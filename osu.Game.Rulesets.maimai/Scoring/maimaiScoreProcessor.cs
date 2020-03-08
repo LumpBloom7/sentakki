@@ -7,11 +7,7 @@ using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.maimai.Scoring
 {
-    public class maimaiScoreProcessor : ScoreProcessor<maimaiHitObject>
+    public class maimaiScoreProcessor : ScoreProcessor
     {
-        public maimaiScoreProcessor(DrawableRuleset<maimaiHitObject> ruleset)
-            : base(ruleset)
-        {
-        }
     }
 }

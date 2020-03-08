@@ -18,18 +18,14 @@ namespace osu.Game.Rulesets.maimai
 {
     public class maimaiRuleset : Ruleset
     {
-        public maimaiRuleset(RulesetInfo rulesetInfo = null)
-            : base(rulesetInfo)
-        {
-        }
 
-        public override string Description => "Washing machine rhythm game.";
+        public override string Description => "maimai";
 
-        public override DrawableRuleset CreateDrawableRulesetWith(IWorkingBeatmap beatmap, IReadOnlyList<Mod> mods) =>
+        public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod> mods) =>
             new DrawablemaimaiRuleset(this, beatmap, mods);
 
         public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) =>
-            new maimaiBeatmapConverter(beatmap);
+            new maimaiBeatmapConverter(beatmap, this);
 
         public override DifficultyCalculator CreateDifficultyCalculator(WorkingBeatmap beatmap) =>
             new maimaiDifficultyCalculator(this, beatmap);
@@ -56,7 +52,7 @@ namespace osu.Game.Rulesets.maimai
 
         public override Drawable CreateIcon() => new Sprite
         {
-            Texture = new TextureStore(new TextureLoaderStore(CreateResourceStore()), false).Get("Textures/coin"),
+            Texture = new TextureStore(new TextureLoaderStore(CreateResourceStore()), false).Get("Textures/Icon2"),
         };
     }
 }

@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.maimai.Mods
         {
             ScoreInfo = new ScoreInfo
             {
-                User = new User { Username = "sample" },
+                User = new User { Username = "Mai-chan" },
             },
             Replay = new maimaiAutoGenerator(beatmap).Generate(),
         };

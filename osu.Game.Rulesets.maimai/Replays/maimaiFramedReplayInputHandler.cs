@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using osu.Framework.Input.StateChanges;
-using osu.Framework.MathUtils;
+using osu.Framework.Utils;
 using osu.Game.Replays;
 using osu.Game.Rulesets.Replays;
 using osuTK;

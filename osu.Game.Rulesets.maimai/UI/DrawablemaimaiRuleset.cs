@@ -21,14 +21,10 @@ namespace osu.Game.Rulesets.maimai.UI
     [Cached]
     public class DrawablemaimaiRuleset : DrawableRuleset<maimaiHitObject>
     {
-        public DrawablemaimaiRuleset(maimaiRuleset ruleset, IWorkingBeatmap beatmap, IReadOnlyList<Mod> mods)
+        public DrawablemaimaiRuleset(maimaiRuleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
             : base(ruleset, beatmap, mods)
         {
         }
-
-        public override ScoreProcessor CreateScoreProcessor() => new maimaiScoreProcessor(this);
-
-        public override PlayfieldAdjustmentContainer CreatePlayfieldAdjustmentContainer() => new maimaiPlayfieldAdjustmentContainer();
 
         protected override Playfield CreatePlayfield() => new maimaiPlayfield();
 
