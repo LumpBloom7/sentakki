@@ -27,6 +27,10 @@ namespace osu.Game.Rulesets.maimai.UI
     [Cached]
     public class maimaiPlayfield : Playfield
     {
+        private readonly float ringSize = .8f;
+        private readonly float dotSize = 40f;
+        private readonly float intersectDistance = .49f;
+
         public maimaiPlayfield()
         {
             AddRangeInternal(new Drawable[]
@@ -36,7 +40,6 @@ namespace osu.Game.Rulesets.maimai.UI
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Size = new Vector2(1f),
                     Children = new Drawable[]{
                         new Container
                         {
@@ -46,7 +49,7 @@ namespace osu.Game.Rulesets.maimai.UI
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Size = new Vector2(.8f),
+                            Size = new Vector2(ringSize),
                             Children = new Drawable[]
                             {
                                 new Circle
@@ -55,8 +58,8 @@ namespace osu.Game.Rulesets.maimai.UI
                                     RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Size = new Vector2(40),
-                                    Position = new Vector2(0, -.49f)
+                                    Size = new Vector2(dotSize),
+                                    Position = new Vector2(0, -intersectDistance)
                                 },
                                 new Circle
                                 {
@@ -64,8 +67,8 @@ namespace osu.Game.Rulesets.maimai.UI
                                     RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Size = new Vector2(40),
-                                    Position = new Vector2(0, .49f)
+                                    Size = new Vector2(dotSize),
+                                    Position = new Vector2(0, intersectDistance)
                                 },
                                 new Circle
                                 {
@@ -73,8 +76,8 @@ namespace osu.Game.Rulesets.maimai.UI
                                     RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Size = new Vector2(40),
-                                    Position = new Vector2(-.49f, 0)
+                                    Size = new Vector2(dotSize),
+                                    Position = new Vector2(-intersectDistance, 0)
                                 },
                                 new Circle
                                 {
@@ -82,8 +85,8 @@ namespace osu.Game.Rulesets.maimai.UI
                                     RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Size = new Vector2(40),
-                                    Position = new Vector2(.49f, 0)
+                                    Size = new Vector2(dotSize),
+                                    Position = new Vector2(intersectDistance, 0)
                                 },
                             }
                         },
@@ -95,7 +98,7 @@ namespace osu.Game.Rulesets.maimai.UI
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Size = new Vector2(.8f),
+                            Size = new Vector2(ringSize),
                             Children = new Drawable[]
                             {
                                 new Circle
@@ -104,8 +107,8 @@ namespace osu.Game.Rulesets.maimai.UI
                                     RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Size = new Vector2(40),
-                                    Position = new Vector2(0, -.49f)
+                                    Size = new Vector2(dotSize),
+                                    Position = new Vector2(0, -intersectDistance)
                                 },
                                 new Circle
                                 {
@@ -113,8 +116,8 @@ namespace osu.Game.Rulesets.maimai.UI
                                     RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Size = new Vector2(40),
-                                    Position = new Vector2(0, .49f)
+                                    Size = new Vector2(dotSize),
+                                    Position = new Vector2(0, intersectDistance)
                                 },
                                 new Circle
                                 {
@@ -122,8 +125,8 @@ namespace osu.Game.Rulesets.maimai.UI
                                     RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Size = new Vector2(40),
-                                    Position = new Vector2(-.49f, 0)
+                                    Size = new Vector2(dotSize),
+                                    Position = new Vector2(-intersectDistance, 0)
                                 },
                                 new Circle
                                 {
@@ -131,8 +134,8 @@ namespace osu.Game.Rulesets.maimai.UI
                                     RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
-                                    Size = new Vector2(40),
-                                    Position = new Vector2(.49f, 0)
+                                    Size = new Vector2(dotSize),
+                                    Position = new Vector2(intersectDistance, 0)
                                 },
                             }
                         },
@@ -142,7 +145,7 @@ namespace osu.Game.Rulesets.maimai.UI
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Size = new Vector2(.8f),
+                            Size = new Vector2(ringSize),
                             Masking = true,
                             BorderThickness = 10,
                             BorderColour = Color4.White,
@@ -155,7 +158,7 @@ namespace osu.Game.Rulesets.maimai.UI
                                     AlwaysPresent = true,
                                 },
                             }
-                        }
+                        },
                     }
                 }.WithEffect(new GlowEffect{
                     Colour = Color4.Pink,
@@ -171,17 +174,18 @@ namespace osu.Game.Rulesets.maimai.UI
 
         private class VisualisationContainer : BeatSyncedContainer
         {
-            private bool activated = true;
+            private readonly float ringSize = 0.77f;
+
             private LogoVisualisation visualisation;
-            private bool firstKiaiBeat = true;
-            private int kiaiBeatIndex;
             private readonly Bindable<bool> showVisualisation = new Bindable<bool>(true);
 
             [BackgroundDependencyLoader(true)]
             private void load(maimaiRulesetConfigManager settings)
             {
-                RelativeSizeAxes = Axes.None;
-                Size = new Vector2(600);
+                FillAspectRatio = 1;
+                FillMode = FillMode.Fit;
+                RelativeSizeAxes = Axes.Both;
+                Size = new Vector2(ringSize);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
 
