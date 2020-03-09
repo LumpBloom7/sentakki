@@ -7,11 +7,16 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Bindings;
 using osu.Game.Beatmaps;
+using osu.Game.Configuration;
+using osu.Game.Overlays.Settings;
+using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.maimai.Beatmaps;
 using osu.Game.Rulesets.maimai.Mods;
 using osu.Game.Rulesets.maimai.UI;
+using osu.Game.Rulesets.maimai.Configuration;
 using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.maimai
@@ -43,6 +48,10 @@ namespace osu.Game.Rulesets.maimai
         }
 
         public override string ShortName => "maimai";
+
+        public override RulesetSettingsSubsection CreateSettings() => new maimaiSettingsSubsection(this);
+
+        public override IRulesetConfigManager CreateConfig(SettingsStore settings) => new maimaiRulesetConfigManager(settings, RulesetInfo);
 
         public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) => new[]
         {
