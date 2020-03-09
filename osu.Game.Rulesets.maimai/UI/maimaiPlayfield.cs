@@ -40,95 +40,109 @@ namespace osu.Game.Rulesets.maimai.UI
                     Children = new Drawable[]{
                         new Container
                         {
+                            FillAspectRatio = 1,
+                            FillMode = FillMode.Fit,
                             Rotation = 22.5f,
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Size = new Vector2(1f),
+                            Size = new Vector2(.8f),
                             Children = new Drawable[]
                             {
                                 new Circle
                                 {
                                     RelativeSizeAxes = Axes.None,
+                                    RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
                                     Size = new Vector2(40),
-                                    Position = new Vector2(0, -295)
+                                    Position = new Vector2(0, -.49f)
                                 },
                                 new Circle
                                 {
                                     RelativeSizeAxes = Axes.None,
+                                    RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
                                     Size = new Vector2(40),
-                                    Position = new Vector2(0, 295)
+                                    Position = new Vector2(0, .49f)
                                 },
                                 new Circle
                                 {
                                     RelativeSizeAxes = Axes.None,
+                                    RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
                                     Size = new Vector2(40),
-                                    Position = new Vector2(-295, 0)
+                                    Position = new Vector2(-.49f, 0)
                                 },
                                 new Circle
                                 {
                                     RelativeSizeAxes = Axes.None,
+                                    RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
                                     Size = new Vector2(40),
-                                    Position = new Vector2(295, 0)
+                                    Position = new Vector2(.49f, 0)
                                 },
                             }
                         },
                         new Container
                         {
                             Rotation = -22.5f,
+                            FillAspectRatio = 1,
+                            FillMode = FillMode.Fit,
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Size = new Vector2(1f),
+                            Size = new Vector2(.8f),
                             Children = new Drawable[]
                             {
                                 new Circle
                                 {
                                     RelativeSizeAxes = Axes.None,
+                                    RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
                                     Size = new Vector2(40),
-                                    Position = new Vector2(0, -295)
+                                    Position = new Vector2(0, -.49f)
                                 },
                                 new Circle
                                 {
                                     RelativeSizeAxes = Axes.None,
+                                    RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
                                     Size = new Vector2(40),
-                                    Position = new Vector2(0, 295)
+                                    Position = new Vector2(0, .49f)
                                 },
                                 new Circle
                                 {
                                     RelativeSizeAxes = Axes.None,
+                                    RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
                                     Size = new Vector2(40),
-                                    Position = new Vector2(-295, 0)
+                                    Position = new Vector2(-.49f, 0)
                                 },
                                 new Circle
                                 {
                                     RelativeSizeAxes = Axes.None,
+                                    RelativePositionAxes = Axes.Both,
                                     Anchor = Anchor.Centre,
                                     Origin = Anchor.Centre,
                                     Size = new Vector2(40),
-                                    Position = new Vector2(295, 0)
+                                    Position = new Vector2(.49f, 0)
                                 },
                             }
                         },
                         new CircularContainer{
-                            RelativeSizeAxes = Axes.None,
+                            FillAspectRatio = 1,
+                            FillMode = FillMode.Fit,
+                            RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Size = new Vector2(600),
+                            Size = new Vector2(.8f),
                             Masking = true,
                             BorderThickness = 10,
                             BorderColour = Color4.White,
@@ -145,7 +159,7 @@ namespace osu.Game.Rulesets.maimai.UI
                     }
                 }.WithEffect(new GlowEffect{
                     Colour = Color4.Pink,
-                    //PadExtent = true,
+                    PadExtent = true,
                     Strength = 2,
                     CacheDrawnEffect = true,
                 }),
