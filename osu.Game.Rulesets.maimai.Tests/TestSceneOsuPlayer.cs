@@ -4,13 +4,13 @@
 using NUnit.Framework;
 using osu.Game.Tests.Visual;
 
-namespace osu.Game.Rulesets.maimai.Tests
+namespace osu.Game.Rulesets.Maimai.Tests
 {
     [TestFixture]
     public class TestSceneOsuPlayer : PlayerTestScene
     {
         public TestSceneOsuPlayer()
-            : base(new maimaiRuleset())
+            : base(new MaimaiRuleset())
         {
         }
     }

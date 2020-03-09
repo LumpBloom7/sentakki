@@ -9,29 +9,29 @@ using osu.Game.Input.Handlers;
 using osu.Game.Replays;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.maimai.Objects;
-using osu.Game.Rulesets.maimai.Objects.Drawables;
-using osu.Game.Rulesets.maimai.Replays;
-using osu.Game.Rulesets.maimai.Scoring;
+using osu.Game.Rulesets.Maimai.Objects;
+using osu.Game.Rulesets.Maimai.Objects.Drawables;
+using osu.Game.Rulesets.Maimai.Replays;
+using osu.Game.Rulesets.Maimai.Scoring;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.UI;
 
-namespace osu.Game.Rulesets.maimai.UI
+namespace osu.Game.Rulesets.Maimai.UI
 {
     [Cached]
-    public class DrawablemaimaiRuleset : DrawableRuleset<maimaiHitObject>
+    public class DrawableMaimaiRuleset : DrawableRuleset<MaimaiHitObject>
     {
-        public DrawablemaimaiRuleset(maimaiRuleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
+        public DrawableMaimaiRuleset(MaimaiRuleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
             : base(ruleset, beatmap, mods)
         {
         }
 
-        protected override Playfield CreatePlayfield() => new maimaiPlayfield();
+        protected override Playfield CreatePlayfield() => new MaimaiPlayfield();
 
-        protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new maimaiFramedReplayInputHandler(replay);
+        protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new MaimaiFramedReplayInputHandler(replay);
 
-        public override DrawableHitObject<maimaiHitObject> CreateDrawableRepresentation(maimaiHitObject h) => new DrawablemaimaiHitObject(h);
+        public override DrawableHitObject<MaimaiHitObject> CreateDrawableRepresentation(MaimaiHitObject h) => new DrawableMaimaiHitObject(h);
 
-        protected override PassThroughInputManager CreateInputManager() => new maimaiInputManager(Ruleset?.RulesetInfo);
+        protected override PassThroughInputManager CreateInputManager() => new MaimaiInputManager(Ruleset?.RulesetInfo);
     }
 }

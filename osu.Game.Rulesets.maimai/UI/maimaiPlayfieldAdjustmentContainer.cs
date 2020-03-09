@@ -5,11 +5,11 @@ using osu.Framework.Graphics;
 using osu.Game.Rulesets.UI;
 using osuTK;
 
-namespace osu.Game.Rulesets.maimai.UI
+namespace osu.Game.Rulesets.Maimai.UI
 {
-    public class maimaiPlayfieldAdjustmentContainer : PlayfieldAdjustmentContainer
+    public class MaimaiPlayfieldAdjustmentContainer : PlayfieldAdjustmentContainer
     {
-        public maimaiPlayfieldAdjustmentContainer()
+        public MaimaiPlayfieldAdjustmentContainer()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;

@@ -7,28 +7,28 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
-using osu.Game.Rulesets.maimai.Objects;
+using osu.Game.Rulesets.Maimai.Objects;
 using osuTK;
 
-namespace osu.Game.Rulesets.maimai.Beatmaps
+namespace osu.Game.Rulesets.Maimai.Beatmaps
 {
-    public class maimaiBeatmapConverter : BeatmapConverter<maimaiHitObject>
+    public class MaimaiBeatmapConverter : BeatmapConverter<MaimaiHitObject>
     {
 
         // todo: Check for conversion types that should be supported (ie. Beatmap.HitObjects.Any(h => h is IHasXPosition))
         // https://github.com/ppy/osu/tree/master/osu.Game/Rulesets/Objects/Types
         public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition);
 
-        public maimaiBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
+        public MaimaiBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
             : base(beatmap, ruleset)
         {
         }
 
 
-        protected override IEnumerable<maimaiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap)
+        protected override IEnumerable<MaimaiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap)
         {
 
-            yield return new maimaiHitObject
+            yield return new MaimaiHitObject
             {
                 Samples = original.Samples,
                 StartTime = original.StartTime,

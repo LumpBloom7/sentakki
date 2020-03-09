@@ -1,7 +1,7 @@
 ﻿using System;
 using osuTK;
 
-namespace osu.Game.Rulesets.maimai
+namespace osu.Game.Rulesets.Maimai
 {
     public static class Utils
     {

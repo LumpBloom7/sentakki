@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Beatmaps;
-using osu.Game.Rulesets.maimai.Objects;
+using osu.Game.Rulesets.Maimai.Objects;
 
-namespace osu.Game.Rulesets.maimai.Beatmaps
+namespace osu.Game.Rulesets.Maimai.Beatmaps
 {
-    public class maimaiBeatmap : Beatmap<maimaiHitObject>
+    public class MaimaiBeatmap : Beatmap<MaimaiHitObject>
     {
         public override IEnumerable<BeatmapStatistic> GetStatistics()
         {

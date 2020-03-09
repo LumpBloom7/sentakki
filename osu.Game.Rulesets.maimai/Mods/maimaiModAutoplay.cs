@@ -3,14 +3,14 @@
 
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.maimai.Objects;
-using osu.Game.Rulesets.maimai.Replays;
+using osu.Game.Rulesets.Maimai.Objects;
+using osu.Game.Rulesets.Maimai.Replays;
 using osu.Game.Scoring;
 using osu.Game.Users;
 
-namespace osu.Game.Rulesets.maimai.Mods
+namespace osu.Game.Rulesets.Maimai.Mods
 {
-    public class maimaiModAutoplay : ModAutoplay<maimaiHitObject>
+    public class MaimaiModAutoplay : ModAutoplay<MaimaiHitObject>
     {
         public override Score CreateReplayScore(IBeatmap beatmap) => new Score
         {
@@ -18,7 +18,7 @@ namespace osu.Game.Rulesets.maimai.Mods
             {
                 User = new User { Username = "Mai-chan" },
             },
-            Replay = new maimaiAutoGenerator(beatmap).Generate(),
+            Replay = new MaimaiAutoGenerator(beatmap).Generate(),
         };
     }
 }

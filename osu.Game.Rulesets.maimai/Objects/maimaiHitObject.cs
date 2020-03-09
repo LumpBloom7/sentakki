@@ -6,9 +6,9 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osuTK;
 
-namespace osu.Game.Rulesets.maimai.Objects
+namespace osu.Game.Rulesets.Maimai.Objects
 {
-    public class maimaiHitObject : HitObject, IHasPosition
+    public class MaimaiHitObject : HitObject, IHasPosition
     {
         public override Judgement CreateJudgement() => new Judgement();
 

@@ -9,11 +9,11 @@ using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Difficulty.Skills;
 using osu.Game.Rulesets.Mods;
 
-namespace osu.Game.Rulesets.maimai
+namespace osu.Game.Rulesets.Maimai
 {
-    public class maimaiDifficultyCalculator : DifficultyCalculator
+    public class MaimaiDifficultyCalculator : DifficultyCalculator
     {
-        public maimaiDifficultyCalculator(Ruleset ruleset, WorkingBeatmap beatmap)
+        public MaimaiDifficultyCalculator(Ruleset ruleset, WorkingBeatmap beatmap)
             : base(ruleset, beatmap)
         {
         }

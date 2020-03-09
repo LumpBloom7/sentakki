@@ -14,16 +14,16 @@ using osu.Game.Rulesets.Scoring;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.maimai.Objects.Drawables
+namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
-    public class DrawablemaimaiHitObject : DrawableHitObject<maimaiHitObject>
+    public class DrawableMaimaiHitObject : DrawableHitObject<MaimaiHitObject>
     {
         private const double time_preempt = 600;
         private const double time_fadein = 400;
 
         public override bool HandlePositionalInput => true;
 
-        public DrawablemaimaiHitObject(maimaiHitObject hitObject)
+        public DrawableMaimaiHitObject(MaimaiHitObject hitObject)
             : base(hitObject)
         {
             Size = new Vector2(80);

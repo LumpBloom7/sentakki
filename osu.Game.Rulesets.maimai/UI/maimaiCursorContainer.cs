@@ -8,9 +8,9 @@ using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.UI;
 using osuTK;
 
-namespace osu.Game.Rulesets.maimai.UI
+namespace osu.Game.Rulesets.Maimai.UI
 {
-    public class maimaiCursorContainer : GameplayCursorContainer
+    public class MaimaiCursorContainer : GameplayCursorContainer
     {
         private Sprite cursorSprite;
         private Texture cursorTexture;

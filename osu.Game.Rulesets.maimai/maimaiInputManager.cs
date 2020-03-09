@@ -5,17 +5,17 @@ using System.ComponentModel;
 using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.UI;
 
-namespace osu.Game.Rulesets.maimai
+namespace osu.Game.Rulesets.Maimai
 {
-    public class maimaiInputManager : RulesetInputManager<maimaiAction>
+    public class MaimaiInputManager : RulesetInputManager<MaimaiAction>
     {
-        public maimaiInputManager(RulesetInfo ruleset)
+        public MaimaiInputManager(RulesetInfo ruleset)
             : base(ruleset, 0, SimultaneousBindingMode.Unique)
         {
         }
     }
 
-    public enum maimaiAction
+    public enum MaimaiAction
     {
         [Description("Button 1")]
         Button1,

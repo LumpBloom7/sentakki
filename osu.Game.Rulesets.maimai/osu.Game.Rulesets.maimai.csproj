@@ -4,7 +4,10 @@
     <AssemblyTitle>osu.Game.Rulesets.Sample</AssemblyTitle>
     <OutputType>Library</OutputType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <RootNamespace>osu.Game.Rulesets.maimai</RootNamespace>
+    <RootNamespace>osu.Game.Rulesets.Maimai</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyName>osu.Game.Rulesets.Maimai</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\**" />

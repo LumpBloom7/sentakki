@@ -13,50 +13,50 @@ using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.maimai.Beatmaps;
-using osu.Game.Rulesets.maimai.Mods;
-using osu.Game.Rulesets.maimai.UI;
-using osu.Game.Rulesets.maimai.Configuration;
+using osu.Game.Rulesets.Maimai.Beatmaps;
+using osu.Game.Rulesets.Maimai.Mods;
+using osu.Game.Rulesets.Maimai.UI;
+using osu.Game.Rulesets.Maimai.Configuration;
 using osu.Game.Rulesets.UI;
 
-namespace osu.Game.Rulesets.maimai
+namespace osu.Game.Rulesets.Maimai
 {
-    public class maimaiRuleset : Ruleset
+    public class MaimaiRuleset : Ruleset
     {
 
         public override string Description => "maimai";
 
         public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod> mods) =>
-            new DrawablemaimaiRuleset(this, beatmap, mods);
+            new DrawableMaimaiRuleset(this, beatmap, mods);
 
         public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) =>
-            new maimaiBeatmapConverter(beatmap, this);
+            new MaimaiBeatmapConverter(beatmap, this);
 
         public override DifficultyCalculator CreateDifficultyCalculator(WorkingBeatmap beatmap) =>
-            new maimaiDifficultyCalculator(this, beatmap);
+            new MaimaiDifficultyCalculator(this, beatmap);
 
         public override IEnumerable<Mod> GetModsFor(ModType type)
         {
             switch (type)
             {
                 case ModType.Automation:
-                    return new[] { new maimaiModAutoplay() };
+                    return new[] { new MaimaiModAutoplay() };
 
                 default:
                     return new Mod[] { null };
             }
         }
 
-        public override string ShortName => "maimai";
+        public override string ShortName => "Maimai";
 
-        public override RulesetSettingsSubsection CreateSettings() => new maimaiSettingsSubsection(this);
+        public override RulesetSettingsSubsection CreateSettings() => new MaimaiSettingsSubsection(this);
 
-        public override IRulesetConfigManager CreateConfig(SettingsStore settings) => new maimaiRulesetConfigManager(settings, RulesetInfo);
+        public override IRulesetConfigManager CreateConfig(SettingsStore settings) => new MaimaiRulesetConfigManager(settings, RulesetInfo);
 
         public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) => new[]
         {
-            new KeyBinding(InputKey.Z, maimaiAction.Button1),
-            new KeyBinding(InputKey.X, maimaiAction.Button2),
+            new KeyBinding(InputKey.Z, MaimaiAction.Button1),
+            new KeyBinding(InputKey.X, MaimaiAction.Button2),
         };
 
         public override Drawable CreateIcon() => new Sprite

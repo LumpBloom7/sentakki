@@ -1,11 +1,11 @@
 ﻿using osu.Game.Configuration;
 using osu.Game.Rulesets.Configuration;
 
-namespace osu.Game.Rulesets.maimai.Configuration
+namespace osu.Game.Rulesets.Maimai.Configuration
 {
-    public class maimaiRulesetConfigManager : RulesetConfigManager<maimaiRulesetSettings>
+    public class MaimaiRulesetConfigManager : RulesetConfigManager<MaimaiRulesetSettings>
     {
-        public maimaiRulesetConfigManager(SettingsStore settings, RulesetInfo ruleset, int? variant = null)
+        public MaimaiRulesetConfigManager(SettingsStore settings, RulesetInfo ruleset, int? variant = null)
             : base(settings, ruleset, variant)
         {
         }
@@ -14,11 +14,11 @@ namespace osu.Game.Rulesets.maimai.Configuration
         {
             base.InitialiseDefaults();
 
-            Set(maimaiRulesetSettings.ShowVisualizer, true);
+            Set(MaimaiRulesetSettings.ShowVisualizer, true);
         }
     }
 
-    public enum maimaiRulesetSettings
+    public enum MaimaiRulesetSettings
     {
         ShowVisualizer
     }

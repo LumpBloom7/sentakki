@@ -1,15 +1,15 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Game.Overlays.Settings;
-using osu.Game.Rulesets.maimai.Configuration;
+using osu.Game.Rulesets.Maimai.Configuration;
 
-namespace osu.Game.Rulesets.maimai.UI
+namespace osu.Game.Rulesets.Maimai.UI
 {
-    class maimaiSettingsSubsection : RulesetSettingsSubsection
+    class MaimaiSettingsSubsection : RulesetSettingsSubsection
     {
         protected override string Header => "maimai";
 
-        public maimaiSettingsSubsection(Ruleset ruleset)
+        public MaimaiSettingsSubsection(Ruleset ruleset)
             : base(ruleset)
         {
         }
@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.maimai.UI
         [BackgroundDependencyLoader]
         private void load()
         {
-            var config = (maimaiRulesetConfigManager)Config;
+            var config = (MaimaiRulesetConfigManager)Config;
 
             // for an odd reason, Config seems to be passed as null when creating it. doesnt even get called...
             if (config == null)
@@ -28,7 +28,7 @@ namespace osu.Game.Rulesets.maimai.UI
                 new SettingsCheckbox
                 {
                     LabelText = "Show Visualizer",
-                    Bindable = config.GetBindable<bool>(maimaiRulesetSettings.ShowVisualizer)
+                    Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.ShowVisualizer)
                 }
             };
         }

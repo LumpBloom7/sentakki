@@ -20,18 +20,18 @@ using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Menu;
 using osuTK;
 using osuTK.Graphics;
-using osu.Game.Rulesets.maimai.Configuration;
+using osu.Game.Rulesets.Maimai.Configuration;
 
-namespace osu.Game.Rulesets.maimai.UI
+namespace osu.Game.Rulesets.Maimai.UI
 {
     [Cached]
-    public class maimaiPlayfield : Playfield
+    public class MaimaiPlayfield : Playfield
     {
         private readonly float ringSize = .8f;
         private readonly float dotSize = 40f;
         private readonly float intersectDistance = .49f;
 
-        public maimaiPlayfield()
+        public MaimaiPlayfield()
         {
             AddRangeInternal(new Drawable[]
             {
@@ -170,7 +170,7 @@ namespace osu.Game.Rulesets.maimai.UI
                 new VisualisationContainer(),
             });
         }
-        protected override GameplayCursorContainer CreateCursor() => new maimaiCursorContainer();
+        protected override GameplayCursorContainer CreateCursor() => new MaimaiCursorContainer();
 
         private class VisualisationContainer : BeatSyncedContainer
         {
@@ -180,7 +180,7 @@ namespace osu.Game.Rulesets.maimai.UI
             private readonly Bindable<bool> showVisualisation = new Bindable<bool>(true);
 
             [BackgroundDependencyLoader(true)]
-            private void load(maimaiRulesetConfigManager settings)
+            private void load(MaimaiRulesetConfigManager settings)
             {
                 FillAspectRatio = 1;
                 FillMode = FillMode.Fit;
@@ -198,7 +198,7 @@ namespace osu.Game.Rulesets.maimai.UI
 
                 };
 
-                settings?.BindWith(maimaiRulesetSettings.ShowVisualizer, showVisualisation);
+                settings?.BindWith(MaimaiRulesetSettings.ShowVisualizer, showVisualisation);
 
                 showVisualisation.ValueChanged += value => { visualisation.FadeTo(value.NewValue ? 1 : 0, 500); };
                 showVisualisation.TriggerChange();

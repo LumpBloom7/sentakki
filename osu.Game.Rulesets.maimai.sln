@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "osu.Game.Rulesets.maimai", "osu.Game.Rulesets.maimai\osu.Game.Rulesets.maimai.csproj", "{5AE1F0F1-DAFA-46E7-959C-DA233B7C87E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "osu.Game.Rulesets.Maimai", "osu.Game.Rulesets.Maimai\osu.Game.Rulesets.Maimai.csproj", "{5AE1F0F1-DAFA-46E7-959C-DA233B7C87E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "osu.Game.Rulesets.maimai.Tests", "osu.Game.Rulesets.maimai.Tests\osu.Game.Rulesets.maimai.Tests.csproj", "{B4577C85-CB83-462A-BCE3-22FFEB16311D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "osu.Game.Rulesets.Maimai.Tests", "osu.Game.Rulesets.Maimai.Tests\osu.Game.Rulesets.Maimai.Tests.csproj", "{B4577C85-CB83-462A-BCE3-22FFEB16311D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,8 +29,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {671B0BEC-2403-45B0-9357-2C97CC517668}

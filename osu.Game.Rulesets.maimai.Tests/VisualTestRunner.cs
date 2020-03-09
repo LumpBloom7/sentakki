@@ -6,7 +6,7 @@ using osu.Framework;
 using osu.Framework.Platform;
 using osu.Game.Tests;
 
-namespace osu.Game.Rulesets.maimai.Tests
+namespace osu.Game.Rulesets.Maimai.Tests
 {
     public static class VisualTestRunner
     {

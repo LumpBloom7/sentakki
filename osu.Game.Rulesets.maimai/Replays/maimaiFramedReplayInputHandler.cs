@@ -9,16 +9,16 @@ using osu.Game.Replays;
 using osu.Game.Rulesets.Replays;
 using osuTK;
 
-namespace osu.Game.Rulesets.maimai.Replays
+namespace osu.Game.Rulesets.Maimai.Replays
 {
-    public class maimaiFramedReplayInputHandler : FramedReplayInputHandler<maimaiReplayFrame>
+    public class MaimaiFramedReplayInputHandler : FramedReplayInputHandler<MaimaiReplayFrame>
     {
-        public maimaiFramedReplayInputHandler(Replay replay)
+        public MaimaiFramedReplayInputHandler(Replay replay)
             : base(replay)
         {
         }
 
-        protected override bool IsImportant(maimaiReplayFrame frame) => true;
+        protected override bool IsImportant(MaimaiReplayFrame frame) => true;
 
         protected Vector2 Position
         {

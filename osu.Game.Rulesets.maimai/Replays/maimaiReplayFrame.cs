@@ -4,9 +4,9 @@
 using osu.Game.Rulesets.Replays;
 using osuTK;
 
-namespace osu.Game.Rulesets.maimai.Replays
+namespace osu.Game.Rulesets.Maimai.Replays
 {
-    public class maimaiReplayFrame : ReplayFrame
+    public class MaimaiReplayFrame : ReplayFrame
     {
         public Vector2 Position;
     }
