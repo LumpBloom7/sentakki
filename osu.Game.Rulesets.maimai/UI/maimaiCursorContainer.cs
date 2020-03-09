@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.maimai.UI
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            cursorTexture = textures.Get("character");
+            cursorTexture = textures.Get("char");
 
             if (cursorSprite != null)
                 cursorSprite.Texture = cursorTexture;

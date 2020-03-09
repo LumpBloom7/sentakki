@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.maimai.Objects.Drawables
             AddInternal(new Sprite
             {
                 RelativeSizeAxes = Axes.Both,
-                Texture = textures.Get("Icon2"),
+                Texture = textures.Get("Icon55"),
             });
         }
 
