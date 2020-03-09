@@ -189,6 +189,7 @@ namespace osu.Game.Rulesets.Maimai.UI
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
 
+
                 Child = visualisation = new LogoVisualisation
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -199,8 +200,6 @@ namespace osu.Game.Rulesets.Maimai.UI
                 };
 
                 settings?.BindWith(MaimaiRulesetSettings.ShowVisualizer, showVisualisation);
-
-                showVisualisation.ValueChanged += value => { visualisation.FadeTo(value.NewValue ? 1 : 0, 500); };
                 showVisualisation.TriggerChange();
             }
 
@@ -212,9 +211,10 @@ namespace osu.Game.Rulesets.Maimai.UI
 
             protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, TrackAmplitudes amplitudes)
             {
-                if (effectPoint.KiaiMode)
+                if (effectPoint.KiaiMode && showVisualisation.Value)
                 {
                     visualisation.FadeIn(200);
+
                 }
                 else
                 {
