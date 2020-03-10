@@ -16,6 +16,7 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Maimai.UI;
 using osu.Game.Rulesets.Scoring;
 using System;
 using osuTK;
@@ -27,7 +28,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
     public class DrawableMaimaiHitObject : DrawableHitObject<MaimaiHitObject>
     {
         public CircularContainer Circle;
-        public HitReceptor Receptor;
 
         public Func<DrawableMaimaiHitObject, bool> CheckValidation;
 
@@ -39,54 +39,38 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         private bool validActionPressed;
 
         protected sealed override double InitialLifetimeOffset => 600;
-        //public override bool HandlePositionalInput => true;
+        public override bool HandlePositionalInput => true;
 
         public DrawableMaimaiHitObject(MaimaiHitObject hitObject)
             : base(hitObject)
         {
-            Size = new Vector2(.8f);
-            RelativeSizeAxes = Axes.Both;
-            FillMode = FillMode.Fit;
-            FillAspectRatio = 1;
-            Anchor = Anchor.Centre;
+            Size = new Vector2(80);
             Origin = Anchor.Centre;
-
-            AddRangeInternal(new Drawable[]{
-                Receptor = new HitReceptor(),
-                Circle = new CircularContainer
+            Anchor = Anchor.Centre;
+            Alpha = 0.05f;
+            AddInternal(Circle = new CircularContainer
+            {
+                RelativeSizeAxes = Axes.Both,
+                Masking = true,
+                BorderColour = Color4.White,
+                BorderThickness = 10,
+                Child = new Box
                 {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Size = new Vector2(80),
-                    Masking = true,
-                    BorderColour = Color4.White,
-                    BorderThickness = 10,
-                    Alpha = 0.05f,
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0,
-                        AlwaysPresent = true,
-                    },
-                    Position = Vector2.Zero,
-                }
+                    RelativeSizeAxes = Axes.Both,
+                    Alpha = 0,
+                    AlwaysPresent = true,
+                },
             });
-
-            hitObject.Angle = Utils.GetNotePathFromDegrees(hitObject.endPosition.GetDegreesFromPosition(Circle.AnchorPosition) * 4);
-            Rotation = hitObject.Angle;
             Position = Vector2.Zero;
-
         }
 
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            var b = HitObject.endPosition.GetDegreesFromPosition(Circle.AnchorPosition) * 4;
-            var a = b *= (float)(Math.PI / 180);
+            var a = HitObject.Angle * (float)(Math.PI / 180);
 
-            Circle.FadeIn(400);
-            Circle.MoveToY(this.RelativeToAbsoluteFactor.Y / 2, 600);
-            Receptor.MoveToY(this.RelativeToAbsoluteFactor.Y / 2, 600);
+            this.FadeIn(400);
+            this.MoveTo(new Vector2(-(295 * (float)Math.Cos(a)), -(295 * (float)Math.Sin(a))), 600);
         }
 
         protected override IEnumerable<HitSampleInfo> GetSamples() => new[]
@@ -101,43 +85,48 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (timeOffset >= 0)
-                ApplyResult(r => r.Type = this.Receptor.IsHovered ? HitResult.Perfect : HitResult.Miss);
+                ApplyResult(r => r.Type = this.IsHovered ? HitResult.Perfect : HitResult.Miss);
         }
 
         protected override void UpdateStateTransforms(ArmedState state)
         {
             base.UpdateStateTransforms(state);
 
+            const double time_fade_hit = 250, time_fade_miss = 400;
+
             switch (state)
             {
+                case ArmedState.Idle:
+                    LifetimeStart = HitObject.StartTime - 600;
+                    HitAction = null;
+
+                    break;
+
                 case ArmedState.Hit:
-                    this.ScaleTo(5, 1500, Easing.OutQuint).FadeOut(1500, Easing.OutQuint).Expire();
+                    var b = HitObject.Angle;
+                    var a = b * (float)(Math.PI / 180);
+
+                    Circle.ScaleTo(2f, time_fade_hit, Easing.OutCubic)
+                       .FadeColour(Color4.Yellow, time_fade_hit, Easing.OutCubic)
+                       .MoveToOffset(new Vector2(-(300 * (float)Math.Cos(a)), -(300 * (float)Math.Sin(a))), time_fade_hit, Easing.OutCubic)
+                       .FadeOut(time_fade_hit);
+
+                    this.FadeOut(time_fade_hit);
+
                     break;
 
                 case ArmedState.Miss:
-                    const double duration = 1000;
+                    var c = HitObject.Angle;
+                    var d = c * (float)(Math.PI / 180);
 
-                    this.ScaleTo(1.2f, duration, Easing.OutQuint);
-                    //this.MoveToOffset(new Vector2(0, 10), duration, Easing.In);
-                    this.FadeColour(Color4.Red.Opacity(0.5f), duration / 2, Easing.OutQuint).Then().FadeOut(duration / 2, Easing.InQuint).Expire();
+                    Circle.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                       .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
+                       .MoveToOffset(new Vector2(-(100 * (float)Math.Cos(d)), -(100 * (float)Math.Sin(d))), time_fade_hit, Easing.OutCubic)
+                       .FadeOut(time_fade_miss);
+
+                    this.FadeOut(time_fade_miss);
+
                     break;
-            }
-        }
-
-        public class HitReceptor : CompositeDrawable
-        {
-            // IsHovered is used
-            public override bool HandlePositionalInput => true;
-
-            public HitReceptor()
-            {
-                Size = new Vector2(80);
-
-                Anchor = Anchor.Centre;
-                Origin = Anchor.Centre;
-
-                CornerRadius = 40;
-                CornerExponent = 2;
             }
         }
     }
