@@ -33,17 +33,13 @@ jobs:
     submodules: 'recursive'
 
   - task: DotNetCoreCLI@2
+    displayName: Dotnet install osu.Game.Templates
     inputs:
         command: 'custom'
         custom: 'new'
         arguments: '-i ppy.osu.Game.Templates'
-  - task: NuGetCommand@2
-    displayName: 'Restore NuGet packages'
-    inputs:
-      restoreSolution: '$(solution)'
-      verbosityRestore: 'Normal'
-
   - task: DotNetCoreCLI@2
+    displayName: Dotnet Build
     inputs:
       command: 'build'
       arguments: '-c $(buildConfiguration)'
