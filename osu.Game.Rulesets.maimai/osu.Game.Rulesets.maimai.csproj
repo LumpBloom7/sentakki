@@ -16,4 +16,7 @@
     <PackageReference Include="ppy.osu.Framework" Version="2020.305.0" />
     <PackageReference Include="ppy.osu.Game" Version="2020.306.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\Samples\" />
+  </ItemGroup>
 </Project>

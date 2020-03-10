@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Maimai.UI
 
         protected override Drawable CreateCursor() => cursorSprite = new Sprite
         {
-            Scale = new Vector2(0.5f),
+            Scale = new Vector2(0.3f),
             Origin = Anchor.Centre,
             Texture = cursorTexture,
         };
@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.Maimai.UI
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            cursorTexture = textures.Get("Icon");
+            cursorTexture = textures.Get("Icon2");
 
             if (cursorSprite != null)
                 cursorSprite.Texture = cursorTexture;

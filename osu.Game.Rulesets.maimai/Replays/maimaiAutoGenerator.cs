@@ -13,7 +13,6 @@ namespace osu.Game.Rulesets.Maimai.Replays
 {
     public class MaimaiAutoGenerator : AutoGenerator
     {
-        private readonly Vector2 CENTRE = new Vector2(MaimaiPlayfield.ringSize / 2);
         protected Replay Replay;
         protected List<ReplayFrame> Frames => Replay.Frames;
 
