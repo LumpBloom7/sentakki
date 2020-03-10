@@ -10,7 +10,7 @@ pr:
 - '*'
 
 jobs:
-- job: osu-maimai
+- job: osu_Maimai
   pool:
     vmImage: 'windows-latest'
 
