@@ -31,17 +31,19 @@ jobs:
   - checkout: 'self'
     lfs: true
     submodules: 'recursive'
-    
+
+  - task: DotNetCoreCLI@2
+    inputs:
+        command: 'custom'
+        custom: 'new'
+        arguments: '-i ppy.osu.Game.Templates'
   - task: NuGetCommand@2
     displayName: 'Restore NuGet packages'
     inputs:
       restoreSolution: '$(solution)'
       verbosityRestore: 'Normal'
 
-  - task: VSBuild@1
-    displayName: 'Build solution $(solution)'
+  - task: DotNetCoreCLI@2
     inputs:
-      solution: '$(solution)'
-      platform: '$(buildPlatform)'
-      configuration: '$(buildConfiguration)'
-      maximumCpuCount: true
+      command: 'build'
+      arguments: '-c $(buildConfiguration)'
