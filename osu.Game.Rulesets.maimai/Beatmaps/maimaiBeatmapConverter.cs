@@ -27,12 +27,12 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
 
         protected override IEnumerable<MaimaiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap)
         {
-
             yield return new MaimaiHitObject
             {
                 Samples = original.Samples,
                 StartTime = original.StartTime,
-                Position = (original as IHasPosition)?.Position ?? Vector2.Zero,
+                endPosition = (original as IHasPosition)?.Position ?? Vector2.Zero,
+
             };
         }
     }

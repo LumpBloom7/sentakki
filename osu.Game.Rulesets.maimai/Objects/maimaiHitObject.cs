@@ -8,8 +8,11 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Maimai.Objects
 {
-    public class MaimaiHitObject : HitObject, IHasPosition
+    public class MaimaiHitObject : HitObject
     {
+        public Vector2 endPosition { get; set; }
+        public float Angle { get; set; }
+        public int path { get; set; }
         public override Judgement CreateJudgement() => new Judgement();
 
         public Vector2 Position { get; set; }
