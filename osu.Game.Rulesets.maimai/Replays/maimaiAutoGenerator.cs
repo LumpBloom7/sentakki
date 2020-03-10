@@ -6,11 +6,14 @@ using osu.Game.Beatmaps;
 using osu.Game.Replays;
 using osu.Game.Rulesets.Maimai.Objects;
 using osu.Game.Rulesets.Replays;
+using osu.Game.Rulesets.Maimai.UI;
+using osuTK;
 
 namespace osu.Game.Rulesets.Maimai.Replays
 {
     public class MaimaiAutoGenerator : AutoGenerator
     {
+        private readonly Vector2 CENTRE = new Vector2(MaimaiPlayfield.ringSize / 2);
         protected Replay Replay;
         protected List<ReplayFrame> Frames => Replay.Frames;
 
@@ -24,14 +27,13 @@ namespace osu.Game.Rulesets.Maimai.Replays
 
         public override Replay Generate()
         {
-            Frames.Add(new MaimaiReplayFrame());
-
+            Frames.Add(new MaimaiReplayFrame { Position = new Vector2(350) });
             foreach (MaimaiHitObject hitObject in Beatmap.HitObjects)
             {
                 Frames.Add(new MaimaiReplayFrame
                 {
                     Time = hitObject.StartTime,
-                    Position = hitObject.Position,
+                    Position = hitObject.endPosition + new Vector2(350)
                 });
             }
 

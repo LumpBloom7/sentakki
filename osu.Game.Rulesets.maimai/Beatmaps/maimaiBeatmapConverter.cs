@@ -9,6 +9,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Maimai.Objects;
 using osuTK;
+using System;
 
 namespace osu.Game.Rulesets.Maimai.Beatmaps
 {
@@ -27,12 +28,13 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
 
         protected override IEnumerable<MaimaiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap)
         {
+            var Angle_ = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition((original as IHasPosition)?.Position ?? Vector2.Zero, Vector2.Zero) * 4);
             yield return new MaimaiHitObject
             {
+                Angle = Angle_,
                 Samples = original.Samples,
                 StartTime = original.StartTime,
-                endPosition = (original as IHasPosition)?.Position ?? Vector2.Zero,
-
+                endPosition = new Vector2(-(295 * (float)Math.Cos(Angle_ * (float)(Math.PI / 180))), -(295 * (float)Math.Sin(Angle_ * (float)(Math.PI / 180))))
             };
         }
     }

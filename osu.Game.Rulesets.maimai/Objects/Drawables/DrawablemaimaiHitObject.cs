@@ -67,10 +67,8 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            var a = HitObject.Angle * (float)(Math.PI / 180);
-
             this.FadeIn(400);
-            this.MoveTo(new Vector2(-(295 * (float)Math.Cos(a)), -(295 * (float)Math.Sin(a))), 600);
+            this.MoveTo(HitObject.endPosition, 600);
         }
 
         protected override IEnumerable<HitSampleInfo> GetSamples() => new[]

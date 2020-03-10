@@ -33,6 +33,10 @@ namespace osu.Game.Rulesets.Maimai.UI
 
         public MaimaiPlayfield()
         {
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
+            RelativeSizeAxes = Axes.None;
+            Size = new Vector2(ringSize + 100);
             AddRangeInternal(new Drawable[]
             {
                 new Container
@@ -174,7 +178,7 @@ namespace osu.Game.Rulesets.Maimai.UI
 
         private class VisualisationContainer : BeatSyncedContainer
         {
-            private readonly float ringSize = 0.77f;
+            private readonly float ringSize = 600;
 
             private LogoVisualisation visualisation;
             private readonly Bindable<bool> showVisualisation = new Bindable<bool>(true);
