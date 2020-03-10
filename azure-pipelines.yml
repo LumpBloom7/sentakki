@@ -10,7 +10,7 @@ pr:
 - '*'
 
 jobs:
-- job: BloomFramework
+- job: osu-maimai
   pool:
     vmImage: 'windows-latest'
 
