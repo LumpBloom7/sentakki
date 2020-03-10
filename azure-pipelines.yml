@@ -1,0 +1,45 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- '*'
+
+pr:
+- '*'
+
+jobs:
+- job: osu_Maimai
+  pool:
+    vmImage: 'windows-latest'
+
+  variables:
+    solution: '*.sln'
+
+  strategy:
+    maxParallel: 10
+    matrix:
+      debug-AnyCPU:
+        buildPlatform: 'Any CPU'
+        buildConfiguration: 'Debug'
+      release-AnyCPU:
+        buildPlatform: 'Any CPU'
+        buildConfiguration: 'Release'
+
+  steps:
+  - checkout: 'self'
+    lfs: true
+    submodules: 'recursive'
+
+  - task: DotNetCoreCLI@2
+    displayName: Dotnet install osu.Game.Templates
+    inputs:
+        command: 'custom'
+        custom: 'new'
+        arguments: '-i ppy.osu.Game.Templates'
+  - task: DotNetCoreCLI@2
+    displayName: Dotnet Build
+    inputs:
+      command: 'build'
+      arguments: '-c $(buildConfiguration)'
