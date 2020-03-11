@@ -8,14 +8,13 @@ namespace osu.Game.Rulesets.Maimai
     {
         public static float GetDegreesFromPosition(this Vector2 target, Vector2 self)
         {
-            Vector2 offset = self - target;
-            float degrees = (float)MathHelper.RadiansToDegrees(Math.Atan2(-offset.X, offset.Y)) + 24.3f;
+            float degrees = (float)MathHelper.RadiansToDegrees(Math.Atan2(target.X - self.X, target.Y - self.Y));
 
             return degrees;
         }
         public static float/*<int, Nullable<int>> */GetNotePathFromDegrees(float degrees)
         {
-            degrees %= 360f;
+            if (degrees < 0) degrees += 360;
             Console.WriteLine("Input: " + degrees.ToString());
             float SingleThreshold = 40f; // 40 Degrees margin from centre
             int result = 0;
