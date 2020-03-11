@@ -101,7 +101,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     break;
 
                 case ArmedState.Hit:
-                    var b = HitObject.Angle;
+                    var b = HitObject.Angle + 90;
                     var a = b * (float)(Math.PI / 180);
 
                     Circle.ScaleTo(2f, time_fade_hit, Easing.OutCubic)
@@ -114,8 +114,8 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     break;
 
                 case ArmedState.Miss:
-                    var c = HitObject.Angle;
-                    var d = c * (float)(Math.PI / 180);
+                    var c = HitObject.Angle + 90;
+                    var d = c * (float)(Math.PI / 180) + 90;
 
                     Circle.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
