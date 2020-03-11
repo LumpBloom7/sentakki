@@ -188,7 +188,7 @@ namespace osu.Game.Rulesets.Maimai.UI
             {
                 FillAspectRatio = 1;
                 FillMode = FillMode.Fit;
-                RelativeSizeAxes = Axes.Both;
+                // RelativeSizeAxes = Axes.Both;
                 Size = new Vector2(ringSize);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
