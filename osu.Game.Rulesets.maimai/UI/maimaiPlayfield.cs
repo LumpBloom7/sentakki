@@ -28,8 +28,8 @@ namespace osu.Game.Rulesets.Maimai.UI
     public class MaimaiPlayfield : Playfield
     {
         public static readonly float ringSize = 600;
-        private readonly float dotSize = 40f;
-        private readonly float intersectDistance = 295;
+        private readonly float dotSize = 20f;
+        private readonly float intersectDistance = 297.5f;
 
         public MaimaiPlayfield()
         {
@@ -151,7 +151,7 @@ namespace osu.Game.Rulesets.Maimai.UI
                             Origin = Anchor.Centre,
                             Size = new Vector2(ringSize),
                             Masking = true,
-                            BorderThickness = 10,
+                            BorderThickness = 5,
                             BorderColour = Color4.White,
                             Children = new Drawable[]
                             {

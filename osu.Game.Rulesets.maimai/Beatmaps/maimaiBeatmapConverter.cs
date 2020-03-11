@@ -37,7 +37,8 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
                 Angle = Angle_,
                 Samples = original.Samples,
                 StartTime = original.StartTime,
-                endPosition = new Vector2(-(295 * (float)Math.Cos((Angle_ + 90f) * (float)(Math.PI / 180))), -(295 * (float)Math.Sin((Angle_ + 90f) * (float)(Math.PI / 180)))),
+                endPosition = new Vector2(-(297.5f * (float)Math.Cos((Angle_ + 90f) * (float)(Math.PI / 180))), -(297.5f * (float)Math.Sin((Angle_ + 90f) * (float)(Math.PI / 180)))),
+                Position = new Vector2(-(66 * (float)Math.Cos((Angle_ + 90f) * (float)(Math.PI / 180))), -(66 * (float)Math.Sin((Angle_ + 90f) * (float)(Math.PI / 180)))),
             };
         }
     }
