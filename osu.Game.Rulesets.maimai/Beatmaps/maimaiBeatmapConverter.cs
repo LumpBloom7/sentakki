@@ -9,6 +9,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Maimai.Objects;
 using osuTK;
+
 using System;
 
 namespace osu.Game.Rulesets.Maimai.Beatmaps
@@ -24,17 +25,19 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
             : base(beatmap, ruleset)
         {
         }
-
-
         protected override IEnumerable<MaimaiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap)
         {
-            var Angle_ = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition((original as IHasPosition)?.Position ?? Vector2.Zero, Vector2.Zero) * 4);
+            Vector2 CENTRE_POINT = new Vector2(256, 192);
+            Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
+            newPos.Y = 384 - newPos.Y;
+            float Angle_ = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT));
+
             yield return new MaimaiHitObject
             {
                 Angle = Angle_,
                 Samples = original.Samples,
                 StartTime = original.StartTime,
-                endPosition = new Vector2(-(295 * (float)Math.Cos(Angle_ * (float)(Math.PI / 180))), -(295 * (float)Math.Sin(Angle_ * (float)(Math.PI / 180))))
+                endPosition = new Vector2(-(295 * (float)Math.Cos((Angle_ + 90f) * (float)(Math.PI / 180))), -(295 * (float)Math.Sin((Angle_ + 90f) * (float)(Math.PI / 180)))),
             };
         }
     }
