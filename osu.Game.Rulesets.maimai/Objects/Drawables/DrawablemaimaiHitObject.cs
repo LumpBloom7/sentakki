@@ -7,12 +7,12 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Transforms;
 using osu.Game.Audio;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Framework.Bindables;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
-using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -38,12 +38,13 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
         private bool validActionPressed;
 
-        protected sealed override double InitialLifetimeOffset => 600;
+        protected sealed override double InitialLifetimeOffset => 800;
         public override bool HandlePositionalInput => true;
 
         public DrawableMaimaiHitObject(MaimaiHitObject hitObject)
             : base(hitObject)
         {
+            Scale = new Vector2(.2f);
             Size = new Vector2(80);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
@@ -61,14 +62,14 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     AlwaysPresent = true,
                 },
             });
-            Position = Vector2.Zero;
+
+            Position = hitObject.Position;
         }
 
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            this.FadeIn(400);
-            this.MoveTo(HitObject.endPosition, 600);
+            this.FadeInFromZero(500).Append(b => b.ScaleTo(1f, 500)).Then(b => b.MoveTo(HitObject.endPosition, 300));
         }
 
         protected override IEnumerable<HitSampleInfo> GetSamples() => new[]
@@ -94,19 +95,13 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
             switch (state)
             {
-                case ArmedState.Idle:
-                    LifetimeStart = HitObject.StartTime - 600;
-                    HitAction = null;
-
-                    break;
-
                 case ArmedState.Hit:
                     var b = HitObject.Angle + 90;
                     var a = b * (float)(Math.PI / 180);
 
                     Circle.ScaleTo(2f, time_fade_hit, Easing.OutCubic)
                        .FadeColour(Color4.Yellow, time_fade_hit, Easing.OutCubic)
-                       .MoveToOffset(new Vector2(-(300 * (float)Math.Cos(a)), -(300 * (float)Math.Sin(a))), time_fade_hit, Easing.OutCubic)
+                       .MoveToOffset(new Vector2(-(500 * (float)Math.Cos(a)), -(500 * (float)Math.Sin(a))), time_fade_hit, Easing.OutCubic)
                        .FadeOut(time_fade_hit);
 
                     this.FadeOut(time_fade_hit);
