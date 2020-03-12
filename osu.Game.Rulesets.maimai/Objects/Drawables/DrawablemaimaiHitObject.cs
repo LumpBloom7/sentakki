@@ -20,6 +20,7 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Maimai.Configuration;
 using osu.Game.Rulesets.Maimai.UI;
 using osu.Game.Rulesets.Scoring;
 using System;
@@ -36,6 +37,8 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         public HitReceptor MaimaiNote;
         public CircularProgress hitObjectLine;
 
+        //protected double EntryDuration
+
         /// <summary>
         /// The action that caused this <see cref="DrawableHit"/> to be hit.
         /// </summary>
@@ -43,7 +46,8 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
         private bool validActionPressed;
 
-        protected sealed override double InitialLifetimeOffset => 800;
+        double fadeIn = 500, moveTo, idle;
+        protected override double InitialLifetimeOffset => 3500;
         public override bool HandlePositionalInput => true;
 
         public DrawableMaimaiHitObject(MaimaiHitObject hitObject)
@@ -68,8 +72,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     RelativeSizeAxes = Axes.None,
                     Rotation =  -45 +HitObject.Angle,
                     Current = new Bindable<double>(0.25),
-                    Alpha = 0f
-
+                    Alpha = 0f,
                 },
                 MaimaiNote = new HitReceptor(HitObject)
 
@@ -77,13 +80,23 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             });
 
         }
+        [BackgroundDependencyLoader(true)]
+        private void load(MaimaiRulesetConfigManager settings)
+        {
+            Bindable<double> AnimationDuration = new Bindable<double>(1000);
+            settings?.BindWith(MaimaiRulesetSettings.AnimationDuration, AnimationDuration);
+            AnimationDuration.TriggerChange();
+            fadeIn = 500;
+            moveTo = AnimationDuration.Value;
+            idle = 3500 - fadeIn - moveTo;
+        }
 
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            MaimaiNote.FadeInFromZero(500).Append(b => b.ScaleTo(1f, 500)).Then(b => b.MoveTo(HitObject.endPosition, 300));
+            MaimaiNote.ScaleTo(.2f, idle).Then(b => b.FadeInFromZero(fadeIn).Append(b => b.ScaleTo(1f, fadeIn)).Then(b => b.MoveTo(HitObject.endPosition, moveTo)));
             //hitObjectLine.ScaleTo(1f, 500).Then(l => l.ScaleTo(4.54545455f, 300));
-            hitObjectLine.FadeTo(.75f, 500).Then(h => h.ResizeTo(600, 300));
+            hitObjectLine.FadeTo(0, idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(600, moveTo)));
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -149,7 +162,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 Size = new Vector2(240);
                 Origin = Anchor.Centre;
                 Anchor = Anchor.Centre;
-                Alpha = .05f;
+                Alpha = .0f;
                 Position = HitObject.Position;
             }
 

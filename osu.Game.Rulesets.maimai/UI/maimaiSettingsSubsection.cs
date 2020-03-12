@@ -1,4 +1,6 @@
-﻿using osu.Framework.Allocation;
+﻿using System;
+using System.Linq;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Maimai.Configuration;
@@ -29,7 +31,13 @@ namespace osu.Game.Rulesets.Maimai.UI
                 {
                     LabelText = "Show Visualizer",
                     Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.ShowVisualizer)
+                },
+                new SettingsSlider<double>
+                {
+                    LabelText = "Note entry animation duration",
+                    Bindable = config.GetBindable<double>(MaimaiRulesetSettings.AnimationDuration ),
                 }
+                ,
             };
         }
     }

@@ -15,11 +15,13 @@ namespace osu.Game.Rulesets.Maimai.Configuration
             base.InitialiseDefaults();
 
             Set(MaimaiRulesetSettings.ShowVisualizer, true);
+            Set(MaimaiRulesetSettings.AnimationDuration, 500, 50.0, 2000, 50.0);
         }
     }
 
     public enum MaimaiRulesetSettings
     {
-        ShowVisualizer
+        ShowVisualizer,
+        AnimationDuration,
     }
 }
