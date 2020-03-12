@@ -62,12 +62,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     Origin = Anchor.Centre,
                     Anchor = Anchor.Centre,
                     BorderThickness = 18,
-                    //EdgeEffect = new EdgeEffectParameters
-                    //{
-                    //    Type = EdgeEffectType.Shadow,
-                    //    Colour = Color4.Pink.Opacity(0.5f),
-                    //    Radius = 5,
-                    //},
                     Children = new Drawable[]{
                         new Box
                         {
