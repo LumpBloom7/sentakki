@@ -8,6 +8,7 @@ using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Maimai.Objects;
+using osu.Game.Rulesets.Maimai.UI;
 using osuTK;
 using osuTK.Graphics;
 using System;
@@ -38,8 +39,8 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
                 Angle = Angle_,
                 Samples = original.Samples,
                 StartTime = original.StartTime,
-                endPosition = new Vector2(-(297.5f * (float)Math.Cos((Angle_ + 90f) * (float)(Math.PI / 180))), -(297.5f * (float)Math.Sin((Angle_ + 90f) * (float)(Math.PI / 180)))),
-                Position = new Vector2(-(66 * (float)Math.Cos((Angle_ + 90f) * (float)(Math.PI / 180))), -(66 * (float)Math.Sin((Angle_ + 90f) * (float)(Math.PI / 180)))),
+                endPosition = new Vector2(-(MaimaiPlayfield.intersectDistance * (float)Math.Cos((Angle_ + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.intersectDistance * (float)Math.Sin((Angle_ + 90f) * (float)(Math.PI / 180)))),
+                Position = new Vector2(-(MaimaiPlayfield.noteStartDistance * (float)Math.Cos((Angle_ + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.noteStartDistance * (float)Math.Sin((Angle_ + 90f) * (float)(Math.PI / 180)))),
             };
         }
     }

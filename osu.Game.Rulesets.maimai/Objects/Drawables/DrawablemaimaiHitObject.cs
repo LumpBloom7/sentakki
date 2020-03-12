@@ -53,7 +53,47 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Alpha = 0.05f;
+            Position = hitObject.Position;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(TextureStore textures)
+        {
             AddRangeInternal(new Drawable[] {
+                new Container
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Size = new Vector2(80),
+                    Colour = HitObject.NoteColor,
+                    Child = new Sprite
+                    {
+
+                        RelativeSizeAxes = Axes.Both,
+                        Size = new Vector2(1.28125f),
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Texture = textures.Get("Gameplay/osu/ring-glow"),
+                        Blending = BlendingParameters.Additive,
+                        Alpha = 0.5f
+                    }
+
+                },
+                new CircularContainer
+                {
+                    Size = new Vector2(80),
+                    Masking = true,
+                    BorderColour = HitObject.NoteColor,
+                    Origin = Anchor.Centre,
+                    Anchor = Anchor.Centre,
+                    BorderThickness = 15,
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Alpha = 0,
+                        AlwaysPresent = true,
+                    },
+                },
                 new CircularContainer
                 {
                     Size = new Vector2(80),
@@ -61,96 +101,14 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     BorderColour = Color4.Black,
                     Origin = Anchor.Centre,
                     Anchor = Anchor.Centre,
-                    BorderThickness = 18,
-                    Children = new Drawable[]{
-                        new Box
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Alpha = 0,
-                            AlwaysPresent = true,
-                        },
-                        new CircularContainer
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Masking = true,
-                            BorderColour = HitObject.NoteColor,
-                            Origin = Anchor.Centre,
-                            Anchor = Anchor.Centre,
-                            BorderThickness = 15,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Alpha = 0,
-                                AlwaysPresent = true,
-                            },
-                        },
-                        new CircularContainer
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Masking = true,
-                            BorderColour = Color4.Black,
-                            Origin = Anchor.Centre,
-                            Anchor = Anchor.Centre,
-                            BorderThickness = 3,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Alpha = 0,
-                                AlwaysPresent = true,
-                            },
-                        },
-                        new Circle
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Size = new Vector2(.2f),
-                            Colour = HitObject.NoteColor,
-                            Origin = Anchor.Centre,
-                            Anchor = Anchor.Centre,
-                        },
-                        new CircularContainer
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Size = new Vector2(.2f),
-                            Masking = true,
-                            BorderColour = Color4.Black,
-                            Origin = Anchor.Centre,
-                            Anchor = Anchor.Centre,
-                            BorderThickness = 3,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Alpha = 0,
-                                AlwaysPresent = true,
-                            },
-                        },
-                    }
+                    BorderThickness = 3,
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Alpha = 0,
+                        AlwaysPresent = true,
+                    },
                 },
-            });
-
-            Position = hitObject.Position;
-        }
-
-        [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
-        {
-            AddInternal(new Container
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Size = new Vector2(80),
-                Colour = HitObject.NoteColor,
-                Child = new Sprite
-                {
-
-                    RelativeSizeAxes = Axes.Both,
-                    Size = new Vector2(1.28125f),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Texture = textures.Get("Gameplay/osu/ring-glow"),
-                    Blending = BlendingParameters.Additive,
-                    Alpha = 0.5f
-                }
-
             });
         }
 

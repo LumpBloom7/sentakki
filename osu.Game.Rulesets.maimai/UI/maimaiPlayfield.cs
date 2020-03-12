@@ -29,9 +29,22 @@ namespace osu.Game.Rulesets.Maimai.UI
     [Cached]
     public class MaimaiPlayfield : Playfield
     {
+
         public static readonly float ringSize = 600;
         private readonly float dotSize = 20f;
-        private readonly float intersectDistance = 296.5f;
+        public static readonly float intersectDistance = 296.5f;
+        public static readonly float noteStartDistance = 66f;
+        public static readonly float[] pathAngles =
+            {
+                22.5f,
+                67.5f,
+                112.5f,
+                157.5f,
+                202.5f,
+                247.5f,
+                292.5f,
+                337.5f
+            };
 
         public MaimaiPlayfield()
         {
@@ -54,25 +67,6 @@ namespace osu.Game.Rulesets.Maimai.UI
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Children = new Drawable[]{
-                        new CircularContainer{
-                            FillAspectRatio = 1,
-                            FillMode = FillMode.Fit,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Size = new Vector2(ringSize),
-                            Masking = true,
-                            BorderThickness = 8.5f,
-                            BorderColour = Color4.Black,
-                            Children = new Drawable[]
-                            {
-                                new Box
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Alpha = 0,
-                                    AlwaysPresent = true,
-                                },
-                            }
-                        },
                         new CircularContainer{
                             FillAspectRatio = 1,
                             FillMode = FillMode.Fit,
@@ -111,81 +105,15 @@ namespace osu.Game.Rulesets.Maimai.UI
                                 },
                             }
                         },
-                        new Container
-                        {
-                            FillAspectRatio = 1,
-                            FillMode = FillMode.Fit,
-                            Rotation = 22.5f,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Size = new Vector2(ringSize),
-                            Children = new Drawable[]
-                            {
-                                new DotPiece
-                                {
-                                    Size = new Vector2(dotSize),
-                                    Position = new Vector2(0, -intersectDistance)
-
-                                },
-                                new DotPiece
-                                {
-                                    Size = new Vector2(dotSize),
-                                    Position = new Vector2(0, intersectDistance)
-
-                                },
-                                new DotPiece
-                                {
-                                    Size = new Vector2(dotSize),
-                                    Position = new Vector2(-intersectDistance, 0)
-
-                                },
-                                new DotPiece
-                                {
-                                    Size = new Vector2(dotSize),
-                                    Position = new Vector2(intersectDistance, 0)
-
-                                },
-                            }
-                        },
-                        new Container
-                        {
-                            Rotation = -22.5f,
-                            FillAspectRatio = 1,
-                            FillMode = FillMode.Fit,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Size = new Vector2(ringSize),
-                            Children = new Drawable[]
-                            {
-                                new DotPiece
-                                {
-                                    Size = new Vector2(dotSize),
-                                    Position = new Vector2(0, -intersectDistance)
-
-                                },
-                                new DotPiece
-                                {
-                                    Size = new Vector2(dotSize),
-                                    Position = new Vector2(0, intersectDistance)
-
-                                },
-                                new DotPiece
-                                {
-                                    Size = new Vector2(dotSize),
-                                    Position = new Vector2(-intersectDistance, 0)
-
-                                },
-                                new DotPiece
-                                {
-                                    Size = new Vector2(dotSize),
-                                    Position = new Vector2(intersectDistance, 0)
-
-                                },
-                            }
-                        },
                     }
                 },
             });
+            foreach (float pathAngle in pathAngles)
+                AddInternal(new DotPiece
+                {
+                    Size = new Vector2(dotSize),
+                    Position = new Vector2(-(MaimaiPlayfield.intersectDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.intersectDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
+                });
         }
         protected override GameplayCursorContainer CreateCursor() => new MaimaiCursorContainer();
 
