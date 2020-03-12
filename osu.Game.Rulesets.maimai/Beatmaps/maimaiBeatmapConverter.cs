@@ -9,7 +9,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Maimai.Objects;
 using osuTK;
-
+using osuTK.Graphics;
 using System;
 
 namespace osu.Game.Rulesets.Maimai.Beatmaps
@@ -34,6 +34,7 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
 
             yield return new MaimaiHitObject
             {
+                NoteColor = Color4.Orange,
                 Angle = Angle_,
                 Samples = original.Samples,
                 StartTime = original.StartTime,

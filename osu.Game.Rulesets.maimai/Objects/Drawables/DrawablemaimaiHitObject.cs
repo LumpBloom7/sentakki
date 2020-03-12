@@ -8,6 +8,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Transforms;
+using osu.Framework.Graphics.Effects;
 using osu.Game.Audio;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Framework.Bindables;
@@ -27,7 +28,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
     public class DrawableMaimaiHitObject : DrawableHitObject<MaimaiHitObject>
     {
-        public CircularContainer Circle;
 
         public Func<DrawableMaimaiHitObject, bool> CheckValidation;
 
@@ -51,20 +51,83 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Alpha = 0.05f;
-            AddInternal(Circle = new CircularContainer
-            {
-                //RelativeSizeAxes = Axes.Both,
-                Size = new Vector2(80),
-                Masking = true,
-                BorderColour = Color4.White,
-                Origin = Anchor.Centre,
-                Anchor = Anchor.Centre,
-                BorderThickness = 10,
-                Child = new Box
+            AddRangeInternal(new Drawable[] {
+                new CircularContainer
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0,
-                    AlwaysPresent = true,
+                    Size = new Vector2(80),
+                    Masking = true,
+                    BorderColour = Color4.Black,
+                    Origin = Anchor.Centre,
+                    Anchor = Anchor.Centre,
+                    BorderThickness = 18,
+                    //EdgeEffect = new EdgeEffectParameters
+                    //{
+                    //    Type = EdgeEffectType.Shadow,
+                    //    Colour = Color4.White.Opacity(0.5f),
+                    //    Radius = 5,
+                    //},
+                    Children = new Drawable[]{
+                        new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Alpha = 0,
+                            AlwaysPresent = true,
+                        },
+                        new CircularContainer
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Masking = true,
+                            BorderColour = HitObject.NoteColor,
+                            Origin = Anchor.Centre,
+                            Anchor = Anchor.Centre,
+                            BorderThickness = 15,
+                            Child = new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Alpha = 0,
+                                AlwaysPresent = true,
+                            },
+                        },
+                        new CircularContainer
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Masking = true,
+                            BorderColour = Color4.Black,
+                            Origin = Anchor.Centre,
+                            Anchor = Anchor.Centre,
+                            BorderThickness = 3,
+                            Child = new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Alpha = 0,
+                                AlwaysPresent = true,
+                            },
+                        },
+                        new Circle
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Size = new Vector2(.2f),
+                            Colour = HitObject.NoteColor,
+                            Origin = Anchor.Centre,
+                            Anchor = Anchor.Centre,
+                        },
+                        new CircularContainer
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Size = new Vector2(.2f),
+                            Masking = true,
+                            BorderColour = Color4.Black,
+                            Origin = Anchor.Centre,
+                            Anchor = Anchor.Centre,
+                            BorderThickness = 3,
+                            Child = new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Alpha = 0,
+                                AlwaysPresent = true,
+                            },
+                        },
+                    }
                 },
             });
 
@@ -104,7 +167,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     var b = HitObject.Angle + 90;
                     var a = b * (float)(Math.PI / 180);
 
-                    Circle.ScaleTo(2f, time_fade_hit, Easing.OutCubic)
+                    this.ScaleTo(2f, time_fade_hit, Easing.OutCubic)
                        .FadeColour(Color4.Yellow, time_fade_hit, Easing.OutCubic)
                        .MoveToOffset(new Vector2(-(500 * (float)Math.Cos(a)), -(500 * (float)Math.Sin(a))), time_fade_hit, Easing.OutCubic)
                        .FadeOut(time_fade_hit);
@@ -117,7 +180,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     var c = HitObject.Angle + 90;
                     var d = c * (float)(Math.PI / 180) + 90;
 
-                    Circle.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                    this.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
                        .MoveToOffset(new Vector2(-(100 * (float)Math.Cos(d)), -(100 * (float)Math.Sin(d))), time_fade_hit, Easing.OutCubic)
                        .FadeOut(time_fade_miss);

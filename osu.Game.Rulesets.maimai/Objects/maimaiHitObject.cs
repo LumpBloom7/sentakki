@@ -5,11 +5,13 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Maimai.Objects
 {
     public class MaimaiHitObject : HitObject
     {
+        public Color4 NoteColor { get; set; }
         public Vector2 endPosition { get; set; }
         public float Angle { get; set; }
         public int path { get; set; }
