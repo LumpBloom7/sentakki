@@ -44,16 +44,21 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         public DrawableMaimaiHitObject(MaimaiHitObject hitObject)
             : base(hitObject)
         {
+            CornerRadius = 120;
+            CornerExponent = 2;
             Scale = new Vector2(.2f);
-            Size = new Vector2(80);
+            Size = new Vector2(240);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Alpha = 0.05f;
             AddInternal(Circle = new CircularContainer
             {
-                RelativeSizeAxes = Axes.Both,
+                //RelativeSizeAxes = Axes.Both,
+                Size = new Vector2(80),
                 Masking = true,
                 BorderColour = Color4.White,
+                Origin = Anchor.Centre,
+                Anchor = Anchor.Centre,
                 BorderThickness = 10,
                 Child = new Box
                 {
