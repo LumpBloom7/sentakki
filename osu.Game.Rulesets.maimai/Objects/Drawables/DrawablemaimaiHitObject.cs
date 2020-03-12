@@ -118,15 +118,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             this.FadeInFromZero(500).Append(b => b.ScaleTo(1f, 500)).Then(b => b.MoveTo(HitObject.endPosition, 300));
         }
 
-        protected override IEnumerable<HitSampleInfo> GetSamples() => new[]
-        {
-            new HitSampleInfo
-            {
-                Bank = SampleControlPoint.DEFAULT_BANK,
-                Name = HitSampleInfo.HIT_NORMAL,
-            }
-        };
-
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (timeOffset >= 0)
