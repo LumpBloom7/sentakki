@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System.Collections.Generic;
@@ -204,7 +204,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
                 case ArmedState.Miss:
                     var c = HitObject.Angle + 90;
-                    var d = c * (float)(Math.PI / 180) + 90;
+                    var d = c * (float)(Math.PI / 180);
 
                     this.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
