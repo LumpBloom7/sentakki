@@ -41,11 +41,13 @@ namespace osu.Game.Rulesets.Maimai.UI
             Size = new Vector2(ringSize + 100);
             AddRangeInternal(new Drawable[]
             {
+                new VisualisationContainer(),
                 new GlowPiece
                 {
                     Size = new Vector2(ringSize),
                     Colour = Color4.Pink,
                 },
+                HitObjectContainer,
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -55,7 +57,6 @@ namespace osu.Game.Rulesets.Maimai.UI
                         new CircularContainer{
                             FillAspectRatio = 1,
                             FillMode = FillMode.Fit,
-                            //RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             Size = new Vector2(ringSize),
@@ -75,7 +76,6 @@ namespace osu.Game.Rulesets.Maimai.UI
                         new CircularContainer{
                             FillAspectRatio = 1,
                             FillMode = FillMode.Fit,
-                            //RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             Size = new Vector2(ringSize),
@@ -95,7 +95,6 @@ namespace osu.Game.Rulesets.Maimai.UI
                         new CircularContainer{
                             FillAspectRatio = 1,
                             FillMode = FillMode.Fit,
-                            //RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             Size = new Vector2(ringSize),
@@ -117,7 +116,6 @@ namespace osu.Game.Rulesets.Maimai.UI
                             FillAspectRatio = 1,
                             FillMode = FillMode.Fit,
                             Rotation = 22.5f,
-                            //RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             Size = new Vector2(ringSize),
@@ -154,7 +152,6 @@ namespace osu.Game.Rulesets.Maimai.UI
                             Rotation = -22.5f,
                             FillAspectRatio = 1,
                             FillMode = FillMode.Fit,
-                            //RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             Size = new Vector2(ringSize),
@@ -186,16 +183,8 @@ namespace osu.Game.Rulesets.Maimai.UI
                                 },
                             }
                         },
-
                     }
-                }/*.WithEffect(new GlowEffect{
-                    Colour = Color4.Pink,
-                    PadExtent = true,
-                    Strength = 2,
-                    CacheDrawnEffect = true,
-                })*/,
-                HitObjectContainer,
-                new VisualisationContainer(),
+                },
             });
         }
         protected override GameplayCursorContainer CreateCursor() => new MaimaiCursorContainer();
