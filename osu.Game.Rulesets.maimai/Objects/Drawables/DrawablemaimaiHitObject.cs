@@ -1,4 +1,4 @@
-﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System.Collections.Generic;
@@ -9,6 +9,8 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Transforms;
 using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
 using osu.Game.Audio;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Framework.Bindables;
@@ -63,7 +65,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     //EdgeEffect = new EdgeEffectParameters
                     //{
                     //    Type = EdgeEffectType.Shadow,
-                    //    Colour = Color4.White.Opacity(0.5f),
+                    //    Colour = Color4.Pink.Opacity(0.5f),
                     //    Radius = 5,
                     //},
                     Children = new Drawable[]{
@@ -132,6 +134,30 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             });
 
             Position = hitObject.Position;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(TextureStore textures)
+        {
+            AddInternal(new Container
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Size = new Vector2(80),
+                Colour = HitObject.NoteColor,
+                Child = new Sprite
+                {
+
+                    RelativeSizeAxes = Axes.Both,
+                    Size = new Vector2(1.28125f),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Texture = textures.Get("Gameplay/osu/ring-glow"),
+                    Blending = BlendingParameters.Additive,
+                    Alpha = 0.5f
+                }
+
+            });
         }
 
         protected override void UpdateInitialTransforms()
