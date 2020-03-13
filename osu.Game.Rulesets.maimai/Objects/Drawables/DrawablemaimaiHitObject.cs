@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
+using System.Diagnostics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Transforms;
@@ -20,6 +21,7 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Maimai.Configuration;
 using osu.Game.Rulesets.Maimai.UI;
 using osu.Game.Rulesets.Scoring;
@@ -32,34 +34,25 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
     public class DrawableMaimaiHitObject : DrawableHitObject<MaimaiHitObject>
     {
+        public readonly HitReceptor HitArea;
+        public readonly MainCirclePiece CirclePiece;
+        public readonly CircularProgress hitObjectLine;
 
-        public Func<DrawableMaimaiHitObject, bool> CheckValidation;
-        public HitReceptor MaimaiNote;
-        public CircularProgress hitObjectLine;
-
-        //protected double EntryDuration
-
-        /// <summary>
-        /// The action that caused this <see cref="DrawableHit"/> to be hit.
-        /// </summary>
-        public MaimaiAction? HitAction { get; private set; }
-
-        private bool validActionPressed;
-
+        private Bindable<Color4> accentColor;
         double fadeIn = 500, moveTo, idle;
         protected override double InitialLifetimeOffset => 3500;
-        public override bool HandlePositionalInput => true;
 
         public DrawableMaimaiHitObject(MaimaiHitObject hitObject)
             : base(hitObject)
         {
+            accentColor = new Bindable<Color4>(hitObject.NoteColor);
+            AccentColour.BindTo(accentColor);
             RelativeSizeAxes = Axes.Both;
             CornerRadius = 120;
             CornerExponent = 2;
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
-            //Position = hitObject.Position;
             AddRangeInternal(new Drawable[] {
                 hitObjectLine = new CircularProgress
                 {
@@ -74,8 +67,17 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     Current = new Bindable<double>(0.25),
                     Alpha = 0f,
                 },
-                MaimaiNote = new HitReceptor(HitObject)
-
+                CirclePiece = new MainCirclePiece()
+                {
+                    Scale = new Vector2(0f),
+                    Rotation = hitObject.Angle,
+                    Position = HitObject.Position
+                },
+                HitArea = new HitReceptor()
+                {
+                    RelativeSizeAxes = Axes.None,
+                    Position = hitObject.endPosition
+                },
 
             });
 
@@ -94,22 +96,21 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            MaimaiNote.ScaleTo(.2f, idle).Then(b => b.FadeInFromZero(fadeIn).Append(b => b.ScaleTo(1f, fadeIn)).Then(b => b.MoveTo(HitObject.endPosition, moveTo)));
-            //hitObjectLine.ScaleTo(1f, 500).Then(l => l.ScaleTo(4.54545455f, 300));
+            CirclePiece.ScaleTo(0f, idle).Then().FadeInFromZero(fadeIn).ScaleTo(1f, fadeIn).Then().MoveTo(HitObject.endPosition, moveTo);
             hitObjectLine.FadeTo(0, idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(600, moveTo)));
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (timeOffset >= 0)
-                ApplyResult(r => r.Type = MaimaiNote.IsHovered ? HitResult.Perfect : HitResult.Miss);
+                ApplyResult(r => r.Type = HitArea.IsHovered ? HitResult.Perfect : HitResult.Miss);
         }
 
         protected override void UpdateStateTransforms(ArmedState state)
         {
             base.UpdateStateTransforms(state);
 
-            const double time_fade_hit = 250, time_fade_miss = 400;
+            const double time_fade_hit = 400, time_fade_miss = 400;
 
             switch (state)
             {
@@ -119,12 +120,12 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
 
 
-                    MaimaiNote.ScaleTo(2f, time_fade_hit, Easing.OutCubic)
-                       .FadeColour(Color4.Yellow, time_fade_hit, Easing.OutCubic)
-                       .MoveToOffset(new Vector2(-(500 * (float)Math.Cos(a)), -(500 * (float)Math.Sin(a))), time_fade_hit, Easing.OutCubic)
-                       .FadeOut(time_fade_hit);
+                    //MaimaiNote.ScaleTo(2f, time_fade_hit, Easing.OutCubic)
+                    //   .FadeColour(Color4.Yellow, time_fade_hit, Easing.OutCubic)
+                    //   .MoveToOffset(new Vector2(-(500 * (float)Math.Cos(a)), -(500 * (float)Math.Sin(a))), time_fade_hit, Easing.OutCubic)
+                    //   .FadeOut(time_fade_hit);
 
-                    MaimaiNote.FadeOut(time_fade_hit);
+                    //MaimaiNote.FadeOut(time_fade_hit);
                     hitObjectLine.FadeOut();
                     this.ScaleTo(1f, time_fade_hit).Expire();
 
@@ -134,12 +135,12 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     var c = HitObject.Angle + 90;
                     var d = c * (float)(Math.PI / 180);
 
-                    MaimaiNote.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                    CirclePiece.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
                        .MoveToOffset(new Vector2(-(100 * (float)Math.Cos(d)), -(100 * (float)Math.Sin(d))), time_fade_hit, Easing.OutCubic)
                        .FadeOut(time_fade_miss);
 
-                    MaimaiNote.FadeOut(time_fade_miss);
+                    CirclePiece.FadeOut(time_fade_miss);
                     hitObjectLine.FadeOut();
                     this.ScaleTo(1f, time_fade_miss).Expire();
 
@@ -147,81 +148,18 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             }
         }
 
-        public class HitReceptor : CompositeDrawable
+        public class HitReceptor : CircularContainer
         {
+            // IsHovered is used
             public override bool HandlePositionalInput => true;
 
-            public MaimaiHitObject HitObject;
-            public HitReceptor(MaimaiHitObject HitObject)
+            public HitReceptor()
             {
-                this.HitObject = HitObject;
                 RelativeSizeAxes = Axes.None;
-                CornerRadius = 120;
-                CornerExponent = 2;
-                Scale = new Vector2(.2f);
-                Size = new Vector2(240);
-                Origin = Anchor.Centre;
+                Size = new Vector2(300f);
                 Anchor = Anchor.Centre;
-                Alpha = .0f;
-                Position = HitObject.Position;
+                Origin = Anchor.Centre;
             }
-
-            [BackgroundDependencyLoader(true)]
-            private void load(TextureStore textures)
-            {
-                AddRangeInternal(new Drawable[] {
-                new Container
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Size = new Vector2(80),
-                    Colour = HitObject.NoteColor,
-                    Child = new Sprite
-                    {
-
-                        RelativeSizeAxes = Axes.Both,
-                        Size = new Vector2(1.28125f),
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Texture = textures.Get("Gameplay/osu/ring-glow"),
-                        Blending = BlendingParameters.Additive,
-                        Alpha = 0.5f
-                    }
-
-                },
-                new CircularContainer
-                {
-                    Size = new Vector2(80),
-                    Masking = true,
-                    BorderColour = HitObject.NoteColor,
-                    Origin = Anchor.Centre,
-                    Anchor = Anchor.Centre,
-                    BorderThickness = 15,
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0,
-                        AlwaysPresent = true,
-                    },
-                },
-                new CircularContainer
-                {
-                    Size = new Vector2(80),
-                    Masking = true,
-                    BorderColour = Color4.Black,
-                    Origin = Anchor.Centre,
-                    Anchor = Anchor.Centre,
-                    BorderThickness = 3,
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0,
-                        AlwaysPresent = true,
-                    },
-                },
-            });
-            }
-
         }
     }
 }
