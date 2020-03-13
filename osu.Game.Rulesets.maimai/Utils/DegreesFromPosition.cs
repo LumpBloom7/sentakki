@@ -16,7 +16,6 @@ namespace osu.Game.Rulesets.Maimai
         public static float/*<int, Nullable<int>> */GetNotePathFromDegrees(float degrees)
         {
             if (degrees < 0) degrees += 360;
-            Console.WriteLine("Input: " + degrees.ToString());
             float SingleThreshold = 40f; // 40 Degrees margin from centre
             int result = 0;
 
@@ -33,7 +32,6 @@ namespace osu.Game.Rulesets.Maimai
                 //    return new Tuple<int, Nullable<int>>(i, (i == 7 ? 0 : i));
 
             }
-            Console.WriteLine("Output: " + MaimaiPlayfield.pathAngles[result].ToString() + "(" + result.ToString() + ")");
             return MaimaiPlayfield.pathAngles[result];
         }
     }
