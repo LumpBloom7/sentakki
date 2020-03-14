@@ -156,9 +156,18 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             public HitReceptor()
             {
                 RelativeSizeAxes = Axes.None;
-                Size = new Vector2(300f);
+                Size = new Vector2(350f);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
+                Masking = true;
+                BorderColour = Color4.Purple;
+                BorderThickness = 5;
+                Child = new Box
+                {
+                    Alpha = 0,
+                    RelativeSizeAxes = Axes.Both,
+                    AlwaysPresent = true
+                };
             }
         }
     }
