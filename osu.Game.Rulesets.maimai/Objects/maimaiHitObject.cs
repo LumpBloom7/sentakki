@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Maimai.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osuTK;
@@ -11,11 +12,12 @@ namespace osu.Game.Rulesets.Maimai.Objects
 {
     public class MaimaiHitObject : HitObject
     {
+        public override Judgement CreateJudgement() => new MaimaiJudgement();
+
         public Color4 NoteColor { get; set; }
         public Vector2 endPosition { get; set; }
         public float Angle { get; set; }
         public int path { get; set; }
-        public override Judgement CreateJudgement() => new Judgement();
 
         public Vector2 Position { get; set; }
 

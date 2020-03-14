@@ -13,6 +13,7 @@ using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Maimai.Scoring;
 using osu.Game.Rulesets.Maimai.Beatmaps;
 using osu.Game.Rulesets.Maimai.Mods;
 using osu.Game.Rulesets.Maimai.UI;
@@ -25,6 +26,8 @@ namespace osu.Game.Rulesets.Maimai
     {
 
         public override string Description => "maimai";
+
+        public override ScoreProcessor CreateScoreProcessor() => new MaimaiScoreProcessor();
 
         public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod> mods) =>
             new DrawableMaimaiRuleset(this, beatmap, mods);

@@ -4,10 +4,14 @@
 using osu.Game.Rulesets.Maimai.Objects;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.UI;
+using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Maimai.Judgements;
 
 namespace osu.Game.Rulesets.Maimai.Scoring
 {
     public class MaimaiScoreProcessor : ScoreProcessor
     {
+        public override HitWindows CreateHitWindows() => new MaimaiHitWindows();
     }
 }

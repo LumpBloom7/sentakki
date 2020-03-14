@@ -23,12 +23,14 @@ using osu.Game.Screens.Menu;
 using osuTK;
 using osuTK.Graphics;
 using osu.Game.Rulesets.Maimai.Configuration;
+using osu.Game.Rulesets.Maimai.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Maimai.UI
 {
     [Cached]
     public class MaimaiPlayfield : Playfield
     {
+        private JudgementContainer<DrawableMaimaiJudgement> judgementLayer;
 
         public static readonly float ringSize = 600;
         private readonly float dotSize = 20f;
@@ -54,6 +56,11 @@ namespace osu.Game.Rulesets.Maimai.UI
             Size = new Vector2(ringSize + 100);
             AddRangeInternal(new Drawable[]
             {
+                judgementLayer = new JudgementContainer<DrawableMaimaiJudgement>
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Depth = 1,
+                },
                 new VisualisationContainer(),
                 new GlowPiece
                 {
@@ -116,6 +123,38 @@ namespace osu.Game.Rulesets.Maimai.UI
                 });
         }
         protected override GameplayCursorContainer CreateCursor() => new MaimaiCursorContainer();
+
+
+        public override void Add(DrawableHitObject h)
+        {
+            base.Add(h);
+
+            var obj = (DrawableMaimaiHitObject)h;
+
+            obj.OnNewResult += onNewResult;
+        }
+
+        private void onNewResult(DrawableHitObject judgedObject, JudgementResult result)
+        {
+            if (!judgedObject.DisplayResult || !DisplayJudgements.Value)
+                return;
+
+            var maimaiObj = (DrawableMaimaiHitObject)judgedObject;
+
+            var b = maimaiObj.HitObject.Angle + 90;
+            var a = b *= (float)(Math.PI / 180);
+
+            DrawableMaimaiJudgement explosion = new DrawableMaimaiJudgement(result, maimaiObj)
+            {
+                Origin = Anchor.Centre,
+                Anchor = Anchor.Centre,
+                Position = new Vector2(-(240 * (float)Math.Cos(a)), -(240 * (float)Math.Sin(a))),
+                Rotation = maimaiObj.HitObject.Angle,
+            };
+
+            judgementLayer.Add(explosion);
+        }
+
 
         public class DotPiece : Container
         {

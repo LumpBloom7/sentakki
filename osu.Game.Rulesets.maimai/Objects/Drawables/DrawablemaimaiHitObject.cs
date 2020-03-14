@@ -28,18 +28,37 @@ using osu.Game.Rulesets.Scoring;
 using System;
 using osuTK;
 using osuTK.Graphics;
+using osu.Framework.Input.Bindings;
 using System.Linq;
 
 namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
-    public class DrawableMaimaiHitObject : DrawableHitObject<MaimaiHitObject>
+    public class DrawableMaimaiHitObject : DrawableHitObject<MaimaiHitObject>, IKeyBindingHandler<MaimaiAction>
     {
         public readonly HitReceptor HitArea;
         public readonly MainCirclePiece CirclePiece;
         public readonly CircularProgress hitObjectLine;
 
+        public Func<DrawableMaimaiHitObject, bool> CheckValidation;
+
         private Bindable<Color4> accentColor;
         double fadeIn = 500, moveTo, idle;
+
+        /// <summary>
+        /// The action that caused this <see cref="DrawableHit"/> to be hit.
+        /// </summary>
+        public MaimaiAction? HitAction { get; private set; }
+
+        private bool validActionPressed;
+
+        /// <summary>
+        /// A list of keys which can result in hits for this HitObject.
+        /// </summary>
+        public MaimaiAction[] HitActions { get; set; } = new[]
+        {
+            MaimaiAction.Button1,
+            MaimaiAction.Button2,
+        };
         protected override double InitialLifetimeOffset => 3500;
 
         public DrawableMaimaiHitObject(MaimaiHitObject hitObject)
@@ -102,8 +121,23 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            if (timeOffset >= 0)
-                ApplyResult(r => r.Type = HitArea.IsHovered ? HitResult.Perfect : HitResult.Miss);
+            Debug.Assert(HitObject.HitWindows != null);
+
+            if (!userTriggered)
+            {
+                if (!HitObject.HitWindows.CanBeHit(timeOffset))
+                    ApplyResult(r => r.Type = HitResult.Miss);
+
+                return;
+            }
+
+            var result = HitObject.HitWindows.ResultFor(timeOffset);
+            if (result == HitResult.None)
+            {
+                return;
+            }
+
+            ApplyResult(r => r.Type = result);
         }
 
         protected override void UpdateStateTransforms(ArmedState state)
@@ -148,6 +182,23 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             }
         }
 
+        public bool OnPressed(MaimaiAction action)
+        {
+            if (Judged)
+                return false;
+
+            validActionPressed = HitActions.Contains(action);
+
+            var result = UpdateResult(true);
+
+            if (IsHit)
+                HitAction = action;
+
+            return result;
+        }
+
+        public void OnReleased(MaimaiAction action) { }
+
         public class HitReceptor : CircularContainer
         {
             // IsHovered is used
@@ -159,15 +210,15 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 Size = new Vector2(350f);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
-                Masking = true;
-                BorderColour = Color4.Purple;
-                BorderThickness = 5;
-                Child = new Box
-                {
-                    Alpha = 0,
-                    RelativeSizeAxes = Axes.Both,
-                    AlwaysPresent = true
-                };
+                //Masking = true;
+                //BorderColour = Color4.Purple;
+                //BorderThickness = 5;
+                //Child = new Box
+                //{
+                //    Alpha = 0,
+                //    RelativeSizeAxes = Axes.Both,
+                //    AlwaysPresent = true
+                //};
             }
         }
     }
