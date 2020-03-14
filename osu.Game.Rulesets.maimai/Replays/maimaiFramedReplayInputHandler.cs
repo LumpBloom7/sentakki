@@ -42,6 +42,10 @@ namespace osu.Game.Rulesets.Maimai.Replays
                 new MousePositionAbsoluteInput
                 {
                     Position = GamefieldToScreenSpace(Position)
+                },
+                new ReplayState<MaimaiAction>
+                {
+                    PressedActions = CurrentFrame?.Actions ?? new List<MaimaiAction>()
                 }
             };
         }

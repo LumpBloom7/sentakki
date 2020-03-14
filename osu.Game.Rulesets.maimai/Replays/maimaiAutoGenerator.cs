@@ -29,11 +29,19 @@ namespace osu.Game.Rulesets.Maimai.Replays
             Frames.Add(new MaimaiReplayFrame { Position = new Vector2(350) });
             foreach (MaimaiHitObject hitObject in Beatmap.HitObjects)
             {
-                Frames.Add(new MaimaiReplayFrame
+                var currentFrame = new MaimaiReplayFrame
                 {
                     Time = hitObject.StartTime,
-                    Position = hitObject.endPosition + new Vector2(350)
-                });
+                    Position = hitObject.endPosition + new Vector2(350),
+                };
+                currentFrame.Actions.Add(MaimaiAction.Button1);
+                Frames.Add(currentFrame);
+                var nextFrame = new MaimaiReplayFrame
+                {
+                    Time = hitObject.StartTime + 1,
+                    Position = hitObject.endPosition + new Vector2(350),
+                };
+                Frames.Add(nextFrame);
             }
 
             return Replay;
