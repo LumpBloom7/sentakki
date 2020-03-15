@@ -7,9 +7,9 @@ using osu.Game.Tests.Visual;
 namespace osu.Game.Rulesets.Maimai.Tests
 {
     [TestFixture]
-    public class TestSceneOsuPlayer : PlayerTestScene
+    public class TestSceneMaimaiPlayer : PlayerTestScene
     {
-        public TestSceneOsuPlayer()
+        public TestSceneMaimaiPlayer()
             : base(new MaimaiRuleset())
         {
         }

@@ -17,7 +17,7 @@
         <PackageReference Update="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.4" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\osu.Game.Rulesets.Maimai\osu.Game.Rulesets.Maimai.csproj"/>
+        <ProjectReference Include="..\osu.Game.Rulesets.Maimai\osu.Game.Rulesets.Maimai.csproj" />
     </ItemGroup>
     <PropertyGroup Label="Project">
         <OutputType>WinExe</OutputType>
