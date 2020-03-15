@@ -17,6 +17,7 @@ using osu.Game.Audio;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Framework.Bindables;
 using osu.Game.Beatmaps;
+using osu.Framework.Input.Bindings;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
@@ -33,7 +34,7 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
-    public class DrawableMaimaiHitObject : DrawableHitObject<MaimaiHitObject>, IKeyBindingHandler<MaimaiAction>
+    public class DrawableMaimaiHitObject : DrawableHitObject<MaimaiHitObject>
     {
         public readonly HitReceptor HitArea;
         public readonly MainCirclePiece CirclePiece;
@@ -47,7 +48,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         /// <summary>
         /// The action that caused this <see cref="DrawableHit"/> to be hit.
         /// </summary>
-        public MaimaiAction? HitAction { get; private set; }
+        public MaimaiAction? HitAction => HitArea.HitAction;
 
         private bool validActionPressed;
 
@@ -88,12 +89,21 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 },
                 CirclePiece = new MainCirclePiece()
                 {
+
                     Scale = new Vector2(0f),
                     Rotation = hitObject.Angle,
                     Position = HitObject.Position
                 },
                 HitArea = new HitReceptor()
                 {
+                    Hit = () =>
+                    {
+                        if (AllJudged)
+                            return false;
+
+                        UpdateResult(true);
+                        return true;
+                    },
                     RelativeSizeAxes = Axes.None,
                     Position = hitObject.endPosition
                 },
@@ -152,8 +162,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     var b = HitObject.Angle + 90;
                     var a = b * (float)(Math.PI / 180);
 
-
-
                     //MaimaiNote.ScaleTo(2f, time_fade_hit, Easing.OutCubic)
                     //   .FadeColour(Color4.Yellow, time_fade_hit, Easing.OutCubic)
                     //   .MoveToOffset(new Vector2(-(500 * (float)Math.Cos(a)), -(500 * (float)Math.Sin(a))), time_fade_hit, Easing.OutCubic)
@@ -181,45 +189,43 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     break;
             }
         }
-
-        public bool OnPressed(MaimaiAction action)
-        {
-            if (Judged)
-                return false;
-
-            validActionPressed = HitActions.Contains(action);
-
-            var result = UpdateResult(true);
-
-            if (IsHit)
-                HitAction = action;
-
-            return result;
-        }
-
-        public void OnReleased(MaimaiAction action) { }
-
-        public class HitReceptor : CircularContainer
+        public class HitReceptor : CircularContainer, IKeyBindingHandler<MaimaiAction>
         {
             // IsHovered is used
             public override bool HandlePositionalInput => true;
 
+            public Func<bool> Hit;
+
+            public MaimaiAction? HitAction;
             public HitReceptor()
             {
                 RelativeSizeAxes = Axes.None;
                 Size = new Vector2(350f);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
-                //Masking = true;
-                //BorderColour = Color4.Purple;
-                //BorderThickness = 5;
-                //Child = new Box
-                //{
-                //    Alpha = 0,
-                //    RelativeSizeAxes = Axes.Both,
-                //    AlwaysPresent = true
-                //};
+            }
+
+            public bool OnPressed(MaimaiAction action)
+            {
+                switch (action)
+                {
+                    case MaimaiAction.Button1:
+                    case MaimaiAction.Button2:
+                        if (IsHovered && (Hit?.Invoke() ?? false))
+                        {
+                            HitAction = action;
+                            return true;
+                        }
+
+                        break;
+                }
+
+                return false;
+            }
+            public void OnReleased(MaimaiAction action)
+            {
             }
         }
+
     }
 }
