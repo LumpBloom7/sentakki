@@ -51,7 +51,7 @@ namespace osu.Game.Rulesets.Maimai.UI
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.None;
-            Size = new Vector2(ringSize + 100);
+            Size = new Vector2(600);
             AddRangeInternal(new Drawable[]
             {
                 judgementLayer = new JudgementContainer<DrawableMaimaiJudgement>
