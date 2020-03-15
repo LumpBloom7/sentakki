@@ -96,19 +96,20 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             });
 
         }
+        Bindable<double> AnimationDuration = new Bindable<double>(1000);
+
         [BackgroundDependencyLoader(true)]
         private void load(MaimaiRulesetConfigManager settings)
         {
-            Bindable<double> AnimationDuration = new Bindable<double>(1000);
             settings?.BindWith(MaimaiRulesetSettings.AnimationDuration, AnimationDuration);
-            AnimationDuration.TriggerChange();
-            fadeIn = 500;
-            moveTo = AnimationDuration.Value;
-            idle = 3500 - fadeIn - moveTo;
         }
 
         protected override void UpdateInitialTransforms()
         {
+            AnimationDuration.TriggerChange();
+            fadeIn = 500;
+            moveTo = AnimationDuration.Value;
+            idle = 3500 - fadeIn - moveTo;
             base.UpdateInitialTransforms();
             CirclePiece.ScaleTo(0f, idle).Then().FadeInFromZero(fadeIn).ScaleTo(1f, fadeIn).Then().MoveTo(HitObject.endPosition, moveTo);
             HitObjectLine.FadeTo(0, idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(600, moveTo)));
