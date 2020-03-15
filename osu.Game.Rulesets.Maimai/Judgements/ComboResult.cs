@@ -12,15 +12,15 @@ namespace osu.Game.Rulesets.Maimai.Judgements
 
 
         [Description(@"Good")]
-        Meh,
-
-        [Description(@"Great")]
         Good,
 
-        [Description(@"Perfect")]
+        [Description(@"Great")]
         Great,
 
-        [Description(@"Critical")]
+        [Description(@"Perfect")]
         Perfect,
+
+        [Description(@"Critical")]
+        Critical,
     }
 }

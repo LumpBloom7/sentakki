@@ -1,13 +1,12 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-using System.Collections.Generic;
 using osu.Game.Beatmaps;
 using osu.Game.Replays;
 using osu.Game.Rulesets.Maimai.Objects;
 using osu.Game.Rulesets.Replays;
-using osu.Game.Rulesets.Maimai.UI;
 using osuTK;
+using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Maimai.Replays
 {

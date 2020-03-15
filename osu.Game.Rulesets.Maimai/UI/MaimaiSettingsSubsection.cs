@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Maimai.Configuration;

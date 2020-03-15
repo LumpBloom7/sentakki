@@ -6,8 +6,6 @@ using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
@@ -29,12 +27,11 @@ namespace osu.Game.Rulesets.Maimai.UI
         private JudgementContainer<DrawableMaimaiJudgement> judgementLayer;
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
-
-        public static readonly float ringSize = 600;
-        public static readonly float dotSize = 20f;
-        public static readonly float intersectDistance = 296.5f;
-        public static readonly float noteStartDistance = 66f;
-        public static readonly float[] pathAngles =
+        public static readonly float RingSize = 600;
+        public static readonly float DotSize = 20f;
+        public static readonly float IntersectDistance = 296.5f;
+        public static readonly float NoteStartDistance = 66f;
+        public static readonly float[] PathAngles =
             {
                 22.5f,
                 67.5f,
@@ -95,39 +92,6 @@ namespace osu.Game.Rulesets.Maimai.UI
             };
 
             judgementLayer.Add(explosion);
-        }
-
-
-        public class DotPiece : Container
-        {
-            public DotPiece()
-            {
-                Anchor = Anchor.Centre;
-                Origin = Anchor.Centre;
-                RelativeSizeAxes = Axes.None;
-                Children = new Drawable[] {
-                    new Circle
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                    },
-                    new CircularContainer{
-                        RelativeSizeAxes = Axes.Both,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Masking = true,
-                        BorderColour = Color4.Black,
-                        BorderThickness = 3,
-                        Child = new Box
-                        {
-                            AlwaysPresent = true,
-                            Alpha = 0,
-                            RelativeSizeAxes = Axes.Both,
-                        }
-                    },
-                };
-            }
         }
 
         private class VisualisationContainer : BeatSyncedContainer

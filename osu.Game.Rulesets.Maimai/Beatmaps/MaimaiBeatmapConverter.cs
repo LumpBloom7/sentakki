@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Game.Beatmaps;
+using osu.Game.Audio;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Maimai.Objects;
@@ -31,16 +32,16 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
             Vector2 CENTRE_POINT = new Vector2(256, 192);
             Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
             newPos.Y = 384 - newPos.Y;
-            float Angle_ = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT));
+            float angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT));
 
             yield return new MaimaiHitObject
             {
                 NoteColor = Color4.Orange,
-                Angle = Angle_,
+                Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
                 Samples = original.Samples,
                 StartTime = original.StartTime,
-                endPosition = new Vector2(-(MaimaiPlayfield.intersectDistance * (float)Math.Cos((Angle_ + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.intersectDistance * (float)Math.Sin((Angle_ + 90f) * (float)(Math.PI / 180)))),
-                Position = new Vector2(-(MaimaiPlayfield.noteStartDistance * (float)Math.Cos((Angle_ + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.noteStartDistance * (float)Math.Sin((Angle_ + 90f) * (float)(Math.PI / 180)))),
+                endPosition = new Vector2(-(MaimaiPlayfield.IntersectDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.IntersectDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                Position = new Vector2(-(MaimaiPlayfield.NoteStartDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.NoteStartDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
             };
         }
     }

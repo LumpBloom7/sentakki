@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using osu.Game.Rulesets.Maimai.UI;
+﻿using osu.Game.Rulesets.Maimai.UI;
 using osuTK;
+using System;
 
 namespace osu.Game.Rulesets.Maimai
 {
@@ -19,9 +18,9 @@ namespace osu.Game.Rulesets.Maimai
             float SingleThreshold = 40f; // 40 Degrees margin from centre
             int result = 0;
 
-            for (int i = 0; i < MaimaiPlayfield.pathAngles.Length; ++i)
+            for (int i = 0; i < MaimaiPlayfield.PathAngles.Length; ++i)
             {
-                if (MaimaiPlayfield.pathAngles[i] - degrees >= -22.5f && MaimaiPlayfield.pathAngles[i] - degrees <= 22.5f)
+                if (MaimaiPlayfield.PathAngles[i] - degrees >= -22.5f && MaimaiPlayfield.PathAngles[i] - degrees <= 22.5f)
                     result = i;
 
                 //if (pathAngles[i] - degrees >= -45 && pathAngles[i] - degrees <= -SingleThreshold)
@@ -32,7 +31,7 @@ namespace osu.Game.Rulesets.Maimai
                 //    return new Tuple<int, Nullable<int>>(i, (i == 7 ? 0 : i));
 
             }
-            return MaimaiPlayfield.pathAngles[result];
+            return MaimaiPlayfield.PathAngles[result];
         }
     }
 }

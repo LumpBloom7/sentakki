@@ -1,21 +1,19 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using NUnit.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Maimai.Objects;
 using osu.Game.Rulesets.Maimai.Objects.Drawables;
-using osuTK;
-using System.Collections.Generic;
-using System;
-using osu.Game.Rulesets.Mods;
-using System.Linq;
-using NUnit.Framework;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Tests.Visual;
+using osuTK;
 using osuTK.Graphics;
+using System;
+using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Maimai.Tests.Objects
 {
@@ -36,7 +34,6 @@ namespace osu.Game.Rulesets.Maimai.Tests.Objects
         {
             base.Content.Add(content = new MaimaiInputManager(new RulesetInfo { ID = 0 }));
 
-            //Child = testSingle(2);
             AddStep("Miss Single", () => testSingle());
             AddStep("Hit Single", () => testSingle(true));
 
@@ -57,8 +54,6 @@ namespace osu.Game.Rulesets.Maimai.Tests.Objects
             circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
 
             var drawable = CreateDrawableTapNote(circle, auto);
-            //foreach (var mod in SelectedMods.Value.OfType<IApplicableToDrawableHitObjects>())
-            //    mod.ApplyToDrawableHitObjects(new[] { drawable });
 
             Add(drawable);
         }

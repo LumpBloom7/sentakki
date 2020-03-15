@@ -15,8 +15,6 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
 {
     public class MaimaiRing : CompositeDrawable
     {
-
-
         public MaimaiRing()
         {
             Anchor = Anchor.Centre;
@@ -36,7 +34,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                             FillMode = FillMode.Fit,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Size = new Vector2(MaimaiPlayfield.ringSize),
+                            Size = new Vector2(MaimaiPlayfield.RingSize),
                             Masking = true,
                             BorderThickness = 6,
                             BorderColour = Color4.White,
@@ -55,7 +53,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                             FillMode = FillMode.Fit,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Size = new Vector2(MaimaiPlayfield.ringSize),
+                            Size = new Vector2(MaimaiPlayfield.RingSize),
                             Masking = true,
                             BorderThickness = 3,
                             BorderColour = Color4.Black,
@@ -72,10 +70,10 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     }
                 },
             };
-            foreach (float pathAngle in MaimaiPlayfield.pathAngles)
+            foreach (float pathAngle in MaimaiPlayfield.PathAngles)
                 AddInternal(new DotPiece
                 {
-                    Position = new Vector2(-(MaimaiPlayfield.intersectDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.intersectDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
+                    Position = new Vector2(-(MaimaiPlayfield.IntersectDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.IntersectDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
                 });
         }
 
@@ -83,7 +81,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
         {
             public DotPiece()
             {
-                Size = new Vector2(MaimaiPlayfield.dotSize);
+                Size = new Vector2(MaimaiPlayfield.DotSize);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
                 RelativeSizeAxes = Axes.None;
@@ -114,12 +112,11 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
 
         public class GlowPiece : Container
         {
-
             public GlowPiece()
             {
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
-                Size = new Vector2(MaimaiPlayfield.ringSize);
+                Size = new Vector2(MaimaiPlayfield.RingSize);
                 Colour = Color4.Pink;
                 //RelativeSizeAxes = Axes.Both;
             }

@@ -1,36 +1,21 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-using System.Collections.Generic;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.Color4Extensions;
-using osu.Framework.Graphics;
-using System.Diagnostics;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Transforms;
-using osu.Framework.Graphics.Effects;
-using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Textures;
-using osu.Framework.Graphics.UserInterface;
-using osu.Game.Audio;
-using osu.Game.Beatmaps.ControlPoints;
 using osu.Framework.Bindables;
-using osu.Game.Beatmaps;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
-using osu.Game.Beatmaps.ControlPoints;
-using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Types;
-using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Maimai.Configuration;
+using osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Maimai.UI;
+using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
-using System;
 using osuTK;
 using osuTK.Graphics;
-using osu.Framework.Input.Bindings;
-using System.Linq;
+using System;
+using System.Diagnostics;
 
 namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
@@ -38,7 +23,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
     {
         public readonly HitReceptor HitArea;
         public readonly MainCirclePiece CirclePiece;
-        public readonly CircularProgress hitObjectLine;
+        public readonly CircularProgress HitObjectLine;
 
         public Func<DrawableMaimaiHitObject, bool> CheckValidation;
 
@@ -74,9 +59,9 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             AddRangeInternal(new Drawable[] {
-                hitObjectLine = new CircularProgress
+                HitObjectLine = new CircularProgress
                 {
-                    Size = new Vector2(MaimaiPlayfield.noteStartDistance*2),
+                    Size = new Vector2(MaimaiPlayfield.NoteStartDistance*2),
                     RelativePositionAxes = Axes.None,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -126,7 +111,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         {
             base.UpdateInitialTransforms();
             CirclePiece.ScaleTo(0f, idle).Then().FadeInFromZero(fadeIn).ScaleTo(1f, fadeIn).Then().MoveTo(HitObject.endPosition, moveTo);
-            hitObjectLine.FadeTo(0, idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(600, moveTo)));
+            HitObjectLine.FadeTo(0, idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(600, moveTo)));
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -168,7 +153,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     //   .FadeOut(time_fade_hit);
 
                     //MaimaiNote.FadeOut(time_fade_hit);
-                    hitObjectLine.FadeOut();
+                    HitObjectLine.FadeOut();
                     this.ScaleTo(1f, time_fade_hit).Expire();
 
                     break;
@@ -183,7 +168,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                        .FadeOut(time_fade_miss);
 
                     CirclePiece.FadeOut(time_fade_miss);
-                    hitObjectLine.FadeOut();
+                    HitObjectLine.FadeOut();
                     this.ScaleTo(1f, time_fade_miss).Expire();
 
                     break;
