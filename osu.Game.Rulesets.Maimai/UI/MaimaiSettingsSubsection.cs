@@ -27,13 +27,18 @@ namespace osu.Game.Rulesets.Maimai.UI
             {
                 new SettingsCheckbox
                 {
+                    LabelText = "Use Maimai style judgement text (In-game only)",
+                    Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.MaimaiJudgements)
+                },
+                new SettingsCheckbox
+                {
                     LabelText = "Show Visualizer",
                     Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.ShowVisualizer)
                 },
                 new SettingsSlider<double>
                 {
                     LabelText = "Note entry animation duration",
-                    Bindable = config.GetBindable<double>(MaimaiRulesetSettings.AnimationDuration ),
+                    Bindable = config.GetBindable<double>(MaimaiRulesetSettings.AnimationDuration )
                 }
                 ,
             };

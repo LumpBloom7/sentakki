@@ -6,6 +6,8 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Maimai.Configuration;
+using osu.Game.Rulesets.UI;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Skinning;
 using osuTK;
@@ -24,26 +26,29 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         }
 
         [BackgroundDependencyLoader]
-        private void load(OsuConfigManager config)
+        private void load(OsuConfigManager config, MaimaiRulesetConfigManager settings)
         {
-            switch (Result.Type)
+            if (settings.Get<bool>(MaimaiRulesetSettings.MaimaiJudgements))
             {
-                case HitResult.Perfect:
-                    JudgementText.Text = "Critical";
-                    JudgementText.Colour = Color4.Yellow;
-                    break;
+                switch (Result.Type)
+                {
+                    case HitResult.Perfect:
+                        JudgementText.Text = "Critical";
+                        JudgementText.Colour = Color4.Yellow;
+                        break;
 
-                case HitResult.Great:
-                    JudgementText.Text = "Perfect";
-                    break;
+                    case HitResult.Great:
+                        JudgementText.Text = "Perfect";
+                        break;
 
-                case HitResult.Good:
-                    JudgementText.Text = "Great";
-                    break;
+                    case HitResult.Good:
+                        JudgementText.Text = "Great";
+                        break;
 
-                case HitResult.Meh:
-                    JudgementText.Text = "Good";
-                    break;
+                    case HitResult.Meh:
+                        JudgementText.Text = "Good";
+                        break;
+                }
             }
 
             if (config.Get<bool>(OsuSetting.HitLighting) && Result.Type != HitResult.Miss)
