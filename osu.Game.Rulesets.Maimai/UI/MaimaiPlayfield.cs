@@ -48,16 +48,13 @@ namespace osu.Game.Rulesets.Maimai.UI
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            RelativeSizeAxes = Axes.Both;
+            RelativeSizeAxes = Axes.None;
             Size = new Vector2(ringSize + 100);
             AddRangeInternal(new Drawable[]
             {
                 judgementLayer = new JudgementContainer<DrawableMaimaiJudgement>
                 {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both,
-
                     Depth = 1,
                 },
                 new VisualisationContainer(),
@@ -66,6 +63,7 @@ namespace osu.Game.Rulesets.Maimai.UI
             });
         }
         protected override GameplayCursorContainer CreateCursor() => new MaimaiCursorContainer();
+
 
         public override void Add(DrawableHitObject h)
         {
