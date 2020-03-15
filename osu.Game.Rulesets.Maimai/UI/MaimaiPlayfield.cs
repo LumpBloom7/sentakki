@@ -28,6 +28,8 @@ namespace osu.Game.Rulesets.Maimai.UI
     {
         private JudgementContainer<DrawableMaimaiJudgement> judgementLayer;
 
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
+
         public static readonly float ringSize = 600;
         public static readonly float dotSize = 20f;
         public static readonly float intersectDistance = 296.5f;
