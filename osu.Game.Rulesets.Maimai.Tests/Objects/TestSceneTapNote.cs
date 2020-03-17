@@ -36,12 +36,10 @@ namespace osu.Game.Rulesets.Maimai.Tests.Objects
 
             AddStep("Miss Single", () => testSingle());
             AddStep("Hit Single", () => testSingle(true));
-
         }
 
         private void testSingle(bool auto = false)
         {
-
             var circle = new MaimaiHitObject
             {
                 StartTime = Time.Current + 1000,

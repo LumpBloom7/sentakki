@@ -17,6 +17,5 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
             if (IsPresent)
                 base.Update();
         }
-
     }
 }

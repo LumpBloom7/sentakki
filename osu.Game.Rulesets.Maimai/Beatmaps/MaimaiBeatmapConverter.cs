@@ -18,7 +18,6 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
 {
     public class MaimaiBeatmapConverter : BeatmapConverter<MaimaiHitObject>
     {
-
         // todo: Check for conversion types that should be supported (ie. Beatmap.HitObjects.Any(h => h is IHasXPosition))
         // https://github.com/ppy/osu/tree/master/osu.Game/Rulesets/Objects/Types
         public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition);
@@ -27,6 +26,7 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
             : base(beatmap, ruleset)
         {
         }
+
         protected override IEnumerable<MaimaiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap)
         {
             Vector2 CENTRE_POINT = new Vector2(256, 192);

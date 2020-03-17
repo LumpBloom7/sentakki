@@ -29,7 +29,6 @@ namespace osu.Game.Rulesets.Maimai
                 //    return new Tuple<int, Nullable<int>>(i, null);
                 //else if (pathAngles[i] - degrees <= 45 && pathAngles[i] - degrees >= SingleThreshold)
                 //    return new Tuple<int, Nullable<int>>(i, (i == 7 ? 0 : i));
-
             }
             return MaimaiPlayfield.PathAngles[result];
         }

@@ -39,10 +39,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
                         RelativeSizeAxes = Axes.Both
                     }
                 }
-
             };
         }
-
-
     }
 }

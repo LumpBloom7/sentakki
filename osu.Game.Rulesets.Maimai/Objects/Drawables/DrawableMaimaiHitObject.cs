@@ -74,7 +74,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 },
                 CirclePiece = new MainCirclePiece()
                 {
-
                     Scale = new Vector2(0f),
                     Rotation = hitObject.Angle,
                     Position = HitObject.Position
@@ -92,9 +91,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     RelativeSizeAxes = Axes.None,
                     Position = hitObject.endPosition
                 },
-
             });
-
         }
         Bindable<double> AnimationDuration = new Bindable<double>(1000);
 
@@ -148,12 +145,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     var b = HitObject.Angle + 90;
                     var a = b * (float)(Math.PI / 180);
 
-                    //MaimaiNote.ScaleTo(2f, time_fade_hit, Easing.OutCubic)
-                    //   .FadeColour(Color4.Yellow, time_fade_hit, Easing.OutCubic)
-                    //   .MoveToOffset(new Vector2(-(500 * (float)Math.Cos(a)), -(500 * (float)Math.Sin(a))), time_fade_hit, Easing.OutCubic)
-                    //   .FadeOut(time_fade_hit);
-
-                    //MaimaiNote.FadeOut(time_fade_hit);
                     HitObjectLine.FadeOut();
                     this.ScaleTo(1f, time_fade_hit).Expire();
 
@@ -202,7 +193,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                             HitAction = action;
                             return true;
                         }
-
                         break;
                 }
 
@@ -212,6 +202,5 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             {
             }
         }
-
     }
 }

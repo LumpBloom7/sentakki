@@ -63,7 +63,6 @@ namespace osu.Game.Rulesets.Maimai.UI
         }
         protected override GameplayCursorContainer CreateCursor() => new MaimaiCursorContainer();
 
-
         public override void Add(DrawableHitObject h)
         {
             base.Add(h);
@@ -110,17 +109,13 @@ namespace osu.Game.Rulesets.Maimai.UI
                 Size = new Vector2(ringSize);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
-
-
                 Child = visualisation = new LogoVisualisation
                 {
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Colour = Color4.Pink.Darken(.8f),
-
                 };
-
                 settings?.BindWith(MaimaiRulesetSettings.ShowVisualizer, showVisualisation);
                 showVisualisation.TriggerChange();
             }
@@ -136,7 +131,6 @@ namespace osu.Game.Rulesets.Maimai.UI
                 if (effectPoint.KiaiMode && showVisualisation.Value)
                 {
                     visualisation.FadeIn(200);
-
                 }
                 else
                 {

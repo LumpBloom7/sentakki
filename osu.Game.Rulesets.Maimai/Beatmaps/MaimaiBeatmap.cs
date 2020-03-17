@@ -21,6 +21,5 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
                 }
             };
         }
-
     }
 }

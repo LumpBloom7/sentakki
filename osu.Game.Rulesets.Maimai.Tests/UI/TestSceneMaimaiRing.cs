@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Maimai.Tests.UI
 {
-
     [TestFixture]
     public class TestSceneMaimaiRing : OsuTestScene
     {
@@ -15,11 +14,9 @@ namespace osu.Game.Rulesets.Maimai.Tests.UI
             typeof(MaimaiRing)
         };
 
-
         public TestSceneMaimaiRing()
         {
             Add(new MaimaiRing());
-
         }
     }
 }
