@@ -18,11 +18,11 @@ using System.Collections.Generic;
 namespace osu.Game.Rulesets.Maimai.Tests.Objects
 {
     [TestFixture]
-    public class TestSceneTapNote : OsuTestScene
+    public class TestSceneTouchHold : OsuTestScene
     {
         public override IReadOnlyList<Type> RequiredTypes => new[]
         {
-            typeof(DrawableMaimaiTapNote)
+            typeof(DrawableMaimaiTouchHold)
         };
 
         private readonly Container content;
@@ -30,7 +30,7 @@ namespace osu.Game.Rulesets.Maimai.Tests.Objects
 
         private int depthIndex;
 
-        public TestSceneTapNote()
+        public TestSceneTouchHold()
         {
             base.Content.Add(content = new MaimaiInputManager(new RulesetInfo { ID = 0 }));
 
@@ -40,44 +40,40 @@ namespace osu.Game.Rulesets.Maimai.Tests.Objects
 
         private void testSingle(bool auto = false)
         {
-            var circle = new MaimaiHitObject
+            var circle = new MaimaiTouchHold
             {
                 StartTime = Time.Current + 1000,
-                Position = new Vector2(0, -66f),
-                Angle = 0,
-                endPosition = new Vector2(0, -296.5f),
-                NoteColor = Color4.Orange,
+                Duration = 5000,
+                Position = new Vector2(0, 0)
             };
 
             circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
 
-            var drawable = CreateDrawableTapNote(circle, auto);
+            var drawable = CreateDrawableTouchHoldNote(circle, auto);
 
             Add(drawable);
         }
 
-        protected virtual TestDrawableTapNote CreateDrawableTapNote(MaimaiHitObject circle, bool auto) => new TestDrawableTapNote(circle, auto)
+        protected virtual TestDrawableTouchHoldNote CreateDrawableTouchHoldNote(MaimaiTouchHold circle, bool auto) => new TestDrawableTouchHoldNote(circle, auto)
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Depth = depthIndex++,
         };
 
-        protected class TestDrawableTapNote : DrawableMaimaiTapNote
+        protected class TestDrawableTouchHoldNote : DrawableMaimaiTouchHold
         {
-            private readonly bool auto;
-
-            public TestDrawableTapNote(MaimaiHitObject h, bool auto)
+            public TestDrawableTouchHoldNote(MaimaiTouchHold h, bool auto)
                 : base(h)
             {
-                this.auto = auto;
+                this.Auto = auto;
             }
 
             public void TriggerJudgement() => UpdateResult(true);
 
             protected override void CheckForResult(bool userTriggered, double timeOffset)
             {
-                if (auto && !userTriggered && timeOffset > 0)
+                if (this.Auto && !userTriggered && timeOffset > 0)
                 {
                     // force success
                     ApplyResult(r => r.Type = HitResult.Perfect);

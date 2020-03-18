@@ -9,7 +9,8 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
     {
         public FlashPiece()
         {
-            Size = new Vector2(80);
+            RelativeSizeAxes = Axes.Both;
+            Size = new Vector2(1f);
 
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
