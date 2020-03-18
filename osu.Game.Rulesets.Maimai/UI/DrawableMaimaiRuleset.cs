@@ -28,7 +28,19 @@ namespace osu.Game.Rulesets.Maimai.UI
 
         protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new MaimaiFramedReplayInputHandler(replay);
 
-        public override DrawableHitObject<MaimaiHitObject> CreateDrawableRepresentation(MaimaiHitObject h) => new DrawableMaimaiHitObject(h);
+        public override DrawableHitObject<MaimaiHitObject> CreateDrawableRepresentation(MaimaiHitObject h)
+        {
+            switch (h)
+            {
+                case MaimaiTouchHold touchHold:
+                    return new DrawableMaimaiTouchHold(touchHold);
+
+                case MaimaiHitObject tapNote:
+                    return new DrawableMaimaiTapNote(tapNote);
+            }
+
+            return null;
+        }
 
         protected override PassThroughInputManager CreateInputManager() => new MaimaiInputManager(Ruleset?.RulesetInfo);
     }
