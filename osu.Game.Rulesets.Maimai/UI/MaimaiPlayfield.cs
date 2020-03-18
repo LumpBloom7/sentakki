@@ -10,6 +10,7 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Maimai.Configuration;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Maimai.Objects.Drawables;
 using osu.Game.Rulesets.Maimai.UI.Components;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -81,15 +82,33 @@ namespace osu.Game.Rulesets.Maimai.UI
 
             var b = maimaiObj.HitObject.Angle + 90;
             var a = b *= (float)(Math.PI / 180);
-
-            DrawableMaimaiJudgement explosion = new DrawableMaimaiJudgement(result, maimaiObj)
+            DrawableMaimaiJudgement explosion;
+            switch (judgedObject)
             {
-                Origin = Anchor.Centre,
-                Anchor = Anchor.Centre,
-                Position = new Vector2(-(240 * (float)Math.Cos(a)), -(240 * (float)Math.Sin(a))),
-                Rotation = maimaiObj.HitObject.Angle,
-            };
-
+                case DrawableMaimaiTouchHold TH:
+                    explosion = new DrawableMaimaiJudgement(result, maimaiObj)
+                    {
+                        Origin = Anchor.Centre,
+                        Anchor = Anchor.Centre,
+                    };
+                    break;
+                case DrawableMaimaiTapNote T:
+                    explosion = new DrawableMaimaiJudgement(result, maimaiObj)
+                    {
+                        Origin = Anchor.Centre,
+                        Anchor = Anchor.Centre,
+                        Position = new Vector2(-(240 * (float)Math.Cos(a)), -(240 * (float)Math.Sin(a))),
+                        Rotation = maimaiObj.HitObject.Angle,
+                    };
+                    break;
+                default:
+                    explosion = new DrawableMaimaiJudgement(result, maimaiObj)
+                    {
+                        Origin = Anchor.Centre,
+                        Anchor = Anchor.Centre,
+                    };
+                    break;
+            }
             judgementLayer.Add(explosion);
         }
 
