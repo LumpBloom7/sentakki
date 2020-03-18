@@ -4,6 +4,7 @@
 using osu.Game.Beatmaps;
 using osu.Game.Replays;
 using osu.Game.Rulesets.Maimai.Objects;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Replays;
 using osuTK;
 using System.Collections.Generic;
@@ -28,19 +29,41 @@ namespace osu.Game.Rulesets.Maimai.Replays
             Frames.Add(new MaimaiReplayFrame { Position = new Vector2(300) });
             foreach (MaimaiHitObject hitObject in Beatmap.HitObjects)
             {
-                var currentFrame = new MaimaiReplayFrame
+                MaimaiReplayFrame currentFrame = new MaimaiReplayFrame();
+                MaimaiReplayFrame nextFrame = new MaimaiReplayFrame();
+
+                switch (hitObject)
                 {
-                    Time = hitObject.StartTime,
-                    Position = hitObject.endPosition + new Vector2(300),
-                };
-                currentFrame.Actions.Add(MaimaiAction.Button1);
+                    case MaimaiTouchHold th:
+                        currentFrame = new MaimaiReplayFrame
+                        {
+                            Time = hitObject.StartTime,
+                            Position = new Vector2(300),
+                        };
+                        currentFrame.Actions.Add(MaimaiAction.Button1);
+                        nextFrame = new MaimaiReplayFrame
+                        {
+                            Time = th.EndTime + 1,
+                            Position = new Vector2(300),
+                        };
+                        break;
+                    case MaimaiHitObject tn:
+                        currentFrame = new MaimaiReplayFrame
+                        {
+                            Time = tn.StartTime,
+                            Position = tn.endPosition + new Vector2(300),
+                        };
+                        currentFrame.Actions.Add(MaimaiAction.Button1);
+                        nextFrame = new MaimaiReplayFrame
+                        {
+                            Time = tn.StartTime + 1,
+                            Position = tn.endPosition + new Vector2(300),
+                        };
+                        break;
+                }
                 Frames.Add(currentFrame);
-                var nextFrame = new MaimaiReplayFrame
-                {
-                    Time = hitObject.StartTime + 1,
-                    Position = hitObject.endPosition + new Vector2(300),
-                };
                 Frames.Add(nextFrame);
+
             }
 
             return Replay;
