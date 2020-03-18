@@ -1,13 +1,10 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
-using osu.Game.Rulesets.Maimai.Configuration;
 using osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
@@ -23,14 +20,10 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
     {
         public CircularProgress progress;
         public Circle circle;
-        public SpriteText text;
 
         private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
 
-        private Bindable<Color4> accentColor;
-        double fadeIn = 500;
-        private MaimaiTouchHold hitObject_;
         public override bool HandlePositionalInput => true;
 
         private MaimaiInputManager maimaiActionInputManager;
@@ -41,20 +34,21 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         public DrawableMaimaiTouchHold(MaimaiTouchHold hitObject)
             : base(hitObject)
         {
-            hitObject_ = hitObject;
+            AccentColour.Value = Color4.HotPink;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Size = new Vector2(150);
+            Size = new Vector2(120);
             Scale = new Vector2(0f);
             RelativeSizeAxes = Axes.None;
+            Alpha = 0;
             AddRangeInternal(new Drawable[] {
                 progress = new CircularProgress
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     InnerRadius = 1f,
-                    Size = new Vector2(150),
-                    Colour = Color4.Purple,
+                    Size = new Vector2(120),
+                    Colour = AccentColour.Value,
                     Current = { Value = 0 },
                 },
                 circle = new Circle
@@ -65,22 +59,17 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     Size = new Vector2(100),
                     Colour = Color4.Azure,
                 },
-                text = new SpriteText
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Text = "Hold!",
-                    Colour = Color4.Black,
-                },
                 flash = new FlashPiece(),
-                explode = new ExplodePiece(),
+                explode = new ExplodePiece{
+                    Colour = AccentColour.Value
+                },
             });
         }
 
         protected override void UpdateInitialTransforms()
         {
-            this.FadeInFromZero(500).ScaleTo(1f, 500);
-            progress.ScaleTo(1f, 500).Then().FillTo(1f, hitObject_.Duration - 400f);
+            this.FadeTo(.5f, 500).ScaleTo(1f, 500);
+            progress.Delay(500).FillTo(1f, (HitObject as MaimaiTouchHold).Duration);
         }
 
         private double potential = 0;
@@ -90,7 +79,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         {
             if (Time.Current < HitObject.StartTime) return;
 
-            if (userTriggered || Time.Current < (HitObject as IHasEndTime)?.EndTime - 400f)
+            if (userTriggered || Time.Current < (HitObject as IHasEndTime)?.EndTime)
                 return;
 
             double result = held / potential;
@@ -105,7 +94,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     r.Type = HitResult.Good;
                 else if (result >= .5)
                     r.Type = HitResult.Ok;
-                else if (Time.Current >= (HitObject as IHasEndTime)?.EndTime - 400f)
+                else if (Time.Current >= (HitObject as IHasEndTime)?.EndTime)
                     r.Type = HitResult.Miss;
             });
         }
@@ -119,14 +108,11 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 potential++;
                 if ((buttonHeld && IsHovered) || Auto)
                 {
-                    held++; text.Text = (held / potential).FormatAccuracy();
+                    held++;
                     this.Alpha = 1f;
                 }
                 else
-                {
-                    text.Text = "Hold!";
                     this.Alpha = .5f;
-                }
                 base.Update();
             }
         }
@@ -136,8 +122,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             base.UpdateStateTransforms(state);
 
             const double time_fade_hit = 400, time_fade_miss = 400;
-
-            var sequence = this.Delay((HitObject as IHasEndTime).Duration);
 
             switch (state)
             {
@@ -151,7 +135,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
                     explode.Delay((HitObject as IHasEndTime).Duration).FadeIn(flash_in);
                     progress.Delay((HitObject as IHasEndTime).Duration).FadeOut();
-                    text.Delay((HitObject as IHasEndTime).Duration).FadeOut();
                     this.Delay((HitObject as IHasEndTime).Duration).ScaleTo(1.5f, 400, Easing.OutQuad);
 
                     using (BeginDelayedSequence(flash_in, true))
@@ -163,7 +146,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     }
                     break;
                 case ArmedState.Miss:
-                    sequence.ScaleTo(.0f, time_fade_miss);
+                    this.Delay((HitObject as IHasEndTime).Duration).ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss);
                     break;
             }
         }

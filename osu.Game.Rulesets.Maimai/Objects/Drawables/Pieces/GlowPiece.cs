@@ -25,8 +25,8 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
         {
             Child = new Sprite
             {
-                Size = new Vector2(102.5f),
-                RelativeSizeAxes = Axes.None,
+                Size = new Vector2(1.28125f),
+                RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Texture = textures.Get("Gameplay/osu/ring-glow"),
