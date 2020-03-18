@@ -150,6 +150,8 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                          .FadeOut(flash_out);
 
                     explode.Delay((HitObject as IHasEndTime).Duration).FadeIn(flash_in);
+                    progress.Delay((HitObject as IHasEndTime).Duration).FadeOut();
+                    text.Delay((HitObject as IHasEndTime).Duration).FadeOut();
                     this.Delay((HitObject as IHasEndTime).Duration).ScaleTo(1.5f, 400, Easing.OutQuad);
 
                     using (BeginDelayedSequence(flash_in, true))

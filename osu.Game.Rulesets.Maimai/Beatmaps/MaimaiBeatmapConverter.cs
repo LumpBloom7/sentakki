@@ -13,6 +13,13 @@ using osu.Game.Rulesets.Maimai.UI;
 using osuTK;
 using osuTK.Graphics;
 using System;
+using osuTK;
+using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Objects;
+using System.Collections.Generic;
+using osu.Game.Rulesets.Objects.Types;
+using System.Linq;
+using osu.Framework.Extensions.IEnumerableExtensions;
 
 namespace osu.Game.Rulesets.Maimai.Beatmaps
 {
@@ -34,15 +41,37 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
             newPos.Y = 384 - newPos.Y;
             float angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT));
 
-            yield return new MaimaiHitObject
+            switch (original)
             {
-                NoteColor = Color4.Orange,
-                Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
-                Samples = original.Samples,
-                StartTime = original.StartTime,
-                endPosition = new Vector2(-(MaimaiPlayfield.IntersectDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.IntersectDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                Position = new Vector2(-(MaimaiPlayfield.NoteStartDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.NoteStartDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-            };
+                case IHasCurve curveData:
+                    return new MaimaiHitObject
+                    {
+                        NoteColor = Color4.Orange,
+                        Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
+                        Samples = original.Samples,
+                        StartTime = original.StartTime,
+                        endPosition = new Vector2(-(MaimaiPlayfield.IntersectDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.IntersectDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                        Position = new Vector2(-(MaimaiPlayfield.NoteStartDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.NoteStartDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                    }.Yield();
+
+                case IHasEndTime endTimeData:
+                    return new MaimaiTouchHold
+                    {
+                        Position = Vector2.Zero,
+                        StartTime = original.StartTime,
+                        EndTime = endTimeData.EndTime,
+                    }.Yield();
+                default:
+                    return new MaimaiHitObject
+                    {
+                        NoteColor = Color4.Orange,
+                        Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
+                        Samples = original.Samples,
+                        StartTime = original.StartTime,
+                        endPosition = new Vector2(-(MaimaiPlayfield.IntersectDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.IntersectDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                        Position = new Vector2(-(MaimaiPlayfield.NoteStartDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.NoteStartDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                    }.Yield();
+            }
         }
     }
 }

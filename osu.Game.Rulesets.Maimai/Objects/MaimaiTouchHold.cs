@@ -6,7 +6,7 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Maimai.Judgements;
 using osu.Game.Rulesets.Scoring;
 
-namespace osu.Game.Rulesets.Maimai.Objects.Drawables
+namespace osu.Game.Rulesets.Maimai.Objects
 {
     public class MaimaiTouchHold : MaimaiHitObject, IHasEndTime
     {
