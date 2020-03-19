@@ -71,45 +71,23 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                 },
             };
             foreach (float pathAngle in MaimaiPlayfield.PathAngles)
-                AddInternal(new DotPiece
+                AddInternal(new CircularContainer
                 {
+                    Size = new Vector2(MaimaiPlayfield.DotSize),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    RelativeSizeAxes = Axes.None,
+                    Masking = true,
+                    BorderColour = Color4.Black,
+                    BorderThickness = 3,
                     Position = new Vector2(-(MaimaiPlayfield.IntersectDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.IntersectDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
+                    Child = new Box
+                    {
+                        AlwaysPresent = true,
+                        RelativeSizeAxes = Axes.Both,
+                    }
                 });
         }
-
-        public class DotPiece : Container
-        {
-            public DotPiece()
-            {
-                Size = new Vector2(MaimaiPlayfield.DotSize);
-                Anchor = Anchor.Centre;
-                Origin = Anchor.Centre;
-                RelativeSizeAxes = Axes.None;
-                Children = new Drawable[] {
-                    new Circle
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                    },
-                    new CircularContainer{
-                        RelativeSizeAxes = Axes.Both,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Masking = true,
-                        BorderColour = Color4.Black,
-                        BorderThickness = 3,
-                        Child = new Box
-                        {
-                            AlwaysPresent = true,
-                            Alpha = 0,
-                            RelativeSizeAxes = Axes.Both,
-                        }
-                    },
-                };
-            }
-        }
-
         public class GlowPiece : Container
         {
             public GlowPiece()
@@ -118,7 +96,6 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                 Origin = Anchor.Centre;
                 Size = new Vector2(MaimaiPlayfield.RingSize);
                 Colour = Color4.Pink;
-                //RelativeSizeAxes = Axes.Both;
             }
 
             [BackgroundDependencyLoader]
@@ -127,7 +104,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                 Child = new Sprite
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Size = new Vector2(1.28125f),
+                    Size = new Vector2(1.278f),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Texture = textures.Get("Gameplay/osu/ring-glow"),
