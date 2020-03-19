@@ -12,6 +12,7 @@ namespace osu.Game.Rulesets.Maimai.Replays
 {
     public class MaimaiReplayFrame : ReplayFrame
     {
+        public ReplayEvent noteEvent = ReplayEvent.none;
         public Vector2 Position;
         public List<MaimaiAction> Actions = new List<MaimaiAction>();
 
@@ -25,5 +26,13 @@ namespace osu.Game.Rulesets.Maimai.Replays
             Position = position;
             Actions.AddRange(actions);
         }
+    }
+    public enum ReplayEvent
+    {
+        none,
+        TapDown,
+        TapUp,
+        TouchHoldDown,
+        TouchHoldUp
     }
 }
