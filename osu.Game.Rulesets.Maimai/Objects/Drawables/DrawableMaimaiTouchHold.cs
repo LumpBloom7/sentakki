@@ -4,11 +4,13 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
 using osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Graphics;
 using osu.Game.Utils;
 using osuTK;
 using osuTK.Graphics;
@@ -18,11 +20,13 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
     public class DrawableMaimaiTouchHold : DrawableMaimaiHitObject
     {
-        public CircularProgress progress;
-        public Circle circle;
-
+        private readonly CircularProgress progress;
+        private readonly TouchHoldCirclePiece circle;
+        private readonly CircularContainer ring;
+        private readonly SpriteText text;
         private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
+        private readonly GlowPiece glow;
 
         public override bool HandlePositionalInput => true;
 
@@ -42,22 +46,54 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             RelativeSizeAxes = Axes.None;
             Alpha = 0;
             AddRangeInternal(new Drawable[] {
-                progress = new CircularProgress
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    InnerRadius = 1f,
-                    Size = new Vector2(120),
+                glow = new GlowPiece(){
+                    Alpha = 0f,
                     Colour = AccentColour.Value,
-                    Current = { Value = 0 },
                 },
-                circle = new Circle
+                ring = new CircularContainer
                 {
+                    RelativeSizeAxes = Axes.Both,
+                    Size = Vector2.One,
+                    Masking = true,
+                    BorderColour = Color4.White,
+                    BorderThickness = 10,
+                    Child = new Box
+                    {
+                        AlwaysPresent = true,
+                        Alpha = 0,
+                        RelativeSizeAxes = Axes.Both
+                    }
+                },
+                new CircularContainer
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Size = Vector2.One,
+                    Masking = true,
+                    Child = progress = new CircularProgress
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        InnerRadius = 0.175f,
+                        Size = Vector2.One,
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = AccentColour.Value,
+                        Current = { Value = 0 },
+                    }
+                },
+                circle = new TouchHoldCirclePiece
+                {
+                    Colour = AccentColour.Value,
+                    Size = new Vector2(102),
+                    RelativeSizeAxes = Axes.None,
+                },
+                text = new SpriteText
+                {
+                    Text = "HOLD!",
+                    Font = OsuFont.Torus.With(weight: FontWeight.Bold, size: 34),
+                    Colour = Color4.White,
+                    ShadowColour = Color4.Black,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    RelativeSizeAxes = Axes.None,
-                    Size = new Vector2(100),
-                    Colour = Color4.Azure,
                 },
                 flash = new FlashPiece(),
                 explode = new ExplodePiece{
@@ -68,7 +104,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
         protected override void UpdateInitialTransforms()
         {
-            this.FadeTo(.5f, 500).ScaleTo(1f, 500);
+            this.FadeTo(.5f, 500).ScaleTo(.8f, 500);
             progress.Delay(500).FillTo(1f, (HitObject as MaimaiTouchHold).Duration);
         }
 
@@ -110,9 +146,16 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 {
                     held++;
                     this.Alpha = 1f;
+                    this.ScaleTo(1f, 100);
+                    glow.FadeTo(1f, 100);
                 }
                 else
+                {
                     this.Alpha = .5f;
+                    //this.Scale = new Vector2(.9f);
+                    this.ScaleTo(.9f, 200);
+                    glow.FadeTo(0f, 200);
+                }
                 base.Update();
             }
         }
@@ -120,8 +163,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         protected override void UpdateStateTransforms(ArmedState state)
         {
             base.UpdateStateTransforms(state);
-
-            const double time_fade_hit = 400, time_fade_miss = 400;
 
             switch (state)
             {
@@ -134,19 +175,19 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                          .FadeOut(flash_out);
 
                     explode.Delay((HitObject as IHasEndTime).Duration).FadeIn(flash_in);
-                    progress.Delay((HitObject as IHasEndTime).Duration).FadeOut();
                     this.Delay((HitObject as IHasEndTime).Duration).ScaleTo(1.5f, 400, Easing.OutQuad);
 
                     using (BeginDelayedSequence(flash_in, true))
                     {
-                        //after the flash, we can hide some elements that were behind it
+                        progress.Delay((HitObject as IHasEndTime).Duration).FadeOut();
+                        text.Delay((HitObject as IHasEndTime).Duration).FadeOut();
+                        ring.Delay((HitObject as IHasEndTime).Duration).FadeOut();
                         circle.Delay((HitObject as IHasEndTime).Duration).FadeOut();
-
                         this.Delay((HitObject as IHasEndTime).Duration).FadeOut(800);
                     }
                     break;
                 case ArmedState.Miss:
-                    this.Delay((HitObject as IHasEndTime).Duration).ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss);
+                    this.Delay((HitObject as IHasEndTime).Duration).ScaleTo(.0f, 400).FadeOut(400);
                     break;
             }
         }

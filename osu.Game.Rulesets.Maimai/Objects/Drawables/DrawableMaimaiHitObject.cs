@@ -23,8 +23,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
     {
         public Func<DrawableMaimaiHitObject, bool> CheckValidation;
 
-        private bool validActionPressed;
-
         public MaimaiAction[] HitActions { get; set; } = new[]
         {
             MaimaiAction.Button1,
