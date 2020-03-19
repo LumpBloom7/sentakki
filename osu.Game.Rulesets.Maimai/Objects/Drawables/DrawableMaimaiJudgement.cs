@@ -25,10 +25,10 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         {
         }
 
-        [BackgroundDependencyLoader]
-        private void load(OsuConfigManager config, MaimaiRulesetConfigManager settings)
+        [BackgroundDependencyLoader(true)]
+        private void load(MaimaiRulesetConfigManager settings)
         {
-            if (settings.Get<bool>(MaimaiRulesetSettings.MaimaiJudgements))
+            if (settings != null && settings.Get<bool>(MaimaiRulesetSettings.MaimaiJudgements))
             {
                 switch (Result.Type)
                 {
@@ -51,7 +51,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 }
             }
 
-            if (config.Get<bool>(OsuSetting.HitLighting) && Result.Type != HitResult.Miss)
+            if (Result.Type != HitResult.Miss)
             {
                 AddInternal(lighting = new SkinnableSprite("lighting")
                 {
