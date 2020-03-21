@@ -92,20 +92,13 @@ namespace osu.Game.Rulesets.Maimai.UI
                         Anchor = Anchor.Centre,
                     };
                     break;
-                case DrawableMaimaiTapNote T:
+                default:
                     explosion = new DrawableMaimaiJudgement(result, maimaiObj)
                     {
                         Origin = Anchor.Centre,
                         Anchor = Anchor.Centre,
                         Position = new Vector2(-(240 * (float)Math.Cos(a)), -(240 * (float)Math.Sin(a))),
                         Rotation = maimaiObj.HitObject.Angle,
-                    };
-                    break;
-                default:
-                    explosion = new DrawableMaimaiJudgement(result, maimaiObj)
-                    {
-                        Origin = Anchor.Centre,
-                        Anchor = Anchor.Centre,
                     };
                     break;
             }

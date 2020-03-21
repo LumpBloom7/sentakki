@@ -32,6 +32,9 @@ namespace osu.Game.Rulesets.Maimai.UI
         {
             switch (h)
             {
+                case MaimaiHold holdNote:
+                    return new DrawableMaimaiHoldNote(holdNote);
+
                 case MaimaiTouchHold touchHold:
                     return new DrawableMaimaiTouchHold(touchHold);
 

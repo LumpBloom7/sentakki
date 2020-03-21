@@ -44,12 +44,13 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
             switch (original)
             {
                 case IHasCurve curveData:
-                    return new MaimaiHitObject
+                    return new MaimaiHold
                     {
-                        NoteColor = Color4.Orange,
+                        NoteColor = Color4.Crimson,
                         Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
                         Samples = original.Samples,
                         StartTime = original.StartTime,
+                        EndTime = original.GetEndTime(),
                         endPosition = new Vector2(-(MaimaiPlayfield.IntersectDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.IntersectDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
                         Position = new Vector2(-(MaimaiPlayfield.NoteStartDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.NoteStartDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
                     }.Yield();
