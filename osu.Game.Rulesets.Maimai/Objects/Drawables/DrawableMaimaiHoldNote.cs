@@ -4,8 +4,9 @@
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.UserInterface;
 using osu.Game.Rulesets.Maimai.Configuration;
 using osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Maimai.UI;
@@ -14,23 +15,8 @@ using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osuTK;
 using osuTK.Graphics;
+using System;
 using System.Linq;
-using System;
-using osu.Framework.Allocation;
-using osu.Framework.Bindables;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.UserInterface;
-using osu.Framework.Input.Bindings;
-using osu.Game.Rulesets.Maimai.Configuration;
-using osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces;
-using osu.Game.Rulesets.Maimai.UI;
-using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Scoring;
-using osuTK;
-using osuTK.Graphics;
-using System;
-using System.Diagnostics;
 
 namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {

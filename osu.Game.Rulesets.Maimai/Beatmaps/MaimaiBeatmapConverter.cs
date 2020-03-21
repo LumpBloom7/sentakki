@@ -1,25 +1,17 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Game.Beatmaps;
-using osu.Game.Audio;
-using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Maimai.Objects;
 using osu.Game.Rulesets.Maimai.UI;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
 using osuTK;
 using osuTK.Graphics;
 using System;
-using osuTK;
-using osu.Game.Beatmaps;
-using osu.Game.Rulesets.Objects;
 using System.Collections.Generic;
-using osu.Game.Rulesets.Objects.Types;
 using System.Linq;
-using osu.Framework.Extensions.IEnumerableExtensions;
 
 namespace osu.Game.Rulesets.Maimai.Beatmaps
 {
