@@ -122,13 +122,13 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
             ApplyResult(r =>
             {
-                if (result >= 1)
+                if (result >= 9)
                     r.Type = HitResult.Perfect;
-                else if (result >= .9)
-                    r.Type = HitResult.Great;
                 else if (result >= .8)
-                    r.Type = HitResult.Good;
+                    r.Type = HitResult.Great;
                 else if (result >= .5)
+                    r.Type = HitResult.Good;
+                else if (result >= .2)
                     r.Type = HitResult.Ok;
                 else if (Time.Current >= (HitObject as IHasEndTime)?.EndTime)
                     r.Type = HitResult.Miss;
