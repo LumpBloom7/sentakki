@@ -33,6 +33,8 @@ namespace osu.Game.Rulesets.Maimai.Replays
         TapDown,
         TapUp,
         TouchHoldDown,
-        TouchHoldUp
+        TouchHoldUp,
+        HoldDown,
+        HoldUp
     }
 }

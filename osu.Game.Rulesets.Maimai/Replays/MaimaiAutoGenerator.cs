@@ -59,6 +59,23 @@ namespace osu.Game.Rulesets.Maimai.Replays
                             Position = new Vector2(300),
                         };
                         break;
+                    case MaimaiHold h:
+                        currentFrame = new MaimaiReplayFrame
+                        {
+                            Time = hitObject.StartTime,
+                            Position = h.endPosition + new Vector2(300),
+                            noteEvent = ReplayEvent.HoldDown,
+                            Actions = { nextButton }
+                        };
+                        Frames.Add(currentFrame);
+                        inUse = new Tuple<MaimaiAction, double>(nextButton, h.EndTime);
+                        nextFrame = new MaimaiReplayFrame
+                        {
+                            Time = h.EndTime,
+                            noteEvent = ReplayEvent.HoldUp,
+                            Position = h.endPosition + new Vector2(300)
+                        };
+                        break;
                     case MaimaiHitObject tn:
                         List<MaimaiAction> startList;
                         List<MaimaiAction> endList;
