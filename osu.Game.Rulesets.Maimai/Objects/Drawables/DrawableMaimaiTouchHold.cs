@@ -177,13 +177,13 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     explode.Delay((HitObject as IHasEndTime).Duration).FadeIn(flash_in);
                     this.Delay((HitObject as IHasEndTime).Duration).ScaleTo(1.5f, 400, Easing.OutQuad);
 
-                    using (BeginDelayedSequence(flash_in, true))
+                    using (BeginDelayedSequence((HitObject as IHasEndTime).Duration + flash_in, true))
                     {
-                        progress.Delay((HitObject as IHasEndTime).Duration).FadeOut();
-                        text.Delay((HitObject as IHasEndTime).Duration).FadeOut();
-                        ring.Delay((HitObject as IHasEndTime).Duration).FadeOut();
-                        circle.Delay((HitObject as IHasEndTime).Duration).FadeOut();
-                        this.Delay((HitObject as IHasEndTime).Duration).FadeOut(800);
+                        progress.FadeOut();
+                        text.FadeOut();
+                        ring.FadeOut();
+                        circle.FadeOut();
+                        this.FadeOut(800);
                     }
                     break;
                 case ArmedState.Miss:

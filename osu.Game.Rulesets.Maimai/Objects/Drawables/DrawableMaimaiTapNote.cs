@@ -93,8 +93,8 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             moveTo = AnimationDuration.Value;
             idle = 3500 - fadeIn - moveTo;
             base.UpdateInitialTransforms();
-            CirclePiece.ScaleTo(0f, idle).Then().FadeInFromZero(fadeIn).ScaleTo(1f, fadeIn).Then().MoveTo(HitObject.endPosition, moveTo);
-            HitObjectLine.FadeTo(0, idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(600, moveTo)));
+            CirclePiece.Delay(idle).FadeInFromZero(fadeIn).ScaleTo(1f, fadeIn).Then().MoveTo(HitObject.endPosition, moveTo);
+            HitObjectLine.Delay(idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(600, moveTo)));
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
