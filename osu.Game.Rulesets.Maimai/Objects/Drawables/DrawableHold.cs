@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Allocation;
@@ -54,7 +54,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 note = new Container
                 {
                     Scale = Vector2.Zero,
-                    Position = new Vector2(0,- 26),
+                    Position = new Vector2(0, -26),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.BottomCentre,
                     Size = new Vector2(80),
@@ -62,13 +62,38 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     CornerRadius = 40,
                     Alpha = 0,
                     Masking = true,
-                    BorderThickness = 15f,
-                    BorderColour = Color4.Crimson,
-                    Child = new Box
+                    Children = new Drawable[]
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0,
-                        AlwaysPresent = true,
+                        new Container
+                        {
+                            CornerExponent = 2f,
+                            CornerRadius = 40,
+                            RelativeSizeAxes = Axes.Both,
+                            BorderThickness = 15f,
+                            BorderColour = Color4.Crimson,
+                            Masking = true,
+                            Child = new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Alpha = 0,
+                                AlwaysPresent = true
+                            }
+                        },
+                        new Container
+                        {
+                            CornerExponent = 2f,
+                            CornerRadius = 40,
+                            RelativeSizeAxes = Axes.Both,
+                            BorderThickness = 3,
+                            BorderColour = Color4.Black,
+                            Masking = true,
+                            Child = new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Alpha = 0,
+                                AlwaysPresent = true
+                            }
+                        },
                     }
                 },
                 explode = new ExplodePiece
