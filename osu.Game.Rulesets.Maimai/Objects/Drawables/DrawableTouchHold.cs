@@ -122,7 +122,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
             ApplyResult(r =>
             {
-                if (result >= 9)
+                if (result >= .9)
                     r.Type = HitResult.Perfect;
                 else if (result >= .8)
                     r.Type = HitResult.Great;
