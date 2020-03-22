@@ -5,12 +5,12 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Maimai.Configuration;
-using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Maimai.Objects.Drawables;
 using osu.Game.Rulesets.Maimai.UI.Components;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -71,6 +71,23 @@ namespace osu.Game.Rulesets.Maimai.UI
             var obj = (DrawableMaimaiHitObject)h;
 
             obj.OnNewResult += onNewResult;
+            obj.CheckValidation = checkValidation;
+        }
+
+        private bool checkValidation(DrawableMaimaiHitObject hitObject)
+        {
+            var lastObject = HitObjectContainer.AliveObjects.GetPrevious(hitObject);
+
+            // If there is no previous object alive, allow the hit.
+            if (lastObject == null)
+                return true;
+
+            // Ensure that either the last object has received a judgement or the hit time occurs at or after the last object's start time.
+            // Simultaneous hitobjects are allowed to be hit at the same time value to account for edge-cases such as Centipede.
+            if (lastObject.Judged)
+                return true;
+
+            return false;
         }
 
         private void onNewResult(DrawableHitObject judgedObject, JudgementResult result)

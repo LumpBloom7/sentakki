@@ -110,7 +110,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             }
 
             var result = HitObject.HitWindows.ResultFor(timeOffset);
-            if (result == HitResult.None)
+            if (result == HitResult.None || CheckValidation?.Invoke(this) == false)
             {
                 return;
             }

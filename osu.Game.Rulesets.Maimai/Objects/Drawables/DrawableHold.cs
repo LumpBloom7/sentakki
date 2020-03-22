@@ -229,13 +229,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
             }
-
-            public void OnPressed(MaimaiAction action)
-            {
-            }
-            public void OnReleased(MaimaiAction action)
-            {
-            }
         }
     }
 }
