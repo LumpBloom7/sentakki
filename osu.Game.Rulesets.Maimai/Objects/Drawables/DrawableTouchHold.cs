@@ -18,10 +18,10 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
-    public class DrawableMaimaiTouchHold : DrawableMaimaiHitObject
+    public class DrawableTouchHold : DrawableMaimaiHitObject
     {
         private readonly CircularProgress progress;
-        private readonly TouchHoldCirclePiece circle;
+        private readonly TouchHoldCircle circle;
         private readonly CircularContainer ring;
         private readonly SpriteText text;
         private readonly FlashPiece flash;
@@ -35,7 +35,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
         protected override double InitialLifetimeOffset => 500;
 
-        public DrawableMaimaiTouchHold(MaimaiTouchHold hitObject)
+        public DrawableTouchHold(TouchHold hitObject)
             : base(hitObject)
         {
             AccentColour.Value = Color4.HotPink;
@@ -80,7 +80,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                         Current = { Value = 0 },
                     }
                 },
-                circle = new TouchHoldCirclePiece
+                circle = new TouchHoldCircle
                 {
                     Colour = AccentColour.Value,
                     Size = new Vector2(102),
@@ -105,7 +105,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             this.FadeTo(.5f, 500).ScaleTo(.8f, 500);
-            progress.Delay(500).FillTo(1f, (HitObject as MaimaiTouchHold).Duration);
+            progress.Delay(500).FillTo(1f, (HitObject as TouchHold).Duration);
         }
 
         private double potential = 0;

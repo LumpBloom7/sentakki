@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
             switch (original)
             {
                 case IHasCurve curveData:
-                    return new MaimaiHold
+                    return new Hold
                     {
                         NoteColor = Color4.Crimson,
                         Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
@@ -48,14 +48,14 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
                     }.Yield();
 
                 case IHasEndTime endTimeData:
-                    return new MaimaiTouchHold
+                    return new TouchHold
                     {
                         Position = Vector2.Zero,
                         StartTime = original.StartTime,
                         EndTime = endTimeData.EndTime,
                     }.Yield();
                 default:
-                    return new MaimaiHitObject
+                    return new Tap
                     {
                         NoteColor = Color4.Orange,
                         Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),

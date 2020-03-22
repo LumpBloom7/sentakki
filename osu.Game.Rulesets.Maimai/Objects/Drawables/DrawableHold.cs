@@ -20,7 +20,7 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
-    public class DrawableMaimaiHoldNote : DrawableMaimaiHitObject
+    public class DrawableHold : DrawableMaimaiHitObject
     {
         //private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
@@ -29,7 +29,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         public readonly CircularProgress HitObjectLine;
         protected override double InitialLifetimeOffset => 3500;
 
-        public DrawableMaimaiHoldNote(MaimaiHold hitObject)
+        public DrawableHold(Hold hitObject)
             : base(hitObject)
         {
             Size = new Vector2(80);
@@ -107,7 +107,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             idle = 3500 - fadeIn - moveTo;
 
             float originalHeight = 40;
-            float length = Convert.ToSingle((MaimaiPlayfield.IntersectDistance - 66) / AnimationDuration.Value * ((HitObject as MaimaiHold).EndTime - HitObject.StartTime));
+            float length = Convert.ToSingle((MaimaiPlayfield.IntersectDistance - 66) / AnimationDuration.Value * ((HitObject as Hold).EndTime - HitObject.StartTime));
             double extendTime = (length / (MaimaiPlayfield.IntersectDistance - 66)) * AnimationDuration.Value;
 
             if (length >= (MaimaiPlayfield.IntersectDistance - 66))
@@ -116,7 +116,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 .ScaleTo(1f, fadeIn)
                 .Then()
                 .ResizeHeightTo(MaimaiPlayfield.IntersectDistance - 66 + 80, moveTo)
-                .Delay((HitObject as MaimaiHold).EndTime - HitObject.StartTime)
+                .Delay((HitObject as Hold).EndTime - HitObject.StartTime)
                 .ResizeHeightTo(80, moveTo)
                 .MoveToY(-(MaimaiPlayfield.IntersectDistance - 40), moveTo);
             else

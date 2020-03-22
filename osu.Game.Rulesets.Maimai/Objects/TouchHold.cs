@@ -8,7 +8,7 @@ using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Maimai.Objects
 {
-    public class MaimaiTouchHold : MaimaiHitObject, IHasEndTime
+    public class TouchHold : MaimaiHitObject, IHasEndTime
     {
         public double EndTime
         {

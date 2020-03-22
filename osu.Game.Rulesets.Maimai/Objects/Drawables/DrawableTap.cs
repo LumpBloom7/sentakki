@@ -19,10 +19,10 @@ using System.Diagnostics;
 
 namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
-    public class DrawableMaimaiTapNote : DrawableMaimaiHitObject
+    public class DrawableTap : DrawableMaimaiHitObject
     {
         public readonly HitReceptor HitArea;
-        public readonly MainCirclePiece CirclePiece;
+        public readonly TapCircle CirclePiece;
         public readonly CircularProgress HitObjectLine;
 
         private Bindable<Color4> accentColor;
@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
         protected override double InitialLifetimeOffset => 3500;
 
-        public DrawableMaimaiTapNote(MaimaiHitObject hitObject)
+        public DrawableTap(MaimaiHitObject hitObject)
             : base(hitObject)
         {
             accentColor = new Bindable<Color4>(hitObject.NoteColor);
@@ -57,7 +57,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     Current = new Bindable<double>(0.25),
                     Alpha = 0f,
                 },
-                CirclePiece = new MainCirclePiece()
+                CirclePiece = new TapCircle()
                 {
                     Scale = new Vector2(0f),
                     Rotation = hitObject.Angle,

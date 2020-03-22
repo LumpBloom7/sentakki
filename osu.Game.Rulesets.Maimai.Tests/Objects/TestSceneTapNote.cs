@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Maimai.Tests.Objects
     {
         public override IReadOnlyList<Type> RequiredTypes => new[]
         {
-            typeof(DrawableMaimaiTapNote)
+            typeof(DrawableTap)
         };
 
         private readonly Container content;
@@ -40,7 +40,7 @@ namespace osu.Game.Rulesets.Maimai.Tests.Objects
 
         private void testSingle(bool auto = false)
         {
-            var circle = new MaimaiHitObject
+            var circle = new Tap
             {
                 StartTime = Time.Current + 1000,
                 Position = new Vector2(0, -66f),
@@ -56,18 +56,18 @@ namespace osu.Game.Rulesets.Maimai.Tests.Objects
             Add(drawable);
         }
 
-        protected virtual TestDrawableTapNote CreateDrawableTapNote(MaimaiHitObject circle, bool auto) => new TestDrawableTapNote(circle, auto)
+        protected virtual TestDrawableTapNote CreateDrawableTapNote(Tap circle, bool auto) => new TestDrawableTapNote(circle, auto)
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Depth = depthIndex++,
         };
 
-        protected class TestDrawableTapNote : DrawableMaimaiTapNote
+        protected class TestDrawableTapNote : DrawableTap
         {
             private readonly bool auto;
 
-            public TestDrawableTapNote(MaimaiHitObject h, bool auto)
+            public TestDrawableTapNote(Tap h, bool auto)
                 : base(h)
             {
                 this.auto = auto;

@@ -8,10 +8,8 @@ using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Maimai.Objects
 {
-    public class MaimaiHold : MaimaiHitObject, IHasHold
+    public class Hold : MaimaiHitObject, IHasHold
     {
         public double EndTime { get; set; }
-
-        protected override HitWindows CreateHitWindows() => HitWindows.Empty;
     }
 }

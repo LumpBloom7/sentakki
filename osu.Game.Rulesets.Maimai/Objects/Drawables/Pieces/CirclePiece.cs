@@ -13,6 +13,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
         {
             RelativeSizeAxes = Axes.Both;
             Size = new Vector2(1f);
+            Masking = true;
             Children = new Drawable[]
             {
                 InnerCircle = new CircularContainer

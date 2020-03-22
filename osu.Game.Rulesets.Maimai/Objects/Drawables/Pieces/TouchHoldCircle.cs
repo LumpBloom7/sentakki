@@ -10,9 +10,9 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
 {
-    public class TouchHoldCirclePiece : CircularContainer
+    public class TouchHoldCircle : CircularContainer
     {
-        public TouchHoldCirclePiece()
+        public TouchHoldCircle()
         {
             RelativeSizeAxes = Axes.Both;
             Size = Vector2.One;

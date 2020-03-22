@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Maimai.Tests.Objects
     {
         public override IReadOnlyList<Type> RequiredTypes => new[]
         {
-            typeof(DrawableMaimaiTouchHold)
+            typeof(DrawableTouchHold)
         };
 
         private readonly Container content;
@@ -40,7 +40,7 @@ namespace osu.Game.Rulesets.Maimai.Tests.Objects
 
         private void testSingle(bool auto = false)
         {
-            var circle = new MaimaiTouchHold
+            var circle = new TouchHold
             {
                 StartTime = Time.Current + 1000,
                 Duration = 5000,
@@ -54,16 +54,16 @@ namespace osu.Game.Rulesets.Maimai.Tests.Objects
             Add(drawable);
         }
 
-        protected virtual TestDrawableTouchHoldNote CreateDrawableTouchHoldNote(MaimaiTouchHold circle, bool auto) => new TestDrawableTouchHoldNote(circle, auto)
+        protected virtual TestDrawableTouchHoldNote CreateDrawableTouchHoldNote(TouchHold circle, bool auto) => new TestDrawableTouchHoldNote(circle, auto)
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Depth = depthIndex++,
         };
 
-        protected class TestDrawableTouchHoldNote : DrawableMaimaiTouchHold
+        protected class TestDrawableTouchHoldNote : DrawableTouchHold
         {
-            public TestDrawableTouchHoldNote(MaimaiTouchHold h, bool auto)
+            public TestDrawableTouchHoldNote(TouchHold h, bool auto)
                 : base(h)
             {
                 this.Auto = auto;

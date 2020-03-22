@@ -42,7 +42,7 @@ namespace osu.Game.Rulesets.Maimai.Replays
 
                 switch (hitObject)
                 {
-                    case MaimaiTouchHold th:
+                    case TouchHold th:
                         currentFrame = new MaimaiReplayFrame
                         {
                             Time = hitObject.StartTime,
@@ -59,7 +59,7 @@ namespace osu.Game.Rulesets.Maimai.Replays
                             Position = new Vector2(300),
                         };
                         break;
-                    case MaimaiHold h:
+                    case Hold h:
                         currentFrame = new MaimaiReplayFrame
                         {
                             Time = hitObject.StartTime,

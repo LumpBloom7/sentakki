@@ -8,14 +8,14 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
 {
-    public class MainCirclePiece : CompositeDrawable
+    public class TapCircle : CompositeDrawable
     {
         private readonly CirclePiece circle;
         private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
         private readonly GlowPiece glow;
 
-        public MainCirclePiece()
+        public TapCircle()
         {
             Size = new Vector2(80);
 
@@ -37,7 +37,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
         [BackgroundDependencyLoader]
         private void load(DrawableHitObject drawableObject)
         {
-            MaimaiHitObject osuObject = (MaimaiHitObject)drawableObject.HitObject;
+            Tap osuObject = (Tap)drawableObject.HitObject;
 
             state.BindTo(drawableObject.State);
             state.BindValueChanged(updateState, true);

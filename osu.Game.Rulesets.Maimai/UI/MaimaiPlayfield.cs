@@ -85,7 +85,7 @@ namespace osu.Game.Rulesets.Maimai.UI
             DrawableMaimaiJudgement explosion;
             switch (judgedObject)
             {
-                case DrawableMaimaiTouchHold TH:
+                case DrawableTouchHold TH:
                     explosion = new DrawableMaimaiJudgement(result, maimaiObj)
                     {
                         Origin = Anchor.Centre,
