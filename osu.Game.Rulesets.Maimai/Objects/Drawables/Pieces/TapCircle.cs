@@ -47,7 +47,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
             {
                 explode.Colour = colour.NewValue;
                 glow.Colour = colour.NewValue;
-                circle.InnerCircle.BorderColour = colour.NewValue;
+                circle.BorderColour = colour.NewValue;
             }, true);
         }
 
