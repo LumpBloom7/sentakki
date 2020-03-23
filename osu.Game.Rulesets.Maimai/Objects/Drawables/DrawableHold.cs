@@ -27,6 +27,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         private readonly HitReceptor HitArea;
         private readonly Container note;
         public readonly CircularProgress HitObjectLine;
+        private readonly FlashPiece flash;
         protected override double InitialLifetimeOffset => 3500;
 
         public DrawableHold(Hold hitObject)
@@ -88,22 +89,11 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                                 AlwaysPresent = true
                             }
                         },
-                        //new Container
-                        //{
-                        //    CornerExponent = 2f,
-                        //    CornerRadius = 40,
-                        //    RelativeSizeAxes = Axes.Both,
-                        //    BorderThickness = 3,
-                        //    BorderColour = Color4.Black,
-                        //    Masking = true,
-                        //    Child = new Box
-                        //    {
-                        //        RelativeSizeAxes = Axes.Both,
-                        //        Alpha = 0,
-                        //        AlwaysPresent = true
-                        //    }
-                        //},
                     }
+                },
+                flash = new FlashPiece
+                {
+                    Position = new Vector2(0,-MaimaiPlayfield.IntersectDistance),
                 },
                 explode = new ExplodePiece
                 {
@@ -141,7 +131,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             idle = 3500 - fadeIn - moveTo;
 
             float originalHeight = 40;
-            float length = Convert.ToSingle((MaimaiPlayfield.IntersectDistance - 66) / AnimationDuration.Value * ((HitObject as Hold).EndTime - HitObject.StartTime));
+            float length = Convert.ToSingle((MaimaiPlayfield.IntersectDistance - 66) / AnimationDuration.Value * ((HitObject as IHasEndTime).Duration));
             double extendTime = (length / (MaimaiPlayfield.IntersectDistance - 66)) * AnimationDuration.Value;
 
             if (length >= (MaimaiPlayfield.IntersectDistance - 66))
@@ -150,7 +140,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 .ScaleTo(1f, fadeIn)
                 .Then()
                 .ResizeHeightTo(MaimaiPlayfield.IntersectDistance - 66 + 80, moveTo)
-                .Delay((HitObject as Hold).EndTime - HitObject.StartTime)
+                .Delay((HitObject as IHasEndTime).Duration)
                 .ResizeHeightTo(80, moveTo)
                 .MoveToY(-(MaimaiPlayfield.IntersectDistance - 40), moveTo);
             else
@@ -174,7 +164,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         {
             if (Time.Current < HitObject.StartTime) return;
 
-            if (userTriggered || Time.Current < (HitObject as IHasHold)?.EndTime)
+            if (userTriggered || Time.Current < (HitObject as IHasEndTime).EndTime)
                 return;
 
             double result = held / potential;
@@ -189,7 +179,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     r.Type = HitResult.Good;
                 else if (result >= .2)
                     r.Type = HitResult.Ok;
-                else if (Time.Current >= (HitObject as IHasHold)?.EndTime)
+                else if (Time.Current >= (HitObject as IHasEndTime).EndTime)
                     r.Type = HitResult.Miss;
             });
         }
@@ -197,7 +187,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         public bool Auto = false;
         protected override void Update()
         {
-            if (Time.Current >= HitObject.StartTime && Time.Current <= (HitObject as IHasHold)?.EndTime)
+            if (Time.Current >= HitObject.StartTime && Time.Current <= (HitObject as IHasEndTime).EndTime)
             {
                 potential++;
                 if (HitArea.IsDown() || Auto)
@@ -225,13 +215,25 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     const double flash_in = 40;
                     const double flash_out = 100;
 
-                    explode.Delay((HitObject as IHasHold).EndTime - HitObject.StartTime).FadeIn(flash_in).ScaleTo(1.5f, 400, Easing.OutQuad);
-                    note.Delay((HitObject as IHasHold).EndTime - HitObject.StartTime).FadeOut();
-                    HitObjectLine.Delay((HitObject as IHasHold).EndTime - HitObject.StartTime).FadeOut();
-                    this.Delay((HitObject as IHasHold).EndTime - HitObject.StartTime).FadeOut(800).Expire();
+                    using (BeginDelayedSequence((HitObject as IHasEndTime).Duration, true))
+                    {
+                        flash.FadeTo(0.8f, flash_in)
+                             .Then()
+                             .FadeOut(flash_out);
+
+                        explode.FadeIn(flash_in).ScaleTo(1.5f, 400, Easing.OutQuad);
+                        HitObjectLine.FadeOut();
+
+                        using (BeginDelayedSequence(flash_in, true))
+                        {
+                            //after the flash, we can hide some elements that were behind it
+                            note.FadeOut();
+                            this.FadeOut(800);
+                        }
+                    }
                     break;
                 case ArmedState.Miss:
-                    var sequence = note.Delay((HitObject as IHasHold).EndTime - HitObject.StartTime);
+                    var sequence = note.Delay((HitObject as IHasEndTime).Duration);
 
                     sequence.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
@@ -239,8 +241,8 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                        .FadeOut(time_fade_miss);
 
                     sequence.FadeOut(time_fade_miss);
-                    HitObjectLine.Delay((HitObject as IHasHold).EndTime - HitObject.StartTime).FadeOut();
-                    this.Delay((HitObject as IHasHold).EndTime - HitObject.StartTime).ScaleTo(1f, time_fade_miss).Expire();
+                    HitObjectLine.Delay((HitObject as IHasEndTime).Duration).FadeOut();
+                    this.Delay((HitObject as IHasEndTime).Duration).ScaleTo(1f, time_fade_miss).Expire();
                     break;
             }
         }

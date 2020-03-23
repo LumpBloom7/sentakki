@@ -8,8 +8,14 @@ using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Maimai.Objects
 {
-    public class Hold : MaimaiHitObject, IHasHold
+    public class Hold : MaimaiHitObject, IHasEndTime
     {
-        public double EndTime { get; set; }
+        public double EndTime
+        {
+            get => StartTime + Duration;
+            set => Duration = value - StartTime;
+        }
+
+        public double Duration { get; set; }
     }
 }
