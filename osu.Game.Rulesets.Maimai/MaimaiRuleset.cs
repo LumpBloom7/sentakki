@@ -44,6 +44,7 @@ namespace osu.Game.Rulesets.Maimai
                 case ModType.DifficultyReduction:
                     return new Mod[]
                     {
+                        new MultiMod(new MaimaiModHalfTime(), new MaimaiModDaycore()),
                         new MaimaiModNoFail(),
                     };
                 case ModType.DifficultyIncrease:
