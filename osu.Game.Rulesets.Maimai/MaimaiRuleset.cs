@@ -41,6 +41,11 @@ namespace osu.Game.Rulesets.Maimai
         {
             switch (type)
             {
+                case ModType.DifficultyReduction:
+                    return new Mod[]
+                    {
+                        new MaimaiModNoFail(),
+                    };
                 case ModType.DifficultyIncrease:
                     return new Mod[]
                     {
