@@ -52,15 +52,13 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     Current = new Bindable<double>(0.25),
                     Alpha = 0f,
                 },
-                note = new Container
+                note = new CircularContainer
                 {
                     Scale = Vector2.Zero,
                     Position = new Vector2(0, -26),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.BottomCentre,
                     Size = new Vector2(80),
-                    CornerExponent = 2f,
-                    CornerRadius = 40,
                     Alpha = 0,
                     Masking = true,
                     BorderThickness = 15,
@@ -71,13 +69,10 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                         {
                             RelativeSizeAxes = Axes.Both,
                             Alpha = 0,
-                            AlwaysPresent = true
+                            AlwaysPresent = true,
                         },
-                        new Container
+                        new CircularContainer
                         {
-
-                            CornerExponent = 2f,
-                            CornerRadius = 40,
                             RelativeSizeAxes = Axes.Both,
                             BorderThickness = 3f,
                             BorderColour = Color4.Black,
@@ -86,9 +81,9 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 Alpha = 0,
-                                AlwaysPresent = true
+                                AlwaysPresent = true,
                             }
-                        },
+                        }
                     }
                 },
                 flash = new FlashPiece
@@ -155,7 +150,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 .ResizeHeightTo(80, extendTime)
                 .MoveToY(-(MaimaiPlayfield.IntersectDistance - 40), extendTime);
 
-            HitObjectLine.Delay(idle).FadeTo(.75f, fadeIn).Then().ResizeTo(600, moveTo);
+            //HitObjectLine.Delay(idle).FadeTo(.75f, fadeIn).Then().ResizeTo(600, moveTo);
         }
 
         private double potential = 0;

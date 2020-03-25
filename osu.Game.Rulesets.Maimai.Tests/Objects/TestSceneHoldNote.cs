@@ -46,7 +46,6 @@ namespace osu.Game.Rulesets.Maimai.Tests.Objects
             AddStep("Hit Long", () => testSingle(1000, true));
             AddStep("Miss Very Long", () => testSingle(3000));
             AddStep("Hit Very Long", () => testSingle(3000, true));
-
         }
 
         private void testSingle(double duration, bool auto = false)
