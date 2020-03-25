@@ -41,6 +41,11 @@ namespace osu.Game.Rulesets.Maimai
         {
             switch (type)
             {
+                case ModType.DifficultyIncrease:
+                    return new Mod[]
+                    {
+                        new MultiMod(new MaimaiModDoubleTime(), new MaimaiModNightcore()),
+                    };
                 case ModType.Automation:
                     return new[] { new MaimaiModAutoplay() };
 
