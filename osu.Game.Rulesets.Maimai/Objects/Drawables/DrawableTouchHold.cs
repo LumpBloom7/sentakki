@@ -124,6 +124,11 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         {
             this.FadeTo(.5f, 500).ScaleTo(.8f, 500);
             progress.Delay(500).FillTo(1f, (HitObject as TouchHold).Duration);
+            if (isHidden)
+                using (BeginDelayedSequence(500))
+                {
+                    this.FadeOut(250);
+                }
         }
 
         private double potential = 0;
@@ -163,14 +168,13 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 if ((buttonHeld && IsHovered) || Auto)
                 {
                     held++;
-                    this.Alpha = 1f;
+                    this.FadeTo((isHidden) ? .2f : 1f, 100);
                     this.ScaleTo(1f, 100);
                     glow.FadeTo(1f, 100);
                 }
                 else
                 {
-                    this.Alpha = .5f;
-                    //this.Scale = new Vector2(.9f);
+                    this.FadeTo((isHidden) ? 0 : .5f, 100);
                     this.ScaleTo(.9f, 200);
                     glow.FadeTo(0f, 200);
                 }

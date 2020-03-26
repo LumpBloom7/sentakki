@@ -93,8 +93,14 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             moveTo = AnimationDuration.Value;
             idle = 3500 - fadeIn - moveTo;
             base.UpdateInitialTransforms();
+
             CirclePiece.Delay(idle).FadeInFromZero(fadeIn).ScaleTo(1f, fadeIn).Then().MoveTo(HitObject.endPosition, moveTo);
             HitObjectLine.Delay(idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(600, moveTo)));
+            if (isHidden)
+                using (BeginDelayedSequence(idle + fadeIn))
+                {
+                    this.FadeOut(moveTo / 2);
+                }
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)

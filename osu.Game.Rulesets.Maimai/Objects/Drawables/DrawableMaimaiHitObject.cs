@@ -21,6 +21,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
     public class DrawableMaimaiHitObject : DrawableHitObject<MaimaiHitObject>
     {
+        public bool isHidden = false;
         public Func<DrawableMaimaiHitObject, bool> CheckValidation;
 
         public MaimaiAction[] HitActions { get; set; } = new[]

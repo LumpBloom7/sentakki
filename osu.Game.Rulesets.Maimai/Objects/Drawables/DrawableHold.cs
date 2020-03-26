@@ -160,6 +160,11 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 .MoveToY(-(MaimaiPlayfield.IntersectDistance - 40), extendTime);
 
             HitObjectLine.Delay(idle).FadeTo(.75f, fadeIn).Then().ResizeTo(600, moveTo);
+            if (isHidden)
+                using (BeginDelayedSequence(idle + fadeIn))
+                {
+                    this.FadeOut(moveTo / 2);
+                }
         }
 
         private double potential = 0;
@@ -197,12 +202,12 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 if (HitArea.IsDown() || Auto)
                 {
                     held++;
-                    this.FadeTo(1f, 100);
+                    this.FadeTo(isHidden ? .2f : 1f, 100);
                     explode.FadeTo(1f, 100);
                 }
                 else
                 {
-                    this.FadeTo(.5f, 200);
+                    this.FadeTo(isHidden?0f:.5f, 200);
                     explode.FadeTo(0f, 200);
                 }
                 base.Update();

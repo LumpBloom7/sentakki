@@ -52,6 +52,7 @@ namespace osu.Game.Rulesets.Maimai
                     {
                         new MaimaiModSuddenDeath(),
                         new MultiMod(new MaimaiModDoubleTime(), new MaimaiModNightcore()),
+                        new MaimaiModHidden(),
                     };
                 case ModType.Automation:
                     return new[] { new MaimaiModAutoplay() };
