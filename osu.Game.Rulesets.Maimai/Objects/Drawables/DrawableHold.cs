@@ -52,7 +52,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     Current = new Bindable<double>(0.25),
                     Alpha = 0f,
                 },
-                note = new CircularContainer
+                note = new Container
                 {
                     Scale = Vector2.Zero,
                     Position = new Vector2(0, -26),
@@ -60,23 +60,32 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     Origin = Anchor.BottomCentre,
                     Size = new Vector2(80),
                     Alpha = 0,
-                    Masking = true,
-                    BorderThickness = 15,
-                    BorderColour = Color4.Crimson,
                     Children = new Drawable[]
                     {
-                        new Box
+                        new Container
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Alpha = 0,
-                            AlwaysPresent = true,
+                            Padding = new MarginPadding(1),
+                            Child = new CircularContainer
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Masking = true,
+                                BorderThickness = 15,
+                                BorderColour = Color4.Crimson,
+                                Child = new Box
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Alpha = 0,
+                                    AlwaysPresent = true,
+                                }
+                            }
                         },
                         new CircularContainer
                         {
                             RelativeSizeAxes = Axes.Both,
-                            BorderThickness = 3f,
-                            BorderColour = Color4.Black,
                             Masking = true,
+                            BorderThickness = 3,
+                            BorderColour = Color4.Black,
                             Child = new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
