@@ -2,14 +2,15 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
+using osu.Framework.Extensions;
 using osu.Framework.Graphics;
-using osu.Game.Configuration;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Textures;
+using osu.Game.Graphics;
+using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Maimai.Configuration;
-using osu.Game.Rulesets.UI;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -17,8 +18,8 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
     public class DrawableMaimaiJudgement : DrawableJudgement
     {
-        private SkinnableSprite lighting;
-        private Bindable<Color4> lightingColour;
+        [Resolved]
+        private OsuColour colours { get; set; }
 
         public DrawableMaimaiJudgement(JudgementResult result, DrawableMaimaiHitObject judgedObject)
             : base(result, judgedObject)
@@ -26,8 +27,23 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(MaimaiRulesetConfigManager settings)
+        private void load(TextureStore textures, MaimaiRulesetConfigManager settings)
         {
+            InternalChild = JudgementBody = new Container
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                RelativeSizeAxes = Axes.Both,
+                Child = JudgementText = new OsuSpriteText
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Text = Result.Type.GetDescription().ToUpperInvariant(),
+                    Font = OsuFont.Numeric.With(size: 20),
+                    Colour = colours.ForHitResult(Result.Type),
+                    Scale = new Vector2(0.85f, 1),
+                }
+            };
             if (settings != null && settings.Get<bool>(MaimaiRulesetSettings.MaimaiJudgements))
             {
                 switch (Result.Type)
@@ -50,41 +66,12 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                         break;
                 }
             }
-
-            if (Result.Type != HitResult.Miss)
-            {
-                AddInternal(lighting = new SkinnableSprite("lighting")
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Blending = BlendingParameters.Additive,
-                    Depth = float.MaxValue
-                });
-
-                if (JudgedObject != null)
-                {
-                    lightingColour = JudgedObject.AccentColour.GetBoundCopy();
-                    lightingColour.BindValueChanged(colour => lighting.Colour = colour.NewValue, true);
-                }
-                else
-                {
-                    lighting.Colour = Color4.White;
-                }
-            }
         }
 
-        protected override double FadeOutDelay => lighting == null ? base.FadeOutDelay : 1400;
+        protected override double FadeOutDelay => base.FadeOutDelay;
 
         protected override void ApplyHitAnimations()
         {
-            if (lighting != null)
-            {
-                JudgementBody.Delay(FadeInDuration).FadeOut(400);
-
-                lighting.ScaleTo(0.8f).ScaleTo(1.2f, 600, Easing.Out);
-                lighting.FadeIn(200).Then().Delay(200).FadeOut(1000);
-            }
-
             JudgementText?.TransformSpacingTo(new Vector2(14, 0), 1800, Easing.OutQuint);
             base.ApplyHitAnimations();
         }
