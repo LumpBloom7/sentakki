@@ -159,7 +159,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 .ResizeHeightTo(80, extendTime)
                 .MoveToY(-(MaimaiPlayfield.IntersectDistance - 40), extendTime);
 
-            //HitObjectLine.Delay(idle).FadeTo(.75f, fadeIn).Then().ResizeTo(600, moveTo);
+            HitObjectLine.Delay(idle).FadeTo(.75f, fadeIn).Then().ResizeTo(600, moveTo);
         }
 
         private double potential = 0;
