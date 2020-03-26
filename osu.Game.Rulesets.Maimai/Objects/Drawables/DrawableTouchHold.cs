@@ -27,6 +27,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
         private readonly GlowPiece glow;
+        private readonly CircularContainer outline;
 
         public override bool HandlePositionalInput => true;
 
@@ -50,46 +51,63 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     Alpha = 0f,
                     Colour = AccentColour.Value,
                 },
-                ring = new CircularContainer
+                new Container
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Size = Vector2.One,
-                    Masking = true,
-                    BorderColour = Color4.White,
-                    BorderThickness = 10,
-                    Child = new Box
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Padding = new MarginPadding(1),
+                    Children = new Drawable[]
                     {
-                        AlwaysPresent = true,
-                        Alpha = 0,
-                        RelativeSizeAxes = Axes.Both
+                        ring = new Circle
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Masking = true,
+                        },
+                        new CircularContainer
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Size = Vector2.One,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Masking = true,
+                            Child = progress = new CircularProgress
+                            {
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                                InnerRadius = 0.250f,
+                                Size = Vector2.One,
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = AccentColour.Value,
+                                Current = { Value = 0 },
+                            }
+                        },
                     }
                 },
-                new CircularContainer
+                outline = new CircularContainer
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Size = Vector2.One,
                     Masking = true,
-                    Child = progress = new CircularProgress
+                    BorderColour = Color4.Black,
+                    BorderThickness = 3,
+                    Child = new Box
                     {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        InnerRadius = 0.175f,
-                        Size = Vector2.One,
                         RelativeSizeAxes = Axes.Both,
-                        Colour = AccentColour.Value,
-                        Current = { Value = 0 },
+                        Alpha = 0,
+                        AlwaysPresent = true,
                     }
                 },
                 circle = new TouchHoldCircle
                 {
+
                     Colour = AccentColour.Value,
-                    Size = new Vector2(102),
-                    RelativeSizeAxes = Axes.None,
+                    Size = new Vector2(0.77f),
+                    RelativeSizeAxes = Axes.Both,
                 },
                 text = new SpriteText
                 {
                     Text = "HOLD!",
-                    Font = OsuFont.Torus.With(weight: FontWeight.Bold, size: 34),
+                    Font = OsuFont.Torus.With(weight: FontWeight.Bold, size: 32),
                     Colour = Color4.White,
                     ShadowColour = Color4.Black,
                     Anchor = Anchor.Centre,
@@ -179,6 +197,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
                     using (BeginDelayedSequence((HitObject as IHasEndTime).Duration + flash_in, true))
                     {
+                        outline.FadeOut();
                         progress.FadeOut();
                         text.FadeOut();
                         ring.FadeOut();
