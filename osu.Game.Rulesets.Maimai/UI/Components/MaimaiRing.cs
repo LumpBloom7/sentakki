@@ -22,7 +22,6 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
 
             InternalChildren = new Drawable[]
             {
-                new GlowPiece(),
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -87,31 +86,6 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                         RelativeSizeAxes = Axes.Both,
                     }
                 });
-        }
-        public class GlowPiece : Container
-        {
-            public GlowPiece()
-            {
-                Anchor = Anchor.Centre;
-                Origin = Anchor.Centre;
-                Size = new Vector2(MaimaiPlayfield.RingSize);
-                Colour = Color4.Pink;
-            }
-
-            [BackgroundDependencyLoader]
-            private void load(TextureStore textures)
-            {
-                Child = new Sprite
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Size = new Vector2(1.278f),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Texture = textures.Get("Gameplay/osu/ring-glow"),
-                    Blending = BlendingParameters.Additive,
-                    Alpha = 0.5f
-                };
-            }
         }
     }
 }
