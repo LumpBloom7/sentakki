@@ -27,6 +27,7 @@ namespace osu.Game.Rulesets.Maimai.UI
     {
         private JudgementContainer<DrawableMaimaiJudgement> judgementLayer;
 
+        private readonly MaimaiRing ring;
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
         public static readonly float RingSize = 600;
         public static readonly float DotSize = 20f;
@@ -59,7 +60,7 @@ namespace osu.Game.Rulesets.Maimai.UI
                 },
                 new VisualisationContainer(),
                 HitObjectContainer,
-                new MaimaiRing(),
+                ring = new MaimaiRing(),
             });
         }
         protected override GameplayCursorContainer CreateCursor() => new MaimaiCursorContainer();
@@ -119,6 +120,8 @@ namespace osu.Game.Rulesets.Maimai.UI
                     };
                     break;
             }
+            if (result.IsHit)
+                ring.flash();
             judgementLayer.Add(explosion);
         }
 
