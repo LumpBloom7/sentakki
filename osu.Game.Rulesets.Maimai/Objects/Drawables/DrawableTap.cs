@@ -150,7 +150,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                        .MoveToOffset(new Vector2(-(100 * (float)Math.Cos(d)), -(100 * (float)Math.Sin(d))), time_fade_hit, Easing.OutCubic)
                        .FadeOut(time_fade_miss);
 
-                    CirclePiece.FadeOut(time_fade_miss);
                     HitObjectLine.FadeOut();
                     this.ScaleTo(1f, time_fade_miss).Expire();
 

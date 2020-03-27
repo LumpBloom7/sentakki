@@ -23,16 +23,15 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
     public class DrawableHold : DrawableMaimaiHitObject
     {
         //private readonly FlashPiece flash;
-        private readonly ExplodePiece explode;
         private readonly HitReceptor HitArea;
-        private readonly Container note;
+        private readonly HoldBody note;
         public readonly CircularProgress HitObjectLine;
-        private readonly FlashPiece flash;
         protected override double InitialLifetimeOffset => 3500;
 
         public DrawableHold(Hold hitObject)
             : base(hitObject)
         {
+            AccentColour.Value = hitObject.NoteColor;
             Size = new Vector2(80);
             Position = Vector2.Zero;
             Anchor = Anchor.Centre;
@@ -52,64 +51,8 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     Current = new Bindable<double>(0.25),
                     Alpha = 0f,
                 },
-                note = new Container
-                {
-                    Scale = Vector2.Zero,
-                    Position = new Vector2(0, -26),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.BottomCentre,
-                    Size = new Vector2(80),
-                    Alpha = 0,
-                    Children = new Drawable[]
-                    {
-                        new Container
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding(1),
-                            Child = new CircularContainer
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Masking = true,
-                                BorderThickness = 15,
-                                BorderColour = Color4.Crimson,
-                                Child = new Box
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Alpha = 0,
-                                    AlwaysPresent = true,
-                                }
-                            }
-                        },
-                        new CircularContainer
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Masking = true,
-                            BorderThickness = 3,
-                            BorderColour = Color4.Black,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Alpha = 0,
-                                AlwaysPresent = true,
-                            }
-                        }
-                    }
-                },
-                flash = new FlashPiece
-                {
-                    Position = new Vector2(0,-MaimaiPlayfield.IntersectDistance),
-                },
-                explode = new ExplodePiece
-                {
-                    Position = new Vector2(0,-MaimaiPlayfield.IntersectDistance),
-                    Colour = Color4.Crimson,
-                    Child = new TrianglesPiece
-                    {
-                        Blending = BlendingParameters.Additive,
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0.5f,
-                        Velocity = 5f,
-                    }
+                note = new HoldBody{
+                    Duration = hitObject.Duration
                 },
                 HitArea = new HitReceptor
                 {
@@ -203,12 +146,12 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 {
                     held++;
                     this.FadeTo(isHidden ? .2f : 1f, 100);
-                    explode.FadeTo(1f, 100);
+                    //explode.FadeTo(1f, 100);
                 }
                 else
                 {
                     this.FadeTo(isHidden ? 0f : .5f, 200);
-                    explode.FadeTo(0f, 200);
+                    //explode.FadeTo(0f, 200);
                 }
                 base.Update();
             }
@@ -221,37 +164,29 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    const double flash_in = 40;
-                    const double flash_out = 100;
-
+                    HitObjectLine.FadeOut();
                     using (BeginDelayedSequence((HitObject as IHasEndTime).Duration, true))
                     {
-                        flash.FadeTo(0.8f, flash_in)
-                             .Then()
-                             .FadeOut(flash_out);
-
-                        explode.FadeIn(flash_in).ScaleTo(1.5f, 400, Easing.OutQuad);
-                        HitObjectLine.FadeOut();
-
-                        using (BeginDelayedSequence(flash_in, true))
-                        {
-                            //after the flash, we can hide some elements that were behind it
-                            note.FadeOut();
-                            this.FadeOut(800);
-                        }
+                        this.ScaleTo(1f, time_fade_hit);
                     }
                     break;
                 case ArmedState.Miss:
-                    var sequence = note.Delay((HitObject as IHasEndTime).Duration);
+                    var c = HitObject.Angle + 90;
+                    var d = c * (float)(Math.PI / 180);
 
-                    sequence.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
-                       .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
-                       .MoveToOffset(new Vector2(0, -100), time_fade_hit, Easing.OutCubic)
-                       .FadeOut(time_fade_miss);
+                    using (BeginDelayedSequence((HitObject as IHasEndTime).Duration, true))
+                    {
+                        note.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                            .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
+                            .MoveToOffset(new Vector2(-(100 * (float)Math.Cos(d)), -(100 * (float)Math.Sin(d))), time_fade_hit, Easing.OutCubic)
+                            .FadeOut(time_fade_miss);
 
-                    sequence.FadeOut(time_fade_miss);
-                    HitObjectLine.Delay((HitObject as IHasEndTime).Duration).FadeOut();
-                    this.Delay((HitObject as IHasEndTime).Duration).ScaleTo(1f, time_fade_miss).Expire();
+                        using (BeginDelayedSequence(time_fade_miss, true))
+                        {
+                            this.Expire();
+                        }
+                    }
+                    HitObjectLine.FadeOut();
                     break;
             }
         }
