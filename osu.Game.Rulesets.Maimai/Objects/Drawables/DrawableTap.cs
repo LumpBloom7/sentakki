@@ -95,7 +95,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             base.UpdateInitialTransforms();
 
             CirclePiece.Delay(idle).FadeInFromZero(fadeIn).ScaleTo(1f, fadeIn).Then().MoveTo(HitObject.endPosition, moveTo);
-            HitObjectLine.Delay(idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(600, moveTo)));
+            HitObjectLine.Delay(idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(593, moveTo)));
             if (isHidden)
                 using (BeginDelayedSequence(idle + fadeIn))
                 {

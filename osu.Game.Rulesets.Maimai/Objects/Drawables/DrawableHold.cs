@@ -159,7 +159,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 .ResizeHeightTo(80, extendTime)
                 .MoveToY(-(MaimaiPlayfield.IntersectDistance - 40), extendTime);
 
-            HitObjectLine.Delay(idle).FadeTo(.75f, fadeIn).Then().ResizeTo(600, moveTo);
+            HitObjectLine.Delay(idle).FadeTo(.75f, fadeIn).Then().ResizeTo(593, moveTo);
             if (isHidden)
                 using (BeginDelayedSequence(idle + fadeIn))
                 {
@@ -207,7 +207,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 }
                 else
                 {
-                    this.FadeTo(isHidden?0f:.5f, 200);
+                    this.FadeTo(isHidden ? 0f : .5f, 200);
                     explode.FadeTo(0f, 200);
                 }
                 base.Update();
