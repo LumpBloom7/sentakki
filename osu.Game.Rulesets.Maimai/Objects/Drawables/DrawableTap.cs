@@ -23,7 +23,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
     {
         public readonly HitReceptor HitArea;
         public readonly TapCircle CirclePiece;
-        public readonly CircularProgress HitObjectLine;
+        public readonly CircularContainer HitObjectLine;
 
         private Bindable<Color4> accentColor;
         double fadeIn = 500, moveTo, idle;
@@ -44,18 +44,9 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             AddRangeInternal(new Drawable[] {
-                HitObjectLine = new CircularProgress
+                HitObjectLine = new HitObjectLine
                 {
-                    Size = new Vector2(MaimaiPlayfield.NoteStartDistance*2),
-                    RelativePositionAxes = Axes.None,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Colour = HitObject.NoteColor,
-                    InnerRadius = .025f,
-                    RelativeSizeAxes = Axes.None,
-                    Rotation =  -45 +HitObject.Angle,
-                    Current = new Bindable<double>(0.25),
-                    Alpha = 0f,
+                    Rotation = HitObject.Angle,
                 },
                 CirclePiece = new TapCircle()
                 {
@@ -84,6 +75,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         private void load(MaimaiRulesetConfigManager settings)
         {
             settings?.BindWith(MaimaiRulesetSettings.AnimationDuration, AnimationDuration);
+            HitObjectLine.Child.Colour = HitObject.NoteColor;
         }
 
         protected override void UpdateInitialTransforms()
@@ -95,7 +87,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             base.UpdateInitialTransforms();
 
             CirclePiece.Delay(idle).FadeInFromZero(fadeIn).ScaleTo(1f, fadeIn).Then().MoveTo(HitObject.endPosition, moveTo);
-            HitObjectLine.Delay(idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(593, moveTo)));
+            HitObjectLine.Delay(idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(600, moveTo)));
             if (isHidden)
                 using (BeginDelayedSequence(idle + fadeIn))
                 {

@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         //private readonly FlashPiece flash;
         private readonly HitReceptor HitArea;
         private readonly HoldBody note;
-        public readonly CircularProgress HitObjectLine;
+        public readonly CircularContainer HitObjectLine;
         protected override double InitialLifetimeOffset => 3500;
 
         public DrawableHold(Hold hitObject)
@@ -38,19 +38,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             Origin = Anchor.Centre;
             Rotation = HitObject.Angle;
             AddRangeInternal(new Drawable[]{
-                HitObjectLine = new CircularProgress
-                {
-                    Size = new Vector2(MaimaiPlayfield.NoteStartDistance*2),
-                    RelativePositionAxes = Axes.None,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Colour = HitObject.NoteColor,
-                    InnerRadius = .025f,
-                    RelativeSizeAxes = Axes.None,
-                    Rotation =  -45,
-                    Current = new Bindable<double>(0.25),
-                    Alpha = 0f,
-                },
+                HitObjectLine = new HitObjectLine(),
                 note = new HoldBody{
                     Duration = hitObject.Duration
                 },
@@ -67,6 +55,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         private void load(MaimaiRulesetConfigManager settings)
         {
             settings?.BindWith(MaimaiRulesetSettings.AnimationDuration, AnimationDuration);
+            HitObjectLine.Child.Colour = HitObject.NoteColor;
         }
 
         double fadeIn = 500, moveTo, idle;
@@ -102,7 +91,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 .ResizeHeightTo(80, extendTime)
                 .MoveToY(-(MaimaiPlayfield.IntersectDistance - 40), extendTime);
 
-            HitObjectLine.Delay(idle).FadeTo(.75f, fadeIn).Then().ResizeTo(593, moveTo);
+            HitObjectLine.Delay(idle).FadeTo(.75f, fadeIn).Then().ResizeTo(600, moveTo);
             if (isHidden)
                 using (BeginDelayedSequence(idle + fadeIn))
                 {
@@ -178,7 +167,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     {
                         note.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                             .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
-                            .MoveToOffset(new Vector2(-(100 * (float)Math.Cos(d)), -(100 * (float)Math.Sin(d))), time_fade_hit, Easing.OutCubic)
+                            .MoveToOffset(new Vector2(0, -100), time_fade_hit, Easing.OutCubic)
                             .FadeOut(time_fade_miss);
 
                         using (BeginDelayedSequence(time_fade_miss, true))
