@@ -53,14 +53,14 @@ namespace osu.Game.Rulesets.Maimai.UI
             Size = new Vector2(600);
             AddRangeInternal(new Drawable[]
             {
+
+                new VisualisationContainer(),
+                ring = new MaimaiRing(),
+                HitObjectContainer,
                 judgementLayer = new JudgementContainer<DrawableMaimaiJudgement>
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Depth = 1,
                 },
-                new VisualisationContainer(),
-                HitObjectContainer,
-                ring = new MaimaiRing(),
             });
         }
         protected override GameplayCursorContainer CreateCursor() => new MaimaiCursorContainer();
