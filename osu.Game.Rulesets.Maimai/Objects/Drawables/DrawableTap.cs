@@ -25,7 +25,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         public readonly TapCircle CirclePiece;
         public readonly CircularContainer HitObjectLine;
 
-        private Bindable<Color4> accentColor;
         double fadeIn = 500, moveTo, idle;
 
         public MaimaiAction? HitAction => HitArea.HitAction;
@@ -35,8 +34,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         public DrawableTap(MaimaiHitObject hitObject)
             : base(hitObject)
         {
-            accentColor = new Bindable<Color4>(hitObject.NoteColor);
-            AccentColour.BindTo(accentColor);
+            AccentColour.Value = hitObject.NoteColor;
             RelativeSizeAxes = Axes.Both;
             CornerRadius = 120;
             CornerExponent = 2;
@@ -89,10 +87,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             CirclePiece.Delay(idle).FadeInFromZero(fadeIn).ScaleTo(1f, fadeIn).Then().MoveTo(HitObject.endPosition, moveTo);
             HitObjectLine.Delay(idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(600, moveTo)));
             if (isHidden)
-                using (BeginDelayedSequence(idle + fadeIn))
-                {
-                    this.FadeOut(moveTo / 2);
-                }
+                this.Delay(idle + fadeIn).FadeOut(moveTo / 2);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)

@@ -8,6 +8,7 @@ using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Maimai.Objects;
 using osu.Game.Rulesets.Maimai.Objects.Drawables;
+using osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Tests.Visual;
 using osuTK;
@@ -22,7 +23,8 @@ namespace osu.Game.Rulesets.Maimai.Tests.Objects
     {
         public override IReadOnlyList<Type> RequiredTypes => new[]
         {
-            typeof(DrawableTouchHold)
+            typeof(DrawableTouchHold),
+            typeof(TouchHoldCircle)
         };
 
         private readonly Container content;

@@ -22,7 +22,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
     public class DrawableHold : DrawableMaimaiHitObject
     {
-        //private readonly FlashPiece flash;
         private readonly HitReceptor HitArea;
         private readonly HoldBody note;
         public readonly CircularContainer HitObjectLine;
@@ -70,33 +69,29 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             float length = Convert.ToSingle((MaimaiPlayfield.IntersectDistance - 66) / AnimationDuration.Value * ((HitObject as IHasEndTime).Duration));
             double extendTime = (length / (MaimaiPlayfield.IntersectDistance - 66)) * AnimationDuration.Value;
 
-            if (length >= (MaimaiPlayfield.IntersectDistance - 66))
-                note.Delay(idle)
-                .FadeInFromZero(500)
-                .ScaleTo(1f, fadeIn)
-                .Then()
-                .ResizeHeightTo(MaimaiPlayfield.IntersectDistance - 66 + 80, moveTo)
-                .Delay((HitObject as IHasEndTime).Duration)
-                .ResizeHeightTo(80, moveTo)
-                .MoveToY(-(MaimaiPlayfield.IntersectDistance - 40), moveTo);
-            else
-                note.Delay(idle)
-                .FadeInFromZero(500)
-                .ScaleTo(1f, fadeIn)
-                .Then()
-                .ResizeHeightTo(length + 80, extendTime)
-                .Then()
-                .MoveToY(-(MaimaiPlayfield.IntersectDistance - length - 80 + 40), AnimationDuration.Value - extendTime)
-                .Then()
-                .ResizeHeightTo(80, extendTime)
-                .MoveToY(-(MaimaiPlayfield.IntersectDistance - 40), extendTime);
+            var seq = note.Delay(idle)
+                    .FadeInFromZero(500)
+                    .ScaleTo(1f, fadeIn)
+                    .Then();
+
+                if (length >= (MaimaiPlayfield.IntersectDistance - 66))
+                    seq.ResizeHeightTo(MaimaiPlayfield.IntersectDistance - 66 + 80, moveTo)
+                    .Delay((HitObject as IHasEndTime).Duration)
+                    .ResizeHeightTo(80, moveTo)
+                    .MoveToY(-(MaimaiPlayfield.IntersectDistance - 40), moveTo);
+                else
+                    seq.ResizeHeightTo(length + 80, extendTime)
+                    .Then()
+                    .MoveToY(-(MaimaiPlayfield.IntersectDistance - length - 80 + 40), AnimationDuration.Value - extendTime)
+                    .Then()
+                    .ResizeHeightTo(80, extendTime)
+                    .MoveToY(-(MaimaiPlayfield.IntersectDistance - 40), extendTime);
+
 
             HitObjectLine.Delay(idle).FadeTo(.75f, fadeIn).Then().ResizeTo(600, moveTo);
+
             if (isHidden)
-                using (BeginDelayedSequence(idle + fadeIn))
-                {
-                    this.FadeOut(moveTo / 2);
-                }
+                this.Delay(idle + fadeIn).FadeOut(moveTo / 2);
         }
 
         private double potential = 0;

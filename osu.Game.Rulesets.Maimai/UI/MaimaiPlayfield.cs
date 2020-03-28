@@ -53,7 +53,6 @@ namespace osu.Game.Rulesets.Maimai.UI
             Size = new Vector2(600);
             AddRangeInternal(new Drawable[]
             {
-
                 new VisualisationContainer(),
                 ring = new MaimaiRing(),
                 HitObjectContainer,

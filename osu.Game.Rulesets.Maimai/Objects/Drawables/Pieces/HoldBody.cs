@@ -78,7 +78,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
             accentColour.BindValueChanged(colour =>
             {
                 explode.Colour = colour.NewValue;
-                //glow.Colour = colour.NewValue;
                 note.BorderColour = colour.NewValue;
             }, true);
         }
@@ -99,7 +98,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
                     {
                         explode.FadeIn(flash_in);
                         this.ScaleTo(1.5f, 400, Easing.OutQuad);
-
 
                         using (BeginDelayedSequence(flash_in, true))
                         {
