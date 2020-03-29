@@ -6,6 +6,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Effects;
+using osu.Framework.Extensions.Color4Extensions;
 using osuTK;
 using osuTK.Graphics;
 using System;
@@ -97,8 +98,8 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             Masking = true,
-                            BorderThickness = 3,
-                            BorderColour = Color4.Black,
+                            BorderThickness = 2,
+                            BorderColour = Color4.White.Darken(1),
                             Children = new Drawable[]
                             {
                                 new Box
@@ -107,7 +108,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                                     Alpha = 0,
                                     AlwaysPresent = true,
                                 },
-                            }
+                            },
                         },
                     }
                 },
@@ -122,8 +123,8 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.None,
                     Masking = true,
-                    BorderColour = Color4.Black,
-                    BorderThickness = 3,
+                    BorderColour = Color4.White.Darken(1),
+                    BorderThickness = 2,
                     Position = new Vector2(-(MaimaiPlayfield.IntersectDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.IntersectDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
                     Child = new Box
                     {
