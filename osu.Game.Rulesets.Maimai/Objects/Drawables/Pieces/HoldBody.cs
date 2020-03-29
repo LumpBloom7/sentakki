@@ -3,6 +3,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Game.Rulesets.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
@@ -15,6 +16,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
         private readonly ExplodePiece explode;
         private readonly CircularContainer note;
         private readonly CircularContainer outline;
+        private readonly CircularContainer innerOutline;
 
         public double Duration = 0;
 
@@ -27,6 +29,18 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
             Size = new Vector2(80);
             InternalChildren = new Drawable[]
             {
+                innerOutline = new CircularContainer
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Masking = true,
+                    BorderThickness = 17.35f,
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Alpha = 0,
+                        AlwaysPresent = true,
+                    }
+                },
                 new Container
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -36,7 +50,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
                         RelativeSizeAxes = Axes.Both,
                         Masking = true,
                         BorderThickness = 15,
-                        BorderColour = Color4.Crimson,
                         Child = new Box
                         {
                             RelativeSizeAxes = Axes.Both,
@@ -49,8 +62,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
                 {
                     RelativeSizeAxes = Axes.Both,
                     Masking = true,
-                    BorderThickness = 3,
-                    BorderColour = Color4.Black,
+                    BorderThickness = 2,
                     Child = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
@@ -79,6 +91,8 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
             {
                 explode.Colour = colour.NewValue;
                 note.BorderColour = colour.NewValue;
+                outline.BorderColour = colour.NewValue.Darken(1);
+                innerOutline.BorderColour = colour.NewValue.Darken(1);
             }, true);
         }
 
