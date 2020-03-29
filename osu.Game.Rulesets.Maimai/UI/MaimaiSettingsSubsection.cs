@@ -35,12 +35,23 @@ namespace osu.Game.Rulesets.Maimai.UI
                     LabelText = "Show Visualizer",
                     Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.ShowVisualizer)
                 },
+                new SettingsCheckbox
+                {
+                    LabelText = "Show note start indicators",
+                    Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.ShowNoteStartIndicators)
+                },
                 new SettingsSlider<double>
                 {
                     LabelText = "Note entry animation duration",
-                    Bindable = config.GetBindable<double>(MaimaiRulesetSettings.AnimationDuration )
-                }
-                ,
+                    Bindable = config.GetBindable<double>(MaimaiRulesetSettings.AnimationDuration)
+                },
+                new SettingsSlider<float>
+                {
+                    LabelText = "Ring Opacity",
+                    Bindable = config.GetBindable<float>(MaimaiRulesetSettings.RingOpacity),
+                    KeyboardStep = 0.01f,
+                    DisplayAsPercentage = true
+                },
             };
         }
     }

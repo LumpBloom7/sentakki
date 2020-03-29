@@ -17,6 +17,8 @@ namespace osu.Game.Rulesets.Maimai.Configuration
             Set(MaimaiRulesetSettings.ShowVisualizer, true);
             Set(MaimaiRulesetSettings.AnimationDuration, 500, 50.0, 2000, 50.0);
             Set(MaimaiRulesetSettings.MaimaiJudgements, false);
+            Set(MaimaiRulesetSettings.ShowNoteStartIndicators, false);
+            Set(MaimaiRulesetSettings.RingOpacity, 1f, 0f, 1f, 0.01f);
         }
     }
 
@@ -25,5 +27,7 @@ namespace osu.Game.Rulesets.Maimai.Configuration
         ShowVisualizer,
         AnimationDuration,
         MaimaiJudgements,
+        RingOpacity,
+        ShowNoteStartIndicators,
     }
 }

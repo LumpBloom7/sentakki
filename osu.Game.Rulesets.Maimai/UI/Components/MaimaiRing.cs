@@ -2,11 +2,13 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Extensions.Color4Extensions;
+using osu.Game.Rulesets.Maimai.Configuration;
 using osuTK;
 using osuTK.Graphics;
 using System;
@@ -177,6 +179,22 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
 
             flash();
         }
+
+        Bindable<float> ringOpacity = new Bindable<float>(1);
+        Bindable<bool> noteStartIndicators = new Bindable<bool>(false);
+
+        [BackgroundDependencyLoader(true)]
+        private void load(MaimaiRulesetConfigManager settings)
+        {
+            settings?.BindWith(MaimaiRulesetSettings.RingOpacity, ringOpacity);
+            ringOpacity.BindValueChanged(opacity => this.Alpha = opacity.NewValue);
+            ringOpacity.TriggerChange();
+
+            settings?.BindWith(MaimaiRulesetSettings.ShowNoteStartIndicators, noteStartIndicators);
+            noteStartIndicators.BindValueChanged(opacity => spawnIndicator.Alpha = Convert.ToSingle(opacity.NewValue));
+            noteStartIndicators.TriggerChange();
+        }
+
 
         public void flash()
         {
