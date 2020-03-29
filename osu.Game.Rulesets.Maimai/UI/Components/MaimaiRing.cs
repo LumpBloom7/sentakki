@@ -16,6 +16,8 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
     public class MaimaiRing : CompositeDrawable
     {
         public readonly BufferedContainer hitBlur;
+        private readonly Container ring;
+        private readonly Container spawnIndicator;
         private readonly Container simpleRing = new Container
         {
             Anchor = Anchor.Centre,
@@ -67,7 +69,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     Colour = Color4.Fuchsia,
                     PadExtent = true,
                 }),
-                new Container
+                ring = new Container
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -129,11 +131,17 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                         },
                     }
                 },
+                spawnIndicator = new Container
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                }
+
             };
             // Add dots to the actual ring
             foreach (float pathAngle in MaimaiPlayfield.PathAngles)
             {
-                AddInternal(new CircularContainer
+                ring.Add(new CircularContainer
                 {
                     Size = new Vector2(MaimaiPlayfield.DotSize),
                     Anchor = Anchor.Centre,
@@ -147,6 +155,22 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     {
                         AlwaysPresent = true,
                         RelativeSizeAxes = Axes.Both,
+                    }
+                });
+
+                spawnIndicator.Add(new CircularContainer
+                {
+                    Size = new Vector2(16, 8),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Masking = true,
+                    BorderColour = Color4.White.Darken(1),
+                    BorderThickness = 2f,
+                    Rotation = pathAngle,
+                    Position = new Vector2(-(MaimaiPlayfield.NoteStartDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.NoteStartDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both
                     }
                 });
             }
