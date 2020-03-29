@@ -116,6 +116,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
                         using (BeginDelayedSequence(flash_in, true))
                         {
                             //after the flash, we can hide some elements that were behind it
+                            innerOutline.FadeOut();
                             note.FadeOut();
                             outline.FadeOut();
 
