@@ -75,6 +75,23 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     FillAspectRatio = 1,
                     FillMode = FillMode.Fit,
                     Children = new Drawable[]{
+                        new CircularContainer{
+                            RelativeSizeAxes = Axes.Both,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Masking = true,
+                            BorderThickness = 8.35f,
+                            BorderColour = Color4.White.Darken(1),
+                            Children = new Drawable[]
+                            {
+                                new Box
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Alpha = 0,
+                                    AlwaysPresent = true,
+                                },
+                            }
+                        },
                         new Container{
                             RelativeSizeAxes = Axes.Both,
                             Padding = new MarginPadding(1),
