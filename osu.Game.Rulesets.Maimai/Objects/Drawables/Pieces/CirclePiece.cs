@@ -61,7 +61,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
                         AlwaysPresent = true
                     }
                 },
-
             };
         }
     }

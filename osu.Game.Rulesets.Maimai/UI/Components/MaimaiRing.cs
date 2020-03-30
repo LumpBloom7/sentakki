@@ -121,14 +121,11 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                             Masking = true,
                             BorderThickness = 2,
                             BorderColour = Color4.White.Darken(1),
-                            Children = new Drawable[]
+                            Child = new Box
                             {
-                                new Box
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Alpha = 0,
-                                    AlwaysPresent = true,
-                                },
+                                RelativeSizeAxes = Axes.Both,
+                                Alpha = 0,
+                                AlwaysPresent = true,
                             },
                         },
                     }
@@ -176,7 +173,6 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     }
                 });
             }
-
             flash();
         }
 
@@ -194,7 +190,6 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
             noteStartIndicators.BindValueChanged(opacity => spawnIndicator.Alpha = Convert.ToSingle(opacity.NewValue));
             noteStartIndicators.TriggerChange();
         }
-
 
         public void flash()
         {
