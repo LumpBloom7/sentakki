@@ -135,8 +135,8 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                 }
-
             };
+
             // Add dots to the actual ring
             foreach (float pathAngle in MaimaiPlayfield.PathAngles)
             {
