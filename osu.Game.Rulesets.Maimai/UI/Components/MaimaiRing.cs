@@ -183,12 +183,10 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
         private void load(MaimaiRulesetConfigManager settings)
         {
             settings?.BindWith(MaimaiRulesetSettings.RingOpacity, ringOpacity);
-            ringOpacity.BindValueChanged(opacity => this.Alpha = opacity.NewValue);
-            ringOpacity.TriggerChange();
+            ringOpacity.BindValueChanged(opacity => this.Alpha = opacity.NewValue, true);
 
             settings?.BindWith(MaimaiRulesetSettings.ShowNoteStartIndicators, noteStartIndicators);
-            noteStartIndicators.BindValueChanged(opacity => spawnIndicator.Alpha = Convert.ToSingle(opacity.NewValue));
-            noteStartIndicators.TriggerChange();
+            noteStartIndicators.BindValueChanged(opacity => spawnIndicator.Alpha = Convert.ToSingle(opacity.NewValue), true);
         }
 
         public void flash()

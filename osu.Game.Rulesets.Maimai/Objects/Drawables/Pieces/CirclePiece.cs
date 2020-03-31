@@ -8,9 +8,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
 {
     class CirclePiece : CircularContainer
     {
-        public CircularContainer outline;
-        public CircularContainer innerOutline;
-        public CircularContainer coloredCircle;
         public CirclePiece()
         {
             RelativeSizeAxes = Axes.Both;
@@ -20,12 +17,12 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
 
             Children = new Drawable[]
             {
-                innerOutline = new CircularContainer
+                new CircularContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Masking = true,
                     BorderThickness = 16.35f,
-                    BorderColour = Color4.Black,
+                    BorderColour = Color4.Gray,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Child = new Box
@@ -35,7 +32,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
                         AlwaysPresent = true
                     }
                 },
-                coloredCircle = new CircularContainer
+                new CircularContainer
                 {
                     Masking = true,
                     BorderThickness = 15,
@@ -48,12 +45,12 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
                         AlwaysPresent = true
                     }
                 },
-                outline = new CircularContainer
+                new CircularContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Masking = true,
                     BorderThickness = 2,
-                    BorderColour = Color4.Black,
+                    BorderColour = Color4.Gray,
                     Child = new Box
                     {
                         RelativeSizeAxes = Axes.Both,

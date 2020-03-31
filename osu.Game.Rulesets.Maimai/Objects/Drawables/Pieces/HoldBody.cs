@@ -14,9 +14,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
     {
         private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
-        private readonly CircularContainer note;
-        private readonly CircularContainer outline;
-        private readonly CircularContainer innerOutline;
+        private readonly Container note;
 
         public double Duration = 0;
 
@@ -29,45 +27,55 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
             Size = new Vector2(80);
             InternalChildren = new Drawable[]
             {
-                innerOutline = new CircularContainer
+                note = new Container
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Masking = true,
-                    BorderThickness = 17.35f,
-                    Child = new Box
+                    RelativeSizeAxes=Axes.Both,
+                    Children = new Drawable[]
                     {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0,
-                        AlwaysPresent = true,
-                    }
-                },
-                new Container
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Padding = new MarginPadding(1),
-                    Child = note = new CircularContainer
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Masking = true,
-                        BorderThickness = 15,
-                        Child = new Box
+                        new CircularContainer
                         {
                             RelativeSizeAxes = Axes.Both,
-                            Alpha = 0,
-                            AlwaysPresent = true,
-                        }
-                    }
-                },
-                outline = new CircularContainer
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Masking = true,
-                    BorderThickness = 2,
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0,
-                        AlwaysPresent = true,
+                            Masking = true,
+                            BorderThickness = 17.35f,
+                            BorderColour = Color4.Gray,
+                            Child = new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Alpha = 0,
+                                AlwaysPresent = true,
+                            }
+                        },
+                        new Container
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Padding = new MarginPadding(1),
+                            Child = new CircularContainer
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Masking = true,
+                                BorderThickness = 15,
+                                BorderColour = Color4.White,
+                                Child = new Box
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Alpha = 0,
+                                    AlwaysPresent = true,
+                                }
+                            }
+                        },
+                        new CircularContainer
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Masking = true,
+                            BorderThickness = 2,
+                            BorderColour = Color4.Gray,
+                            Child = new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Alpha = 0,
+                                AlwaysPresent = true,
+                            }
+                        },
                     }
                 },
                 flash = new FlashPiece(),
@@ -90,9 +98,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
             accentColour.BindValueChanged(colour =>
             {
                 explode.Colour = colour.NewValue;
-                note.BorderColour = colour.NewValue;
-                outline.BorderColour = colour.NewValue.Darken(1);
-                innerOutline.BorderColour = colour.NewValue.Darken(1);
+                note.Colour = colour.NewValue;
             }, true);
         }
 
@@ -116,9 +122,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
                         using (BeginDelayedSequence(flash_in, true))
                         {
                             //after the flash, we can hide some elements that were behind it
-                            innerOutline.FadeOut();
                             note.FadeOut();
-                            outline.FadeOut();
 
                             this.FadeOut(800);
                         }
