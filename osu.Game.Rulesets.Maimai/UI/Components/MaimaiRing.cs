@@ -94,7 +94,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                             Origin = Anchor.Centre,
                             Masking = true,
                             BorderThickness = 8.35f,
-                            BorderColour = Color4.White.Darken(1),
+                            BorderColour = Color4.Gray,
                             Children = new Drawable[]
                             {
                                 new Box
@@ -129,7 +129,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                             Origin = Anchor.Centre,
                             Masking = true,
                             BorderThickness = 2,
-                            BorderColour = Color4.White.Darken(1),
+                            BorderColour = Color4.Gray,
                             Child = new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
@@ -146,42 +146,42 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                 }
             };
 
-            //// Add dots to the actual ring
-            //foreach (float pathAngle in MaimaiPlayfield.PathAngles)
-            //{
-            //    ring.Add(new CircularContainer
-            //    {
-            //        Size = new Vector2(MaimaiPlayfield.DotSize),
-            //        Anchor = Anchor.Centre,
-            //        Origin = Anchor.Centre,
-            //        RelativeSizeAxes = Axes.None,
-            //        Masking = true,
-            //        BorderColour = ringColor.Value.Darken(1),
-            //        BorderThickness = 2,
-            //        Position = new Vector2(-(MaimaiPlayfield.IntersectDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.IntersectDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
-            //        Child = new Box
-            //        {
-            //            AlwaysPresent = true,
-            //            RelativeSizeAxes = Axes.Both,
-            //        }
-            //    });
+            // Add dots to the actual ring
+            foreach (float pathAngle in MaimaiPlayfield.PathAngles)
+            {
+                ring.Add(new CircularContainer
+                {
+                    Size = new Vector2(MaimaiPlayfield.DotSize),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    RelativeSizeAxes = Axes.None,
+                    Masking = true,
+                    BorderColour = Color4.Gray,
+                    BorderThickness = 2,
+                    Position = new Vector2(-(MaimaiPlayfield.IntersectDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.IntersectDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
+                    Child = new Box
+                    {
+                        AlwaysPresent = true,
+                        RelativeSizeAxes = Axes.Both,
+                    }
+                });
 
-            //    spawnIndicator.Add(new CircularContainer
-            //    {
-            //        Size = new Vector2(16, 8),
-            //        Anchor = Anchor.Centre,
-            //        Origin = Anchor.Centre,
-            //        Masking = true,
-            //        BorderColour = ringColor.Value.Darken(1),
-            //        BorderThickness = 2f,
-            //        Rotation = pathAngle,
-            //        Position = new Vector2(-(MaimaiPlayfield.NoteStartDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.NoteStartDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
-            //        Child = new Box
-            //        {
-            //            RelativeSizeAxes = Axes.Both
-            //        }
-            //    });
-            //}
+                spawnIndicator.Add(new CircularContainer
+                {
+                    Size = new Vector2(16, 8),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Masking = true,
+                    BorderColour = Color4.Gray,
+                    BorderThickness = 2f,
+                    Rotation = pathAngle,
+                    Position = new Vector2(-(MaimaiPlayfield.NoteStartDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.NoteStartDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both
+                    }
+                });
+            }
             flash();
         }
 
@@ -199,60 +199,10 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
             noteStartIndicators.BindValueChanged(opacity => spawnIndicator.Alpha = Convert.ToSingle(opacity.NewValue));
             noteStartIndicators.TriggerChange();
 
-            Color4 ringColor;
-            Color4 outlineColor;
             if (difficultyRating is null)
                 difficultyRating = DifficultyRating.Easy;
 
-            ringColor = colours.ForDifficultyRating(difficultyRating.Value);
-            outlineColor = ringColor.Darken(1);
-            if (ringColor == colours.Gray0)
-                outlineColor = Color4.Gray;
-
-            hitBlur.Colour = ringColor == colours.Gray0 ? Color4.Gray : ringColor;
-            outline.BorderColour = outlineColor;
-            innerOutline.BorderColour = outlineColor;
-            ringFill.BorderColour = ringColor;
-
-            // Add dots to the actual ring
-            foreach (float pathAngle in MaimaiPlayfield.PathAngles)
-            {
-                ring.Add(new CircularContainer
-                {
-                    Size = new Vector2(MaimaiPlayfield.DotSize),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    RelativeSizeAxes = Axes.None,
-                    Masking = true,
-                    BorderColour = outlineColor,
-                    BorderThickness = 2,
-                    Position = new Vector2(-(MaimaiPlayfield.IntersectDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.IntersectDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = ringColor
-                    }
-                });
-
-                spawnIndicator.Add(new CircularContainer
-                {
-                    Size = new Vector2(16, 8),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Masking = true,
-                    BorderColour = outlineColor,
-                    BorderThickness = 2f,
-                    Rotation = pathAngle,
-                    Position = new Vector2(-(MaimaiPlayfield.NoteStartDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.NoteStartDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = ringColor
-                    }
-                });
-            }
-
-
+            this.Colour = colours.ForDifficultyRating(difficultyRating.Value, true);
         }
 
         public void flash()
