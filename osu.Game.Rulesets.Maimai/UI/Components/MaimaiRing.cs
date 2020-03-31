@@ -182,11 +182,11 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     }
                 });
             }
-            flash();
         }
 
         Bindable<float> ringOpacity = new Bindable<float>(1);
         Bindable<bool> noteStartIndicators = new Bindable<bool>(false);
+        Bindable<bool> diffBasedColor = new Bindable<bool>(false);
 
         [BackgroundDependencyLoader(true)]
         private void load(MaimaiRulesetConfigManager settings, OsuColour colours)
@@ -199,10 +199,21 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
             noteStartIndicators.BindValueChanged(opacity => spawnIndicator.Alpha = Convert.ToSingle(opacity.NewValue));
             noteStartIndicators.TriggerChange();
 
-            if (difficultyRating is null)
-                difficultyRating = DifficultyRating.Easy;
+            settings?.BindWith(MaimaiRulesetSettings.DiffBasedRingColor, diffBasedColor);
+            diffBasedColor.BindValueChanged(enabled =>
+            {
+                if (enabled.NewValue)
+                {
+                    if (difficultyRating is null)
+                        difficultyRating = DifficultyRating.Normal;
 
-            this.Colour = colours.ForDifficultyRating(difficultyRating.Value, true);
+                    this.Colour = colours.ForDifficultyRating(difficultyRating.Value, true);
+                }
+                else
+                {
+                    this.Colour = Color4.White;
+                }
+            }, true);
         }
 
         public void flash()

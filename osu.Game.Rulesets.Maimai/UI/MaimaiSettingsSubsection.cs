@@ -40,6 +40,11 @@ namespace osu.Game.Rulesets.Maimai.UI
                     LabelText = "Show note start indicators",
                     Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.ShowNoteStartIndicators)
                 },
+                new SettingsCheckbox
+                {
+                    LabelText = "Change ring color based on difficulty rating",
+                    Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.DiffBasedRingColor)
+                },
                 new SettingsSlider<double>
                 {
                     LabelText = "Note entry animation duration",
