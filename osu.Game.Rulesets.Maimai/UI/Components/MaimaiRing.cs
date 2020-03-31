@@ -12,11 +12,17 @@ using osu.Game.Rulesets.Maimai.Configuration;
 using osuTK;
 using osuTK.Graphics;
 using System;
+using osu.Game.Beatmaps;
+using osu.Game.Graphics;
 
 namespace osu.Game.Rulesets.Maimai.UI.Components
 {
     public class MaimaiRing : CompositeDrawable
     {
+        private readonly CircularContainer outline;
+        private readonly CircularContainer ringFill;
+        private readonly CircularContainer innerOutline;
+
         public readonly BufferedContainer hitBlur;
         private readonly Container ring;
         private readonly Container spawnIndicator;
@@ -45,8 +51,11 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
             },
         };
 
-        public MaimaiRing()
+        private DifficultyRating? difficultyRating;
+
+        public MaimaiRing(DifficultyRating? rating = null)
         {
+            difficultyRating = rating;
             // Add dots to the simple ring used for the blur
             foreach (float pathAngle in MaimaiPlayfield.PathAngles)
             {
@@ -68,7 +77,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                 hitBlur = simpleRing.WithEffect(new BlurEffect{
                     Sigma = new Vector2(5),
                     CacheDrawnEffect = true,
-                    Colour = Color4.Fuchsia,
+                    Colour = Color4.White,
                     PadExtent = true,
                 }),
                 ring = new Container
@@ -79,7 +88,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     FillAspectRatio = 1,
                     FillMode = FillMode.Fit,
                     Children = new Drawable[]{
-                        new CircularContainer{
+                        innerOutline = new CircularContainer{
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
@@ -99,7 +108,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                         new Container{
                             RelativeSizeAxes = Axes.Both,
                             Padding = new MarginPadding(1),
-                            Child = new CircularContainer{
+                            Child = ringFill = new CircularContainer{
                                 RelativeSizeAxes = Axes.Both,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
@@ -114,7 +123,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                                 },
                             },
                         },
-                        new CircularContainer{
+                        outline = new CircularContainer{
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
@@ -137,6 +146,74 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                 }
             };
 
+            //// Add dots to the actual ring
+            //foreach (float pathAngle in MaimaiPlayfield.PathAngles)
+            //{
+            //    ring.Add(new CircularContainer
+            //    {
+            //        Size = new Vector2(MaimaiPlayfield.DotSize),
+            //        Anchor = Anchor.Centre,
+            //        Origin = Anchor.Centre,
+            //        RelativeSizeAxes = Axes.None,
+            //        Masking = true,
+            //        BorderColour = ringColor.Value.Darken(1),
+            //        BorderThickness = 2,
+            //        Position = new Vector2(-(MaimaiPlayfield.IntersectDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.IntersectDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
+            //        Child = new Box
+            //        {
+            //            AlwaysPresent = true,
+            //            RelativeSizeAxes = Axes.Both,
+            //        }
+            //    });
+
+            //    spawnIndicator.Add(new CircularContainer
+            //    {
+            //        Size = new Vector2(16, 8),
+            //        Anchor = Anchor.Centre,
+            //        Origin = Anchor.Centre,
+            //        Masking = true,
+            //        BorderColour = ringColor.Value.Darken(1),
+            //        BorderThickness = 2f,
+            //        Rotation = pathAngle,
+            //        Position = new Vector2(-(MaimaiPlayfield.NoteStartDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.NoteStartDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
+            //        Child = new Box
+            //        {
+            //            RelativeSizeAxes = Axes.Both
+            //        }
+            //    });
+            //}
+            flash();
+        }
+
+        Bindable<float> ringOpacity = new Bindable<float>(1);
+        Bindable<bool> noteStartIndicators = new Bindable<bool>(false);
+
+        [BackgroundDependencyLoader(true)]
+        private void load(MaimaiRulesetConfigManager settings, OsuColour colours)
+        {
+            settings?.BindWith(MaimaiRulesetSettings.RingOpacity, ringOpacity);
+            ringOpacity.BindValueChanged(opacity => this.Alpha = opacity.NewValue);
+            ringOpacity.TriggerChange();
+
+            settings?.BindWith(MaimaiRulesetSettings.ShowNoteStartIndicators, noteStartIndicators);
+            noteStartIndicators.BindValueChanged(opacity => spawnIndicator.Alpha = Convert.ToSingle(opacity.NewValue));
+            noteStartIndicators.TriggerChange();
+
+            Color4 ringColor;
+            Color4 outlineColor;
+            if (difficultyRating is null)
+                difficultyRating = DifficultyRating.Easy;
+
+            ringColor = colours.ForDifficultyRating(difficultyRating.Value);
+            outlineColor = ringColor.Darken(1);
+            if (ringColor == colours.Gray0)
+                outlineColor = Color4.Gray;
+
+            hitBlur.Colour = ringColor == colours.Gray0 ? Color4.Gray : ringColor;
+            outline.BorderColour = outlineColor;
+            innerOutline.BorderColour = outlineColor;
+            ringFill.BorderColour = ringColor;
+
             // Add dots to the actual ring
             foreach (float pathAngle in MaimaiPlayfield.PathAngles)
             {
@@ -147,13 +224,13 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.None,
                     Masking = true,
-                    BorderColour = Color4.White.Darken(1),
+                    BorderColour = outlineColor,
                     BorderThickness = 2,
                     Position = new Vector2(-(MaimaiPlayfield.IntersectDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.IntersectDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
                     Child = new Box
                     {
-                        AlwaysPresent = true,
                         RelativeSizeAxes = Axes.Both,
+                        Colour = ringColor
                     }
                 });
 
@@ -163,32 +240,19 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Masking = true,
-                    BorderColour = Color4.White.Darken(1),
+                    BorderColour = outlineColor,
                     BorderThickness = 2f,
                     Rotation = pathAngle,
                     Position = new Vector2(-(MaimaiPlayfield.NoteStartDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.NoteStartDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
                     Child = new Box
                     {
-                        RelativeSizeAxes = Axes.Both
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = ringColor
                     }
                 });
             }
-            flash();
-        }
 
-        Bindable<float> ringOpacity = new Bindable<float>(1);
-        Bindable<bool> noteStartIndicators = new Bindable<bool>(false);
 
-        [BackgroundDependencyLoader(true)]
-        private void load(MaimaiRulesetConfigManager settings)
-        {
-            settings?.BindWith(MaimaiRulesetSettings.RingOpacity, ringOpacity);
-            ringOpacity.BindValueChanged(opacity => this.Alpha = opacity.NewValue);
-            ringOpacity.TriggerChange();
-
-            settings?.BindWith(MaimaiRulesetSettings.ShowNoteStartIndicators, noteStartIndicators);
-            noteStartIndicators.BindValueChanged(opacity => spawnIndicator.Alpha = Convert.ToSingle(opacity.NewValue));
-            noteStartIndicators.TriggerChange();
         }
 
         public void flash()

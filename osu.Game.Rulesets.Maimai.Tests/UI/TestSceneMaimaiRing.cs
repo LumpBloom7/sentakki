@@ -4,6 +4,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Game.Tests.Visual;
 using System;
 using System.Collections.Generic;
+using osu.Game.Beatmaps;
 
 namespace osu.Game.Rulesets.Maimai.Tests.UI
 {
