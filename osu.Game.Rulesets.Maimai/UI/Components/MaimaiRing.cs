@@ -200,7 +200,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
             noteStartIndicators.BindValueChanged(opacity => spawnIndicator.Alpha = Convert.ToSingle(opacity.NewValue));
             noteStartIndicators.TriggerChange();
 
-            settings.BindWith(MaimaiRulesetSettings.ShowHitFlash, showHitFlash);
+            settings?.BindWith(MaimaiRulesetSettings.ShowHitFlash, showHitFlash);
 
             settings?.BindWith(MaimaiRulesetSettings.DiffBasedRingColor, diffBasedColor);
             diffBasedColor.BindValueChanged(enabled =>
