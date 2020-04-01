@@ -28,7 +28,7 @@ namespace osu.Game.Rulesets.Maimai.UI
                 new SettingsCheckbox
                 {
                     LabelText = "Use Maimai style judgement text (In-game only)",
-                    Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.MaimaiJudgements)
+                    Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.MaimaiJudgements),
                 },
                 new SettingsCheckbox
                 {
@@ -39,6 +39,11 @@ namespace osu.Game.Rulesets.Maimai.UI
                 {
                     LabelText = "Show note start indicators",
                     Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.ShowNoteStartIndicators)
+                },
+                new SettingsCheckbox
+                {
+                    LabelText = "Flash ring on hit",
+                    Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.ShowHitFlash)
                 },
                 new SettingsSlider<double>
                 {

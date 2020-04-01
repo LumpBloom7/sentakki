@@ -120,7 +120,7 @@ namespace osu.Game.Rulesets.Maimai.UI
                     break;
             }
             if (result.IsHit)
-                ring.flash();
+                ring.Flash();
             judgementLayer.Add(explosion);
         }
 

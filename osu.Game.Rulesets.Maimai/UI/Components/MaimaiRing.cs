@@ -173,11 +173,12 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     }
                 });
             }
-            flash();
+            hitBlur.Alpha = 0; // Don't show hit flash at first.
         }
 
         Bindable<float> ringOpacity = new Bindable<float>(1);
         Bindable<bool> noteStartIndicators = new Bindable<bool>(false);
+        Bindable<bool> showHitFlash = new Bindable<bool>(true);
 
         [BackgroundDependencyLoader(true)]
         private void load(MaimaiRulesetConfigManager settings)
@@ -187,11 +188,14 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
 
             settings?.BindWith(MaimaiRulesetSettings.ShowNoteStartIndicators, noteStartIndicators);
             noteStartIndicators.BindValueChanged(opacity => spawnIndicator.Alpha = Convert.ToSingle(opacity.NewValue), true);
+
+            settings?.BindWith(MaimaiRulesetSettings.ShowHitFlash, showHitFlash);
         }
 
-        public void flash()
+        public void Flash()
         {
-            hitBlur.FadeIn(50).Then().FadeOut(200);
+            if (showHitFlash.Value)
+                hitBlur.FadeIn(50).Then().FadeOut(200);
         }
     }
 }

@@ -19,6 +19,7 @@ namespace osu.Game.Rulesets.Maimai.Configuration
             Set(MaimaiRulesetSettings.MaimaiJudgements, false);
             Set(MaimaiRulesetSettings.ShowNoteStartIndicators, false);
             Set(MaimaiRulesetSettings.RingOpacity, 1f, 0f, 1f, 0.01f);
+            Set(MaimaiRulesetSettings.ShowHitFlash, true);
         }
     }
 
@@ -29,5 +30,6 @@ namespace osu.Game.Rulesets.Maimai.Configuration
         MaimaiJudgements,
         RingOpacity,
         ShowNoteStartIndicators,
+        ShowHitFlash
     }
 }
