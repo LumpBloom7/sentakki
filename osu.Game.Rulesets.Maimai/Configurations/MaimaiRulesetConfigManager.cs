@@ -18,6 +18,7 @@ namespace osu.Game.Rulesets.Maimai.Configuration
             Set(MaimaiRulesetSettings.AnimationDuration, 500, 50.0, 2000, 50.0);
             Set(MaimaiRulesetSettings.MaimaiJudgements, false);
             Set(MaimaiRulesetSettings.ShowNoteStartIndicators, false);
+            Set(MaimaiRulesetSettings.DiffBasedRingColor, false);
             Set(MaimaiRulesetSettings.RingOpacity, 1f, 0f, 1f, 0.01f);
             Set(MaimaiRulesetSettings.ShowHitFlash, true);
         }
@@ -30,6 +31,7 @@ namespace osu.Game.Rulesets.Maimai.Configuration
         MaimaiJudgements,
         RingOpacity,
         ShowNoteStartIndicators,
-        ShowHitFlash
+        ShowHitFlash,
+        DiffBasedRingColor
     }
 }

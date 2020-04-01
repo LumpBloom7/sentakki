@@ -19,6 +19,7 @@ using osu.Game.Screens.Menu;
 using osuTK;
 using osuTK.Graphics;
 using System;
+using osu.Game.Beatmaps;
 
 namespace osu.Game.Rulesets.Maimai.UI
 {
@@ -45,7 +46,7 @@ namespace osu.Game.Rulesets.Maimai.UI
                 337.5f
             };
 
-        public MaimaiPlayfield()
+        public MaimaiPlayfield(DifficultyRating difficultyRating)
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
@@ -54,7 +55,7 @@ namespace osu.Game.Rulesets.Maimai.UI
             AddRangeInternal(new Drawable[]
             {
                 new VisualisationContainer(),
-                ring = new MaimaiRing(),
+                ring = new MaimaiRing(difficultyRating),
                 HitObjectContainer,
                 judgementLayer = new JudgementContainer<DrawableMaimaiJudgement>
                 {
