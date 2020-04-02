@@ -197,8 +197,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
             ringOpacity.BindValueChanged(opacity => this.Alpha = opacity.NewValue, true);
 
             settings?.BindWith(MaimaiRulesetSettings.ShowNoteStartIndicators, noteStartIndicators);
-            noteStartIndicators.BindValueChanged(opacity => spawnIndicator.Alpha = Convert.ToSingle(opacity.NewValue));
-            noteStartIndicators.TriggerChange();
+            noteStartIndicators.BindValueChanged(opacity => spawnIndicator.FadeTo(Convert.ToSingle(opacity.NewValue), 200));
 
             settings?.BindWith(MaimaiRulesetSettings.ShowHitFlash, showHitFlash);
 
@@ -210,13 +209,18 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     if (difficultyRating is null)
                         difficultyRating = DifficultyRating.Normal;
 
-                    this.Colour = colours.ForDifficultyRating(difficultyRating.Value, true);
+                    this.FadeColour(colours.ForDifficultyRating(difficultyRating.Value, true), 200);
                 }
                 else
                 {
-                    this.Colour = Color4.White;
+                    this.FadeColour(Color4.White, 200);
                 }
-            }, true);
+            });
+        }
+        protected override void LoadComplete()
+        {
+            noteStartIndicators.TriggerChange();
+            diffBasedColor.TriggerChange();
         }
 
         public void Flash()
