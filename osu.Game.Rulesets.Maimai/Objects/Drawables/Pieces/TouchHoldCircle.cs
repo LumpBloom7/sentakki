@@ -51,7 +51,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
                     Padding = new MarginPadding(1),
                     Masking = true,
                     BorderColour = Color4.Black,
-                    BorderThickness = 3,
+                    BorderThickness = 2,
                     Children = new Drawable[]
                     {
                         new Circle

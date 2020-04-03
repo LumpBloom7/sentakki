@@ -16,9 +16,11 @@ using osu.Game.Rulesets.Maimai.UI.Components;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Menu;
+using osu.Game.Graphics;
 using osuTK;
 using osuTK.Graphics;
 using System;
+using osu.Game.Beatmaps;
 
 namespace osu.Game.Rulesets.Maimai.UI
 {
@@ -45,7 +47,7 @@ namespace osu.Game.Rulesets.Maimai.UI
                 337.5f
             };
 
-        public MaimaiPlayfield()
+        public MaimaiPlayfield(DifficultyRating difficultyRating)
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
@@ -53,8 +55,10 @@ namespace osu.Game.Rulesets.Maimai.UI
             Size = new Vector2(600);
             AddRangeInternal(new Drawable[]
             {
-                new VisualisationContainer(),
-                ring = new MaimaiRing(),
+                new VisualisationContainer{
+                    DifficultyRating = difficultyRating
+                },
+                ring = new MaimaiRing(difficultyRating),
                 HitObjectContainer,
                 judgementLayer = new JudgementContainer<DrawableMaimaiJudgement>
                 {
@@ -120,7 +124,7 @@ namespace osu.Game.Rulesets.Maimai.UI
                     break;
             }
             if (result.IsHit)
-                ring.flash();
+                ring.Flash();
             judgementLayer.Add(explosion);
         }
 
@@ -130,9 +134,11 @@ namespace osu.Game.Rulesets.Maimai.UI
 
             private LogoVisualisation visualisation;
             private readonly Bindable<bool> showVisualisation = new Bindable<bool>(true);
+            private readonly Bindable<bool> diffBasedColor = new Bindable<bool>(false);
+            public DifficultyRating? DifficultyRating;
 
             [BackgroundDependencyLoader(true)]
-            private void load(MaimaiRulesetConfigManager settings)
+            private void load(MaimaiRulesetConfigManager settings, OsuColour colours)
             {
                 FillAspectRatio = 1;
                 FillMode = FillMode.Fit;
@@ -145,16 +151,23 @@ namespace osu.Game.Rulesets.Maimai.UI
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Colour = Color4.Pink.Darken(.8f),
                 };
                 settings?.BindWith(MaimaiRulesetSettings.ShowVisualizer, showVisualisation);
                 showVisualisation.TriggerChange();
+
+                settings?.BindWith(MaimaiRulesetSettings.DiffBasedRingColor, diffBasedColor);
+                diffBasedColor.BindValueChanged(enabled =>
+                {
+                    if (enabled.NewValue && DifficultyRating.HasValue)
+                        visualisation.FadeColour(colours.ForDifficultyRating(DifficultyRating.Value, true), 200);
+                    else
+                        visualisation.FadeColour(Color4.White, 200);
+                });
             }
 
             protected override void LoadComplete()
             {
-                base.LoadComplete();
-                visualisation.AccentColour = Color4.Pink.Darken(.8f);
+                diffBasedColor.TriggerChange();
             }
 
             protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, TrackAmplitudes amplitudes)

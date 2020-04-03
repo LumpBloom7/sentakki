@@ -2,6 +2,7 @@
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Game.Rulesets.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
@@ -47,7 +48,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
             {
                 explode.Colour = colour.NewValue;
                 glow.Colour = colour.NewValue;
-                circle.BorderColour = colour.NewValue;
+                circle.Colour = colour.NewValue;
             }, true);
         }
 

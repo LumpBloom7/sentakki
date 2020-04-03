@@ -12,31 +12,52 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
         {
             RelativeSizeAxes = Axes.Both;
             Size = new Vector2(1f);
-            Masking = true;
-            BorderThickness = 15;
-            BorderColour = Color4.White;
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
 
             Children = new Drawable[]
             {
-                new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha= 0,
-                    AlwaysPresent = true
-                },
                 new CircularContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Masking = true,
-                    BorderThickness = 3,
-                    BorderColour = Color4.Black,
+                    BorderThickness = 16.35f,
+                    BorderColour = Color4.Gray,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
                     Child = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
                         Alpha= 0,
                         AlwaysPresent = true
                     }
-                }
+                },
+                new CircularContainer
+                {
+                    Masking = true,
+                    BorderThickness = 15,
+                    RelativeSizeAxes = Axes.Both,
+                    BorderColour = Color4.White,
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Alpha= 0,
+                        AlwaysPresent = true
+                    }
+                },
+                new CircularContainer
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Masking = true,
+                    BorderThickness = 2,
+                    BorderColour = Color4.Gray,
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Alpha= 0,
+                        AlwaysPresent = true
+                    }
+                },
             };
         }
     }
