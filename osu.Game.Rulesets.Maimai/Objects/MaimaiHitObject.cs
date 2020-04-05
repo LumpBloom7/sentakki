@@ -10,7 +10,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Maimai.Objects
 {
-    public class MaimaiHitObject : HitObject
+    public abstract class MaimaiHitObject : HitObject
     {
         public override Judgement CreateJudgement() => new MaimaiJudgement();
 
