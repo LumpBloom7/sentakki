@@ -82,11 +82,13 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                 }),
                 ring = new Container
                 {
+                    Scale = Vector2.Zero,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Size = new Vector2(MaimaiPlayfield.RingSize),
                     FillAspectRatio = 1,
                     FillMode = FillMode.Fit,
+                    Alpha = 0,
                     Children = new Drawable[]{
                         innerOutline = new CircularContainer{
                             RelativeSizeAxes = Axes.Both,
@@ -143,6 +145,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
+                    Alpha = 0
                 }
             };
 
@@ -151,6 +154,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
             {
                 ring.Add(new CircularContainer
                 {
+
                     Size = new Vector2(MaimaiPlayfield.DotSize),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -185,8 +189,8 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
             hitBlur.Alpha = 0; // Don't show hit flash at first.
         }
 
-        Bindable<float> ringOpacity = new Bindable<float>(1);
-        Bindable<bool> noteStartIndicators = new Bindable<bool>(false);
+        public Bindable<float> ringOpacity = new Bindable<float>(1);
+        public Bindable<bool> noteStartIndicators = new Bindable<bool>(false);
         Bindable<bool> diffBasedColor = new Bindable<bool>(false);
         Bindable<bool> showHitFlash = new Bindable<bool>(true);
 
@@ -219,6 +223,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
         }
         protected override void LoadComplete()
         {
+            ring.FadeIn(1000, Easing.OutElasticQuarter).ScaleTo(1, 1000, Easing.OutElasticQuarter);
             noteStartIndicators.TriggerChange();
             diffBasedColor.TriggerChange();
         }
