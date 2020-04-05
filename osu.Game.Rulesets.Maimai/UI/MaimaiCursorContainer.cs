@@ -7,6 +7,15 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.UI;
 using osuTK;
+using osu.Framework.Allocation;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input;
+using osu.Framework.Input.Events;
+using osu.Framework.Utils;
+using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Maimai.UI
 {
@@ -29,6 +38,13 @@ namespace osu.Game.Rulesets.Maimai.UI
 
             if (cursorSprite != null)
                 cursorSprite.Texture = cursorTexture;
+        }
+        protected override bool OnMouseMove(MouseMoveEvent e)
+        {
+            ActiveCursor.RelativePositionAxes = Axes.None;
+            ActiveCursor.Position = e.MousePosition;
+            ActiveCursor.RelativePositionAxes = Axes.Both;
+            return base.OnMouseMove(e);
         }
     }
 }

@@ -62,6 +62,7 @@ namespace osu.Game.Rulesets.Maimai
                     return new Mod[]
                     {
                         new MultiMod(new ModWindUp(), new ModWindDown()),
+                        new MaimaiModSpin()
                     };
                 default:
                     return new Mod[] { null };

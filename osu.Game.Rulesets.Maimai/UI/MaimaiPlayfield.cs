@@ -16,6 +16,8 @@ using osu.Game.Rulesets.Maimai.UI.Components;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Menu;
+using osu.Framework.Input;
+using osu.Framework.Input.Events;
 using osu.Game.Graphics;
 using osuTK;
 using osuTK.Graphics;
@@ -25,11 +27,12 @@ using osu.Game.Beatmaps;
 namespace osu.Game.Rulesets.Maimai.UI
 {
     [Cached]
-    public class MaimaiPlayfield : Playfield
+    public class MaimaiPlayfield : Playfield, IRequireHighFrequencyMousePosition
     {
         private JudgementContainer<DrawableMaimaiJudgement> judgementLayer;
 
         private readonly MaimaiRing ring;
+        public Bindable<bool> spinMod = new Bindable<bool>(false);
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
         public static readonly float RingSize = 600;
         public static readonly float DotSize = 20f;
@@ -49,6 +52,11 @@ namespace osu.Game.Rulesets.Maimai.UI
 
         public MaimaiPlayfield(DifficultyRating difficultyRating)
         {
+            spinMod.BindValueChanged(b =>
+            {
+                if (b.NewValue) this.Spin(5000, RotationDirection.Clockwise).Then().Loop();
+            });
+
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.None;
@@ -66,6 +74,7 @@ namespace osu.Game.Rulesets.Maimai.UI
                 },
             });
         }
+
         protected override GameplayCursorContainer CreateCursor() => new MaimaiCursorContainer();
 
         public override void Add(DrawableHitObject h)
@@ -123,11 +132,17 @@ namespace osu.Game.Rulesets.Maimai.UI
                     };
                     break;
             }
-            if (result.IsHit)
+
+            // We want to disable the hit flash when the playfield is spinning, because the fps impact is wayyyy too drastic for my liking.
+            if (result.IsHit && !spinMod.Value)
                 ring.Flash();
             judgementLayer.Add(explosion);
         }
-
+        protected override void LoadComplete()
+        {
+            spinMod.TriggerChange();
+            base.LoadComplete();
+        }
         private class VisualisationContainer : BeatSyncedContainer
         {
             private readonly float ringSize = 600;

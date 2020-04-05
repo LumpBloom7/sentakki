@@ -76,7 +76,6 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
             {
                 hitBlur = simpleRing.WithEffect(new BlurEffect{
                     Sigma = new Vector2(5),
-                    CacheDrawnEffect = true,
                     Colour = Color4.White,
                     PadExtent = true,
                 }),
@@ -154,7 +153,6 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
             {
                 ring.Add(new CircularContainer
                 {
-
                     Size = new Vector2(MaimaiPlayfield.DotSize),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
