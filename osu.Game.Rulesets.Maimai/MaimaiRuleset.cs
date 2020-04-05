@@ -25,6 +25,7 @@ namespace osu.Game.Rulesets.Maimai
     public class MaimaiRuleset : Ruleset
     {
         public override string Description => "maimai";
+        public override string PlayingVerb => "Washing laundry";
 
         public override ScoreProcessor CreateScoreProcessor() => new MaimaiScoreProcessor();
 
