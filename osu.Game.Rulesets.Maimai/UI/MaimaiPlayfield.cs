@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.Maimai.UI
         private JudgementContainer<DrawableMaimaiJudgement> judgementLayer;
 
         private readonly MaimaiRing ring;
-        public Bindable<bool> spinMod = new Bindable<bool>(false);
+        public BindableNumber<int> revolutionDuration = new BindableNumber<int>(0);
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
         public static readonly float RingSize = 600;
         public static readonly float DotSize = 20f;
@@ -52,9 +52,9 @@ namespace osu.Game.Rulesets.Maimai.UI
 
         public MaimaiPlayfield(DifficultyRating difficultyRating)
         {
-            spinMod.BindValueChanged(b =>
+            revolutionDuration.BindValueChanged(b =>
             {
-                if (b.NewValue) this.Spin(5000, RotationDirection.Clockwise).Then().Loop();
+                if (b.NewValue != 0) this.Spin(b.NewValue * 1000, RotationDirection.Clockwise).Then().Loop();
             });
 
             Anchor = Anchor.Centre;
@@ -140,7 +140,7 @@ namespace osu.Game.Rulesets.Maimai.UI
         }
         protected override void LoadComplete()
         {
-            spinMod.TriggerChange();
+            revolutionDuration.TriggerChange();
             base.LoadComplete();
         }
         private class VisualisationContainer : BeatSyncedContainer
