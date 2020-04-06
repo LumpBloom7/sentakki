@@ -134,6 +134,9 @@ namespace osu.Game.Rulesets.Maimai.UI
             }
 
             judgementLayer.Add(explosion);
+
+            if (result.IsHit && judgedObject.HitObject.Kiai)
+                ring.KiaiBeat();
         }
         protected override void LoadComplete()
         {
@@ -145,7 +148,7 @@ namespace osu.Game.Rulesets.Maimai.UI
             private readonly float ringSize = 600;
 
             private LogoVisualisation visualisation;
-            private readonly Bindable<bool> showVisualisation = new Bindable<bool>(true);
+            private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
             private readonly Bindable<bool> diffBasedColor = new Bindable<bool>(false);
             public DifficultyRating? DifficultyRating;
 
@@ -155,7 +158,7 @@ namespace osu.Game.Rulesets.Maimai.UI
                 FillAspectRatio = 1;
                 FillMode = FillMode.Fit;
                 RelativeSizeAxes = Axes.Both;
-                Size = new Vector2(.98f);
+                Size = new Vector2(.99f);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
                 Child = visualisation = new LogoVisualisation
@@ -164,8 +167,8 @@ namespace osu.Game.Rulesets.Maimai.UI
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                 };
-                settings?.BindWith(MaimaiRulesetSettings.ShowVisualizer, showVisualisation);
-                showVisualisation.TriggerChange();
+                settings?.BindWith(MaimaiRulesetSettings.KiaiEffects, kiaiEffect);
+                kiaiEffect.TriggerChange();
 
                 settings?.BindWith(MaimaiRulesetSettings.DiffBasedRingColor, diffBasedColor);
                 diffBasedColor.BindValueChanged(enabled =>
@@ -184,7 +187,7 @@ namespace osu.Game.Rulesets.Maimai.UI
 
             protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, TrackAmplitudes amplitudes)
             {
-                if (effectPoint.KiaiMode && showVisualisation.Value)
+                if (effectPoint.KiaiMode && kiaiEffect.Value)
                 {
                     visualisation.FadeIn(200);
                 }

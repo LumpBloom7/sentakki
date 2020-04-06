@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Maimai.Configuration
         {
             base.InitialiseDefaults();
 
-            Set(MaimaiRulesetSettings.ShowVisualizer, true);
+            Set(MaimaiRulesetSettings.KiaiEffects, true);
             Set(MaimaiRulesetSettings.AnimationDuration, 500, 50.0, 2000, 50.0);
             Set(MaimaiRulesetSettings.MaimaiJudgements, false);
             Set(MaimaiRulesetSettings.ShowNoteStartIndicators, false);
@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.Maimai.Configuration
 
     public enum MaimaiRulesetSettings
     {
-        ShowVisualizer,
+        KiaiEffects,
         AnimationDuration,
         MaimaiJudgements,
         RingOpacity,

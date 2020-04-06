@@ -142,6 +142,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
         public Bindable<float> ringOpacity = new Bindable<float>(1);
         public Bindable<bool> noteStartIndicators = new Bindable<bool>(false);
         Bindable<bool> diffBasedColor = new Bindable<bool>(false);
+        private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
 
         [BackgroundDependencyLoader(true)]
         private void load(MaimaiRulesetConfigManager settings, OsuColour colours)
@@ -167,12 +168,19 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     this.FadeColour(Color4.White, 200);
                 }
             });
+
+            settings?.BindWith(MaimaiRulesetSettings.KiaiEffects, kiaiEffect);
         }
         protected override void LoadComplete()
         {
             ring.FadeIn(1000, Easing.OutElasticQuarter).ScaleTo(1, 1000, Easing.OutElasticQuarter);
             noteStartIndicators.TriggerChange();
             diffBasedColor.TriggerChange();
+        }
+        public void KiaiBeat()
+        {
+            if (kiaiEffect.Value)
+                this.ScaleTo(1.01f, 100).Then().ScaleTo(1, 100);
         }
     }
 }

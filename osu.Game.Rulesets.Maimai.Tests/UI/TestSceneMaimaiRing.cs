@@ -30,6 +30,7 @@ namespace osu.Game.Rulesets.Maimai.Tests.UI
             AddStep("Create Ring", () => Add(ring = new MaimaiRing()));
             AddUntilStep("Ring loaded", () => ring.IsLoaded && ring.Alpha == 1);
             AddToggleStep("Toggle notestart Indicators", b => ring.noteStartIndicators.Value = b);
+            AddRepeatStep("Trigger Kiai Beat", () => ring.KiaiBeat(), 5);
             AddSliderStep<float>("Test opacity", 0, 1, 1, f => { if (ring != null) ring.ringOpacity.Value = f; });
         }
     }

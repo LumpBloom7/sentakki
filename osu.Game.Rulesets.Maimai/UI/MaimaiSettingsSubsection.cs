@@ -32,8 +32,8 @@ namespace osu.Game.Rulesets.Maimai.UI
                 },
                 new SettingsCheckbox
                 {
-                    LabelText = "Show Visualizer",
-                    Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.ShowVisualizer)
+                    LabelText = "Show Kiai effects",
+                    Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.KiaiEffects)
                 },
                 new SettingsCheckbox
                 {
