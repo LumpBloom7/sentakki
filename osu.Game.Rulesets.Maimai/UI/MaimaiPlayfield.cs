@@ -133,9 +133,6 @@ namespace osu.Game.Rulesets.Maimai.UI
                     break;
             }
 
-            // We want to disable the hit flash when the playfield is spinning, because the fps impact is wayyyy too drastic for my liking.
-            if (result.IsHit && !spinMod.Value)
-                ring.Flash();
             judgementLayer.Add(explosion);
         }
         protected override void LoadComplete()

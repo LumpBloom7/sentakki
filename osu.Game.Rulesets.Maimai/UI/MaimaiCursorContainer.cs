@@ -5,17 +5,9 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Input.Events;
 using osu.Game.Rulesets.UI;
 using osuTK;
-using osu.Framework.Allocation;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Input;
-using osu.Framework.Input.Events;
-using osu.Framework.Utils;
-using osuTK;
-using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Maimai.UI
 {

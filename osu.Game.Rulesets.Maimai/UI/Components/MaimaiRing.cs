@@ -19,66 +19,19 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
 {
     public class MaimaiRing : CompositeDrawable
     {
-        private readonly CircularContainer outline;
-        private readonly CircularContainer ringFill;
-        private readonly CircularContainer innerOutline;
-
-        public readonly BufferedContainer hitBlur;
         private readonly Container ring;
         private readonly Container spawnIndicator;
-        private readonly Container simpleRing = new Container
-        {
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Size = new Vector2(MaimaiPlayfield.RingSize + 10),
-            FillAspectRatio = 1,
-            FillMode = FillMode.Fit,
-
-            Child = new CircularContainer
-            {
-                RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Masking = true,
-                BorderThickness = 18,
-                BorderColour = Color4.White,
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0,
-                    AlwaysPresent = true,
-                },
-            },
-        };
 
         private DifficultyRating? difficultyRating;
 
         public MaimaiRing(DifficultyRating? rating = null)
         {
             difficultyRating = rating;
-            // Add dots to the simple ring used for the blur
-            foreach (float pathAngle in MaimaiPlayfield.PathAngles)
-            {
-                simpleRing.Add(new Circle
-                {
-                    Size = new Vector2(30),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    RelativeSizeAxes = Axes.None,
-                    Masking = true,
-                    Position = new Vector2(-(MaimaiPlayfield.IntersectDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(MaimaiPlayfield.IntersectDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
-                });
-            }
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
 
             InternalChildren = new Drawable[]
             {
-                hitBlur = simpleRing.WithEffect(new BlurEffect{
-                    Sigma = new Vector2(5),
-                    Colour = Color4.White,
-                    PadExtent = true,
-                }),
                 ring = new Container
                 {
                     Scale = Vector2.Zero,
@@ -89,7 +42,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     FillMode = FillMode.Fit,
                     Alpha = 0,
                     Children = new Drawable[]{
-                        innerOutline = new CircularContainer{
+                        new CircularContainer{
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
@@ -109,7 +62,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                         new Container{
                             RelativeSizeAxes = Axes.Both,
                             Padding = new MarginPadding(1),
-                            Child = ringFill = new CircularContainer{
+                            Child = new CircularContainer{
                                 RelativeSizeAxes = Axes.Both,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
@@ -124,7 +77,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                                 },
                             },
                         },
-                        outline = new CircularContainer{
+                        new CircularContainer{
                             RelativeSizeAxes = Axes.Both,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
@@ -184,13 +137,11 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                     }
                 });
             }
-            hitBlur.Alpha = 0; // Don't show hit flash at first.
         }
 
         public Bindable<float> ringOpacity = new Bindable<float>(1);
         public Bindable<bool> noteStartIndicators = new Bindable<bool>(false);
         Bindable<bool> diffBasedColor = new Bindable<bool>(false);
-        Bindable<bool> showHitFlash = new Bindable<bool>(true);
 
         [BackgroundDependencyLoader(true)]
         private void load(MaimaiRulesetConfigManager settings, OsuColour colours)
@@ -200,8 +151,6 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
 
             settings?.BindWith(MaimaiRulesetSettings.ShowNoteStartIndicators, noteStartIndicators);
             noteStartIndicators.BindValueChanged(opacity => spawnIndicator.FadeTo(Convert.ToSingle(opacity.NewValue), 200));
-
-            settings?.BindWith(MaimaiRulesetSettings.ShowHitFlash, showHitFlash);
 
             settings?.BindWith(MaimaiRulesetSettings.DiffBasedRingColor, diffBasedColor);
             diffBasedColor.BindValueChanged(enabled =>
@@ -224,12 +173,6 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
             ring.FadeIn(1000, Easing.OutElasticQuarter).ScaleTo(1, 1000, Easing.OutElasticQuarter);
             noteStartIndicators.TriggerChange();
             diffBasedColor.TriggerChange();
-        }
-
-        public void Flash()
-        {
-            if (showHitFlash.Value)
-                hitBlur.FadeIn(50).Then().FadeOut(200);
         }
     }
 }

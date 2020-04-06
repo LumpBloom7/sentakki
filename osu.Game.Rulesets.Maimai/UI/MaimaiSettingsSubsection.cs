@@ -45,11 +45,6 @@ namespace osu.Game.Rulesets.Maimai.UI
                     LabelText = "Change ring color based on difficulty rating",
                     Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.DiffBasedRingColor)
                 },
-                new SettingsCheckbox
-                {
-                    LabelText = "Flash ring on hit",
-                    Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.ShowHitFlash)
-                },
                 new SettingsSlider<double>
                 {
                     LabelText = "Note entry animation duration",
