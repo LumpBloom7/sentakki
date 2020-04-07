@@ -54,6 +54,7 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
                         StartTime = original.StartTime,
                         EndTime = endTimeData.EndTime,
                     }.Yield();
+
                 default:
                     return new Tap
                     {

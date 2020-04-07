@@ -31,6 +31,7 @@ namespace osu.Game.Rulesets.Maimai.UI
             if (cursorSprite != null)
                 cursorSprite.Texture = cursorTexture;
         }
+
         protected override bool OnMouseMove(MouseMoveEvent e)
         {
             ActiveCursor.RelativePositionAxes = Axes.None;

@@ -5,11 +5,9 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Maimai.Configuration;
 using osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces;
-using osu.Game.Rulesets.Maimai.UI;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osuTK;
@@ -25,9 +23,9 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         public readonly TapCircle CirclePiece;
         public readonly CircularContainer HitObjectLine;
 
-        double fadeIn = 500, moveTo, idle;
+        private double fadeIn = 500, moveTo, idle;
 
-        public MaimaiAction? HitAction => HitArea.HitAction;
+        //private MaimaiAction? hitAction => HitArea.HitAction;
 
         protected override double InitialLifetimeOffset => 3500;
 
@@ -67,26 +65,27 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 },
             });
         }
-        Bindable<double> AnimationDuration = new Bindable<double>(1000);
+
+        private Bindable<double> animationDuration = new Bindable<double>(1000);
 
         [BackgroundDependencyLoader(true)]
         private void load(MaimaiRulesetConfigManager settings)
         {
-            settings?.BindWith(MaimaiRulesetSettings.AnimationDuration, AnimationDuration);
+            settings?.BindWith(MaimaiRulesetSettings.AnimationDuration, animationDuration);
             HitObjectLine.Child.Colour = HitObject.NoteColor;
         }
 
         protected override void UpdateInitialTransforms()
         {
-            AnimationDuration.TriggerChange();
+            animationDuration.TriggerChange();
             fadeIn = 500;
-            moveTo = AnimationDuration.Value;
+            moveTo = animationDuration.Value;
             idle = 3500 - fadeIn - moveTo;
             base.UpdateInitialTransforms();
 
             CirclePiece.Delay(idle).FadeInFromZero(fadeIn).ScaleTo(1f, fadeIn).Then().MoveTo(HitObject.endPosition, moveTo);
             HitObjectLine.Delay(idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(600, moveTo)));
-            if (isHidden)
+            if (IsHidden)
                 this.Delay(idle + fadeIn).FadeOut(moveTo / 2);
         }
 
@@ -143,6 +142,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     break;
             }
         }
+
         public class HitReceptor : CircularContainer, IKeyBindingHandler<MaimaiAction>
         {
             // IsHovered is used
@@ -151,6 +151,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             public Func<bool> Hit;
 
             public MaimaiAction? HitAction;
+
             public HitReceptor()
             {
                 RelativeSizeAxes = Axes.None;
@@ -175,6 +176,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
                 return false;
             }
+
             public void OnReleased(MaimaiAction action)
             {
             }

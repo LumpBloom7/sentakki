@@ -1,10 +1,4 @@
-﻿using System;
-using osu.Game.Beatmaps;
-using osu.Game.Rulesets.Objects.Types;
-using osu.Game.Beatmaps.ControlPoints;
-using osu.Game.Rulesets.Judgements;
-using osu.Game.Rulesets.Maimai.Judgements;
-using osu.Game.Rulesets.Scoring;
+﻿using osu.Game.Rulesets.Objects.Types;
 
 namespace osu.Game.Rulesets.Maimai.Objects
 {

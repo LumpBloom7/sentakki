@@ -5,8 +5,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.UserInterface;
 using osu.Game.Rulesets.Maimai.Configuration;
 using osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Maimai.UI;
@@ -48,54 +46,54 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             });
         }
 
-        Bindable<double> AnimationDuration = new Bindable<double>(1000);
+        private Bindable<double> animationDuration = new Bindable<double>(1000);
 
         [BackgroundDependencyLoader(true)]
         private void load(MaimaiRulesetConfigManager settings)
         {
-            settings?.BindWith(MaimaiRulesetSettings.AnimationDuration, AnimationDuration);
+            settings?.BindWith(MaimaiRulesetSettings.AnimationDuration, animationDuration);
             HitObjectLine.Child.Colour = HitObject.NoteColor;
         }
 
-        double fadeIn = 500, moveTo, idle;
+        private double fadeIn = 500, moveTo, idle;
+
         protected override void UpdateInitialTransforms()
         {
-            AnimationDuration.TriggerChange();
+            animationDuration.TriggerChange();
             fadeIn = 500;
-            moveTo = AnimationDuration.Value;
+            moveTo = animationDuration.Value;
             idle = 3500 - fadeIn - moveTo;
 
-            float originalHeight = 40;
-            float length = Convert.ToSingle((MaimaiPlayfield.IntersectDistance - 66) / AnimationDuration.Value * ((HitObject as IHasEndTime).Duration));
-            double extendTime = (length / (MaimaiPlayfield.IntersectDistance - 66)) * AnimationDuration.Value;
+            float length = Convert.ToSingle((MaimaiPlayfield.IntersectDistance - 66) / animationDuration.Value * ((HitObject as IHasEndTime).Duration));
+            double extendTime = (length / (MaimaiPlayfield.IntersectDistance - 66)) * animationDuration.Value;
 
             var seq = note.Delay(idle)
                     .FadeInFromZero(500)
                     .ScaleTo(1f, fadeIn)
                     .Then();
 
-                if (length >= (MaimaiPlayfield.IntersectDistance - 66))
-                    seq.ResizeHeightTo(MaimaiPlayfield.IntersectDistance - 66 + 80, moveTo)
-                    .Delay((HitObject as IHasEndTime).Duration)
-                    .ResizeHeightTo(80, moveTo)
-                    .MoveToY(-(MaimaiPlayfield.IntersectDistance - 40), moveTo);
-                else
-                    seq.ResizeHeightTo(length + 80, extendTime)
-                    .Then()
-                    .MoveToY(-(MaimaiPlayfield.IntersectDistance - length - 80 + 40), AnimationDuration.Value - extendTime)
-                    .Then()
-                    .ResizeHeightTo(80, extendTime)
-                    .MoveToY(-(MaimaiPlayfield.IntersectDistance - 40), extendTime);
-
+            if (length >= (MaimaiPlayfield.IntersectDistance - 66))
+                seq.ResizeHeightTo(MaimaiPlayfield.IntersectDistance - 66 + 80, moveTo)
+                .Delay((HitObject as IHasEndTime).Duration)
+                .ResizeHeightTo(80, moveTo)
+                .MoveToY(-(MaimaiPlayfield.IntersectDistance - 40), moveTo);
+            else
+                seq.ResizeHeightTo(length + 80, extendTime)
+                .Then()
+                .MoveToY(-(MaimaiPlayfield.IntersectDistance - length - 80 + 40), animationDuration.Value - extendTime)
+                .Then()
+                .ResizeHeightTo(80, extendTime)
+                .MoveToY(-(MaimaiPlayfield.IntersectDistance - 40), extendTime);
 
             HitObjectLine.Delay(idle).FadeTo(.75f, fadeIn).Then().ResizeTo(600, moveTo);
 
-            if (isHidden)
+            if (IsHidden)
                 this.Delay(idle + fadeIn).FadeOut(moveTo / 2);
         }
 
         private double potential = 0;
         private double held = 0;
+
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (Time.Current < HitObject.StartTime) return;
@@ -121,6 +119,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         }
 
         public bool Auto = false;
+
         protected override void Update()
         {
             if (Time.Current >= HitObject.StartTime && Time.Current <= (HitObject as IHasEndTime).EndTime)
@@ -129,12 +128,12 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 if (HitArea.IsDown() || Auto)
                 {
                     held++;
-                    this.FadeTo(isHidden ? .2f : 1f, 100);
+                    this.FadeTo(IsHidden ? .2f : 1f, 100);
                     //explode.FadeTo(1f, 100);
                 }
                 else
                 {
-                    this.FadeTo(isHidden ? 0f : .5f, 200);
+                    this.FadeTo(IsHidden ? 0f : .5f, 200);
                     //explode.FadeTo(0f, 200);
                 }
                 base.Update();
@@ -154,6 +153,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                         this.ScaleTo(1f, time_fade_hit);
                     }
                     break;
+
                 case ArmedState.Miss:
                     var c = HitObject.Angle + 90;
                     var d = c * (float)(Math.PI / 180);
@@ -186,6 +186,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             public bool IsDown() => IsHovered && (MaimaiActionInputManager?.PressedActions.Any(x => x == MaimaiAction.Button1 || x == MaimaiAction.Button2) ?? false);
 
             public MaimaiAction? HitAction;
+
             public HitReceptor()
             {
                 RelativeSizeAxes = Axes.None;

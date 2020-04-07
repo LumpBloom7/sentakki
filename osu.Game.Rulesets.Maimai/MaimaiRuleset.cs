@@ -1,7 +1,6 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-using System.Collections.Generic;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
@@ -11,14 +10,15 @@ using osu.Game.Configuration;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
+using osu.Game.Rulesets.Maimai.Beatmaps;
+using osu.Game.Rulesets.Maimai.Configuration;
+using osu.Game.Rulesets.Maimai.Mods;
+using osu.Game.Rulesets.Maimai.Scoring;
+using osu.Game.Rulesets.Maimai.UI;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Maimai.Scoring;
-using osu.Game.Rulesets.Maimai.Beatmaps;
-using osu.Game.Rulesets.Maimai.Mods;
-using osu.Game.Rulesets.Maimai.UI;
-using osu.Game.Rulesets.Maimai.Configuration;
 using osu.Game.Rulesets.UI;
+using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Maimai
 {
@@ -48,6 +48,7 @@ namespace osu.Game.Rulesets.Maimai
                         new MultiMod(new MaimaiModHalfTime(), new MaimaiModDaycore()),
                         new MaimaiModNoFail(),
                     };
+
                 case ModType.DifficultyIncrease:
                     return new Mod[]
                     {
@@ -55,6 +56,7 @@ namespace osu.Game.Rulesets.Maimai
                         new MultiMod(new MaimaiModDoubleTime(), new MaimaiModNightcore()),
                         new MaimaiModHidden(),
                     };
+
                 case ModType.Automation:
                     return new[] { new MaimaiModAutoplay() };
 
@@ -64,6 +66,7 @@ namespace osu.Game.Rulesets.Maimai
                         new MultiMod(new ModWindUp(), new ModWindDown()),
                         new MaimaiModSpin()
                     };
+
                 default:
                     return new Mod[] { null };
             }

@@ -6,7 +6,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
 {
-    class CirclePiece : CircularContainer
+    public class CirclePiece : CircularContainer
     {
         public CirclePiece()
         {

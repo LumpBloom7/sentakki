@@ -4,12 +4,10 @@
 using osu.Game.Beatmaps;
 using osu.Game.Replays;
 using osu.Game.Rulesets.Maimai.Objects;
-using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Replays;
 using osuTK;
-using System.Collections.Generic;
-using System.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Maimai.Replays
 {
@@ -25,7 +23,9 @@ namespace osu.Game.Rulesets.Maimai.Replays
         {
             Replay = new Replay();
         }
-        Tuple<MaimaiAction, double> inUse = new Tuple<MaimaiAction, double>(MaimaiAction.Button1, -1);
+
+        private Tuple<MaimaiAction, double> inUse = new Tuple<MaimaiAction, double>(MaimaiAction.Button1, -1);
+
         public override Replay Generate()
         {
             Frames.Add(new MaimaiReplayFrame { Position = new Vector2(300) });
@@ -59,6 +59,7 @@ namespace osu.Game.Rulesets.Maimai.Replays
                             Position = new Vector2(300),
                         };
                         break;
+
                     case Hold h:
                         currentFrame = new MaimaiReplayFrame
                         {
@@ -76,6 +77,7 @@ namespace osu.Game.Rulesets.Maimai.Replays
                             Position = h.endPosition + new Vector2(300)
                         };
                         break;
+
                     case MaimaiHitObject tn:
                         List<MaimaiAction> startList;
                         List<MaimaiAction> endList;

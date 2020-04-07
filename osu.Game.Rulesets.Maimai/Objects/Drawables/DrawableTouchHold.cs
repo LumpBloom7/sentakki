@@ -42,7 +42,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         {
             this.FadeTo(.5f, 500).ScaleTo(.8f, 500);
             circle.StartProgressBar();
-            if (isHidden)
+            if (IsHidden)
                 using (BeginDelayedSequence(500))
                 {
                     this.FadeOut(250);
@@ -52,6 +52,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         private double potential = 0;
         private double held = 0;
         private bool buttonHeld = false;
+
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (Time.Current < HitObject.StartTime) return;
@@ -77,6 +78,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         }
 
         public bool Auto = false;
+
         protected override void Update()
         {
             buttonHeld = MaimaiActionInputManager?.PressedActions.Any(x => x == MaimaiAction.Button1 || x == MaimaiAction.Button2) ?? false;
@@ -86,13 +88,13 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 if ((buttonHeld && IsHovered) || Auto)
                 {
                     held++;
-                    this.FadeTo((isHidden) ? .2f : 1f, 100);
+                    this.FadeTo((IsHidden) ? .2f : 1f, 100);
                     this.ScaleTo(1f, 100);
                     circle.Glow.FadeTo(1f, 100);
                 }
                 else
                 {
-                    this.FadeTo((isHidden) ? 0 : .5f, 100);
+                    this.FadeTo((IsHidden) ? 0 : .5f, 100);
                     this.ScaleTo(.9f, 200);
                     circle.Glow.FadeTo(0f, 200);
                 }
@@ -112,7 +114,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     break;
 
                 case ArmedState.Miss:
-                    this.Delay((HitObject as IHasEndTime).Duration).ScaleTo(.0f, 400).FadeOut(400);
+                    this.Delay((HitObject as IHasEndTime).Duration).ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss);
                     break;
             }
         }

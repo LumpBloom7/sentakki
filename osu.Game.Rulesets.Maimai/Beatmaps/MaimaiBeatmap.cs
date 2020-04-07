@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using osu.Framework.Graphics.Sprites;
+﻿using osu.Framework.Graphics.Sprites;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Maimai.Objects;
+using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Maimai.Beatmaps
 {

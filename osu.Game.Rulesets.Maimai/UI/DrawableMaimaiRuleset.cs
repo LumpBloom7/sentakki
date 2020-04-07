@@ -13,8 +13,6 @@ using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.UI;
 using System.Collections.Generic;
-using osu.Game.Graphics;
-using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Maimai.UI
 {

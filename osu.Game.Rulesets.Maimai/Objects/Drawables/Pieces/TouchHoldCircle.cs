@@ -132,6 +132,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
 
         private readonly IBindable<ArmedState> state = new Bindable<ArmedState>();
         private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
+
         [BackgroundDependencyLoader]
         private void load(TextureStore textures, DrawableHitObject drawableObject)
         {

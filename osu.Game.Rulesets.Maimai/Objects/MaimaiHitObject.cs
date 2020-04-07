@@ -4,7 +4,6 @@
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Maimai.Judgements;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Types;
 using osuTK;
 using osuTK.Graphics;
 

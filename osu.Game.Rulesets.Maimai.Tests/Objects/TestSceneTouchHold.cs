@@ -12,7 +12,6 @@ using osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Tests.Visual;
 using osuTK;
-using osuTK.Graphics;
 using System;
 using System.Collections.Generic;
 

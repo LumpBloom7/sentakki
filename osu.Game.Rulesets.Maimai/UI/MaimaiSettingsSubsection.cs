@@ -5,7 +5,7 @@ using osu.Game.Rulesets.Maimai.Configuration;
 
 namespace osu.Game.Rulesets.Maimai.UI
 {
-    class MaimaiSettingsSubsection : RulesetSettingsSubsection
+    public class MaimaiSettingsSubsection : RulesetSettingsSubsection
     {
         protected override string Header => "maimai";
 

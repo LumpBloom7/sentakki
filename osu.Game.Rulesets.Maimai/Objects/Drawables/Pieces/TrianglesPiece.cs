@@ -2,7 +2,7 @@
 
 namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
 {
-    class TrianglesPiece : Triangles
+    public class TrianglesPiece : Triangles
     {
         protected override float SpawnRatio => 1f;
 

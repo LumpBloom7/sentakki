@@ -1,13 +1,13 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using osu.Framework.Bindables;
 using osu.Framework.Graphics.Sprites;
+using osu.Game.Configuration;
 using osu.Game.Rulesets.Maimai.Objects;
 using osu.Game.Rulesets.Maimai.UI;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.UI;
-using osu.Framework.Bindables;
-using osu.Game.Configuration;
 
 namespace osu.Game.Rulesets.Maimai.Mods
 {
@@ -33,10 +33,9 @@ namespace osu.Game.Rulesets.Maimai.Mods
             Value = 5
         };
 
-
         public void ApplyToDrawableRuleset(DrawableRuleset<MaimaiHitObject> drawableRuleset)
         {
-            (drawableRuleset.Playfield as MaimaiPlayfield).revolutionDuration.Value = revolutionDuration.Value;
+            (drawableRuleset.Playfield as MaimaiPlayfield).RevolutionDuration.Value = revolutionDuration.Value;
         }
     }
 }

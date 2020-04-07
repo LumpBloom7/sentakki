@@ -13,13 +13,10 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
         {
             RelativeSizeAxes = Axes.Both;
             Size = new Vector2(1f);
-
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-
             Blending = BlendingParameters.Additive;
             Alpha = 0;
-
             Child = new TrianglesPiece
             {
                 Blending = BlendingParameters.Additive,

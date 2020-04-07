@@ -11,6 +11,7 @@ namespace osu.Game.Rulesets.Maimai.Tests.UI
     public class TestSceneMaimaiRing : OsuTestScene
     {
         private MaimaiRing ring;
+
         public override IReadOnlyList<Type> RequiredTypes => new[]
         {
             typeof(MaimaiRing)
@@ -29,9 +30,9 @@ namespace osu.Game.Rulesets.Maimai.Tests.UI
 
             AddStep("Create Ring", () => Add(ring = new MaimaiRing()));
             AddUntilStep("Ring loaded", () => ring.IsLoaded && ring.Alpha == 1);
-            AddToggleStep("Toggle notestart Indicators", b => ring.noteStartIndicators.Value = b);
+            AddToggleStep("Toggle notestart Indicators", b => ring.NoteStartIndicators.Value = b);
             AddRepeatStep("Trigger Kiai Beat", () => ring.KiaiBeat(), 5);
-            AddSliderStep<float>("Test opacity", 0, 1, 1, f => { if (ring != null) ring.ringOpacity.Value = f; });
+            AddSliderStep<float>("Test opacity", 0, 1, 1, f => { if (ring != null) ring.RingOpacity.Value = f; });
         }
     }
 }

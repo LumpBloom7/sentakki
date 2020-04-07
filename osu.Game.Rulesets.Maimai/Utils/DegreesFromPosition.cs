@@ -12,6 +12,7 @@ namespace osu.Game.Rulesets.Maimai
 
             return degrees;
         }
+
         public static float/*<int, Nullable<int>> */GetNotePathFromDegrees(float degrees)
         {
             if (degrees < 0) degrees += 360;

@@ -4,10 +4,12 @@
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
+using osu.Framework.Input;
+using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
+using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Maimai.Configuration;
@@ -16,28 +18,27 @@ using osu.Game.Rulesets.Maimai.UI.Components;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Menu;
-using osu.Framework.Input;
-using osu.Framework.Input.Events;
-using osu.Game.Graphics;
 using osuTK;
 using osuTK.Graphics;
 using System;
-using osu.Game.Beatmaps;
 
 namespace osu.Game.Rulesets.Maimai.UI
 {
     [Cached]
     public class MaimaiPlayfield : Playfield, IRequireHighFrequencyMousePosition
     {
-        private JudgementContainer<DrawableMaimaiJudgement> judgementLayer;
+        private readonly JudgementContainer<DrawableMaimaiJudgement> judgementLayer;
 
         private readonly MaimaiRing ring;
-        public BindableNumber<int> revolutionDuration = new BindableNumber<int>(0);
+        public BindableNumber<int> RevolutionDuration = new BindableNumber<int>(0);
+
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
+
         public static readonly float RingSize = 600;
         public static readonly float DotSize = 20f;
         public static readonly float IntersectDistance = 296.5f;
         public static readonly float NoteStartDistance = 66f;
+
         public static readonly float[] PathAngles =
             {
                 22.5f,
@@ -52,7 +53,7 @@ namespace osu.Game.Rulesets.Maimai.UI
 
         public MaimaiPlayfield(DifficultyRating difficultyRating)
         {
-            revolutionDuration.BindValueChanged(b =>
+            RevolutionDuration.BindValueChanged(b =>
             {
                 if (b.NewValue != 0) this.Spin(b.NewValue * 1000, RotationDirection.Clockwise).Then().Loop();
             });
@@ -122,6 +123,7 @@ namespace osu.Game.Rulesets.Maimai.UI
                         Anchor = Anchor.Centre,
                     };
                     break;
+
                 default:
                     explosion = new DrawableMaimaiJudgement(result, maimaiObj)
                     {
@@ -138,15 +140,15 @@ namespace osu.Game.Rulesets.Maimai.UI
             if (result.IsHit && judgedObject.HitObject.Kiai)
                 ring.KiaiBeat();
         }
+
         protected override void LoadComplete()
         {
-            revolutionDuration.TriggerChange();
+            RevolutionDuration.TriggerChange();
             base.LoadComplete();
         }
+
         private class VisualisationContainer : BeatSyncedContainer
         {
-            private readonly float ringSize = 600;
-
             private LogoVisualisation visualisation;
             private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
             private readonly Bindable<bool> diffBasedColor = new Bindable<bool>(false);

@@ -1,7 +1,7 @@
 ﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osuTK;
 using osu.Framework.Graphics.Shapes;
+using osuTK;
 
 namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
 {
@@ -11,13 +11,10 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
         {
             RelativeSizeAxes = Axes.Both;
             Size = new Vector2(1f);
-
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-
             Blending = BlendingParameters.Additive;
             Alpha = 0;
-
             Child = new CircularContainer
             {
                 Masking = true,

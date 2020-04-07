@@ -6,14 +6,12 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Effects;
-using osu.Framework.Extensions.Color4Extensions;
+using osu.Game.Beatmaps;
+using osu.Game.Graphics;
 using osu.Game.Rulesets.Maimai.Configuration;
 using osuTK;
 using osuTK.Graphics;
 using System;
-using osu.Game.Beatmaps;
-using osu.Game.Graphics;
 
 namespace osu.Game.Rulesets.Maimai.UI.Components
 {
@@ -139,19 +137,19 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
             }
         }
 
-        public Bindable<float> ringOpacity = new Bindable<float>(1);
-        public Bindable<bool> noteStartIndicators = new Bindable<bool>(false);
-        Bindable<bool> diffBasedColor = new Bindable<bool>(false);
+        public readonly Bindable<float> RingOpacity = new Bindable<float>(1);
+        public readonly Bindable<bool> NoteStartIndicators = new Bindable<bool>(false);
+        private readonly Bindable<bool> diffBasedColor = new Bindable<bool>(false);
         private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
 
         [BackgroundDependencyLoader(true)]
         private void load(MaimaiRulesetConfigManager settings, OsuColour colours)
         {
-            settings?.BindWith(MaimaiRulesetSettings.RingOpacity, ringOpacity);
-            ringOpacity.BindValueChanged(opacity => this.Alpha = opacity.NewValue, true);
+            settings?.BindWith(MaimaiRulesetSettings.RingOpacity, RingOpacity);
+            RingOpacity.BindValueChanged(opacity => this.Alpha = opacity.NewValue, true);
 
-            settings?.BindWith(MaimaiRulesetSettings.ShowNoteStartIndicators, noteStartIndicators);
-            noteStartIndicators.BindValueChanged(opacity => spawnIndicator.FadeTo(Convert.ToSingle(opacity.NewValue), 200));
+            settings?.BindWith(MaimaiRulesetSettings.ShowNoteStartIndicators, NoteStartIndicators);
+            NoteStartIndicators.BindValueChanged(opacity => spawnIndicator.FadeTo(Convert.ToSingle(opacity.NewValue), 200));
 
             settings?.BindWith(MaimaiRulesetSettings.DiffBasedRingColor, diffBasedColor);
             diffBasedColor.BindValueChanged(enabled =>
@@ -171,12 +169,14 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
 
             settings?.BindWith(MaimaiRulesetSettings.KiaiEffects, kiaiEffect);
         }
+
         protected override void LoadComplete()
         {
             ring.FadeIn(1000, Easing.OutElasticQuarter).ScaleTo(1, 1000, Easing.OutElasticQuarter);
-            noteStartIndicators.TriggerChange();
+            NoteStartIndicators.TriggerChange();
             diffBasedColor.TriggerChange();
         }
+
         public void KiaiBeat()
         {
             if (kiaiEffect.Value)
