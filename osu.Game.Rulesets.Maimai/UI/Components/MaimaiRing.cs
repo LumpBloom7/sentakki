@@ -17,7 +17,6 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
 {
     public class MaimaiRing : CompositeDrawable
     {
-        private readonly Container ring;
         private readonly Container spawnIndicator;
 
         private DifficultyRating? difficultyRating;
@@ -27,18 +26,18 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
             difficultyRating = rating;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
+            Scale = Vector2.Zero;
+            Alpha = 0;
 
             InternalChildren = new Drawable[]
             {
-                ring = new Container
+                new Container
                 {
-                    Scale = Vector2.Zero,
+                    Name = "Ring",
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Size = new Vector2(MaimaiPlayfield.RingSize),
                     FillAspectRatio = 1,
-                    FillMode = FillMode.Fit,
-                    Alpha = 0,
                     Children = new Drawable[]{
                         new CircularContainer{
                             RelativeSizeAxes = Axes.Both,
@@ -93,6 +92,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
                 },
                 spawnIndicator = new Container
                 {
+                    Name = "Spawn indicatiors",
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Alpha = 0
@@ -102,8 +102,9 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
             // Add dots to the actual ring
             foreach (float pathAngle in MaimaiPlayfield.PathAngles)
             {
-                ring.Add(new CircularContainer
+                AddInternal(new CircularContainer
                 {
+                    Name = "Dot",
                     Size = new Vector2(MaimaiPlayfield.DotSize),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -172,8 +173,8 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
 
         protected override void LoadComplete()
         {
-            ring.FadeIn(1000, Easing.OutElasticQuarter).ScaleTo(1, 1000, Easing.OutElasticQuarter);
             NoteStartIndicators.TriggerChange();
+            this.FadeIn(1000, Easing.OutElasticQuarter).ScaleTo(1, 1000, Easing.OutElasticQuarter);
             diffBasedColor.TriggerChange();
         }
 
