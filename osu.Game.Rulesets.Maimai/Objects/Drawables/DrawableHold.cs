@@ -5,6 +5,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Maimai.Configuration;
 using osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Maimai.UI;
@@ -14,7 +15,6 @@ using osu.Game.Rulesets.Scoring;
 using osuTK;
 using osuTK.Graphics;
 using System;
-using System.Linq;
 
 namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
@@ -42,6 +42,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 HitArea = new HitReceptor
                 {
                     Position = new Vector2(0,-MaimaiPlayfield.IntersectDistance),
+                    Hit = () => !AllJudged
                 }
             });
         }
@@ -125,7 +126,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             if (Time.Current >= HitObject.StartTime && Time.Current <= (HitObject as IHasEndTime).EndTime)
             {
                 potential++;
-                if (HitArea.IsDown() || Auto)
+                if (HitArea.Triggered || Auto)
                 {
                     held++;
                     this.FadeTo(IsHidden ? .2f : 1f, 100);
@@ -175,7 +176,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             }
         }
 
-        public class HitReceptor : CircularContainer
+        public class HitReceptor : CircularContainer, IKeyBindingHandler<MaimaiAction>
         {
             // IsHovered is used
             public override bool HandlePositionalInput => true;
@@ -183,16 +184,39 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             private MaimaiInputManager maimaiActionInputManager;
             internal MaimaiInputManager MaimaiActionInputManager => maimaiActionInputManager ??= GetContainingInputManager() as MaimaiInputManager;
 
-            public bool IsDown() => IsHovered && (MaimaiActionInputManager?.PressedActions.Any(x => x == MaimaiAction.Button1 || x == MaimaiAction.Button2) ?? false);
-
             public MaimaiAction? HitAction;
+            public Func<bool> Hit;
 
             public HitReceptor()
             {
                 RelativeSizeAxes = Axes.None;
-                Size = new Vector2(350f);
+                Size = new Vector2(350);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
+            }
+
+            public bool Triggered = false;
+
+            public bool OnPressed(MaimaiAction action)
+            {
+                switch (action)
+                {
+                    case MaimaiAction.Button1:
+                    case MaimaiAction.Button2:
+                        if (IsHovered && (Hit?.Invoke() ?? false))
+                        {
+                            HitAction = action;
+                            Triggered = true;
+                            return true;
+                        }
+                        break;
+                }
+
+                return false;
+            }
+
+            public void OnReleased(MaimaiAction action)
+            {
             }
         }
     }

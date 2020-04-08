@@ -25,8 +25,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
         private double fadeIn = 500, moveTo, idle;
 
-        //private MaimaiAction? hitAction => HitArea.HitAction;
-
         protected override double InitialLifetimeOffset => 3500;
 
         public DrawableTap(MaimaiHitObject hitObject)
@@ -96,13 +94,17 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             if (!userTriggered)
             {
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
+                {
                     ApplyResult(r => r.Type = HitResult.Miss);
+                }
 
                 return;
             }
 
+            if (HitObject.HitWindows.ResultFor(timeOffset) == HitResult.Miss && Time.Current < HitObject.StartTime) return;
+
             var result = HitObject.HitWindows.ResultFor(timeOffset);
-            if (result == HitResult.None || CheckValidation?.Invoke(this) == false)
+            if (result == HitResult.None)
             {
                 return;
             }
@@ -152,10 +154,13 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
             public MaimaiAction? HitAction;
 
+            private MaimaiInputManager maimaiActionInputManager;
+            internal MaimaiInputManager MaimaiActionInputManager => maimaiActionInputManager ??= GetContainingInputManager() as MaimaiInputManager;
+
             public HitReceptor()
             {
                 RelativeSizeAxes = Axes.None;
-                Size = new Vector2(350f);
+                Size = new Vector2(350);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
             }
