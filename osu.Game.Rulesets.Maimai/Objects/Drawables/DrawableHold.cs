@@ -9,6 +9,7 @@ using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Maimai.Configuration;
 using osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Maimai.UI;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -20,10 +21,27 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
     public class DrawableHold : DrawableMaimaiHitObject
     {
+        public override bool DisplayResult => false;
+
+        public IBindable<bool> IsHitting => isHitting;
+
+        private readonly Bindable<bool> isHitting = new Bindable<bool>();
+
+        public DrawableHoldHead Head => headContainer.Child;
+        public DrawableHoldTail Tail => tailContainer.Child;
+
+        private readonly Container<DrawableHoldHead> headContainer;
+        private readonly Container<DrawableHoldTail> tailContainer;
+
         private readonly HitReceptor HitArea;
         private readonly HoldBody note;
         public readonly CircularContainer HitObjectLine;
         protected override double InitialLifetimeOffset => 3500;
+
+        /// <summary>
+        /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
+        /// </summary>
+        public double? HoldStartTime { get; private set; }
 
         public DrawableHold(Hold hitObject)
             : base(hitObject)
@@ -39,12 +57,78 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 note = new HoldBody{
                     Duration = hitObject.Duration
                 },
+                headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
+                tailContainer = new Container<DrawableHoldTail> { RelativeSizeAxes = Axes.Both },
                 HitArea = new HitReceptor
                 {
                     Position = new Vector2(0,-MaimaiPlayfield.IntersectDistance),
-                    Hit = () => !AllJudged
+                    Hit = () => {
+                        if (AllJudged)
+                            return false;
+
+                        beginHoldAt(Time.Current - Head.HitObject.StartTime);
+                        Head.UpdateResult();
+
+                        return true;
+                    },
+                    Release = () =>
+                    {
+                        if(AllJudged) return;
+                        if(HoldStartTime is null) return;
+
+                        Tail.UpdateResult();
+                        HoldStartTime = null;
+                        isHitting.Value = false;
+                    }
                 }
             });
+        }
+
+        protected override void AddNestedHitObject(DrawableHitObject hitObject)
+        {
+            base.AddNestedHitObject(hitObject);
+
+            switch (hitObject)
+            {
+                case DrawableHoldHead head:
+                    headContainer.Child = head;
+                    break;
+
+                case DrawableHoldTail tail:
+                    tailContainer.Child = tail;
+                    break;
+            }
+        }
+
+        protected override void ClearNestedHitObjects()
+        {
+            base.ClearNestedHitObjects();
+            headContainer.Clear();
+            tailContainer.Clear();
+        }
+
+        protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
+        {
+            switch (hitObject)
+            {
+                case HoldTail _:
+                    return new DrawableHoldTail(this)
+                    {
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        AccentColour = { BindTarget = AccentColour }
+                    };
+
+                case Tap _:
+                    return new DrawableHoldHead(this)
+                    {
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        AccentColour = { BindTarget = AccentColour }
+                    };
+            }
+
+            return base.CreateNestedHitObject(hitObject);
         }
 
         private Bindable<double> animationDuration = new Bindable<double>(1000);
@@ -92,54 +176,13 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 this.Delay(idle + fadeIn).FadeOut(moveTo / 2);
         }
 
-        private double potential = 0;
-        private double held = 0;
-
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            if (Time.Current < HitObject.StartTime) return;
-
-            if (userTriggered || Time.Current < (HitObject as IHasEndTime).EndTime)
-                return;
-
-            double result = held / potential;
-
-            ApplyResult(r =>
-            {
-                if (result >= .9)
-                    r.Type = HitResult.Perfect;
-                else if (result >= .8)
-                    r.Type = HitResult.Great;
-                else if (result >= .5)
-                    r.Type = HitResult.Good;
-                else if (result >= .2)
-                    r.Type = HitResult.Ok;
-                else if (Time.Current >= (HitObject as IHasEndTime).EndTime)
-                    r.Type = HitResult.Miss;
-            });
+            if (Tail.AllJudged)
+                ApplyResult(r => r.Type = HitResult.Perfect);
         }
 
         public bool Auto = false;
-
-        protected override void Update()
-        {
-            if (Time.Current >= HitObject.StartTime && Time.Current <= (HitObject as IHasEndTime).EndTime)
-            {
-                potential++;
-                if (HitArea.Triggered || Auto)
-                {
-                    held++;
-                    this.FadeTo(IsHidden ? .2f : 1f, 100);
-                    //explode.FadeTo(1f, 100);
-                }
-                else
-                {
-                    this.FadeTo(IsHidden ? 0f : .5f, 200);
-                    //explode.FadeTo(0f, 200);
-                }
-                base.Update();
-            }
-        }
 
         protected override void UpdateStateTransforms(ArmedState state)
         {
@@ -176,6 +219,15 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             }
         }
 
+        private void beginHoldAt(double timeOffset)
+        {
+            if (timeOffset < -Head.HitObject.HitWindows.WindowFor(HitResult.Miss))
+                return;
+
+            HoldStartTime = Time.Current;
+            isHitting.Value = true;
+        }
+
         public class HitReceptor : CircularContainer, IKeyBindingHandler<MaimaiAction>
         {
             // IsHovered is used
@@ -186,6 +238,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
             public MaimaiAction? HitAction;
             public Func<bool> Hit;
+            public Action Release;
 
             public HitReceptor()
             {
@@ -195,21 +248,13 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 Origin = Anchor.Centre;
             }
 
-            public bool Triggered = false;
-
             public bool OnPressed(MaimaiAction action)
             {
                 switch (action)
                 {
                     case MaimaiAction.Button1:
                     case MaimaiAction.Button2:
-                        if (IsHovered && (Hit?.Invoke() ?? false))
-                        {
-                            HitAction = action;
-                            Triggered = true;
-                            return true;
-                        }
-                        break;
+                        return (Hit?.Invoke() ?? false);
                 }
 
                 return false;
@@ -217,6 +262,13 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 
             public void OnReleased(MaimaiAction action)
             {
+                switch (action)
+                {
+                    case MaimaiAction.Button1:
+                    case MaimaiAction.Button2:
+                        Release?.Invoke();
+                        break;
+                }
             }
         }
     }

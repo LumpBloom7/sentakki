@@ -15,7 +15,7 @@ namespace osu.Game.Rulesets.Maimai.Objects
 
         public Color4 NoteColor { get; set; }
         public Vector2 endPosition { get; set; }
-        public float Angle { get; set; }
+        public virtual float Angle { get; set; }
 
         public Vector2 Position { get; set; }
 
