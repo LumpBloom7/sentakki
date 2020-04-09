@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Maimai.UI
         {
         }
 
-        protected override Playfield CreatePlayfield() => new MaimaiPlayfield(Beatmap.BeatmapInfo.DifficultyRating);
+        protected override Playfield CreatePlayfield() => new MaimaiPlayfield();
 
         protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new MaimaiFramedReplayInputHandler(replay);
 

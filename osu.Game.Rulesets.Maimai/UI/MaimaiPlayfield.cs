@@ -50,7 +50,7 @@ namespace osu.Game.Rulesets.Maimai.UI
                 337.5f
             };
 
-        public MaimaiPlayfield(DifficultyRating difficultyRating)
+        public MaimaiPlayfield()
         {
             RevolutionDuration.BindValueChanged(b =>
             {
@@ -63,10 +63,8 @@ namespace osu.Game.Rulesets.Maimai.UI
             Size = new Vector2(600);
             AddRangeInternal(new Drawable[]
             {
-                new VisualisationContainer{
-                    DifficultyRating = difficultyRating
-                },
-                ring = new MaimaiRing(difficultyRating),
+                new VisualisationContainer(),
+                ring = new MaimaiRing(),
                 HitObjectContainer,
                 judgementLayer = new JudgementContainer<DrawableMaimaiJudgement>
                 {
@@ -134,10 +132,9 @@ namespace osu.Game.Rulesets.Maimai.UI
             private LogoVisualisation visualisation;
             private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
             private readonly Bindable<bool> diffBasedColor = new Bindable<bool>(false);
-            public DifficultyRating? DifficultyRating;
 
             [BackgroundDependencyLoader(true)]
-            private void load(MaimaiRulesetConfigManager settings, OsuColour colours)
+            private void load(MaimaiRulesetConfigManager settings, OsuColour colours, DrawableMaimaiRuleset ruleset)
             {
                 FillAspectRatio = 1;
                 FillMode = FillMode.Fit;
@@ -157,8 +154,8 @@ namespace osu.Game.Rulesets.Maimai.UI
                 settings?.BindWith(MaimaiRulesetSettings.DiffBasedRingColor, diffBasedColor);
                 diffBasedColor.BindValueChanged(enabled =>
                 {
-                    if (enabled.NewValue && DifficultyRating.HasValue)
-                        visualisation.FadeColour(colours.ForDifficultyRating(DifficultyRating.Value, true), 200);
+                    if (enabled.NewValue)
+                        visualisation.FadeColour(colours.ForDifficultyRating(ruleset?.Beatmap.BeatmapInfo.DifficultyRating ?? DifficultyRating.Normal, true), 200);
                     else
                         visualisation.FadeColour(Color4.White, 200);
                 });

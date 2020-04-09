@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Maimai.Configuration;
+using osu.Game.Rulesets.Maimai.Objects;
 using osuTK;
 using osuTK.Graphics;
 using System;
@@ -19,11 +20,8 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
     {
         private readonly Container spawnIndicator;
 
-        private DifficultyRating? difficultyRating;
-
-        public MaimaiRing(DifficultyRating? rating = null)
+        public MaimaiRing()
         {
-            difficultyRating = rating;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Scale = Vector2.Zero;
@@ -144,7 +142,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
         private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
 
         [BackgroundDependencyLoader(true)]
-        private void load(MaimaiRulesetConfigManager settings, OsuColour colours)
+        private void load(MaimaiRulesetConfigManager settings, OsuColour colours, DrawableMaimaiRuleset ruleset)
         {
             settings?.BindWith(MaimaiRulesetSettings.RingOpacity, RingOpacity);
             RingOpacity.BindValueChanged(opacity => this.Alpha = opacity.NewValue, true);
@@ -157,10 +155,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
             {
                 if (enabled.NewValue)
                 {
-                    if (difficultyRating is null)
-                        difficultyRating = DifficultyRating.Normal;
-
-                    this.FadeColour(colours.ForDifficultyRating(difficultyRating.Value, true), 200);
+                    this.FadeColour(colours.ForDifficultyRating(ruleset?.Beatmap.BeatmapInfo.DifficultyRating ?? DifficultyRating.Normal, true), 200);
                 }
                 else
                 {
