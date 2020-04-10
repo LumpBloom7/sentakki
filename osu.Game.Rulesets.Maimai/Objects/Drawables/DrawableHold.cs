@@ -65,7 +65,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     Hit = () => {
                         if (AllJudged)
                             return false;
-
+                        this.FadeTo(IsHidden ? .2f : 1f, 100);
                         beginHoldAt(Time.Current - Head.HitObject.StartTime);
                         Head.UpdateResult();
 
@@ -75,6 +75,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     {
                         if(AllJudged) return;
                         if(HoldStartTime is null) return;
+                        this.FadeTo(IsHidden ? 0f : .5f, 200);
 
                         Tail.UpdateResult();
                         HoldStartTime = null;
