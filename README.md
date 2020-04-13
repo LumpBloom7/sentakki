@@ -16,11 +16,12 @@ It should be on par or even better than what Sega has provided with their cabine
 
 ## Trying the ruleset
 
-Prebuilt binaries are currently unavailable as I want to make things more presentable before I make it easily accessible to the public.
+Prebuilt binaries are provided for users who doesn't want to create a development environment.. Releases are guaranteed to work with the latest version of lazer at the time of release.
 
-Once I'm happy with how it is progressing, I will provide releases that can be used out-of-the-box.
+| [Releases](https://github.com/lumpbloom7/osu-maimai/releases/) |
+| ---- |
 
-Those eager to try this ruleset out can still manually build the binary to test with the latest version of lazer.
+This is a lazer exclusive ruleset, don't expect it to work on stable.
 
 ## Debugging and Developing
 
