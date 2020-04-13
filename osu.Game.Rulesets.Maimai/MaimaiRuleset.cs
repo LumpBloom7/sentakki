@@ -52,7 +52,7 @@ namespace osu.Game.Rulesets.Maimai
                 case ModType.DifficultyIncrease:
                     return new Mod[]
                     {
-                        new MaimaiModSuddenDeath(),
+                        new MultiMod(new MaimaiModSuddenDeath(), new MaimaiModPerfect()),
                         new MultiMod(new MaimaiModDoubleTime(), new MaimaiModNightcore()),
                         new MaimaiModHidden(),
                     };
