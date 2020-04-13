@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
         private readonly Container<DrawableHoldHead> headContainer;
         private readonly Container<DrawableHoldTail> tailContainer;
 
-        private readonly HitReceptor HitArea;
+        public readonly HitReceptor HitArea;
         private readonly HoldBody note;
         public readonly CircularContainer HitObjectLine;
         protected override double InitialLifetimeOffset => 3500;

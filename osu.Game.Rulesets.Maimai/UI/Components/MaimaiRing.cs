@@ -9,7 +9,6 @@ using osu.Framework.Graphics.Shapes;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Maimai.Configuration;
-using osu.Game.Rulesets.Maimai.Objects;
 using osuTK;
 using osuTK.Graphics;
 using System;

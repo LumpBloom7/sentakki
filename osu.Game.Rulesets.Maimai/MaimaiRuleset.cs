@@ -58,7 +58,11 @@ namespace osu.Game.Rulesets.Maimai
                     };
 
                 case ModType.Automation:
-                    return new[] { new MaimaiModAutoplay() };
+                    return new Mod[]
+                    {
+                        new MaimaiModAutoplay(),
+                        new MaimaiModRelax()
+                    };
 
                 case ModType.Fun:
                     return new Mod[]
