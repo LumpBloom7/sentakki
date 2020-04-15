@@ -1,11 +1,27 @@
-﻿using osu.Game.Rulesets.Judgements;
+﻿using osu.Game.Audio;
+using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace osu.Game.Rulesets.Maimai.Objects
 {
     public class Hold : MaimaiHitObject, IHasEndTime
     {
+        private List<IList<HitSampleInfo>> nodeSamples = new List<IList<HitSampleInfo>>();
+
+        public List<IList<HitSampleInfo>> NodeSamples
+        {
+            get => nodeSamples;
+            set
+            {
+                nodeSamples = value;
+                Samples = value.Last();
+                Head.Samples = value.First();
+            }
+        }
+
         public double EndTime
         {
             get => StartTime + Duration;
@@ -53,8 +69,6 @@ namespace osu.Game.Rulesets.Maimai.Objects
         protected override void CreateNestedHitObjects()
         {
             base.CreateNestedHitObjects();
-
-            Head.Samples = Samples;
 
             AddNested(Head);
             AddNested(Tail);
