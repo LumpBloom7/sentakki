@@ -1,6 +1,6 @@
-![osu!maimai logo](https://github.com/lumpbloom7/osu-maimai/raw/master/assets/logo.png)
+![maimai for osu!](assets/logov2.png)
 
-# osu!maimai
+# maimai for osu!
 [![.NET Core](https://github.com/LumpBloom7/osu-maimai/workflows/.NET%20Core/badge.svg)](https://github.com/LumpBloom7/osu-maimai/actions?query=workflow%3A%22.NET+Core%22) [![CodeFactor](https://www.codefactor.io/repository/github/lumpbloom7/osu-maimai/badge)](https://www.codefactor.io/repository/github/lumpbloom7/osu-maimai)
 
 An attempt to recreate Sega's maimai within osu!lazer, while making it more flexible.
@@ -28,7 +28,7 @@ This is a lazer exclusive ruleset, don't expect it to work on stable.
 Some prerequisites are required before attempting to debug or develop:
 
 * A desktop platform with the .NET Core 3.1 SDK or higher installed.
-* An IDE with support for C#, providing auto completion and syntax highlighting. I recommend using Visual Studio 2019.
+* An IDE with support for C#, providing auto completion and syntax highlighting. I recommend using Visual Studio 2019 or Visual Studio Code.
 * Other requirements are shared with osu!lazer and osu!framework
 
 ### Downloading the source code
@@ -45,7 +45,7 @@ git pull
 ### Building
 Using the `Build` command from your IDE should generate a DLL file within the output directory. If you're debugging or developing, it is a bit more convenient to run the `VisualTests` project instead since that'll remove the need to copy the dll to your lazer directory.
 
-You can also build osu!maimai from the command-line with a single command:
+You can also build maimai for osu! from the command-line with a single command:
 ```
 dotnet build osu.Game.Rulesets.Maimai
 ```
@@ -55,6 +55,6 @@ dotnet build osu.Game.Rulesets.Maimai
 I welcome any sort of contributions, as long as they are helpful. Those who aren't able to develop may instead suggest changes or report issues via [GitHub issues](https://github.com/lumpbloom7/osu-maimai/issues)
 
 ## Licence
-osu!maimai's code and framework are licensed under the [MIT licence](https://opensource.org/licenses/MIT). Please see the licence file for more information. tl;dr you can do whatever you want as long as you include the original copyright and license notice in any copy of the software/source.
+`maimai for osu!`'s code and framework are licensed under the [MIT licence](https://opensource.org/licenses/MIT). Please see the licence file for more information. tl;dr you can do whatever you want as long as you include the original copyright and license notice in any copy of the software/source.
 
 Do take note that project dependencies may not share the same license.
