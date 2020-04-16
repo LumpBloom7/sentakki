@@ -3,6 +3,8 @@
 
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Maimai.Judgements;
+using osu.Game.Rulesets.Maimai.Scoring;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Objects;
 using osuTK;
 using osuTK.Graphics;
@@ -21,5 +23,7 @@ namespace osu.Game.Rulesets.Maimai.Objects
 
         public float X => Position.X;
         public float Y => Position.Y;
+
+        protected override HitWindows CreateHitWindows() => new MaimaiHitWindows();
     }
 }

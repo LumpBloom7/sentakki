@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Maimai.Judgements
                 default:
                     return 0;
 
-                case HitResult.Ok:
+                case HitResult.Meh:
                     return 50;
 
                 case HitResult.Good:
@@ -39,7 +39,7 @@ namespace osu.Game.Rulesets.Maimai.Judgements
                 case HitResult.Miss:
                     return -0.1;
 
-                case HitResult.Ok:
+                case HitResult.Meh:
                 case HitResult.Good:
                 case HitResult.Great:
                     return 0.2;

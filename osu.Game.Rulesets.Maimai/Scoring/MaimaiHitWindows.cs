@@ -17,18 +17,9 @@ namespace osu.Game.Rulesets.Maimai.Scoring
                 case HitResult.Meh:
                 case HitResult.Miss:
                     return true;
+                default:
+                    return false;
             }
-
-            return false;
         }
-
-        protected override DifficultyRange[] GetRanges() => new[]
-        {
-            new DifficultyRange(HitResult.Perfect,0,10,24),
-            new DifficultyRange(HitResult.Great, 24, 30, 49),
-            new DifficultyRange(HitResult.Good, 49, 50, 69),
-            new DifficultyRange(HitResult.Meh, 69, 74, 99),
-            new DifficultyRange(HitResult.Miss, 50, 75, 100),
-        };
     }
 }
