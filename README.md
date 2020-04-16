@@ -62,6 +62,6 @@ I welcome any sort of contributions, as long as they are helpful. Those who aren
 
 ## Licence
 
-`maimai for osu!`'s code and framework are licensed under the [MIT licence](https://opensource.org/licenses/MIT). Please see the licence file for more information. tl;dr you can do whatever you want as long as you include the original copyright and license notice in any copy of the software/source.
+Maimai for osu! is licensed under the [MIT licence](https://opensource.org/licenses/MIT). Please see the licence file for more information. tl;dr you can do whatever you want as long as you include the original copyright and license notice in any copy of the software/source.
 
 Do take note that project dependencies may not share the same license.
