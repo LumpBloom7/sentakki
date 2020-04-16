@@ -32,5 +32,28 @@
             "group": "build",
             "problemMatcher": "$msCompile"
         },
+        // Test Tasks
+        {
+            "label": "Run tests (Debug)",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "test",
+                "/p:Configuration=Debug",
+            ],
+            "group": "test",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Run tests (Release)",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "test",
+                "/p:Configuration=Release",
+            ],
+            "group": "test",
+            "problemMatcher": "$msCompile"
+        }
     ]
 }
