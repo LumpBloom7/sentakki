@@ -259,7 +259,12 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 {
                     case MaimaiAction.Button1:
                     case MaimaiAction.Button2:
-                        return (Hit?.Invoke() ?? false);
+                        if (IsHovered && (Hit?.Invoke() ?? false))
+                        {
+                            HitAction = action;
+                            return true;
+                        }
+                        break;
                 }
 
                 return false;
