@@ -144,7 +144,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
         private void load(MaimaiRulesetConfigManager settings, OsuColour colours, DrawableMaimaiRuleset ruleset)
         {
             settings?.BindWith(MaimaiRulesetSettings.RingOpacity, RingOpacity);
-            RingOpacity.BindValueChanged(opacity => this.Alpha = opacity.NewValue, true);
+            RingOpacity.BindValueChanged(opacity => this.Alpha = opacity.NewValue);
 
             settings?.BindWith(MaimaiRulesetSettings.ShowNoteStartIndicators, NoteStartIndicators);
             NoteStartIndicators.BindValueChanged(opacity => spawnIndicator.FadeTo(Convert.ToSingle(opacity.NewValue), 200));
@@ -168,7 +168,7 @@ namespace osu.Game.Rulesets.Maimai.UI.Components
         protected override void LoadComplete()
         {
             NoteStartIndicators.TriggerChange();
-            this.FadeIn(1000, Easing.OutElasticQuarter).ScaleTo(1, 1000, Easing.OutElasticQuarter);
+            this.FadeTo(RingOpacity.Value,1000, Easing.OutElasticQuarter).ScaleTo(1, 1000, Easing.OutElasticQuarter);
             diffBasedColor.TriggerChange();
         }
 
