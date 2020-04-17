@@ -16,8 +16,7 @@ namespace osu.Game.Rulesets.Maimai.Objects
             get => nodeSamples;
             set
             {
-                nodeSamples = value;
-                Samples = value.Last();
+                Tail.Samples = value.Last();
                 Head.Samples = value.First();
             }
         }
