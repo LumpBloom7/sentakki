@@ -84,8 +84,11 @@ namespace osu.Game.Rulesets.Maimai
 
         public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) => new[]
         {
+
             new KeyBinding(InputKey.Z, MaimaiAction.Button1),
             new KeyBinding(InputKey.X, MaimaiAction.Button2),
+            new KeyBinding(InputKey.MouseLeft, MaimaiAction.Button1),
+            new KeyBinding(InputKey.MouseRight, MaimaiAction.Button2),
         };
 
         public override Drawable CreateIcon() => new Sprite
