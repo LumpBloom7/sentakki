@@ -15,7 +15,6 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
 {
     public class GlowPiece : Container
     {
-        private readonly CircularContainer glow;
         public GlowPiece()
         {
             RelativeSizeAxes = Axes.Both;
@@ -23,24 +22,21 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.Both;
             Padding = new MarginPadding(1);
-            Child = glow = new CircularContainer{
+        }
+
+        protected override void LoadComplete()
+        {
+            Child = new CircularContainer
+            {
                 Masking = true,
                 RelativeSizeAxes = Axes.Both,
-                EdgeEffect = new EdgeEffectParameters{
+                EdgeEffect = new EdgeEffectParameters
+                {
                     Hollow = true,
                     Type = EdgeEffectType.Glow,
                     Radius = 15,
-                    Colour = Color4.White,
+                    Colour = Colour,
                 }
-            };
-        }
-
-        protected override void LoadComplete(){
-            glow.EdgeEffect = new EdgeEffectParameters{
-                Hollow = true,
-                Type = EdgeEffectType.Glow,
-                Radius = 15,
-                Colour = Colour,
             };
         }
     }
