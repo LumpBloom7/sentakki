@@ -67,6 +67,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                             return false;
                         beginHoldAt(Time.Current - Head.HitObject.StartTime);
                         Head.UpdateResult();
+                        note.glow.FadeIn(50);
 
                         return true;
                     },
@@ -76,6 +77,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                         if(HoldStartTime is null) return;
 
                         Tail.UpdateResult();
+                        note.glow.FadeOut(100);
                         HoldStartTime = null;
                         isHitting.Value = false;
                     }
