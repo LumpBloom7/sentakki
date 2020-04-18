@@ -2,7 +2,7 @@
 
 # maimai for osu!
 
-[![.NET Core](https://github.com/LumpBloom7/osu-maimai/workflows/.NET%20Core/badge.svg)](https://github.com/LumpBloom7/osu-maimai/actions?query=workflow%3A%22.NET+Core%22) [![CodeFactor](https://www.codefactor.io/repository/github/lumpbloom7/osu-maimai/badge)](https://www.codefactor.io/repository/github/lumpbloom7/osu-maimai)
+[![.NET Core](https://github.com/LumpBloom7/osu-maimai/workflows/.NET%20Core/badge.svg)](https://github.com/LumpBloom7/osu-maimai/actions?query=workflow%3A%22.NET+Core%22) [![CodeFactor](https://www.codefactor.io/repository/github/lumpbloom7/osu-maimai/badge)](https://www.codefactor.io/repository/github/lumpbloom7/osu-maimai) [![Discord](https://img.shields.io/discord/700619421466624050?label=Discord&logo=discord&logoColor=%23959DA5)](https://discord.gg/CQPNADu)
 
 An attempt to recreate Sega's maimai within osu!lazer, while making it more flexible.
 
