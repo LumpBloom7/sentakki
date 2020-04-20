@@ -2,6 +2,7 @@
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Maimai.Objects;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace osu.Game.Rulesets.Maimai.Beatmaps
 {
@@ -11,7 +12,7 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
         {
             int beats = HitObjects.Count(b => b is Tap);
             int holds = HitObjects.Count(h => h is Hold);
-            int centreHolds = HitObjects.Count(h => is TouchHold)
+            int centreHolds = HitObjects.Count(h => h is TouchHold);
 
             return new[]
             {
