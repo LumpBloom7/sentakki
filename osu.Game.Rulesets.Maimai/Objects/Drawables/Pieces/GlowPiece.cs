@@ -2,11 +2,14 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
 {
@@ -18,20 +21,22 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.Both;
+            Padding = new MarginPadding(1);
         }
 
-        [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
+        protected override void LoadComplete()
         {
-            Child = new Sprite
+            Child = new CircularContainer
             {
-                Size = new Vector2(1.28125f),
+                Masking = true,
                 RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Texture = textures.Get("Gameplay/osu/ring-glow"),
-                Blending = BlendingParameters.Additive,
-                Alpha = 0.5f
+                EdgeEffect = new EdgeEffectParameters
+                {
+                    Hollow = true,
+                    Type = EdgeEffectType.Glow,
+                    Radius = 15,
+                    Colour = Colour,
+                }
             };
         }
     }

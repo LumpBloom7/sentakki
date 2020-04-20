@@ -14,6 +14,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
         private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
         private readonly Container note;
+        public readonly GlowPiece glow;
 
         public double Duration = 0;
 
@@ -31,6 +32,9 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
                     RelativeSizeAxes=Axes.Both,
                     Children = new Drawable[]
                     {
+                        glow = new GlowPiece(){
+                            Alpha = 0,
+                        },
                         new CircularContainer
                         {
                             RelativeSizeAxes = Axes.Both,
@@ -98,6 +102,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables.Pieces
             {
                 explode.Colour = colour.NewValue;
                 note.Colour = colour.NewValue;
+                glow.Colour = colour.NewValue;
             }, true);
         }
 
