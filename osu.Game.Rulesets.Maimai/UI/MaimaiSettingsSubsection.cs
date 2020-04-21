@@ -1,5 +1,6 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Maimai.Configuration;
 
@@ -45,10 +46,10 @@ namespace osu.Game.Rulesets.Maimai.UI
                     LabelText = "Change ring color based on difficulty rating",
                     Bindable = config.GetBindable<bool>(MaimaiRulesetSettings.DiffBasedRingColor)
                 },
-                new SettingsSlider<double>
+                new SettingsSlider<double, TimeSlider>
                 {
-                    LabelText = "Note entry animation duration",
-                    Bindable = config.GetBindable<double>(MaimaiRulesetSettings.AnimationDuration)
+                    LabelText = "Note speed",
+                    Bindable = config.GetBindable<double>(MaimaiRulesetSettings.AnimationDuration),
                 },
                 new SettingsSlider<float>
                 {
@@ -58,6 +59,20 @@ namespace osu.Game.Rulesets.Maimai.UI
                     DisplayAsPercentage = true
                 },
             };
+        }
+
+        private class TimeSlider : OsuSliderBar<double>
+        {
+            private string speedRating()
+            {
+                double speed = (1100 - Current.Value) / 100;
+
+                if (speed == 10.5)
+                    return "Sonic";
+
+                return speed.ToString();
+            }
+            public override string TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
         }
     }
 }

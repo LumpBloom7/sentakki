@@ -15,7 +15,7 @@ namespace osu.Game.Rulesets.Maimai.Configuration
             base.InitialiseDefaults();
 
             Set(MaimaiRulesetSettings.KiaiEffects, true);
-            Set(MaimaiRulesetSettings.AnimationDuration, 500, 50.0, 2000, 50.0);
+            Set(MaimaiRulesetSettings.AnimationDuration, 500, 50.0, 1000, 50.0);
             Set(MaimaiRulesetSettings.MaimaiJudgements, false);
             Set(MaimaiRulesetSettings.ShowNoteStartIndicators, false);
             Set(MaimaiRulesetSettings.DiffBasedRingColor, false);
