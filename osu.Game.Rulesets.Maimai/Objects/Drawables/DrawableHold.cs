@@ -16,6 +16,8 @@ using osu.Game.Rulesets.Scoring;
 using osuTK;
 using osuTK.Graphics;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace osu.Game.Rulesets.Maimai.Objects.Drawables
 {
@@ -85,9 +87,11 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             });
         }
 
-        protected override void Update(){
-            if(Time.Current >= HitObject.StartTime){
-                if(isHitting.Value)this.FadeTo(IsHidden ? .2f : 1f, 50);
+        protected override void Update()
+        {
+            if (Time.Current >= HitObject.StartTime)
+            {
+                if (isHitting.Value) this.FadeTo(IsHidden ? .2f : 1f, 50);
                 else this.FadeTo(IsHidden ? 0f : .5f, 200);
             }
         }
@@ -243,7 +247,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
             private MaimaiInputManager maimaiActionInputManager;
             internal MaimaiInputManager MaimaiActionInputManager => maimaiActionInputManager ??= GetContainingInputManager() as MaimaiInputManager;
 
-            public MaimaiAction? HitAction;
+            private List<MaimaiAction> actions = new List<MaimaiAction>();
             public Func<bool> Hit;
             public Action Release;
 
@@ -263,7 +267,7 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                     case MaimaiAction.Button2:
                         if (IsHovered && (Hit?.Invoke() ?? false))
                         {
-                            HitAction = action;
+                            actions.Add(action);
                             return true;
                         }
                         break;
@@ -278,7 +282,10 @@ namespace osu.Game.Rulesets.Maimai.Objects.Drawables
                 {
                     case MaimaiAction.Button1:
                     case MaimaiAction.Button2:
-                        Release?.Invoke();
+                        if (actions.Contains(action))
+                            actions.Remove(action);
+                        if (!actions.Any())
+                            Release?.Invoke();
                         break;
                 }
             }
