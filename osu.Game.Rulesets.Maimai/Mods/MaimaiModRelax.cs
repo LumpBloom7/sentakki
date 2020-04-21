@@ -10,11 +10,12 @@ using osu.Game.Rulesets.UI;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using osu.Game.Screens.Play;
 using static osu.Game.Input.Handlers.ReplayInputHandler;
 
 namespace osu.Game.Rulesets.Maimai.Mods
 {
-    public class MaimaiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDrawableRuleset<MaimaiHitObject>
+    public class MaimaiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDrawableRuleset<MaimaiHitObject>, IApplicableToPlayer
     {
         public override string Description => @"You don't need to click. Give your clicking/tapping fingers a break from the heat of things.";
 
@@ -26,7 +27,9 @@ namespace osu.Game.Rulesets.Maimai.Mods
         private bool isDownState;
         private bool wasLeft;
 
-        private MaimaiInputManager osuInputManager;
+        private bool hasReplay;
+
+        private MaimaiInputManager maimaiInputManager;
 
         private ReplayState<MaimaiAction> state;
         private double lastStateChangeTime;
@@ -34,12 +37,24 @@ namespace osu.Game.Rulesets.Maimai.Mods
         public void ApplyToDrawableRuleset(DrawableRuleset<MaimaiHitObject> drawableRuleset)
         {
             // grab the input manager for future use.
-            osuInputManager = (MaimaiInputManager)drawableRuleset.KeyBindingInputManager;
-            osuInputManager.AllowUserPresses = false;
+            maimaiInputManager = (MaimaiInputManager)drawableRuleset.KeyBindingInputManager;
+        }
+
+        public void ApplyToPlayer(Player player)
+        {
+            if (maimaiInputManager.ReplayInputHandler != null)
+            {
+                hasReplay = true;
+                return;
+            }
+            maimaiInputManager.AllowUserPresses = false;
         }
 
         public void Update(Playfield playfield)
         {
+            if (hasReplay)
+                return;
+
             bool requiresHold = false;
             bool requiresHit = false;
 
@@ -105,7 +120,7 @@ namespace osu.Game.Rulesets.Maimai.Mods
                     wasLeft = !wasLeft;
                 }
 
-                state?.Apply(osuInputManager.CurrentState, osuInputManager);
+                state?.Apply(maimaiInputManager.CurrentState, maimaiInputManager);
             }
         }
     }

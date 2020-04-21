@@ -28,6 +28,8 @@ namespace osu.Game.Rulesets.Maimai.UI
 
         protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new MaimaiFramedReplayInputHandler(replay);
 
+        protected override ReplayRecorder CreateReplayRecorder(Replay replay) => new MaimaiReplayRecorder(replay);
+
         public override DrawableHitObject<MaimaiHitObject> CreateDrawableRepresentation(MaimaiHitObject h)
         {
             switch (h)

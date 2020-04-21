@@ -13,9 +13,11 @@ using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Maimai.Beatmaps;
 using osu.Game.Rulesets.Maimai.Configuration;
 using osu.Game.Rulesets.Maimai.Mods;
+using osu.Game.Rulesets.Maimai.Replays;
 using osu.Game.Rulesets.Maimai.Scoring;
 using osu.Game.Rulesets.Maimai.UI;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Replays.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.UI;
 using System.Collections.Generic;
@@ -37,6 +39,8 @@ namespace osu.Game.Rulesets.Maimai
 
         public override DifficultyCalculator CreateDifficultyCalculator(WorkingBeatmap beatmap) =>
             new MaimaiDifficultyCalculator(this, beatmap);
+
+        public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new MaimaiReplayFrame();
 
         public override IEnumerable<Mod> GetModsFor(ModType type)
         {
