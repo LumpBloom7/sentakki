@@ -67,5 +67,7 @@ namespace osu.Game.Rulesets.Maimai.Beatmaps
                     }.Yield();
             }
         }
+
+        protected override Beatmap<MaimaiHitObject> CreateBeatmap() => new MaimaiBeatmap();
     }
 }
