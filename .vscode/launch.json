@@ -2,24 +2,24 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "maimai for osu! (Tests, Debug)",
+            "name": "sentakki for osu! (Tests, Debug)",
             "type": "coreclr",
             "request": "launch",
             "program": "dotnet",
             "args": [
-                "${workspaceRoot}/osu.Game.Rulesets.Maimai.Tests/bin/Debug/netcoreapp3.1/osu.Game.Rulesets.Maimai.Tests.dll"
+                "${workspaceRoot}/osu.Game.Rulesets.Sentakki.Tests/bin/Debug/netcoreapp3.1/osu.Game.Rulesets.Sentakki.Tests.dll"
             ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "Build tests (Debug)",
             "console": "internalConsole"
         },
         {
-            "name": "maimai for osu! (Tests, Release)",
+            "name": "sentakki for osu! (Tests, Release)",
             "type": "coreclr",
             "request": "launch",
             "program": "dotnet",
             "args": [
-                "${workspaceRoot}/osu.Game.Rulesets.Maimai.Tests/bin/Release/netcoreapp3.1/osu.Game.Rulesets.Maimai.Tests.dll"
+                "${workspaceRoot}/osu.Game.Rulesets.Sentakki.Tests/bin/Release/netcoreapp3.1/osu.Game.Rulesets.Sentakki.Tests.dll"
             ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "Build tests (Release)",
