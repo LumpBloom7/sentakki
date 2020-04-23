@@ -2,7 +2,7 @@
 
 # sentakki
 
-[![.NET Core](https://github.com/LumpBloom7/sentakki/workflows/.NET%20Core/badge.svg)](https://github.com/LumpBloom7/sentakki/actions?query=workflow%3A%22.NET+Core%22) [![CodeFactor](https://www.codefactor.io/repository/github/lumpbloom7/sentakki/badge)](https://www.codefactor.io/repository/github/lumpbloom7/sentakki) [![Discord](https://img.shields.io/discord/700619421466624050?label=Discord&logo=discord&logoColor=%23959DA5)](https://discord.gg/CQPNADu)
+[![.NET Core](https://github.com/LumpBloom7/sentakki/workflows/.NET%20Core/badge.svg)](https://github.com/LumpBloom7/sentakki/actions?query=workflow%3A%22.NET+Core%22) [![CodeFactor](https://www.codefactor.io/repository/github/lumpbloom7/sentakki/badge)](https://www.codefactor.io/repository/github/lumpbloom7/sentakki) [![Discord](https://img.shields.io/discord/700619421466624050?color=%237289DA&label=Discord&logo=Discord&logoColor=%23959DA5)](https://discord.gg/CQPNADu)
 
 An attempt to recreate Sega's maimai within osu!lazer, while making it more flexible.
 
@@ -21,7 +21,8 @@ Prebuilt binaries are provided for users who doesn't want to create a developmen
 | [Releases](https://github.com/lumpbloom7/sentakki/releases/) |
 | ---- |
 
-This is a lazer exclusive ruleset, don't expect it to work on stable.
+| [Installation Guide](https://github.com/LumpBloom7/sentakki/wiki/Ruleset-installation-guide) |
+| ---- |
 
 ## Debugging and Developing
 
