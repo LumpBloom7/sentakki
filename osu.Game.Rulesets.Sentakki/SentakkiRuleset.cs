@@ -88,7 +88,6 @@ namespace osu.Game.Rulesets.Sentakki
 
         public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) => new[]
         {
-
             new KeyBinding(InputKey.Z, SentakkiAction.Button1),
             new KeyBinding(InputKey.X, SentakkiAction.Button2),
             new KeyBinding(InputKey.MouseLeft, SentakkiAction.Button1),
