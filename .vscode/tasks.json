@@ -8,7 +8,7 @@
             "args": [
                 "build",
                 "--no-restore",
-                "osu.Game.Rulesets.Maimai.Tests",
+                "osu.Game.Rulesets.Sentakki.Tests",
                 "/p:GenerateFullPaths=true",
                 "/m",
                 "/verbosity:m"
@@ -23,7 +23,7 @@
             "args": [
                 "build",
                 "--no-restore",
-                "osu.Game.Rulesets.Maimai.Tests",
+                "osu.Game.Rulesets.Sentakki.Tests",
                 "/p:Configuration=Release",
                 "/p:GenerateFullPaths=true",
                 "/m",
