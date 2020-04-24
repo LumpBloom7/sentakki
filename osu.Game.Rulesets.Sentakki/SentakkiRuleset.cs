@@ -56,6 +56,7 @@ namespace osu.Game.Rulesets.Sentakki
                 case ModType.DifficultyIncrease:
                     return new Mod[]
                     {
+                        new SentakkiModHardRock(),
                         new MultiMod(new SentakkiModSuddenDeath(), new SentakkiModPerfect()),
                         new MultiMod(new SentakkiModDoubleTime(), new SentakkiModNightcore()),
                         new SentakkiModHidden(),
