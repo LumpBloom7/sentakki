@@ -41,10 +41,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     LabelText = "Show note start indicators",
                     Bindable = config.GetBindable<bool>(SentakkiRulesetSettings.ShowNoteStartIndicators)
                 },
-                new SettingsCheckbox
+                new SettingsEnumDropdown<ColorOption>
                 {
-                    LabelText = "Change ring color based on difficulty rating",
-                    Bindable = config.GetBindable<bool>(SentakkiRulesetSettings.DiffBasedRingColor)
+                    LabelText = "Ring Colour",
+                    Bindable = config.GetBindable<ColorOption>(SentakkiRulesetSettings.RingColor)
                 },
                 new SettingsSlider<double, TimeSlider>
                 {
