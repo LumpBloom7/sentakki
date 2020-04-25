@@ -7,6 +7,8 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Platform;
 using osu.Game.Tests.Visual;
 using osuTK.Graphics;
+using osu.Game.Users;
+using osu.Game.Online.API;
 
 namespace osu.Game.Rulesets.Sentakki.Tests
 {
@@ -15,9 +17,8 @@ namespace osu.Game.Rulesets.Sentakki.Tests
         [BackgroundDependencyLoader]
         private void load(GameHost host, OsuGameBase gameBase)
         {
-            OsuGame game = new OsuGame();
+            OsuGameSupporter game = new OsuGameSupporter();
             game.SetHost(host);
-
             Children = new Drawable[]
             {
                 new Box
@@ -27,6 +28,16 @@ namespace osu.Game.Rulesets.Sentakki.Tests
                 },
                 game
             };
+        }
+        internal class OsuGameSupporter : OsuGame
+        {
+            public OsuGameSupporter()
+            {
+                API = new DummyAPIAccess();
+                API.LocalUser.Value.IsSupporter = true;
+                API.LocalUser.Value.Username = "Mai-chan";
+                API.LocalUser.Value.Country = new Country { FlagName = @"BE" };
+            }
         }
     }
 }
