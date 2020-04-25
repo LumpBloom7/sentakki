@@ -2,7 +2,9 @@
 
 # sentakki
 
-[![.NET Core](https://github.com/LumpBloom7/sentakki/workflows/.NET%20Core/badge.svg)](https://github.com/LumpBloom7/sentakki/actions?query=workflow%3A%22.NET+Core%22) [![CodeFactor](https://www.codefactor.io/repository/github/lumpbloom7/sentakki/badge)](https://www.codefactor.io/repository/github/lumpbloom7/sentakki) [![Discord](https://img.shields.io/discord/700619421466624050?color=%237289DA&label=Discord&logo=Discord&logoColor=%23959DA5)](https://discord.gg/CQPNADu)
+[![.NET Core](https://github.com/LumpBloom7/sentakki/workflows/.NET%20Core/badge.svg)](https://github.com/LumpBloom7/sentakki/actions?query=workflow%3A%22.NET+Core%22)
+[![CodeFactor](https://www.codefactor.io/repository/github/lumpbloom7/sentakki/badge)](https://www.codefactor.io/repository/github/lumpbloom7/sentakki)
+[![Discord Shield](https://discordapp.com/api/guilds/700619421466624050/widget.png?style=shield)](https://discord.gg/CQPNADu)
 
 An attempt to recreate Sega's maimai within osu!lazer, while making it more flexible.
 
