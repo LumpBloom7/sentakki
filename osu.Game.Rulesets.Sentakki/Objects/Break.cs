@@ -27,7 +27,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public class Child : SentakkiHitObject
         {
-            public override Judgement CreateJudgement() => new SentakkiBreakJudgement();
             protected override HitWindows CreateHitWindows() => new HitWindows.EmptyHitWindows();
         }
     }
