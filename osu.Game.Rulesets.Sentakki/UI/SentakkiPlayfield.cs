@@ -107,6 +107,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                         Anchor = Anchor.Centre,
                     };
                     break;
+                case DrawableBreak.DrawableChild _:
+                    return;
 
                 default:
                     explosion = new DrawableSentakkiJudgement(result, sentakkiObj)

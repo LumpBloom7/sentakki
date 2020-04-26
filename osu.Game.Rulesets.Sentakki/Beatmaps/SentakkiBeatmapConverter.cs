@@ -12,6 +12,8 @@ using osuTK.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using osu.Game.Audio;
+using osu.Game.Beatmaps.ControlPoints;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
@@ -56,15 +58,27 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     }.Yield();
 
                 default:
-                    return new Tap
-                    {
-                        NoteColor = Color4.Orange,
-                        Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
-                        Samples = original.Samples,
-                        StartTime = original.StartTime,
-                        endPosition = new Vector2(-(SentakkiPlayfield.IntersectDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.IntersectDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                        Position = new Vector2(-(SentakkiPlayfield.NoteStartDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NoteStartDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                    }.Yield();
+                    bool strong = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
+                    if (strong)
+                        return new Break
+                        {
+                            NoteColor = Color4.OrangeRed,
+                            Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
+                            Samples = original.Samples,
+                            StartTime = original.StartTime,
+                            endPosition = new Vector2(-(SentakkiPlayfield.IntersectDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.IntersectDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                            Position = new Vector2(-(SentakkiPlayfield.NoteStartDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NoteStartDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                        }.Yield();
+                    else
+                        return new Tap
+                        {
+                            NoteColor = Color4.Orange,
+                            Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
+                            Samples = original.Samples,
+                            StartTime = original.StartTime,
+                            endPosition = new Vector2(-(SentakkiPlayfield.IntersectDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.IntersectDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                            Position = new Vector2(-(SentakkiPlayfield.NoteStartDistance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NoteStartDistance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                        }.Yield();
             }
         }
 
