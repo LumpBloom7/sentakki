@@ -10,7 +10,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
     {
         public override IEnumerable<BeatmapStatistic> GetStatistics()
         {
-            int beats = HitObjects.Count(b => b is Tap);
+            int beats = HitObjects.Count(b => b.GetType() == typeof(Tap));
             int holds = HitObjects.Count(h => h is Hold);
             int centreHolds = HitObjects.Count(h => h is TouchHold);
             int breaks = HitObjects.Count(h => h is Break);
