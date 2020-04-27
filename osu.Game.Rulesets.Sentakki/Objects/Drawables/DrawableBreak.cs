@@ -2,6 +2,9 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
+using osu.Framework.Audio.Track;
+using osu.Framework.Audio.Sample;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -22,11 +25,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     public class DrawableBreak : DrawableTap
     {
         private readonly Container<DrawableChild> children;
+
+        private SampleChannel breakSound;
         public DrawableBreak(SentakkiHitObject hitObject) : base(hitObject)
         {
             AddInternal(
                 children = new Container<DrawableChild>()
             );
+        }
+        [BackgroundDependencyLoader]
+        private void load(ISampleStore samples)
+        {
+            breakSound = samples.Get("Gameplay/Break");
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -50,6 +60,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
             }
             ApplyResult(r => r.Type = result);
+            if (result != HitResult.Miss)
+                breakSound.Play();
         }
 
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
