@@ -1,24 +1,14 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-using osu.Framework.Allocation;
-using osu.Framework.Audio;
-using osu.Framework.Audio.Track;
-using osu.Framework.Audio.Sample;
-using osu.Framework.Bindables;
-using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Input.Bindings;
-using osu.Game.Rulesets.Sentakki.Configuration;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Framework.Graphics;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Scoring;
-using osuTK;
-using osuTK.Graphics;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
+using osu.Game.Skinning;
+using osu.Game.Audio;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -26,17 +16,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         private readonly Container<DrawableChild> children;
 
-        private SampleChannel breakSound;
+        private readonly SkinnableSound breakSound;
         public DrawableBreak(SentakkiHitObject hitObject) : base(hitObject)
         {
-            AddInternal(
-                children = new Container<DrawableChild>()
-            );
-        }
-        [BackgroundDependencyLoader]
-        private void load(ISampleStore samples)
-        {
-            breakSound = samples.Get("Gameplay/Break");
+            AddRangeInternal(new Drawable[]{
+                children = new Container<DrawableChild>(),
+                breakSound = new SkinnableSound(new SampleInfo("Break"))
+            });
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -61,7 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
             ApplyResult(r => r.Type = result);
             if (result != HitResult.Miss)
-                breakSound.Play();
+                breakSound?.Play();
         }
 
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
