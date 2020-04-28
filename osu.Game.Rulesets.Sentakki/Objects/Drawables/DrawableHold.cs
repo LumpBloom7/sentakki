@@ -69,7 +69,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                             return false;
                         beginHoldAt(Time.Current - Head.HitObject.StartTime);
                         Head.UpdateResult();
-                        note.glow.FadeIn(50);
 
                         return true;
                     },
@@ -79,7 +78,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         if(HoldStartTime is null) return;
 
                         Tail.UpdateResult();
-                        note.glow.FadeOut(100);
                         HoldStartTime = null;
                         isHitting.Value = false;
                     }
@@ -91,8 +89,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (Time.Current >= HitObject.StartTime)
             {
-                if (isHitting.Value) this.FadeTo(IsHidden ? .2f : 1f, 50);
-                else this.FadeTo(IsHidden ? 0f : .5f, 200);
+                if (isHitting.Value)
+                {
+                    note.glow.FadeIn(50);
+                    this.FadeTo(IsHidden ? .2f : 1f, 50);
+                }
+                else
+                {
+                    note.glow.FadeOut(100);
+                    this.FadeTo(IsHidden ? 0f : .5f, 200);
+                }
             }
         }
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
