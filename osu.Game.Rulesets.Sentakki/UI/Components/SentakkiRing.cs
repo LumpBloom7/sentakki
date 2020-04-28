@@ -184,7 +184,10 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         public void KiaiBeat()
         {
             if (kiaiEffect.Value)
+            {
+                FinishTransforms();
                 this.ScaleTo(1.01f, 100).Then().ScaleTo(1, 100);
+            }
         }
     }
 }
