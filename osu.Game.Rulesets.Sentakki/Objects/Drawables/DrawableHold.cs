@@ -54,6 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Rotation = HitObject.Angle;
+            AlwaysPresent = true;
             AddRangeInternal(new Drawable[]{
                 HitObjectLine = new HitObjectLine(),
                 note = new HoldBody{

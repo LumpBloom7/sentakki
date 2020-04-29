@@ -33,6 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Scale = new Vector2(0f);
             RelativeSizeAxes = Axes.None;
             Alpha = 0;
+            AlwaysPresent = true;
             AddRangeInternal(new Drawable[] {
                 circle = new TouchHoldCircle(){ Duration = hitObject.Duration },
             });

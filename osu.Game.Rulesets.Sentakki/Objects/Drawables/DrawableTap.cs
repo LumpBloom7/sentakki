@@ -37,6 +37,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
+            AlwaysPresent = true;
             AddRangeInternal(new Drawable[] {
                 HitObjectLine = new HitObjectLine
                 {
