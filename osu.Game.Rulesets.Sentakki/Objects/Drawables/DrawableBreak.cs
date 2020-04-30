@@ -40,7 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
             }
             ApplyResult(r => r.Type = result);
-            if (result != HitResult.Miss)
+            if (result == HitResult.Perfect)
                 breakSound?.Play();
         }
     }
