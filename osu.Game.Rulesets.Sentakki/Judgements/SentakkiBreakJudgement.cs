@@ -1,15 +1,12 @@
-﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Judgements
 {
-    public class SentakkiJudgement : Judgement
+    public class SentakkiBreakJudgement : SentakkiJudgement
     {
-        public override HitResult MaxResult => HitResult.Perfect;
-
         protected override int NumericResultFor(HitResult result)
         {
             switch (result)
@@ -18,14 +15,15 @@ namespace osu.Game.Rulesets.Sentakki.Judgements
                     return 0;
 
                 case HitResult.Meh:
-                    return 250;
+                    return 1000;
 
                 case HitResult.Good:
-                    return 400;
+                    return 2000;
 
                 case HitResult.Great:
+                    return 2500;
                 case HitResult.Perfect:
-                    return 500;
+                    return 2600;
             }
         }
 
@@ -37,15 +35,15 @@ namespace osu.Game.Rulesets.Sentakki.Judgements
                     return 0;
 
                 case HitResult.Miss:
-                    return -0.1;
+                    return -0.4;
 
                 case HitResult.Meh:
                 case HitResult.Good:
                 case HitResult.Great:
-                    return 0.2;
+                    return 0.4;
 
                 case HitResult.Perfect:
-                    return 0.3;
+                    return 0.6;
             }
         }
     }
