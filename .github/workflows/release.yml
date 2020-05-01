@@ -1,0 +1,54 @@
+name: Tagged Release
+on:
+  push:
+    tags: ['*']
+
+jobs:
+  build:
+    name: Build and Create Release
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Fetch all tags
+      run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+    - name: Get current tag
+      run: echo "::set-env name=CURRENT_TAG::$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1))"
+    - name: Get previous tag
+      run: echo "::set-env name=PREVIOUS_TAG::$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))"
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build osu.Game.Rulesets.Sentakki --configuration Release -p:Version=${{env.CURRENT_TAG}} --no-restore
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          Thank you for showing interest in this ruleset. This is a tagged release (${{env.CURRENT_TAG}}).
+          If you like this ruleset, do consider supporting me on [ko-fi](https://ko-fi.com/Bloom) or [PayPal](https://paypal.me/lumpbloom7).
+
+          Check out the [commit history](https://github.com/LumpBloom7/sentakki/compare/${{env.PREVIOUS_TAG}}...${{env.CURRENT_TAG}}) for changes made since the last release.
+
+          ## Installation
+
+          [Refer to this wiki page](https://github.com/LumpBloom7/sentakki/wiki/Ruleset-installation-guide)
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./osu.Game.Rulesets.Sentakki/bin/Release/netcoreapp3.1/osu.Game.Rulesets.Sentakki.dll
+        asset_name: osu.Game.Rulesets.Sentakki.dll
+        asset_content_type: application/vnd.microsoft.portable-executable
