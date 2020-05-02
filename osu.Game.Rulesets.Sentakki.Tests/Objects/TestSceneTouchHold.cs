@@ -67,14 +67,14 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             public TestDrawableTouchHoldNote(TouchHold h, bool auto)
                 : base(h)
             {
-                this.Auto = auto;
+                Auto = auto;
             }
 
             public void TriggerJudgement() => UpdateResult(true);
 
             protected override void CheckForResult(bool userTriggered, double timeOffset)
             {
-                if (this.Auto && !userTriggered && timeOffset > 0)
+                if (Auto && !userTriggered && timeOffset > 0)
                 {
                     // force success
                     ApplyResult(r => r.Type = HitResult.Perfect);

@@ -60,7 +60,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         return true;
                     },
                     RelativeSizeAxes = Axes.None,
-                    Position = hitObject.endPosition
+                    Position = hitObject.EndPosition
                 },
             });
         }
@@ -82,7 +82,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             idle = 3500 - fadeIn - moveTo;
             base.UpdateInitialTransforms();
 
-            CirclePiece.Delay(idle).FadeInFromZero(fadeIn).ScaleTo(1f, fadeIn).Then().MoveTo(HitObject.endPosition, moveTo);
+            CirclePiece.Delay(idle).FadeInFromZero(fadeIn).ScaleTo(1f, fadeIn).Then().MoveTo(HitObject.EndPosition, moveTo);
             HitObjectLine.Delay(idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(600, moveTo)));
             if (IsHidden)
                 this.Delay(idle + fadeIn).FadeOut(moveTo / 2);
@@ -122,9 +122,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    var b = HitObject.Angle + 90;
-                    var a = b * (float)(Math.PI / 180);
-
                     HitObjectLine.FadeOut();
                     this.ScaleTo(1f, time_fade_hit).Expire();
 

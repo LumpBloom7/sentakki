@@ -64,7 +64,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 tailContainer = new Container<DrawableHoldTail> { RelativeSizeAxes = Axes.Both },
                 HitArea = new HitReceptor
                 {
-                    Position = new Vector2(0,-SentakkiPlayfield.IntersectDistance),
+                    Position = new Vector2(0,-SentakkiPlayfield.INTERSECTDISTANCE),
                     Hit = () => {
                         if (AllJudged)
                             return false;
@@ -92,12 +92,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 if (isHitting.Value)
                 {
-                    note.glow.FadeIn(50);
+                    note.Glow.FadeIn(50);
                     this.FadeTo(IsHidden ? .2f : 1f, 50);
                 }
                 else
                 {
-                    note.glow.FadeOut(100);
+                    note.Glow.FadeOut(100);
                     this.FadeTo(IsHidden ? 0f : .5f, 200);
                 }
             }
@@ -167,26 +167,26 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             moveTo = animationDuration.Value;
             idle = 3500 - fadeIn - moveTo;
 
-            float length = Convert.ToSingle((SentakkiPlayfield.IntersectDistance - 66) / animationDuration.Value * ((HitObject as IHasEndTime).Duration));
-            double extendTime = (length / (SentakkiPlayfield.IntersectDistance - 66)) * animationDuration.Value;
+            float length = Convert.ToSingle((SentakkiPlayfield.INTERSECTDISTANCE - 66) / animationDuration.Value * ((HitObject as IHasEndTime).Duration));
+            double extendTime = (length / (SentakkiPlayfield.INTERSECTDISTANCE - 66)) * animationDuration.Value;
 
             var seq = note.Delay(idle)
                     .FadeInFromZero(500)
                     .ScaleTo(1f, fadeIn)
                     .Then();
 
-            if (length >= (SentakkiPlayfield.IntersectDistance - 66))
-                seq.ResizeHeightTo(SentakkiPlayfield.IntersectDistance - 66 + 80, moveTo)
+            if (length >= (SentakkiPlayfield.INTERSECTDISTANCE - 66))
+                seq.ResizeHeightTo(SentakkiPlayfield.INTERSECTDISTANCE - 66 + 80, moveTo)
                 .Delay((HitObject as IHasEndTime).Duration)
                 .ResizeHeightTo(80, moveTo)
-                .MoveToY(-(SentakkiPlayfield.IntersectDistance - 40), moveTo);
+                .MoveToY(-(SentakkiPlayfield.INTERSECTDISTANCE - 40), moveTo);
             else
                 seq.ResizeHeightTo(length + 80, extendTime)
                 .Then()
-                .MoveToY(-(SentakkiPlayfield.IntersectDistance - length - 80 + 40), animationDuration.Value - extendTime)
+                .MoveToY(-(SentakkiPlayfield.INTERSECTDISTANCE - length - 80 + 40), animationDuration.Value - extendTime)
                 .Then()
                 .ResizeHeightTo(80, extendTime)
-                .MoveToY(-(SentakkiPlayfield.IntersectDistance - 40), extendTime);
+                .MoveToY(-(SentakkiPlayfield.INTERSECTDISTANCE - 40), extendTime);
 
             HitObjectLine.Delay(idle).FadeTo(.75f, fadeIn).Then().ResizeTo(600, moveTo);
 
@@ -217,9 +217,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
 
                 case ArmedState.Miss:
-                    var c = HitObject.Angle + 90;
-                    var d = c * (float)(Math.PI / 180);
-
                     using (BeginDelayedSequence((HitObject as IHasEndTime).Duration, true))
                     {
                         note.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
@@ -229,7 +226,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                         using (BeginDelayedSequence(time_fade_miss, true))
                         {
-                            this.Expire();
+                            Expire();
                         }
                     }
                     HitObjectLine.FadeOut();

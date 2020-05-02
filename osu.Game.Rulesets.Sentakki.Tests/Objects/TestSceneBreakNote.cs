@@ -46,7 +46,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 StartTime = Time.Current + 1000,
                 Position = new Vector2(0, -66f),
                 Angle = 0,
-                endPosition = new Vector2(0, -296.5f),
+                EndPosition = new Vector2(0, -296.5f),
                 NoteColor = Color4.OrangeRed,
             };
 

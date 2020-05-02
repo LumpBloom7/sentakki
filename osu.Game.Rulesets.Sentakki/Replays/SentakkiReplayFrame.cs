@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.Replays
 {
     public class SentakkiReplayFrame : ReplayFrame, IConvertibleReplayFrame
     {
-        public ReplayEvent noteEvent = ReplayEvent.none;
+        public ReplayEvent NoteEvent = ReplayEvent.none;
         public Vector2 Position;
         public List<SentakkiAction> Actions = new List<SentakkiAction>();
 

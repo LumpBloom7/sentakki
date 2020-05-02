@@ -47,7 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                         {
                             Time = hitObject.StartTime,
                             Position = new Vector2(300),
-                            noteEvent = ReplayEvent.TouchHoldDown,
+                            NoteEvent = ReplayEvent.TouchHoldDown,
                             Actions = { nextButton }
                         };
                         Frames.Add(currentFrame);
@@ -55,7 +55,7 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                         nextFrame = new SentakkiReplayFrame
                         {
                             Time = th.EndTime,
-                            noteEvent = ReplayEvent.TouchHoldUp,
+                            NoteEvent = ReplayEvent.TouchHoldUp,
                             Position = new Vector2(300),
                         };
                         break;
@@ -64,8 +64,8 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                         currentFrame = new SentakkiReplayFrame
                         {
                             Time = hitObject.StartTime,
-                            Position = h.endPosition + new Vector2(300),
-                            noteEvent = ReplayEvent.HoldDown,
+                            Position = h.EndPosition + new Vector2(300),
+                            NoteEvent = ReplayEvent.HoldDown,
                             Actions = { nextButton }
                         };
                         Frames.Add(currentFrame);
@@ -73,8 +73,8 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                         nextFrame = new SentakkiReplayFrame
                         {
                             Time = h.EndTime,
-                            noteEvent = ReplayEvent.HoldUp,
-                            Position = h.endPosition + new Vector2(300)
+                            NoteEvent = ReplayEvent.HoldUp,
+                            Position = h.EndPosition + new Vector2(300)
                         };
                         break;
 
@@ -106,16 +106,16 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                         currentFrame = new SentakkiReplayFrame
                         {
                             Time = tn.StartTime,
-                            Position = tn.endPosition + new Vector2(300),
-                            noteEvent = ReplayEvent.TapDown,
+                            Position = tn.EndPosition + new Vector2(300),
+                            NoteEvent = ReplayEvent.TapDown,
                             Actions = startList
                         };
                         Frames.Add(currentFrame);
                         nextFrame = new SentakkiReplayFrame
                         {
                             Time = tn.StartTime + 1,
-                            Position = tn.endPosition + new Vector2(300),
-                            noteEvent = ReplayEvent.TapUp,
+                            Position = tn.EndPosition + new Vector2(300),
+                            NoteEvent = ReplayEvent.TapUp,
                             Actions = endList
                         };
                         break;
@@ -128,10 +128,10 @@ namespace osu.Game.Rulesets.Sentakki.Replays
             for (int i = 0; i < Frames.Count; ++i)
             {
                 var frame = Frames[i] as SentakkiReplayFrame;
-                if (frame.noteEvent == ReplayEvent.TouchHoldDown) holdActive = true;
-                else if (frame.noteEvent == ReplayEvent.TouchHoldUp) holdActive = false;
+                if (frame.NoteEvent == ReplayEvent.TouchHoldDown) holdActive = true;
+                else if (frame.NoteEvent == ReplayEvent.TouchHoldUp) holdActive = false;
 
-                if (holdActive && frame.noteEvent == ReplayEvent.TapUp)
+                if (holdActive && frame.NoteEvent == ReplayEvent.TapUp)
                 {
                     newFrames.Add(new SentakkiReplayFrame
                     {

@@ -55,7 +55,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 StartTime = Time.Current + 1000,
                 EndTime = Time.Current + 1000 + duration,
                 Position = new Vector2(0, -66),
-                endPosition = new Vector2(0, -296.5f),
+                EndPosition = new Vector2(0, -296.5f),
                 Angle = 0f,
                 NoteColor = Color4.Crimson,
             };
@@ -79,14 +79,14 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             public TestDrawableHoldNote(Hold h, bool auto)
                 : base(h)
             {
-                this.Auto = auto;
+                Auto = auto;
             }
 
             public void TriggerJudgement() => UpdateResult(true);
 
             protected override void CheckForResult(bool userTriggered, double timeOffset)
             {
-                if (this.Auto && !userTriggered && timeOffset > 0)
+                if (Auto && !userTriggered && timeOffset > 0)
                 {
                     // force success
                     ApplyResult(r => r.Type = HitResult.Perfect);

@@ -37,12 +37,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
 
-        public static readonly float RingSize = 600;
-        public static readonly float DotSize = 20f;
-        public static readonly float IntersectDistance = 296.5f;
-        public static readonly float NoteStartDistance = 66f;
+        public static readonly float RINGSIZE = 600;
+        public static readonly float DOTSIZE = 20f;
+        public static readonly float INTERSECTDISTANCE = 296.5f;
+        public static readonly float NOTESTARTDISTANCE = 66f;
 
-        public static readonly float[] PathAngles =
+        public static readonly float[] PATHANGLES =
             {
                 22.5f,
                 67.5f,
@@ -100,7 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             DrawableSentakkiJudgement explosion;
             switch (judgedObject)
             {
-                case DrawableTouchHold TH:
+                case DrawableTouchHold _:
                     explosion = new DrawableSentakkiJudgement(result, sentakkiObj)
                     {
                         Origin = Anchor.Centre,

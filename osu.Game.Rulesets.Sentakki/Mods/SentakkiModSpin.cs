@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override double ScoreMultiplier => 1.00;
 
         [SettingSource("Revolution Duration", "The duration in seconds to complete a revolution")]
-        public BindableNumber<int> revolutionDuration { get; } = new BindableNumber<int>
+        public BindableNumber<int> RevolutionDuration { get; } = new BindableNumber<int>
         {
             MinValue = 3,
             MaxValue = 10,
@@ -35,7 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public void ApplyToDrawableRuleset(DrawableRuleset<SentakkiHitObject> drawableRuleset)
         {
-            (drawableRuleset.Playfield as SentakkiPlayfield).RevolutionDuration.Value = revolutionDuration.Value;
+            (drawableRuleset.Playfield as SentakkiPlayfield).RevolutionDuration.Value = RevolutionDuration.Value;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         public HitObjectLine()
         {
-            Size = new Vector2(SentakkiPlayfield.NoteStartDistance * 2);
+            Size = new Vector2(SentakkiPlayfield.NOTESTARTDISTANCE * 2);
             Masking = true;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;

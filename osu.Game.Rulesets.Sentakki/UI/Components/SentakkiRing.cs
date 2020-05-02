@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                     Name = "Ring",
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Size = new Vector2(SentakkiPlayfield.RingSize),
+                    Size = new Vector2(SentakkiPlayfield.RINGSIZE),
                     FillAspectRatio = 1,
                     Children = new Drawable[]{
                         new CircularContainer{
@@ -100,19 +100,19 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             };
 
             // Add dots to the actual ring
-            foreach (float pathAngle in SentakkiPlayfield.PathAngles)
+            foreach (float pathAngle in SentakkiPlayfield.PATHANGLES)
             {
                 AddInternal(new CircularContainer
                 {
                     Name = "Dot",
-                    Size = new Vector2(SentakkiPlayfield.DotSize),
+                    Size = new Vector2(SentakkiPlayfield.DOTSIZE),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.None,
                     Masking = true,
                     BorderColour = Color4.Gray,
                     BorderThickness = 2,
-                    Position = new Vector2(-(SentakkiPlayfield.IntersectDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.IntersectDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
+                    Position = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
                     Child = new Box
                     {
                         AlwaysPresent = true,
@@ -129,7 +129,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                     BorderColour = Color4.Gray,
                     BorderThickness = 2f,
                     Rotation = pathAngle,
-                    Position = new Vector2(-(SentakkiPlayfield.NoteStartDistance * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NoteStartDistance * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
+                    Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
                     Child = new Box
                     {
                         RelativeSizeAxes = Axes.Both
@@ -149,7 +149,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         private void load(SentakkiRulesetConfigManager settings, OsuColour colours, DrawableSentakkiRuleset ruleset, IAPIProvider api, SkinManager skinManager)
         {
             settings?.BindWith(SentakkiRulesetSettings.RingOpacity, RingOpacity);
-            RingOpacity.BindValueChanged(opacity => this.Alpha = opacity.NewValue);
+            RingOpacity.BindValueChanged(opacity => Alpha = opacity.NewValue);
 
             settings?.BindWith(SentakkiRulesetSettings.ShowNoteStartIndicators, NoteStartIndicators);
             NoteStartIndicators.BindValueChanged(opacity => spawnIndicator.FadeTo(Convert.ToSingle(opacity.NewValue), 200));

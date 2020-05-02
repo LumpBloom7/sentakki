@@ -1,0 +1,25 @@
+<Project>
+  <PropertyGroup Label="C#">
+    <LangVersion>8.0</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup Label="Resources">
+    <EmbeddedResource Include="Resources\**\*.*" />
+  </ItemGroup>
+  <ItemGroup Label="Code Analysis">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8" PrivateAssets="All" />
+  </ItemGroup>
+  <PropertyGroup Label="Code Analysis">
+    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)CodeAnalysis\sentakki.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Label="Nuget">
+    <IsPackable>false</IsPackable>
+    <Authors>Derrick Timmermans</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/LumpBloom7/sentakki</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/LumpBloom7/sentakki</RepositoryUrl>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <Copyright>Copyright (c) 2020 Derrick Timmermans</Copyright>
+    <PackageTags>osu game</PackageTags>
+  </PropertyGroup>
+</Project>
