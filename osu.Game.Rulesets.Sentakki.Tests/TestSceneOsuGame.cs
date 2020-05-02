@@ -34,9 +34,12 @@ namespace osu.Game.Rulesets.Sentakki.Tests
             public OsuGameSupporter()
             {
                 API = new DummyAPIAccess();
-                API.LocalUser.Value.IsSupporter = true;
-                API.LocalUser.Value.Username = "Mai-chan";
-                API.LocalUser.Value.Country = new Country { FlagName = @"BE" };
+                API.LocalUser.Value = new User
+                {
+                    IsSupporter = true,
+                    Username = "Mai-Chan",
+                    Country = new Country { FlagName = @"BE" }
+                };
             }
         }
     }
