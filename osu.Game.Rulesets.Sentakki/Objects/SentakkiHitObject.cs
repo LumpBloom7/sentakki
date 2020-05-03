@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public override Judgement CreateJudgement() => new SentakkiJudgement();
 
         public Color4 NoteColor { get; set; }
-        public Vector2 EndPosition { get; set; }
+        public virtual Vector2 EndPosition { get; set; }
         public virtual float Angle { get; set; }
 
         public Vector2 Position { get; set; }
