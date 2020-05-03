@@ -258,7 +258,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             public HitReceptor()
             {
                 RelativeSizeAxes = Axes.None;
-                Size = new Vector2(350);
+                Size = new Vector2(240);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
             }
