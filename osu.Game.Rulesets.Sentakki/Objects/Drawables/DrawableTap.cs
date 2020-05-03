@@ -187,12 +187,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
             protected override bool OnHover(HoverEvent e)
             {
-                foreach (var buttonheld in SentakkiActionInputManager.PressedActions)
-                    if (OnPressed(buttonheld))
-                        return true;
-                return false;
+                return SentakkiActionInputManager?.PressedActions.Any(action => OnPressed(action)) ?? false;
             }
-
         }
     }
 }
