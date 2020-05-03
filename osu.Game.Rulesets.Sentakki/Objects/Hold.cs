@@ -4,7 +4,7 @@ using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using System.Collections.Generic;
 using System.Linq;
-
+using osuTK;
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Hold : SentakkiHitObject, IHasEndTime
@@ -58,6 +58,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 base.Angle = value;
                 Head.Angle = value;
                 Tail.Angle = value;
+            }
+        }
+
+        public override Vector2 EndPosition
+        {
+            get => base.EndPosition;
+            set
+            {
+                base.EndPosition = value;
+                Head.EndPosition = value;
+                Tail.EndPosition = value;
             }
         }
 
