@@ -306,8 +306,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             protected override void OnHoverLost(HoverLostEvent e)
             {
                 actions.Clear();
+                Release?.Invoke();
             }
-
         }
     }
 }
