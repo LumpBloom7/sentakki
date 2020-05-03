@@ -41,6 +41,5 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 breakSound?.Play();
             }
         }
-
     }
 }
