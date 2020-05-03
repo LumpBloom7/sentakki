@@ -55,6 +55,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         Position = Vector2.Zero,
                         StartTime = original.StartTime,
                         EndTime = endTimeData.EndTime,
+                        Samples = original.Samples,
                     }.Yield();
 
                 default:
