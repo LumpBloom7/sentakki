@@ -6,6 +6,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -293,6 +294,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         break;
                 }
             }
+            protected override bool OnHover(HoverEvent e)
+            {
+                foreach (var buttonheld in SentakkiActionInputManager.PressedActions)
+                    if (OnPressed(buttonheld))
+                    {
+                        actions.AddRange(SentakkiActionInputManager.PressedActions);
+                        return true;
+                    }
+                return false;
+            }
+            protected override void OnHoverLost(HoverLostEvent e)
+            {
+                actions.Clear();
+            }
+
         }
     }
 }

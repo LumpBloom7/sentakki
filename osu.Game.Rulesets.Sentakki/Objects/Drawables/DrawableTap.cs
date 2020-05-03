@@ -6,6 +6,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -14,6 +15,7 @@ using osuTK;
 using osuTK.Graphics;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -183,6 +185,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             public void OnReleased(SentakkiAction action)
             {
             }
+            protected override bool OnHover(HoverEvent e)
+            {
+                foreach (var buttonheld in SentakkiActionInputManager.PressedActions)
+                    if (OnPressed(buttonheld))
+                        return true;
+                return false;
+            }
+
         }
     }
 }
