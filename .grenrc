@@ -1,0 +1,23 @@
+{
+    "limit": 1,
+    "dataSource": "prs",
+    "ignoreIssuesWith": [
+        "duplicate",
+        "dependencies",
+        "documentation",
+        "help wanted",
+        "invalid",
+        "question",
+        "wontfix"
+    ],
+    "template": {
+        "issue": "- {{name}} [{{text}}]({{url}}) | [{{user_login}}]({{user_url}})",
+        "group": "\n### {{heading}}\n",
+        "changelogTitle": "",
+        "release": "## Changes since last release\n{{body}}"
+    },
+    "groupBy": {
+        "✨ New Features": "[enhancement]",
+        "🐛 Bug Fixes:": "[bug]"
+    }
+}

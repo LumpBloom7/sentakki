@@ -13,6 +13,10 @@ jobs:
       uses: actions/checkout@v2
     - name: Fetch all tags
       run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v1.4.2
+    - name: Install Gren
+      run: npm install github-release-notes -g
     - name: Get current tag
       run: echo "::set-env name=CURRENT_TAG::$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1))"
     - name: Get previous tag
@@ -25,6 +29,15 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build osu.Game.Rulesets.Sentakki --configuration Release -p:Version=${{env.CURRENT_TAG}} --no-restore
+    - name: Generate changelog
+      shell: bash
+      run: |
+        gren changelog -T ${{secrets.RELEASE_TOKEN}} --generate --override
+        changelog=$(<./CHANGELOG.md)
+        changelog="${changelog//'%'/'%25'}"
+        changelog="${changelog//$'\n'/'%0A'}"
+        changelog="${changelog//$'\r'/'%0D'}"
+        echo "::set-env name=CHANGELOG::$changelog"
     - name: Create Release
       id: create_release
       uses: actions/create-release@latest
@@ -37,7 +50,9 @@ jobs:
           Thank you for showing interest in this ruleset. This is a tagged release (${{env.CURRENT_TAG}}).
           If you like this ruleset, do consider supporting me on [ko-fi](https://ko-fi.com/Bloom) or [PayPal](https://paypal.me/lumpbloom7).
 
-          Check out the [commit history](https://github.com/LumpBloom7/sentakki/compare/${{env.PREVIOUS_TAG}}...${{env.CURRENT_TAG}}) for changes made since the last release.
+          ${{env.CHANGELOG}}
+
+          Check out the [commit history](https://github.com/LumpBloom7/sentakki/compare/${{env.PREVIOUS_TAG}}...${{env.CURRENT_TAG}}) for more detailed changes made since the last release.
 
           ## Installation
 
