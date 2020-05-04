@@ -82,7 +82,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Tail.UpdateResult();
                         HoldStartTime = null;
                         isHitting.Value = false;
-                    }
+                    },
+                    NoteAngle = HitObject.Angle
                 }
             });
         }
@@ -259,13 +260,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             public float NoteAngle = -1;
             public bool HoverAction()
             {
-                if (SentakkiActionInputManager.CurrentAngles.Contains(NoteAngle))
-                    return false;
-                SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
-                if (SentakkiActionInputManager.PressedActions.Any(action => OnPressed(action)))
+                if (!SentakkiActionInputManager.CurrentAngles.Contains(NoteAngle))
                 {
-                    actions.AddRange(SentakkiActionInputManager.PressedActions);
-                    return true;
+                    SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
+                    if (SentakkiActionInputManager.PressedActions.Any(action => OnPressed(action)))
+                        actions.AddRange(SentakkiActionInputManager.PressedActions);
                 }
                 return false;
             }

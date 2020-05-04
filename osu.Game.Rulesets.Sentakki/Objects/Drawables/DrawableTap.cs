@@ -170,10 +170,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             public bool HoverAction()
             {
-                if (SentakkiActionInputManager.CurrentAngles.Contains(NoteAngle))
-                    return false;
-                SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
-                return SentakkiActionInputManager?.PressedActions.Any(action => OnPressed(action)) ?? false;
+                if (!SentakkiActionInputManager.CurrentAngles.Contains(NoteAngle))
+                {
+                    SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
+                    SentakkiActionInputManager?.PressedActions.Any(action => OnPressed(action));
+                }
+                return false;
             }
             public virtual bool OnPressed(SentakkiAction action)
             {
@@ -203,7 +205,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public class HoverReceptor : CircularContainer
         {
             public override bool HandlePositionalInput => true;
-            private HitReceptor parent;
+            private readonly HitReceptor parent;
             public HoverReceptor(HitReceptor parent)
             {
                 RelativeSizeAxes = Axes.None;
