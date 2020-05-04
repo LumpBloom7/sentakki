@@ -14,11 +14,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.101
+    - name: Install dependencies
+      run: dotnet restore
     - name: Build with .NET
-      run: dotnet build --configuration Release
+      run: dotnet build --no-restore --configuration Release
     - name: Unit Tests
-      run: dotnet test
+      run: dotnet test --no-restore

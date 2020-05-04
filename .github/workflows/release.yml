@@ -13,18 +13,10 @@ jobs:
       uses: actions/checkout@v2
     - name: Fetch all tags
       run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v1.4.2
-    - name: Install Gren
-      run: npm install github-release-notes -g
     - name: Get current tag
       run: echo "::set-env name=CURRENT_TAG::$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1))"
     - name: Get previous tag
       run: echo "::set-env name=PREVIOUS_TAG::$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))"
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.101
     - name: Install dependencies
       run: dotnet restore
     - name: Build
@@ -32,6 +24,7 @@ jobs:
     - name: Generate changelog
       shell: bash
       run: |
+        npm install github-release-notes -g
         gren changelog -T ${{secrets.RELEASE_TOKEN}} --generate --override
         changelog=$(<./CHANGELOG.md)
         changelog="${changelog//'%'/'%25'}"
