@@ -256,6 +256,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             public Func<bool> Hit;
             public Action Release;
 
+            public float NoteAngle = -1;
             public HitReceptor()
             {
                 RelativeSizeAxes = Axes.None;
@@ -296,6 +297,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
             protected override bool OnHover(HoverEvent e)
             {
+                if (SentakkiActionInputManager.CurrentAngles.Contains(NoteAngle))
+                    return false;
+                SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
                 if (SentakkiActionInputManager.PressedActions.Any(action => OnPressed(action)))
                 {
                     actions.AddRange(SentakkiActionInputManager.PressedActions);
@@ -305,6 +309,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
             protected override void OnHoverLost(HoverLostEvent e)
             {
+                SentakkiActionInputManager.CurrentAngles.Remove(NoteAngle);
                 actions.Clear();
                 Release?.Invoke();
             }

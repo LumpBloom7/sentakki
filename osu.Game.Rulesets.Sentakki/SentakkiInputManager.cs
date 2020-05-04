@@ -42,6 +42,8 @@ namespace osu.Game.Rulesets.Sentakki
             : base(ruleset, 0, SimultaneousBindingMode.Unique)
         {
         }
+
+        public List<float> CurrentAngles = new List<float>();
     }
 
     public enum SentakkiAction

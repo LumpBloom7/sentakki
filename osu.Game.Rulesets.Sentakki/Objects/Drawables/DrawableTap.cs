@@ -62,7 +62,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         return true;
                     },
                     RelativeSizeAxes = Axes.None,
-                    Position = hitObject.EndPosition
+                    Position = hitObject.EndPosition,
+                    NoteAngle = HitObject.Angle
                 },
             });
         }
@@ -157,6 +158,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             private SentakkiInputManager sentakkiActionInputManager;
             internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
+            public float NoteAngle = -1;
             public HitReceptor()
             {
                 RelativeSizeAxes = Axes.None;
@@ -187,7 +189,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
             protected override bool OnHover(HoverEvent e)
             {
+                if (SentakkiActionInputManager.CurrentAngles.Contains(NoteAngle))
+                    return false;
+                SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
                 return SentakkiActionInputManager?.PressedActions.Any(action => OnPressed(action)) ?? false;
+            }
+            protected override void OnHoverLost(HoverLostEvent e)
+            {
+                sentakkiActionInputManager.CurrentAngles.Remove(NoteAngle);
             }
         }
     }
