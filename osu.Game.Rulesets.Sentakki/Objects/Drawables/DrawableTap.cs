@@ -165,9 +165,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 Size = new Vector2(240);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
+                Add(new HoverReceptor(this));
             }
 
-            public bool OnPressed(SentakkiAction action)
+            public bool HoverAction()
+            {
+                if (SentakkiActionInputManager.CurrentAngles.Contains(NoteAngle))
+                    return false;
+                SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
+                return SentakkiActionInputManager?.PressedActions.Any(action => OnPressed(action)) ?? false;
+            }
+            public virtual bool OnPressed(SentakkiAction action)
             {
                 switch (action)
                 {
@@ -184,20 +192,27 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return false;
             }
 
-            public void OnReleased(SentakkiAction action)
+            public virtual void OnReleased(SentakkiAction action)
             {
-            }
-            protected override bool OnHover(HoverEvent e)
-            {
-                if (SentakkiActionInputManager.CurrentAngles.Contains(NoteAngle))
-                    return false;
-                SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
-                return SentakkiActionInputManager?.PressedActions.Any(action => OnPressed(action)) ?? false;
             }
             protected override void OnHoverLost(HoverLostEvent e)
             {
-                sentakkiActionInputManager.CurrentAngles.Remove(NoteAngle);
+                SentakkiActionInputManager.CurrentAngles.Remove(NoteAngle);
             }
+        }
+        public class HoverReceptor : CircularContainer
+        {
+            public override bool HandlePositionalInput => true;
+            private HitReceptor parent;
+            public HoverReceptor(HitReceptor parent)
+            {
+                RelativeSizeAxes = Axes.None;
+                Size = new Vector2(150);
+                Anchor = Anchor.Centre;
+                Origin = Anchor.Centre;
+                this.parent = parent;
+            }
+            protected override bool OnHover(HoverEvent e) => parent.HoverAction();
         }
     }
 }

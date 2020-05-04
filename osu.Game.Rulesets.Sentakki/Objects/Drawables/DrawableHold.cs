@@ -257,15 +257,28 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             public Action Release;
 
             public float NoteAngle = -1;
+            public bool HoverAction()
+            {
+                if (SentakkiActionInputManager.CurrentAngles.Contains(NoteAngle))
+                    return false;
+                SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
+                if (SentakkiActionInputManager.PressedActions.Any(action => OnPressed(action)))
+                {
+                    actions.AddRange(SentakkiActionInputManager.PressedActions);
+                    return true;
+                }
+                return false;
+            }
             public HitReceptor()
             {
                 RelativeSizeAxes = Axes.None;
                 Size = new Vector2(240);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
+                Add(new HoverReceptor(this));
             }
 
-            public bool OnPressed(SentakkiAction action)
+            public virtual bool OnPressed(SentakkiAction action)
             {
                 switch (action)
                 {
@@ -278,7 +291,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         }
                         break;
                 }
-
                 return false;
             }
 
@@ -295,23 +307,25 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         break;
                 }
             }
-            protected override bool OnHover(HoverEvent e)
-            {
-                if (SentakkiActionInputManager.CurrentAngles.Contains(NoteAngle))
-                    return false;
-                SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
-                if (SentakkiActionInputManager.PressedActions.Any(action => OnPressed(action)))
-                {
-                    actions.AddRange(SentakkiActionInputManager.PressedActions);
-                    return true;
-                }
-                return false;
-            }
             protected override void OnHoverLost(HoverLostEvent e)
             {
                 SentakkiActionInputManager.CurrentAngles.Remove(NoteAngle);
                 actions.Clear();
                 Release?.Invoke();
+            }
+
+            public class HoverReceptor : CircularContainer
+            {
+                private readonly HitReceptor parent;
+                public HoverReceptor(HitReceptor parent)
+                {
+                    Size = new Vector2(150);
+                    Anchor = Anchor.Centre;
+                    Origin = Anchor.Centre;
+                    this.parent = parent;
+                }
+
+                protected override bool OnHover(HoverEvent e) => parent.HoverAction();
             }
         }
     }
