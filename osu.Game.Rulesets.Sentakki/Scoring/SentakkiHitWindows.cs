@@ -15,8 +15,6 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
                 case HitResult.Great:
                 case HitResult.Good:
                 case HitResult.Meh:
-                case HitResult.Miss:
-                    return true;
                 default:
                     return false;
             }
