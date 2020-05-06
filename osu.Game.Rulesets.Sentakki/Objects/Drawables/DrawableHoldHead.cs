@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
 
             var result = HitObject.HitWindows.ResultFor(timeOffset);
-            if (result == HitResult.None)
+            if (result == HitResult.None || (result == HitResult.Miss && Time.Current < HitObject.StartTime))
                 return;
 
             ApplyResult(r => r.Type = result);
