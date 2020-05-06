@@ -5,7 +5,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -14,7 +13,6 @@ using osuTK;
 using osuTK.Graphics;
 using System;
 using System.Diagnostics;
-
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTap : DrawableSentakkiHitObject
@@ -59,8 +57,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         UpdateResult(true);
                         return true;
                     },
-                    RelativeSizeAxes = Axes.None,
-                    Position = hitObject.EndPosition
+                    Position = hitObject.EndPosition,
+                    NoteAngle = HitObject.Angle
                 },
             });
         }
@@ -140,48 +138,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     this.ScaleTo(1f, time_fade_miss).Expire();
 
                     break;
-            }
-        }
-
-        public class HitReceptor : CircularContainer, IKeyBindingHandler<SentakkiAction>
-        {
-            // IsHovered is used
-            public override bool HandlePositionalInput => true;
-
-            public Func<bool> Hit;
-
-            public SentakkiAction? HitAction;
-
-            private SentakkiInputManager sentakkiActionInputManager;
-            internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
-
-            public HitReceptor()
-            {
-                RelativeSizeAxes = Axes.None;
-                Size = new Vector2(240);
-                Anchor = Anchor.Centre;
-                Origin = Anchor.Centre;
-            }
-
-            public bool OnPressed(SentakkiAction action)
-            {
-                switch (action)
-                {
-                    case SentakkiAction.Button1:
-                    case SentakkiAction.Button2:
-                        if (IsHovered && (Hit?.Invoke() ?? false))
-                        {
-                            HitAction = action;
-                            return true;
-                        }
-                        break;
-                }
-
-                return false;
-            }
-
-            public void OnReleased(SentakkiAction action)
-            {
             }
         }
     }
