@@ -34,7 +34,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             if (!SentakkiActionInputManager.CurrentAngles.Contains(NoteAngle))
             {
-                SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
                 if (SentakkiActionInputManager.PressedActions.Any(action => OnPressed(action)))
                     actions.AddRange(SentakkiActionInputManager.PressedActions);
             }
@@ -51,6 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         public virtual bool OnPressed(SentakkiAction action)
         {
+            SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
             switch (action)
             {
                 default:
