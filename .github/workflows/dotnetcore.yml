@@ -19,4 +19,4 @@ jobs:
     - name: Build with .NET
       run: dotnet build --no-restore --configuration Release
     - name: Unit Tests
-      run: dotnet test --no-restore
+      run: dotnet test --no-build --no-restore --configuration Release

@@ -20,7 +20,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build osu.Game.Rulesets.Sentakki --configuration Release -p:Version=${{env.CURRENT_TAG}} --no-restore
+      run: dotnet build osu.Game.Rulesets.Sentakki --configuration Release --no-restore
     - name: Generate changelog
       shell: bash
       run: |

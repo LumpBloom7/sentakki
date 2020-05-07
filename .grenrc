@@ -18,6 +18,7 @@
     },
     "groupBy": {
         "✨ New Features": "[enhancement]",
-        "🐛 Bug Fixes:": "[bug]"
+        "🛠  Improvements": "[tweak]",
+        "🐛 Bug Fixes:": "[bug]",
     }
 }
