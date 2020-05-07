@@ -1,4 +1,4 @@
-﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Allocation;
@@ -77,9 +77,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void Update()
         {
             base.Update();
-            animationDuration.TriggerChange();
-            fadeIn = 500 * Clock.Rate;
-            moveTo = animationDuration.Value * Clock.Rate;
+            fadeIn = 500 * (Clock.Rate < 0 ? 1 : Clock.Rate);
+            moveTo = animationDuration.Value * (Clock.Rate < 0 ? 1 : Clock.Rate);
             double animStart = HitObject.StartTime - moveTo - fadeIn;
             double currentProg = Clock.CurrentTime - animStart;
 
@@ -145,7 +144,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 case ArmedState.Hit:
                     HitObjectLine.FadeOut();
-                    this.ScaleTo(1f, time_fade_hit).Expire();
+                    this.Delay(400).FadeOut().Expire();
 
                     break;
 
