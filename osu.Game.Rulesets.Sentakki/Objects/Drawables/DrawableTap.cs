@@ -13,6 +13,8 @@ using osuTK;
 using osuTK.Graphics;
 using System;
 using System.Diagnostics;
+using osu.Game.Rulesets.Sentakki.UI;
+
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTap : DrawableSentakkiHitObject
@@ -23,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private double fadeIn = 500, moveTo, idle;
 
-        protected override double InitialLifetimeOffset => 3500;
+        protected override double InitialLifetimeOffset => 12000;
 
         public DrawableTap(SentakkiHitObject hitObject)
             : base(hitObject)
@@ -72,16 +74,42 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             HitObjectLine.Child.Colour = HitObject.NoteColor;
         }
 
+        protected override void Update()
+        {
+            base.Update();
+            animationDuration.TriggerChange();
+            fadeIn = 500 * Clock.Rate;
+            moveTo = animationDuration.Value * Clock.Rate;
+            double animStart = HitObject.StartTime - moveTo - fadeIn;
+            double currentProg = Clock.CurrentTime - animStart;
+
+            float fadeAmount = (float)(currentProg / fadeIn);
+            if (fadeAmount < 0) fadeAmount = 0;
+            else if (fadeAmount > 1) fadeAmount = 1;
+
+
+            CirclePiece.Alpha = (float)(1 * fadeAmount);
+            CirclePiece.Scale = new Vector2((float)(1 * fadeAmount));
+            HitObjectLine.Alpha = (float)(.75 * fadeAmount);
+
+            Vector2 positionDifference = HitObject.EndPosition - HitObject.Position;
+
+            float moveAmount = (float)((currentProg - fadeIn) / moveTo);
+            if (moveAmount < 0) moveAmount = 0;
+            else if (moveAmount > 1) moveAmount = 1;
+
+            CirclePiece.Position = HitObject.Position + (positionDifference * moveAmount);
+            float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
+
+            HitObjectLine.Size = new Vector2((SentakkiPlayfield.NOTESTARTDISTANCE * 2) + (sizeDiff * moveAmount));
+        }
+
         protected override void UpdateInitialTransforms()
         {
-            animationDuration.TriggerChange();
+
             fadeIn = 500;
             moveTo = animationDuration.Value;
             idle = 3500 - fadeIn - moveTo;
-            base.UpdateInitialTransforms();
-
-            CirclePiece.Delay(idle).FadeInFromZero(fadeIn).ScaleTo(1f, fadeIn).Then().MoveTo(HitObject.EndPosition, moveTo);
-            HitObjectLine.Delay(idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(600, moveTo)));
             if (IsHidden)
                 this.Delay(idle + fadeIn).FadeOut(moveTo / 2);
         }
