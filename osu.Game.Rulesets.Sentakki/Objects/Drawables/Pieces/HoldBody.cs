@@ -118,16 +118,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                              .Then()
                              .FadeOut(flash_out);
 
-                    using (BeginDelayedSequence(Duration))
+                    using (BeginDelayedSequence(Duration, true))
                     {
                         explode.FadeIn(flash_in);
                         this.ScaleTo(1.5f, 400, Easing.OutQuad);
 
                         using (BeginDelayedSequence(flash_in, true))
                         {
-                            //after the flash, we can hide some elements that were behind it
                             note.FadeOut();
-
                             this.FadeOut(800);
                         }
                     }
