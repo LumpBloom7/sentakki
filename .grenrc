@@ -19,6 +19,6 @@
     "groupBy": {
         "✨ New Features": "[enhancement]",
         "🛠  Improvements": "[tweak]",
-        "🐛 Bug Fixes:": "[bug]",
+        "🐛 Bug Fixes:": "[bug]"
     }
 }
