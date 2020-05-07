@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Allocation;
@@ -23,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public readonly TapCircle CirclePiece;
         public readonly CircularContainer HitObjectLine;
 
-        private double fadeIn = 500, moveTo, idle;
+        private double fadeIn = 500, moveTo;
 
         protected override double InitialLifetimeOffset => 12000;
 
@@ -98,19 +98,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             else if (moveAmount > 1) moveAmount = 1;
 
             CirclePiece.Position = HitObject.Position + (positionDifference * moveAmount);
+            if (IsHidden)
+                Alpha = 1 - (1 * moveAmount);
             float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
 
             HitObjectLine.Size = new Vector2((SentakkiPlayfield.NOTESTARTDISTANCE * 2) + (sizeDiff * moveAmount));
-        }
-
-        protected override void UpdateInitialTransforms()
-        {
-
-            fadeIn = 500;
-            moveTo = animationDuration.Value;
-            idle = 3500 - fadeIn - moveTo;
-            if (IsHidden)
-                this.Delay(idle + fadeIn).FadeOut(moveTo / 2);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
