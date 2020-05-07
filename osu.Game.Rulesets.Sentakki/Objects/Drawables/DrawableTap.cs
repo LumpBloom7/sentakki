@@ -82,26 +82,28 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             double animStart = HitObject.StartTime - moveTo - fadeIn;
             double currentProg = Clock.CurrentTime - animStart;
 
+            // Calculate initial entry animation
             float fadeAmount = (float)(currentProg / fadeIn);
             if (fadeAmount < 0) fadeAmount = 0;
             else if (fadeAmount > 1) fadeAmount = 1;
-
 
             CirclePiece.Alpha = (float)(1 * fadeAmount);
             CirclePiece.Scale = new Vector2((float)(1 * fadeAmount));
             HitObjectLine.Alpha = (float)(.75 * fadeAmount);
 
+            // Calculate position
             Vector2 positionDifference = HitObject.EndPosition - HitObject.Position;
-
             float moveAmount = (float)((currentProg - fadeIn) / moveTo);
             if (moveAmount < 0) moveAmount = 0;
             else if (moveAmount > 1) moveAmount = 1;
 
             CirclePiece.Position = HitObject.Position + (positionDifference * moveAmount);
+
             if (IsHidden)
                 Alpha = 1 - (1 * moveAmount);
-            float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
 
+            // Make sure HitObjectLine is adjusted
+            float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
             HitObjectLine.Size = new Vector2((SentakkiPlayfield.NOTESTARTDISTANCE * 2) + (sizeDiff * moveAmount));
         }
 
