@@ -26,7 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             breakSound.AddAdjustment(AdjustableProperty.Balance, balanceAdjust);
         }
 
-        [BackgroundDependencyLoader]
+        [BackgroundDependencyLoader(true)]
         private void load(OsuConfigManager osuConfig, SentakkiRulesetConfigManager sentakkiConfig)
         {
             osuConfig.BindWith(OsuSetting.PositionalHitSounds, userPositionalHitSounds);
