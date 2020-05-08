@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Allocation;
@@ -223,7 +223,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (Tail.AllJudged)
-                ApplyResult(r => r.Type = HitResult.Perfect);
+                ApplyResult(r => r.Type = (Head.IsHit || Tail.IsHit) ? HitResult.Perfect : HitResult.Miss);
         }
 
         public bool Auto = false;
@@ -244,7 +244,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
 
                 case ArmedState.Miss:
-                    using (BeginDelayedSequence((HitObject as IHasEndTime).Duration, true))
+                    double longestSurvivalTime = Tail.HitObject.HitWindows.WindowFor(HitResult.Miss);
+                    using (BeginDelayedSequence((HitObject as IHasEndTime).Duration + longestSurvivalTime, true))
                     {
                         note.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                             .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
