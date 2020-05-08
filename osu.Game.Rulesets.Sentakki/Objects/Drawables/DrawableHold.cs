@@ -172,7 +172,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (extendAmount < 0) extendAmount = 0;
             else if (extendAmount > 1) extendAmount = 1;
 
-            note.Height = (float)(80 + length * extendAmount);
+            note.Height = (float)(80 + (length * extendAmount));
 
             // Calculate duration where no movement is happening (when notes are very long)
             float idleTime = (float)((HitObject as IHasEndTime).Duration - extendTime);
@@ -196,27 +196,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             else if (TotalMoveAmount > 1) TotalMoveAmount = 1;
 
             if (IsHidden && TotalMoveAmount > 0)
-                Alpha = 1 - (1 * TotalMoveAmount);
-
+                Alpha = 1 - (1 * TotalMoveAmount / ((Time.Current >= HitObject.StartTime && isHitting.Value) ? 2 : 1));
             // Make sure HitObjectLine is adjusted with the moving note
             float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
             HitObjectLine.Size = new Vector2((SentakkiPlayfield.NOTESTARTDISTANCE * 2) + (sizeDiff * TotalMoveAmount));
 
-
-
-            // Hit feedback
+            // Hit feedback glow
             if (Time.Current >= HitObject.StartTime)
             {
                 if (isHitting.Value)
-                {
                     note.Glow.FadeIn(50);
-                    this.FadeTo(IsHidden ? .2f : 1f, 50);
-                }
                 else
-                {
                     note.Glow.FadeOut(100);
-                    this.FadeTo(IsHidden ? 0f : .5f, 200);
-                }
             }
         }
 
