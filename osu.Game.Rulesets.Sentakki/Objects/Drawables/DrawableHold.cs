@@ -194,7 +194,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (TotalMoveAmount < 0) TotalMoveAmount = 0;
             else if (TotalMoveAmount > 1) TotalMoveAmount = 1;
 
-            if (IsHidden)
+            if (IsHidden && TotalMoveAmount > 0)
                 Alpha = 1 - (1 * TotalMoveAmount);
 
             // Make sure HitObjectLine is adjusted with the moving note

@@ -99,7 +99,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             CirclePiece.Position = HitObject.Position + (positionDifference * moveAmount);
 
-            if (IsHidden)
+            if (IsHidden && moveAmount > 0)
                 Alpha = 1 - (1 * moveAmount);
 
             // Make sure HitObjectLine is adjusted
