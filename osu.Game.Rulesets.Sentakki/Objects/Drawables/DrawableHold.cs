@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public readonly HitReceptor HitArea;
         private readonly HoldBody note;
         public readonly CircularContainer HitObjectLine;
-        protected override double InitialLifetimeOffset => 3500;
+        protected override double InitialLifetimeOffset => 12000;
 
         /// <summary>
         /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
@@ -83,22 +83,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
-        protected override void Update()
-        {
-            if (Time.Current >= HitObject.StartTime)
-            {
-                if (isHitting.Value)
-                {
-                    note.Glow.FadeIn(50);
-                    this.FadeTo(IsHidden ? .2f : 1f, 50);
-                }
-                else
-                {
-                    note.Glow.FadeOut(100);
-                    this.FadeTo(IsHidden ? 0f : .5f, 200);
-                }
-            }
-        }
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
         {
             base.AddNestedHitObject(hitObject);
@@ -155,46 +139,82 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             HitObjectLine.Child.Colour = HitObject.NoteColor;
         }
 
-        private double fadeIn = 500, moveTo, idle;
+        private double fadeIn = 500, moveTo;
 
-        protected override void UpdateInitialTransforms()
+        protected override void Update()
         {
-            animationDuration.TriggerChange();
-            fadeIn = 500;
-            moveTo = animationDuration.Value;
-            idle = 3500 - fadeIn - moveTo;
+            base.Update();
+            if (Result.HasResult) return;
+            fadeIn = 500 * (Clock.Rate < 0 ? 1 : Clock.Rate);
+            moveTo = animationDuration.Value * (Clock.Rate < 0 ? 1 : Clock.Rate);
+            double animStart = HitObject.StartTime - moveTo - fadeIn;
+            double currentProg = Clock.CurrentTime - animStart;
 
-            float length = Convert.ToSingle((SentakkiPlayfield.INTERSECTDISTANCE - 66) / animationDuration.Value * ((HitObject as IHasEndTime).Duration));
-            double extendTime = (length / (SentakkiPlayfield.INTERSECTDISTANCE - 66)) * animationDuration.Value;
+            // Calculate initial entry animation
+            float fadeAmount = (float)(currentProg / fadeIn);
+            if (fadeAmount < 0) fadeAmount = 0;
+            else if (fadeAmount > 1) fadeAmount = 1;
 
-            var seq = note.Delay(idle)
-                    .FadeInFromZero(500)
-                    .ScaleTo(1f, fadeIn)
-                    .Then();
+            HitObjectLine.Alpha = (float)(.75 * fadeAmount);
+            note.Alpha = (float)(1 * fadeAmount);
+            note.Scale = new Vector2((float)(1 * fadeAmount));
 
-            if (length >= (SentakkiPlayfield.INTERSECTDISTANCE - 66))
-                seq.ResizeHeightTo(SentakkiPlayfield.INTERSECTDISTANCE - 66 + 80, moveTo)
-                .Delay((HitObject as IHasEndTime).Duration)
-                .ResizeHeightTo(80, moveTo)
-                .MoveToY(-(SentakkiPlayfield.INTERSECTDISTANCE - 40), moveTo);
-            else
-                seq.ResizeHeightTo(length + 80, extendTime)
-                .Then()
-                .MoveToY(-(SentakkiPlayfield.INTERSECTDISTANCE - length - 80 + 40), animationDuration.Value - extendTime)
-                .Then()
-                .ResizeHeightTo(80, extendTime)
-                .MoveToY(-(SentakkiPlayfield.INTERSECTDISTANCE - 40), extendTime);
+            // Calculate total length of hold note
+            double length = Convert.ToSingle((SentakkiPlayfield.INTERSECTDISTANCE - 66) / moveTo * ((HitObject as IHasEndTime).Duration));
+            if (length > SentakkiPlayfield.INTERSECTDISTANCE - 66) // Clip max length
+                length = SentakkiPlayfield.INTERSECTDISTANCE - 66;
 
-            HitObjectLine.Delay(idle).FadeTo(.75f, fadeIn).Then().ResizeTo(600, moveTo);
+            // Calculate time taken to extend to desired length
+            double extendTime = length / (SentakkiPlayfield.INTERSECTDISTANCE - 66) * moveTo;
 
-            if (IsHidden)
-                this.Delay(idle + fadeIn).FadeOut(moveTo / 2);
+            // Start strecthing
+            float extendAmount = (float)((currentProg - fadeIn) / extendTime);
+            if (extendAmount < 0) extendAmount = 0;
+            else if (extendAmount > 1) extendAmount = 1;
+
+            note.Height = (float)(80 + (length * extendAmount));
+
+            // Calculate duration where no movement is happening (when notes are very long)
+            float idleTime = (float)((HitObject as IHasEndTime).Duration - extendTime);
+
+            // Move the note once idle time is over
+            float moveAmount = (float)((currentProg - fadeIn - extendTime - idleTime) / moveTo);
+            if (moveAmount < 0) moveAmount = 0;
+            else if (moveAmount > 1) moveAmount = 1;
+
+            float yDiff = SentakkiPlayfield.INTERSECTDISTANCE - 66;
+            note.Y = -26 - (yDiff * moveAmount);
+
+            // Start shrinking when the time comes
+            float shrinkAmount = Math.Abs(note.Y) + note.Height - SentakkiPlayfield.INTERSECTDISTANCE - 40;
+            if (shrinkAmount > 0)
+                note.Height -= shrinkAmount;
+
+            // Hidden fade calculation
+            float TotalMoveAmount = (float)((currentProg - fadeIn) / moveTo);
+            if (TotalMoveAmount < 0) TotalMoveAmount = 0;
+            else if (TotalMoveAmount > 1) TotalMoveAmount = 1;
+
+            if (IsHidden && TotalMoveAmount > 0)
+                Alpha = 1 - (1 * TotalMoveAmount / ((Time.Current >= HitObject.StartTime && isHitting.Value) ? 2 : 1));
+            // Make sure HitObjectLine is adjusted with the moving note
+            float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
+            HitObjectLine.Size = new Vector2((SentakkiPlayfield.NOTESTARTDISTANCE * 2) + (sizeDiff * TotalMoveAmount));
+
+            // Hit feedback glow
+            if (Time.Current >= HitObject.StartTime)
+            {
+                if (isHitting.Value)
+                    note.Glow.FadeIn(50);
+                else
+                    note.Glow.FadeOut(100);
+            }
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (Tail.AllJudged)
-                ApplyResult(r => r.Type = HitResult.Perfect);
+                ApplyResult(r => r.Type = (Head.IsHit || Tail.IsHit) ? HitResult.Perfect : HitResult.Miss);
         }
 
         public bool Auto = false;
@@ -203,10 +223,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateStateTransforms(state);
             const double time_fade_hit = 400, time_fade_miss = 400;
+            HitObjectLine.FadeOut();
+
             switch (state)
             {
                 case ArmedState.Hit:
-                    HitObjectLine.FadeOut();
                     using (BeginDelayedSequence((HitObject as IHasEndTime).Duration, true))
                     {
                         this.ScaleTo(1f, time_fade_hit);
@@ -214,7 +235,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
 
                 case ArmedState.Miss:
-                    using (BeginDelayedSequence((HitObject as IHasEndTime).Duration, true))
+                    double longestSurvivalTime = Tail.HitObject.HitWindows.WindowFor(HitResult.Miss);
+                    using (BeginDelayedSequence((HitObject as IHasEndTime).Duration + longestSurvivalTime, true))
                     {
                         note.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                             .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
@@ -226,7 +248,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                             Expire();
                         }
                     }
-                    HitObjectLine.FadeOut();
                     break;
             }
         }

@@ -13,6 +13,8 @@ using osuTK;
 using osuTK.Graphics;
 using System;
 using System.Diagnostics;
+using osu.Game.Rulesets.Sentakki.UI;
+
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTap : DrawableSentakkiHitObject
@@ -21,9 +23,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public readonly TapCircle CirclePiece;
         public readonly CircularContainer HitObjectLine;
 
-        private double fadeIn = 500, moveTo, idle;
+        private double fadeIn = 500, moveTo;
 
-        protected override double InitialLifetimeOffset => 3500;
+        protected override double InitialLifetimeOffset => 12000;
 
         public DrawableTap(SentakkiHitObject hitObject)
             : base(hitObject)
@@ -72,18 +74,38 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             HitObjectLine.Child.Colour = HitObject.NoteColor;
         }
 
-        protected override void UpdateInitialTransforms()
+        protected override void Update()
         {
-            animationDuration.TriggerChange();
-            fadeIn = 500;
-            moveTo = animationDuration.Value;
-            idle = 3500 - fadeIn - moveTo;
-            base.UpdateInitialTransforms();
+            base.Update();
+            if (Result.HasResult) return;
+            fadeIn = 500 * (Clock.Rate < 0 ? 1 : Clock.Rate);
+            moveTo = animationDuration.Value * (Clock.Rate < 0 ? 1 : Clock.Rate);
+            double animStart = HitObject.StartTime - moveTo - fadeIn;
+            double currentProg = Clock.CurrentTime - animStart;
 
-            CirclePiece.Delay(idle).FadeInFromZero(fadeIn).ScaleTo(1f, fadeIn).Then().MoveTo(HitObject.EndPosition, moveTo);
-            HitObjectLine.Delay(idle).Then(h => h.FadeTo(.75f, fadeIn).Then(h => h.ResizeTo(600, moveTo)));
-            if (IsHidden)
-                this.Delay(idle + fadeIn).FadeOut(moveTo / 2);
+            // Calculate initial entry animation
+            float fadeAmount = (float)(currentProg / fadeIn);
+            if (fadeAmount < 0) fadeAmount = 0;
+            else if (fadeAmount > 1) fadeAmount = 1;
+
+            CirclePiece.Alpha = (float)(1 * fadeAmount);
+            CirclePiece.Scale = new Vector2((float)(1 * fadeAmount));
+            HitObjectLine.Alpha = (float)(.75 * fadeAmount);
+
+            // Calculate position
+            Vector2 positionDifference = HitObject.EndPosition - HitObject.Position;
+            float moveAmount = (float)((currentProg - fadeIn) / moveTo);
+            if (moveAmount < 0) moveAmount = 0;
+            else if (moveAmount > 1) moveAmount = 1;
+
+            CirclePiece.Position = HitObject.Position + (positionDifference * moveAmount);
+
+            if (IsHidden && moveAmount > 0)
+                Alpha = 1 - (1 * moveAmount);
+
+            // Make sure HitObjectLine is adjusted
+            float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
+            HitObjectLine.Size = new Vector2((SentakkiPlayfield.NOTESTARTDISTANCE * 2) + (sizeDiff * moveAmount));
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -112,12 +134,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.UpdateStateTransforms(state);
 
             const double time_fade_hit = 400, time_fade_miss = 400;
+            HitObjectLine.FadeOut();
 
             switch (state)
             {
                 case ArmedState.Hit:
-                    HitObjectLine.FadeOut();
-                    this.ScaleTo(1f, time_fade_hit).Expire();
+                    this.Delay(400).FadeOut().Expire();
 
                     break;
 
@@ -130,7 +152,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                        .MoveToOffset(new Vector2(-(100 * (float)Math.Cos(d)), -(100 * (float)Math.Sin(d))), time_fade_hit, Easing.OutCubic)
                        .FadeOut(time_fade_miss);
 
-                    HitObjectLine.FadeOut();
                     this.ScaleTo(1f, time_fade_miss).Expire();
 
                     break;
