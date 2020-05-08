@@ -201,6 +201,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
             HitObjectLine.Size = new Vector2((SentakkiPlayfield.NOTESTARTDISTANCE * 2) + (sizeDiff * TotalMoveAmount));
 
+            if (Result.HasResult)
+                HitObjectLine.Alpha = 0;
+
             // Hit feedback
             if (Time.Current >= HitObject.StartTime)
             {
@@ -232,7 +235,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    HitObjectLine.FadeOut();
                     using (BeginDelayedSequence((HitObject as IHasEndTime).Duration, true))
                     {
                         this.ScaleTo(1f, time_fade_hit);
@@ -252,7 +254,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                             Expire();
                         }
                     }
-                    HitObjectLine.FadeOut();
                     break;
             }
         }

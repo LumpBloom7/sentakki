@@ -105,6 +105,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // Make sure HitObjectLine is adjusted
             float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
             HitObjectLine.Size = new Vector2((SentakkiPlayfield.NOTESTARTDISTANCE * 2) + (sizeDiff * moveAmount));
+
+            if (Result.HasResult)
+                HitObjectLine.Alpha = 0;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -137,7 +140,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    HitObjectLine.FadeOut();
                     this.Delay(400).FadeOut().Expire();
 
                     break;
@@ -151,7 +153,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                        .MoveToOffset(new Vector2(-(100 * (float)Math.Cos(d)), -(100 * (float)Math.Sin(d))), time_fade_hit, Easing.OutCubic)
                        .FadeOut(time_fade_miss);
 
-                    HitObjectLine.FadeOut();
                     this.ScaleTo(1f, time_fade_miss).Expire();
 
                     break;
