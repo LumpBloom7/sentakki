@@ -25,7 +25,7 @@ jobs:
       shell: bash
       run: |
         npm install github-release-notes -g
-        gren changelog -T ${{secrets.RELEASE_TOKEN}} --generate --override
+        gren changelog -T ${{secrets.GITHUB_TOKEN}} --generate --override --tags=${{env.CURRENT_TAG}}..${{env.PREVIOUS_TAG}}
         changelog=$(<./CHANGELOG.md)
         changelog="${changelog//'%'/'%25'}"
         changelog="${changelog//$'\n'/'%0A'}"
