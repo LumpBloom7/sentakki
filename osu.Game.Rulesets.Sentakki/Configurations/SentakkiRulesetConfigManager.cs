@@ -21,6 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
             Set(SentakkiRulesetSettings.ShowNoteStartIndicators, false);
             Set(SentakkiRulesetSettings.RingColor, ColorOption.Default);
             Set(SentakkiRulesetSettings.RingOpacity, 1f, 0f, 1f, 0.01f);
+            Set(SentakkiRulesetSettings.BreakSounds, true);
         }
     }
 
@@ -38,6 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
         MaimaiJudgements,
         RingOpacity,
         ShowNoteStartIndicators,
-        RingColor
+        RingColor,
+        BreakSounds
     }
 }
