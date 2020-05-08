@@ -1,5 +1,4 @@
 {
-    "limit": 1,
     "dataSource": "prs",
     "ignoreIssuesWith": [
         "duplicate",
