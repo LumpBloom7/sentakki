@@ -77,6 +77,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void Update()
         {
             base.Update();
+            if (Result.HasResult) return;
             fadeIn = 500 * (Clock.Rate < 0 ? 1 : Clock.Rate);
             moveTo = animationDuration.Value * (Clock.Rate < 0 ? 1 : Clock.Rate);
             double animStart = HitObject.StartTime - moveTo - fadeIn;
@@ -106,8 +107,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
             HitObjectLine.Size = new Vector2((SentakkiPlayfield.NOTESTARTDISTANCE * 2) + (sizeDiff * moveAmount));
 
-            if (Result.HasResult)
-                HitObjectLine.Alpha = 0;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -136,6 +135,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.UpdateStateTransforms(state);
 
             const double time_fade_hit = 400, time_fade_miss = 400;
+            HitObjectLine.FadeOut();
 
             switch (state)
             {

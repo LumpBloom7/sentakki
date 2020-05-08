@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Graphics;
@@ -71,6 +71,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void Update()
         {
+            base.Update();
+            if (Result.HasResult) return;
             double fadeIn = 500 * (Clock.Rate < 0 ? 1 : Clock.Rate);
             double animStart = HitObject.StartTime - fadeIn;
             double currentProg = Clock.CurrentTime - animStart;

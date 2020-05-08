@@ -1,4 +1,4 @@
-﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Allocation;
@@ -144,6 +144,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void Update()
         {
             base.Update();
+            if (Result.HasResult) return;
             fadeIn = 500 * (Clock.Rate < 0 ? 1 : Clock.Rate);
             moveTo = animationDuration.Value * (Clock.Rate < 0 ? 1 : Clock.Rate);
             double animStart = HitObject.StartTime - moveTo - fadeIn;
@@ -201,8 +202,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
             HitObjectLine.Size = new Vector2((SentakkiPlayfield.NOTESTARTDISTANCE * 2) + (sizeDiff * TotalMoveAmount));
 
-            if (Result.HasResult)
-                HitObjectLine.Alpha = 0;
+
 
             // Hit feedback
             if (Time.Current >= HitObject.StartTime)
@@ -232,6 +232,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateStateTransforms(state);
             const double time_fade_hit = 400, time_fade_miss = 400;
+            HitObjectLine.FadeOut();
+
             switch (state)
             {
                 case ArmedState.Hit:
