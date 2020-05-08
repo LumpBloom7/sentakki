@@ -59,7 +59,7 @@ namespace osu.Game.Rulesets.Sentakki
                         new SentakkiModHardRock(),
                         new MultiMod(new SentakkiModSuddenDeath(), new SentakkiModPerfect()),
                         new MultiMod(new SentakkiModDoubleTime(), new SentakkiModNightcore()),
-                        new SentakkiModHidden(),
+                        new MultiMod(new SentakkiModHidden(), new SentakkiModFadeIn()),
                     };
 
                 case ModType.Automation:
