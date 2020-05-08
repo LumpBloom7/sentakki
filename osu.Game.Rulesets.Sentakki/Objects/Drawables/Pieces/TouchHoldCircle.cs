@@ -35,7 +35,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             RelativeSizeAxes = Axes.Both;
             Size = Vector2.One;
-
+            Scale = new Vector2(.8f);
+            Alpha = .5f;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
 

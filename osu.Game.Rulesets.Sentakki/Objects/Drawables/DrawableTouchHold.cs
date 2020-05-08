@@ -1,4 +1,4 @@
-﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Graphics;
@@ -80,8 +80,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (fadeAmount < 0) fadeAmount = 0;
             else if (fadeAmount > 1) fadeAmount = 1;
 
-            Alpha = .5f * fadeAmount;
-            Scale = new Vector2(.8f * fadeAmount);
+            Alpha = fadeAmount;
+            Scale = new Vector2(1f * fadeAmount);
 
             // Calculate progressbar fill
             float fillAmount = (float)((currentProg - fadeIn) / (HitObject as TouchHold).Duration);
@@ -106,14 +106,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 if ((buttonHeld && IsHovered) || Auto)
                 {
                     held++;
-                    this.FadeTo((IsHidden) ? .2f : 1f, 100);
-                    this.ScaleTo(1f, 100);
+                    circle.FadeTo((IsHidden) ? .2f : 1f, 100);
+                    circle.ScaleTo(1f, 100);
                     circle.Glow.FadeTo(1f, 100);
                 }
                 else
                 {
-                    this.FadeTo((IsHidden) ? 0 : .5f, 100);
-                    this.ScaleTo(.9f, 200);
+                    circle.FadeTo((IsHidden) ? 0 : .5f, 100);
+                    circle.ScaleTo(.8f, 200);
                     circle.Glow.FadeTo(0f, 200);
                 }
                 base.Update();
