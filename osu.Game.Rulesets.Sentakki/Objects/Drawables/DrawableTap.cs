@@ -22,9 +22,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public readonly HitReceptor HitArea;
         public readonly TapCircle CirclePiece;
         public readonly CircularContainer HitObjectLine;
-
-        private double fadeIn = 500, moveTo;
-
         protected override double InitialLifetimeOffset => 12000;
 
         public DrawableTap(SentakkiHitObject hitObject)
@@ -78,8 +75,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.Update();
             if (Result.HasResult) return;
-            fadeIn = 500 * (Clock.Rate < 0 ? 1 : Clock.Rate);
-            moveTo = animationDuration.Value * (Clock.Rate < 0 ? 1 : Clock.Rate);
+            double fadeIn = 500 * (Clock.Rate < 0 ? 1 : Clock.Rate);
+            double moveTo = animationDuration.Value * (Clock.Rate < 0 ? 1 : Clock.Rate);
             double animStart = HitObject.StartTime - moveTo - fadeIn;
             double currentProg = Clock.CurrentTime - animStart;
 
@@ -100,10 +97,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             CirclePiece.Position = HitObject.Position + (positionDifference * moveAmount);
 
-            if (IsHidden && moveAmount > 0)
-                Alpha = 1 - (1 * moveAmount);
+            // Handle hidden and fadeIn modifications
+            if (IsHidden)
+            {
+                float hideAmount = (float)((currentProg - fadeIn) / (moveTo / 2));
+                if (hideAmount < 0) hideAmount = 0;
+                else if (hideAmount > 1) hideAmount = 1;
+
+                Alpha = 1 - (1 * hideAmount);
+            }
             else if (IsFadeIn)
+            {
+                // Using existing moveAmount because it serves our needs
                 Alpha = 1 * moveAmount;
+            }
 
             // Make sure HitObjectLine is adjusted
             float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
