@@ -98,7 +98,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             else if (hiddenAmount > 1) hiddenAmount = 1;
 
             if (IsHidden && hiddenAmount > 0)
-                Alpha = 1 - (1 * hiddenAmount);
+                Alpha = 1 - (1 * hiddenAmount / ((Time.Current >= HitObject.StartTime && ((buttonHeld && IsHovered) || Auto)) ? 2 : 1));
             else if (IsFadeIn)
                 Alpha = 1 * hiddenAmount;
 
@@ -110,13 +110,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 if ((buttonHeld && IsHovered) || Auto)
                 {
                     held++;
-                    circle.FadeTo((IsHidden) ? .2f : 1f, 100);
+                    circle.FadeTo(1f, 100);
                     circle.ScaleTo(1f, 100);
                     circle.Glow.FadeTo(1f, 100);
                 }
                 else
                 {
-                    circle.FadeTo((IsHidden) ? 0 : .5f, 100);
+                    circle.FadeTo(.5f, 100);
                     circle.ScaleTo(.8f, 200);
                     circle.Glow.FadeTo(0f, 200);
                 }
