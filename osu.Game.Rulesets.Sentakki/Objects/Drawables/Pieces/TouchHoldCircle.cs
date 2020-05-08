@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public readonly GlowPiece Glow;
         private readonly ExplodePiece explode;
         private readonly FlashPiece flash;
-        private readonly CircularProgress progress;
+        public readonly CircularProgress Progress;
         private readonly Sprite disc;
         private readonly CircularContainer fillCircle;
         private readonly CircularContainer ring;
@@ -65,7 +65,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             Masking = true,
-                            Child = progress = new CircularProgress
+                            Child = Progress = new CircularProgress
                             {
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
@@ -125,11 +125,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             };
         }
 
-        public void StartProgressBar()
-        {
-            progress.Delay(500).FillTo(1f, Duration);
-        }
-
         private readonly IBindable<ArmedState> state = new Bindable<ArmedState>();
         private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
 
@@ -146,7 +141,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             {
                 explode.Colour = colour.NewValue;
                 Glow.Colour = colour.NewValue;
-                progress.Colour = colour.NewValue;
+                Progress.Colour = colour.NewValue;
                 fillCircle.Colour = colour.NewValue;
             }, true);
         }
@@ -171,7 +166,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     using (BeginDelayedSequence(Duration + flash_in, true))
                     {
                         //after the flash, we can hide some elements that were behind it
-                        progress.FadeOut();
+                        Progress.FadeOut();
                         fillCircle.FadeOut();
                         outline.FadeOut();
                         ring.FadeOut();

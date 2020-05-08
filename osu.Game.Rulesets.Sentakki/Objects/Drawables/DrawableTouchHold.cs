@@ -39,17 +39,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
-        protected override void UpdateInitialTransforms()
-        {
-            this.FadeTo(.5f, 500).ScaleTo(.8f, 500);
-            circle.StartProgressBar();
-            if (IsHidden)
-                using (BeginDelayedSequence(500))
-                {
-                    this.FadeOut(250);
-                }
-        }
-
         private double potential = 0;
         private double held = 0;
         private bool buttonHeld = false;
@@ -82,6 +71,34 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void Update()
         {
+            double fadeIn = 500 * (Clock.Rate < 0 ? 1 : Clock.Rate);
+            double animStart = HitObject.StartTime - fadeIn;
+            double currentProg = Clock.CurrentTime - animStart;
+
+            // Calculate initial entry animation
+            float fadeAmount = (float)(currentProg / fadeIn);
+            if (fadeAmount < 0) fadeAmount = 0;
+            else if (fadeAmount > 1) fadeAmount = 1;
+
+            Alpha = .5f * fadeAmount;
+            Scale = new Vector2(.8f * fadeAmount);
+
+            // Calculate progressbar fill
+            float fillAmount = (float)((currentProg - fadeIn) / (HitObject as TouchHold).Duration);
+            if (fillAmount < 0) fillAmount = 0;
+            else if (fillAmount > 1) fillAmount = 1;
+
+            circle.Progress.Current.Value = fillAmount;
+
+            // Hidden fade calculation
+            float hiddenAmount = (float)((currentProg - fadeIn) / 250);
+            if (hiddenAmount < 0) hiddenAmount = 0;
+            else if (hiddenAmount > 1) hiddenAmount = 1;
+
+            if (IsHidden && hiddenAmount > 0)
+                Alpha = 1 - (1 * hiddenAmount);
+
+            // Input and feedback
             buttonHeld = SentakkiActionInputManager?.PressedActions.Any(x => x == SentakkiAction.Button1 || x == SentakkiAction.Button2) ?? false;
             if (Time.Current >= HitObject.StartTime && Time.Current <= (HitObject as IHasEndTime)?.EndTime)
             {
