@@ -197,6 +197,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             if (IsHidden && TotalMoveAmount > 0)
                 Alpha = 1 - (1 * TotalMoveAmount / ((Time.Current >= HitObject.StartTime && isHitting.Value) ? 2 : 1));
+            else if (IsFadeIn)
+                Alpha = 1 * TotalMoveAmount;
             // Make sure HitObjectLine is adjusted with the moving note
             float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
             HitObjectLine.Size = new Vector2((SentakkiPlayfield.NOTESTARTDISTANCE * 2) + (sizeDiff * TotalMoveAmount));

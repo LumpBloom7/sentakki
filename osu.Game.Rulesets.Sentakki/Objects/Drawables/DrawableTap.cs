@@ -102,6 +102,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             if (IsHidden && moveAmount > 0)
                 Alpha = 1 - (1 * moveAmount);
+            else if (IsFadeIn)
+                Alpha = 1 * moveAmount;
 
             // Make sure HitObjectLine is adjusted
             float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);

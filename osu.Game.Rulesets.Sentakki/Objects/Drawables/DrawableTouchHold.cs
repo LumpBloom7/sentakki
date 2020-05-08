@@ -99,6 +99,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             if (IsHidden && hiddenAmount > 0)
                 Alpha = 1 - (1 * hiddenAmount);
+            else if (IsFadeIn)
+                Alpha = 1 * hiddenAmount;
 
             // Input and feedback
             buttonHeld = SentakkiActionInputManager?.PressedActions.Any(x => x == SentakkiAction.Button1 || x == SentakkiAction.Button2) ?? false;
