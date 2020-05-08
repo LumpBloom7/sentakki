@@ -38,6 +38,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 },
                 new SettingsCheckbox
                 {
+                    LabelText = "Play Break sample when hitting BREAKs perfectly",
+                    Bindable = config.GetBindable<bool>(SentakkiRulesetSettings.BreakSounds)
+                },
+                new SettingsCheckbox
+                {
                     LabelText = "Show note start indicators",
                     Bindable = config.GetBindable<bool>(SentakkiRulesetSettings.ShowNoteStartIndicators)
                 },
