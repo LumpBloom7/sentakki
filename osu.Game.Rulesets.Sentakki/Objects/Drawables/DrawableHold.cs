@@ -139,14 +139,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             HitObjectLine.Child.Colour = HitObject.NoteColor;
         }
 
-        private double fadeIn = 500, moveTo;
-
         protected override void Update()
         {
             base.Update();
             if (Result.HasResult) return;
-            fadeIn = 500 * (Clock.Rate < 0 ? 1 : Clock.Rate);
-            moveTo = animationDuration.Value * (Clock.Rate < 0 ? 1 : Clock.Rate);
+            double fadeIn = 500 * (Clock.Rate < 0 ? 1 : Clock.Rate);
+            double moveTo = animationDuration.Value * (Clock.Rate < 0 ? 1 : Clock.Rate);
             double animStart = HitObject.StartTime - moveTo - fadeIn;
             double currentProg = Clock.CurrentTime - animStart;
 
@@ -190,18 +188,31 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (shrinkAmount > 0)
                 note.Height -= shrinkAmount;
 
-            // Hidden fade calculation
-            float TotalMoveAmount = (float)((currentProg - fadeIn) / moveTo);
-            if (TotalMoveAmount < 0) TotalMoveAmount = 0;
-            else if (TotalMoveAmount > 1) TotalMoveAmount = 1;
+            // Handle hidden and fadeIn modifications
+            if (IsHidden)
+            {
+                float hideAmount = (float)((currentProg - fadeIn) / (moveTo / 2));
+                if (hideAmount < 0) hideAmount = 0;
+                else if (hideAmount > 1) hideAmount = 1;
 
-            if (IsHidden && TotalMoveAmount > 0)
-                Alpha = 1 - (1 * TotalMoveAmount / ((Time.Current >= HitObject.StartTime && isHitting.Value) ? 2 : 1));
+                Alpha = 1 - (1 * hideAmount / ((Time.Current >= HitObject.StartTime && isHitting.Value) ? 2 : 1));
+            }
             else if (IsFadeIn)
-                Alpha = 1 * TotalMoveAmount;
+            {
+                float fadeInAmount = (float)((currentProg - fadeIn) / moveTo);
+                if (fadeInAmount < 0) fadeInAmount = 0;
+                else if (fadeInAmount > 1) fadeInAmount = 1;
+
+                Alpha = 1 * fadeInAmount;
+            }
+
             // Make sure HitObjectLine is adjusted with the moving note
+            float totalMove = (float)((currentProg - fadeIn) / moveTo);
+            if (totalMove < 0) totalMove = 0;
+            else if (totalMove > 1) totalMove = 1;
+
             float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
-            HitObjectLine.Size = new Vector2((SentakkiPlayfield.NOTESTARTDISTANCE * 2) + (sizeDiff * TotalMoveAmount));
+            HitObjectLine.Size = new Vector2((SentakkiPlayfield.NOTESTARTDISTANCE * 2) + (sizeDiff * totalMove));
 
             // Hit feedback glow
             if (Time.Current >= HitObject.StartTime)

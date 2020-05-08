@@ -93,14 +93,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             circle.Progress.Current.Value = fillAmount;
 
             // Hidden fade calculation
-            float hiddenAmount = (float)((currentProg - fadeIn) / 250);
+            float hiddenAmount = (float)((currentProg - fadeIn) / 125);
             if (hiddenAmount < 0) hiddenAmount = 0;
             else if (hiddenAmount > 1) hiddenAmount = 1;
 
             if (IsHidden && hiddenAmount > 0)
                 Alpha = 1 - (1 * hiddenAmount / ((Time.Current >= HitObject.StartTime && ((buttonHeld && IsHovered) || Auto)) ? 2 : 1));
-            else if (IsFadeIn)
-                Alpha = 1 * hiddenAmount;
 
             // Input and feedback
             buttonHeld = SentakkiActionInputManager?.PressedActions.Any(x => x == SentakkiAction.Button1 || x == SentakkiAction.Button2) ?? false;
