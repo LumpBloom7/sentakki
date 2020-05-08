@@ -106,7 +106,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // Make sure HitObjectLine is adjusted
             float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
             HitObjectLine.Size = new Vector2((SentakkiPlayfield.NOTESTARTDISTANCE * 2) + (sizeDiff * moveAmount));
-
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
