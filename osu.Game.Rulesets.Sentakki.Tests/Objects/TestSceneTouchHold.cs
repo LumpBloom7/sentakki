@@ -8,24 +8,15 @@ using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Tests.Visual;
 using osuTK;
-using System;
-using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
     [TestFixture]
     public class TestSceneTouchHold : OsuTestScene
     {
-        public override IReadOnlyList<Type> RequiredTypes => new[]
-        {
-            typeof(DrawableTouchHold),
-            typeof(TouchHoldCircle)
-        };
-
         private readonly Container content;
         protected override Container<Drawable> Content => content;
 

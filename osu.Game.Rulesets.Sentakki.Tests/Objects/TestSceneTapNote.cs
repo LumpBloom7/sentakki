@@ -12,19 +12,12 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Tests.Visual;
 using osuTK;
 using osuTK.Graphics;
-using System;
-using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
     [TestFixture]
     public class TestSceneTapNote : OsuTestScene
     {
-        public override IReadOnlyList<Type> RequiredTypes => new[]
-        {
-            typeof(DrawableTap)
-        };
-
         private readonly Container content;
         protected override Container<Drawable> Content => content;
 
