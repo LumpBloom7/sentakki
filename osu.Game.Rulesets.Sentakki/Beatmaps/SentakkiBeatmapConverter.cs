@@ -22,6 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         // todo: Check for conversion types that should be supported (ie. Beatmap.HitObjects.Any(h => h is IHasXPosition))
         // https://github.com/ppy/osu/tree/master/osu.Game/Rulesets/Objects/Types
         public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition);
+        public bool Experimental = false;
 
         public SentakkiBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
             : base(beatmap, ruleset)
@@ -76,7 +77,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                             EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
                             Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
                         });
-                        if (twinNote)
+                        if (twinNote && Experimental)
                             objects.Add(new Break
                             {
                                 NoteColor = Color4.OrangeRed,
@@ -98,7 +99,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                             EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
                             Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
                         });
-                        if (twinNote)
+                        if (twinNote && Experimental)
                             objects.Add(new Tap
                             {
                                 NoteColor = Color4.Orange,
