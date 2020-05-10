@@ -28,6 +28,7 @@ namespace osu.Game.Rulesets.Sentakki.Replays
 
         public override Replay Generate()
         {
+            double lastTime = -1;
             Frames.Add(new SentakkiReplayFrame { Position = new Vector2(300) });
             foreach (SentakkiHitObject hitObject in Beatmap.HitObjects)
             {
@@ -105,7 +106,7 @@ namespace osu.Game.Rulesets.Sentakki.Replays
 
                         currentFrame = new SentakkiReplayFrame
                         {
-                            Time = tn.StartTime,
+                            Time = lastTime = tn.StartTime == lastTime ? tn.StartTime + 2 : tn.StartTime,
                             Position = tn.EndPosition + new Vector2(300),
                             NoteEvent = ReplayEvent.TapDown,
                             Actions = startList
@@ -113,7 +114,7 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                         Frames.Add(currentFrame);
                         nextFrame = new SentakkiReplayFrame
                         {
-                            Time = tn.StartTime + 1,
+                            Time = currentFrame.Time + 1,
                             Position = tn.EndPosition + new Vector2(300),
                             NoteEvent = ReplayEvent.TapUp,
                             Actions = endList

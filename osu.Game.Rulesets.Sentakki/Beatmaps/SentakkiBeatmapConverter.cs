@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             switch (original)
             {
                 case IHasCurve curveData:
-                    return new Hold
+                    yield return new Hold
                     {
                         NoteColor = Color4.Crimson,
                         Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
@@ -47,21 +47,27 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         EndTime = original.GetEndTime(),
                         EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
                         Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                    }.Yield();
+                    };
+                    yield break;
 
                 case IHasEndTime endTimeData:
-                    return new TouchHold
+                    yield return new TouchHold
                     {
                         Position = Vector2.Zero,
                         StartTime = original.StartTime,
                         EndTime = endTimeData.EndTime,
                         Samples = original.Samples,
-                    }.Yield();
+                    };
+                    yield break;
 
                 default:
                     bool strong = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
+                    bool twinNote = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP);
+                    List<SentakkiHitObject> objects = new List<SentakkiHitObject>();
+
                     if (strong)
-                        return new Break
+                    {
+                        objects.Add(new Break
                         {
                             NoteColor = Color4.OrangeRed,
                             Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
@@ -69,9 +75,21 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                             StartTime = original.StartTime,
                             EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
                             Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                        }.Yield();
+                        });
+                        if (twinNote)
+                            objects.Add(new Break
+                            {
+                                NoteColor = Color4.OrangeRed,
+                                Angle = angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT) - 180),
+                                Samples = original.Samples,
+                                StartTime = original.StartTime,
+                                EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                                Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                            });
+                    }
                     else
-                        return new Tap
+                    {
+                        objects.Add(new Tap
                         {
                             NoteColor = Color4.Orange,
                             Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
@@ -79,7 +97,21 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                             StartTime = original.StartTime,
                             EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
                             Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                        }.Yield();
+                        });
+                        if (twinNote)
+                            objects.Add(new Tap
+                            {
+                                NoteColor = Color4.Orange,
+                                Angle = angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT) - 180),
+                                Samples = original.Samples,
+                                StartTime = original.StartTime,
+                                EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                                Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                            });
+                    }
+                    foreach (var hitobject in objects)
+                        yield return hitobject;
+                    yield break;
             }
         }
 
