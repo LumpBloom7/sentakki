@@ -25,8 +25,6 @@ namespace osu.Game.Rulesets.Sentakki.Replays
             Frames.Add(new SentakkiReplayFrame { Position = new Vector2(-1000), Time = -500 });
         }
 
-        private Tuple<SentakkiAction, double> inUse = new Tuple<SentakkiAction, double>(SentakkiAction.Button1, -1);
-
         public override Replay Generate()
         {
             return Replay;
