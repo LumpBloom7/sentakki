@@ -24,9 +24,14 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition);
         public bool Experimental = false;
 
+        private Random random;
+
         public SentakkiBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
             : base(beatmap, ruleset)
         {
+            var difficulty = beatmap.BeatmapInfo.BaseDifficulty;
+            int seed = ((int)MathF.Round(difficulty.DrainRate + difficulty.CircleSize) * 20) + (int)(difficulty.OverallDifficulty * 41.2) + (int)MathF.Round(difficulty.ApproachRate);
+            random = new Random(seed);
         }
 
         protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap)
@@ -57,7 +62,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         objects.Add(new Hold
                         {
                             NoteColor = Color4.Crimson,
-                            Angle = angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT) - 180),
+                            Angle = angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT) + (22.5f * random.Next(1, 7))),
                             NodeSamples = curveData.NodeSamples,
                             StartTime = original.StartTime,
                             EndTime = original.GetEndTime(),
@@ -93,7 +98,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                             objects.Add(new Break
                             {
                                 NoteColor = Color4.OrangeRed,
-                                Angle = angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT) - 180),
+                                Angle = angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT) + (22.5f * random.Next(1, 7))),
                                 Samples = original.Samples,
                                 StartTime = original.StartTime,
                                 EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
@@ -115,7 +120,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                             objects.Add(new Tap
                             {
                                 NoteColor = Color4.Orange,
-                                Angle = angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT) - 180),
+                                Angle = angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT) + (22.5f * random.Next(1, 7))),
                                 Samples = original.Samples,
                                 StartTime = original.StartTime,
                                 EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),

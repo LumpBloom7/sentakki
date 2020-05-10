@@ -16,6 +16,7 @@ namespace osu.Game.Rulesets.Sentakki
         public static float/*<int, Nullable<int>> */GetNotePathFromDegrees(float degrees)
         {
             if (degrees < 0) degrees += 360;
+            if (degrees >= 360) degrees %= 360;
             int result = 0;
 
             for (int i = 0; i < SentakkiPlayfield.PATHANGLES.Length; ++i)
