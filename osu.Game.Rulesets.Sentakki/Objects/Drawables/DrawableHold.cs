@@ -230,8 +230,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 ApplyResult(r => r.Type = (Head.IsHit || Tail.IsHit) ? HitResult.Perfect : HitResult.Miss);
         }
 
-        public bool Auto = false;
-
         protected override void UpdateStateTransforms(ArmedState state)
         {
             base.UpdateStateTransforms(state);
