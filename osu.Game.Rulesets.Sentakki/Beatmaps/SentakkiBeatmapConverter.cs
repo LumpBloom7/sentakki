@@ -36,10 +36,14 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             newPos.Y = 384 - newPos.Y;
             float angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT));
 
+            bool twinNote = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP);
+            List<SentakkiHitObject> objects = new List<SentakkiHitObject>();
+
             switch (original)
             {
                 case IHasCurve curveData:
-                    yield return new Hold
+                    twinNote = curveData.NodeSamples.Any(s => s.Any(s => s.Name == HitSampleInfo.HIT_CLAP));
+                    objects.Add(new Hold
                     {
                         NoteColor = Color4.Crimson,
                         Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
@@ -48,24 +52,32 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         EndTime = original.GetEndTime(),
                         EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
                         Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                    };
-                    yield break;
+                    });
+                    if (twinNote && Experimental)
+                        objects.Add(new Hold
+                        {
+                            NoteColor = Color4.Crimson,
+                            Angle = angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT) - 180),
+                            NodeSamples = curveData.NodeSamples,
+                            StartTime = original.StartTime,
+                            EndTime = original.GetEndTime(),
+                            EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                            Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                        });
+                    break;
 
                 case IHasEndTime endTimeData:
-                    yield return new TouchHold
+                    objects.Add(new TouchHold
                     {
                         Position = Vector2.Zero,
                         StartTime = original.StartTime,
                         EndTime = endTimeData.EndTime,
                         Samples = original.Samples,
-                    };
-                    yield break;
+                    });
+                    break;
 
                 default:
                     bool strong = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
-                    bool twinNote = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP);
-                    List<SentakkiHitObject> objects = new List<SentakkiHitObject>();
-
                     if (strong)
                     {
                         objects.Add(new Break
@@ -110,10 +122,12 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                                 Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
                             });
                     }
-                    foreach (var hitobject in objects)
-                        yield return hitobject;
-                    yield break;
+                    break;
             }
+            foreach (var hitObject in objects)
+                yield return hitObject;
+
+            yield break;
         }
 
         protected override Beatmap<SentakkiHitObject> CreateBeatmap() => new SentakkiBeatmap();

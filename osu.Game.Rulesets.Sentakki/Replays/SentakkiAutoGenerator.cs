@@ -64,7 +64,7 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                     case Hold h:
                         currentFrame = new SentakkiReplayFrame
                         {
-                            Time = hitObject.StartTime,
+                            Time = lastTime = h.StartTime == lastTime ? h.StartTime + 1 : h.StartTime,
                             Position = h.EndPosition + new Vector2(300),
                             NoteEvent = ReplayEvent.HoldDown,
                             Actions = { nextButton }
@@ -73,7 +73,7 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                         inUse = new Tuple<SentakkiAction, double>(nextButton, h.EndTime);
                         nextFrame = new SentakkiReplayFrame
                         {
-                            Time = h.EndTime,
+                            Time = currentFrame.Time + h.Duration,
                             NoteEvent = ReplayEvent.HoldUp,
                             Position = h.EndPosition + new Vector2(300)
                         };
@@ -106,7 +106,7 @@ namespace osu.Game.Rulesets.Sentakki.Replays
 
                         currentFrame = new SentakkiReplayFrame
                         {
-                            Time = lastTime = tn.StartTime == lastTime ? tn.StartTime + 2 : tn.StartTime,
+                            Time = lastTime = tn.StartTime == lastTime ? tn.StartTime + 1 : tn.StartTime,
                             Position = tn.EndPosition + new Vector2(300),
                             NoteEvent = ReplayEvent.TapDown,
                             Actions = startList
