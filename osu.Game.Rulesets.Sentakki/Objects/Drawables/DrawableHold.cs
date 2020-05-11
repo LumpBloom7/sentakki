@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public readonly HitReceptor HitArea;
         private readonly HoldBody note;
         public readonly CircularContainer HitObjectLine;
-        protected override double InitialLifetimeOffset => 12000;
+        protected override double InitialLifetimeOffset => 6000;
 
         /// <summary>
         /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
@@ -143,8 +143,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.Update();
             if (Result.HasResult) return;
-            double fadeIn = 500 * (Clock.Rate < 0 ? 1 : Clock.Rate);
-            double moveTo = animationDuration.Value * (Clock.Rate < 0 ? 1 : Clock.Rate);
+            double fadeIn = 500 * GameplaySpeed;
+            double moveTo = animationDuration.Value * GameplaySpeed;
             double animStart = HitObject.StartTime - moveTo - fadeIn;
             double currentProg = Clock.CurrentTime - animStart;
 

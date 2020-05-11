@@ -21,7 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
-        protected override double InitialLifetimeOffset => 500;
+        protected override double InitialLifetimeOffset => 2000;
 
         public DrawableTouchHold(TouchHold hitObject)
             : base(hitObject)
@@ -73,7 +73,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.Update();
             if (Result.HasResult) return;
-            double fadeIn = 500 * (Clock.Rate < 0 ? 1 : Clock.Rate);
+            double fadeIn = 500 * GameplaySpeed;
             double animStart = HitObject.StartTime - fadeIn;
             double currentProg = Clock.CurrentTime - animStart;
 

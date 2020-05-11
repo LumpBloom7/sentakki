@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private readonly JudgementContainer<DrawableSentakkiJudgement> judgementLayer;
 
         private readonly SentakkiRing ring;
-        public BindableNumber<int> RevolutionDuration = new BindableNumber<int>(0);
+        public BindableNumber<int> RevolutionDuration = new BindableNumber<int>(5);
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
 
@@ -56,14 +56,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public SentakkiPlayfield()
         {
-            RevolutionDuration.BindValueChanged(b =>
-            {
-                if (b.NewValue != 0) this.Spin(b.NewValue * 1000, RotationDirection.Clockwise).Then().Loop();
-            });
-
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.None;
+            Rotation = 0;
             Size = new Vector2(600);
             AddRangeInternal(new Drawable[]
             {
@@ -75,6 +71,22 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     RelativeSizeAxes = Axes.Both,
                 },
             });
+        }
+
+        private DrawableSentakkiRuleset drawableSentakkiRuleset;
+
+        [BackgroundDependencyLoader(true)]
+        private void load(DrawableSentakkiRuleset drawableRuleset)
+        {
+            drawableSentakkiRuleset = drawableRuleset;
+        }
+
+        protected override void Update()
+        {
+            // Using deltaTime instead of what I did with the hitObjects to avoid noticible jitter during rate changed.
+            double rotationAmount = Clock.ElapsedFrameTime / (RevolutionDuration.Value * 1000 * (drawableSentakkiRuleset?.GameplaySpeed ?? 1)) * 360;
+            Rotation += (float)rotationAmount;
+            base.Update();
         }
 
         protected override GameplayCursorContainer CreateCursor() => new SentakkiCursorContainer();
@@ -122,12 +134,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             if (result.IsHit && judgedObject.HitObject.Kiai)
                 ring.KiaiBeat();
-        }
-
-        protected override void LoadComplete()
-        {
-            RevolutionDuration.TriggerChange();
-            base.LoadComplete();
         }
 
         private class VisualisationContainer : BeatSyncedContainer
