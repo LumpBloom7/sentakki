@@ -1,8 +1,12 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
+using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -21,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
-        protected override double InitialLifetimeOffset => 500;
+        protected override double InitialLifetimeOffset => 2000;
 
         public DrawableTouchHold(TouchHold hitObject)
             : base(hitObject)
@@ -69,11 +73,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public bool Auto = false;
 
+        private Bindable<Track> speedAdjustmentTrack = new Bindable<Track>(new TrackVirtual(0));
+        private double speed => speedAdjustmentTrack.Value.AggregateTempo.Value * speedAdjustmentTrack.Value.AggregateFrequency.Value;
+
+        [BackgroundDependencyLoader(true)]
+        private void load(DrawableSentakkiRuleset drawableRuleset)
+        {
+            speedAdjustmentTrack.BindTo(drawableRuleset.SpeedAdjustmentTrack);
+        }
+
         protected override void Update()
         {
             base.Update();
             if (Result.HasResult) return;
-            double fadeIn = 500 * (Clock.Rate < 0 ? 1 : Clock.Rate);
+            double fadeIn = 500 * speed;
             double animStart = HitObject.StartTime - fadeIn;
             double currentProg = Clock.CurrentTime - animStart;
 

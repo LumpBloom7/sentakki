@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -34,7 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public readonly HitReceptor HitArea;
         private readonly HoldBody note;
         public readonly CircularContainer HitObjectLine;
-        protected override double InitialLifetimeOffset => 12000;
+        protected override double InitialLifetimeOffset => 6000;
 
         /// <summary>
         /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
@@ -131,20 +132,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         private Bindable<double> animationDuration = new Bindable<double>(1000);
+        private Bindable<Track> speedAdjustmentTrack = new Bindable<Track>(new TrackVirtual(0));
+        private double speed => speedAdjustmentTrack.Value.AggregateTempo.Value * speedAdjustmentTrack.Value.AggregateFrequency.Value;
 
         [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager settings)
+        private void load(SentakkiRulesetConfigManager settings, DrawableSentakkiRuleset drawableRuleset)
         {
             settings?.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
             HitObjectLine.Child.Colour = HitObject.NoteColor;
+
+            speedAdjustmentTrack.BindTo(drawableRuleset.SpeedAdjustmentTrack);
         }
 
         protected override void Update()
         {
             base.Update();
             if (Result.HasResult) return;
-            double fadeIn = 500 * (Clock.Rate < 0 ? 1 : Clock.Rate);
-            double moveTo = animationDuration.Value * (Clock.Rate < 0 ? 1 : Clock.Rate);
+            double fadeIn = 500 * speed;
+            double moveTo = animationDuration.Value * speed;
             double animStart = HitObject.StartTime - moveTo - fadeIn;
             double currentProg = Clock.CurrentTime - animStart;
 

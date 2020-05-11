@@ -1,11 +1,15 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System.Linq;
+using osu.Framework.Audio.Track;
+using osu.Framework.Bindables;
 using osu.Framework.Allocation;
 using osu.Framework.Input;
 using osu.Game.Beatmaps;
 using osu.Game.Input.Handlers;
 using osu.Game.Replays;
+using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Replays;
@@ -22,6 +26,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
         public DrawableSentakkiRuleset(SentakkiRuleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
             : base(ruleset, beatmap, mods)
         {
+        }
+
+        public readonly Bindable<Track> SpeedAdjustmentTrack = new Bindable<Track>(new TrackVirtual(0));
+
+        [BackgroundDependencyLoader(true)]
+        private void load()
+        {
+            foreach (var mod in Mods.OfType<IApplicableToTrack>())
+                mod.ApplyToTrack(SpeedAdjustmentTrack.Value);
         }
 
         protected override Playfield CreatePlayfield() => new SentakkiPlayfield();
