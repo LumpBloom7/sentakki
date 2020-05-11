@@ -56,11 +56,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public SentakkiPlayfield()
         {
-            RevolutionDuration.BindValueChanged(b =>
-            {
-                if (b.NewValue != 0) this.Spin(b.NewValue * 1000, RotationDirection.Clockwise).Then().Loop();
-            });
-
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.None;
@@ -75,6 +70,23 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     RelativeSizeAxes = Axes.Both,
                 },
             });
+        }
+
+        private Bindable<Track> speedAdjustmentTrack = new Bindable<Track>(new TrackVirtual(0));
+        private double speed => speedAdjustmentTrack.Value.AggregateTempo.Value * speedAdjustmentTrack.Value.AggregateFrequency.Value;
+
+        [BackgroundDependencyLoader(true)]
+        private void load(DrawableSentakkiRuleset drawableRuleset)
+        {
+            speedAdjustmentTrack.BindTo(drawableRuleset.SpeedAdjustmentTrack);
+        }
+
+        protected override void Update()
+        {
+            // Using deltaTime instead of what I did with the hitObjects to avoid noticible jitter during rate changed.
+            double rotationAmount = Clock.ElapsedFrameTime / (RevolutionDuration.Value * 1000 * speed) * 360;
+            Rotation += (float)rotationAmount;
+            base.Update();
         }
 
         protected override GameplayCursorContainer CreateCursor() => new SentakkiCursorContainer();
@@ -122,12 +134,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             if (result.IsHit && judgedObject.HitObject.Kiai)
                 ring.KiaiBeat();
-        }
-
-        protected override void LoadComplete()
-        {
-            RevolutionDuration.TriggerChange();
-            base.LoadComplete();
         }
 
         private class VisualisationContainer : BeatSyncedContainer
