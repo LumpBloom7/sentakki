@@ -2,7 +2,6 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Allocation;
-using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -132,25 +131,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         private Bindable<double> animationDuration = new Bindable<double>(1000);
-        private Bindable<Track> speedAdjustmentTrack = new Bindable<Track>(new TrackVirtual(0));
-        private double speed => speedAdjustmentTrack.Value.AggregateTempo.Value * speedAdjustmentTrack.Value.AggregateFrequency.Value;
 
         [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager settings, DrawableSentakkiRuleset drawableRuleset)
+        private void load(SentakkiRulesetConfigManager settings)
         {
             settings?.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
             HitObjectLine.Child.Colour = HitObject.NoteColor;
-
-            if (drawableRuleset != null)
-                speedAdjustmentTrack.BindTo(drawableRuleset?.SpeedAdjustmentTrack);
         }
 
         protected override void Update()
         {
             base.Update();
             if (Result.HasResult) return;
-            double fadeIn = 500 * speed;
-            double moveTo = animationDuration.Value * speed;
+            double fadeIn = 500 * GameplaySpeed;
+            double moveTo = animationDuration.Value * GameplaySpeed;
             double animStart = HitObject.StartTime - moveTo - fadeIn;
             double currentProg = Clock.CurrentTime - animStart;
 

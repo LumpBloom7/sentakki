@@ -1,12 +1,8 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-using osu.Framework.Allocation;
-using osu.Framework.Bindables;
-using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
-using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -73,21 +69,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public bool Auto = false;
 
-        private Bindable<Track> speedAdjustmentTrack = new Bindable<Track>(new TrackVirtual(0));
-        private double speed => speedAdjustmentTrack.Value.AggregateTempo.Value * speedAdjustmentTrack.Value.AggregateFrequency.Value;
-
-        [BackgroundDependencyLoader(true)]
-        private void load(DrawableSentakkiRuleset drawableRuleset)
-        {
-            if (drawableRuleset != null)
-                speedAdjustmentTrack.BindTo(drawableRuleset?.SpeedAdjustmentTrack);
-        }
-
         protected override void Update()
         {
             base.Update();
             if (Result.HasResult) return;
-            double fadeIn = 500 * speed;
+            double fadeIn = 500 * GameplaySpeed;
             double animStart = HitObject.StartTime - fadeIn;
             double currentProg = Clock.CurrentTime - animStart;
 

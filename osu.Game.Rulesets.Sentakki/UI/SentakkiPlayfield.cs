@@ -73,20 +73,18 @@ namespace osu.Game.Rulesets.Sentakki.UI
             });
         }
 
-        private Bindable<Track> speedAdjustmentTrack = new Bindable<Track>(new TrackVirtual(0));
-        private double speed => speedAdjustmentTrack.Value.AggregateTempo.Value * speedAdjustmentTrack.Value.AggregateFrequency.Value;
+        private DrawableSentakkiRuleset drawableSentakkiRuleset;
 
         [BackgroundDependencyLoader(true)]
         private void load(DrawableSentakkiRuleset drawableRuleset)
         {
-            if (drawableRuleset != null)
-                speedAdjustmentTrack.BindTo(drawableRuleset?.SpeedAdjustmentTrack);
+            drawableSentakkiRuleset = drawableRuleset;
         }
 
         protected override void Update()
         {
             // Using deltaTime instead of what I did with the hitObjects to avoid noticible jitter during rate changed.
-            double rotationAmount = Clock.ElapsedFrameTime / (RevolutionDuration.Value * 1000 * speed) * 360;
+            double rotationAmount = Clock.ElapsedFrameTime / (RevolutionDuration.Value * 1000 * (drawableSentakkiRuleset?.GameplaySpeed ?? 1)) * 360;
             Rotation += (float)rotationAmount;
             base.Update();
         }
