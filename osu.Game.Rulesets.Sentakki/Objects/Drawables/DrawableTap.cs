@@ -15,6 +15,7 @@ using osuTK.Graphics;
 using System;
 using System.Diagnostics;
 using osu.Game.Rulesets.Sentakki.UI;
+
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTap : DrawableSentakkiHitObject
@@ -72,7 +73,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             settings?.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
             HitObjectLine.Child.Colour = HitObject.NoteColor;
 
-            speedAdjustmentTrack.BindTo(drawableRuleset.SpeedAdjustmentTrack);
+            if (drawableRuleset != null)
+                speedAdjustmentTrack.BindTo(drawableRuleset.SpeedAdjustmentTrack);
         }
 
         protected override void Update()

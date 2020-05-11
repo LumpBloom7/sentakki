@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private readonly JudgementContainer<DrawableSentakkiJudgement> judgementLayer;
 
         private readonly SentakkiRing ring;
-        public BindableNumber<int> RevolutionDuration = new BindableNumber<int>(0);
+        public BindableNumber<int> RevolutionDuration = new BindableNumber<int>(5);
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
 
@@ -59,6 +59,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.None;
+            Rotation = 0;
             Size = new Vector2(600);
             AddRangeInternal(new Drawable[]
             {
@@ -78,7 +79,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [BackgroundDependencyLoader(true)]
         private void load(DrawableSentakkiRuleset drawableRuleset)
         {
-            speedAdjustmentTrack.BindTo(drawableRuleset.SpeedAdjustmentTrack);
+            if (drawableRuleset != null)
+                speedAdjustmentTrack.BindTo(drawableRuleset?.SpeedAdjustmentTrack);
         }
 
         protected override void Update()

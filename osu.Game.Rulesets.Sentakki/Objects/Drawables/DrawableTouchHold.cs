@@ -79,7 +79,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         [BackgroundDependencyLoader(true)]
         private void load(DrawableSentakkiRuleset drawableRuleset)
         {
-            speedAdjustmentTrack.BindTo(drawableRuleset.SpeedAdjustmentTrack);
+            if (drawableRuleset != null)
+                speedAdjustmentTrack.BindTo(drawableRuleset?.SpeedAdjustmentTrack);
         }
 
         protected override void Update()

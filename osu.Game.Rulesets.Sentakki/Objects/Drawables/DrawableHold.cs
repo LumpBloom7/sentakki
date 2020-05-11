@@ -141,7 +141,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             settings?.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
             HitObjectLine.Child.Colour = HitObject.NoteColor;
 
-            speedAdjustmentTrack.BindTo(drawableRuleset.SpeedAdjustmentTrack);
+            if (drawableRuleset != null)
+                speedAdjustmentTrack.BindTo(drawableRuleset?.SpeedAdjustmentTrack);
         }
 
         protected override void Update()
