@@ -195,7 +195,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 if (hideAmount < 0) hideAmount = 0;
                 else if (hideAmount > 1) hideAmount = 1;
 
-                Alpha = 1 - (1 * hideAmount / ((Time.Current >= HitObject.StartTime && isHitting.Value) ? 2 : 1));
+                Alpha = 1 - (1 * hideAmount / ((Time.Current >= HitObject.StartTime && (isHitting.Value || Auto)) ? 2 : 1));
             }
             else if (IsFadeIn)
             {
@@ -216,7 +216,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // Hit feedback glow
             if (Time.Current >= HitObject.StartTime)
             {
-                if (isHitting.Value)
+                if (isHitting.Value || Auto)
                     note.Glow.FadeIn(50);
                 else
                     note.Glow.FadeOut(100);
@@ -228,8 +228,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (Tail.AllJudged)
                 ApplyResult(r => r.Type = (Head.IsHit || Tail.IsHit) ? HitResult.Perfect : HitResult.Miss);
         }
-
-        public bool Auto = false;
 
         protected override void UpdateStateTransforms(ArmedState state)
         {

@@ -67,8 +67,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
-        public bool Auto = false;
-
         protected override void Update()
         {
             base.Update();

@@ -12,6 +12,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public bool IsHidden = false;
         public bool IsFadeIn = false;
 
+        public bool Auto = false;
+
         protected override float SamplePlaybackPosition => (HitObject.EndPosition.X + SentakkiPlayfield.INTERSECTDISTANCE) / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
         public SentakkiAction[] HitActions { get; set; } = new[]
         {

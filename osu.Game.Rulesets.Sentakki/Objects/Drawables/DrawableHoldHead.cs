@@ -5,9 +5,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableHoldHead : DrawableSentakkiHitObject
     {
+        private DrawableHold hold;
         public DrawableHoldHead(DrawableHold holdNote)
             : base((holdNote.HitObject as Hold).Head)
         {
+            hold = holdNote;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -16,6 +18,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             if (!userTriggered)
             {
+                if (hold.Auto && timeOffset > 0)
+                    ApplyResult(r => r.Type = HitResult.Perfect);
+
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
                     ApplyResult(r => r.Type = HitResult.Miss);
                 return;

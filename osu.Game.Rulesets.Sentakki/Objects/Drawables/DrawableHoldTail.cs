@@ -31,6 +31,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             if (!userTriggered)
             {
+                if (holdNote.Auto && timeOffset > 0)
+                    ApplyResult(r => r.Type = HitResult.Perfect);
+
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
                     if (holdNote.IsHitting.Value)
                         ApplyResult(r => r.Type = HitResult.Ok);
