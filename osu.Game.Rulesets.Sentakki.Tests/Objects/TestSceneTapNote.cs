@@ -8,7 +8,6 @@ using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Scoring;
 using osu.Game.Tests.Visual;
 using osuTK;
 using osuTK.Graphics;
@@ -44,40 +43,13 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
             circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
 
-            var drawable = CreateDrawableTapNote(circle, auto);
-
-            Add(drawable);
-        }
-
-        protected virtual TestDrawableTapNote CreateDrawableTapNote(Tap circle, bool auto) => new TestDrawableTapNote(circle, auto)
-        {
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Depth = depthIndex++,
-        };
-
-        protected class TestDrawableTapNote : DrawableTap
-        {
-            private readonly bool auto;
-
-            public TestDrawableTapNote(Tap h, bool auto)
-                : base(h)
+            Add(new DrawableTap(circle)
             {
-                this.auto = auto;
-            }
-
-            public void TriggerJudgement() => UpdateResult(true);
-
-            protected override void CheckForResult(bool userTriggered, double timeOffset)
-            {
-                if (auto && !userTriggered && timeOffset > 0)
-                {
-                    // force success
-                    ApplyResult(r => r.Type = HitResult.Perfect);
-                }
-                else
-                    base.CheckForResult(userTriggered, timeOffset);
-            }
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Depth = depthIndex++,
+                Auto = auto
+            });
         }
     }
 }
