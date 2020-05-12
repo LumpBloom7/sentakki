@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public readonly HitReceptor HitArea;
         private readonly HoldBody note;
-        public readonly CircularContainer HitObjectLine;
+        public readonly HitObjectLine HitObjectLine;
         protected override double InitialLifetimeOffset => 6000;
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private void load(SentakkiRulesetConfigManager settings)
         {
             settings?.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
-            HitObjectLine.Child.Colour = HitObject.NoteColor;
+            HitObjectLine.Colour = HitObject.NoteColor;
         }
 
         protected override void Update()
@@ -153,7 +153,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (fadeAmount < 0) fadeAmount = 0;
             else if (fadeAmount > 1) fadeAmount = 1;
 
-            HitObjectLine.Alpha = (float)(.75 * fadeAmount);
+            HitObjectLine.Alpha = fadeAmount;
             note.Alpha = (float)(1 * fadeAmount);
             note.Scale = new Vector2((float)(1 * fadeAmount));
 
@@ -211,8 +211,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (totalMove < 0) totalMove = 0;
             else if (totalMove > 1) totalMove = 1;
 
-            float sizeDiff = 600 - (SentakkiPlayfield.NOTESTARTDISTANCE * 2);
-            HitObjectLine.Size = new Vector2((SentakkiPlayfield.NOTESTARTDISTANCE * 2) + (sizeDiff * totalMove));
+            HitObjectLine.UpdateVisual(totalMove);
 
             // Hit feedback glow
             if (Time.Current >= HitObject.StartTime)
