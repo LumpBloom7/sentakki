@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private readonly JudgementContainer<DrawableSentakkiJudgement> judgementLayer;
 
         private readonly SentakkiRing ring;
-        public BindableNumber<int> RevolutionDuration = new BindableNumber<int>(5);
+        public BindableNumber<int> RevolutionDuration = new BindableNumber<int>(0);
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
 
@@ -84,8 +84,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override void Update()
         {
             // Using deltaTime instead of what I did with the hitObjects to avoid noticible jitter during rate changed.
-            double rotationAmount = Clock.ElapsedFrameTime / (RevolutionDuration.Value * 1000 * (drawableSentakkiRuleset?.GameplaySpeed ?? 1)) * 360;
-            Rotation += (float)rotationAmount;
+            if (RevolutionDuration.Value > 0)
+            {
+                double rotationAmount = Clock.ElapsedFrameTime / (RevolutionDuration.Value * 1000 * (drawableSentakkiRuleset?.GameplaySpeed ?? 1)) * 360;
+                Rotation += (float)rotationAmount;
+            }
             base.Update();
         }
 
