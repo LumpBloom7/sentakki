@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using osu.Game.Audio;
 using osu.Game.Beatmaps.ControlPoints;
+using System.Diagnostics;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
@@ -157,7 +158,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             foreach (var e in SliderEventGenerator.Generate(original.StartTime, spanDuration, velocity, tickDistance, curve.Path.Distance, curve.RepeatCount + 1, legacyLastTickOffset))
             {
                 int newPath = path;
-                while (newPath == path) path = rng.Next(0, 8);
+                while (newPath == path) newPath = rng.Next(0, 8);
 
                 switch (e.Type)
                 {
