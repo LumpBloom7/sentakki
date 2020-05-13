@@ -39,7 +39,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             Vector2 CENTRE_POINT = new Vector2(256, 192);
             Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
             newPos.Y = 384 - newPos.Y;
-            float angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT));
+
+            float angle = newPos.GetDegreesFromPosition(CENTRE_POINT).GetNotePathFromDegrees();
 
             bool twinNote = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP);
             List<SentakkiHitObject> objects = new List<SentakkiHitObject>();
@@ -51,23 +52,23 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     objects.Add(new Hold
                     {
                         NoteColor = Color4.Crimson,
-                        Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
+                        Angle = angle,
                         NodeSamples = curveData.NodeSamples,
                         StartTime = original.StartTime,
                         EndTime = original.GetEndTime(),
-                        EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                        Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                        EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, angle),
+                        Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, angle),
                     });
                     if (twinNote && Experimental)
                         objects.Add(new Hold
                         {
                             NoteColor = Color4.Crimson,
-                            Angle = angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT) + (22.5f * random.Next(1, 7))),
+                            Angle = angle = (newPos.GetDegreesFromPosition(CENTRE_POINT) + (22.5f * random.Next(1, 7))).GetNotePathFromDegrees(),
                             NodeSamples = curveData.NodeSamples,
                             StartTime = original.StartTime,
                             EndTime = original.GetEndTime(),
-                            EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                            Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                            EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, angle),
+                            Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, angle),
                         });
                     break;
 
@@ -88,21 +89,21 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         objects.Add(new Break
                         {
                             NoteColor = Color4.OrangeRed,
-                            Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
+                            Angle = angle,
                             Samples = original.Samples,
                             StartTime = original.StartTime,
-                            EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                            Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                            EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, angle),
+                            Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, angle),
                         });
                         if (twinNote && Experimental)
                             objects.Add(new Break
                             {
                                 NoteColor = Color4.OrangeRed,
-                                Angle = angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT) + (22.5f * random.Next(1, 7))),
+                                Angle = angle = (newPos.GetDegreesFromPosition(CENTRE_POINT) + (22.5f * random.Next(1, 7))).GetNotePathFromDegrees(),
                                 Samples = original.Samples,
                                 StartTime = original.StartTime,
-                                EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                                Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                                EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, angle),
+                                Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, angle),
                             });
                     }
                     else
@@ -110,21 +111,21 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         objects.Add(new Tap
                         {
                             NoteColor = Color4.Orange,
-                            Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
+                            Angle = angle,
                             Samples = original.Samples,
                             StartTime = original.StartTime,
-                            EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                            Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                            EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, angle),
+                            Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, angle),
                         });
                         if (twinNote && Experimental)
                             objects.Add(new Tap
                             {
                                 NoteColor = Color4.Orange,
-                                Angle = angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT) + (22.5f * random.Next(1, 7))),
+                                Angle = angle = (newPos.GetDegreesFromPosition(CENTRE_POINT) + (22.5f * random.Next(1, 7))).GetNotePathFromDegrees(),
                                 Samples = original.Samples,
                                 StartTime = original.StartTime,
-                                EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                                Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
+                                EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, angle),
+                                Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, angle),
                             });
                     }
                     break;
