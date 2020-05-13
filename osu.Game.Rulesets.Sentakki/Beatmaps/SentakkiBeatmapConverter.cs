@@ -60,16 +60,22 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, angle),
                     });
                     if (twinNote && Experimental)
-                        objects.Add(new Hold
-                        {
-                            NoteColor = Color4.Crimson,
-                            Angle = angle = (newPos.GetDegreesFromPosition(CENTRE_POINT) + (22.5f * random.Next(1, 7))).GetNotePathFromDegrees(),
-                            NodeSamples = curveData.NodeSamples,
-                            StartTime = original.StartTime,
-                            EndTime = original.GetEndTime(),
-                            EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, angle),
-                            Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, angle),
-                        });
+                    {
+                        var taps = SentakkiExtensions.CreateTapFromTicks(original, beatmap, curveData, random);
+                        if (!taps.Any())
+                            objects.Add(new Hold
+                            {
+                                NoteColor = Color4.Crimson,
+                                Angle = angle = (newPos.GetDegreesFromPosition(CENTRE_POINT) + (22.5f * random.Next(1, 6))).GetNotePathFromDegrees(),
+                                NodeSamples = curveData.NodeSamples,
+                                StartTime = original.StartTime,
+                                EndTime = original.GetEndTime(),
+                                EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, angle),
+                                Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, angle),
+                            });
+                        else
+                            objects.AddRange(taps);
+                    }
                     break;
 
                 case IHasEndTime endTimeData:
@@ -99,7 +105,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                             objects.Add(new Break
                             {
                                 NoteColor = Color4.OrangeRed,
-                                Angle = angle = (newPos.GetDegreesFromPosition(CENTRE_POINT) + (22.5f * random.Next(1, 7))).GetNotePathFromDegrees(),
+                                Angle = angle = (newPos.GetDegreesFromPosition(CENTRE_POINT) + (22.5f * random.Next(1, 6))).GetNotePathFromDegrees(),
                                 Samples = original.Samples,
                                 StartTime = original.StartTime,
                                 EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, angle),
@@ -121,7 +127,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                             objects.Add(new Tap
                             {
                                 NoteColor = Color4.Orange,
-                                Angle = angle = (newPos.GetDegreesFromPosition(CENTRE_POINT) + (22.5f * random.Next(1, 7))).GetNotePathFromDegrees(),
+                                Angle = angle = (newPos.GetDegreesFromPosition(CENTRE_POINT) + (22.5f * random.Next(1, 6))).GetNotePathFromDegrees(),
                                 Samples = original.Samples,
                                 StartTime = original.StartTime,
                                 EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, angle),
