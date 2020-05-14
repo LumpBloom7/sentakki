@@ -1,19 +1,14 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osuTK;
-using osuTK.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using osu.Game.Audio;
-using osu.Game.Beatmaps.ControlPoints;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
@@ -22,10 +17,16 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         // todo: Check for conversion types that should be supported (ie. Beatmap.HitObjects.Any(h => h is IHasXPosition))
         // https://github.com/ppy/osu/tree/master/osu.Game/Rulesets/Objects/Types
         public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition);
+        public bool Experimental = false;
+
+        private readonly Random random;
 
         public SentakkiBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
             : base(beatmap, ruleset)
         {
+            var difficulty = beatmap.BeatmapInfo.BaseDifficulty;
+            int seed = ((int)MathF.Round(difficulty.DrainRate + difficulty.CircleSize) * 20) + (int)(difficulty.OverallDifficulty * 41.2) + (int)MathF.Round(difficulty.ApproachRate);
+            random = new Random(seed);
         }
 
         protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap)
@@ -33,54 +34,29 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             Vector2 CENTRE_POINT = new Vector2(256, 192);
             Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
             newPos.Y = 384 - newPos.Y;
-            float angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT));
+
+            int path = newPos.GetDegreesFromPosition(CENTRE_POINT).GetNotePathFromDegrees();
+            List<SentakkiHitObject> objects = new List<SentakkiHitObject>();
 
             switch (original)
             {
-                case IHasCurve curveData:
-                    return new Hold
-                    {
-                        NoteColor = Color4.Crimson,
-                        Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
-                        NodeSamples = curveData.NodeSamples,
-                        StartTime = original.StartTime,
-                        EndTime = original.GetEndTime(),
-                        EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                        Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                    }.Yield();
+                case IHasCurve _:
+                    objects.AddRange(Conversions.CreateHoldNote(original, path, beatmap, random, Experimental));
+                    break;
 
-                case IHasEndTime endTimeData:
-                    return new TouchHold
-                    {
-                        Position = Vector2.Zero,
-                        StartTime = original.StartTime,
-                        EndTime = endTimeData.EndTime,
-                        Samples = original.Samples,
-                    }.Yield();
+                case IHasEndTime _:
+                    objects.Add(Conversions.CreateTouchHold(original));
+                    break;
 
                 default:
-                    bool strong = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
-                    if (strong)
-                        return new Break
-                        {
-                            NoteColor = Color4.OrangeRed,
-                            Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
-                            Samples = original.Samples,
-                            StartTime = original.StartTime,
-                            EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                            Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                        }.Yield();
-                    else
-                        return new Tap
-                        {
-                            NoteColor = Color4.Orange,
-                            Angle = Utils.GetNotePathFromDegrees(Utils.GetDegreesFromPosition(newPos, CENTRE_POINT)),
-                            Samples = original.Samples,
-                            StartTime = original.StartTime,
-                            EndPosition = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                            Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180)))),
-                        }.Yield();
+                    objects.AddRange(Conversions.CreateTapNote(original, path, random, Experimental));
+                    break;
             }
+
+            foreach (var hitObject in objects)
+                yield return hitObject;
+
+            yield break;
         }
 
         protected override Beatmap<SentakkiHitObject> CreateBeatmap() => new SentakkiBeatmap();

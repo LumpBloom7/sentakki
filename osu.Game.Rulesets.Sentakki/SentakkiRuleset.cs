@@ -73,7 +73,8 @@ namespace osu.Game.Rulesets.Sentakki
                     return new Mod[]
                     {
                         new MultiMod(new ModWindUp(), new ModWindDown()),
-                        new SentakkiModSpin()
+                        new SentakkiModSpin(),
+                        new SentakkiModExperimental(),
                     };
 
                 default:
