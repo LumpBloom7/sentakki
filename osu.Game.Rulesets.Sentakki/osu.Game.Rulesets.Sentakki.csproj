@@ -11,6 +11,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ppy.osu.Framework" Version="2020.511.0" />
-    <PackageReference Include="ppy.osu.Game" Version="2020.508.2" />
+    <PackageReference Include="ppy.osu.Game" Version="2020.515.0" />
   </ItemGroup>
 </Project>
