@@ -21,16 +21,6 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build osu.Game.Rulesets.Sentakki --configuration Release -p:version=${{env.CURRENT_TAG}} --no-restore
-    - name: Generate changelog
-      shell: bash
-      run: |
-        npm install github-release-notes -g
-        gren changelog -T ${{secrets.GITHUB_TOKEN}} --generate --override --tags=${{env.CURRENT_TAG}}..${{env.PREVIOUS_TAG}}
-        changelog=$(<./CHANGELOG.md)
-        changelog="${changelog//'%'/'%25'}"
-        changelog="${changelog//$'\n'/'%0A'}"
-        changelog="${changelog//$'\r'/'%0D'}"
-        echo "::set-env name=CHANGELOG::$changelog"
     - name: Create Release
       id: create_release
       uses: actions/create-release@latest
@@ -38,18 +28,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
         tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        body: |
-          Thank you for showing interest in this ruleset. This is a tagged release (${{env.CURRENT_TAG}}).
-          If you like this ruleset, do consider supporting me on [ko-fi](https://ko-fi.com/Bloom) or [PayPal](https://paypal.me/lumpbloom7).
-
-          ${{env.CHANGELOG}}
-
-          Check out the [commit history](https://github.com/LumpBloom7/sentakki/compare/${{env.PREVIOUS_TAG}}...${{env.CURRENT_TAG}}) for more detailed changes made since the last release.
-
-          ## Installation
-
-          [Refer to this wiki page](https://github.com/LumpBloom7/sentakki/wiki/Ruleset-installation-guide)
+        release_name: ${{ github.ref }}
     - name: Upload Release Asset
       id: upload-release-asset
       uses: actions/upload-release-asset@master
@@ -60,3 +39,7 @@ jobs:
         asset_path: ./osu.Game.Rulesets.Sentakki/bin/Release/netcoreapp3.1/osu.Game.Rulesets.Sentakki.dll
         asset_name: osu.Game.Rulesets.Sentakki.dll
         asset_content_type: application/vnd.microsoft.portable-executable
+    - name: Generate changelog
+      run: |
+        npm install github-release-notes -g
+        gren release -T ${{secrets.RELEASE_TOKEN}} --tags=${{env.CURRENT_TAG}} --override
