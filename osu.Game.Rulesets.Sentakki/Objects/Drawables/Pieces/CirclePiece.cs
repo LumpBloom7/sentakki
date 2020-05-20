@@ -58,6 +58,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                         AlwaysPresent = true
                     }
                 },
+                new CircularContainer
+                {
+                    Size = new Vector2(16),
+                    Masking = true,
+                    BorderColour = Color4.Gray,
+                    BorderThickness = 2,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        AlwaysPresent = true,
+                        Colour = Color4.White,
+                    }
+                }
             };
         }
     }

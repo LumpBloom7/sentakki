@@ -79,6 +79,38 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                                 AlwaysPresent = true,
                             }
                         },
+                        new CircularContainer
+                        {
+                            Position = new Vector2(0, -40),
+                            Size = new Vector2(16),
+                            Masking = true,
+                            BorderColour = Color4.Gray,
+                            BorderThickness = 2,
+                            Anchor = Anchor.BottomCentre,
+                            Origin = Anchor.Centre,
+                            Child = new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                AlwaysPresent = true,
+                                Colour = Color4.White,
+                            }
+                        },
+                        new CircularContainer
+                        {
+                            Position = new Vector2(0, 40),
+                            Size = new Vector2(16),
+                            Masking = true,
+                            BorderColour = Color4.Gray,
+                            BorderThickness = 2,
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.Centre,
+                            Child = new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                AlwaysPresent = true,
+                                Colour = Color4.White,
+                            }
+                        }
                     }
                 },
                 flash = new FlashPiece(),
