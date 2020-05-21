@@ -60,7 +60,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 },
                 new CircularContainer
                 {
-                    Size = new Vector2(16),
+                    Size = new Vector2(20),
                     Masking = true,
                     BorderColour = Color4.Gray,
                     BorderThickness = 2,
