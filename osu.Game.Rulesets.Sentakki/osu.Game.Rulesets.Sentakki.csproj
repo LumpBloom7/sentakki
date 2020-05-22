@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Project">
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyTitle>osu.Game.Rulesets.Sentakki</AssemblyTitle>
@@ -10,7 +10,7 @@
     <AssemblyName>osu.Game.Rulesets.Sentakki</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ppy.osu.Framework" Version="2020.511.0" />
-    <PackageReference Include="ppy.osu.Game" Version="2020.515.0" />
+    <PackageReference Include="ppy.osu.Framework" Version="2020.519.0"/>
+    <PackageReference Include="ppy.osu.Game" Version="2020.523.0"/>
   </ItemGroup>
 </Project>
