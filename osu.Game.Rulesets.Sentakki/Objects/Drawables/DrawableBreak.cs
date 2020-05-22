@@ -10,20 +10,23 @@ using osu.Game.Configuration;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
+using osu.Game.Screens.Play;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableBreak : DrawableTap
     {
         private readonly Bindable<bool> userPositionalHitSounds = new Bindable<bool>(false);
-        private readonly BindableDouble balanceAdjust = new BindableDouble();
         private readonly SkinnableSound breakSound;
+
+        [Resolved(canBeNull: true)]
+        private GameplayClock gameplayClock { get; set; }
+
         public DrawableBreak(SentakkiHitObject hitObject) : base(hitObject)
         {
             AddRangeInternal(new Drawable[]{
                 breakSound = new SkinnableSound(new SampleInfo("Break"))
             });
-            breakSound.AddAdjustment(AdjustableProperty.Balance, balanceAdjust);
         }
 
         [BackgroundDependencyLoader(true)]
@@ -37,11 +40,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public override void PlaySamples()
         {
             base.PlaySamples();
-            if (Result.Type == HitResult.Perfect && breakEnabled.Value)
+            if (breakSound != null && Result.Type == HitResult.Perfect && breakEnabled.Value && !gameplayClock.IsSeeking)
             {
                 const float balance_adjust_amount = 0.4f;
-                balanceAdjust.Value = balance_adjust_amount * (userPositionalHitSounds.Value ? SamplePlaybackPosition - 0.5f : 0);
-                breakSound?.Play();
+                breakSound.Balance.Value = balance_adjust_amount * (userPositionalHitSounds.Value ? SamplePlaybackPosition - 0.5f : 0);
+                breakSound.Play();
             }
         }
     }
