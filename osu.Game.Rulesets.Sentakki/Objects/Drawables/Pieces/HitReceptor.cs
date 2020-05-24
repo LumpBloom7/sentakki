@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
-        private List<SentakkiAction> actions = new List<SentakkiAction>();
+        private readonly List<SentakkiAction> actions = new List<SentakkiAction>();
         public Func<bool> Hit;
         public Action Release;
 
@@ -27,7 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             if (!SentakkiActionInputManager.CurrentAngles.Contains(NoteAngle))
             {
                 if (SentakkiActionInputManager.PressedActions.Any(action => OnPressed(action)))
-                    actions.AddRange(SentakkiActionInputManager.PressedActions);
+                    actions.AddRange(SentakkiActionInputManager.PressedActions.Except(actions));
             }
             return false;
         }
@@ -56,29 +56,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         public void OnReleased(SentakkiAction action)
         {
-            SentakkiActionInputManager.CurrentAngles.Remove(NoteAngle);
-            switch (action)
+            actions.Remove(action);
+            if (!actions.Any())
             {
-                default:
-                    if (actions.Contains(action))
-                        actions.Remove(action);
-                    if (!actions.Any())
-                        Release?.Invoke();
-                    break;
-            }
-        }
-
-        protected override void Update()
-        {
-            base.Update();
-            if (!SentakkiActionInputManager.PressedActions.Any() && actions.Any())
-            {
-                SentakkiActionInputManager.CurrentAngles.Remove(NoteAngle);
-                actions.Clear();
                 Release?.Invoke();
+                SentakkiActionInputManager.CurrentAngles.Remove(NoteAngle);
             }
         }
-
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
@@ -88,12 +72,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 actions.Clear();
                 Release?.Invoke();
             }
-        }
-
-        protected override void Dispose(bool isDisposing)
-        {
-            base.Dispose(isDisposing);
-            SentakkiActionInputManager.CurrentAngles.Remove(NoteAngle);
         }
 
         internal class HoverReceptor : CircularContainer
