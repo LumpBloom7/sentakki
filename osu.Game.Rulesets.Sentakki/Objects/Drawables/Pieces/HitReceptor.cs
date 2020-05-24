@@ -100,7 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             public HoverReceptor()
             {
-                Size = new Vector2(80);
+                Size = new Vector2(40);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
             }
