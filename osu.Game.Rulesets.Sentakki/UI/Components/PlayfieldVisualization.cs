@@ -76,7 +76,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
         private readonly Bindable<ColorOption> colorOption = new Bindable<ColorOption>(ColorOption.Default);
 
-        [BackgroundDependencyLoader]
+        [BackgroundDependencyLoader(true)]
         private void load(ShaderManager shaders, IBindable<WorkingBeatmap> beatmap, SkinManager skinManager, SentakkiRulesetConfigManager settings, OsuColour colours, DrawableSentakkiRuleset ruleset)
         {
             this.beatmap.BindTo(beatmap);
@@ -85,7 +85,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             skin = skinManager.CurrentSkin.GetBoundCopy();
             skin.BindValueChanged(_ => colorOption.TriggerChange());
 
-            settings.BindWith(SentakkiRulesetSettings.RingColor, colorOption);
+            settings?.BindWith(SentakkiRulesetSettings.RingColor, colorOption);
             colorOption.BindValueChanged(c =>
             {
                 AccentColour = Color4.White.Opacity(0.2f);
