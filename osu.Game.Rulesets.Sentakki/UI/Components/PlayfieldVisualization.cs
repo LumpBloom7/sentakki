@@ -92,14 +92,13 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             skin = skinManager.CurrentSkin.GetBoundCopy();
             skin.BindValueChanged(_ => colorOption.TriggerChange());
 
-            settings.BindWith(SentakkiRulesetSettings.KiaiEffects, kiaiEffect);
+            settings?.BindWith(SentakkiRulesetSettings.KiaiEffects, kiaiEffect);
             kiaiEffect.BindValueChanged(k =>
             {
                 if (k.NewValue)
                     this.FadeIn(200);
                 else
                     this.FadeOut(500);
-
             });
 
             settings?.BindWith(SentakkiRulesetSettings.RingColor, colorOption);
@@ -113,7 +112,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                     this.FadeColour(colours.ForDifficultyRating(ruleset?.Beatmap.BeatmapInfo.DifficultyRating ?? DifficultyRating.Normal, true), 200);
                 else if (c.NewValue == ColorOption.Skin)
                     this.FadeColour(skin.Value.GetConfig<GlobalSkinColours, Color4>(GlobalSkinColours.MenuGlow)?.Value ?? Color4.White, 200);
-
             });
         }
 
@@ -227,11 +225,11 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                             if (audioData[i] < amplitude_dead_zone)
                                 continue;
 
-                            float rotation = MathUtils.DegreesToRadians(i / (float)bars_per_visualiser * 360 + j * 360 / visualiser_rounds);
+                            float rotation = MathUtils.DegreesToRadians((i / (float)bars_per_visualiser * 360) + (j * 360 / visualiser_rounds));
                             float rotationCos = MathF.Cos(rotation);
                             float rotationSin = MathF.Sin(rotation);
                             // taking the cos and sin to the 0..1 range
-                            var barPosition = new Vector2(rotationCos / 2 + 0.5f, rotationSin / 2 + 0.5f) * size;
+                            var barPosition = new Vector2((rotationCos / 2) + 0.5f, (rotationSin / 2) + 0.5f) * size;
 
                             var barSize = new Vector2(size * MathF.Sqrt(2 * (1 - MathF.Cos(MathUtils.DegreesToRadians(360f / bars_per_visualiser)))) / 2f, bar_length * audioData[i]);
                             // The distance between the position and the sides of the bar.
