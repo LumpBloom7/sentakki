@@ -97,7 +97,12 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 else if (c.NewValue == ColorOption.Skin)
                     this.FadeColour(skin.Value.GetConfig<GlobalSkinColours, Color4>(GlobalSkinColours.MenuGlow)?.Value ?? Color4.White, 200);
 
-            }, true);
+            });
+        }
+
+        protected override void LoadComplete()
+        {
+            colorOption.TriggerChange();
         }
 
         private void updateAmplitudes()

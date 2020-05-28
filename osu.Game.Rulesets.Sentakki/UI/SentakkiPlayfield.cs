@@ -6,25 +6,15 @@ using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
-using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
-using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.UI;
-using osu.Game.Screens.Menu;
 using osuTK;
-using osuTK.Graphics;
 using System;
-using osu.Game.Online.API;
-using osu.Game.Users;
-using osu.Game.Skinning;
-using osu.Framework.Extensions.Color4Extensions;
-using osu.Game.Screens.Play;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -142,11 +132,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private class VisualisationContainer : BeatSyncedContainer
         {
-            private PlayfieldVisualisation visualisation;
+            private readonly PlayfieldVisualisation visualisation;
             private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
 
-            [BackgroundDependencyLoader(true)]
-            private void load(SentakkiRulesetConfigManager settings, OsuColour colours, DrawableSentakkiRuleset ruleset, IAPIProvider api, SkinManager skinManager)
+            public VisualisationContainer()
             {
                 FillAspectRatio = 1;
                 FillMode = FillMode.Fit;
