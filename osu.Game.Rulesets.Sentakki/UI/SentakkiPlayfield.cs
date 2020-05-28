@@ -54,7 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             Size = new Vector2(600);
             AddRangeInternal(new Drawable[]
             {
-                new VisualisationContainer(),
+                new PlayfieldVisualisation(),
                 ring = new SentakkiRing(),
                 HitObjectContainer,
                 judgementLayer = new JudgementContainer<DrawableSentakkiJudgement>
@@ -128,36 +128,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             if (result.IsHit && judgedObject.HitObject.Kiai)
                 ring.KiaiBeat();
-        }
-
-        private class VisualisationContainer : BeatSyncedContainer
-        {
-            private readonly PlayfieldVisualisation visualisation;
-            private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
-
-            public VisualisationContainer()
-            {
-                FillAspectRatio = 1;
-                FillMode = FillMode.Fit;
-                RelativeSizeAxes = Axes.Both;
-                Size = new Vector2(.99f);
-                Anchor = Anchor.Centre;
-                Origin = Anchor.Centre;
-                Child = visualisation = new PlayfieldVisualisation
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                };
-            }
-
-            protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, TrackAmplitudes amplitudes)
-            {
-                if (effectPoint.KiaiMode && kiaiEffect.Value)
-                    visualisation.FadeIn(200);
-                else
-                    visualisation.FadeOut(500);
-            }
         }
     }
 }

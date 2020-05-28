@@ -70,12 +70,19 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
         public PlayfieldVisualisation()
         {
+            FillAspectRatio = 1;
+            FillMode = FillMode.Fit;
+            RelativeSizeAxes = Axes.Both;
+            Size = new Vector2(.99f);
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
             texture = Texture.WhitePixel;
             Blending = BlendingParameters.Additive;
         }
 
         private readonly Bindable<ColorOption> colorOption = new Bindable<ColorOption>(ColorOption.Default);
 
+        private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
         [BackgroundDependencyLoader(true)]
         private void load(ShaderManager shaders, IBindable<WorkingBeatmap> beatmap, SkinManager skinManager, SentakkiRulesetConfigManager settings, OsuColour colours, DrawableSentakkiRuleset ruleset)
         {
@@ -84,6 +91,16 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
             skin = skinManager.CurrentSkin.GetBoundCopy();
             skin.BindValueChanged(_ => colorOption.TriggerChange());
+
+            settings.BindWith(SentakkiRulesetSettings.KiaiEffects, kiaiEffect);
+            kiaiEffect.BindValueChanged(k =>
+            {
+                if (k.NewValue)
+                    this.FadeIn(200);
+                else
+                    this.FadeOut(500);
+
+            });
 
             settings?.BindWith(SentakkiRulesetSettings.RingColor, colorOption);
             colorOption.BindValueChanged(c =>
@@ -103,6 +120,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         protected override void LoadComplete()
         {
             colorOption.TriggerChange();
+            kiaiEffect.TriggerChange();
         }
 
         private void updateAmplitudes()
@@ -116,7 +134,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             {
                 if (track?.IsRunning ?? false)
                 {
-                    float targetAmplitude = (temporalAmplitudes?[(i + indexOffset) % bars_per_visualiser] ?? 0) * (effect?.KiaiMode == true ? 1 : 0.5f);
+                    float targetAmplitude = (temporalAmplitudes?[(i + indexOffset) % bars_per_visualiser] ?? 0) * (effect?.KiaiMode == true ? 1 : 0f);
                     if (targetAmplitude > frequencyAmplitudes[i])
                         frequencyAmplitudes[i] = targetAmplitude;
                 }
