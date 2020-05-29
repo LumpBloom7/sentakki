@@ -14,6 +14,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -24,9 +25,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override float SamplePlaybackPosition => (HitObject.Position.X + SentakkiPlayfield.INTERSECTDISTANCE) / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
 
-        protected override double InitialLifetimeOffset => 2000;
+        protected override double InitialLifetimeOffset => 1000;
 
         private readonly CircularContainer innercircle;
+
+        private SentakkiInputManager sentakkiActionInputManager;
+        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
         public DrawableTouch(SentakkiHitObject hitObject) : base(hitObject)
         {
@@ -63,7 +67,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             this.FadeIn(500).ScaleTo(1, 500);
-            innercircle.Delay(500).ScaleTo(1, 1500);
+            innercircle.Delay(500).ScaleTo(1, 500);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -123,6 +127,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
         protected override bool OnHover(HoverEvent e)
         {
+            if (!SentakkiActionInputManager.PressedActions.Any()) return false;
             if (AllJudged)
                 return false;
 
