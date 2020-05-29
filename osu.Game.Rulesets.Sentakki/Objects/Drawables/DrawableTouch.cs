@@ -31,6 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableTouch(SentakkiHitObject hitObject) : base(hitObject)
         {
             Size = new Vector2(80);
+            Position = hitObject.Position;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Alpha = 0;

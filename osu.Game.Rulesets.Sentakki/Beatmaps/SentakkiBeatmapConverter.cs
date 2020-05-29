@@ -49,7 +49,10 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     break;
 
                 default:
-                    objects.AddRange(Conversions.CreateTapNote(original, path, random, Experimental));
+                    if (newPos.X < 0)
+                        objects.AddRange(Conversions.CreateTouchNote(original, path, random, Experimental));
+                    else
+                        objects.AddRange(Conversions.CreateTapNote(original, path, random, Experimental));
                     break;
             }
 

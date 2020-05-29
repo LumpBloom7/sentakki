@@ -77,6 +77,23 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             return notes;
         }
 
+        public static List<SentakkiHitObject> CreateTouchNote(HitObject original, int path, Random rng, bool experimental = false)
+        {
+            Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
+            newPos.Y = (384 - newPos.Y) - 192;
+            newPos.X = (-newPos.X) - 256;
+
+            List<SentakkiHitObject> notes = new List<SentakkiHitObject>{new Touch
+            {
+                Samples = original.Samples,
+                StartTime = original.StartTime,
+                Position = newPos,
+            }};
+
+            return notes;
+        }
+
+
         public static SentakkiHitObject CreateTouchHold(HitObject original)
         => new TouchHold
         {
