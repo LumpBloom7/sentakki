@@ -45,11 +45,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             if (IsHovered)
             {
                 SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
-                if (Hit?.Invoke() ?? false)
-                {
-                    actions.Add(action);
-                    return true;
-                }
+                actions.Add(action);
+                return Hit?.Invoke() ?? false;
             }
             return false;
         }
