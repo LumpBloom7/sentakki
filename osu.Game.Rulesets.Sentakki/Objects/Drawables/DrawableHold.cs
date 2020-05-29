@@ -62,7 +62,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 {
                     Position = new Vector2(0,-SentakkiPlayfield.INTERSECTDISTANCE),
                     Hit = () => {
-                        if (AllJudged)
+                        if (AllJudged || HoldStartTime != null)
                             return false;
                         beginHoldAt(Time.Current - Head.HitObject.StartTime);
                         Head.UpdateResult();
