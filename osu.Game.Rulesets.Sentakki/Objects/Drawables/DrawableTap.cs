@@ -26,9 +26,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             : base(hitObject)
         {
             AccentColour.Value = hitObject.NoteColor;
-            RelativeSizeAxes = Axes.Both;
-            CornerRadius = 120;
-            CornerExponent = 2;
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
