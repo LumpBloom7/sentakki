@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         {
             var circle = new Touch
             {
-                StartTime = Time.Current + 2000,
+                StartTime = Time.Current + 1000,
                 Position = Vector2.Zero,
                 NoteColor = Color4.Azure,
             };

@@ -15,6 +15,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -27,7 +28,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override double InitialLifetimeOffset => 1000;
 
-        private readonly CircularContainer innercircle;
+        private readonly CircularContainer circle1;
+        private readonly CircularContainer circle2;
+        private readonly CircularContainer circle3;
+        private readonly CircularContainer circle4;
 
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
@@ -42,23 +46,64 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Scale = Vector2.Zero;
             AlwaysPresent = true;
             AddRangeInternal(new Drawable[]{
-                new Circle{
-                    Size = new Vector2(80),
-                    Origin = Anchor.Centre,
-                    Anchor =Anchor.Centre,
-                },
-                innercircle = new CircularContainer{
+                circle1 = new CircularContainer{
                     Masking = true,
-                    Size = new Vector2(80),
-                    Scale = Vector2.Zero,
+                    Position = new Vector2(40, 0),
+                    Size = new Vector2(40),
                     BorderColour = Color4.Red,
                     Origin = Anchor.Centre,
                     Anchor =Anchor.Centre,
                     BorderThickness = 3,
                     Child = new Box{
                         RelativeSizeAxes = Axes.Both,
-                        Alpha= 0,
+                        Alpha= .2f,
                         AlwaysPresent = true,
+                        Colour = Color4.Red,
+                    }
+                },
+                circle2 = new CircularContainer{
+                    Masking = true,
+                    Position = new Vector2(-40, 0),
+                    Size = new Vector2(40),
+                    BorderColour = Color4.Red,
+                    Origin = Anchor.Centre,
+                    Anchor =Anchor.Centre,
+                    BorderThickness = 3,
+                    Child = new Box{
+                        RelativeSizeAxes = Axes.Both,
+                        Alpha= .2f,
+                        AlwaysPresent = true,
+                        Colour = Color4.Red,
+                    }
+                },
+                circle3 = new CircularContainer{
+                    Masking = true,
+                    Position = new Vector2(0, 40),
+                    Size = new Vector2(40),
+                    BorderColour = Color4.Red,
+                    Origin = Anchor.Centre,
+                    Anchor =Anchor.Centre,
+                    BorderThickness = 3,
+                    Child = new Box{
+                        RelativeSizeAxes = Axes.Both,
+                        Alpha= .2f,
+                        AlwaysPresent = true,
+                        Colour = Color4.Red,
+                    }
+                },
+                circle4 = new CircularContainer{
+                    Masking = true,
+                    Position = new Vector2(0, -40),
+                    Size = new Vector2(40),
+                    BorderColour = Color4.Red,
+                    Origin = Anchor.Centre,
+                    Anchor =Anchor.Centre,
+                    BorderThickness = 3,
+                    Child = new Box{
+                        RelativeSizeAxes = Axes.Both,
+                        Alpha= .2f,
+                        AlwaysPresent = true,
+                        Colour = Color4.Red,
                     }
                 }
             });
@@ -66,8 +111,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void UpdateInitialTransforms()
         {
-            this.FadeIn(500).ScaleTo(1, 500);
-            innercircle.Delay(500).ScaleTo(1, 500);
+            this.FadeIn(500, Easing.InOutBack).ScaleTo(1, 500, Easing.InOutBack);
+            circle1.Delay(500).MoveTo(Vector2.Zero, 500, Easing.InOutBack).ResizeTo(80, 500, Easing.InOutBack);
+            circle2.Delay(500).MoveTo(Vector2.Zero, 500, Easing.InOutBack).ResizeTo(80, 500, Easing.InOutBack);
+            circle3.Delay(500).MoveTo(Vector2.Zero, 500, Easing.InOutBack).ResizeTo(80, 500, Easing.InOutBack);
+            circle4.Delay(500).MoveTo(Vector2.Zero, 500, Easing.InOutBack).ResizeTo(80, 500, Easing.InOutBack);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
