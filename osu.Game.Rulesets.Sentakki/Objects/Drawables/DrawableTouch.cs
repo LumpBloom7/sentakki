@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableTouch : DrawableSentakkiHitObject, IKeyBindingHandler<SentakkiAction>
+    public class DrawableTouch : DrawableSentakkiHitObject
     {
         // IsHovered is used
         public override bool HandlePositionalInput => true;
@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public DrawableTouch(SentakkiHitObject hitObject) : base(hitObject)
         {
-            Size = new Vector2(80);
+            Size = new Vector2(240);
             Position = hitObject.Position;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
@@ -105,6 +105,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         AlwaysPresent = true,
                         Colour = Color4.Red,
                     }
+                },
+                new HitReceptor{
+                    Hit = () =>
+                    {
+                        if (AllJudged)
+                            return false;
+
+                        UpdateResult(true);
+                        return false;
+                    },
                 }
             });
         }
@@ -112,10 +122,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             this.FadeIn(500, Easing.InOutBack).ScaleTo(1, 500, Easing.InOutBack);
-            circle1.Delay(500).MoveTo(Vector2.Zero, 500, Easing.InOutBack).ResizeTo(80, 500, Easing.InOutBack);
-            circle2.Delay(500).MoveTo(Vector2.Zero, 500, Easing.InOutBack).ResizeTo(80, 500, Easing.InOutBack);
-            circle3.Delay(500).MoveTo(Vector2.Zero, 500, Easing.InOutBack).ResizeTo(80, 500, Easing.InOutBack);
-            circle4.Delay(500).MoveTo(Vector2.Zero, 500, Easing.InOutBack).ResizeTo(80, 500, Easing.InOutBack);
+            circle1.Delay(600).MoveTo(Vector2.Zero, 400).ResizeTo(80, 400);
+            circle2.Delay(600).MoveTo(Vector2.Zero, 400).ResizeTo(80, 400);
+            circle3.Delay(600).MoveTo(Vector2.Zero, 400).ResizeTo(80, 400);
+            circle4.Delay(600).MoveTo(Vector2.Zero, 400).ResizeTo(80, 400);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -127,7 +137,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 if (Auto && timeOffset > 0)
                     ApplyResult(r => r.Type = HitResult.Perfect);
 
-                if (!HitObject.HitWindows.CanBeHit(timeOffset))
+                if (timeOffset > 100)
                 {
                     ApplyResult(r => r.Type = HitResult.Miss);
                 }
@@ -135,12 +145,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
             }
 
-            var result = HitObject.HitWindows.ResultFor(timeOffset);
-            if (Time.Current < HitObject.StartTime && (result == HitResult.Good || result == HitResult.Miss)) return;
-            if (result == HitResult.None || (result == HitResult.Miss && Time.Current < HitObject.StartTime))
-                return;
+            if (Math.Abs(timeOffset) < 400)
+                ApplyResult(r => r.Type = HitResult.Perfect);
 
-            ApplyResult(r => r.Type = result);
         }
 
         protected override void UpdateStateTransforms(ArmedState state)
@@ -160,28 +167,5 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
             }
         }
-
-        public virtual bool OnPressed(SentakkiAction action)
-        {
-            if (AllJudged || !IsHovered)
-                return false;
-
-            UpdateResult(true);
-            return true;
-        }
-
-        public void OnReleased(SentakkiAction action)
-        {
-        }
-        protected override bool OnHover(HoverEvent e)
-        {
-            if (!SentakkiActionInputManager.PressedActions.Any()) return false;
-            if (AllJudged)
-                return false;
-
-            UpdateResult(true);
-            return true;
-        }
-
     }
 }
