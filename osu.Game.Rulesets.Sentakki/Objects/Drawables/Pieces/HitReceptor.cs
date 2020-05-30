@@ -1,17 +1,9 @@
-using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
-using osu.Game.Rulesets.Sentakki.Configuration;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
-using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Scoring;
 using osuTK;
-using osuTK.Graphics;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -25,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
-        private List<SentakkiAction> actions = new List<SentakkiAction>();
+        private readonly List<SentakkiAction> actions = new List<SentakkiAction>();
         public Func<bool> Hit;
         public Action Release;
 
@@ -35,7 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             if (!SentakkiActionInputManager.CurrentAngles.Contains(NoteAngle))
             {
                 if (SentakkiActionInputManager.PressedActions.Any(action => OnPressed(action)))
-                    actions.AddRange(SentakkiActionInputManager.PressedActions);
+                    actions.AddRange(SentakkiActionInputManager.PressedActions.Except(actions));
             }
             return false;
         }
@@ -50,44 +42,40 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         public virtual bool OnPressed(SentakkiAction action)
         {
-            SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
-            switch (action)
+            if (IsHovered)
             {
-                default:
-                    if (IsHovered && (Hit?.Invoke() ?? false))
-                    {
-                        actions.Add(action);
-                        return true;
-                    }
-                    break;
+                SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
+                actions.Add(action);
+                return Hit?.Invoke() ?? false;
             }
             return false;
         }
 
         public void OnReleased(SentakkiAction action)
         {
-            switch (action)
+            actions.Remove(action);
+            if (!actions.Any())
             {
-                default:
-                    if (actions.Contains(action))
-                        actions.Remove(action);
-                    if (!actions.Any())
-                        Release?.Invoke();
-                    break;
+                Release?.Invoke();
+                SentakkiActionInputManager.CurrentAngles.Remove(NoteAngle);
             }
         }
+
         protected override void OnHoverLost(HoverLostEvent e)
         {
             SentakkiActionInputManager.CurrentAngles.Remove(NoteAngle);
-            actions.Clear();
-            Release?.Invoke();
+            if (actions.Any())
+            {
+                actions.Clear();
+                Release?.Invoke();
+            }
         }
 
         internal class HoverReceptor : CircularContainer
         {
             public HoverReceptor()
             {
-                Size = new Vector2(150);
+                Size = new Vector2(60);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
             }
