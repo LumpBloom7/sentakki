@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     name: Build and Create Release
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
@@ -15,8 +15,6 @@ jobs:
       run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
     - name: Get current tag
       run: echo "::set-env name=CURRENT_TAG::$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1))"
-    - name: Get previous tag
-      run: echo "::set-env name=PREVIOUS_TAG::$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))"
     - name: Install dependencies
       run: dotnet restore
     - name: Build

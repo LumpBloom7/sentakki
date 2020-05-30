@@ -21,10 +21,10 @@ It should be on par or even better than what Sega has provided with their cabine
 Prebuilt binaries are provided for users who doesn't want to create a development environment.. Releases are guaranteed to work with the latest version of lazer at the time of release.
 
 | [Releases](https://github.com/lumpbloom7/sentakki/releases/) |
-| ---- |
+| ------------------------------------------------------------ |
 
 | [Installation Guide](https://github.com/LumpBloom7/sentakki/wiki/Ruleset-installation-guide) |
-| ---- |
+| -------------------------------------------------------------------------------------------- |
 
 ## Debugging and Developing
 

@@ -13,11 +13,10 @@
         "issue": "- {{name}} | [{{text}}]({{url}}) <sub>by [{{user_login}}]({{user_url}})</sub>",
         "group": "\n### {{heading}}\n",
         "changelogTitle": "",
-        "release": "Thank you for showing interest in this ruleset. This is a tagged release ({{release}}).\nIf you like this ruleset, do consider supporting me on [ko-fi](https://ko-fi.com/Bloom) or [PayPal](https://paypal.me/lumpbloom7).\n\n## Changes since last release\n{{body}}\n## Installation\n\n[Refer to this wiki page](https://github.com/LumpBloom7/sentakki/wiki/Ruleset-installation-guide)"
     },
     "groupBy": {
         "✨ New Features": "[enhancement]",
         "🛠  Improvements": "[tweak]",
-        "🐛 Bug Fixes:": "[bug]"
+        "🐛 Bug Fixes": "[bug]"
     }
 }
