@@ -39,5 +39,5 @@ jobs:
         asset_content_type: application/vnd.microsoft.portable-executable
     - name: Generate changelog
       run: |
-        npm install github-release-notes -g
+        sudo npm install github-release-notes -g
         gren release -T ${{secrets.RELEASE_TOKEN}} --tags=${{env.CURRENT_TAG}} --override

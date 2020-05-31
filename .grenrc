@@ -12,7 +12,7 @@
     "template": {
         "issue": "- {{name}} | [{{text}}]({{url}}) <sub>by [{{user_login}}]({{user_url}})</sub>",
         "group": "\n### {{heading}}\n",
-        "changelogTitle": "",
+        "changelogTitle": ""
     },
     "groupBy": {
         "✨ New Features": "[enhancement]",
