@@ -10,6 +10,5 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // This is not actually used during the result check, since all valid hits result in a perfect judgement
         // The only reason that it's here is so that hits show on the accuracy meter at the side.
         protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
-
     }
 }

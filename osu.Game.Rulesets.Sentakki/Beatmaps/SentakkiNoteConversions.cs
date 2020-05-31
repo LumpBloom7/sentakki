@@ -93,7 +93,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             return notes;
         }
 
-
         public static SentakkiHitObject CreateTouchHold(HitObject original)
         => new TouchHold
         {
