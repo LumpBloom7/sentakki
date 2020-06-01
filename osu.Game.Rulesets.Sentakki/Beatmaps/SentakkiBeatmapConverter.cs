@@ -1,4 +1,4 @@
-﻿using osu.Game.Beatmaps;
+using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
@@ -9,12 +9,21 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
+    [Flags]
+    public enum ConversionExperiments
+    {
+        none = 0,
+        twins = 1,
+        touch = 2
+    }
+
     public class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObject>
     {
         // todo: Check for conversion types that should be supported (ie. Beatmap.HitObjects.Any(h => h is IHasXPosition))
         // https://github.com/ppy/osu/tree/master/osu.Game/Rulesets/Objects/Types
         public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition);
-        public bool Experimental = false;
+
+        public ConversionExperiments EnabledExperiments = ConversionExperiments.none;
 
         private readonly Random random;
 
@@ -38,7 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             switch (original)
             {
                 case IHasCurve _:
-                    objects.AddRange(Conversions.CreateHoldNote(original, path, beatmap, random, Experimental));
+                    objects.AddRange(Conversions.CreateHoldNote(original, path, beatmap, random, EnabledExperiments));
                     break;
 
                 case IHasEndTime _:
@@ -46,10 +55,10 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     break;
 
                 default:
-                    if (newPos.X < 0)
-                        objects.AddRange(Conversions.CreateTouchNote(original, path, random, Experimental));
+                    if (EnabledExperiments.HasFlag(ConversionExperiments.touch))
+                        objects.AddRange(Conversions.CreateTouchNote(original, path, random, EnabledExperiments));
                     else
-                        objects.AddRange(Conversions.CreateTapNote(original, path, random, Experimental));
+                        objects.AddRange(Conversions.CreateTapNote(original, path, random, EnabledExperiments));
                     break;
             }
 

@@ -2,6 +2,11 @@
 using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Mods;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Bindables;
+using osu.Game.Configuration;
+using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {
@@ -18,9 +23,27 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public override double ScoreMultiplier => 1.00;
 
+        [SettingSource("Enable twin notes", "Allow more than one note to share the same times")]
+        public BindableBool EnableTwins { get; } = new BindableBool
+        {
+            Default = false,
+            Value = false
+        };
+
+        [SettingSource("Replace TAP notes with TOUCH notes", "Allow TOUCHs to replace taps for testing")]
+        public BindableBool EnableTouch { get; } = new BindableBool
+        {
+            Default = false,
+            Value = false
+        };
+
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
-            (beatmapConverter as SentakkiBeatmapConverter).Experimental = true;
+            if (EnableTwins.Value)
+                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.twins;
+
+            if (EnableTouch.Value)
+                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.touch;
         }
     }
 }
