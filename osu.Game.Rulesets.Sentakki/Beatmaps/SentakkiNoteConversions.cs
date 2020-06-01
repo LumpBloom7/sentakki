@@ -81,7 +81,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         {
             Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
             newPos.Y = 384 - newPos.Y - 192;
-            newPos.X -= 256;
+            newPos.X = (newPos.X - 256) * 0.6f;
 
             List<SentakkiHitObject> notes = new List<SentakkiHitObject>{new Touch
             {
