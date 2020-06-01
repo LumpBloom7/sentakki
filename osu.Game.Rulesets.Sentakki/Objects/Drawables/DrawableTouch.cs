@@ -121,11 +121,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void UpdateInitialTransforms()
         {
+            double largestHitWindow = HitObject.HitWindows.WindowFor(HitResult.Meh);
             this.FadeIn(500, Easing.InOutBack).ScaleTo(1, 500, Easing.InOutBack);
-            circle1.Delay(600).MoveTo(Vector2.Zero, 400).ResizeTo(80, 400);
-            circle2.Delay(600).MoveTo(Vector2.Zero, 400).ResizeTo(80, 400);
-            circle3.Delay(600).MoveTo(Vector2.Zero, 400).ResizeTo(80, 400);
-            circle4.Delay(600).MoveTo(Vector2.Zero, 400).ResizeTo(80, 400);
+
+            using (BeginDelayedSequence(1000 - largestHitWindow, true))
+            {
+                circle1.MoveTo(Vector2.Zero, largestHitWindow).ResizeTo(80, largestHitWindow);
+                circle2.MoveTo(Vector2.Zero, largestHitWindow).ResizeTo(80, largestHitWindow);
+                circle3.MoveTo(Vector2.Zero, largestHitWindow).ResizeTo(80, largestHitWindow);
+                circle4.MoveTo(Vector2.Zero, largestHitWindow).ResizeTo(80, largestHitWindow);
+            }
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -137,17 +142,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 if (Auto && timeOffset > 0)
                     ApplyResult(r => r.Type = HitResult.Perfect);
 
-                if (timeOffset > 100)
-                {
+                if (!HitObject.HitWindows.CanBeHit(timeOffset))
                     ApplyResult(r => r.Type = HitResult.Miss);
-                }
 
                 return;
             }
+            var result = HitObject.HitWindows.ResultFor(timeOffset);
+            if (timeOffset < 0 && result <= HitResult.Miss)
+                return;
+            if (result >= HitResult.Meh && timeOffset < 0)
+                result = HitResult.Perfect;
 
-            if (Math.Abs(timeOffset) < 400)
-                ApplyResult(r => r.Type = HitResult.Perfect);
-
+            ApplyResult(r => r.Type = result);
         }
 
         protected override void UpdateStateTransforms(ArmedState state)
