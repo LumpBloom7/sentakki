@@ -155,6 +155,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             circle2.Size = new Vector2(sizeAnimFormula(40));
             circle3.Size = new Vector2(sizeAnimFormula(40));
             circle4.Size = new Vector2(sizeAnimFormula(40));
+
+            // Handle hidden and fadeIn modifications
+            if (IsHidden)
+            {
+                float hideAmount = (float)((currentProg - fadeIn) / (moveTo / 2));
+                if (hideAmount < 0) hideAmount = 0;
+                else if (hideAmount > 1) hideAmount = 1;
+
+                Alpha = 1 - (1 * hideAmount);
+            }
+            else if (IsFadeIn)
+            {
+                // Using existing moveAmount because it serves our needs
+                Alpha = 1 * moveAmount;
+            }
+
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
