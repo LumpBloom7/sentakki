@@ -64,7 +64,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                     break;
 
                 // already hit or beyond the hittable end time.
-                if (h.IsHit || (h.HitObject is IHasEndTime hasEnd && time > hasEnd.EndTime))
+                if (h.IsHit || (h.HitObject is IHasDuration hasEnd && time > hasEnd.EndTime))
                     continue;
 
                 switch (h)

@@ -11,6 +11,7 @@ using System.Linq;
 using osu.Game.Audio;
 using osu.Game.Beatmaps.ControlPoints;
 using System.Diagnostics;
+using System.Threading;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
@@ -82,13 +83,13 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         {
             Position = Vector2.Zero,
             StartTime = original.StartTime,
-            EndTime = (original as IHasEndTime).EndTime,
+            EndTime = (original as IHasDuration).EndTime,
             Samples = original.Samples,
         };
 
         public static List<SentakkiHitObject> CreateHoldNote(HitObject original, int path, IBeatmap beatmap, Random rng, bool experimental)
         {
-            var curveData = original as IHasCurve;
+            var curveData = original as IHasPathWithRepeats;
 
             List<SentakkiHitObject> notes = new List<SentakkiHitObject>();
             bool twin = curveData.NodeSamples.Any(s => s.Any(s => s.Name == HitSampleInfo.HIT_CLAP));
@@ -134,7 +135,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         public static List<SentakkiHitObject> CreateTapFromTicks(HitObject original, int path, IBeatmap beatmap, Random rng)
         {
-            var curve = original as IHasCurve;
+            var curve = original as IHasPathWithRepeats;
             double spanDuration = curve.Duration / (curve.RepeatCount + 1);
             bool isRepeatSpam = spanDuration < 75 && curve.RepeatCount > 0;
 
@@ -155,7 +156,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             double legacyLastTickOffset = (original as IHasLegacyLastTickOffset)?.LegacyLastTickOffset ?? 0;
 
-            foreach (var e in SliderEventGenerator.Generate(original.StartTime, spanDuration, velocity, tickDistance, curve.Path.Distance, curve.RepeatCount + 1, legacyLastTickOffset))
+            foreach (var e in SliderEventGenerator.Generate(original.StartTime, spanDuration, velocity, tickDistance, curve.Path.Distance, curve.RepeatCount + 1, legacyLastTickOffset, CancellationToken.None))
             {
                 int newPath = path;
                 while (newPath == path) newPath = rng.Next(0, 8);

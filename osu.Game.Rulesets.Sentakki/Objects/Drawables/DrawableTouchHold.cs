@@ -44,7 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (Time.Current < HitObject.StartTime) return;
 
-            if (userTriggered || Time.Current < (HitObject as IHasEndTime)?.EndTime)
+            if (userTriggered || Time.Current < (HitObject as IHasDuration)?.EndTime)
                 return;
 
             double result = held / potential;
@@ -59,7 +59,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     r.Type = HitResult.Good;
                 else if (result >= .2)
                     r.Type = HitResult.Ok;
-                else if (Time.Current >= (HitObject as IHasEndTime)?.EndTime)
+                else if (Time.Current >= (HitObject as IHasDuration)?.EndTime)
                     r.Type = HitResult.Miss;
             });
         }
@@ -97,7 +97,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             // Input and feedback
             buttonHeld = SentakkiActionInputManager?.PressedActions.Any(x => x == SentakkiAction.Button1 || x == SentakkiAction.Button2) ?? false;
-            if (Time.Current >= HitObject.StartTime && Time.Current <= (HitObject as IHasEndTime)?.EndTime)
+            if (Time.Current >= HitObject.StartTime && Time.Current <= (HitObject as IHasDuration)?.EndTime)
             {
                 potential++;
                 if ((buttonHeld && IsHovered) || Auto)
@@ -125,11 +125,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    this.Delay((HitObject as IHasEndTime).Duration).ScaleTo(1f, time_fade_hit).Expire();
+                    this.Delay((HitObject as IHasDuration).Duration).ScaleTo(1f, time_fade_hit).Expire();
                     break;
 
                 case ArmedState.Miss:
-                    this.Delay((HitObject as IHasEndTime).Duration).ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss);
+                    this.Delay((HitObject as IHasDuration).Duration).ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss);
                     break;
             }
         }

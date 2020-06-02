@@ -155,7 +155,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             note.Scale = new Vector2((float)(1 * fadeAmount));
 
             // Calculate total length of hold note
-            double length = Convert.ToSingle((SentakkiPlayfield.INTERSECTDISTANCE - 66) / moveTo * ((HitObject as IHasEndTime).Duration));
+            double length = Convert.ToSingle((SentakkiPlayfield.INTERSECTDISTANCE - 66) / moveTo * ((HitObject as IHasDuration).Duration));
             if (length > SentakkiPlayfield.INTERSECTDISTANCE - 66) // Clip max length
                 length = SentakkiPlayfield.INTERSECTDISTANCE - 66;
 
@@ -170,7 +170,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             note.Height = (float)(80 + (length * extendAmount));
 
             // Calculate duration where no movement is happening (when notes are very long)
-            float idleTime = (float)((HitObject as IHasEndTime).Duration - extendTime);
+            float idleTime = (float)((HitObject as IHasDuration).Duration - extendTime);
 
             // Move the note once idle time is over
             float moveAmount = (float)((currentProg - fadeIn - extendTime - idleTime) / moveTo);
@@ -235,7 +235,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    using (BeginDelayedSequence((HitObject as IHasEndTime).Duration, true))
+                    using (BeginDelayedSequence((HitObject as IHasDuration).Duration, true))
                     {
                         this.ScaleTo(1f, time_fade_hit);
                     }
@@ -243,7 +243,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 case ArmedState.Miss:
                     double longestSurvivalTime = Tail.HitObject.HitWindows.WindowFor(HitResult.Miss);
-                    using (BeginDelayedSequence((HitObject as IHasEndTime).Duration + longestSurvivalTime, true))
+                    using (BeginDelayedSequence((HitObject as IHasDuration).Duration + longestSurvivalTime, true))
                     {
                         note.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                             .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)

@@ -7,7 +7,7 @@ using System.Linq;
 using osuTK;
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public class Hold : SentakkiHitObject, IHasEndTime
+    public class Hold : SentakkiHitObject, IHasDuration
     {
         private List<IList<HitSampleInfo>> nodeSamples = new List<IList<HitSampleInfo>>();
 

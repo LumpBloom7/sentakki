@@ -37,11 +37,11 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             switch (original)
             {
-                case IHasCurve _:
+                case IHasPathWithRepeats _:
                     objects.AddRange(Conversions.CreateHoldNote(original, path, beatmap, random, Experimental));
                     break;
 
-                case IHasEndTime _:
+                case IHasDuration _:
                     objects.Add(Conversions.CreateTouchHold(original));
                     break;
 
