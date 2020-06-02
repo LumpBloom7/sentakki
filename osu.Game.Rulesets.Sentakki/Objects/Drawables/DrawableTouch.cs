@@ -1,21 +1,14 @@
-using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osuTK;
 using osuTK.Graphics;
-using System;
 using System.Diagnostics;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Input.Bindings;
-using osu.Framework.Input.Events;
-using System.Linq;
-using System.Collections.Generic;
+using osu.Framework.Graphics.Transforms;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -26,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override float SamplePlaybackPosition => (HitObject.Position.X + SentakkiPlayfield.INTERSECTDISTANCE) / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
 
-        protected override double InitialLifetimeOffset => 1000;
+        protected override double InitialLifetimeOffset => 2000;
 
         private readonly CircularContainer circle1;
         private readonly CircularContainer circle2;
@@ -119,18 +112,49 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
-        protected override void UpdateInitialTransforms()
-        {
-            double largestHitWindow = HitObject.HitWindows.WindowFor(HitResult.Meh);
-            this.FadeIn(500, Easing.InOutBack).ScaleTo(1, 500, Easing.InOutBack);
+        // Easing functions for manual use.
+        private readonly DefaultEasingFunction inOutBack = new DefaultEasingFunction(Easing.InOutBack);
+        private readonly DefaultEasingFunction inQuint = new DefaultEasingFunction(Easing.InQuint);
 
-            using (BeginDelayedSequence(1000 - largestHitWindow, true))
-            {
-                circle1.MoveTo(Vector2.Zero, largestHitWindow).ResizeTo(80, largestHitWindow);
-                circle2.MoveTo(Vector2.Zero, largestHitWindow).ResizeTo(80, largestHitWindow);
-                circle3.MoveTo(Vector2.Zero, largestHitWindow).ResizeTo(80, largestHitWindow);
-                circle4.MoveTo(Vector2.Zero, largestHitWindow).ResizeTo(80, largestHitWindow);
-            }
+        protected override void Update()
+        {
+            base.Update();
+            if (Result.HasResult) return;
+
+            double fadeIn = 500 * GameplaySpeed;
+            double moveTo = 500 * GameplaySpeed;
+            double animStart = HitObject.StartTime - fadeIn - moveTo;
+            double currentProg = Clock.CurrentTime - animStart;
+
+            // Calculate initial entry animation
+            float fadeAmount = (float)(currentProg / fadeIn);
+            if (fadeAmount < 0) fadeAmount = 0;
+            else if (fadeAmount > 1) fadeAmount = 1;
+
+            Alpha = fadeAmount * (float)inOutBack.ApplyEasing(fadeAmount);
+            Scale = new Vector2(1f * fadeAmount * (float)inOutBack.ApplyEasing(fadeAmount));
+
+            // Calculate position
+            float moveAmount = (float)((currentProg - fadeIn) / moveTo);
+            if (moveAmount < 0) moveAmount = 0;
+            else if (moveAmount > 1) moveAmount = 1;
+
+            // Used to simplify this crazy arse manual animating
+            float moveAnimFormula(float originalValue) => (float)(originalValue - (originalValue * moveAmount * inQuint.ApplyEasing(moveAmount)));
+
+            circle1.Position = new Vector2(moveAnimFormula(40), 0);
+            circle2.Position = new Vector2(moveAnimFormula(-40), 0);
+            circle3.Position = new Vector2(0, moveAnimFormula(40));
+            circle4.Position = new Vector2(0, moveAnimFormula(-40));
+
+            // Used to simplify this crazy arse manual animating
+            float finalSize = 80;
+            float sizeAnimFormula(float originalValue) => (float)(originalValue + (finalSize - originalValue) * moveAmount * inQuint.ApplyEasing(moveAmount));
+
+            circle1.Size = new Vector2(sizeAnimFormula(40));
+            circle2.Size = new Vector2(sizeAnimFormula(40));
+            circle3.Size = new Vector2(sizeAnimFormula(40));
+            circle4.Size = new Vector2(sizeAnimFormula(40));
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
