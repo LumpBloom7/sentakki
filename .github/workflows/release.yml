@@ -34,10 +34,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./osu.Game.Rulesets.Sentakki/bin/Release/netcoreapp3.1/osu.Game.Rulesets.Sentakki.dll
+        asset_path: ./osu.Game.Rulesets.Sentakki/bin/Release/netstandard2.1/osu.Game.Rulesets.Sentakki.dll
         asset_name: osu.Game.Rulesets.Sentakki.dll
         asset_content_type: application/vnd.microsoft.portable-executable
     - name: Generate changelog
       run: |
-        npm install github-release-notes -g
+        sudo npm install github-release-notes -g
         gren release -T ${{secrets.RELEASE_TOKEN}} --tags=${{env.CURRENT_TAG}} --override

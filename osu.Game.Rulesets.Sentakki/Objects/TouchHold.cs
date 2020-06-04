@@ -3,7 +3,7 @@ using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public class TouchHold : SentakkiHitObject, IHasEndTime
+    public class TouchHold : SentakkiHitObject, IHasDuration
     {
         public double EndTime
         {
