@@ -7,6 +7,7 @@ using osu.Game.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
+using System.ComponentModel;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {
@@ -30,11 +31,21 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             Value = false
         };
 
-        [SettingSource("Replace TAP notes with TOUCH notes", "Allow TOUCHs to replace taps for testing")]
-        public BindableBool EnableTouch { get; } = new BindableBool
+        public enum TouchOptions
         {
-            Default = false,
-            Value = false
+            [Description("Off")]
+            none,
+            [Description("Replace all taps")]
+            replace,
+            [Description("Replace some taps")]
+            random,
+        }
+
+        [SettingSource("Touch notes", "Allow TOUCHs to replace taps for testing")]
+        public Bindable<TouchOptions> EnableTouch { get; } = new Bindable<TouchOptions>
+        {
+            Default = TouchOptions.none,
+            Value = TouchOptions.none,
         };
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
@@ -42,8 +53,10 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             if (EnableTwins.Value)
                 (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.twins;
 
-            if (EnableTouch.Value)
+            if (EnableTouch.Value == TouchOptions.replace)
                 (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.touch;
+            else if (EnableTouch.Value == TouchOptions.random)
+                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.randomTouch;
         }
     }
 }
