@@ -6,25 +6,26 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/lumpbloom7/sentakki/badge)](https://www.codefactor.io/repository/github/lumpbloom7/sentakki)
 [![Discord Shield](https://discordapp.com/api/guilds/700619421466624050/widget.png?style=shield)](https://discord.gg/CQPNADu)
 
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E01N56M)
+
 An attempt to recreate Sega's maimai within osu!lazer, while making it more flexible.
 
 ## Status
 
-This is very much a WIP. Most of maimai's note types are yet to be implemented, and most lazer features are also absent. However, I do consider it playable, albeit in a limited fashion.
-
-### End goal
-
-It should be on par or even better than what Sega has provided with their cabinets. It should also have a level of quality that rivals official osu! rulesets.
+This is very much a WIP. Some of maimai's note types are yet to be implemented. However, I do consider it playable, and pretty fun if I do say so myself.
 
 ## Trying the ruleset
 
-Prebuilt binaries are provided for users who doesn't want to create a development environment.. Releases are guaranteed to work with the latest version of lazer at the time of release.
+Prebuilt binaries are provided for users who doesn't want to create a development environment. Releases are guaranteed to work with the latest version of lazer at the time of release.
 
 | [Releases](https://github.com/lumpbloom7/sentakki/releases/) |
 | ------------------------------------------------------------ |
 
 | [Installation Guide](https://github.com/LumpBloom7/sentakki/wiki/Ruleset-installation-guide) |
 | -------------------------------------------------------------------------------------------- |
+
+| [Sentakki wiki](https://github.com/LumpBloom7/sentakki/wiki/) |
+| ------------------------------------------------------------- |
 
 ## Debugging and Developing
 
@@ -53,7 +54,7 @@ git pull
 
 Using the `Build` command from your IDE should generate a DLL file within the output directory. If you're debugging or developing, it is a bit more convenient to run the `VisualTests` project instead since that'll remove the need to copy the dll to your lazer directory.
 
-You can also build maimai for osu! from the command-line with a single command:
+You can also build sentakki from the command-line with a single command:
 
 ```sh
 dotnet build osu.Game.Rulesets.Sentakki
