@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override float SamplePlaybackPosition => (HitObject.Position.X + SentakkiPlayfield.INTERSECTDISTANCE) / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
 
-        protected override double InitialLifetimeOffset => 3000;
+        protected override double InitialLifetimeOffset => 6000;
 
         private readonly CircularContainer circle1;
         private readonly CircularContainer circle2;
