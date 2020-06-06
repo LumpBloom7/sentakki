@@ -14,13 +14,14 @@ namespace osu.Game.Rulesets.Sentakki.Mods
     public class SentakkiModExperimental : Mod, IApplicableToBeatmapConverter
     {
         public override string Name => "Experimental";
-        public override string Description => "Some experimental features to be added to future sentakki builds. Autoplay recommended.";
+        public override string Description => "Some experimental features to be added to future sentakki builds. Autoplay/No-Fail recommended. Replays unsupported.";
         public override string Acronym => "Ex";
 
         public override IconUsage? Icon => FontAwesome.Solid.Flask;
         public override ModType Type => ModType.Fun;
 
         public override bool Ranked => false;
+        public override bool RequiresConfiguration => true;
 
         public override double ScoreMultiplier => 1.00;
 
