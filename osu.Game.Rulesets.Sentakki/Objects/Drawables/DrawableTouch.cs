@@ -1,3 +1,5 @@
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -9,6 +11,7 @@ using osu.Game.Rulesets.Sentakki.UI;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Transforms;
+using osu.Game.Rulesets.Sentakki.Configuration;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -19,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override float SamplePlaybackPosition => (HitObject.Position.X + SentakkiPlayfield.INTERSECTDISTANCE) / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
 
-        protected override double InitialLifetimeOffset => 2000;
+        protected override double InitialLifetimeOffset => 3000;
 
         private readonly CircularContainer circle1;
         private readonly CircularContainer circle2;
@@ -112,6 +115,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
+        private readonly Bindable<double> touchAnimationDuration = new Bindable<double>(1000);
+
+        [BackgroundDependencyLoader(true)]
+        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
+        {
+            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, touchAnimationDuration);
+        }
+
         // Easing functions for manual use.
         private readonly DefaultEasingFunction inOutBack = new DefaultEasingFunction(Easing.InOutBack);
         private readonly DefaultEasingFunction inQuint = new DefaultEasingFunction(Easing.InQuint);
@@ -121,7 +132,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.Update();
             if (Result.HasResult) return;
 
-            double fadeIn = 500 * GameplaySpeed;
+
+
+            double fadeIn = touchAnimationDuration.Value * GameplaySpeed;
             double moveTo = 500 * GameplaySpeed;
             double animStart = HitObject.StartTime - fadeIn - moveTo;
             double currentProg = Clock.CurrentTime - animStart;
