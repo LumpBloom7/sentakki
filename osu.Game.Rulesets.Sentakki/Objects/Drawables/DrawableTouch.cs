@@ -24,10 +24,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override double InitialLifetimeOffset => 6000;
 
-        private readonly CircularContainer circle1;
-        private readonly CircularContainer circle2;
-        private readonly CircularContainer circle3;
-        private readonly CircularContainer circle4;
+        private readonly TouchBlob blob1;
+        private readonly TouchBlob blob2;
+        private readonly TouchBlob blob3;
+        private readonly TouchBlob blob4;
+
+        private readonly TouchFlashPiece flash;
+        private readonly ExplodePiece explode;
+
+        private readonly CircularContainer dot;
 
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
@@ -35,74 +40,44 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableTouch(SentakkiHitObject hitObject) : base(hitObject)
         {
             Depth = -1; // This note is on a higher plane of existence.
-            Size = new Vector2(240);
+            Size = new Vector2(80);
             Position = hitObject.Position;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Alpha = 0;
             Scale = Vector2.Zero;
+            Colour = HitObject.NoteColor;
             AlwaysPresent = true;
             AddRangeInternal(new Drawable[]{
-                circle1 = new CircularContainer{
+                blob1 = new TouchBlob{
+                    Position = new Vector2(40, 0)
+                },
+                blob2 = new TouchBlob{
+                    Position = new Vector2(-40, 0)
+                },
+                blob3 = new TouchBlob{
+                    Position = new Vector2(0, 40)
+                },
+                blob4 = new TouchBlob{
+                    Position = new Vector2(0, -40)
+                },
+                dot = new CircularContainer
+                {
+                    Size = new Vector2(20),
                     Masking = true,
-                    Position = new Vector2(40, 0),
-                    Size = new Vector2(40),
-                    BorderColour = Color4.Red,
+                    BorderColour = Color4.Gray,
+                    BorderThickness = 2,
+                    Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Anchor =Anchor.Centre,
-                    BorderThickness = 3,
-                    Child = new Box{
+                    Child = new Box
+                    {
                         RelativeSizeAxes = Axes.Both,
-                        Alpha= .2f,
                         AlwaysPresent = true,
-                        Colour = Color4.Red,
+                        Colour = Color4.White,
                     }
                 },
-                circle2 = new CircularContainer{
-                    Masking = true,
-                    Position = new Vector2(-40, 0),
-                    Size = new Vector2(40),
-                    BorderColour = Color4.Red,
-                    Origin = Anchor.Centre,
-                    Anchor =Anchor.Centre,
-                    BorderThickness = 3,
-                    Child = new Box{
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha= .2f,
-                        AlwaysPresent = true,
-                        Colour = Color4.Red,
-                    }
-                },
-                circle3 = new CircularContainer{
-                    Masking = true,
-                    Position = new Vector2(0, 40),
-                    Size = new Vector2(40),
-                    BorderColour = Color4.Red,
-                    Origin = Anchor.Centre,
-                    Anchor =Anchor.Centre,
-                    BorderThickness = 3,
-                    Child = new Box{
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha= .2f,
-                        AlwaysPresent = true,
-                        Colour = Color4.Red,
-                    }
-                },
-                circle4 = new CircularContainer{
-                    Masking = true,
-                    Position = new Vector2(0, -40),
-                    Size = new Vector2(40),
-                    BorderColour = Color4.Red,
-                    Origin = Anchor.Centre,
-                    Anchor =Anchor.Centre,
-                    BorderThickness = 3,
-                    Child = new Box{
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha= .2f,
-                        AlwaysPresent = true,
-                        Colour = Color4.Red,
-                    }
-                },
+                flash = new TouchFlashPiece(),
+                explode = new ExplodePiece(),
                 new HitReceptor{
                     Hit = () =>
                     {
@@ -133,8 +108,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.Update();
             if (Result.HasResult) return;
 
-
-
             double fadeIn = touchAnimationDuration.Value * GameplaySpeed;
             double moveTo = 500 * GameplaySpeed;
             double animStart = HitObject.StartTime - fadeIn - moveTo;
@@ -156,19 +129,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // Used to simplify this crazy arse manual animating
             float moveAnimFormula(float originalValue) => (float)(originalValue - (originalValue * moveAmount * inQuint.ApplyEasing(moveAmount)));
 
-            circle1.Position = new Vector2(moveAnimFormula(40), 0);
-            circle2.Position = new Vector2(moveAnimFormula(-40), 0);
-            circle3.Position = new Vector2(0, moveAnimFormula(40));
-            circle4.Position = new Vector2(0, moveAnimFormula(-40));
+            blob1.Position = new Vector2(moveAnimFormula(40), 0);
+            blob2.Position = new Vector2(moveAnimFormula(-40), 0);
+            blob3.Position = new Vector2(0, moveAnimFormula(40));
+            blob4.Position = new Vector2(0, moveAnimFormula(-40));
 
             // Used to simplify this crazy arse manual animating
-            float finalSize = 80;
-            float sizeAnimFormula(float originalValue) => (float)(originalValue + (finalSize - originalValue) * moveAmount * inQuint.ApplyEasing(moveAmount));
+            float sizeAnimFormula() => (float)(.5 + .5 * moveAmount * inQuint.ApplyEasing(moveAmount));
 
-            circle1.Size = new Vector2(sizeAnimFormula(40));
-            circle2.Size = new Vector2(sizeAnimFormula(40));
-            circle3.Size = new Vector2(sizeAnimFormula(40));
-            circle4.Size = new Vector2(sizeAnimFormula(40));
+            blob1.Scale = new Vector2(sizeAnimFormula());
+            blob2.Scale = new Vector2(sizeAnimFormula());
+            blob3.Scale = new Vector2(sizeAnimFormula());
+            blob4.Scale = new Vector2(sizeAnimFormula());
 
             // Handle hidden and fadeIn modifications
             if (IsHidden)
@@ -213,17 +185,31 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateStateTransforms(ArmedState state)
         {
             base.UpdateStateTransforms(state);
+            const double time_fade_hit = 400, time_fade_miss = 400;
 
             switch (state)
             {
                 case ArmedState.Hit:
-                    this.ScaleTo(1.5f, 200).FadeOut(200).Then().Expire();
+                    const double flash_in = 40;
+                    const double flash_out = 100;
+
+                    flash.FadeTo(0.8f, flash_in)
+                         .Then()
+                         .FadeOut(flash_out);
+
+                    dot.Delay(flash_in).FadeOut();
+
+                    explode.FadeIn(flash_in);
+                    this.ScaleTo(1.5f, 400, Easing.OutQuad);
+
+                    this.Delay(time_fade_hit).FadeOut().Expire();
 
                     break;
 
                 case ArmedState.Miss:
-                    this.ScaleTo(0, 400).FadeOut(400).Then().Expire();
-
+                    this.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                       .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
+                       .FadeOut(time_fade_miss);
                     break;
             }
         }

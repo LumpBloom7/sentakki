@@ -86,6 +86,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             List<SentakkiHitObject> notes = new List<SentakkiHitObject>{new Touch
             {
+                NoteColor = Color4.Cyan,
                 Samples = original.Samples,
                 StartTime = original.StartTime,
                 Position = newPos,

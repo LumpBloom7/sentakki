@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             {
                 StartTime = Time.Current + 1000,
                 Position = Vector2.Zero,
-                NoteColor = Color4.Azure,
+                NoteColor = Color4.Cyan,
             };
 
             circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
