@@ -34,6 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public DrawableTouch(SentakkiHitObject hitObject) : base(hitObject)
         {
+            Depth = -1; // This note is on a higher plane of existence.
             Size = new Vector2(240);
             Position = hitObject.Position;
             Origin = Anchor.Centre;
