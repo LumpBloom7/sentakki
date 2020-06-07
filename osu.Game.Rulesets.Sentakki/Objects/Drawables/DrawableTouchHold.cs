@@ -1,4 +1,7 @@
-﻿using osu.Framework.Graphics;
+﻿using osu.Framework.Allocation;
+using osu.Framework.Bindables;
+using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Framework.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
@@ -18,7 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
-        protected override double InitialLifetimeOffset => 2000;
+        protected override double InitialLifetimeOffset => 4000;
 
         public DrawableTouchHold(TouchHold hitObject)
             : base(hitObject)
@@ -64,11 +67,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
+        private readonly Bindable<double> touchAnimationDuration = new Bindable<double>(1000);
+
+        [BackgroundDependencyLoader(true)]
+        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
+        {
+            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, touchAnimationDuration);
+        }
+
         protected override void Update()
         {
             base.Update();
             if (Result.HasResult) return;
-            double fadeIn = 500 * GameplaySpeed;
+
+            double fadeIn = touchAnimationDuration.Value * GameplaySpeed;
             double animStart = HitObject.StartTime - fadeIn;
             double currentProg = Clock.CurrentTime - animStart;
 
