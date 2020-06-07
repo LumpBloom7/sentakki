@@ -11,6 +11,7 @@ using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Tests.Visual;
 using osuTK;
 using osuTK.Graphics;
+using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
@@ -28,6 +29,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
             AddStep("Miss Single", () => testSingle());
             AddStep("Hit Single", () => testSingle(true));
+            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject) && (h as DrawableSentakkiHitObject).AllJudged == false));
         }
 
         private void testSingle(bool auto = false)
