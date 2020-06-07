@@ -9,14 +9,25 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
+    [Flags]
+    public enum ConversionExperiments
+    {
+        none = 0,
+        twins = 1,
+        touch = 2,
+        randomTouch = 4,
+    }
+
     public class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObject>
     {
         // todo: Check for conversion types that should be supported (ie. Beatmap.HitObjects.Any(h => h is IHasXPosition))
         // https://github.com/ppy/osu/tree/master/osu.Game/Rulesets/Objects/Types
         public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition);
-        public bool Experimental = false;
+
+        public ConversionExperiments EnabledExperiments = ConversionExperiments.none;
 
         private readonly Random random;
+        private readonly Random random2;
 
         public SentakkiBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
             : base(beatmap, ruleset)
@@ -24,6 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             var difficulty = beatmap.BeatmapInfo.BaseDifficulty;
             int seed = ((int)MathF.Round(difficulty.DrainRate + difficulty.CircleSize) * 20) + (int)(difficulty.OverallDifficulty * 41.2) + (int)MathF.Round(difficulty.ApproachRate);
             random = new Random(seed);
+            random2 = new Random(seed);
         }
 
         protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap)
@@ -38,7 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             switch (original)
             {
                 case IHasPathWithRepeats _:
-                    objects.AddRange(Conversions.CreateHoldNote(original, path, beatmap, random, Experimental));
+                    objects.AddRange(Conversions.CreateHoldNote(original, path, beatmap, random, EnabledExperiments));
                     break;
 
                 case IHasDuration _:
@@ -46,7 +58,10 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     break;
 
                 default:
-                    objects.AddRange(Conversions.CreateTapNote(original, path, random, Experimental));
+                    if (EnabledExperiments.HasFlag(ConversionExperiments.touch) || (EnabledExperiments.HasFlag(ConversionExperiments.randomTouch) && (random2.Next() % 10 == 0)))
+                        objects.AddRange(Conversions.CreateTouchNote(original, path, random, EnabledExperiments));
+                    else
+                        objects.AddRange(Conversions.CreateTapNote(original, path, random, EnabledExperiments));
                     break;
             }
 

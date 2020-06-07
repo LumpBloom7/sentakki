@@ -103,6 +103,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
             DrawableSentakkiJudgement explosion;
             switch (judgedObject)
             {
+                case DrawableTouch t:
+                    explosion = new DrawableSentakkiJudgement(result, sentakkiObj)
+                    {
+                        Origin = Anchor.Centre,
+                        Anchor = Anchor.Centre,
+                        Position = t.Position
+                    };
+                    break;
+
                 case DrawableTouchHold _:
                     explosion = new DrawableSentakkiJudgement(result, sentakkiObj)
                     {

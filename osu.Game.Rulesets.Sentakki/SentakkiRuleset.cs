@@ -23,8 +23,8 @@ namespace osu.Game.Rulesets.Sentakki
 {
     public class SentakkiRuleset : Ruleset
     {
-        public override string Description => "sentakki";
-        public override string PlayingVerb => "Washing laundry";
+        public override string Description => "sentakki insiders";
+        public override string PlayingVerb => "Washing laundry as an insider";
 
         public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor();
 

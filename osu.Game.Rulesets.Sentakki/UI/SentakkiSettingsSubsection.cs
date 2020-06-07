@@ -56,6 +56,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     LabelText = "Note speed",
                     Bindable = config.GetBindable<double>(SentakkiRulesetSettings.AnimationDuration),
                 },
+                new SettingsSlider<double, TimeSlider>
+                {
+                    LabelText = "Touch note speed",
+                    Bindable = config.GetBindable<double>(SentakkiRulesetSettings.TouchAnimationDuration),
+                },
                 new SettingsSlider<float>
                 {
                     LabelText = "Ring Opacity",

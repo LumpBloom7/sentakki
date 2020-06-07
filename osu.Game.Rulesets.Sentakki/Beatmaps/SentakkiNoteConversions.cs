@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
     public static class Conversions
     {
-        public static List<SentakkiHitObject> CreateTapNote(HitObject original, int path, Random rng, bool experimental = false)
+        public static List<SentakkiHitObject> CreateTapNote(HitObject original, int path, Random rng, ConversionExperiments experimental = ConversionExperiments.none)
         {
             List<SentakkiHitObject> notes = new List<SentakkiHitObject>();
             bool strong = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, path),
                     Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, path),
                 });
-                if (twin && experimental)
+                if (twin && experimental.HasFlag(ConversionExperiments.twins))
                 {
                     int newPath = path;
                     while (path == newPath) newPath = rng.Next(0, 8);
@@ -60,7 +60,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, path),
                     Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, path),
                 });
-                if (twin && experimental)
+                if (twin && experimental.HasFlag(ConversionExperiments.twins))
                 {
                     int newPath = path;
                     while (path == newPath) newPath = rng.Next(0, 8);
@@ -78,6 +78,23 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             return notes;
         }
 
+        public static List<SentakkiHitObject> CreateTouchNote(HitObject original, int path, Random rng, ConversionExperiments experimental = ConversionExperiments.none)
+        {
+            Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
+            newPos.Y = 384 - newPos.Y - 192;
+            newPos.X = (newPos.X - 256) * 0.6f;
+
+            List<SentakkiHitObject> notes = new List<SentakkiHitObject>{new Touch
+            {
+                NoteColor = Color4.Cyan,
+                Samples = original.Samples,
+                StartTime = original.StartTime,
+                Position = newPos,
+            }};
+
+            return notes;
+        }
+
         public static SentakkiHitObject CreateTouchHold(HitObject original)
         => new TouchHold
         {
@@ -87,7 +104,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             Samples = original.Samples,
         };
 
-        public static List<SentakkiHitObject> CreateHoldNote(HitObject original, int path, IBeatmap beatmap, Random rng, bool experimental)
+        public static List<SentakkiHitObject> CreateHoldNote(HitObject original, int path, IBeatmap beatmap, Random rng, ConversionExperiments experimental = ConversionExperiments.none)
         {
             var curveData = original as IHasPathWithRepeats;
 
@@ -105,7 +122,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, path),
             });
 
-            if (experimental)
+            if (experimental.HasFlag(ConversionExperiments.twins))
             {
                 if (twin)
                 {
