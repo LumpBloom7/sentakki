@@ -51,14 +51,14 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     LabelText = "Ring Colour",
                     Bindable = config.GetBindable<ColorOption>(SentakkiRulesetSettings.RingColor)
                 },
-                new SettingsSlider<double, TimeSlider>
+                new SettingsSlider<double, NoteTimeSlider>
                 {
-                    LabelText = "Note speed",
+                    LabelText = "Note entry speed",
                     Bindable = config.GetBindable<double>(SentakkiRulesetSettings.AnimationDuration),
                 },
-                new SettingsSlider<double, TimeSlider>
+                new SettingsSlider<double, TouchTimeSlider>
                 {
-                    LabelText = "Touch note speed",
+                    LabelText = "Touch note fade-in speed",
                     Bindable = config.GetBindable<double>(SentakkiRulesetSettings.TouchAnimationDuration),
                 },
                 new SettingsSlider<float>
@@ -71,7 +71,20 @@ namespace osu.Game.Rulesets.Sentakki.UI
             };
         }
 
-        private class TimeSlider : OsuSliderBar<double>
+        private class NoteTimeSlider : OsuSliderBar<double>
+        {
+            private string speedRating()
+            {
+                double speed = (2200 - Current.Value) / 200;
+
+                if (speed == 10.5)
+                    return "Sonic";
+
+                return speed.ToString();
+            }
+            public override string TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
+        }
+        private class TouchTimeSlider : OsuSliderBar<double>
         {
             private string speedRating()
             {

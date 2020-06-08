@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public readonly HitReceptor HitArea;
         public readonly TapCircle CirclePiece;
         public readonly HitObjectLine HitObjectLine;
-        protected override double InitialLifetimeOffset => 6000;
+        protected override double InitialLifetimeOffset => 8000;
 
         public DrawableTap(SentakkiHitObject hitObject)
             : base(hitObject)
@@ -66,8 +66,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.Update();
             if (Result.HasResult) return;
-            double fadeIn = 500 * GameplaySpeed;
-            double moveTo = animationDuration.Value * GameplaySpeed;
+
+            double animSpeed = animationDuration.Value / 2;
+
+            double fadeIn = animSpeed * GameplaySpeed;
+            double moveTo = animSpeed * GameplaySpeed;
             double animStart = HitObject.StartTime - moveTo - fadeIn;
             double currentProg = Clock.CurrentTime - animStart;
 
