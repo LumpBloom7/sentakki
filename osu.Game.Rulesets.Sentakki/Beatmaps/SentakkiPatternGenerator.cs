@@ -50,7 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         {
             currentPattern = rng.Next(0, patternlist.Count); // Pick a pattern
             offset = rng.Next(0, 8); // Give it a random offset for variety
-            offset2 = rng.Next(-3, 4); // Give it a random offset for variety
+            offset2 = rng.Next(-2, 3); // Give it a random offset for variety
         }
         public SentakkiHitObject GenerateNewNote(HitObject original)
         {
