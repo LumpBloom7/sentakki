@@ -1,4 +1,4 @@
-﻿using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using System;
 
@@ -6,7 +6,12 @@ namespace osu.Game.Rulesets.Sentakki
 {
     public static class SentakkiExtensions
     {
-        public static float GetAngleFromPath(this int path) => SentakkiPlayfield.PATHANGLES[path];
+        public static float GetAngleFromPath(this int path)
+        {
+            while (path < 0) path += 8;
+            path %= 8;
+            return SentakkiPlayfield.PATHANGLES[path];
+        }
         public static Vector2 GetPosition(float distance, int path)
         {
             return new Vector2(-(distance * (float)Math.Cos((path.GetAngleFromPath() + 90f) * (float)(Math.PI / 180))), -(distance * (float)Math.Sin((path.GetAngleFromPath() + 90f) * (float)(Math.PI / 180))));
