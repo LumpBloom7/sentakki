@@ -27,12 +27,15 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         public ConversionExperiments EnabledExperiments = ConversionExperiments.none;
 
+        private SentakkiPatternGenerator patternGen;
+
         private readonly Random random;
         private readonly Random random2;
 
         public SentakkiBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
             : base(beatmap, ruleset)
         {
+            patternGen = new SentakkiPatternGenerator(beatmap);
             var difficulty = beatmap.BeatmapInfo.BaseDifficulty;
             int seed = ((int)MathF.Round(difficulty.DrainRate + difficulty.CircleSize) * 20) + (int)(difficulty.OverallDifficulty * 41.2) + (int)MathF.Round(difficulty.ApproachRate);
             random = new Random(seed);
@@ -48,30 +51,37 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             int path = newPos.GetDegreesFromPosition(CENTRE_POINT).GetNotePathFromDegrees();
             List<SentakkiHitObject> objects = new List<SentakkiHitObject>();
 
-
-
-            switch (original)
+            if (EnabledExperiments.HasFlag(ConversionExperiments.patternv2))
             {
-                case IHasPathWithRepeats _:
-                    objects.AddRange(Conversions.CreateHoldNote(original, path, beatmap, random, EnabledExperiments));
-                    break;
-
-                case IHasDuration _:
-                    objects.Add(Conversions.CreateTouchHold(original));
-                    break;
-
-                default:
-                    if (EnabledExperiments.HasFlag(ConversionExperiments.touch) || (EnabledExperiments.HasFlag(ConversionExperiments.randomTouch) && (random2.Next() % 10 == 0)))
-                        objects.AddRange(Conversions.CreateTouchNote(original, path, random, EnabledExperiments));
-                    else
-                        objects.AddRange(Conversions.CreateTapNote(original, path, random, EnabledExperiments));
-                    break;
+                if ((original as IHasCombo).NewCombo)
+                    patternGen.CreateNewPattern();
+                yield return patternGen.GenerateNewNote(original);
             }
+            else
+            {
+                switch (original)
+                {
+                    case IHasPathWithRepeats _:
+                        objects.AddRange(Conversions.CreateHoldNote(original, path, beatmap, random, EnabledExperiments));
+                        break;
 
-            foreach (var hitObject in objects)
-                yield return hitObject;
+                    case IHasDuration _:
+                        objects.Add(Conversions.CreateTouchHold(original));
+                        break;
 
-            yield break;
+                    default:
+                        if (EnabledExperiments.HasFlag(ConversionExperiments.touch) || (EnabledExperiments.HasFlag(ConversionExperiments.randomTouch) && (random2.Next() % 10 == 0)))
+                            objects.AddRange(Conversions.CreateTouchNote(original, path, random, EnabledExperiments));
+                        else
+                            objects.AddRange(Conversions.CreateTapNote(original, path, random, EnabledExperiments));
+                        break;
+                }
+
+                foreach (var hitObject in objects)
+                    yield return hitObject;
+
+                yield break;
+            }
         }
 
         protected override Beatmap<SentakkiHitObject> CreateBeatmap() => new SentakkiBeatmap();
