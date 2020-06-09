@@ -72,6 +72,18 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     return Conversions.CreateTouchHold(original);
 
                 default:
+                    if (original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH))
+                    {
+                        return new Break
+                        {
+                            NoteColor = Color4.OrangeRed,
+                            Angle = notePath.GetAngleFromPath(),
+                            Samples = original.Samples,
+                            StartTime = original.StartTime,
+                            EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
+                            Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
+                        };
+                    }
                     return new Tap
                     {
                         NoteColor = Color4.Orange,
@@ -82,7 +94,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
                     };
             }
-
         }
     }
 }
