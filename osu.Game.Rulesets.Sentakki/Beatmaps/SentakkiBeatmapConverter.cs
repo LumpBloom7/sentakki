@@ -16,6 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         twins = 1,
         touch = 2,
         randomTouch = 4,
+        patternv2 = 8
     }
 
     public class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObject>
@@ -46,6 +47,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             int path = newPos.GetDegreesFromPosition(CENTRE_POINT).GetNotePathFromDegrees();
             List<SentakkiHitObject> objects = new List<SentakkiHitObject>();
+
+
 
             switch (original)
             {
