@@ -25,15 +25,22 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             rng = new Random(seed);
         }
 
-
         //The patterns will generate the note path to be used based on the current offset
         // argument list is (offset, diff)
         private List<Func<int>> patternlist => new List<Func<int>>{
             //Stream pattern, path difference determined by offset2
             ()=> {
                 offset+=offset2;
-                return offset%8;
+                return offset;
             },
+            // Back and forth, works better with longer combos
+            // Path difference determined by offset2, but will make sure offset2 is never 0.
+            ()=>{
+                offset2 = offset2 == 0 ? 1:offset2;
+                offset+=offset2;
+                offset2= -offset2;
+                return offset;
+            }
         };
         private int currentPattern = 0;
         private int offset = 0;
@@ -43,13 +50,27 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         {
             currentPattern = rng.Next(0, patternlist.Count); // Pick a pattern
             offset = rng.Next(0, 8); // Give it a random offset for variety
-            offset2 = rng.Next(0, 7); // Give it a random offset for variety
+            offset2 = rng.Next(-3, 4); // Give it a random offset for variety
         }
         public SentakkiHitObject GenerateNewNote(HitObject original)
         {
             int notePath = patternlist[currentPattern].Invoke();
             switch (original)
             {
+                case IHasPathWithRepeats hold:
+                    return new Hold
+                    {
+                        NoteColor = Color4.Crimson,
+                        Angle = notePath.GetAngleFromPath(),
+                        NodeSamples = hold.NodeSamples,
+                        StartTime = original.StartTime,
+                        EndTime = original.GetEndTime(),
+                        EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
+                        Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
+                    };
+                case IHasDuration _:
+                    return Conversions.CreateTouchHold(original);
+
                 default:
                     return new Tap
                     {
