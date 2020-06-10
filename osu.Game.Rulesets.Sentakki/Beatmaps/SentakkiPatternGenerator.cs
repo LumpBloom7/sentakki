@@ -55,6 +55,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         public SentakkiHitObject GenerateNewNote(HitObject original)
         {
             int notePath = patternlist[currentPattern].Invoke();
+
             switch (original)
             {
                 case IHasPathWithRepeats hold:
@@ -73,7 +74,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
                 default:
                     if (original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH))
-                    {
                         return new Break
                         {
                             NoteColor = Color4.OrangeRed,
@@ -83,7 +83,19 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                             EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
                             Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
                         };
+                    if (original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE))
+                    {
+                        Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
+                        newPos = new Vector2((newPos.X / 512 * 400) - 200, (newPos.Y / 384 * 400) - 200);
+                        return new Touch
+                        {
+                            NoteColor = Color4.Cyan,
+                            Samples = original.Samples,
+                            StartTime = original.StartTime,
+                            Position = newPos
+                        };
                     }
+
                     return new Tap
                     {
                         NoteColor = Color4.Orange,
