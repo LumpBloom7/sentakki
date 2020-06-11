@@ -29,18 +29,20 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         //The patterns will generate the note path to be used based on the current offset
         // argument list is (offset, diff)
-        private List<Func<int>> patternlist => new List<Func<int>>{
+        private List<Func<bool, int>> patternlist => new List<Func<bool, int>>{
             //Stream pattern, path difference determined by offset2
-            ()=> {
-                offset+=offset2;
+            (twin)=> {
+                if(twin) return offset + 4;
+                else offset+=offset2;
                 return offset;
             },
             // Back and forth, works better with longer combos
             // Path difference determined by offset2, but will make sure offset2 is never 0.
-            ()=>{
-                offset2 = offset2 == 0 ? 1:offset2;
+            (twin)=>{
+                offset2 = offset2 == 0 ? 1 : offset2;
                 offset+=offset2;
                 offset2= -offset2;
+
                 return offset;
             }
         };
@@ -48,69 +50,94 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private int offset = 0;
         private int offset2 = 0;
 
+        private int getNewPath(bool twin = false) => patternlist[currentPattern].Invoke(twin);
+
         public void CreateNewPattern()
         {
             currentPattern = rng.Next(0, patternlist.Count); // Pick a pattern
             offset = rng.Next(0, 8); // Give it a random offset for variety
             offset2 = rng.Next(-2, 3); // Give it a random offset for variety
         }
+
         public IEnumerable<SentakkiHitObject> GenerateNewNote(HitObject original)
         {
-            int notePath = patternlist[currentPattern].Invoke();
-
+            int notePath = getNewPath();
             switch (original)
             {
                 case IHasPathWithRepeats hold:
-                    yield return new Hold
-                    {
-                        NoteColor = Color4.Crimson,
-                        Angle = notePath.GetAngleFromPath(),
-                        NodeSamples = hold.NodeSamples,
-                        StartTime = original.StartTime,
-                        EndTime = original.GetEndTime(),
-                        EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
-                        Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
-                    };
+                    if (Experiments.Value.HasFlag(ConversionExperiments.twins) && hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
+                        yield return createHoldNote(original, true);
+
+                    yield return createHoldNote(original);
                     break;
+
                 case IHasDuration _:
                     yield return Conversions.CreateTouchHold(original);
                     break;
 
                 default:
                     if (original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH))
-                        yield return new Break
-                        {
-                            NoteColor = Color4.OrangeRed,
-                            Angle = notePath.GetAngleFromPath(),
-                            Samples = original.Samples,
-                            StartTime = original.StartTime,
-                            EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
-                            Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
-                        };
-                    if (Experiments.Value.HasFlag(ConversionExperiments.touch) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE))
                     {
-                        Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
-                        newPos = new Vector2((newPos.X / 512 * 400) - 200, (newPos.Y / 384 * 400) - 200);
-                        yield return new Touch
-                        {
-                            NoteColor = Color4.Cyan,
-                            Samples = original.Samples,
-                            StartTime = original.StartTime,
-                            Position = newPos
-                        };
+                        if (Experiments.Value.HasFlag(ConversionExperiments.twins) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP))
+                            yield return createTapNote<Break>(original, true);
+                        yield return createTapNote<Break>(original);
                     }
-
-                    yield return new Tap
+                    else if (Experiments.Value.HasFlag(ConversionExperiments.touch) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE))
                     {
-                        NoteColor = Color4.Orange,
-                        Angle = notePath.GetAngleFromPath(),
-                        Samples = original.Samples,
-                        StartTime = original.StartTime,
-                        EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
-                        Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
-                    };
+                        yield return createTouchNote(original);
+                    }
+                    else
+                    {
+                        if (Experiments.Value.HasFlag(ConversionExperiments.twins) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP))
+                            yield return createTapNote(original, true);
+                        yield return createTapNote(original);
+                    }
                     break;
             }
+        }
+
+        // Individual note generation code, because it's cleaner
+        private SentakkiHitObject createHoldNote(HitObject original, bool twin = false)
+        {
+            int notePath = getNewPath(twin);
+            return new Hold
+            {
+                NoteColor = Color4.Crimson,
+                Angle = notePath.GetAngleFromPath(),
+                NodeSamples = (original as IHasPathWithRepeats).NodeSamples,
+                StartTime = original.StartTime,
+                EndTime = original.GetEndTime(),
+                EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
+                Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
+            };
+        }
+
+        private SentakkiHitObject createTapNote(HitObject original, bool twin = false) => createTapNote<Tap>(original, twin);
+        private SentakkiHitObject createTapNote<T>(HitObject original, bool twin = false) where T : Tap, new()
+        {
+            int notePath = getNewPath(twin);
+            return new T
+            {
+                NoteColor = (typeof(T) == typeof(Break)) ? Color4.OrangeRed : Color4.Orange,
+                Angle = notePath.GetAngleFromPath(),
+                Samples = original.Samples,
+                StartTime = original.StartTime,
+                EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
+                Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
+            };
+        }
+
+        private SentakkiHitObject createTouchNote(HitObject original)
+        {
+            Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
+            newPos = new Vector2((newPos.X / 512 * 400) - 200, (newPos.Y / 384 * 400) - 200);
+            return new Touch
+            {
+                NoteColor = Color4.Cyan,
+                Samples = original.Samples,
+                StartTime = original.StartTime,
+                Position = newPos
+            };
         }
     }
 }
