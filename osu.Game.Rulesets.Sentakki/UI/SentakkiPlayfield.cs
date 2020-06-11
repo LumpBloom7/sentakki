@@ -12,6 +12,8 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.UI;
 using osuTK;
 using System;
+using osu.Framework.Graphics.Containers;
+
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -42,6 +44,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 337.5f
             };
 
+        // Touch notes always appear above other notes, regardless of start time
+        private readonly TouchNoteProxyContainer touchNoteContainer;
         public SentakkiPlayfield()
         {
             Anchor = Anchor.Centre;
@@ -54,10 +58,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 new PlayfieldVisualisation(),
                 ring = new SentakkiRing(),
                 HitObjectContainer,
+                touchNoteContainer = new TouchNoteProxyContainer(),
                 judgementLayer = new JudgementContainer<DrawableSentakkiJudgement>
                 {
                     RelativeSizeAxes = Axes.Both,
-                },
+                }
             });
         }
 
@@ -84,11 +89,14 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public override void Add(DrawableHitObject h)
         {
+            h.OnNewResult += onNewResult;
+            h.OnLoadComplete += d =>
+            {
+                if (d is IDrawableHitObjectWithProxiedApproach c)
+                    touchNoteContainer.Add(c.ProxiedLayer.CreateProxy());
+            };
+
             base.Add(h);
-
-            var obj = (DrawableSentakkiHitObject)h;
-
-            obj.OnNewResult += onNewResult;
         }
 
         private void onNewResult(DrawableHitObject judgedObject, JudgementResult result)
@@ -134,6 +142,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             if (result.IsHit && judgedObject.HitObject.Kiai)
                 ring.KiaiBeat();
+        }
+
+        private class TouchNoteProxyContainer : LifetimeManagementContainer
+        {
+            public void Add(Drawable tochNoteProxy) => AddInternal(tochNoteProxy);
         }
     }
 }
