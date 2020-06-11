@@ -15,10 +15,12 @@ using osu.Game.Rulesets.Sentakki.Configuration;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableTouch : DrawableSentakkiHitObject
+    public class DrawableTouch : DrawableSentakkiHitObject, IDrawableHitObjectWithProxiedApproach
     {
         // IsHovered is used
         public override bool HandlePositionalInput => true;
+
+        public Drawable ProxiedLayer => this;
 
         protected override float SamplePlaybackPosition => (HitObject.Position.X + SentakkiPlayfield.INTERSECTDISTANCE) / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
 
@@ -39,7 +41,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public DrawableTouch(SentakkiHitObject hitObject) : base(hitObject)
         {
-            Depth = -1; // This note is on a higher plane of existence.
             Size = new Vector2(80);
             Position = hitObject.Position;
             Origin = Anchor.Centre;
