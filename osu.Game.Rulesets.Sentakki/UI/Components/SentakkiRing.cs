@@ -140,7 +140,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         private readonly Bindable<ColorOption> colorOption = new Bindable<ColorOption>(ColorOption.Default);
         private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
 
-        private Bindable<User> user;
         private Bindable<Skin> skin;
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager settings, OsuColour colours, DrawableSentakkiRuleset ruleset, IAPIProvider api, SkinManager skinManager)
@@ -151,10 +150,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             settings?.BindWith(SentakkiRulesetSettings.ShowNoteStartIndicators, NoteStartIndicators);
             NoteStartIndicators.BindValueChanged(opacity => spawnIndicator.FadeTo(Convert.ToSingle(opacity.NewValue), 200));
 
-            user = api.LocalUser.GetBoundCopy();
             skin = skinManager.CurrentSkin.GetBoundCopy();
-
-            user.ValueChanged += _ => colorOption.TriggerChange();
             skin.BindValueChanged(_ => colorOption.TriggerChange(), true);
 
             settings?.BindWith(SentakkiRulesetSettings.RingColor, colorOption);
