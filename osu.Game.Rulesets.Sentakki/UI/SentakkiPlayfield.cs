@@ -1,4 +1,4 @@
-﻿using osu.Framework.Allocation;
+using osu.Framework.Allocation;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -145,6 +145,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private class TouchNoteProxyContainer : LifetimeManagementContainer
         {
+            public TouchNoteProxyContainer()
+            {
+                RelativeSizeAxes = Axes.Both;
+            }
             public void Add(Drawable tochNoteProxy) => AddInternal(tochNoteProxy);
         }
     }
