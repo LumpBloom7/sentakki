@@ -64,7 +64,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         public IEnumerable<SentakkiHitObject> GenerateNewNote(HitObject original)
         {
-            int notePath = getNewPath();
             switch (original)
             {
                 case IHasPathWithRepeats hold:
