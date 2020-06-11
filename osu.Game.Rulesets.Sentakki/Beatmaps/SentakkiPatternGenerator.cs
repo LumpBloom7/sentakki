@@ -1,3 +1,4 @@
+using osu.Framework.Bindables;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -17,6 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
     public class SentakkiPatternGenerator
     {
+        public Bindable<ConversionExperiments> Experiments = new Bindable<ConversionExperiments>();
         private readonly Random rng;
         public SentakkiPatternGenerator(IBeatmap beatmap)
         {
@@ -83,7 +85,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                             EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
                             Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
                         };
-                    if (original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE))
+                    if (Experiments.Value.HasFlag(ConversionExperiments.touch) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE))
                     {
                         Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
                         newPos = new Vector2((newPos.X / 512 * 400) - 200, (newPos.Y / 384 * 400) - 200);

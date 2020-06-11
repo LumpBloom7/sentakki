@@ -1,3 +1,4 @@
+﻿using osu.Framework.Bindables;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Objects;
@@ -24,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         // https://github.com/ppy/osu/tree/master/osu.Game/Rulesets/Objects/Types
         public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition);
 
-        public ConversionExperiments EnabledExperiments = ConversionExperiments.none;
+        public Bindable<ConversionExperiments> EnabledExperiments = new Bindable<ConversionExperiments>();
 
         private SentakkiPatternGenerator patternGen;
 
@@ -39,6 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             int seed = ((int)MathF.Round(difficulty.DrainRate + difficulty.CircleSize) * 20) + (int)(difficulty.OverallDifficulty * 41.2) + (int)MathF.Round(difficulty.ApproachRate);
             random = new Random(seed);
             random2 = new Random(seed);
+            patternGen.Experiments.BindTo(EnabledExperiments);
         }
 
         protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap)
@@ -50,7 +52,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             int path = newPos.GetDegreesFromPosition(CENTRE_POINT).GetNotePathFromDegrees();
             List<SentakkiHitObject> objects = new List<SentakkiHitObject>();
 
-            if (EnabledExperiments.HasFlag(ConversionExperiments.patternv2))
+            if (EnabledExperiments.Value.HasFlag(ConversionExperiments.patternv2))
             {
                 if ((original as IHasCombo).NewCombo)
                     patternGen.CreateNewPattern();
@@ -61,7 +63,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 switch (original)
                 {
                     case IHasPathWithRepeats _:
-                        objects.AddRange(Conversions.CreateHoldNote(original, path, beatmap, random, EnabledExperiments));
+                        objects.AddRange(Conversions.CreateHoldNote(original, path, beatmap, random, EnabledExperiments.Value));
                         break;
 
                     case IHasDuration _:
@@ -69,10 +71,10 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         break;
 
                     default:
-                        if (EnabledExperiments.HasFlag(ConversionExperiments.touch) && (random2.Next() % 10 == 0))
-                            objects.AddRange(Conversions.CreateTouchNote(original, path, random, EnabledExperiments));
+                        if (EnabledExperiments.Value.HasFlag(ConversionExperiments.touch) && (random2.Next() % 10 == 0))
+                            objects.AddRange(Conversions.CreateTouchNote(original, path, random, EnabledExperiments.Value));
                         else
-                            objects.AddRange(Conversions.CreateTapNote(original, path, random, EnabledExperiments));
+                            objects.AddRange(Conversions.CreateTapNote(original, path, random, EnabledExperiments.Value));
                         break;
                 }
 

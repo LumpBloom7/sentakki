@@ -1,4 +1,4 @@
-using osu.Game.Beatmaps;
+﻿using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Mods;
 using osu.Framework.Graphics.Sprites;
@@ -49,13 +49,13 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
             if (EnableTwins.Value)
-                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.twins;
+                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.twins;
 
             if (EnableTouch.Value)
-                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.touch;
+                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.touch;
 
             if (EnablePatternGen.Value)
-                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.patternv2;
+                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.patternv2;
 
         }
     }
