@@ -1,4 +1,4 @@
-﻿using osu.Game.Beatmaps;
+using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
@@ -15,8 +15,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         none = 0,
         twins = 1,
         touch = 2,
-        randomTouch = 4,
-        patternv2 = 8
+        patternv2 = 4
     }
 
     public class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObject>
@@ -70,7 +69,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         break;
 
                     default:
-                        if (EnabledExperiments.HasFlag(ConversionExperiments.touch) || (EnabledExperiments.HasFlag(ConversionExperiments.randomTouch) && (random2.Next() % 10 == 0)))
+                        if (EnabledExperiments.HasFlag(ConversionExperiments.touch) && (random2.Next() % 10 == 0))
                             objects.AddRange(Conversions.CreateTouchNote(original, path, random, EnabledExperiments));
                         else
                             objects.AddRange(Conversions.CreateTapNote(original, path, random, EnabledExperiments));

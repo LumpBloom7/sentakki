@@ -1,4 +1,4 @@
-﻿using osu.Game.Beatmaps;
+using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Mods;
 using osu.Framework.Graphics.Sprites;
@@ -25,28 +25,18 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public override double ScoreMultiplier => 1.00;
 
-        [SettingSource("Enable twin notes", "Allow more than one note to share the same times")]
+        [SettingSource("Twin notes", "Allow more than one note to share the same times")]
         public BindableBool EnableTwins { get; } = new BindableBool
         {
             Default = false,
             Value = false
         };
 
-        public enum TouchOptions
+        [SettingSource("Touch notes", "Allow TOUCHs to appear")]
+        public BindableBool EnableTouch { get; } = new BindableBool
         {
-            [Description("Off")]
-            none,
-            [Description("Replace all taps")]
-            replace,
-            [Description("Replace some taps")]
-            random,
-        }
-
-        [SettingSource("Touch notes", "Allow TOUCHs to replace taps for testing")]
-        public Bindable<TouchOptions> EnableTouch { get; } = new Bindable<TouchOptions>
-        {
-            Default = TouchOptions.none,
-            Value = TouchOptions.none,
+            Default = false,
+            Value = false,
         };
 
         [SettingSource("Use pattern generator for osu converts", "Use a pattern generator to generate convert beatmaps")]
@@ -61,10 +51,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             if (EnableTwins.Value)
                 (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.twins;
 
-            if (EnableTouch.Value == TouchOptions.replace)
+            if (EnableTouch.Value)
                 (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.touch;
-            else if (EnableTouch.Value == TouchOptions.random)
-                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.randomTouch;
 
             if (EnablePatternGen.Value)
                 (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.patternv2;
