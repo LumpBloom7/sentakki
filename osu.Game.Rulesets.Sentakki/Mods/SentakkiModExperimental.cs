@@ -56,7 +56,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
             if (EnablePatternGen.Value)
                 (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.patternv2;
-
         }
     }
 }

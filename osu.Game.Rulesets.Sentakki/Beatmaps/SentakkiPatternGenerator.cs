@@ -54,14 +54,14 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             offset = rng.Next(0, 8); // Give it a random offset for variety
             offset2 = rng.Next(-2, 3); // Give it a random offset for variety
         }
-        public SentakkiHitObject GenerateNewNote(HitObject original)
+        public IEnumerable<SentakkiHitObject> GenerateNewNote(HitObject original)
         {
             int notePath = patternlist[currentPattern].Invoke();
 
             switch (original)
             {
                 case IHasPathWithRepeats hold:
-                    return new Hold
+                    yield return new Hold
                     {
                         NoteColor = Color4.Crimson,
                         Angle = notePath.GetAngleFromPath(),
@@ -71,12 +71,14 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
                         Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
                     };
+                    break;
                 case IHasDuration _:
-                    return Conversions.CreateTouchHold(original);
+                    yield return Conversions.CreateTouchHold(original);
+                    break;
 
                 default:
                     if (original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH))
-                        return new Break
+                        yield return new Break
                         {
                             NoteColor = Color4.OrangeRed,
                             Angle = notePath.GetAngleFromPath(),
@@ -89,7 +91,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     {
                         Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
                         newPos = new Vector2((newPos.X / 512 * 400) - 200, (newPos.Y / 384 * 400) - 200);
-                        return new Touch
+                        yield return new Touch
                         {
                             NoteColor = Color4.Cyan,
                             Samples = original.Samples,
@@ -98,7 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         };
                     }
 
-                    return new Tap
+                    yield return new Tap
                     {
                         NoteColor = Color4.Orange,
                         Angle = notePath.GetAngleFromPath(),
@@ -107,6 +109,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
                         Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
                     };
+                    break;
             }
         }
     }

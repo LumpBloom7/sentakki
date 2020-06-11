@@ -56,7 +56,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 if ((original as IHasCombo).NewCombo)
                     patternGen.CreateNewPattern();
-                yield return patternGen.GenerateNewNote(original);
+
+                foreach (var note in patternGen.GenerateNewNote(original).ToList())
+                    yield return note;
             }
             else
             {
