@@ -20,8 +20,11 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
     {
         public Bindable<ConversionExperiments> Experiments = new Bindable<ConversionExperiments>();
         private readonly Random rng;
+
+        private IBeatmap beatmap;
         public SentakkiPatternGenerator(IBeatmap beatmap)
         {
+            this.beatmap = beatmap;
             var difficulty = beatmap.BeatmapInfo.BaseDifficulty;
             int seed = ((int)MathF.Round(difficulty.DrainRate + difficulty.CircleSize) * 20) + (int)(difficulty.OverallDifficulty * 41.2) + (int)MathF.Round(difficulty.ApproachRate);
             rng = new Random(seed);
@@ -65,8 +68,14 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             switch (original)
             {
                 case IHasPathWithRepeats hold:
-                    if (Experiments.Value.HasFlag(ConversionExperiments.twins) && hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
-                        yield return createHoldNote(original, true);
+                    if (Experiments.Value.HasFlag(ConversionExperiments.twins))
+                    {
+                        if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
+                            yield return createHoldNote(original, true);
+                        else
+                            foreach (var note in createTapsFromTicks(original).ToList())
+                                yield return note;
+                    }
 
                     yield return createHoldNote(original);
                     break;
@@ -110,6 +119,54 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
                 Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
             };
+        }
+        private IEnumerable<SentakkiHitObject> createTapsFromTicks(HitObject original)
+        {
+            int notePath = getNewPath(true);
+
+            var curve = original as IHasPathWithRepeats;
+            double spanDuration = curve.Duration / (curve.RepeatCount + 1);
+            bool isRepeatSpam = spanDuration < 75 && curve.RepeatCount > 0;
+
+            if (isRepeatSpam)
+                yield break;
+
+            var difficulty = beatmap.BeatmapInfo.BaseDifficulty;
+
+            var controlPointInfo = beatmap.ControlPointInfo;
+            TimingControlPoint timingPoint = controlPointInfo.TimingPointAt(original.StartTime);
+            DifficultyControlPoint difficultyPoint = controlPointInfo.DifficultyPointAt(original.StartTime);
+
+            double scoringDistance = 100 * difficulty.SliderMultiplier * difficultyPoint.SpeedMultiplier;
+
+            var velocity = scoringDistance / timingPoint.BeatLength;
+            var tickDistance = scoringDistance / difficulty.SliderTickRate;
+
+            double legacyLastTickOffset = (original as IHasLegacyLastTickOffset)?.LegacyLastTickOffset ?? 0;
+
+            foreach (var e in SliderEventGenerator.Generate(original.StartTime, spanDuration, velocity, tickDistance, curve.Path.Distance, curve.RepeatCount + 1, legacyLastTickOffset, CancellationToken.None))
+            {
+                switch (e.Type)
+                {
+                    case SliderEventType.Tick:
+                    case SliderEventType.Repeat:
+                        yield return new Tap
+                        {
+                            NoteColor = Color4.Orange,
+                            Angle = notePath.GetAngleFromPath(),
+                            Samples = original.Samples.Select(s => new HitSampleInfo
+                            {
+                                Bank = s.Bank,
+                                Name = @"slidertick",
+                                Volume = s.Volume
+                            }).ToList(),
+                            StartTime = e.Time,
+                            EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
+                            Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
+                        };
+                        break;
+                }
+            }
         }
 
         private SentakkiHitObject createTapNote(HitObject original, bool twin = false) => createTapNote<Tap>(original, twin);
