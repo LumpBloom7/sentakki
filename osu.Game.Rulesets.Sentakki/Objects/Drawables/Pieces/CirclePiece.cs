@@ -21,7 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 {
                     RelativeSizeAxes = Axes.Both,
                     Masking = true,
-                    BorderThickness = 16.35f,
+                    BorderThickness = 17.35f,
                     BorderColour = Color4.Gray,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -35,14 +35,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 new CircularContainer
                 {
                     Masking = true,
-                    BorderThickness = 15,
                     RelativeSizeAxes = Axes.Both,
-                    BorderColour = Color4.White,
-                    Child = new Box
+                    Padding = new MarginPadding(1),
+                    Child = new CircularContainer
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Alpha= 0,
-                        AlwaysPresent = true
+                        Masking = true,
+                        BorderThickness = 15,
+                        BorderColour = Color4.White,
+                        Child = new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Alpha = 0,
+                            AlwaysPresent = true,
+                        }
                     }
                 },
                 new CircularContainer

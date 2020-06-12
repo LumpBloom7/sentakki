@@ -18,8 +18,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Scale = new Vector2(.5f);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Alpha = .6f;
-
             Children = new Drawable[]
             {
                 new Container

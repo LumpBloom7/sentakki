@@ -143,6 +143,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             blob3.Scale = new Vector2(sizeAnimFormula());
             blob4.Scale = new Vector2(sizeAnimFormula());
 
+            // Might be literally jank, but it removes bad edges after animation finishes
+            if (moveAmount == 1)
+            {
+                blob2.Alpha = 0;
+                blob3.Alpha = 0;
+                blob4.Alpha = 0;
+            }
+
+
             // Handle hidden and fadeIn modifications
             if (IsHidden)
             {

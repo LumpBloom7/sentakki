@@ -29,6 +29,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             {
                 note = new Container
                 {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
                     RelativeSizeAxes=Axes.Both,
                     Children = new Drawable[]
                     {
