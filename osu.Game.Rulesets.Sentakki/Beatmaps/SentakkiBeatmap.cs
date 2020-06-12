@@ -14,6 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             int holds = HitObjects.Count(h => h is Hold);
             int centreHolds = HitObjects.Count(h => h is TouchHold);
             int breaks = HitObjects.Count(h => h is Break);
+            int touchs = HitObjects.Count(h => h is Touch);
 
             return new[]
             {
@@ -39,6 +40,12 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 {
                     Name = "Break Count",
                     Content = breaks.ToString(),
+                    Icon = FontAwesome.Solid.Circle
+                },
+                new BeatmapStatistic
+                {
+                    Name = "Touch Count",
+                    Content = touchs.ToString(),
                     Icon = FontAwesome.Solid.Circle
                 },
             };
