@@ -10,6 +10,7 @@ using osu.Game.Graphics;
 using osuTK;
 using osuTK.Graphics;
 using System.Linq;
+using osu.Framework.Graphics.Effects;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -126,22 +127,30 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     timeHeld += Clock.ElapsedFrameTime;
                     double progress = timeHeld / (HitObject as IHasDuration).Duration;
                     Color4 newColor = Color4.HotPink;
+                    var newEdge = circle.GlowEdgeEffect.Value;
                     if (progress > .2f)
                     {
                         amount += .033f;
                         newColor = colours.ForHitResult(HitResult.Meh);
+                        newEdge.Colour = colours.ForHitResult(HitResult.Meh);
+                        newEdge.Radius = 25;
                     }
 
                     if (progress > .5f)
                     {
                         amount += .033f;
                         newColor = colours.ForHitResult(HitResult.Good);
+                        newEdge.Colour = colours.ForHitResult(HitResult.Good);
+                        newEdge.Radius = 35;
                     }
                     if (progress > .8f)
                     {
                         amount += .034f;
                         newColor = colours.ForHitResult(HitResult.Great);
+                        newEdge.Colour = colours.ForHitResult(HitResult.Great);
+                        newEdge.Radius = 45;
                     }
+                    circle.GlowEdgeEffect.Value = newEdge;
 
                     this.TransformTo(nameof(currentColour), newColor, 100);
                     circle.FadeTo(amount, 100);

@@ -126,6 +126,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         private readonly IBindable<ArmedState> state = new Bindable<ArmedState>();
         private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
+        public readonly Bindable<EdgeEffectParameters> GlowEdgeEffect = new Bindable<EdgeEffectParameters>(new EdgeEffectParameters
+        {
+            Hollow = true,
+            Type = EdgeEffectType.Glow,
+            Radius = 15,
+            Colour = Color4.HotPink,
+        });
 
         [BackgroundDependencyLoader]
         private void load(TextureStore textures, DrawableHitObject drawableObject)
@@ -140,17 +147,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             {
                 explode.Colour = colour.NewValue;
                 Glow.Colour = colour.NewValue;
-                if (Glow.Children.Count > 0)
-                    (Glow.Child as CircularContainer).EdgeEffect = new EdgeEffectParameters
-                    {
-                        Hollow = true,
-                        Type = EdgeEffectType.Glow,
-                        Radius = 15,
-                        Colour = colour.NewValue,
-                    };
                 Progress.Colour = colour.NewValue;
                 fillCircle.Colour = colour.NewValue;
             }, true);
+
+            GlowEdgeEffect.BindValueChanged(value => { if (Glow.Children.Count > 0) (Glow.Child as CircularContainer).EdgeEffect = value.NewValue; }, true);
         }
 
         private void updateState(ValueChangedEvent<ArmedState> state)
