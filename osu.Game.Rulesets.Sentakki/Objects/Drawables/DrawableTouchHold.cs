@@ -6,6 +6,7 @@ using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Graphics;
 using osuTK;
 using osuTK.Graphics;
 using System.Linq;
@@ -39,8 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
-        private double potential = 0;
-        private double held = 0;
+        private double timeHeld = 0;
         private bool buttonHeld = false;
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -50,7 +50,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (userTriggered || Time.Current < (HitObject as IHasDuration)?.EndTime)
                 return;
 
-            double result = held / potential;
+            FinishTransforms(true);
+            double result = timeHeld / (HitObject as IHasDuration).Duration;
 
             ApplyResult(r =>
             {
@@ -73,6 +74,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private void load(SentakkiRulesetConfigManager sentakkiConfigs)
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, touchAnimationDuration);
+        }
+
+        [Resolved]
+        private OsuColour colours { get; set; }
+        private Color4 currentColour
+        {
+            get => AccentColour.Value;
+            set => AccentColour.Value = value;
         }
 
         protected override void Update()
@@ -108,22 +117,41 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 Alpha = 1 - (1 * hiddenAmount / ((Time.Current >= HitObject.StartTime && ((buttonHeld && IsHovered) || Auto)) ? 2 : 1));
 
             // Input and feedback
-            buttonHeld = SentakkiActionInputManager?.PressedActions.Any(x => x == SentakkiAction.Button1 || x == SentakkiAction.Button2) ?? false;
             if (Time.Current >= HitObject.StartTime && Time.Current <= (HitObject as IHasDuration)?.EndTime)
             {
-                potential++;
-                if ((buttonHeld && IsHovered) || Auto)
+                bool activated = (SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered;
+                if (activated || Auto)
                 {
-                    held++;
-                    circle.FadeTo(1f, 100);
-                    circle.ScaleTo(1f, 100);
-                    circle.Glow.FadeTo(1f, 100);
+                    float amount = 1f;
+                    timeHeld += Clock.ElapsedFrameTime;
+                    double progress = timeHeld / (HitObject as IHasDuration).Duration;
+                    Color4 newColor = Color4.HotPink;
+                    if (progress > .2f)
+                    {
+                        amount += .033f;
+                        newColor = colours.ForHitResult(HitResult.Meh);
+                    }
+
+                    if (progress > .5f)
+                    {
+                        amount += .033f;
+                        newColor = colours.ForHitResult(HitResult.Good);
+                    }
+                    if (progress > .8f)
+                    {
+                        amount += .034f;
+                        newColor = colours.ForHitResult(HitResult.Great);
+                    }
+
+                    this.TransformTo(nameof(currentColour), newColor, 100);
+                    circle.FadeTo(amount, 100);
+                    circle.ScaleTo(amount, 100);
+                    circle.Glow.FadeTo((amount - .9f) * 5, 100);
                 }
                 else
                 {
                     circle.FadeTo(.5f, 100);
                     circle.ScaleTo(.8f, 200);
-                    circle.Glow.FadeTo(0f, 200);
                 }
                 base.Update();
             }

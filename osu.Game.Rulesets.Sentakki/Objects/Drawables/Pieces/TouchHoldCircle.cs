@@ -11,6 +11,7 @@ using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
+using osu.Framework.Graphics.Effects;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
@@ -40,7 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             InternalChildren = new Drawable[]
             {
                 Glow = new GlowPiece(){
-                    Alpha = 0f,
+                    Alpha = .5f,
                 },
                 ring = new CircularContainer
                 {
@@ -139,6 +140,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             {
                 explode.Colour = colour.NewValue;
                 Glow.Colour = colour.NewValue;
+                if (Glow.Children.Count > 0)
+                    (Glow.Child as CircularContainer).EdgeEffect = new EdgeEffectParameters
+                    {
+                        Hollow = true,
+                        Type = EdgeEffectType.Glow,
+                        Radius = 15,
+                        Colour = colour.NewValue,
+                    };
                 Progress.Colour = colour.NewValue;
                 fillCircle.Colour = colour.NewValue;
             }, true);
