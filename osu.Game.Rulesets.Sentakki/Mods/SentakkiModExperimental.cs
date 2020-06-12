@@ -36,14 +36,14 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public BindableBool EnableTouch { get; } = new BindableBool
         {
             Default = false,
-            Value = false,
+            Value = true,
         };
 
         [SettingSource("Use pattern generator for osu converts", "Use a pattern generator to generate convert beatmaps")]
         public BindableBool EnablePatternGen { get; } = new BindableBool
         {
             Default = false,
-            Value = false
+            Value = true
         };
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
