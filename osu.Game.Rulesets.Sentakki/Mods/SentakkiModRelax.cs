@@ -77,6 +77,14 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                         }
                         break;
 
+                    case DrawableTouch touch:
+                        if (touch.HitArea.IsHovered)
+                        {
+                            Debug.Assert(touch.HitObject.HitWindows != null);
+                            requiresHit |= touch.HitObject.HitWindows.CanBeHit(time - touch.HitObject.StartTime);
+                        }
+                        break;
+
                     case DrawableHold hold:
                         requiresHold |= hold.HitArea.IsHovered || h.IsHovered;
                         break;
