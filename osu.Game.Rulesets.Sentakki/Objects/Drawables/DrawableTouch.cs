@@ -36,6 +36,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private readonly CircularContainer dot;
 
+        public readonly HitReceptor HitArea;
+
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
@@ -79,7 +81,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 },
                 flash = new TouchFlashPiece(),
                 explode = new ExplodePiece(),
-                new HitReceptor{
+                HitArea = new HitReceptor{
                     Hit = () =>
                     {
                         if (AllJudged)
