@@ -25,6 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             Child = new CircularContainer
             {
+                Alpha = .5f,
                 Masking = true,
                 RelativeSizeAxes = Axes.Both,
                 EdgeEffect = new EdgeEffectParameters
