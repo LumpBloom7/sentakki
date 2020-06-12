@@ -155,7 +155,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     this.TransformTo(nameof(currentColour), newColor, 100);
                     circle.FadeTo(amount, 100);
                     circle.ScaleTo(amount, 100);
-                    circle.Glow.FadeTo((amount - .9f) * 5, 100);
                 }
                 else
                 {
