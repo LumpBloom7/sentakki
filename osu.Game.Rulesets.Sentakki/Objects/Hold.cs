@@ -11,7 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Hold : SentakkiHitObject, IHasDuration
     {
-        public override Color4 NoteColor { get; set; } = Color4.Crimson;
+        public override Color4 NoteColor { get; set; } = Color4.Orange;
 
         private List<IList<HitSampleInfo>> nodeSamples = new List<IList<HitSampleInfo>>();
 
