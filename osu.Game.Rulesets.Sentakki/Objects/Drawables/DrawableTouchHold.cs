@@ -58,11 +58,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 if (result >= .9)
                     r.Type = HitResult.Perfect;
-                else if (result >= .8)
+                else if (result >= .75)
                     r.Type = HitResult.Great;
                 else if (result >= .5)
                     r.Type = HitResult.Good;
-                else if (result >= .2)
+                else if (result >= .25)
                     r.Type = HitResult.Ok;
                 else if (Time.Current >= (HitObject as IHasDuration)?.EndTime)
                     r.Type = HitResult.Miss;
@@ -128,7 +128,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     double progress = timeHeld / (HitObject as IHasDuration).Duration;
                     Color4 newColor = Color4.HotPink;
                     var newEdge = circle.GlowEdgeEffect.Value;
-                    if (progress > .2f)
+                    if (progress > .25f)
                     {
                         amount += .033f;
                         newColor = colours.ForHitResult(HitResult.Meh);
@@ -143,7 +143,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         newEdge.Colour = colours.ForHitResult(HitResult.Good);
                         newEdge.Radius = 35;
                     }
-                    if (progress > .8f)
+                    if (progress > .75f)
                     {
                         amount += .034f;
                         newColor = colours.ForHitResult(HitResult.Great);
