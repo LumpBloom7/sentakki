@@ -110,7 +110,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             int notePath = getNewPath(twin);
             return new Hold
             {
-                NoteColor = Color4.Crimson,
                 Angle = notePath.GetAngleFromPath(),
                 NodeSamples = (original as IHasPathWithRepeats).NodeSamples,
                 StartTime = original.StartTime,
@@ -151,7 +150,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     case SliderEventType.Repeat:
                         yield return new Tap
                         {
-                            NoteColor = Color4.Orange,
                             Angle = notePath.GetAngleFromPath(),
                             Samples = original.Samples.Select(s => new HitSampleInfo
                             {
@@ -174,7 +172,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             int notePath = getNewPath(twin);
             return new T
             {
-                NoteColor = (typeof(T) == typeof(Break)) ? Color4.OrangeRed : Color4.Orange,
                 Angle = notePath.GetAngleFromPath(),
                 Samples = original.Samples,
                 StartTime = original.StartTime,
@@ -189,7 +186,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             newPos = new Vector2((newPos.X / 512 * 400) - 200, (newPos.Y / 384 * 400) - 200);
             return new Touch
             {
-                NoteColor = Color4.Cyan,
                 Samples = original.Samples,
                 StartTime = original.StartTime,
                 Position = newPos

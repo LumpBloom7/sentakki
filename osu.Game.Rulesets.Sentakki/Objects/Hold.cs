@@ -5,10 +5,14 @@ using osu.Game.Rulesets.Scoring;
 using System.Collections.Generic;
 using System.Linq;
 using osuTK;
+using osuTK.Graphics;
+
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Hold : SentakkiHitObject, IHasDuration
     {
+        public override Color4 NoteColor { get; set; } = Color4.Crimson;
+
         private List<IList<HitSampleInfo>> nodeSamples = new List<IList<HitSampleInfo>>();
 
         public List<IList<HitSampleInfo>> NodeSamples

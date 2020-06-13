@@ -27,7 +27,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 notes.Add(new Break
                 {
-                    NoteColor = Color4.OrangeRed,
                     Angle = path.GetAngleFromPath(),
                     Samples = original.Samples,
                     StartTime = original.StartTime,
@@ -40,7 +39,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     while (path == newPath) newPath = rng.Next(0, 8);
                     notes.Add(new Break
                     {
-                        NoteColor = Color4.OrangeRed,
                         Angle = newPath.GetAngleFromPath(),
                         Samples = original.Samples,
                         StartTime = original.StartTime,
@@ -53,7 +51,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 notes.Add(new Tap
                 {
-                    NoteColor = Color4.Orange,
                     Angle = path.GetAngleFromPath(),
                     Samples = original.Samples,
                     StartTime = original.StartTime,
@@ -66,7 +63,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     while (path == newPath) newPath = rng.Next(0, 8);
                     notes.Add(new Tap
                     {
-                        NoteColor = Color4.Orange,
                         Angle = newPath.GetAngleFromPath(),
                         Samples = original.Samples,
                         StartTime = original.StartTime,
@@ -86,7 +82,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             List<SentakkiHitObject> notes = new List<SentakkiHitObject>{new Touch
             {
-                NoteColor = Color4.Cyan,
                 Samples = original.Samples,
                 StartTime = original.StartTime,
                 Position = newPos,
@@ -113,7 +108,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             notes.Add(new Hold
             {
-                NoteColor = Color4.Crimson,
                 Angle = path.GetAngleFromPath(),
                 NodeSamples = curveData.NodeSamples,
                 StartTime = original.StartTime,
@@ -130,7 +124,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     while (path == newPath) newPath = rng.Next(0, 8);
                     notes.Add(new Hold
                     {
-                        NoteColor = Color4.Crimson,
                         Angle = newPath.GetAngleFromPath(),
                         NodeSamples = curveData.NodeSamples,
                         StartTime = original.StartTime,
@@ -184,7 +177,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     case SliderEventType.Repeat:
                         hitObjects.Add(new Tap
                         {
-                            NoteColor = Color4.Orange,
                             Angle = newPath.GetAngleFromPath(),
                             Samples = getTickSamples(original.Samples),
                             StartTime = e.Time,
