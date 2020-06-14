@@ -152,6 +152,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 blob3.Alpha = 0;
                 blob4.Alpha = 0;
             }
+            else
+            {
+                blob2.Alpha = 1;
+                blob3.Alpha = 1;
+                blob4.Alpha = 1;
+            }
 
 
             // Handle hidden and fadeIn modifications
