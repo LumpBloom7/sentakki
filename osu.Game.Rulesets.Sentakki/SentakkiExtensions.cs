@@ -12,9 +12,11 @@ namespace osu.Game.Rulesets.Sentakki
             path %= 8;
             return SentakkiPlayfield.PATHANGLES[path];
         }
-        public static Vector2 GetPosition(float distance, int path)
+        public static Vector2 GetPathPosition(float distance, int path) => GetCircularPosition(distance, path.GetAngleFromPath());
+
+        public static Vector2 GetCircularPosition(float distance, float angle)
         {
-            return new Vector2(-(distance * (float)Math.Cos((path.GetAngleFromPath() + 90f) * (float)(Math.PI / 180))), -(distance * (float)Math.Sin((path.GetAngleFromPath() + 90f) * (float)(Math.PI / 180))));
+            return new Vector2(-(distance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(distance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180))));
         }
 
         public static float GetDegreesFromPosition(this Vector2 target, Vector2 self) => (float)MathHelper.RadiansToDegrees(Math.Atan2(target.X - self.X, target.Y - self.Y));

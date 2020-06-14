@@ -115,8 +115,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 NodeSamples = (original as IHasPathWithRepeats).NodeSamples,
                 StartTime = original.StartTime,
                 EndTime = original.GetEndTime(),
-                EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
-                Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
+                EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
+                Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
             };
         }
         private IEnumerable<SentakkiHitObject> createTapsFromTicks(HitObject original)
@@ -160,8 +160,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                                 Volume = s.Volume
                             }).ToList(),
                             StartTime = e.Time,
-                            EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
-                            Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
+                            EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
+                            Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
                         };
                         break;
                 }
@@ -178,8 +178,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 Angle = notePath.GetAngleFromPath(),
                 Samples = original.Samples,
                 StartTime = original.StartTime,
-                EndPosition = SentakkiExtensions.GetPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
-                Position = SentakkiExtensions.GetPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
+                EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
+                Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
             };
         }
 
@@ -190,7 +190,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 NoteColor = Color4.Cyan,
                 Samples = original.Samples,
                 StartTime = original.StartTime,
-                Position = new Vector2(rng.Next(-200, 200), rng.Next(-200, 200))
+                Position = SentakkiExtensions.GetCircularPosition(rng.Next(200), rng.Next(360))
             };
         }
     }
