@@ -185,14 +185,12 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         private SentakkiHitObject createTouchNote(HitObject original)
         {
-            Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
-            newPos = new Vector2((newPos.X / 512 * 400) - 200, (newPos.Y / 384 * 400) - 200);
             return new Touch
             {
                 NoteColor = Color4.Cyan,
                 Samples = original.Samples,
                 StartTime = original.StartTime,
-                Position = newPos
+                Position = new Vector2(rng.Next(-200, 200), rng.Next(-200, 200))
             };
         }
     }
