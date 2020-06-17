@@ -11,6 +11,7 @@ using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
+using osu.Framework.Graphics.Effects;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
@@ -40,7 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             InternalChildren = new Drawable[]
             {
                 Glow = new GlowPiece(){
-                    Alpha = 0f,
+                    Alpha = .5f,
                 },
                 ring = new CircularContainer
                 {
@@ -125,6 +126,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         private readonly IBindable<ArmedState> state = new Bindable<ArmedState>();
         private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
+        public readonly Bindable<EdgeEffectParameters> GlowEdgeEffect = new Bindable<EdgeEffectParameters>(new EdgeEffectParameters
+        {
+            Hollow = true,
+            Type = EdgeEffectType.Glow,
+            Radius = 15,
+            Colour = Color4.HotPink,
+        });
 
         [BackgroundDependencyLoader]
         private void load(TextureStore textures, DrawableHitObject drawableObject)
@@ -141,18 +149,23 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 Glow.Colour = colour.NewValue;
                 Progress.Colour = colour.NewValue;
                 fillCircle.Colour = colour.NewValue;
+                // EdgeColor
+                var newEdge = GlowEdgeEffect.Value;
+                newEdge.Colour = colour.NewValue;
+                GlowEdgeEffect.Value = newEdge;
             }, true);
+
+            GlowEdgeEffect.BindValueChanged(value => { if (Glow.Children.Count > 0) (Glow.Child as CircularContainer).EdgeEffect = value.NewValue; }, true);
         }
 
         private void updateState(ValueChangedEvent<ArmedState> state)
         {
-            Glow.FadeOut(400);
-
             switch (state.NewValue)
             {
                 case ArmedState.Hit:
                     const double flash_in = 40;
                     const double flash_out = 100;
+                    Glow.Delay(Duration).FadeOut(400);
 
                     flash.Delay(Duration).FadeTo(0.8f, flash_in)
                          .Then()
