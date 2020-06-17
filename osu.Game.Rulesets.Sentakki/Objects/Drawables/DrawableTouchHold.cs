@@ -44,6 +44,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private double timeHeld = 0;
         private bool buttonHeld = false;
 
+        // This is used to reset the animation I used to achieve the judgement feedback.
+        private bool needReset = false;
+
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (Time.Current < HitObject.StartTime) return;
@@ -67,6 +70,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 else if (Time.Current >= (HitObject as IHasDuration)?.EndTime)
                     r.Type = HitResult.Miss;
             });
+            needReset = true;
         }
 
         private readonly Bindable<double> touchAnimationDuration = new Bindable<double>(1000);
@@ -85,10 +89,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             set => AccentColour.Value = value;
         }
 
+        /// <summary>
+        /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
+        /// </summary>
+        public double? HoldStartTime { get; private set; }
+
         protected override void Update()
         {
             base.Update();
             if (Result.HasResult) return;
+            if (needReset)
+            {
+                var newEdge = circle.GlowEdgeEffect.Value;
+                circle.Size = Vector2.One;
+                newEdge.Radius = 15;
+                circle.GlowEdgeEffect.Value = newEdge;
+                currentColour = Color4.HotPink;
+                needReset = false;
+            }
 
             double fadeIn = touchAnimationDuration.Value * GameplaySpeed;
             double animStart = HitObject.StartTime - fadeIn;
@@ -124,45 +142,54 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 if (activated || Auto)
                 {
                     float amount = 1f;
+                    double prevProg = timeHeld / (HitObject as IHasDuration).Duration;
                     timeHeld += Clock.ElapsedFrameTime;
                     double progress = timeHeld / (HitObject as IHasDuration).Duration;
-                    Color4 newColor = Color4.HotPink;
-                    var newEdge = circle.GlowEdgeEffect.Value;
-                    if (progress > .25f)
+
+                    if (progress >= .25f && prevProg < .25f)
                     {
-                        amount += .033f;
-                        newColor = colours.ForHitResult(HitResult.Meh);
-                        newEdge.Colour = colours.ForHitResult(HitResult.Meh);
+                        var newEdge = circle.GlowEdgeEffect.Value;
+                        circle.ResizeTo(1.033f, 100);
                         newEdge.Radius = 25;
+                        circle.GlowEdgeEffect.Value = newEdge;
+                        this.TransformTo(nameof(currentColour), colours.ForHitResult(HitResult.Meh), 100);
                     }
 
-                    if (progress > .5f)
+                    else if (progress >= .50f && prevProg < .50f)
                     {
-                        amount += .033f;
-                        newColor = colours.ForHitResult(HitResult.Good);
-                        newEdge.Colour = colours.ForHitResult(HitResult.Good);
+                        var newEdge = circle.GlowEdgeEffect.Value;
+                        circle.ResizeTo(1.066f, 100);
                         newEdge.Radius = 35;
+                        circle.GlowEdgeEffect.Value = newEdge;
+                        this.TransformTo(nameof(currentColour), colours.ForHitResult(HitResult.Good), 100);
                     }
-                    if (progress > .75f)
+                    else if (progress >= .75f && prevProg < .75f)
                     {
-                        amount += .034f;
-                        newColor = colours.ForHitResult(HitResult.Great);
-                        newEdge.Colour = colours.ForHitResult(HitResult.Great);
+                        var newEdge = circle.GlowEdgeEffect.Value;
+                        circle.ResizeTo(1.1f, 100);
                         newEdge.Radius = 45;
+                        circle.GlowEdgeEffect.Value = newEdge;
+                        this.TransformTo(nameof(currentColour), colours.ForHitResult(HitResult.Great), 100);
                     }
-                    circle.GlowEdgeEffect.Value = newEdge;
 
-                    this.TransformTo(nameof(currentColour), newColor, 100);
-                    circle.FadeTo(amount, 100);
-                    circle.ScaleTo(amount, 100);
+                    if (HoldStartTime == null)
+                    {
+                        circle.FadeTo(amount, 100);
+                        circle.ScaleTo(amount, 100);
+                        HoldStartTime = Clock.CurrentTime;
+                    }
                 }
                 else
                 {
-                    circle.FadeTo(.5f, 100);
-                    circle.ScaleTo(.8f, 200);
+                    if (HoldStartTime != null)
+                    {
+                        circle.FadeTo(.5f, 100);
+                        circle.ScaleTo(.8f, 200);
+                        HoldStartTime = Clock.CurrentTime;
+                    }
                 }
-                base.Update();
             }
+            base.Update();
         }
 
         protected override void UpdateStateTransforms(ArmedState state)

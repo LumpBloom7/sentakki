@@ -149,6 +149,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 Glow.Colour = colour.NewValue;
                 Progress.Colour = colour.NewValue;
                 fillCircle.Colour = colour.NewValue;
+                // EdgeColor
+                var newEdge = GlowEdgeEffect.Value;
+                newEdge.Colour = colour.NewValue;
+                GlowEdgeEffect.Value = newEdge;
             }, true);
 
             GlowEdgeEffect.BindValueChanged(value => { if (Glow.Children.Count > 0) (Glow.Child as CircularContainer).EdgeEffect = value.NewValue; }, true);
