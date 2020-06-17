@@ -160,8 +160,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         private void updateState(ValueChangedEvent<ArmedState> state)
         {
-
-
             switch (state.NewValue)
             {
                 case ArmedState.Hit:
