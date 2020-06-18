@@ -23,58 +23,32 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             bool strong = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
             bool twin = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP);
 
-            if (strong)
+            notes.Add(new Tap
             {
+                IsBreak = strong,
+                Angle = path.GetAngleFromPath(),
+                Samples = original.Samples,
+                StartTime = original.StartTime,
+                EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, path),
+                Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, path),
+            });
+            if (twin && experimental.HasFlag(ConversionExperiments.twins))
+            {
+                int newPath = path;
+                while (path == newPath) newPath = rng.Next(0, 8);
                 notes.Add(new Tap
                 {
-                    IsBreak = true,
-                    Angle = path.GetAngleFromPath(),
+                    IsBreak = strong,
+                    Angle = newPath.GetAngleFromPath(),
                     Samples = original.Samples,
                     StartTime = original.StartTime,
-                    EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, path),
-                    Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, path),
+                    EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, newPath),
+                    Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, newPath),
                 });
-                if (twin && experimental.HasFlag(ConversionExperiments.twins))
-                {
-                    int newPath = path;
-                    while (path == newPath) newPath = rng.Next(0, 8);
-                    notes.Add(new Tap
-                    {
-                        IsBreak = true,
-                        Angle = newPath.GetAngleFromPath(),
-                        Samples = original.Samples,
-                        StartTime = original.StartTime,
-                        EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, newPath),
-                        Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, newPath),
-                    });
-                }
+                foreach (var note in notes)
+                    note.HasTwin = true;
             }
-            else
-            {
-                notes.Add(new Tap
-                {
-                    Angle = path.GetAngleFromPath(),
-                    Samples = original.Samples,
-                    StartTime = original.StartTime,
-                    EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, path),
-                    Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, path),
-                });
-                if (twin && experimental.HasFlag(ConversionExperiments.twins))
-                {
-                    int newPath = path;
-                    while (path == newPath) newPath = rng.Next(0, 8);
-                    notes.Add(new Tap
-                    {
-                        Angle = newPath.GetAngleFromPath(),
-                        Samples = original.Samples,
-                        StartTime = original.StartTime,
-                        EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, newPath),
-                        Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, newPath),
-                    });
-                    foreach (var note in notes)
-                        note.HasTwin = true;
-                }
-            }
+
             return notes;
         }
 
@@ -109,9 +83,11 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             List<SentakkiHitObject> notes = new List<SentakkiHitObject>();
             bool twin = curveData.NodeSamples.Any(s => s.Any(s => s.Name == HitSampleInfo.HIT_CLAP));
+            bool strong = curveData.NodeSamples.Any(s => s.Any(s => s.Name == HitSampleInfo.HIT_FINISH));
 
             notes.Add(new Hold
             {
+                IsBreak = strong,
                 Angle = path.GetAngleFromPath(),
                 NodeSamples = curveData.NodeSamples,
                 StartTime = original.StartTime,
@@ -128,6 +104,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     while (path == newPath) newPath = rng.Next(0, 8);
                     notes.Add(new Hold
                     {
+                        IsBreak = strong,
                         Angle = newPath.GetAngleFromPath(),
                         NodeSamples = curveData.NodeSamples,
                         StartTime = original.StartTime,
