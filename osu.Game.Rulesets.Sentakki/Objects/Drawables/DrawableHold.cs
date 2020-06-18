@@ -61,10 +61,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Hit = () => {
                         if (AllJudged || HoldStartTime != null)
                             return false;
-                        beginHoldAt(Time.Current - Head.HitObject.StartTime);
-                        Head.UpdateResult();
 
-                        note.Glow.FadeIn(50);
+                        if(beginHoldAt(Time.Current - Head.HitObject.StartTime))
+                        {
+                            Head.UpdateResult();
+                            note.Glow.FadeIn(50);
+                        }
 
                         return true;
                     },
@@ -259,13 +261,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        private void beginHoldAt(double timeOffset)
+        private bool beginHoldAt(double timeOffset)
         {
             if (timeOffset < -Head.HitObject.HitWindows.WindowFor(HitResult.Miss))
-                return;
+                return false;
 
             HoldStartTime = Time.Current;
             isHitting.Value = true;
+            return true;
         }
     }
 }
