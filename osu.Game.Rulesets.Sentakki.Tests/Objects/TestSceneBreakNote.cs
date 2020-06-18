@@ -31,8 +31,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
         private void testSingle(bool auto = false)
         {
-            var circle = new Break
+            var circle = new Tap
             {
+                IsBreak = true,
                 StartTime = Time.Current + 1000,
                 Position = new Vector2(0, -66f),
                 Angle = 0,
@@ -41,7 +42,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
             circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
 
-            Add(new DrawableBreak(circle)
+            Add(new DrawableTap(circle)
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

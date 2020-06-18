@@ -66,22 +66,24 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         {
             bool isTwin = false;
             List<SentakkiHitObject> notes = new List<SentakkiHitObject>();
+            bool breakNote = false;
             switch (original)
             {
                 case IHasPathWithRepeats hold:
+                    breakNote = hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH));
                     if (Experiments.Value.HasFlag(ConversionExperiments.twins))
                     {
                         if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
                         {
                             isTwin = true;
-                            notes.Add(createHoldNote(original, true));
+                            notes.Add(createHoldNote(original, true, breakNote));
                         }
                         else
                             foreach (var note in createTapsFromTicks(original).ToList())
                                 yield return note;
                     }
 
-                    notes.Add(createHoldNote(original));
+                    notes.Add(createHoldNote(original, isBreak: breakNote));
                     break;
 
                 case IHasDuration _:
@@ -89,16 +91,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     break;
 
                 default:
-                    if (original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH))
-                    {
-                        if (Experiments.Value.HasFlag(ConversionExperiments.twins) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP))
-                        {
-                            isTwin = true;
-                            notes.Add(createTapNote<Break>(original, true));
-                        }
-                        notes.Add(createTapNote<Break>(original));
-                    }
-                    else if (Experiments.Value.HasFlag(ConversionExperiments.touch) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE))
+                    breakNote = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
+                    if (!breakNote && Experiments.Value.HasFlag(ConversionExperiments.touch) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE))
                     {
                         yield return createTouchNote(original);
                     }
@@ -107,9 +101,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         if (Experiments.Value.HasFlag(ConversionExperiments.twins) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP))
                         {
                             isTwin = true;
-                            notes.Add(createTapNote<Tap>(original, true));
+                            notes.Add(createTapNote(original, true, breakNote));
                         }
-                        notes.Add(createTapNote<Tap>(original));
+                        notes.Add(createTapNote(original, isBreak: breakNote));
                     }
                     break;
             }
@@ -118,17 +112,18 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             foreach (var note in notes)
             {
                 if (isTwin)
-                    note.NoteColor = Color4.Gold;
+                    note.HasTwin = true;
                 yield return note;
             }
         }
 
         // Individual note generation code, because it's cleaner
-        private SentakkiHitObject createHoldNote(HitObject original, bool twin = false)
+        private SentakkiHitObject createHoldNote(HitObject original, bool twin = false, bool isBreak = false)
         {
             int notePath = getNewPath(twin);
             return new Hold
             {
+                IsBreak = isBreak,
                 Angle = notePath.GetAngleFromPath(),
                 NodeSamples = (original as IHasPathWithRepeats).NodeSamples,
                 StartTime = original.StartTime,
@@ -185,12 +180,12 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             }
         }
 
-        private SentakkiHitObject createTapNote(HitObject original, bool twin = false) => createTapNote<Tap>(original, twin);
-        private SentakkiHitObject createTapNote<T>(HitObject original, bool twin = false) where T : SentakkiHitObject, new()
+        private SentakkiHitObject createTapNote(HitObject original, bool twin = false, bool isBreak = false)
         {
             int notePath = getNewPath(twin);
-            return new T
+            return new Tap
             {
+                IsBreak = isBreak,
                 Angle = notePath.GetAngleFromPath(),
                 Samples = original.Samples,
                 StartTime = original.StartTime,

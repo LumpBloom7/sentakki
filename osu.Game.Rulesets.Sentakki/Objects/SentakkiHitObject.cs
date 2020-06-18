@@ -11,9 +11,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public abstract class SentakkiHitObject : HitObject
     {
-        public override Judgement CreateJudgement() => new SentakkiJudgement();
+        public virtual bool IsBreak { get; set; } = false;
+        public virtual bool HasTwin { get; set; } = false;
 
-        public virtual Color4 NoteColor { get; set; } = Color4Extensions.FromHex("ff0064");
+        public override Judgement CreateJudgement() => IsBreak ? new SentakkiBreakJudgement() : new SentakkiJudgement();
+
+        public virtual Color4 NoteColor => IsBreak ? Color4.OrangeRed : (HasTwin ? Color4.Gold : Color4Extensions.FromHex("ff0064"));
         public virtual Vector2 EndPosition { get; set; }
         public virtual float Angle { get; set; }
 

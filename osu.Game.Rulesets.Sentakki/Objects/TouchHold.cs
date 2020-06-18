@@ -5,6 +5,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class TouchHold : SentakkiHitObject, IHasDuration
     {
+        public override bool IsBreak => false;
+
         public double EndTime
         {
             get => StartTime + Duration;

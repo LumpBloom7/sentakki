@@ -6,7 +6,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Touch : SentakkiHitObject
     {
-        public override Color4 NoteColor { get; set; } = Color4.Cyan;
+        public override bool IsBreak => false;
+        public override Color4 NoteColor => HasTwin ? Color4.Gold : Color4.Cyan;
 
         public override float Angle => 0;
 

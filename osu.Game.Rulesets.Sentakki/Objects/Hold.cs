@@ -11,6 +11,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Hold : SentakkiHitObject, IHasDuration
     {
+        private bool isBreak = false;
+        public override bool IsBreak
+        {
+            get => isBreak;
+            set
+            {
+                isBreak = value;
+                Head.IsBreak = value;
+                Tail.IsBreak = value;
+            }
+        }
         private List<IList<HitSampleInfo>> nodeSamples = new List<IList<HitSampleInfo>>();
 
         public List<IList<HitSampleInfo>> NodeSamples

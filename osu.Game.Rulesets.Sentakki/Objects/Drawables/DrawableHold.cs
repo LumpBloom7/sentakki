@@ -38,6 +38,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         /// </summary>
         public double? HoldStartTime { get; private set; }
 
+        protected override bool PlayBreakSample => false;
+
         public DrawableHold(Hold hitObject)
             : base(hitObject)
         {

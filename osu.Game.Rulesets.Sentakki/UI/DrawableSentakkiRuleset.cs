@@ -46,14 +46,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
             {
                 case Touch touchNote:
                     return new DrawableTouch(touchNote);
+
                 case Hold holdNote:
                     return new DrawableHold(holdNote);
 
                 case TouchHold touchHold:
                     return new DrawableTouchHold(touchHold);
-
-                case Break breakNote:
-                    return new DrawableBreak(breakNote);
 
                 case Tap tapNote:
                     return new DrawableTap(tapNote);
