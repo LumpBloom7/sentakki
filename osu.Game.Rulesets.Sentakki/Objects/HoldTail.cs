@@ -3,8 +3,5 @@ using osu.Game.Rulesets.Sentakki.Judgements;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public class HoldTail : Tap
-    {
-        public override Judgement CreateJudgement() => new SentakkiJudgement();
-    }
+    public class HoldTail : Tap { }
 }

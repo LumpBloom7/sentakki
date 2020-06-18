@@ -22,6 +22,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public void UpdateResult() => base.UpdateResult(true);
 
+        protected override bool PlayBreakSample => false;
+
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             Debug.Assert(HitObject.HitWindows != null);

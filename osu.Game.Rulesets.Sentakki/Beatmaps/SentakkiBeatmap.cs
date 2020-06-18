@@ -10,10 +10,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
     {
         public override IEnumerable<BeatmapStatistic> GetStatistics()
         {
-            int beats = HitObjects.Count(b => b.GetType() == typeof(Tap));
+            int taps = HitObjects.Count(b => b is Tap);
             int holds = HitObjects.Count(h => h is Hold);
             int centreHolds = HitObjects.Count(h => h is TouchHold);
-            int breaks = HitObjects.Count(h => h is Break);
             int touchs = HitObjects.Count(h => h is Touch);
 
             return new[]
@@ -21,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 new BeatmapStatistic
                 {
                     Name = "Tap Count",
-                    Content = beats.ToString(),
+                    Content = taps.ToString(),
                     Icon = FontAwesome.Solid.Circle
                 },
                 new BeatmapStatistic
@@ -34,12 +33,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 {
                     Name = "Spinner Hold Count",
                     Content = centreHolds.ToString(),
-                    Icon = FontAwesome.Solid.Circle
-                },
-                new BeatmapStatistic
-                {
-                    Name = "Break Count",
-                    Content = breaks.ToString(),
                     Icon = FontAwesome.Solid.Circle
                 },
                 new BeatmapStatistic

@@ -25,8 +25,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             if (strong)
             {
-                notes.Add(new Break
+                notes.Add(new Tap
                 {
+                    IsBreak = true,
                     Angle = path.GetAngleFromPath(),
                     Samples = original.Samples,
                     StartTime = original.StartTime,
@@ -37,8 +38,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 {
                     int newPath = path;
                     while (path == newPath) newPath = rng.Next(0, 8);
-                    notes.Add(new Break
+                    notes.Add(new Tap
                     {
+                        IsBreak = true,
                         Angle = newPath.GetAngleFromPath(),
                         Samples = original.Samples,
                         StartTime = original.StartTime,
@@ -69,6 +71,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, newPath),
                         Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, newPath),
                     });
+                    foreach (var note in notes)
+                        note.HasTwin = true;
                 }
             }
             return notes;
@@ -131,6 +135,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, newPath),
                         Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, newPath),
                     });
+                    foreach (var note in notes)
+                        note.HasTwin = true;
                 }
                 else
                 {
