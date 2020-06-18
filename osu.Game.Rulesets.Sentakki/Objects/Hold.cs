@@ -5,6 +5,8 @@ using osu.Game.Rulesets.Scoring;
 using System.Collections.Generic;
 using System.Linq;
 using osuTK;
+using osuTK.Graphics;
+
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Hold : SentakkiHitObject, IHasDuration

@@ -61,8 +61,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Hit = () => {
                         if (AllJudged || HoldStartTime != null)
                             return false;
-                        beginHoldAt(Time.Current - Head.HitObject.StartTime);
-                        Head.UpdateResult();
+
+                        if(beginHoldAt(Time.Current - Head.HitObject.StartTime))
+                        {
+                            Head.UpdateResult();
+                            note.Glow.FadeIn(50);
+                        }
 
                         return true;
                     },
@@ -74,6 +78,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Tail.UpdateResult();
                         HoldStartTime = null;
                         isHitting.Value = false;
+                        note.Glow.FadeOut(100);
                     },
                     NoteAngle = HitObject.Angle
                 }
@@ -212,14 +217,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             HitObjectLine.UpdateVisual(totalMove);
 
-            // Hit feedback glow
-            if (Time.Current >= HitObject.StartTime)
-            {
-                if (isHitting.Value || Auto)
-                    note.Glow.FadeIn(50);
-                else
-                    note.Glow.FadeOut(100);
-            }
+            // Auto should trigger a hit, just so it visually looks the same
+            if (Auto && Time.Current >= HitObject.StartTime)
+                HitArea.Hit.Invoke();
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -261,13 +261,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        private void beginHoldAt(double timeOffset)
+        private bool beginHoldAt(double timeOffset)
         {
             if (timeOffset < -Head.HitObject.HitWindows.WindowFor(HitResult.Miss))
-                return;
+                return false;
 
             HoldStartTime = Time.Current;
             isHitting.Value = true;
+            return true;
         }
     }
 }

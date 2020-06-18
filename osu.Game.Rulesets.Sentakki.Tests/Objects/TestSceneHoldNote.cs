@@ -48,7 +48,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 Position = new Vector2(0, -66),
                 EndPosition = new Vector2(0, -296.5f),
                 Angle = 0f,
-                NoteColor = Color4.Crimson,
             };
 
             circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });

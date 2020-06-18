@@ -81,11 +81,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                                 AlwaysPresent = true,
                             }
                         },
-                        new CircularContainer
+                        new Container
                         {
+                            Masking = true,
+                            CornerExponent = 2.5f,
+                            CornerRadius = 5f,
+                            Rotation = 45,
                             Position = new Vector2(0, -40),
                             Size = new Vector2(20),
-                            Masking = true,
                             BorderColour = Color4.Gray,
                             BorderThickness = 2,
                             Anchor = Anchor.BottomCentre,
@@ -97,11 +100,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                                 Colour = Color4.White,
                             }
                         },
-                        new CircularContainer
+                        new Container
                         {
+                            Masking = true,
+                            CornerExponent = 2.5f,
+                            CornerRadius = 5f,
+                            Rotation = 45,
                             Position = new Vector2(0, 40),
                             Size = new Vector2(20),
-                            Masking = true,
                             BorderColour = Color4.Gray,
                             BorderThickness = 2,
                             Anchor = Anchor.TopCentre,
