@@ -6,9 +6,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests
     [TestFixture]
     public class TestSceneSentakkiPlayer : PlayerTestScene
     {
-        public TestSceneSentakkiPlayer()
-            : base(new SentakkiRuleset())
-        {
-        }
+        protected override Ruleset CreatePlayerRuleset() => new SentakkiRuleset();
     }
 }
