@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
         private readonly Container note;
-        public readonly ShadowPiece Glow;
+        public readonly HoldGlowPiece Glow;
 
         public double Duration = 0;
 
@@ -34,7 +34,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     RelativeSizeAxes=Axes.Both,
                     Children = new Drawable[]
                     {
-                        Glow = new ShadowPiece(),
+                        new ShadowPiece(),
+                        Glow = new HoldGlowPiece(){
+                            Alpha = 0
+                        },
                         new CircularContainer
                         {
                             RelativeSizeAxes = Axes.Both,
