@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 {
                     Hollow = false,
                     Type = EdgeEffectType.Glow,
-                    Radius = 10,
+                    Radius = 5,
                     Colour = Colour,
                 }
             };
