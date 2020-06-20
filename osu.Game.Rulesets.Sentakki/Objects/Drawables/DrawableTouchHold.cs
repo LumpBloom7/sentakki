@@ -185,7 +185,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     {
                         circle.FadeTo(.5f, 100);
                         circle.ScaleTo(.8f, 200);
-                        HoldStartTime = Clock.CurrentTime;
+                        HoldStartTime = null;
                     }
                 }
             }
