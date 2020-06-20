@@ -10,9 +10,9 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class GlowPiece : Container
+    public class ShadowPiece : Container
     {
-        public GlowPiece()
+        public ShadowPiece()
         {
             RelativeSizeAxes = Axes.Both;
             Anchor = Anchor.Centre;

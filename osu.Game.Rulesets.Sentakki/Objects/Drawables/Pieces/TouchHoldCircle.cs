@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     {
         public double Duration;
 
-        public readonly GlowPiece Glow;
+        public readonly ShadowPiece Glow;
         private readonly ExplodePiece explode;
         private readonly FlashPiece flash;
         public readonly CircularProgress Progress;
@@ -40,7 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
             InternalChildren = new Drawable[]
             {
-                Glow = new GlowPiece(){
+                Glow = new ShadowPiece(){
                     Alpha = .5f,
                 },
                 ring = new CircularContainer
