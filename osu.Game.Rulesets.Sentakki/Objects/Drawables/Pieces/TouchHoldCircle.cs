@@ -18,8 +18,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     public class TouchHoldCircle : CircularContainer
     {
         public double Duration;
-
-        public readonly ShadowPiece Glow;
         private readonly ExplodePiece explode;
         private readonly FlashPiece flash;
         public readonly CircularProgress Progress;
@@ -40,9 +38,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
             InternalChildren = new Drawable[]
             {
-                Glow = new ShadowPiece(){
-                    Alpha = .5f,
-                },
+                new ShadowPiece(),
                 ring = new CircularContainer
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -126,13 +122,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         private readonly IBindable<ArmedState> state = new Bindable<ArmedState>();
         private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
-        public readonly Bindable<EdgeEffectParameters> GlowEdgeEffect = new Bindable<EdgeEffectParameters>(new EdgeEffectParameters
-        {
-            Hollow = true,
-            Type = EdgeEffectType.Shadow,
-            Radius = 15,
-            Colour = Color4.Black,
-        });
 
         [BackgroundDependencyLoader]
         private void load(TextureStore textures, DrawableHitObject drawableObject)
@@ -146,16 +135,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             accentColour.BindValueChanged(colour =>
             {
                 explode.Colour = colour.NewValue;
-                Glow.Colour = colour.NewValue;
                 Progress.Colour = colour.NewValue;
                 fillCircle.Colour = colour.NewValue;
-                // EdgeColor
-                var newEdge = GlowEdgeEffect.Value;
-                newEdge.Colour = colour.NewValue;
-                GlowEdgeEffect.Value = newEdge;
             }, true);
-
-            GlowEdgeEffect.BindValueChanged(value => { if (Glow.Children.Count > 0) (Glow.Child as CircularContainer).EdgeEffect = value.NewValue; }, true);
         }
 
         private void updateState(ValueChangedEvent<ArmedState> state)
@@ -165,7 +147,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 case ArmedState.Hit:
                     const double flash_in = 40;
                     const double flash_out = 100;
-                    Glow.Delay(Duration).FadeOut(400);
 
                     flash.Delay(Duration).FadeTo(0.8f, flash_in)
                          .Then()

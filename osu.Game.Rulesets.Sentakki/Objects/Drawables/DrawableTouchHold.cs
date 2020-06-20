@@ -100,12 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (Result.HasResult) return;
             if (needReset)
             {
-                var newEdge = circle.GlowEdgeEffect.Value;
                 circle.Size = Vector2.One;
-                newEdge.Radius = 15;
-                circle.GlowEdgeEffect.Value = newEdge;
-                currentColour = Color4.HotPink;
-                needReset = false;
             }
 
             double fadeIn = touchAnimationDuration.Value * GameplaySpeed;
@@ -141,41 +136,31 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 bool activated = (SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered;
                 if (activated || Auto)
                 {
-                    float amount = 1f;
                     double prevProg = timeHeld / (HitObject as IHasDuration).Duration;
                     timeHeld += Clock.ElapsedFrameTime;
                     double progress = timeHeld / (HitObject as IHasDuration).Duration;
 
                     if (progress >= .25f && prevProg < .25f)
                     {
-                        var newEdge = circle.GlowEdgeEffect.Value;
                         circle.ResizeTo(1.033f, 100);
-                        newEdge.Radius = 25;
-                        circle.GlowEdgeEffect.Value = newEdge;
                         this.TransformTo(nameof(currentColour), colours.ForHitResult(HitResult.Meh), 100);
                     }
 
                     else if (progress >= .50f && prevProg < .50f)
                     {
-                        var newEdge = circle.GlowEdgeEffect.Value;
                         circle.ResizeTo(1.066f, 100);
-                        newEdge.Radius = 35;
-                        circle.GlowEdgeEffect.Value = newEdge;
                         this.TransformTo(nameof(currentColour), colours.ForHitResult(HitResult.Good), 100);
                     }
                     else if (progress >= .75f && prevProg < .75f)
                     {
-                        var newEdge = circle.GlowEdgeEffect.Value;
                         circle.ResizeTo(1.1f, 100);
-                        newEdge.Radius = 45;
-                        circle.GlowEdgeEffect.Value = newEdge;
                         this.TransformTo(nameof(currentColour), colours.ForHitResult(HitResult.Great), 100);
                     }
 
                     if (HoldStartTime == null)
                     {
-                        circle.FadeTo(amount, 100);
-                        circle.ScaleTo(amount, 100);
+                        circle.FadeTo(1, 100);
+                        circle.ScaleTo(1, 100);
                         HoldStartTime = Clock.CurrentTime;
                     }
                 }
