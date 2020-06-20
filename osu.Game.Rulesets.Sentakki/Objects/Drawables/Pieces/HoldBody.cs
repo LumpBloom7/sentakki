@@ -34,9 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     RelativeSizeAxes=Axes.Both,
                     Children = new Drawable[]
                     {
-                        Glow = new ShadowPiece(){
-                            Alpha = 0,
-                        },
+                        Glow = new ShadowPiece(),
                         new CircularContainer
                         {
                             RelativeSizeAxes = Axes.Both,
