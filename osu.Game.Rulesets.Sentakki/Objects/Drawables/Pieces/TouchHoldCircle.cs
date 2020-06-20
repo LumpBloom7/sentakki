@@ -129,9 +129,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public readonly Bindable<EdgeEffectParameters> GlowEdgeEffect = new Bindable<EdgeEffectParameters>(new EdgeEffectParameters
         {
             Hollow = true,
-            Type = EdgeEffectType.Glow,
+            Type = EdgeEffectType.Shadow,
             Radius = 15,
-            Colour = Color4.HotPink,
+            Colour = Color4.Black,
         });
 
         [BackgroundDependencyLoader]

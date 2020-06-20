@@ -31,9 +31,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 EdgeEffect = new EdgeEffectParameters
                 {
                     Hollow = true,
-                    Type = EdgeEffectType.Glow,
+                    Type = EdgeEffectType.Shadow,
                     Radius = 15,
-                    Colour = Colour,
+                    Colour = Color4.Black,
                 }
             };
         }
