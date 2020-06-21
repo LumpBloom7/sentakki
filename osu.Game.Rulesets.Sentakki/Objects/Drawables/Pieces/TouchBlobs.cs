@@ -3,6 +3,7 @@ using osu.Framework.Bindables;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 using osuTK.Graphics;
@@ -13,13 +14,34 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     {
         public TouchBlob()
         {
-            Masking = true;
             Size = new Vector2(80);
             Scale = new Vector2(.5f);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Children = new Drawable[]
             {
+                new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Padding = new MarginPadding(1),
+                    Child = new Container
+                    {
+                        Alpha = .5f,
+                        Masking = true,
+                        RelativeSizeAxes = Axes.Both,
+                        CornerRadius = 20,
+                        CornerExponent = 2.5f,
+                        EdgeEffect = new EdgeEffectParameters
+                        {
+                            Hollow = true,
+                            Type = EdgeEffectType.Shadow,
+                            Radius = 15,
+                            Colour = Color4.Black,
+                        }
+                    }
+                },
                 new Container
                 {
                     CornerRadius = 20,
@@ -36,7 +58,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                         Alpha= 0,
                         AlwaysPresent = true
                     }
-                },
+},
                 new Container
                 {
                     Masking = true,
@@ -45,7 +67,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     Child = new Container
                     {
                         CornerRadius = 20,
-                    CornerExponent = 2.5f,
+                        CornerExponent = 2.5f,
                         RelativeSizeAxes = Axes.Both,
                         Masking = true,
                         BorderThickness = 15,
@@ -69,7 +91,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     Child = new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Alpha= 0,
+                        Alpha = 0,
                         AlwaysPresent = true
                     }
                 },
