@@ -219,9 +219,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             HitObjectLine.UpdateVisual(totalMove);
 
-            // Auto should trigger a hit, just so it visually looks the same
-            if (Auto && Time.Current >= HitObject.StartTime)
-                HitArea.Hit.Invoke();
+            // Auto should pretend to trigger a hit, just so it visually looks the same even if the note is guaranteed to give a perfect judgement
+            if (Auto)
+                if (Time.Current >= HitObject.StartTime)
+                    HitArea.Hit.Invoke();
+                else
+                    HitArea.Release.Invoke(); //Make sure note is released...To avoid autoplay rewind visual issue.
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
