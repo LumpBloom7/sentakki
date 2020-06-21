@@ -12,6 +12,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Transforms;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using System;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -117,17 +118,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             double currentProg = Clock.CurrentTime - animStart;
 
             // Calculate initial entry animation
-            float fadeAmount = (float)(currentProg / fadeIn);
-            if (fadeAmount < 0) fadeAmount = 0;
-            else if (fadeAmount > 1) fadeAmount = 1;
+            float fadeAmount = Math.Clamp((float)(currentProg / fadeIn), 0, 1);
 
             Alpha = fadeAmount * (float)inOutBack.ApplyEasing(fadeAmount);
-            Scale = new Vector2(1f * fadeAmount * (float)inOutBack.ApplyEasing(fadeAmount));
+            Scale = new Vector2(fadeAmount * (float)inOutBack.ApplyEasing(fadeAmount));
 
             // Calculate position
-            float moveAmount = (float)((currentProg - fadeIn) / moveTo);
-            if (moveAmount < 0) moveAmount = 0;
-            else if (moveAmount > 1) moveAmount = 1;
+            float moveAmount = Math.Clamp((float)((currentProg - fadeIn) / moveTo), 0, 1);
 
             // Used to simplify this crazy arse manual animating
             float moveAnimFormula(float originalValue) => (float)(originalValue - (originalValue * moveAmount * inQuint.ApplyEasing(moveAmount)));
@@ -163,11 +160,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // Handle hidden and fadeIn modifications
             if (IsHidden)
             {
-                float hideAmount = (float)((currentProg - fadeIn) / (moveTo / 2));
-                if (hideAmount < 0) hideAmount = 0;
-                else if (hideAmount > 1) hideAmount = 1;
+                float hideAmount = Math.Clamp((float)((currentProg - fadeIn) / (moveTo / 2)), 0, 1);
 
-                Alpha = 1 - (1 * hideAmount);
+                Alpha = 1 - hideAmount;
             }
             else if (IsFadeIn)
             {

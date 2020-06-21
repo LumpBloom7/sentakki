@@ -10,7 +10,7 @@ using osu.Game.Graphics;
 using osuTK;
 using osuTK.Graphics;
 using System.Linq;
-using osu.Framework.Graphics.Effects;
+using System;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -42,7 +42,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         private double timeHeld = 0;
-        private bool buttonHeld = false;
+        private bool activated => Auto || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered);
 
         // This is used to reset the animation I used to achieve the judgement feedback.
         private bool needReset = false;
@@ -113,35 +113,33 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             double currentProg = Clock.CurrentTime - animStart;
 
             // Calculate initial entry animation
-            float fadeAmount = (float)(currentProg / fadeIn);
-            if (fadeAmount < 0) fadeAmount = 0;
-            else if (fadeAmount > 1) fadeAmount = 1;
+            float fadeAmount = Math.Clamp((float)(currentProg / fadeIn), 0, 1);
 
             Alpha = fadeAmount;
-            Scale = new Vector2(1f * fadeAmount);
+            Scale = new Vector2(fadeAmount);
 
             // Calculate progressbar fill
-            float fillAmount = (float)((currentProg - fadeIn) / (HitObject as TouchHold).Duration);
-            if (fillAmount < 0) fillAmount = 0;
-            else if (fillAmount > 1) fillAmount = 1;
-
+            float fillAmount = Math.Clamp((float)((currentProg - fadeIn) / (HitObject as TouchHold).Duration), 0, 1);
             circle.Progress.Current.Value = fillAmount;
 
-            // Hidden fade calculation
-            float hiddenAmount = (float)((currentProg - fadeIn) / 125);
-            if (hiddenAmount < 0) hiddenAmount = 0;
-            else if (hiddenAmount > 1) hiddenAmount = 1;
+            if (IsHidden)
+            {
+                float hideAmount = Math.Min((float)((currentProg - fadeIn) / 125), 1);
 
-            if (IsHidden && hiddenAmount > 0)
-                Alpha = 1 - (1 * hiddenAmount / ((Time.Current >= HitObject.StartTime && ((buttonHeld && IsHovered) || Auto)) ? 2 : 1));
+                if (hideAmount > 0)
+                {
+                    if (Time.Current >= HitObject.StartTime && activated)
+                        hideAmount /= 2;
+
+                    Alpha = 1 - hideAmount;
+                }
+            }
 
             // Input and feedback
             if (Time.Current >= HitObject.StartTime && Time.Current <= (HitObject as IHasDuration)?.EndTime)
             {
-                bool activated = (SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered;
-                if (activated || Auto)
+                if (activated)
                 {
-                    float amount = 1f;
                     double prevProg = timeHeld / (HitObject as IHasDuration).Duration;
                     timeHeld += Clock.ElapsedFrameTime;
                     double progress = timeHeld / (HitObject as IHasDuration).Duration;
@@ -174,8 +172,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                     if (HoldStartTime == null)
                     {
-                        circle.FadeTo(amount, 100);
-                        circle.ScaleTo(amount, 100);
+                        circle.FadeTo(1, 100);
+                        circle.ScaleTo(1, 100);
                         HoldStartTime = Clock.CurrentTime;
                     }
                 }

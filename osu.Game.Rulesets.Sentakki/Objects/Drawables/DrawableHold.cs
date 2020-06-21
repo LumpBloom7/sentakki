@@ -148,46 +148,35 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.Update();
             if (Result.HasResult) return;
 
-            double animSpeed = animationDuration.Value / 2;
-            double fadeIn = animSpeed * GameplaySpeed;
-            double moveTo = animSpeed * GameplaySpeed;
-            double animStart = HitObject.StartTime - moveTo - fadeIn;
+            double animTime = animationDuration.Value / 2 * GameplaySpeed;
+            double animStart = HitObject.StartTime - (animTime * 2);
             double currentProg = Clock.CurrentTime - animStart;
 
             // Calculate initial entry animation
-            float fadeAmount = (float)(currentProg / fadeIn);
-            if (fadeAmount < 0) fadeAmount = 0;
-            else if (fadeAmount > 1) fadeAmount = 1;
-
+            float fadeAmount = Math.Clamp((float)(currentProg / animTime), 0, 1);
             HitObjectLine.Alpha = fadeAmount;
-            note.Alpha = (float)(1 * fadeAmount);
-            note.Scale = new Vector2((float)(1 * fadeAmount));
+            note.Alpha = fadeAmount;
+            note.Scale = new Vector2(fadeAmount);
+
+            // This is the movable length (not including start position)
+            float totalMovableDistance = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
+            float adjustedStartPoint = SentakkiPlayfield.NOTESTARTDISTANCE - (Width / 2);
 
             // Calculate total length of hold note
-            double length = Convert.ToSingle((SentakkiPlayfield.INTERSECTDISTANCE - 66) / moveTo * ((HitObject as IHasDuration).Duration));
-            if (length > SentakkiPlayfield.INTERSECTDISTANCE - 66) // Clip max length
-                length = SentakkiPlayfield.INTERSECTDISTANCE - 66;
+            double length = (float)(totalMovableDistance / animTime * (HitObject as IHasDuration).Duration);
+            if (length > totalMovableDistance) // Clip max length
+                length = totalMovableDistance;
 
             // Calculate time taken to extend to desired length
-            double extendTime = length / (SentakkiPlayfield.INTERSECTDISTANCE - 66) * moveTo;
+            double extendTime = length / totalMovableDistance * animTime;
 
             // Start strecthing
-            float extendAmount = (float)((currentProg - fadeIn) / extendTime);
-            if (extendAmount < 0) extendAmount = 0;
-            else if (extendAmount > 1) extendAmount = 1;
-
+            float extendAmount = Math.Clamp((float)((currentProg - animTime) / extendTime), 0, 1);
             note.Height = (float)(80 + (length * extendAmount));
 
-            // Calculate duration where no movement is happening (when notes are very long)
-            float idleTime = (float)((HitObject as IHasDuration).Duration - extendTime);
-
             // Move the note once idle time is over
-            float moveAmount = (float)((currentProg - fadeIn - extendTime - idleTime) / moveTo);
-            if (moveAmount < 0) moveAmount = 0;
-            else if (moveAmount > 1) moveAmount = 1;
-
-            float yDiff = SentakkiPlayfield.INTERSECTDISTANCE - 66;
-            note.Y = -26 - (yDiff * moveAmount);
+            float moveAmount = Math.Clamp((float)((currentProg - animTime - (HitObject as IHasDuration).Duration) / animTime), 0, 1);
+            note.Y = -adjustedStartPoint - (totalMovableDistance * moveAmount);
 
             // Start shrinking when the time comes
             float shrinkAmount = Math.Abs(note.Y) + note.Height - SentakkiPlayfield.INTERSECTDISTANCE - 40;
@@ -197,25 +186,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // Handle hidden and fadeIn modifications
             if (IsHidden)
             {
-                float hideAmount = (float)((currentProg - fadeIn) / (moveTo / 2));
-                if (hideAmount < 0) hideAmount = 0;
-                else if (hideAmount > 1) hideAmount = 1;
+                float hideAmount = Math.Clamp((float)((currentProg - animTime) / (animTime / 2)), 0, 1);
+                // Provide feedback, and allow users to see the length of the note
+                if (Time.Current >= HitObject.StartTime && (isHitting.Value || Auto))
+                    hideAmount /= 2;
 
-                Alpha = 1 - (1 * hideAmount / ((Time.Current >= HitObject.StartTime && (isHitting.Value || Auto)) ? 2 : 1));
+                Alpha = 1 - hideAmount;
             }
             else if (IsFadeIn)
             {
-                float fadeInAmount = (float)((currentProg - fadeIn) / moveTo);
-                if (fadeInAmount < 0) fadeInAmount = 0;
-                else if (fadeInAmount > 1) fadeInAmount = 1;
-
+                float fadeInAmount = Math.Clamp((float)((currentProg - animTime) / animTime), 0, 1);
                 Alpha = 1 * fadeInAmount;
             }
 
             // Make sure HitObjectLine is adjusted with the moving note
-            float totalMove = (float)((currentProg - fadeIn) / moveTo);
-            if (totalMove < 0) totalMove = 0;
-            else if (totalMove > 1) totalMove = 1;
+            float totalMove = Math.Clamp((float)((currentProg - animTime) / animTime), 0, 1);
 
             HitObjectLine.UpdateVisual(totalMove);
 

@@ -67,38 +67,26 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.Update();
             if (Result.HasResult) return;
 
-            double animSpeed = animationDuration.Value / 2;
-
-            double fadeIn = animSpeed * GameplaySpeed;
-            double moveTo = animSpeed * GameplaySpeed;
-            double animStart = HitObject.StartTime - moveTo - fadeIn;
+            double animTime = animationDuration.Value / 2 * GameplaySpeed;
+            double animStart = HitObject.StartTime - (animTime * 2);
             double currentProg = Clock.CurrentTime - animStart;
 
             // Calculate initial entry animation
-            float fadeAmount = (float)(currentProg / fadeIn);
-            if (fadeAmount < 0) fadeAmount = 0;
-            else if (fadeAmount > 1) fadeAmount = 1;
+            float fadeAmount = Math.Clamp((float)(currentProg / animTime), 0, 1);
 
-            CirclePiece.Alpha = (float)(1 * fadeAmount);
-            CirclePiece.Scale = new Vector2((float)(1 * fadeAmount));
+            CirclePiece.Alpha = fadeAmount;
+            CirclePiece.Scale = new Vector2(fadeAmount);
             HitObjectLine.Alpha = fadeAmount;
 
             // Calculate position
-            Vector2 positionDifference = HitObject.EndPosition - HitObject.Position;
-            float moveAmount = (float)((currentProg - fadeIn) / moveTo);
-            if (moveAmount < 0) moveAmount = 0;
-            else if (moveAmount > 1) moveAmount = 1;
-
-            CirclePiece.Position = HitObject.Position + (positionDifference * moveAmount);
+            float moveAmount = Math.Clamp((float)((currentProg - animTime) / animTime), 0, 1);
+            CirclePiece.Position = HitObject.Position + ((HitObject.EndPosition - HitObject.Position) * moveAmount);
 
             // Handle hidden and fadeIn modifications
             if (IsHidden)
             {
-                float hideAmount = (float)((currentProg - fadeIn) / (moveTo / 2));
-                if (hideAmount < 0) hideAmount = 0;
-                else if (hideAmount > 1) hideAmount = 1;
-
-                Alpha = 1 - (1 * hideAmount);
+                float hideAmount = Math.Clamp((float)((currentProg - animTime) / (animTime / 2)), 0, 1);
+                Alpha = 1 - hideAmount;
             }
             else if (IsFadeIn)
             {
