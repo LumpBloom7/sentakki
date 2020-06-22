@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using osu.Framework.Audio.Track;
 using osu.Framework.Allocation;
 using osu.Framework.Input;
@@ -39,6 +39,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new SentakkiFramedReplayInputHandler(replay);
 
         protected override ReplayRecorder CreateReplayRecorder(Replay replay) => new SentakkiReplayRecorder(replay);
+
+        public override PlayfieldAdjustmentContainer CreatePlayfieldAdjustmentContainer() => new SentakkiPlayfieldAdjustmentContainer();
 
         public override DrawableHitObject<SentakkiHitObject> CreateDrawableRepresentation(SentakkiHitObject h)
         {
