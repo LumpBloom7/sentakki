@@ -15,8 +15,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         {
         }
 
-        protected override SelectionHandler CreateSelectionHandler() => new SentakkiSelectionHandler();
-
         public override OverlaySelectionBlueprint CreateBlueprintFor(DrawableHitObject hitObject)
         {
             switch (hitObject)

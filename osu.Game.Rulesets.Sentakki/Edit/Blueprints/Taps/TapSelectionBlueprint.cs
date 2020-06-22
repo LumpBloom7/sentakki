@@ -25,6 +25,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
             CirclePiece.UpdateFrom(HitObject);
         }
 
+        public override Vector2 ScreenSpaceSelectionPoint => DrawableObject.HitArea.ScreenSpaceDrawQuad.Centre;
+
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => DrawableObject.HitArea.ReceivePositionalInputAt(screenSpacePos);
 
         public override Quad SelectionQuad => DrawableObject.HitArea.ScreenSpaceDrawQuad;
