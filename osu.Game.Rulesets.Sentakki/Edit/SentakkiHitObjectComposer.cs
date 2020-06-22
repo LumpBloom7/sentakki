@@ -5,6 +5,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Screens.Edit.Compose.Components;
 using System;
+using osu.Framework.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit
 {
@@ -15,6 +16,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         {
         }
 
-        protected override IReadOnlyList<HitObjectCompositionTool> CompositionTools => Array.Empty<HitObjectCompositionTool>();
+        protected override IReadOnlyList<HitObjectCompositionTool> CompositionTools => new HitObjectCompositionTool[]
+        {
+            new TapCompositionTool(),
+        };
     }
 }
