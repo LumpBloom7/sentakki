@@ -3,13 +3,14 @@ using osu.Game.Rulesets.Sentakki.Judgements;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
 using osuTK;
 using osuTK.Graphics;
 using osu.Framework.Extensions.Color4Extensions;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public abstract class SentakkiHitObject : HitObject
+    public abstract class SentakkiHitObject : HitObject, IHasPosition
     {
         public virtual bool IsBreak { get; set; } = false;
         public virtual bool HasTwin { get; set; } = false;
