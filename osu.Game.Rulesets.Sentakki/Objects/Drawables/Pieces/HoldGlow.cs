@@ -10,9 +10,9 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class GlowPiece : Container
+    public class HoldGlowPiece : Container
     {
-        public GlowPiece()
+        public HoldGlowPiece()
         {
             RelativeSizeAxes = Axes.Both;
             Anchor = Anchor.Centre;
@@ -30,9 +30,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 RelativeSizeAxes = Axes.Both,
                 EdgeEffect = new EdgeEffectParameters
                 {
-                    Hollow = true,
+                    Hollow = false,
                     Type = EdgeEffectType.Glow,
-                    Radius = 15,
+                    Radius = 5,
                     Colour = Colour,
                 }
             };

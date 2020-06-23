@@ -98,12 +98,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.Update();
             if (Result.HasResult) return;
+            // Used to prevent rewind visual issues
             if (needReset)
             {
-                var newEdge = circle.GlowEdgeEffect.Value;
                 circle.Size = Vector2.One;
-                newEdge.Radius = 15;
-                circle.GlowEdgeEffect.Value = newEdge;
                 currentColour = Color4.HotPink;
                 needReset = false;
             }
@@ -146,27 +144,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                     if (progress >= .25f && prevProg < .25f)
                     {
-                        var newEdge = circle.GlowEdgeEffect.Value;
                         circle.ResizeTo(1.033f, 100);
-                        newEdge.Radius = 25;
-                        circle.GlowEdgeEffect.Value = newEdge;
                         this.TransformTo(nameof(currentColour), colours.ForHitResult(HitResult.Meh), 100);
                     }
-
                     else if (progress >= .50f && prevProg < .50f)
                     {
-                        var newEdge = circle.GlowEdgeEffect.Value;
                         circle.ResizeTo(1.066f, 100);
-                        newEdge.Radius = 35;
-                        circle.GlowEdgeEffect.Value = newEdge;
                         this.TransformTo(nameof(currentColour), colours.ForHitResult(HitResult.Good), 100);
                     }
                     else if (progress >= .75f && prevProg < .75f)
                     {
-                        var newEdge = circle.GlowEdgeEffect.Value;
                         circle.ResizeTo(1.1f, 100);
-                        newEdge.Radius = 45;
-                        circle.GlowEdgeEffect.Value = newEdge;
                         this.TransformTo(nameof(currentColour), colours.ForHitResult(HitResult.Great), 100);
                     }
 

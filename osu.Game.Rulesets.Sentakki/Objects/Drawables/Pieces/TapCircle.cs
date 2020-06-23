@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private readonly CirclePiece circle;
         private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
-        private readonly GlowPiece glow;
+        private readonly ShadowPiece glow;
 
         public TapCircle()
         {
@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
             InternalChildren = new Drawable[]
             {
-                glow = new GlowPiece(),
+                glow = new ShadowPiece(),
                 circle = new CirclePiece(),
                 flash = new FlashPiece(),
                 explode = new ExplodePiece(),
