@@ -22,13 +22,13 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
         {
             base.Update();
 
-            CirclePiece.UpdateFrom(HitObject);
+            CirclePiece.UpdateFrom(DrawableObject);
         }
 
-        public override Vector2 ScreenSpaceSelectionPoint => DrawableObject.HitArea.ScreenSpaceDrawQuad.Centre;
+        public override Vector2 ScreenSpaceSelectionPoint => DrawableObject.CirclePiece.ScreenSpaceDrawQuad.Centre;
 
-        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => DrawableObject.HitArea.ReceivePositionalInputAt(screenSpacePos);
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => DrawableObject.CirclePiece.ReceivePositionalInputAt(screenSpacePos);
 
-        public override Quad SelectionQuad => DrawableObject.HitArea.ScreenSpaceDrawQuad;
+        public override Quad SelectionQuad => DrawableObject.CirclePiece.ScreenSpaceDrawQuad;
     }
 }

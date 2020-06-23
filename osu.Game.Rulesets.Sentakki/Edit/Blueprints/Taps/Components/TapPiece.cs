@@ -3,7 +3,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps.Components
@@ -37,6 +37,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps.Components
         public override void UpdateFrom(Tap hitObject)
         {
             base.UpdateFrom(hitObject);
+        }
+        public void UpdateFrom(DrawableTap drawableTap)
+        {
+            Position = drawableTap.CirclePiece.Position;
         }
     }
 }
