@@ -29,7 +29,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private readonly Container<DrawableHoldTail> tailContainer;
 
         public readonly HitReceptor HitArea;
-        private readonly HoldBody note;
+        public readonly HoldBody NoteBody;
         public readonly HitObjectLine HitObjectLine;
         protected override double InitialLifetimeOffset => 8000;
 
@@ -52,7 +52,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AlwaysPresent = true;
             AddRangeInternal(new Drawable[]{
                 HitObjectLine = new HitObjectLine(),
-                note = new HoldBody{
+                NoteBody = new HoldBody{
                     Duration = hitObject.Duration
                 },
                 headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
@@ -67,7 +67,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         if(beginHoldAt(Time.Current - Head.HitObject.StartTime))
                         {
                             Head.UpdateResult();
-                            note.Glow.FadeIn(50);
+                            NoteBody.Glow.FadeIn(50);
                         }
 
                         return true;
@@ -80,7 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Tail.UpdateResult();
                         HoldStartTime = null;
                         isHitting.Value = false;
-                        note.Glow.FadeOut(100);
+                        NoteBody.Glow.FadeOut(100);
                     },
                     NoteAngle = HitObject.Angle
                 }
@@ -153,8 +153,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // Calculate initial entry animation
             float fadeAmount = Math.Clamp((float)(currentProg / animTime), 0, 1);
             HitObjectLine.Alpha = fadeAmount;
-            note.Alpha = fadeAmount;
-            note.Scale = new Vector2(fadeAmount);
+            NoteBody.Alpha = fadeAmount;
+            NoteBody.Scale = new Vector2(fadeAmount);
 
             // This is the movable length (not including start position)
             float totalMovableDistance = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
@@ -170,16 +170,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             // Start strecthing
             float extendAmount = Math.Clamp((float)((currentProg - animTime) / extendTime), 0, 1);
-            note.Height = (float)(80 + (length * extendAmount));
+            NoteBody.Height = (float)(80 + (length * extendAmount));
 
             // Move the note once idle time is over
             float moveAmount = Math.Clamp((float)((currentProg - animTime - (HitObject as IHasDuration).Duration) / animTime), 0, 1);
-            note.Y = -adjustedStartPoint - (totalMovableDistance * moveAmount);
+            NoteBody.Y = -adjustedStartPoint - (totalMovableDistance * moveAmount);
 
             // Start shrinking when the time comes
-            float shrinkAmount = Math.Abs(note.Y) + note.Height - SentakkiPlayfield.INTERSECTDISTANCE - 40;
+            float shrinkAmount = Math.Abs(NoteBody.Y) + NoteBody.Height - SentakkiPlayfield.INTERSECTDISTANCE - 40;
             if (shrinkAmount > 0)
-                note.Height -= shrinkAmount;
+                NoteBody.Height -= shrinkAmount;
 
             // Handle hidden and fadeIn modifications
             if (IsHidden)
@@ -235,7 +235,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     double longestSurvivalTime = Tail.HitObject.HitWindows.WindowFor(HitResult.Miss);
                     using (BeginDelayedSequence((HitObject as IHasDuration).Duration + longestSurvivalTime, true))
                     {
-                        note.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                        NoteBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                             .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
                             .MoveToOffset(new Vector2(0, -100), time_fade_hit, Easing.OutCubic)
                             .FadeOut(time_fade_miss);
