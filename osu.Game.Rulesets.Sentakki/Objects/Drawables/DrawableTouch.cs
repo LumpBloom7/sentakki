@@ -95,12 +95,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
-        private readonly Bindable<double> touchAnimationDuration = new Bindable<double>(1000);
-
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager sentakkiConfigs)
         {
-            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, touchAnimationDuration);
+            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
         }
 
         // Easing functions for manual use.
@@ -112,7 +110,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.Update();
             if (Result.HasResult) return;
 
-            double fadeIn = touchAnimationDuration.Value * GameplaySpeed;
+            double fadeIn = AnimationDuration.Value * GameplaySpeed;
             double moveTo = 500 * GameplaySpeed;
             double animStart = HitObject.StartTime - fadeIn - moveTo;
             double currentProg = Clock.CurrentTime - animStart;

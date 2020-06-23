@@ -134,12 +134,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             return base.CreateNestedHitObject(hitObject);
         }
 
-        private Bindable<double> animationDuration = new Bindable<double>(1000);
-
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager settings)
         {
-            settings?.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
+            settings?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDuration);
             HitObjectLine.Colour = HitObject.NoteColor;
         }
 
@@ -148,7 +146,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.Update();
             if (Result.HasResult) return;
 
-            double animTime = animationDuration.Value / 2 * GameplaySpeed;
+            double animTime = AnimationDuration.Value / 2 * GameplaySpeed;
             double animStart = HitObject.StartTime - (animTime * 2);
             double currentProg = Clock.CurrentTime - animStart;
 

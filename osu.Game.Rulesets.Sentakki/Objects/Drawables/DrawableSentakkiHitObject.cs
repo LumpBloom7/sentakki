@@ -25,6 +25,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public bool Auto = false;
 
+        // Used in the editor
+        public bool IsVisible => Time.Current >= HitObject.StartTime - AnimationDuration.Value;
+
+        // Used for the animation update
+        protected readonly Bindable<double> AnimationDuration = new Bindable<double>(1000);
+
         protected override float SamplePlaybackPosition => (HitObject.EndPosition.X + SentakkiPlayfield.INTERSECTDISTANCE) / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
         public SentakkiAction[] HitActions { get; set; } = new[]
         {
