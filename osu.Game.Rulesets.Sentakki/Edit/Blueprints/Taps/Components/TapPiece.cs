@@ -15,7 +15,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps.Components
         public TapPiece()
         {
             Size = new Vector2(80);
-            Colour = Colour4.GreenYellow;
 
             CornerRadius = Size.X / 2;
             CornerExponent = 2;
@@ -57,6 +56,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps.Components
         {
             base.UpdateFrom(hitObject);
         }
+
         public void UpdateFrom(DrawableTap drawableTap)
         {
             Position = drawableTap.CirclePiece.Position;

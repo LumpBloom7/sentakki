@@ -26,7 +26,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds.Components
                     Anchor = Anchor.Centre,
                     Origin = Anchor.BottomCentre,
                     Size = new Vector2(80),
-                    Colour = Colour4.GreenYellow,
                     CornerRadius = Size.X / 2,
                     CornerExponent = 2,
                     Masking = true,
@@ -91,6 +90,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds.Components
         {
             base.UpdateFrom(hitObject);
         }
+
         public void UpdateFrom(DrawableHold drawableHold)
         {
             notebody.Position = drawableHold.NoteBody.Position;
