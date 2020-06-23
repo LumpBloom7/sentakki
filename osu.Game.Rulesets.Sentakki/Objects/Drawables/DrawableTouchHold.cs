@@ -98,9 +98,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.Update();
             if (Result.HasResult) return;
+            // Used to prevent rewind visual issues
             if (needReset)
             {
                 circle.Size = Vector2.One;
+                currentColour = Color4.HotPink;
+                needReset = false;
             }
 
             double fadeIn = touchAnimationDuration.Value * GameplaySpeed;
@@ -145,7 +148,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         circle.ResizeTo(1.033f, 100);
                         this.TransformTo(nameof(currentColour), colours.ForHitResult(HitResult.Meh), 100);
                     }
-
                     else if (progress >= .50f && prevProg < .50f)
                     {
                         circle.ResizeTo(1.066f, 100);
