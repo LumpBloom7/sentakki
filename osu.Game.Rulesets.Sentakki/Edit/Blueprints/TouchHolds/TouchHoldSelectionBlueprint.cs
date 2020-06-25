@@ -27,6 +27,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => DrawableObject.ReceivePositionalInputAt(screenSpacePos);
 
-        public override Quad SelectionQuad => GetCorrectedQuad(DrawableObject.ScreenSpaceDrawQuad);
+        public override Quad SelectionQuad => SelectionPiece.ScreenSpaceDrawQuad;
     }
 }

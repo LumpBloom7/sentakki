@@ -2,6 +2,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Primitives;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
@@ -12,22 +13,17 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds.Components
 {
     public class HoldSelection : BlueprintPiece<Hold>
     {
+        // This needs to be shrunk because the AABB box has larger margins for some reason
+        public Quad SelectionBoundaries => notebody.ScreenSpaceDrawQuad.AABBFloat.Shrink(10f);
         private Container notebody;
         public HoldSelection()
         {
-            Size = new Vector2(80);
-            Position = Vector2.Zero;
-            Anchor = Anchor.Centre;
-            Origin = Anchor.Centre;
-
-            AddRangeInternal(new Drawable[]{
-                notebody = new Container{
+            InternalChildren = new Drawable[]{
+                notebody = new CircularContainer{
                     Position = new Vector2(0, -26),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.BottomCentre,
                     Size = new Vector2(80),
-                    CornerRadius = Size.X / 2,
-                    CornerExponent = 2,
                     Masking = true,
                     BorderColour = Colour4.White,
                     BorderThickness = 5,
@@ -77,7 +73,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds.Components
                         }
                     },
                 }
-            });
+            };
         }
 
         [BackgroundDependencyLoader]
