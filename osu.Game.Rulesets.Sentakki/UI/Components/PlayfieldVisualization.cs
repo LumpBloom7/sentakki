@@ -12,6 +12,7 @@ using osu.Game.Graphics;
 using osu.Game.Skinning;
 using System;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Utils;
@@ -126,22 +127,16 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             var track = beatmap.Value.TrackLoaded ? beatmap.Value.Track : null;
             var effect = beatmap.Value.BeatmapLoaded ? beatmap.Value.Beatmap?.ControlPointInfo.EffectPointAt(track?.CurrentTime ?? Time.Current) : null;
 
-            float[] temporalAmplitudes = track?.CurrentAmplitudes.FrequencyAmplitudes;
+            if (!effect?.KiaiMode ?? false)
+                return;
+
+            ReadOnlySpan<float> temporalAmplitudes = (track?.CurrentAmplitudes ?? ChannelAmplitudes.Empty).FrequencyAmplitudes.Span;
 
             for (int i = 0; i < bars_per_visualiser; i++)
             {
-                if (track?.IsRunning ?? false)
-                {
-                    float targetAmplitude = (temporalAmplitudes?[(i + indexOffset) % bars_per_visualiser] ?? 0) * (effect?.KiaiMode == true ? 1 : 0f);
-                    if (targetAmplitude > frequencyAmplitudes[i])
-                        frequencyAmplitudes[i] = targetAmplitude;
-                }
-                else
-                {
-                    int index = (i + index_change) % bars_per_visualiser;
-                    if (frequencyAmplitudes[index] > frequencyAmplitudes[i])
-                        frequencyAmplitudes[i] = frequencyAmplitudes[index];
-                }
+                float targetAmplitude = temporalAmplitudes[(i + indexOffset) % bars_per_visualiser];
+                if (targetAmplitude > frequencyAmplitudes[i])
+                    frequencyAmplitudes[i] = targetAmplitude;
             }
 
             indexOffset = (indexOffset + index_change) % bars_per_visualiser;
