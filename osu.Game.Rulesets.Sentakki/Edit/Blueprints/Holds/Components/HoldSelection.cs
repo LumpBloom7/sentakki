@@ -88,7 +88,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds.Components
 
         public override void UpdateFrom(Hold hitObject)
         {
-            base.UpdateFrom(hitObject);
+            //base.UpdateFrom(hitObject);
+            Rotation = hitObject.Angle;
+            notebody.Position = hitObject.EndPosition;
         }
 
         public void UpdateFrom(DrawableHold drawableHold)
