@@ -48,7 +48,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Position = Vector2.Zero;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Rotation = HitObject.Angle;
             AlwaysPresent = true;
             AddRangeInternal(new Drawable[]{
                 HitObjectLine = new HitObjectLine(),
@@ -85,6 +84,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     NoteAngle = HitObject.Angle
                 }
             });
+            HitObject.BindableAngle.BindValueChanged(angle => Rotation = angle.NewValue, true);
         }
 
         protected override void AddNestedHitObject(DrawableHitObject hitObject)

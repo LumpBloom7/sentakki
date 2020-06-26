@@ -28,14 +28,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Anchor = Anchor.Centre;
             AlwaysPresent = true;
             AddRangeInternal(new Drawable[] {
-                HitObjectLine = new HitObjectLine
-                {
-                    Rotation = HitObject.Angle,
-                },
+                HitObjectLine = new HitObjectLine(),
                 CirclePiece = new TapCircle()
                 {
                     Scale = new Vector2(0f),
-                    Rotation = hitObject.Angle,
                     Position = HitObject.Position
                 },
                 HitArea = new HitReceptor()
@@ -49,9 +45,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         return true;
                     },
                     Position = hitObject.EndPosition,
-                    NoteAngle = HitObject.Angle
                 },
             });
+
+            HitObject.BindableAngle.BindValueChanged(angle =>
+            {
+                HitObjectLine.Rotation = angle.NewValue;
+                HitArea.NoteAngle = angle.NewValue;
+                HitArea.Position = hitObject.EndPosition;
+            }, true);
         }
 
         [BackgroundDependencyLoader(true)]
