@@ -47,7 +47,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
             EndPlacement(true);
         }
 
-
         protected override bool OnMouseDown(MouseDownEvent e)
         {
             if (e.Button != MouseButton.Left)
@@ -56,8 +55,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
             BeginPlacement(true);
             return true;
         }
-
-        private double firstTime = 0;
 
         public override void UpdatePosition(SnapResult result)
         {
@@ -72,15 +69,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
                 var angle = path.GetAngleFromPath();
 
                 HitObject.Angle = angle;
-
                 HitObject.EndPosition = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE + 40);
-
-                HitObject.StartTime = EditorClock.CurrentTimeAccurate;
-                firstTime = EditorClock.CurrentTimeAccurate;
             }
             else
             {
-                HitObject.EndTime = EditorClock.CurrentTimeAccurate;
+                HitObject.EndTime = EditorClock.CurrentTime;
             }
         }
     }

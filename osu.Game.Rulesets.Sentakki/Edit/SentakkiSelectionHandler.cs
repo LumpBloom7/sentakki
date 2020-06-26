@@ -12,17 +12,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 {
     public class SentakkiSelectionHandler : SelectionHandler
     {
-
-        public SentakkiSelectionHandler()
-        {
-            RelativeSizeAxes = Axes.None;
-        }
         public override bool HandleMovement(MoveSelectionEvent moveEvent)
         {
             if (SelectedBlueprints.Count() > 1)
                 return true;
 
-            //Vector2 newPos;
             foreach (var h in SelectedHitObjects.OfType<SentakkiHitObject>())
             {
                 if (h is TouchHold)
