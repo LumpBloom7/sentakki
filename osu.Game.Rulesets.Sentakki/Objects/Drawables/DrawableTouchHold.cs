@@ -116,7 +116,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             // Calculate progressbar fill
             float fillAmount = Math.Clamp((float)((currentProg - fadeIn) / (HitObject as TouchHold).Duration), 0, 1);
-            circle.Progress.Current.Value = fillAmount;
+            circle.Progress.Current.Value = float.IsNaN(fillAmount) ? 0 : fillAmount;
 
             if (IsHidden)
             {
