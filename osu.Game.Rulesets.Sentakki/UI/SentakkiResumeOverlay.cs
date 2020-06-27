@@ -6,6 +6,7 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Screens.Play;
 using osuTK.Graphics;
+using System;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -13,8 +14,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
     {
         protected override string Message => "Prepare for unforeseen consequences...";
 
-        private double timePassed = 500;
-        private Bindable<int> tickCount = new Bindable<int>(3);
+        private double timePassed = 3500;
+        private Bindable<int> tickCount = new Bindable<int>(4);
 
         private OsuSpriteText counterText;
         private readonly SkinnableSound countSound;
@@ -36,33 +37,29 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 },
                 countSound = new SkinnableSound(new SampleInfo("count"))
             };
-            tickCount.BindValueChanged(ticks => counterText.Text = ticks.NewValue.ToString());
+            tickCount.BindValueChanged(
+                ticks =>
+                {
+                    counterText.Text = (ticks.NewValue == 4) ? "" : ticks.NewValue.ToString();
+                    if (ticks.NewValue % 4 != 0) countSound?.Play();
+                    if (ticks.NewValue == 0) Resume();
+                }
+            );
         }
 
         protected override void Update()
         {
             base.Update();
-            if (tickCount.Value > 0)
-            {
-                timePassed += Clock.ElapsedFrameTime;
-                if (timePassed > 1000)
-                {
-                    timePassed %= 1000;
-                    --tickCount.Value;
-                    if (tickCount.Value > 0)
-                        countSound?.Play();
-                }
-                if (tickCount.Value == 0)
-                    Resume();
-            }
+            timePassed -= Clock.ElapsedFrameTime;
+            tickCount.Value = (int)Math.Ceiling(timePassed / 1000);
         }
 
         protected override void PopIn()
         {
             base.PopIn();
-            tickCount.Value = 4;
-            counterText.Text = "";
-            timePassed = 500;
+
+            // Reset the countdown
+            timePassed = 3500;
         }
     }
 }
