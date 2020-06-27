@@ -5,6 +5,8 @@ using osu.Game.Audio;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Screens.Play;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osuTK.Graphics;
 using System;
 
@@ -19,6 +21,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private OsuSpriteText counterText;
         private readonly SkinnableSound countSound;
+
+        private SentakkiCursorContainer localCursorContainer;
+
+        public override CursorContainer LocalCursor => State.Value == Visibility.Visible ? localCursorContainer : null;
 
         public SentakkiResumeOverlay()
         {
@@ -60,6 +66,26 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             // Reset the countdown
             timePassed = 3500;
+
+            GameplayCursor.ActiveCursor.Hide();
+
+            if (localCursorContainer == null)
+            {
+                Add(localCursorContainer = new SentakkiCursorContainer());
+                localCursorContainer.MoveTo(GameplayCursor.ActiveCursor.Position);
+            }
+
+        }
+        protected override void PopOut()
+        {
+            base.PopOut();
+
+            if (localCursorContainer != null && GameplayCursor?.ActiveCursor != null)
+                GameplayCursor.ActiveCursor.Position = localCursorContainer.Position;
+
+            localCursorContainer?.Expire();
+            localCursorContainer = null;
+            GameplayCursor?.ActiveCursor?.Show();
         }
     }
 }
