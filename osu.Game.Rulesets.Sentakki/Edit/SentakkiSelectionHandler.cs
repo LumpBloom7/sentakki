@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System.Linq;
+using System;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Screens.Edit.Compose.Components;
@@ -19,27 +20,40 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
             foreach (var h in SelectedHitObjects.OfType<SentakkiHitObject>())
             {
-                if (h is TouchHold)
-                {
-                    // Spinners don't support position adjustments
-                    continue;
-                }
                 var newPos = ToLocalSpace(moveEvent.ScreenSpacePosition);
-                newPos.Y = -newPos.Y;
-                var path = newPos.GetDegreesFromPosition(new Vector2(300, -300)).GetNotePathFromDegrees();
-                var angle = path.GetAngleFromPath();
+                newPos = new Vector2(newPos.X - 300, -(newPos.Y - 300));
 
-                if (h is Hold)
+                switch (h)
                 {
-                    h.EndPosition = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE + 40);
-                }
-                else if (h is Tap)
-                {
-                    h.Position = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.NOTESTARTDISTANCE, angle);
-                    h.EndPosition = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, angle);
-                }
+                    case TouchHold _:
+                        continue;
+                    case Touch touch:
+                    {
+                        float angle = newPos.GetDegreesFromPosition(Vector2.Zero);
+                        float distance = Math.Clamp(Vector2.Distance(newPos, Vector2.Zero), 0, 200);
+                        newPos = SentakkiExtensions.GetCircularPosition(distance, angle);
 
-                h.Angle = angle;
+                        touch.Position = newPos;
+                        break;
+                    }
+                    case Tap _:
+                    {
+                        var path = newPos.GetDegreesFromPosition(Vector2.Zero).GetNotePathFromDegrees();
+                        var angle = path.GetAngleFromPath();
+                        h.Position = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.NOTESTARTDISTANCE, angle);
+                        h.EndPosition = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, angle);
+                        h.Angle = angle;
+                        break;
+                    }
+                    case Hold _:
+                    {
+                        var path = newPos.GetDegreesFromPosition(Vector2.Zero).GetNotePathFromDegrees();
+                        var angle = path.GetAngleFromPath();
+                        h.EndPosition = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE + 40);
+                        h.Angle = angle;
+                        break;
+                    }
+                }
             }
             return true;
         }

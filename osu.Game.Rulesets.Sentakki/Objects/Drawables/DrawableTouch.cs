@@ -108,6 +108,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void Update()
         {
             base.Update();
+            Position = HitObject.Position;
             if (Result.HasResult) return;
 
             double fadeIn = AnimationDuration.Value * GameplaySpeed;
