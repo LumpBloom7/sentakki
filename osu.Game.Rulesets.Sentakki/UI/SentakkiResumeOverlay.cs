@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 {
     public class SentakkiResumeOverlay : ResumeOverlay
     {
-        protected override string Message => "Prepare for unforeseen consequences...";
+        protected override string Message => "Get ready!";
 
         private double timePassed = 3500;
         private Bindable<int> tickCount = new Bindable<int>(4);
@@ -74,8 +74,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 Add(localCursorContainer = new SentakkiCursorContainer());
                 localCursorContainer.MoveTo(GameplayCursor.ActiveCursor.Position);
             }
-
         }
+
         protected override void PopOut()
         {
             base.PopOut();
