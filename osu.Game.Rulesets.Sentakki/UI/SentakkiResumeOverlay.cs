@@ -48,7 +48,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 {
                     counterText.Text = (ticks.NewValue == 4) ? "" : ticks.NewValue.ToString();
                     if (ticks.NewValue % 4 != 0) countSound?.Play();
-                    if (ticks.NewValue == 0) Resume();
+                    if (ticks.NewValue <= 0) Resume();
                 }
             );
         }
