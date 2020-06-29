@@ -22,6 +22,8 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.UI;
 using System.Collections.Generic;
 using System.Linq;
+using osu.Game.Rulesets.Sentakki.Statistics;
+using osuTK;
 
 
 namespace osu.Game.Rulesets.Sentakki
@@ -108,6 +110,17 @@ namespace osu.Game.Rulesets.Sentakki
                     {
                         RelativeSizeAxes = Axes.X,
                         Height = 250
+                    })
+                }
+            },
+            new StatisticRow
+            {
+                Columns = new[]
+                {
+                    new StatisticItem("Judgement Distribution", new JudgementChart(score.HitEvents)
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        Size = new Vector2(1, 250)
                     }),
                 }
             }

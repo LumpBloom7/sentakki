@@ -47,6 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new NoteEntry<Tap>(hitEvents){Position = new Vector2(0, 0)},
                 new NoteEntry<Hold>(hitEvents){Position = new Vector2(0, .2f)},
                 new NoteEntry<Touch>(hitEvents){Position = new Vector2(0, .4f)},
+                new NoteEntry<TouchHold>(hitEvents){Position = new Vector2(0, .6f)},
             });
         }
         public class NoteEntry<T> : Container where T : SentakkiHitObject, new()
