@@ -14,12 +14,14 @@ using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Mods;
 using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.Sentakki.Scoring;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Replays.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.UI;
 using System.Collections.Generic;
+using System.Linq;
 
 
 namespace osu.Game.Rulesets.Sentakki
