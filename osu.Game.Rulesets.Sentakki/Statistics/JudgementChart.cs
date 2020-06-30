@@ -1,37 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
-using osu.Framework.Utils;
-using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Scoring;
 using osuTK;
-using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Textures;
-using osu.Framework.Input.Bindings;
-using osu.Game.Configuration;
-using osu.Game.Overlays.Settings;
-using osu.Game.Screens.Ranking.Statistics;
-using osu.Game.Rulesets.Configuration;
-using osu.Game.Rulesets.Difficulty;
-using osu.Game.Rulesets.Sentakki.Beatmaps;
-using osu.Game.Rulesets.Sentakki.Configuration;
-using osu.Game.Rulesets.Sentakki.Mods;
-using osu.Game.Rulesets.Sentakki.Replays;
-using osu.Game.Rulesets.Sentakki.Scoring;
-using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Replays.Types;
+
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.UI;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Statistics
@@ -42,24 +21,32 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
         {
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
-            Size = new Vector2(250, 150);
+            Size = new Vector2(500, 150);
             AddRangeInternal(new Drawable[]{
-                new NoteEntry<Tap>(hitEvents){Position = new Vector2(0, 0)},
-                new NoteEntry<Hold>(hitEvents){Position = new Vector2(0, .2f)},
-                new NoteEntry<Touch>(hitEvents){Position = new Vector2(0, .4f)},
-                new NoteEntry<TouchHold>(hitEvents){Position = new Vector2(0, .6f)},
+                new NoteEntry("Tap",hitEvents.Where(e=> e.HitObject is Tap && !(e.HitObject as SentakkiHitObject).IsBreak).ToList()){
+                    Position = new Vector2(0, 0)
+                },
+                new NoteEntry("Hold",hitEvents.Where(e=> e.HitObject is Hold && !(e.HitObject as SentakkiHitObject).IsBreak).ToList()){
+                    Position = new Vector2(0, .2f)
+                },
+                new NoteEntry("Touch",hitEvents.Where(e=> e.HitObject is Touch).ToList()){
+                    Position = new Vector2(0, .4f)
+                },
+                new NoteEntry("Touch Hold",hitEvents.Where(e=> e.HitObject is TouchHold).ToList()){
+                    Position = new Vector2(0, .6f)
+                },
+                new NoteEntry("Break",hitEvents.Where(e=> (e.HitObject as SentakkiHitObject).IsBreak).ToList()){
+                    Position = new Vector2(0, .8f)
+                },
             });
         }
-        public class NoteEntry<T> : Container where T : SentakkiHitObject, new()
+        public class NoteEntry : Container
         {
             private Container progressBox;
-            private List<HitEvent> events;
-            public NoteEntry(List<HitEvent> hitEvents)
+            public NoteEntry(string objectName, List<HitEvent> hitEvents)
             {
-                T tmp = new T();
                 Anchor = Anchor.TopCentre;
                 Origin = Anchor.TopCentre;
-                events = hitEvents.Where(e => e.HitObject.GetType() == tmp.GetType() && !(e.HitObject as SentakkiHitObject).IsBreak).ToList();
                 RelativePositionAxes = Axes.Both;
                 RelativeSizeAxes = Axes.Both;
                 Size = new Vector2(1, .2f);
@@ -81,13 +68,13 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                         Size = new Vector2(.33f, 1),
                         Child = new OsuSpriteText
                         {
-                            Colour = Color4.Blue,
+                            Colour = Color4Extensions.FromHex("#435ca6"),
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Text = typeof(T).Name.ToUpper(),
+                            Text = objectName.ToUpper(),
                             Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold)
                         }
-                    },
+        },
                     progressBox = new Container{ // Centre
                         RelativeSizeAxes = Axes.Both,
                         Origin = Anchor.Centre,
@@ -101,9 +88,10 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                                 RelativeSizeAxes = Axes.Both,
                                 Colour = Color4.DarkGray,
                             }
-                        }
+}
                     },
-                    new Container{ // Right
+                    new Container
+                    { // Right
                         RelativeSizeAxes = Axes.Both,
                         Origin = Anchor.CentreRight,
                         Anchor = Anchor.CentreRight,
@@ -113,7 +101,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                             Colour = Color4.Blue,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Text = events.Count.ToString(),
+                            Text = hitEvents.Count.ToString(),
                             Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold)
                         }
                     },
@@ -123,7 +111,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 float GoodCount = 0;
                 float GreatCount = 0;
 
-                foreach (var e in events)
+                foreach (var e in hitEvents)
                 {
                     switch (e.Result)
                     {
@@ -141,9 +129,9 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 }
 
                 progressBox.AddRange(new Drawable[]{
-                    new ProgressBox(HitResult.Meh, MehCount/events.Count),
-                    new ProgressBox(HitResult.Good, GoodCount/events.Count),
-                    new ProgressBox(HitResult.Great, GreatCount/events.Count)
+                    new ProgressBox(HitResult.Meh, MehCount/hitEvents.Count),
+                    new ProgressBox(HitResult.Good, GoodCount/hitEvents.Count),
+                    new ProgressBox(HitResult.Great, GreatCount/hitEvents.Count)
                 });
             }
             private class ProgressBox : Container
