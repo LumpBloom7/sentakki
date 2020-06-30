@@ -31,26 +31,32 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new NoteEntry
                 {
                     ObjectName = "Hold",
-                    HitEvents = hitEvents.Where(e=> (e.HitObject is Hold.HoldHead || e.HitObject is Hold.HoldTail) && !(e.HitObject as SentakkiHitObject).IsBreak).ToList(),
-                    Position = new Vector2(0, .2f)
+                    HitEvents = hitEvents.Where(e => (e.HitObject is Hold.HoldHead || e.HitObject is Hold.HoldTail) && !(e.HitObject as SentakkiHitObject).IsBreak).ToList(),
+                    Position = new Vector2(0, .16f)
+                },
+                new NoteEntry
+                {
+                    ObjectName = "Slide",
+                    HitEvents = new List<HitEvent>(),
+                    Position = new Vector2(0, .32f)
                 },
                 new NoteEntry
                 {
                     ObjectName = "Touch",
-                    HitEvents = hitEvents.Where(e=> e.HitObject is Touch).ToList(),
-                    Position = new Vector2(0, .4f)
+                    HitEvents = hitEvents.Where(e => e.HitObject is Touch).ToList(),
+                    Position = new Vector2(0, .48f)
                 },
                 new NoteEntry
                 {
                     ObjectName = "Touch Hold",
-                    HitEvents = hitEvents.Where(e=> e.HitObject is TouchHold).ToList(),
-                    Position = new Vector2(0, .6f)
+                    HitEvents = hitEvents.Where(e => e.HitObject is TouchHold).ToList(),
+                    Position = new Vector2(0, .64f)
                 },
                 new NoteEntry
                 {
                     ObjectName = "Break",
-                    HitEvents = hitEvents.Where(e=> (e.HitObject as SentakkiHitObject).IsBreak).ToList(),
-                    Position = new Vector2(0, .8f)
+                    HitEvents = hitEvents.Where(e => (e.HitObject as SentakkiHitObject).IsBreak).ToList(),
+                    Position = new Vector2(0, .80f)
                 },
             });
         }
@@ -94,7 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 Origin = Anchor.TopCentre;
                 RelativePositionAxes = Axes.Both;
                 RelativeSizeAxes = Axes.Both;
-                Size = new Vector2(1, .2f);
+                Size = new Vector2(1, .16f);
                 Masking = true;
                 BorderThickness = 2;
                 BorderColour = borderColour;
