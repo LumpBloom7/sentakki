@@ -52,14 +52,14 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 Size = new Vector2(1, .2f);
                 Masking = true;
                 BorderThickness = 2;
-                BorderColour = Color4.Blue;
+                BorderColour = Color4Extensions.FromHex("#98b8df");
                 CornerRadius = 5;
                 CornerExponent = 2.5f;
 
                 InternalChildren = new Drawable[]{
                     new Box{
                         RelativeSizeAxes = Axes.Both,
-                        Colour = Color4.LightBlue,
+                        Colour = Color4Extensions.FromHex("#DCE9F9"),
                     },
                     new Container{ // Left
                         RelativeSizeAxes = Axes.Both,
@@ -68,13 +68,13 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                         Size = new Vector2(.33f, 1),
                         Child = new OsuSpriteText
                         {
-                            Colour = Color4Extensions.FromHex("#435ca6"),
+                            Colour = Color4Extensions.FromHex("#3c5394"),
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             Text = objectName.ToUpper(),
-                            Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold)
+                            Font = OsuFont.Torus.With(size: 20, weight: FontWeight.Bold)
                         }
-        },
+                    },
                     progressBox = new Container{ // Centre
                         RelativeSizeAxes = Axes.Both,
                         Origin = Anchor.Centre,
@@ -98,7 +98,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                         Size = new Vector2(.33f, 1),
                         Child = new OsuSpriteText
                         {
-                            Colour = Color4.Blue,
+                            Colour = Color4Extensions.FromHex("#3c5394"),
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             Text = hitEvents.Count.ToString(),
