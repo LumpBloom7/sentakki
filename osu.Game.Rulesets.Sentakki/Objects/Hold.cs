@@ -85,7 +85,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             }
         }
 
-        public readonly Tap Head = new Tap();
+        public readonly HoldHead Head = new HoldHead();
 
         public readonly HoldTail Tail = new HoldTail();
 

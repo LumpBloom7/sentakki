@@ -122,7 +122,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         AccentColour = { BindTarget = AccentColour }
                     };
 
-                case Tap _:
+                case HoldHead _:
                     return new DrawableHoldHead(this)
                     {
                         Anchor = Anchor.TopCentre,

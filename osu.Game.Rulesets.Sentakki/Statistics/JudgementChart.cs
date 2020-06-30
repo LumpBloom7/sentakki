@@ -20,6 +20,8 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
     {
         public JudgementChart(List<HitEvent> hitEvents)
         {
+
+            hitEvents = hitEvents.Where(e => !(e.HitObject is Hold)).ToList();
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Size = new Vector2(500, 150);
@@ -33,7 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new NoteEntry
                 {
                     ObjectName = "Hold",
-                    HitEvents = hitEvents.Where(e=> e.HitObject is Hold && !(e.HitObject as SentakkiHitObject).IsBreak).ToList(),
+                    HitEvents = hitEvents.Where(e=> (e.HitObject is HoldHead || e.HitObject is HoldTail) && !(e.HitObject as SentakkiHitObject).IsBreak).ToList(),
                     Position = new Vector2(0, .2f)
                 },
                 new NoteEntry
