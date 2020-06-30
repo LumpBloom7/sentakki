@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Extensions.Color4Extensions;
@@ -9,10 +8,9 @@ using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osuTK;
-
 using osu.Game.Rulesets.Scoring;
 using osuTK.Graphics;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Statistics
 {
@@ -20,8 +18,6 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
     {
         public JudgementChart(List<HitEvent> hitEvents)
         {
-
-            hitEvents = hitEvents.Where(e => !(e.HitObject is Hold)).ToList();
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Size = new Vector2(500, 150);
@@ -35,7 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new NoteEntry
                 {
                     ObjectName = "Hold",
-                    HitEvents = hitEvents.Where(e=> (e.HitObject is HoldHead || e.HitObject is HoldTail) && !(e.HitObject as SentakkiHitObject).IsBreak).ToList(),
+                    HitEvents = hitEvents.Where(e=> (e.HitObject is Hold.HoldHead || e.HitObject is Hold.HoldTail) && !(e.HitObject as SentakkiHitObject).IsBreak).ToList(),
                     Position = new Vector2(0, .2f)
                 },
                 new NoteEntry

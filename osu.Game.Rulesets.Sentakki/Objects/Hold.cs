@@ -100,5 +100,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public override Judgement CreateJudgement() => new IgnoreJudgement();
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
+
+        public class HoldHead : SentakkiHitObject { }
+        public class HoldTail : SentakkiHitObject { }
     }
 }
