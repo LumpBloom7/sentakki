@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Extensions.Color4Extensions;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -23,19 +24,34 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
             Anchor = Anchor.Centre;
             Size = new Vector2(500, 150);
             AddRangeInternal(new Drawable[]{
-                new NoteEntry("Tap",hitEvents.Where(e=> e.HitObject is Tap && !(e.HitObject as SentakkiHitObject).IsBreak).ToList()){
+                new NoteEntry
+                {
+                    ObjectName = "Tap",
+                    HitEvents = hitEvents.Where(e=> e.HitObject is Tap && !(e.HitObject as SentakkiHitObject).IsBreak).ToList(),
                     Position = new Vector2(0, 0)
                 },
-                new NoteEntry("Hold",hitEvents.Where(e=> e.HitObject is Hold && !(e.HitObject as SentakkiHitObject).IsBreak).ToList()){
+                new NoteEntry
+                {
+                    ObjectName = "Hold",
+                    HitEvents = hitEvents.Where(e=> e.HitObject is Hold && !(e.HitObject as SentakkiHitObject).IsBreak).ToList(),
                     Position = new Vector2(0, .2f)
                 },
-                new NoteEntry("Touch",hitEvents.Where(e=> e.HitObject is Touch).ToList()){
+                new NoteEntry
+                {
+                    ObjectName = "Touch",
+                    HitEvents = hitEvents.Where(e=> e.HitObject is Touch).ToList(),
                     Position = new Vector2(0, .4f)
                 },
-                new NoteEntry("Touch Hold",hitEvents.Where(e=> e.HitObject is TouchHold).ToList()){
+                new NoteEntry
+                {
+                    ObjectName = "Touch Hold",
+                    HitEvents = hitEvents.Where(e=> e.HitObject is TouchHold).ToList(),
                     Position = new Vector2(0, .6f)
                 },
-                new NoteEntry("Break",hitEvents.Where(e=> (e.HitObject as SentakkiHitObject).IsBreak).ToList()){
+                new NoteEntry
+                {
+                    ObjectName = "Break",
+                    HitEvents = hitEvents.Where(e=> (e.HitObject as SentakkiHitObject).IsBreak).ToList(),
                     Position = new Vector2(0, .8f)
                 },
             });
@@ -43,75 +59,18 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
         public class NoteEntry : Container
         {
             private Container progressBox;
-            public NoteEntry(string objectName, List<HitEvent> hitEvents)
+
+            public string ObjectName = "Object";
+            public List<HitEvent> HitEvents;
+
+            [BackgroundDependencyLoader]
+            private void load(OsuColour colours)
             {
-                Anchor = Anchor.TopCentre;
-                Origin = Anchor.TopCentre;
-                RelativePositionAxes = Axes.Both;
-                RelativeSizeAxes = Axes.Both;
-                Size = new Vector2(1, .2f);
-                Masking = true;
-                BorderThickness = 2;
-                BorderColour = Color4Extensions.FromHex("#98b8df");
-                CornerRadius = 5;
-                CornerExponent = 2.5f;
-
-                InternalChildren = new Drawable[]{
-                    new Box{
-                        RelativeSizeAxes = Axes.Both,
-                        Colour = Color4Extensions.FromHex("#DCE9F9"),
-                    },
-                    new Container{ // Left
-                        RelativeSizeAxes = Axes.Both,
-                        Origin = Anchor.CentreLeft,
-                        Anchor = Anchor.CentreLeft,
-                        Size = new Vector2(.33f, 1),
-                        Child = new OsuSpriteText
-                        {
-                            Colour = Color4Extensions.FromHex("#3c5394"),
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Text = objectName.ToUpper(),
-                            Font = OsuFont.Torus.With(size: 20, weight: FontWeight.Bold)
-                        }
-                    },
-                    progressBox = new Container{ // Centre
-                        RelativeSizeAxes = Axes.Both,
-                        Origin = Anchor.Centre,
-                        Anchor = Anchor.Centre,
-                        Size = new Vector2(.34f, .80f),
-                        Masking = true,
-                        BorderThickness = 2,
-                        BorderColour = Color4.Black,
-                        Children = new Drawable[]{
-                            new Box{
-                                RelativeSizeAxes = Axes.Both,
-                                Colour = Color4.DarkGray,
-                            }
-}
-                    },
-                    new Container
-                    { // Right
-                        RelativeSizeAxes = Axes.Both,
-                        Origin = Anchor.CentreRight,
-                        Anchor = Anchor.CentreRight,
-                        Size = new Vector2(.33f, 1),
-                        Child = new OsuSpriteText
-                        {
-                            Colour = Color4Extensions.FromHex("#3c5394"),
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Text = hitEvents.Count.ToString(),
-                            Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold)
-                        }
-                    },
-                };
-
                 float MehCount = 0;
                 float GoodCount = 0;
                 float GreatCount = 0;
 
-                foreach (var e in hitEvents)
+                foreach (var e in HitEvents)
                 {
                     switch (e.Result)
                     {
@@ -128,19 +87,92 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                     }
                 }
 
+                Color4 textColour = HitEvents.Count == 0 ? Color4Extensions.FromHex("bcbcbc") : (GreatCount == HitEvents.Count) ? Color4.White : Color4Extensions.FromHex("#3c5394");
+                Color4 boxColour = HitEvents.Count == 0 ? Color4Extensions.FromHex("808080") : (GreatCount == HitEvents.Count) ? Color4Extensions.FromHex("fda908") : Color4Extensions.FromHex("#DCE9F9");
+                Color4 borderColour = HitEvents.Count == 0 ? Color4Extensions.FromHex("536277") : (GreatCount == HitEvents.Count) ? Color4Extensions.FromHex("fda908") : Color4Extensions.FromHex("#98b8df");
+                Color4 numberColour = (GreatCount == HitEvents.Count && HitEvents.Count > 0) ? Color4.White : Color4Extensions.FromHex("#3c5394");
+
+                Anchor = Anchor.TopCentre;
+                Origin = Anchor.TopCentre;
+                RelativePositionAxes = Axes.Both;
+                RelativeSizeAxes = Axes.Both;
+                Size = new Vector2(1, .2f);
+                Masking = true;
+                BorderThickness = 2;
+                BorderColour = borderColour;
+                CornerRadius = 5;
+                CornerExponent = 2.5f;
+
+                InternalChildren = new Drawable[]{
+                    new Box{
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = boxColour,
+                    },
+                    new Container{ // Left
+                        RelativeSizeAxes = Axes.Both,
+                        Origin = Anchor.CentreLeft,
+                        Anchor = Anchor.CentreLeft,
+                        Size = new Vector2(.33f, 1),
+                        Child = new OsuSpriteText
+                        {
+                            Colour = textColour,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Text = ObjectName.ToUpper(),
+                            Font = OsuFont.Torus.With(size: 20, weight: FontWeight.Bold)
+                        }
+                    },
+                    progressBox = new Container{ // Centre
+                        RelativeSizeAxes = Axes.Both,
+                        Origin = Anchor.Centre,
+                        Anchor = Anchor.Centre,
+                        Size = new Vector2(.34f, .80f),
+                        Masking = true,
+                        BorderThickness = 2,
+                        BorderColour = Color4.Black,
+                        Children = new Drawable[]{
+                            new Box{
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = (HitEvents.Count ==0) ? Color4Extensions.FromHex("343434"):Color4.DarkGray,
+                            }
+}
+                    },
+                    new Container
+                    { // Right
+                        RelativeSizeAxes = Axes.Both,
+                        Origin = Anchor.CentreRight,
+                        Anchor = Anchor.CentreRight,
+                        Size = new Vector2(.33f, 1),
+                        Child = new OsuSpriteText
+                        {
+                            Colour = numberColour,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Text = HitEvents.Count.ToString(),
+                            Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold)
+                        }
+                    },
+                };
+
                 progressBox.AddRange(new Drawable[]{
-                    new ProgressBox(HitResult.Meh, MehCount/hitEvents.Count),
-                    new ProgressBox(HitResult.Good, GoodCount/hitEvents.Count),
-                    new ProgressBox(HitResult.Great, GreatCount/hitEvents.Count)
+                    new ProgressBox(HitResult.Meh, MehCount/HitEvents.Count),
+                    new ProgressBox(HitResult.Good, GoodCount/HitEvents.Count),
+                    new ProgressBox(HitResult.Great, GreatCount/HitEvents.Count)
                 });
             }
             private class ProgressBox : Container
             {
-                private OsuColour colours = new OsuColour();
+                private HitResult result;
                 public ProgressBox(HitResult result, float progress)
                 {
+                    this.result = result;
                     RelativeSizeAxes = Axes.Both;
                     Size = new Vector2(float.IsNaN(progress) ? 0 : progress, 1);
+                }
+
+                [BackgroundDependencyLoader]
+                private void load(OsuColour colours)
+                {
                     Add(new Box
                     {
                         RelativeSizeAxes = Axes.Both,

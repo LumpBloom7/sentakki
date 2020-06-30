@@ -33,6 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Statistics
             new HitEvent(0,HitResult.Meh,new Tap(),new Tap(), null),
             new HitEvent(0,HitResult.Miss,new Tap(),new Tap(), null),
             new HitEvent(0,HitResult.Miss,new Tap(),new Tap(), null),
+            new HitEvent(0,HitResult.Perfect,new Hold(),new Tap(), null),
         };
         public TestSceneJudgementChart()
         {
