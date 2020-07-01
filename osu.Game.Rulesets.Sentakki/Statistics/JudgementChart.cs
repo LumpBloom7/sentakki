@@ -190,7 +190,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 {
                     using (BeginDelayedSequence(InitialLifetimeOffset, true))
                     {
-                        this.ScaleTo(1, entry_animation_duration, Easing.InOutBack).FadeIn();
+                        this.ScaleTo(1, entry_animation_duration, Easing.OutBack).FadeIn();
                         noteCounter.Current.Value = HitEvents.Count;
                     }
                 });
