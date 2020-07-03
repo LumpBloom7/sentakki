@@ -9,6 +9,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.Objects.Types;
 using osuTK;
+using osuTK.Graphics;
 using NUnit.Framework;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
@@ -32,28 +33,29 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 Origin = Anchor.Centre,
                 PathRadius = 2.5f,
                 AutoSizeAxes = Axes.None,
-                Size = new Vector2(600)
+                Size = new Vector2(600),
+                Colour = Color4.Fuchsia
             });
 
             AddSliderStep("Start Path", 0, 7, 0, p =>
             {
                 StartPath = p;
-                refreshSlide();
+                RefreshSlide();
             });
             AddSliderStep("End Path", 0, 7, 4, p =>
             {
                 EndPath = p;
-                refreshSlide();
+                RefreshSlide();
             });
             AddSliderStep("Progress", 0.0f, 1.0f, 0.0f, p =>
             {
                 progress = p;
-                refreshSlide();
+                RefreshSlide();
             });
         }
         protected abstract List<PathControlPoint> CreatePattern();
 
-        private void refreshSlide()
+        protected void RefreshSlide()
         {
             List<Vector2> vertices = new List<Vector2>();
             var path = new SliderPath(CreatePattern().ToArray());

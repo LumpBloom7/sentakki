@@ -80,17 +80,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // DX Circle Pattern
         public static List<PathControlPoint> GenerateCirclePattern(int start, int end, int rotation = +1)
         {
+
             start = start.NormalizePath();
+            end = end.NormalizePath();
+            int smaller = Math.Min(start, end);
+            int larger = Math.Max(start, end);
+            float centre = (smaller.GetAngleFromPath() + larger.GetAngleFromPath()) / 2;
+            Vector2 centreNode = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, centre == start.GetAngleFromPath() ? centre + 180 : centre) + new Vector2(300);
 
-            List<PathControlPoint> SlidePath = new List<PathControlPoint> { };
-            if (rotation >= 0)
-                for (int i = start; i <= end; ++i)
-                    SlidePath.Add(new PathControlPoint(SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, i.NormalizePath()) + new Vector2(300)));
-            else
-                for (int i = end; i >= start; --i)
-                    SlidePath.Add(new PathControlPoint(SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, i.NormalizePath()) + new Vector2(300)));
-
-            SlidePath[0].Type.Value = PathType.Catmull;
+            List<PathControlPoint> SlidePath = new List<PathControlPoint> {
+                new PathControlPoint(SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, smaller.GetAngleFromPath()+.5f)+new Vector2(300), PathType.PerfectCurve),
+                new PathControlPoint(centreNode),
+                new PathControlPoint(SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, larger) + new Vector2(300), PathType.PerfectCurve)
+            };
+            if (rotation < 0) SlidePath.Reverse();
             return SlidePath;
         }
 
