@@ -64,8 +64,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public static List<PathControlPoint> GenerateLPattern(int start, int end)
         {
             start = start.NormalizePath();
-
-            end = Math.Clamp(end.NormalizePath(), start + 1, start + 4).NormalizePath();
+            end = end.NormalizePath();
 
             Vector2 Node0Pos = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, start) + new Vector2(300);
             Vector2 Node1Pos = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, start + 6) + new Vector2(300);
