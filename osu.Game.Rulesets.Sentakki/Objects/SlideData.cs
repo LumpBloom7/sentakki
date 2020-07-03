@@ -30,13 +30,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             start = start.NormalizePath();
             Vector2 Node0Pos = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, start) + new Vector2(300);
-            Vector2 Node1Pos = getPositionInBetween(Node0Pos, SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, start + 5)) + new Vector2(300);
-            Vector2 Node2Pos = getPositionInBetween(Node1Pos, SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, start + 4)) + new Vector2(300);
+            Vector2 Node1Pos = getPositionInBetween(Node0Pos, SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, start + 5) + new Vector2(300), .57f);
             Vector2 Node3Pos = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, start + 4) + new Vector2(300);
+            Vector2 Node2Pos = getPositionInBetween(Node3Pos, SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, start + 1) + new Vector2(300), .57f);
 
             return new List<PathControlPoint>{
                 new PathControlPoint(Node0Pos, PathType.Linear),
                 new PathControlPoint(Node1Pos, PathType.Linear),
+                new PathControlPoint(new Vector2(300), PathType.Linear),
                 new PathControlPoint(Node2Pos, PathType.Linear),
                 new PathControlPoint(Node3Pos, PathType.Linear)
             };
