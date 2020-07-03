@@ -17,7 +17,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             // Cleanup values
             start = start.NormalizePath();
             end = end.NormalizePath();
-            end = Math.Clamp(end, start + 2, start + 6).NormalizePath();
 
             return new List<PathControlPoint>{
                 new PathControlPoint(SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, start)+ new Vector2(300), PathType.Linear),
