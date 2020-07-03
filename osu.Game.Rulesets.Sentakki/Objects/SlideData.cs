@@ -48,7 +48,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             start = start.NormalizePath();
             end = end.NormalizePath();
-            end = Math.Clamp(end, start + 2, start + 6).NormalizePath();
 
             Vector2 Node0Pos = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, start) + new Vector2(300);
             Vector2 Node1Pos = new Vector2(300);
