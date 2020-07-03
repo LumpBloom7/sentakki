@@ -114,7 +114,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             switch (hitObject)
             {
-                case HoldTail _:
+                case Hold.HoldTail _:
                     return new DrawableHoldTail(this)
                     {
                         Anchor = Anchor.TopCentre,
@@ -122,7 +122,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         AccentColour = { BindTarget = AccentColour }
                     };
 
-                case Tap _:
+                case Hold.HoldHead _:
                     return new DrawableHoldHead(this)
                     {
                         Anchor = Anchor.TopCentre,

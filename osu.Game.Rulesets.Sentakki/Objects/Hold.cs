@@ -85,7 +85,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             }
         }
 
-        public readonly Tap Head = new Tap();
+        public readonly HoldHead Head = new HoldHead();
 
         public readonly HoldTail Tail = new HoldTail();
 
@@ -100,5 +100,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public override Judgement CreateJudgement() => new IgnoreJudgement();
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
+
+        public class HoldHead : SentakkiHitObject { }
+        public class HoldTail : SentakkiHitObject { }
     }
 }
