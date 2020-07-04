@@ -103,7 +103,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         // Easing functions for manual use.
         private readonly DefaultEasingFunction inOutBack = new DefaultEasingFunction(Easing.InOutBack);
-        private readonly DefaultEasingFunction inQuint = new DefaultEasingFunction(Easing.InQuint);
+        private readonly DefaultEasingFunction inOutSine = new DefaultEasingFunction(Easing.InOutSine);
 
         protected override void Update()
         {
@@ -111,7 +111,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (Result.HasResult) return;
 
             double fadeIn = AnimationDuration.Value * GameplaySpeed;
-            double moveTo = 500 * GameplaySpeed;
+            double moveTo = HitObject.HitWindows.WindowFor(HitResult.Meh) * 2 * GameplaySpeed;
             double animStart = HitObject.StartTime - fadeIn - moveTo;
             double currentProg = Clock.CurrentTime - animStart;
 
@@ -125,7 +125,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             float moveAmount = Math.Clamp((float)((currentProg - fadeIn) / moveTo), 0, 1);
 
             // Used to simplify this crazy arse manual animating
-            float moveAnimFormula(float originalValue) => (float)(originalValue - (originalValue * moveAmount * inQuint.ApplyEasing(moveAmount)));
+            float moveAnimFormula(float originalValue) => (float)(originalValue - (originalValue * inOutSine.ApplyEasing(moveAmount)));
 
             blob1.Position = new Vector2(moveAnimFormula(40), 0);
             blob2.Position = new Vector2(moveAnimFormula(-40), 0);
@@ -133,7 +133,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             blob4.Position = new Vector2(0, moveAnimFormula(-40));
 
             // Used to simplify this crazy arse manual animating
-            float sizeAnimFormula() => (float)(.5 + .5 * moveAmount * inQuint.ApplyEasing(moveAmount));
+            float sizeAnimFormula() => (float)(.5 + .5 * inOutSine.ApplyEasing(moveAmount));
 
             blob1.Scale = new Vector2(sizeAnimFormula());
             blob2.Scale = new Vector2(sizeAnimFormula());
@@ -172,6 +172,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
+            // Artificilly extend the hit window
+            timeOffset /= 2;
+
             Debug.Assert(HitObject.HitWindows != null);
 
             if (!userTriggered)
