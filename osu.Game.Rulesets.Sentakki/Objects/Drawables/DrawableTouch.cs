@@ -102,8 +102,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         // Easing functions for manual use.
-        private readonly DefaultEasingFunction inOutBack = new DefaultEasingFunction(Easing.InOutBack);
-        private readonly DefaultEasingFunction inOutSine = new DefaultEasingFunction(Easing.InOutSine);
+        private readonly DefaultEasingFunction outSine = new DefaultEasingFunction(Easing.OutSine);
+        private readonly DefaultEasingFunction inQuint = new DefaultEasingFunction(Easing.InQuint);
 
         protected override void Update()
         {
@@ -118,14 +118,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // Calculate initial entry animation
             float fadeAmount = Math.Clamp((float)(currentProg / fadeIn), 0, 1);
 
-            Alpha = fadeAmount * (float)inOutBack.ApplyEasing(fadeAmount);
-            Scale = new Vector2(fadeAmount * (float)inOutBack.ApplyEasing(fadeAmount));
+            Alpha = fadeAmount * (float)outSine.ApplyEasing(fadeAmount);
+            Scale = new Vector2(fadeAmount * (float)outSine.ApplyEasing(fadeAmount));
 
             // Calculate position
             float moveAmount = Math.Clamp((float)((currentProg - fadeIn) / moveTo), 0, 1);
 
             // Used to simplify this crazy arse manual animating
-            float moveAnimFormula(float originalValue) => (float)(originalValue - (originalValue * inOutSine.ApplyEasing(moveAmount)));
+            float moveAnimFormula(float originalValue) => (float)(originalValue - (originalValue * inQuint.ApplyEasing(moveAmount)));
 
             blob1.Position = new Vector2(moveAnimFormula(40), 0);
             blob2.Position = new Vector2(moveAnimFormula(-40), 0);
@@ -133,7 +133,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             blob4.Position = new Vector2(0, moveAnimFormula(-40));
 
             // Used to simplify this crazy arse manual animating
-            float sizeAnimFormula() => (float)(.5 + .5 * inOutSine.ApplyEasing(moveAmount));
+            float sizeAnimFormula() => (float)(.5 + .5 * inQuint.ApplyEasing(moveAmount));
 
             blob1.Scale = new Vector2(sizeAnimFormula());
             blob2.Scale = new Vector2(sizeAnimFormula());
