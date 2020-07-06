@@ -172,9 +172,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            // Artificilly extend the hit window
-            timeOffset /= 2;
-
             Debug.Assert(HitObject.HitWindows != null);
 
             if (!userTriggered)
