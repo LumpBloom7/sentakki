@@ -187,8 +187,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             var result = HitObject.HitWindows.ResultFor(timeOffset);
             if (timeOffset < 0 && result <= HitResult.Miss)
                 return;
-            if (result >= HitResult.Meh && timeOffset < 0)
-                result = HitResult.Perfect;
+            if (result >= HitResult.Meh && result < HitResult.Great && timeOffset < 0)
+                result = HitResult.Great;
 
             ApplyResult(r => r.Type = result);
         }
