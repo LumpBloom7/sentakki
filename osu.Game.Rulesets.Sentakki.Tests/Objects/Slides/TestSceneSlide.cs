@@ -8,6 +8,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Tests.Visual;
 using osuTK;
 using osuTK.Graphics;
 using NUnit.Framework;
@@ -15,7 +16,7 @@ using NUnit.Framework;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
     [TestFixture]
-    public abstract class TestSceneSlide : TestScene
+    public abstract class TestSceneSlide : OsuTestScene
     {
         private float progress;
         protected int StartPath;
