@@ -105,8 +105,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             var sentakkiObj = (DrawableSentakkiHitObject)judgedObject;
 
-            var b = sentakkiObj.HitObject.Angle + 90;
-            var a = b *= (float)(Math.PI / 180);
             DrawableSentakkiJudgement explosion;
             switch (judgedObject)
             {
@@ -131,8 +129,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     {
                         Origin = Anchor.Centre,
                         Anchor = Anchor.Centre,
-                        Position = new Vector2(-(240 * (float)Math.Cos(a)), -(240 * (float)Math.Sin(a))),
-                        Rotation = sentakkiObj.HitObject.Angle,
+                        Position = SentakkiExtensions.GetPathPosition(240, sentakkiObj.HitObject.Path),
+                        Rotation = sentakkiObj.HitObject.Path.GetAngleFromPath(),
                     };
                     break;
             }

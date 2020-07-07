@@ -23,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public Drawable ProxiedLayer => this;
 
-        protected override float SamplePlaybackPosition => (HitObject.Position.X + SentakkiPlayfield.INTERSECTDISTANCE) / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
+        protected override float SamplePlaybackPosition => (HitObject as Touch).Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2) + .5f;
 
         protected override double InitialLifetimeOffset => 6000;
 

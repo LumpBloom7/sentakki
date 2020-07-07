@@ -1,4 +1,5 @@
-﻿using osu.Game.Rulesets.Judgements;
+﻿using osu.Framework.Bindables;
+using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Sentakki.Judgements;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Rulesets.Scoring;
@@ -17,13 +18,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public override Judgement CreateJudgement() => IsBreak ? new SentakkiBreakJudgement() : new SentakkiJudgement();
 
         public virtual Color4 NoteColor => IsBreak ? Color4.OrangeRed : (HasTwin ? Color4.Gold : Color4Extensions.FromHex("ff0064"));
-        public virtual Vector2 EndPosition { get; set; }
-        public virtual float Angle { get; set; }
 
-        public Vector2 Position { get; set; }
-
-        public float X => Position.X;
-        public float Y => Position.Y;
+        public readonly BindableInt PathBindable = new BindableInt(0);
+        public virtual int Path
+        {
+            get => PathBindable.Value;
+            set => PathBindable.Value = value;
+        }
 
         protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
     }

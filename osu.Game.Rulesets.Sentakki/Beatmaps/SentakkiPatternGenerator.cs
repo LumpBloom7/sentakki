@@ -124,12 +124,10 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             return new Hold
             {
                 IsBreak = isBreak,
-                Angle = notePath.GetAngleFromPath(),
+                Path = notePath,
                 NodeSamples = (original as IHasPathWithRepeats).NodeSamples,
                 StartTime = original.StartTime,
-                EndTime = original.GetEndTime(),
-                EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
-                Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
+                EndTime = original.GetEndTime()
             };
         }
         private IEnumerable<SentakkiHitObject> createTapsFromTicks(HitObject original)
@@ -164,16 +162,14 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     case SliderEventType.Repeat:
                         yield return new Tap
                         {
-                            Angle = notePath.GetAngleFromPath(),
+                            Path = notePath,
                             Samples = original.Samples.Select(s => new HitSampleInfo
                             {
                                 Bank = s.Bank,
                                 Name = @"slidertick",
                                 Volume = s.Volume
                             }).ToList(),
-                            StartTime = e.Time,
-                            EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
-                            Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
+                            StartTime = e.Time
                         };
                         break;
                 }
@@ -186,11 +182,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             return new Tap
             {
                 IsBreak = isBreak,
-                Angle = notePath.GetAngleFromPath(),
+                Path = notePath,
                 Samples = original.Samples,
                 StartTime = original.StartTime,
-                EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
-                Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
             };
         }
 

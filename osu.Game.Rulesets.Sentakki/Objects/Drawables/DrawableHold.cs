@@ -43,12 +43,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableHold(Hold hitObject)
             : base(hitObject)
         {
+            hitObject.PathBindable.BindValueChanged(r => Rotation = r.NewValue.GetAngleFromPath(), true);
             AccentColour.Value = hitObject.NoteColor;
             Size = new Vector2(80);
             Position = Vector2.Zero;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Rotation = HitObject.Angle;
             AlwaysPresent = true;
             AddRangeInternal(new Drawable[]{
                 HitObjectLine = new HitObjectLine(),
@@ -82,7 +82,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         isHitting.Value = false;
                         NoteBody.Glow.FadeOut(100);
                     },
-                    NoteAngle = HitObject.Angle
+                    NoteAngle = hitObject.PathBindable.Value.GetAngleFromPath()
                 }
             });
         }
