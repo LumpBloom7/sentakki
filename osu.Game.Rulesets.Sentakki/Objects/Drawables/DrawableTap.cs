@@ -24,8 +24,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableTap(SentakkiHitObject hitObject)
             : base(hitObject)
         {
-
-            hitObject.PathBindable.BindValueChanged(r => Rotation = r.NewValue.GetAngleFromPath(), true);
             AccentColour.Value = hitObject.NoteColor;
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
@@ -49,9 +47,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         return true;
                     },
                     Position = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE),
-                    NoteAngle = HitObject.PathBindable.Value.GetAngleFromPath()
                 },
             });
+            hitObject.PathBindable.BindValueChanged(r =>
+            {
+                Rotation = r.NewValue.GetAngleFromPath();
+                HitArea.NotePath = r.NewValue;
+            }, true);
         }
 
         [BackgroundDependencyLoader(true)]

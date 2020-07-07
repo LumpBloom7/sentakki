@@ -21,10 +21,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public Func<bool> Hit;
         public Action Release;
 
-        public float NoteAngle = -1;
+        public int? NotePath = null;
         public bool HoverAction()
         {
-            if (!SentakkiActionInputManager.CurrentAngles.Contains(NoteAngle))
+            if (!!NotePath.HasValue || SentakkiActionInputManager.CurrentPath.Contains(NotePath.Value))
             {
                 if (SentakkiActionInputManager.PressedActions.Any(action => OnPressed(action)))
                     actions.AddRange(SentakkiActionInputManager.PressedActions.Except(actions));
@@ -44,7 +44,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             if (IsHovered)
             {
-                SentakkiActionInputManager.CurrentAngles.Add(NoteAngle);
+                if (NotePath.HasValue)
+                    SentakkiActionInputManager.CurrentPath.Add(NotePath.Value);
                 actions.Add(action);
                 return Hit?.Invoke() ?? false;
             }
@@ -57,13 +58,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             if (!actions.Any())
             {
                 Release?.Invoke();
-                SentakkiActionInputManager.CurrentAngles.Remove(NoteAngle);
+                if (NotePath.HasValue)
+                    SentakkiActionInputManager.CurrentPath.Remove(NotePath.Value);
             }
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            SentakkiActionInputManager.CurrentAngles.Remove(NoteAngle);
+            SentakkiActionInputManager.CurrentPath.Remove(NotePath.Value);
             if (actions.Any())
             {
                 actions.Clear();
