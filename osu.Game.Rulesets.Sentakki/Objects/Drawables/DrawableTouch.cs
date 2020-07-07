@@ -42,7 +42,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
-        public DrawableTouch(SentakkiHitObject hitObject) : base(hitObject)
+        public DrawableTouch(Touch hitObject) : base(hitObject)
         {
             Size = new Vector2(80);
             Position = hitObject.Position;

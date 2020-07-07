@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public int? NotePath = null;
         public bool HoverAction()
         {
-            if (!!NotePath.HasValue || SentakkiActionInputManager.CurrentPath.Contains(NotePath.Value))
+            if (!NotePath.HasValue || !SentakkiActionInputManager.CurrentPath.Contains(NotePath.Value))
             {
                 if (SentakkiActionInputManager.PressedActions.Any(action => OnPressed(action)))
                     actions.AddRange(SentakkiActionInputManager.PressedActions.Except(actions));
@@ -65,7 +65,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            SentakkiActionInputManager.CurrentPath.Remove(NotePath.Value);
+            if (NotePath.HasValue)
+                SentakkiActionInputManager.CurrentPath.Remove(NotePath.Value);
             if (actions.Any())
             {
                 actions.Clear();
