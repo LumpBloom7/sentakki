@@ -10,7 +10,7 @@
         "wontfix"
     ],
     "template": {
-        "issue": "- {{name}} | [{{text}}]({{url}}) <sub>by [{{user_login}}]({{user_url}})</sub>",
+        "issue": "- {{name}} | [{{text}}]({{url}})",
         "group": "\n### {{heading}}\n",
         "changelogTitle": ""
     },
