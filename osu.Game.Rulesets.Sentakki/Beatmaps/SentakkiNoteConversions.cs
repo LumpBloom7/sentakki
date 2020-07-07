@@ -67,7 +67,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         public static SentakkiHitObject CreateTouchHold(HitObject original)
         => new TouchHold
         {
-
             StartTime = original.StartTime,
             EndTime = (original as IHasDuration).EndTime,
             Samples = original.Samples,
