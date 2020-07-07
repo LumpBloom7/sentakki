@@ -103,17 +103,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             end = end.NormalizePath();
 
             Vector2 Node0Pos = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, start) + new Vector2(300);
-            Vector2 Node1Pos = getPositionInBetween(Node0Pos, SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, start + 5) + new Vector2(300));
-            Vector2 Node2Pos = new Vector2(250, 400);
+            Vector2 Node1Pos = getPositionInBetween(Node0Pos, SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, start + 5) + new Vector2(300), .51f);
+
+            float angleDiff = (end.GetAngleFromPath() + start.GetAngleFromPath()) / 2 + (Math.Abs(end - start) > 4 ? 0 : 180);
+            Vector2 Node2Pos = new Vector2(300) + SentakkiExtensions.GetCircularPosition(115, angleDiff);
+
             Vector2 Node4Pos = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, end) + new Vector2(300);
-            Vector2 Node3Pos = getPositionInBetween(Node4Pos, SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, end + 3) + new Vector2(300));
+            Vector2 Node3Pos = getPositionInBetween(Node4Pos, SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, end + 3) + new Vector2(300), .51f);
 
             return new List<PathControlPoint>{
                 new PathControlPoint(Node0Pos,PathType.Linear),
                 new PathControlPoint(Node1Pos, PathType.PerfectCurve),
                 new PathControlPoint(Node2Pos),
-                new PathControlPoint(Node3Pos, PathType.PerfectCurve),
-                new PathControlPoint(Node4Pos, PathType.Linear)
+                new PathControlPoint(Node3Pos, PathType.Linear),
+                new PathControlPoint(Node4Pos)
             };
         }
     }
