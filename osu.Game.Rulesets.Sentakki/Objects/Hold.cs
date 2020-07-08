@@ -63,14 +63,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             }
         }
 
-        public override int Path
+        public override int Lane
         {
-            get => base.Path;
+            get => base.Lane;
             set
             {
-                base.Path = value;
-                Head.Path = value;
-                Tail.Path = value;
+                base.Lane = value;
+                Head.Lane = value;
+                Tail.Lane = value;
             }
         }
 

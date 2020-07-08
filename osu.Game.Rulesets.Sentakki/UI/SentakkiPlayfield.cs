@@ -31,17 +31,17 @@ namespace osu.Game.Rulesets.Sentakki.UI
         public static readonly float INTERSECTDISTANCE = 296.5f;
         public static readonly float NOTESTARTDISTANCE = 66f;
 
-        public static readonly float[] PATHANGLES =
-            {
-                22.5f,
-                67.5f,
-                112.5f,
-                157.5f,
-                202.5f,
-                247.5f,
-                292.5f,
-                337.5f
-            };
+        public static readonly float[] LANEANGLES =
+        {
+            22.5f,
+            67.5f,
+            112.5f,
+            157.5f,
+            202.5f,
+            247.5f,
+            292.5f,
+            337.5f
+        };
 
         // Touch notes always appear above other notes, regardless of start time
         private readonly TouchNoteProxyContainer touchNoteContainer;
@@ -129,8 +129,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     {
                         Origin = Anchor.Centre,
                         Anchor = Anchor.Centre,
-                        Position = SentakkiExtensions.GetPathPosition(240, sentakkiObj.HitObject.Path),
-                        Rotation = sentakkiObj.HitObject.Path.GetAngleFromPath(),
+                        Position = SentakkiExtensions.GetPositionAlongLane(240, sentakkiObj.HitObject.Lane),
+                        Rotation = sentakkiObj.HitObject.Lane.GetRotationForLane(),
                     };
                     break;
             }

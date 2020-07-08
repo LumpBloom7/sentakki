@@ -19,11 +19,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public virtual Color4 NoteColor => IsBreak ? Color4.OrangeRed : (HasTwin ? Color4.Gold : Color4Extensions.FromHex("ff0064"));
 
-        public readonly BindableInt PathBindable = new BindableInt(0);
-        public virtual int Path
+        public readonly BindableInt LaneBindable = new BindableInt(0);
+        public virtual int Lane
         {
-            get => PathBindable.Value;
-            set => PathBindable.Value = value;
+            get => LaneBindable.Value;
+            set => LaneBindable.Value = value;
         }
 
         protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();

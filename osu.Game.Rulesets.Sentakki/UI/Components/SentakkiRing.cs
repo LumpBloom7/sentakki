@@ -97,7 +97,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             };
 
             // Add dots to the actual ring
-            foreach (float pathAngle in SentakkiPlayfield.PATHANGLES)
+            foreach (float pathAngle in SentakkiPlayfield.LANEANGLES)
             {
                 AddInternal(new CircularContainer
                 {

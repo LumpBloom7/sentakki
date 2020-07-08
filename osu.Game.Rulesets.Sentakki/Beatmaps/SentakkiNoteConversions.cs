@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
     public static class Conversions
     {
-        public static List<SentakkiHitObject> CreateTapNote(HitObject original, int path, Random rng, ConversionExperiments experimental = ConversionExperiments.none)
+        public static List<SentakkiHitObject> CreateTapNote(HitObject original, int lane, Random rng, ConversionExperiments experimental = ConversionExperiments.none)
         {
             List<SentakkiHitObject> notes = new List<SentakkiHitObject>();
             bool strong = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
@@ -26,18 +26,18 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             notes.Add(new Tap
             {
                 IsBreak = strong,
-                Path = path,
+                Lane = lane,
                 Samples = original.Samples,
                 StartTime = original.StartTime
             });
             if (twin && experimental.HasFlag(ConversionExperiments.twins))
             {
-                int newPath = path;
-                while (path == newPath) newPath = rng.Next(0, 8);
+                int newPath = lane;
+                while (lane == newPath) newPath = rng.Next(0, 8);
                 notes.Add(new Tap
                 {
                     IsBreak = strong,
-                    Path = newPath,
+                    Lane = newPath,
                     Samples = original.Samples,
                     StartTime = original.StartTime
                 });
@@ -48,7 +48,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             return notes;
         }
 
-        public static List<SentakkiHitObject> CreateTouchNote(HitObject original, int path, Random rng, ConversionExperiments experimental = ConversionExperiments.none)
+        public static List<SentakkiHitObject> CreateTouchNote(HitObject original, int lane, Random rng, ConversionExperiments experimental = ConversionExperiments.none)
         {
             Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
             newPos.Y = 384 - newPos.Y - 192;
@@ -72,7 +72,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             Samples = original.Samples,
         };
 
-        public static List<SentakkiHitObject> CreateHoldNote(HitObject original, int path, IBeatmap beatmap, Random rng, ConversionExperiments experimental = ConversionExperiments.none)
+        public static List<SentakkiHitObject> CreateHoldNote(HitObject original, int lane, IBeatmap beatmap, Random rng, ConversionExperiments experimental = ConversionExperiments.none)
         {
             var curveData = original as IHasPathWithRepeats;
 
@@ -83,7 +83,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             notes.Add(new Hold
             {
                 IsBreak = strong,
-                Path = path,
+                Lane = lane,
                 NodeSamples = curveData.NodeSamples,
                 StartTime = original.StartTime,
                 EndTime = original.GetEndTime()
@@ -93,12 +93,12 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 if (twin)
                 {
-                    int newPath = path;
-                    while (path == newPath) newPath = rng.Next(0, 8);
+                    int newLane = lane;
+                    while (lane == newLane) newLane = rng.Next(0, 8);
                     notes.Add(new Hold
                     {
                         IsBreak = strong,
-                        Path = newPath,
+                        Lane = newLane,
                         NodeSamples = curveData.NodeSamples,
                         StartTime = original.StartTime,
                         EndTime = original.GetEndTime(),
@@ -108,7 +108,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 }
                 else
                 {
-                    var taps = CreateTapFromTicks(original, path, beatmap, rng);
+                    var taps = CreateTapFromTicks(original, lane, beatmap, rng);
                     if (taps.Any())
                         notes.AddRange(taps);
                 }
@@ -117,7 +117,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             return notes;
         }
 
-        public static List<SentakkiHitObject> CreateTapFromTicks(HitObject original, int path, IBeatmap beatmap, Random rng)
+        public static List<SentakkiHitObject> CreateTapFromTicks(HitObject original, int lane, IBeatmap beatmap, Random rng)
         {
             var curve = original as IHasPathWithRepeats;
             double spanDuration = curve.Duration / (curve.RepeatCount + 1);
@@ -142,8 +142,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             foreach (var e in SliderEventGenerator.Generate(original.StartTime, spanDuration, velocity, tickDistance, curve.Path.Distance, curve.RepeatCount + 1, legacyLastTickOffset, CancellationToken.None))
             {
-                int newPath = path;
-                while (newPath == path) newPath = rng.Next(0, 8);
+                int newLane = lane;
+                while (newLane == lane) newLane = rng.Next(0, 8);
 
                 switch (e.Type)
                 {
@@ -151,7 +151,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     case SliderEventType.Repeat:
                         hitObjects.Add(new Tap
                         {
-                            Path = newPath,
+                            Lane = newLane,
                             Samples = getTickSamples(original.Samples),
                             StartTime = e.Time,
                         });

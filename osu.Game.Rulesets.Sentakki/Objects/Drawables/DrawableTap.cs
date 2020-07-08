@@ -49,9 +49,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Position = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE),
                 },
             });
-            hitObject.PathBindable.BindValueChanged(r =>
+            hitObject.LaneBindable.BindValueChanged(r =>
             {
-                Rotation = r.NewValue.GetAngleFromPath();
+                Rotation = r.NewValue.GetRotationForLane();
                 HitArea.NotePath = r.NewValue;
             }, true);
         }

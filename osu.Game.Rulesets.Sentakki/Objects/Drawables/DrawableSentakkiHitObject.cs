@@ -31,7 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // Used for the animation update
         protected readonly Bindable<double> AnimationDuration = new Bindable<double>(1000);
 
-        protected override float SamplePlaybackPosition => (SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, HitObject.Path).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
+        protected override float SamplePlaybackPosition => (SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, HitObject.Lane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
         public SentakkiAction[] HitActions { get; set; } = new[]
         {
             SentakkiAction.Button1,
