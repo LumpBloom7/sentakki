@@ -40,7 +40,7 @@ namespace osu.Game.Rulesets.Sentakki
         {
         }
 
-        public List<float> CurrentAngles = new List<float>();
+        public List<int> CurrentPath = new List<int>();
     }
 
     public enum SentakkiAction

@@ -23,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public Drawable ProxiedLayer => this;
 
-        protected override float SamplePlaybackPosition => (HitObject.Position.X + SentakkiPlayfield.INTERSECTDISTANCE) / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
+        protected override float SamplePlaybackPosition => ((HitObject as Touch).Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
 
         protected override double InitialLifetimeOffset => 6000;
 
@@ -42,7 +42,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
-        public DrawableTouch(SentakkiHitObject hitObject) : base(hitObject)
+        public DrawableTouch(Touch hitObject) : base(hitObject)
         {
             Size = new Vector2(80);
             Position = hitObject.Position;

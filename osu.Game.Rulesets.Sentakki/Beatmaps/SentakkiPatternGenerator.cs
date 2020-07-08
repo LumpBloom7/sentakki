@@ -30,17 +30,17 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             rng = new Random(seed);
         }
 
-        //The patterns will generate the note path to be used based on the current offset
+        //The patterns will generate the note lane to be used based on the current offset
         // argument list is (offset, diff)
         private List<Func<bool, int>> patternlist => new List<Func<bool, int>>{
-            //Stream pattern, path difference determined by offset2
+            //Stream pattern, lane difference determined by offset2
             (twin)=> {
                 if(twin) return offset + 4;
                 else offset+=offset2;
                 return offset;
             },
             // Back and forth, works better with longer combos
-            // Path difference determined by offset2, but will make sure offset2 is never 0.
+            // Lane difference determined by offset2, but will make sure offset2 is never 0.
             (twin)=>{
                 offset2 = offset2 == 0 ? 1 : offset2;
                 offset+=offset2;
@@ -53,7 +53,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private int offset = 0;
         private int offset2 = 0;
 
-        private int getNewPath(bool twin = false) => patternlist[currentPattern].Invoke(twin);
+        private int getNewLane(bool twin = false) => patternlist[currentPattern].Invoke(twin);
 
         public void CreateNewPattern()
         {
@@ -120,21 +120,19 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         // Individual note generation code, because it's cleaner
         private SentakkiHitObject createHoldNote(HitObject original, bool twin = false, bool isBreak = false)
         {
-            int notePath = getNewPath(twin);
+            int noteLane = getNewLane(twin);
             return new Hold
             {
                 IsBreak = isBreak,
-                Angle = notePath.GetAngleFromPath(),
+                Lane = noteLane,
                 NodeSamples = (original as IHasPathWithRepeats).NodeSamples,
                 StartTime = original.StartTime,
-                EndTime = original.GetEndTime(),
-                EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
-                Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
+                EndTime = original.GetEndTime()
             };
         }
         private IEnumerable<SentakkiHitObject> createTapsFromTicks(HitObject original)
         {
-            int notePath = getNewPath(true);
+            int noteLane = getNewLane(true);
 
             var curve = original as IHasPathWithRepeats;
             double spanDuration = curve.Duration / (curve.RepeatCount + 1);
@@ -164,16 +162,14 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     case SliderEventType.Repeat:
                         yield return new Tap
                         {
-                            Angle = notePath.GetAngleFromPath(),
+                            Lane = noteLane,
                             Samples = original.Samples.Select(s => new HitSampleInfo
                             {
                                 Bank = s.Bank,
                                 Name = @"slidertick",
                                 Volume = s.Volume
                             }).ToList(),
-                            StartTime = e.Time,
-                            EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
-                            Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
+                            StartTime = e.Time
                         };
                         break;
                 }
@@ -182,15 +178,13 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         private SentakkiHitObject createTapNote(HitObject original, bool twin = false, bool isBreak = false)
         {
-            int notePath = getNewPath(twin);
+            int noteLane = getNewLane(twin);
             return new Tap
             {
                 IsBreak = isBreak,
-                Angle = notePath.GetAngleFromPath(),
+                Lane = noteLane,
                 Samples = original.Samples,
                 StartTime = original.StartTime,
-                EndPosition = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.INTERSECTDISTANCE, notePath),
-                Position = SentakkiExtensions.GetPathPosition(SentakkiPlayfield.NOTESTARTDISTANCE, notePath),
             };
         }
 
