@@ -37,20 +37,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                         break;
                     }
                     case Tap _:
-                    {
-                        var path = newPos.GetDegreesFromPosition(Vector2.Zero).GetNotePathFromDegrees();
-                        var angle = path.GetAngleFromPath();
-                        h.Position = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.NOTESTARTDISTANCE, angle);
-                        h.EndPosition = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, angle);
-                        h.Angle = angle;
-                        break;
-                    }
                     case Hold _:
                     {
-                        var path = newPos.GetDegreesFromPosition(Vector2.Zero).GetNotePathFromDegrees();
-                        var angle = path.GetAngleFromPath();
-                        h.EndPosition = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE + 40);
-                        h.Angle = angle;
+                        h.Lane = newPos.GetDegreesFromPosition(Vector2.Zero).GetNoteLaneFromDegrees();
                         break;
                     }
                 }

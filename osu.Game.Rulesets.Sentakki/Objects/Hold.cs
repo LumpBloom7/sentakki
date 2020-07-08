@@ -63,29 +63,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             }
         }
 
-        public override float Angle
+        public override int Lane
         {
-            get => base.Angle;
+            get => base.Lane;
             set
             {
-                base.Angle = value;
-                Head.Angle = value;
-                Tail.Angle = value;
+                base.Lane = value;
+                Head.Lane = value;
+                Tail.Lane = value;
             }
         }
 
-        public override Vector2 EndPosition
-        {
-            get => base.EndPosition;
-            set
-            {
-                base.EndPosition = value;
-                Head.EndPosition = value;
-                Tail.EndPosition = value;
-            }
-        }
-
-        public readonly Tap Head = new Tap();
+        public readonly HoldHead Head = new HoldHead();
 
         public readonly HoldTail Tail = new HoldTail();
 
@@ -100,5 +89,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public override Judgement CreateJudgement() => new IgnoreJudgement();
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
+
+        public class HoldHead : SentakkiHitObject { }
+        public class HoldTail : SentakkiHitObject { }
     }
 }

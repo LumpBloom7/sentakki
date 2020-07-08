@@ -6,6 +6,7 @@ using osu.Framework.Graphics.Primitives;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
 
@@ -85,8 +86,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds.Components
         public override void UpdateFrom(Hold hitObject)
         {
             //base.UpdateFrom(hitObject);
-            Rotation = hitObject.Angle;
-            notebody.Position = hitObject.EndPosition;
+            Rotation = hitObject.Lane.GetRotationForLane();
+            notebody.Position = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE + 40);
         }
 
         public void UpdateFrom(DrawableHold drawableHold)

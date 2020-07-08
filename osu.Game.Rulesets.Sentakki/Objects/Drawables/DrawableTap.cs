@@ -5,6 +5,8 @@ using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.UI;
+using osu.Framework.Utils;
 using osuTK;
 using osuTK.Graphics;
 using System;
@@ -32,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 CirclePiece = new TapCircle()
                 {
                     Scale = new Vector2(0f),
-                    Position = HitObject.Position
+                    Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE)
                 },
                 HitArea = new HitReceptor()
                 {
@@ -44,15 +46,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         UpdateResult(true);
                         return true;
                     },
-                    Position = hitObject.EndPosition,
+                    Position = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE),
                 },
             });
-
-            HitObject.BindableAngle.BindValueChanged(angle =>
+            hitObject.LaneBindable.BindValueChanged(r =>
             {
-                HitObjectLine.Rotation = angle.NewValue;
-                HitArea.NoteAngle = angle.NewValue;
-                HitArea.Position = hitObject.EndPosition;
+                Rotation = r.NewValue.GetRotationForLane();
+                HitArea.NotePath = r.NewValue;
             }, true);
         }
 
@@ -81,7 +81,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             // Calculate position
             float moveAmount = Math.Clamp((float)((currentProg - animTime) / animTime), 0, 1);
-            CirclePiece.Position = HitObject.Position + ((HitObject.EndPosition - HitObject.Position) * moveAmount);
+            CirclePiece.Y = (float)Interpolation.Lerp(-SentakkiPlayfield.NOTESTARTDISTANCE, -SentakkiPlayfield.INTERSECTDISTANCE, moveAmount);
 
             // Handle hidden and fadeIn modifications
             if (IsHidden)
@@ -137,12 +137,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
 
                 case ArmedState.Miss:
-                    var c = HitObject.Angle + 90;
-                    var d = c * (float)(Math.PI / 180);
 
                     CirclePiece.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
-                       .MoveToOffset(new Vector2(-(100 * (float)Math.Cos(d)), -(100 * (float)Math.Sin(d))), time_fade_hit, Easing.OutCubic)
+                       .MoveToOffset(new Vector2(0, -100), time_fade_hit, Easing.OutCubic)
                        .FadeOut(time_fade_miss);
 
                     this.ScaleTo(1f, time_fade_miss).Expire();

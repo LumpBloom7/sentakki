@@ -4,7 +4,9 @@ using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Bindings;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
+using osu.Game.Scoring;
 using osu.Game.Overlays.Settings;
+using osu.Game.Screens.Ranking.Statistics;
 using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
@@ -12,6 +14,7 @@ using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Mods;
 using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.Sentakki.Scoring;
+using osu.Game.Rulesets.Sentakki.Statistics;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Replays.Types;
@@ -20,6 +23,7 @@ using osu.Game.Rulesets.UI;
 using System.Collections.Generic;
 using osu.Game.Rulesets.Sentakki.Edit;
 using osu.Game.Rulesets.Edit;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki
 {
@@ -95,6 +99,32 @@ namespace osu.Game.Rulesets.Sentakki
             new KeyBinding(InputKey.X, SentakkiAction.Button2),
             new KeyBinding(InputKey.MouseLeft, SentakkiAction.Button1),
             new KeyBinding(InputKey.MouseRight, SentakkiAction.Button2),
+        };
+
+        public override StatisticRow[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap) => new[]
+        {
+            new StatisticRow
+            {
+                Columns = new[]
+                {
+                    new StatisticItem("Timing Distribution", new HitEventTimingDistributionGraph(score.HitEvents)
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        Height = 250
+                    })
+                }
+            },
+            new StatisticRow
+            {
+                Columns = new[]
+                {
+                    new StatisticItem("Judgement Distribution", new JudgementChart(score.HitEvents)
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        Size = new Vector2(1, 250)
+                    }),
+                }
+            }
         };
 
         public override Drawable CreateIcon() => new Sprite

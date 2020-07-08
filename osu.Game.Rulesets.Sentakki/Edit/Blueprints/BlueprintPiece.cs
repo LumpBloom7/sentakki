@@ -1,6 +1,7 @@
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.UI;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints
 {
@@ -22,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints
         /// <param name="hitObject">The <see cref="SentakkiHitObject"/> to reference properties from.</param>
         public virtual void UpdateFrom(T hitObject)
         {
-            Position = hitObject.EndPosition;
+            Position = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, hitObject.Lane.GetRotationForLane());
         }
     }
 }

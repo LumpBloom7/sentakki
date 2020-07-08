@@ -6,13 +6,13 @@ namespace osu.Game.Rulesets.Sentakki
 {
     public static class SentakkiExtensions
     {
-        public static float GetAngleFromPath(this int path)
+        public static float GetRotationForLane(this int lane)
         {
-            while (path < 0) path += 8;
-            path %= 8;
-            return SentakkiPlayfield.PATHANGLES[path];
+            while (lane < 0) lane += 8;
+            lane %= 8;
+            return SentakkiPlayfield.LANEANGLES[lane];
         }
-        public static Vector2 GetPathPosition(float distance, int path) => GetCircularPosition(distance, path.GetAngleFromPath());
+        public static Vector2 GetPositionAlongLane(float distance, int lane) => GetCircularPosition(distance, lane.GetRotationForLane());
 
         public static Vector2 GetCircularPosition(float distance, float angle)
         {
@@ -21,15 +21,15 @@ namespace osu.Game.Rulesets.Sentakki
 
         public static float GetDegreesFromPosition(this Vector2 target, Vector2 self) => (float)MathHelper.RadiansToDegrees(Math.Atan2(target.X - self.X, target.Y - self.Y));
 
-        public static int GetNotePathFromDegrees(this float degrees)
+        public static int GetNoteLaneFromDegrees(this float degrees)
         {
             if (degrees < 0) degrees += 360;
             if (degrees >= 360) degrees %= 360;
             int result = 0;
 
-            for (int i = 0; i < SentakkiPlayfield.PATHANGLES.Length; ++i)
+            for (int i = 0; i < SentakkiPlayfield.LANEANGLES.Length; ++i)
             {
-                if (SentakkiPlayfield.PATHANGLES[i] - degrees >= -22.5f && SentakkiPlayfield.PATHANGLES[i] - degrees <= 22.5f)
+                if (SentakkiPlayfield.LANEANGLES[i] - degrees >= -22.5f && SentakkiPlayfield.LANEANGLES[i] - degrees <= 22.5f)
                     result = i;
             }
             return result;

@@ -19,17 +19,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public override Judgement CreateJudgement() => IsBreak ? new SentakkiBreakJudgement() : new SentakkiJudgement();
 
         public virtual Color4 NoteColor => IsBreak ? Color4.OrangeRed : (HasTwin ? Color4.Gold : Color4Extensions.FromHex("ff0064"));
-        public virtual Vector2 EndPosition { get; set; }
-        public virtual float Angle
+
+        public readonly BindableInt LaneBindable = new BindableInt(0);
+        public virtual int Lane
         {
-            get => BindableAngle.Value;
-            set => BindableAngle.Value = value;
+            get => LaneBindable.Value;
+            set => LaneBindable.Value = value;
         }
 
-        public readonly Bindable<float> BindableAngle = new Bindable<float>(0);
-
-        public Vector2 Position { get; set; }
-
+        // This section is required just so editor actually starts
+        public Vector2 Position { get; set; } = Vector2.Zero;
         public float X => Position.X;
         public float Y => Position.Y;
 

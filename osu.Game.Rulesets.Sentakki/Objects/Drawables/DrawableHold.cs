@@ -81,10 +81,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         isHitting.Value = false;
                         NoteBody.Glow.FadeOut(100);
                     },
-                    NoteAngle = HitObject.Angle
                 }
             });
-            HitObject.BindableAngle.BindValueChanged(angle => Rotation = angle.NewValue, true);
+
+            hitObject.LaneBindable.BindValueChanged(r =>
+            {
+                Rotation = r.NewValue.GetRotationForLane();
+                HitArea.NotePath = r.NewValue;
+            }, true);
         }
 
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
@@ -114,7 +118,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             switch (hitObject)
             {
-                case HoldTail _:
+                case Hold.HoldTail _:
                     return new DrawableHoldTail(this)
                     {
                         Anchor = Anchor.TopCentre,
@@ -122,7 +126,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         AccentColour = { BindTarget = AccentColour }
                     };
 
-                case Tap _:
+                case Hold.HoldHead _:
                     return new DrawableHoldHead(this)
                     {
                         Anchor = Anchor.TopCentre,

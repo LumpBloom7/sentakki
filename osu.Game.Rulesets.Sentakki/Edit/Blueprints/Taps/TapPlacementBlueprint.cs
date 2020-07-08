@@ -52,13 +52,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
             newPos.Y = 600 - newPos.Y;
             newPos -= new Vector2(300);
 
-            var path = newPos.GetDegreesFromPosition(Vector2.Zero).GetNotePathFromDegrees();
-            var angle = path.GetAngleFromPath();
-
-            HitObject.Angle = angle;
-
-            HitObject.Position = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.NOTESTARTDISTANCE, angle);
-            HitObject.EndPosition = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, angle);
+            HitObject.Lane = newPos.GetDegreesFromPosition(Vector2.Zero).GetNoteLaneFromDegrees();
         }
     }
 }

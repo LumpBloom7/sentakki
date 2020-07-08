@@ -34,9 +34,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             var circle = new Tap
             {
                 StartTime = Time.Current + 1000,
-                Position = new Vector2(0, -66f),
-                Angle = 0,
-                EndPosition = new Vector2(0, -296.5f),
             };
 
             circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });

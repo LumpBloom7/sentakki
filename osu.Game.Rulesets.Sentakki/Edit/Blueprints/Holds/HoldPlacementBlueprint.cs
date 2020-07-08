@@ -65,11 +65,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
                 newPos.Y = 600 - newPos.Y;
                 newPos -= new Vector2(300);
 
-                var path = newPos.GetDegreesFromPosition(Vector2.Zero).GetNotePathFromDegrees();
-                var angle = path.GetAngleFromPath();
-
-                HitObject.Angle = angle;
-                HitObject.EndPosition = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE + 40);
+                HitObject.Lane = newPos.GetDegreesFromPosition(Vector2.Zero).GetNoteLaneFromDegrees();
             }
             else
             {

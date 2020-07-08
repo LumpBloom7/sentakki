@@ -11,6 +11,7 @@ using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.UI;
+using osu.Game.Screens.Play;
 using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.UI
@@ -61,6 +62,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             return null;
         }
+
+        protected override ResumeOverlay CreateResumeOverlay() => new SentakkiResumeOverlay();
 
         protected override PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset?.RulesetInfo);
     }
