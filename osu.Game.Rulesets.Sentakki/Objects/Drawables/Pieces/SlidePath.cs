@@ -50,11 +50,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             int chevrons = (int)Math.Ceiling(distance / 25);
             double chevronInterval = 1.0 / chevrons;
 
-            for (double i = progress; i <= 1; i += chevronInterval)
+            float prevAngle = 0;
+            for (double i = progress / chevronInterval; i < chevrons; ++i)
             {
-                Vector2 currentPos = Path.PositionAt(i);
-                Vector2 nextPos = Path.PositionAt(i + chevronInterval);
+                Vector2 currentPos = Path.PositionAt(i * chevronInterval);
+                Vector2 nextPos = Path.PositionAt((i + 1) * chevronInterval);
                 float angle = currentPos.GetDegreesFromPosition(nextPos);
+                if (i == chevronInterval - 1) angle = prevAngle;
+                prevAngle = angle;
+
 
                 AddInternal(new SlideChevron
                 {
