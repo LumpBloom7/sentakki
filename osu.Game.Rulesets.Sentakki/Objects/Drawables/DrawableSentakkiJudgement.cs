@@ -2,7 +2,6 @@
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Textures;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.Judgements;
@@ -24,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(TextureStore textures, SentakkiRulesetConfigManager settings)
+        private void load(SentakkiRulesetConfigManager settings)
         {
             InternalChild = JudgementBody = new Container
             {
@@ -63,14 +62,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         break;
                 }
             }
-        }
-
-        protected override double FadeOutDelay => base.FadeOutDelay;
-
-        protected override void ApplyHitAnimations()
-        {
-            JudgementText?.TransformSpacingTo(new Vector2(14, 0), 1800, Easing.OutQuint);
-            base.ApplyHitAnimations();
         }
     }
 }

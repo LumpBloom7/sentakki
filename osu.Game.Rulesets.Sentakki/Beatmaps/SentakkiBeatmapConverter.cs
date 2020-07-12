@@ -49,7 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
             newPos.Y = 384 - newPos.Y;
 
-            int lane = newPos.GetDegreesFromPosition(CENTRE_POINT).GetNoteLaneFromDegrees();
+            int lane = CENTRE_POINT.GetDegreesFromPosition(newPos).GetNoteLaneFromDegrees();
             List<SentakkiHitObject> objects = new List<SentakkiHitObject>();
 
             if (EnabledExperiments.Value.HasFlag(ConversionExperiments.patternv2))
