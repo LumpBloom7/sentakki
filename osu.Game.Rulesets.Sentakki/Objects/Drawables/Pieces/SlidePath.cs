@@ -47,7 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private void createVisuals(float progress)
         {
             var distance = Path.Distance;
-            int chevrons = (int)Math.Round(distance / 25);
+            int chevrons = (int)Math.Ceiling(distance / 25);
             double chevronInterval = 1.0 / chevrons;
 
             for (double i = progress; i <= 1; i += chevronInterval)
