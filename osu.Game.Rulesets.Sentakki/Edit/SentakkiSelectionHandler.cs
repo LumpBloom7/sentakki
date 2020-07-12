@@ -21,7 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             foreach (var h in SelectedHitObjects.OfType<SentakkiHitObject>())
             {
                 var newPos = ToLocalSpace(moveEvent.ScreenSpacePosition);
-                newPos = new Vector2(newPos.X - 300, -(newPos.Y - 300));
+                newPos = new Vector2(newPos.X - 300, newPos.Y - 300);
 
                 switch (h)
                 {
@@ -29,7 +29,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                         continue;
                     case Touch touch:
                     {
-                        float angle = newPos.GetDegreesFromPosition(Vector2.Zero);
+                        float angle = Vector2.Zero.GetDegreesFromPosition(newPos);
                         float distance = Math.Clamp(Vector2.Distance(newPos, Vector2.Zero), 0, 200);
                         newPos = SentakkiExtensions.GetCircularPosition(distance, angle);
 
@@ -39,7 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                     case Tap _:
                     case Hold _:
                     {
-                        h.Lane = newPos.GetDegreesFromPosition(Vector2.Zero).GetNoteLaneFromDegrees();
+                        h.Lane = Vector2.Zero.GetDegreesFromPosition(newPos).GetNoteLaneFromDegrees();
                         break;
                     }
                 }
