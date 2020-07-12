@@ -23,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public Drawable ProxiedLayer => this;
 
-        protected override float SamplePlaybackPosition => (HitObject.Position.X + SentakkiPlayfield.INTERSECTDISTANCE) / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
+        protected override float SamplePlaybackPosition => ((HitObject as Touch).Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
 
         protected override double InitialLifetimeOffset => 6000;
 
@@ -42,7 +42,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
-        public DrawableTouch(SentakkiHitObject hitObject) : base(hitObject)
+        public DrawableTouch(Touch hitObject) : base(hitObject)
         {
             Size = new Vector2(80);
             Position = hitObject.Position;
@@ -102,7 +102,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         // Easing functions for manual use.
-        private readonly DefaultEasingFunction inOutBack = new DefaultEasingFunction(Easing.InOutBack);
+        private readonly DefaultEasingFunction outSine = new DefaultEasingFunction(Easing.OutSine);
         private readonly DefaultEasingFunction inQuint = new DefaultEasingFunction(Easing.InQuint);
 
         protected override void Update()
@@ -111,21 +111,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (Result.HasResult) return;
 
             double fadeIn = AnimationDuration.Value * GameplaySpeed;
-            double moveTo = 500 * GameplaySpeed;
+            double moveTo = HitObject.HitWindows.WindowFor(HitResult.Meh) * 2 * GameplaySpeed;
             double animStart = HitObject.StartTime - fadeIn - moveTo;
             double currentProg = Clock.CurrentTime - animStart;
 
             // Calculate initial entry animation
             float fadeAmount = Math.Clamp((float)(currentProg / fadeIn), 0, 1);
 
-            Alpha = fadeAmount * (float)inOutBack.ApplyEasing(fadeAmount);
-            Scale = new Vector2(fadeAmount * (float)inOutBack.ApplyEasing(fadeAmount));
+            Alpha = fadeAmount * (float)outSine.ApplyEasing(fadeAmount);
+            Scale = new Vector2(fadeAmount * (float)outSine.ApplyEasing(fadeAmount));
 
             // Calculate position
             float moveAmount = Math.Clamp((float)((currentProg - fadeIn) / moveTo), 0, 1);
 
             // Used to simplify this crazy arse manual animating
-            float moveAnimFormula(float originalValue) => (float)(originalValue - (originalValue * moveAmount * inQuint.ApplyEasing(moveAmount)));
+            float moveAnimFormula(float originalValue) => (float)(originalValue - (originalValue * inQuint.ApplyEasing(moveAmount)));
 
             blob1.Position = new Vector2(moveAnimFormula(40), 0);
             blob2.Position = new Vector2(moveAnimFormula(-40), 0);
@@ -133,7 +133,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             blob4.Position = new Vector2(0, moveAnimFormula(-40));
 
             // Used to simplify this crazy arse manual animating
-            float sizeAnimFormula() => (float)(.5 + .5 * moveAmount * inQuint.ApplyEasing(moveAmount));
+            float sizeAnimFormula() => (float)(.5 + .5 * inQuint.ApplyEasing(moveAmount));
 
             blob1.Scale = new Vector2(sizeAnimFormula());
             blob2.Scale = new Vector2(sizeAnimFormula());
@@ -187,8 +187,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             var result = HitObject.HitWindows.ResultFor(timeOffset);
             if (timeOffset < 0 && result <= HitResult.Miss)
                 return;
-            if (result >= HitResult.Meh && timeOffset < 0)
-                result = HitResult.Perfect;
+            if (result >= HitResult.Meh && result < HitResult.Great && timeOffset < 0)
+                result = HitResult.Great;
 
             ApplyResult(r => r.Type = result);
         }

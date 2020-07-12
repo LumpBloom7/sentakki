@@ -63,25 +63,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             }
         }
 
-        public override float Angle
+        public override int Lane
         {
-            get => base.Angle;
+            get => base.Lane;
             set
             {
-                base.Angle = value;
-                Head.Angle = value;
-                Tail.Angle = value;
-            }
-        }
-
-        public override Vector2 EndPosition
-        {
-            get => base.EndPosition;
-            set
-            {
-                base.EndPosition = value;
-                Head.EndPosition = value;
-                Tail.EndPosition = value;
+                base.Lane = value;
+                Head.Lane = value;
+                Tail.Lane = value;
             }
         }
 

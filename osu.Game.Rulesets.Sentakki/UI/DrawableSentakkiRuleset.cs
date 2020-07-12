@@ -1,7 +1,6 @@
 using System.Linq;
 using osu.Framework.Audio.Track;
 using osu.Framework.Allocation;
-using osu.Framework.Input;
 using osu.Game.Beatmaps;
 using osu.Game.Input.Handlers;
 using osu.Game.Replays;
@@ -65,6 +64,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         protected override ResumeOverlay CreateResumeOverlay() => new SentakkiResumeOverlay();
 
-        protected override PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset?.RulesetInfo);
+        protected override Framework.Input.PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset?.RulesetInfo);
     }
 }

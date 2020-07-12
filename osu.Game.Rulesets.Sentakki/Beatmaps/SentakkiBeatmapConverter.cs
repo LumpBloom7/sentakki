@@ -49,7 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             Vector2 newPos = (original as IHasPosition)?.Position ?? Vector2.Zero;
             newPos.Y = 384 - newPos.Y;
 
-            int path = newPos.GetDegreesFromPosition(CENTRE_POINT).GetNotePathFromDegrees();
+            int lane = newPos.GetDegreesFromPosition(CENTRE_POINT).GetNoteLaneFromDegrees();
             List<SentakkiHitObject> objects = new List<SentakkiHitObject>();
 
             if (EnabledExperiments.Value.HasFlag(ConversionExperiments.patternv2))
@@ -65,7 +65,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 switch (original)
                 {
                     case IHasPathWithRepeats _:
-                        objects.AddRange(Conversions.CreateHoldNote(original, path, beatmap, random, EnabledExperiments.Value));
+                        objects.AddRange(Conversions.CreateHoldNote(original, lane, beatmap, random, EnabledExperiments.Value));
                         break;
 
                     case IHasDuration _:
@@ -74,9 +74,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
                     default:
                         if (EnabledExperiments.Value.HasFlag(ConversionExperiments.touch) && (random2.Next() % 10 == 0))
-                            objects.AddRange(Conversions.CreateTouchNote(original, path, random, EnabledExperiments.Value));
+                            objects.AddRange(Conversions.CreateTouchNote(original, lane, random, EnabledExperiments.Value));
                         else
-                            objects.AddRange(Conversions.CreateTapNote(original, path, random, EnabledExperiments.Value));
+                            objects.AddRange(Conversions.CreateTapNote(original, lane, random, EnabledExperiments.Value));
                         break;
                 }
 

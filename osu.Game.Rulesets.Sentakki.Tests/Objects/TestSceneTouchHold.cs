@@ -34,7 +34,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             {
                 StartTime = Time.Current + 1000,
                 Duration = 5000,
-                Position = new Vector2(0, 0)
             };
 
             circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
