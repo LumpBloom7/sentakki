@@ -23,10 +23,16 @@ namespace osu.Game.Rulesets.Sentakki
 
         public static Vector2 GetCircularPosition(float distance, float angle)
         {
-            return new Vector2(-(distance * (float)Math.Cos((angle + 90f) * (float)(Math.PI / 180))), -(distance * (float)Math.Sin((angle + 90f) * (float)(Math.PI / 180))));
+            return new Vector2(-(distance * (float)Math.Cos((angle + 90) * (float)(Math.PI / 180))), -(distance * (float)Math.Sin((angle + 90) * (float)(Math.PI / 180))));
         }
 
-        public static float GetDegreesFromPosition(this Vector2 target, Vector2 self) => (float)MathHelper.RadiansToDegrees(Math.Atan2(target.X - self.X, target.Y - self.Y));
+        public static float GetDegreesFromPosition(this Vector2 a, Vector2 b)
+        {
+            Vector2 direction = b - a;
+            float angle = MathHelper.RadiansToDegrees(MathF.Atan2(direction.Y, direction.X));
+            if (angle < 0f) angle += 360f;
+            return angle + 90;
+        }
 
         public static int GetNoteLaneFromDegrees(this float degrees)
         {
