@@ -12,27 +12,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         private static Vector2 getPositionInBetween(Vector2 first, Vector2 second, float ratio = .5f) => first + ((second - first) * ratio);
 
         // Covers DX Straight 3-7
-        public static List<PathControlPoint> GenerateStraightPattern(int start, int end)
+        public static List<PathControlPoint> GenerateStraightPattern(int end)
         {
-            // Cleanup values
-            start = start.NormalizePath();
-            end = end.NormalizePath();
-
             return new List<PathControlPoint>{
-                new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, start)+ new Vector2(300), PathType.Linear),
-                new PathControlPoint(getPositionInBetween(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, start),SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end))+ new Vector2(300), PathType.Linear),
+                new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0)+ new Vector2(300), PathType.Linear),
+                new PathControlPoint(getPositionInBetween(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0),SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end))+ new Vector2(300), PathType.Linear),
                 new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end)+ new Vector2(300), PathType.Linear),
             };
         }
 
         // Thunder pattern
-        public static List<PathControlPoint> GenerateThunderPattern(int start)
+        public static List<PathControlPoint> GenerateThunderPattern()
         {
-            start = start.NormalizePath();
-            Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, start) + new Vector2(300);
-            Vector2 Node1Pos = getPositionInBetween(Node0Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, start + 5) + new Vector2(300), .57f);
-            Vector2 Node3Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, start + 4) + new Vector2(300);
-            Vector2 Node2Pos = getPositionInBetween(Node3Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, start + 1) + new Vector2(300), .57f);
+            Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0) + new Vector2(300);
+            Vector2 Node1Pos = getPositionInBetween(Node0Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 5) + new Vector2(300), .57f);
+            Vector2 Node3Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 4) + new Vector2(300);
+            Vector2 Node2Pos = getPositionInBetween(Node3Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 1) + new Vector2(300), .57f);
 
             return new List<PathControlPoint>{
                 new PathControlPoint(Node0Pos, PathType.Linear),
@@ -44,12 +39,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         }
 
         // Covers DX V pattern 1-8
-        public static List<PathControlPoint> GenerateVPattern(int start, int end)
+        public static List<PathControlPoint> GenerateVPattern(int end)
         {
-            start = start.NormalizePath();
-            end = end.NormalizePath();
-
-            Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, start) + new Vector2(300);
+            Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0) + new Vector2(300);
             Vector2 Node1Pos = new Vector2(300);
             Vector2 Node2Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end) + new Vector2(300);
 
@@ -63,11 +55,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // Covers DX L pattern 2-5
         public static List<PathControlPoint> GenerateLPattern(int start, int end)
         {
-            start = start.NormalizePath();
-            end = end.NormalizePath();
-
-            Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, start) + new Vector2(300);
-            Vector2 Node1Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, start + 6) + new Vector2(300);
+            Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0) + new Vector2(300);
+            Vector2 Node1Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 6) + new Vector2(300);
             Vector2 Node2Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end) + new Vector2(300);
 
             return new List<PathControlPoint>{
@@ -78,34 +67,27 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         }
 
         // DX Circle Pattern
-        public static List<PathControlPoint> GenerateCirclePattern(int start, int end, int rotation = +1)
+        public static List<PathControlPoint> GenerateCirclePattern(int end, int rotation = +1)
         {
 
-            start = start.NormalizePath();
-            end = end.NormalizePath();
-            int smaller = Math.Min(start, end);
-            int larger = Math.Max(start, end);
-            float centre = (smaller.GetRotationForLane() + larger.GetRotationForLane()) / 2;
-            Vector2 centreNode = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, centre == start.GetRotationForLane() ? centre + 180 : centre) + new Vector2(300);
+            float centre = (0.GetRotationForLane() + end.GetRotationForLane()) / 2;
+            Vector2 centreNode = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, centre == 0.GetRotationForLane() ? centre + 180 : centre) + new Vector2(300);
 
             List<PathControlPoint> SlidePath = new List<PathControlPoint> {
-                new PathControlPoint(SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, smaller.GetRotationForLane()+.5f)+new Vector2(300), PathType.PerfectCurve),
+                new PathControlPoint(SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, 0.GetRotationForLane()+.5f)+new Vector2(300), PathType.PerfectCurve),
                 new PathControlPoint(centreNode),
-                new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, larger) + new Vector2(300), PathType.PerfectCurve)
+                new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end) + new Vector2(300), PathType.PerfectCurve)
             };
             if (rotation < 0) SlidePath.Reverse();
             return SlidePath;
         }
 
-        public static List<PathControlPoint> GenerateUPattern(int start, int end)
+        public static List<PathControlPoint> GenerateUPattern(int end)
         {
-            start = start.NormalizePath();
-            end = end.NormalizePath();
+            Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0) + new Vector2(300);
+            Vector2 Node1Pos = getPositionInBetween(Node0Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 5) + new Vector2(300), .51f);
 
-            Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, start) + new Vector2(300);
-            Vector2 Node1Pos = getPositionInBetween(Node0Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, start + 5) + new Vector2(300), .51f);
-
-            float angleDiff = (end.GetRotationForLane() + start.GetRotationForLane()) / 2 + (Math.Abs(end - start) > 4 ? 0 : 180);
+            float angleDiff = (end.GetRotationForLane() + 0.GetRotationForLane()) / 2 + (Math.Abs(end) > 4 ? 0 : 180);
             Vector2 Node2Pos = new Vector2(300) + SentakkiExtensions.GetCircularPosition(115, angleDiff);
 
             Vector2 Node4Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end) + new Vector2(300);

@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
     public abstract class TestSceneSlide : OsuTestScene
     {
         private float progress;
-        protected int StartPath;
+        protected int StartPath = 0;
         protected int EndPath;
 
         private readonly SmoothPath slide;
@@ -38,10 +38,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 Colour = Color4.Fuchsia
             });
 
-            AddSliderStep("Start Path", 0, 7, 0, p =>
+            AddSliderStep("Path offset", 0, 7, 0, p =>
             {
-                StartPath = p;
-                RefreshSlide();
+                slide.Rotation = 45 * p;
             });
             AddSliderStep("End Path", 0, 7, 4, p =>
             {
