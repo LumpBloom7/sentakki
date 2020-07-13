@@ -21,8 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             set
             {
                 progress = value;
-                ClearInternal();
-                createVisuals(progress);
+                updateProgress(progress);
             }
         }
         private SliderPath path;
@@ -34,7 +33,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             {
                 path = value;
                 ClearInternal();
-                createVisuals(progress);
+                createVisuals();
+                updateProgress(progress);
             }
         }
 
@@ -44,29 +44,49 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Origin = Anchor.Centre;
         }
 
-        private void createVisuals(float progress)
+        private List<Container> segments = new List<Container>();
+
+        private double chevronInterval = 0;
+        private void createVisuals()
         {
+            segments = new List<Container>();
             var distance = Path.Distance;
             int chevrons = (int)Math.Ceiling(distance / 25);
-            double chevronInterval = 1.0 / chevrons;
+            chevronInterval = 1.0 / chevrons;
 
             float prevAngle = 0;
-            for (double i = chevrons - 1; i >= progress / chevronInterval; --i)
+            Container currentSegment = new Container();
+            for (double i = 0; i < chevrons; ++i)
             {
                 Vector2 currentPos = Path.PositionAt(i * chevronInterval);
-                Vector2 nextPos = Path.PositionAt((i - 1) * chevronInterval);
-                float angle = nextPos.GetDegreesFromPosition(currentPos);
-                if (i == 0) angle = prevAngle;
+                Vector2 nextPos = Path.PositionAt((i + 1) * chevronInterval);
+                float angle = currentPos.GetDegreesFromPosition(nextPos);
+                if (i == chevrons - 1) angle = prevAngle;
                 prevAngle = angle;
 
-
-                AddInternal(new SlideChevron
+                currentSegment.Add(new SlideChevron
                 {
                     Position = currentPos,
                     Rotation = angle,
                 });
-            }
 
+                if (i > 0 && ((i % 5 == 0 && chevrons - 1 - i > 2) || i == chevrons - 1))
+                {
+                    segments.Add(currentSegment);
+                    currentSegment = new Container();
+                }
+            }
+            AddRangeInternal(segments);
+        }
+        private void updateProgress(float progress)
+        {
+            double segmentInterval = 1.0 / segments.Count;
+            int segmentsCompleted = (int)(progress / segmentInterval);
+
+            for (int i = 1; i <= segments.Count; ++i)
+            {
+                segments[i - 1].Alpha = i <= segmentsCompleted ? 0 : 1;
+            }
         }
 
         private class SlideChevron : Sprite
