@@ -51,12 +51,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             double chevronInterval = 1.0 / chevrons;
 
             float prevAngle = 0;
-            for (double i = progress / chevronInterval; i < chevrons; ++i)
+            for (double i = chevrons - 1; i >= progress / chevronInterval; --i)
             {
                 Vector2 currentPos = Path.PositionAt(i * chevronInterval);
-                Vector2 nextPos = Path.PositionAt((i + 1) * chevronInterval);
-                float angle = currentPos.GetDegreesFromPosition(nextPos);
-                if (i == chevronInterval - 1) angle = prevAngle;
+                Vector2 nextPos = Path.PositionAt((i - 1) * chevronInterval);
+                float angle = nextPos.GetDegreesFromPosition(currentPos);
+                if (i == 0) angle = prevAngle;
                 prevAngle = angle;
 
 
