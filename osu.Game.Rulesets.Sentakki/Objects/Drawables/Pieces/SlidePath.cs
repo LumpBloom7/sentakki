@@ -84,16 +84,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             int segmentsCompleted = (int)(progress / segmentInterval);
 
             for (int i = 1; i <= segments.Count; ++i)
-            {
                 segments[i - 1].Alpha = i <= segmentsCompleted ? 0 : 1;
-            }
         }
 
         private class SlideChevron : Sprite
         {
             public SlideChevron()
             {
-                Scale = new Vector2(1.1f);
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
             }
