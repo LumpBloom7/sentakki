@@ -94,7 +94,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             public SlideChevron()
             {
                 Scale = new Vector2(1.1f);
-                Anchor = Anchor.TopLeft;
+                Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
             }
             [BackgroundDependencyLoader]

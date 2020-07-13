@@ -35,10 +35,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 
             Add(slide = new SlideBody()
             {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                RelativeSizeAxes = Axes.None,
-                Size = new Vector2(600),
                 Path = new SliderPath(CreatePattern().ToArray())
             });
 
