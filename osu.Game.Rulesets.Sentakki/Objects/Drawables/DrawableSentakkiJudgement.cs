@@ -17,6 +17,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         [Resolved]
         private OsuColour colours { get; set; }
 
+        private OsuSpriteText sentakkiJudgementText;
+
         public DrawableSentakkiJudgement(JudgementResult result, DrawableSentakkiHitObject judgedObject)
             : base(result, judgedObject)
         {
@@ -25,40 +27,35 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager settings)
         {
-            InternalChild = JudgementBody = new Container
+            JudgementBody.Child = sentakkiJudgementText = new OsuSpriteText
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                RelativeSizeAxes = Axes.Both,
-                Child = JudgementText = new OsuSpriteText
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Text = Result.Type.GetDescription().ToUpperInvariant(),
-                    Font = OsuFont.Numeric.With(size: 20),
-                    Colour = colours.ForHitResult(Result.Type),
-                    Scale = new Vector2(0.85f, 1),
-                }
+                Text = Result.Type.GetDescription().ToUpperInvariant(),
+                Font = OsuFont.Numeric.With(size: 20),
+                Colour = colours.ForHitResult(Result.Type),
+                Scale = new Vector2(0.85f, 1),
             };
+
             if (settings != null && settings.Get<bool>(SentakkiRulesetSettings.MaimaiJudgements))
             {
                 switch (Result.Type)
                 {
                     case HitResult.Perfect:
-                        JudgementText.Text = "Critical";
-                        JudgementText.Colour = Color4.Yellow;
+                        sentakkiJudgementText.Text = "Critical";
+                        sentakkiJudgementText.Colour = Color4.Yellow;
                         break;
 
                     case HitResult.Great:
-                        JudgementText.Text = "Perfect";
+                        sentakkiJudgementText.Text = "Perfect";
                         break;
 
                     case HitResult.Good:
-                        JudgementText.Text = "Great";
+                        sentakkiJudgementText.Text = "Great";
                         break;
 
                     case HitResult.Meh:
-                        JudgementText.Text = "Good";
+                        sentakkiJudgementText.Text = "Good";
                         break;
                 }
             }
