@@ -1,4 +1,4 @@
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -177,13 +177,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             NoteBody.Height = (float)(80 + (length * extendAmount));
 
             // Move the note once idle time is over
-            float moveAmount = Math.Clamp((float)((currentProg - animTime - (HitObject as IHasDuration).Duration) / animTime), 0, 1);
+            float moveAmount = Math.Max((float)((currentProg - animTime - (HitObject as IHasDuration).Duration) / animTime), 0);
             NoteBody.Y = -adjustedStartPoint - (totalMovableDistance * moveAmount);
 
-            // Start shrinking when the time comes
-            float shrinkAmount = Math.Abs(NoteBody.Y) + NoteBody.Height - SentakkiPlayfield.INTERSECTDISTANCE - 40;
-            if (shrinkAmount > 0)
-                NoteBody.Height -= shrinkAmount;
+            if (HoldStartTime != null)
+            {
+                // Start shrinking when the time comes
+                float shrinkAmount = Math.Abs(NoteBody.Y) + NoteBody.Height - SentakkiPlayfield.INTERSECTDISTANCE - 40;
+                if (shrinkAmount > 0)
+                    NoteBody.Height -= shrinkAmount;
+            }
 
             // Handle hidden and fadeIn modifications
             if (IsHidden)

@@ -80,7 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             HitObjectLine.Alpha = fadeAmount;
 
             // Calculate position
-            float moveAmount = Math.Clamp((float)((currentProg - animTime) / animTime), 0, 1);
+            float moveAmount = Math.Max((float)((currentProg - animTime) / animTime), 0);
             CirclePiece.Y = (float)Interpolation.Lerp(-SentakkiPlayfield.NOTESTARTDISTANCE, -SentakkiPlayfield.INTERSECTDISTANCE, moveAmount);
 
             // Handle hidden and fadeIn modifications
