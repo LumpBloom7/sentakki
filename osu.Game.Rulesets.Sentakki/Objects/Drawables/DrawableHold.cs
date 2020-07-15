@@ -1,4 +1,4 @@
-﻿using osu.Framework.Allocation;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -229,15 +229,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    using (BeginDelayedSequence((HitObject as IHasDuration).Duration, true))
+                    using (BeginAbsoluteSequence(Time.Current, true))
                     {
                         this.ScaleTo(1f, time_fade_hit);
                     }
                     break;
 
                 case ArmedState.Miss:
-                    double longestSurvivalTime = Tail.HitObject.HitWindows.WindowFor(HitResult.Miss);
-                    using (BeginDelayedSequence((HitObject as IHasDuration).Duration + longestSurvivalTime, true))
+                    using (BeginAbsoluteSequence(Time.Current, true))
                     {
                         NoteBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                             .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
