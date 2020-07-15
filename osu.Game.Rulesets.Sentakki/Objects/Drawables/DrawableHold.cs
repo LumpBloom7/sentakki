@@ -66,7 +66,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         if(beginHoldAt(Time.Current - Head.HitObject.StartTime))
                         {
                             Head.UpdateResult();
-                            NoteBody.Glow.FadeIn(50);
+                            NoteBody.FadeColour(AccentColour.Value,50);
                         }
 
                         return true;
@@ -79,7 +79,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Tail.UpdateResult();
                         HoldStartTime = null;
                         isHitting.Value = false;
-                        NoteBody.Glow.FadeOut(100);
+                        NoteBody.FadeColour(Color4.Gray,100);
                     },
                 }
             });
@@ -144,14 +144,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             settings?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDuration);
             HitObjectLine.Colour = HitObject.NoteColor;
         }
-        private float holdProgress = 0;
-        private bool needreset = false;
 
         protected override void Update()
         {
             base.Update();
             if (Result.HasResult) return;
-            if (needreset) { holdProgress = 0; needreset = false; }
 
             double animTime = AnimationDuration.Value / 2 * GameplaySpeed;
             double animStart = HitObject.StartTime - (animTime * 2);
@@ -181,8 +178,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             float moveAmount = Math.Max((float)((currentProg - animTime - (HitObject as IHasDuration).Duration) / animTime), 0);
             NoteBody.Y = -adjustedStartPoint - (totalMovableDistance * moveAmount);
 
-            if (HoldStartTime != null)
-                holdProgress = (float)Math.Clamp((Time.Current - HitObject.StartTime) / (HitObject as IHasDuration).Duration, 0, 1);
+            //Shrink note
+            float holdProgress = (float)Math.Clamp((Time.Current - HitObject.StartTime) / (HitObject as IHasDuration).Duration, 0, 1);
             float shrinkAmount = (float)length * holdProgress;
             NoteBody.Height -= shrinkAmount;
 
@@ -218,10 +215,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (Tail.AllJudged)
-            {
                 ApplyResult(r => r.Type = (Head.IsHit || Tail.IsHit) ? HitResult.Perfect : HitResult.Miss);
-                needreset = true;
-            }
         }
 
         protected override void UpdateStateTransforms(ArmedState state)
@@ -232,6 +226,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             switch (state)
             {
+                case ArmedState.Idle:
+                    NoteBody.FadeColour(Color4.Gray, 100);
+                    break;
                 case ArmedState.Hit:
                     using (BeginAbsoluteSequence(Time.Current, true))
                     {

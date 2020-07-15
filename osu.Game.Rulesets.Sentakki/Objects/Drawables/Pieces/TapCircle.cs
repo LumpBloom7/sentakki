@@ -43,12 +43,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             state.BindValueChanged(updateState, true);
 
             accentColour.BindTo(drawableObject.AccentColour);
-            accentColour.BindValueChanged(colour =>
-            {
-                explode.Colour = colour.NewValue;
-                glow.Colour = colour.NewValue;
-                circle.Colour = colour.NewValue;
-            }, true);
+            accentColour.BindValueChanged(colour => Colour = colour.NewValue, true);
         }
 
         private void updateState(ValueChangedEvent<ArmedState> state)

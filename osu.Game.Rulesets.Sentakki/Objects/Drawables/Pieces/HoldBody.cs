@@ -14,7 +14,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
         private readonly Container note;
-        public readonly HoldGlowPiece Glow;
 
         public double Duration = 0;
 
@@ -35,9 +34,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     Children = new Drawable[]
                     {
                         new ShadowPiece(),
-                        Glow = new HoldGlowPiece(){
-                            Alpha = 0
-                        },
                         new CircularContainer
                         {
                             RelativeSizeAxes = Axes.Both,
@@ -139,12 +135,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             state.BindValueChanged(updateState, true);
 
             accentColour.BindTo(drawableObject.AccentColour);
-            accentColour.BindValueChanged(colour =>
-            {
-                explode.Colour = colour.NewValue;
-                note.Colour = colour.NewValue;
-                Glow.Colour = colour.NewValue;
-            }, true);
+            accentColour.BindValueChanged(colour => Colour = colour.NewValue, true);
         }
 
         private void updateState(ValueChangedEvent<ArmedState> state)
