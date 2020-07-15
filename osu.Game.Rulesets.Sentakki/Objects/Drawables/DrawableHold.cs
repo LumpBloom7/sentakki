@@ -144,11 +144,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             settings?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDuration);
             HitObjectLine.Colour = HitObject.NoteColor;
         }
+        private float holdProgress = 0;
+        private bool needreset = false;
 
         protected override void Update()
         {
             base.Update();
             if (Result.HasResult) return;
+            if (needreset) { holdProgress = 0; needreset = false; }
 
             double animTime = AnimationDuration.Value / 2 * GameplaySpeed;
             double animStart = HitObject.StartTime - (animTime * 2);
@@ -166,8 +169,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             // Calculate total length of hold note
             double length = (float)(totalMovableDistance / animTime * (HitObject as IHasDuration).Duration);
-            if (length > totalMovableDistance) // Clip max length
-                length = totalMovableDistance;
 
             // Calculate time taken to extend to desired length
             double extendTime = length / totalMovableDistance * animTime;
@@ -181,12 +182,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             NoteBody.Y = -adjustedStartPoint - (totalMovableDistance * moveAmount);
 
             if (HoldStartTime != null)
-            {
-                // Start shrinking when the time comes
-                float shrinkAmount = Math.Abs(NoteBody.Y) + NoteBody.Height - SentakkiPlayfield.INTERSECTDISTANCE - 40;
-                if (shrinkAmount > 0)
-                    NoteBody.Height -= shrinkAmount;
-            }
+                holdProgress = (float)Math.Clamp((Time.Current - HitObject.StartTime) / (HitObject as IHasDuration).Duration, 0, 1);
+            float shrinkAmount = (float)length * holdProgress;
+            NoteBody.Height -= shrinkAmount;
 
             // Handle hidden and fadeIn modifications
             if (IsHidden)
@@ -220,7 +218,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (Tail.AllJudged)
+            {
                 ApplyResult(r => r.Type = (Head.IsHit || Tail.IsHit) ? HitResult.Perfect : HitResult.Miss);
+                needreset = true;
+            }
         }
 
         protected override void UpdateStateTransforms(ArmedState state)
