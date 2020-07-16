@@ -63,39 +63,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             HitObjectLine.Colour = HitObject.NoteColor;
         }
 
-        protected override void Update()
+        protected override void UpdateInitialTransforms()
         {
-            base.Update();
-            if (Result.HasResult) return;
-
             double animTime = AnimationDuration.Value / 2 * GameplaySpeed;
             double animStart = HitObject.StartTime - (animTime * 2);
-            double currentProg = Clock.CurrentTime - animStart;
-
-            // Calculate initial entry animation
-            float fadeAmount = Math.Clamp((float)(currentProg / animTime), 0, 1);
-
-            CirclePiece.Alpha = fadeAmount;
-            CirclePiece.Scale = new Vector2(fadeAmount);
-            HitObjectLine.Alpha = fadeAmount;
-
-            // Calculate position
-            float moveAmount = Math.Max((float)((currentProg - animTime) / animTime), 0);
-            CirclePiece.Y = (float)Interpolation.Lerp(-SentakkiPlayfield.NOTESTARTDISTANCE, -SentakkiPlayfield.INTERSECTDISTANCE, moveAmount);
-
-            // Handle hidden and fadeIn modifications
-            if (IsHidden)
+            using (BeginAbsoluteSequence(animStart, true))
             {
-                float hideAmount = Math.Clamp((float)((currentProg - animTime) / (animTime / 2)), 0, 1);
-                Alpha = 1 - hideAmount;
+                CirclePiece.FadeInFromZero(animTime).ScaleTo(1, animTime);
+                HitObjectLine.FadeInFromZero(animTime);
+                using (BeginDelayedSequence(animTime, true))
+                {
+                    var excessDistance = (-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * HitObject.HitWindows.WindowFor(HitResult.Miss);
+                    CirclePiece.MoveToY((float)(-SentakkiPlayfield.INTERSECTDISTANCE + excessDistance), animTime + HitObject.HitWindows.WindowFor(HitResult.Miss));
+                    HitObjectLine.ScaleTo(1, animTime);
+                }
             }
-            else if (IsFadeIn)
-            {
-                // Using existing moveAmount because it serves our needs
-                Alpha = 1 * moveAmount;
-            }
-
-            HitObjectLine.UpdateVisual(moveAmount);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -125,23 +107,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateStateTransforms(ArmedState state)
         {
             base.UpdateStateTransforms(state);
-
             const double time_fade_hit = 400, time_fade_miss = 400;
-            HitObjectLine.FadeOut();
 
             switch (state)
             {
                 case ArmedState.Hit:
                     this.Delay(400).FadeOut().Expire();
+                    HitObjectLine.FadeOut();
 
                     break;
 
                 case ArmedState.Miss:
-
                     CirclePiece.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
                        .MoveToOffset(new Vector2(0, -100), time_fade_hit, Easing.OutCubic)
                        .FadeOut(time_fade_miss);
+                    HitObjectLine.FadeOut();
 
                     this.ScaleTo(1f, time_fade_miss).Expire();
 
