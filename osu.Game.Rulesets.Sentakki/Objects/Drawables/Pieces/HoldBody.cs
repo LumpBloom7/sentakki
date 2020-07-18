@@ -14,6 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
         private readonly Container note;
+        private readonly ShadowPiece shadow;
 
         public double Duration = 0;
 
@@ -33,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     RelativeSizeAxes=Axes.Both,
                     Children = new Drawable[]
                     {
-                        new ShadowPiece(),
+                        shadow = new ShadowPiece(),
                         new CircularContainer
                         {
                             RelativeSizeAxes = Axes.Both,
@@ -157,6 +158,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
                         using (BeginDelayedSequence(flash_in, true))
                         {
+                            shadow.FadeOut();
                             note.FadeOut();
                             this.FadeOut(800);
                         }

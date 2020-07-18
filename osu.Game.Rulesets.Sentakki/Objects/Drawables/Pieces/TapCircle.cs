@@ -67,6 +67,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     {
                         //after the flash, we can hide some elements that were behind it
                         circle.FadeOut();
+                        glow.FadeOut();
 
                         this.FadeOut(800);
                     }
