@@ -66,7 +66,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         if(beginHoldAt(Time.Current - Head.HitObject.StartTime))
                         {
                             Head.UpdateResult();
-                            NoteBody.FadeColour(AccentColour.Value,50);
+                            NoteBody.Note.FadeColour(AccentColour.Value,50);
                         }
 
                         return true;
@@ -80,7 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         HoldStartTime = null;
                         isHitting.Value = false;
                         if(!AllJudged)
-                        NoteBody.FadeColour(Color4.Gray,100);
+                        NoteBody.Note.FadeColour(Color4.Gray,100);
                     },
                 }
             });
@@ -171,7 +171,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                             .ResizeHeightTo(80, stretchTime);
 
                     if (HoldStartTime == null)
-                        NoteBody.Delay(animTime).FadeColour(Color4.Gray, 100);
+                        NoteBody.Note.Delay(animTime).FadeColour(Color4.Gray, 100);
 
                     HitObjectLine.ScaleTo(1, animTime);
                 }
