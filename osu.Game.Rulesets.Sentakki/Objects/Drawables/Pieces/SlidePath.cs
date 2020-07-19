@@ -99,7 +99,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             {
                 Texture = textures.Get("slide");
             }
-
         }
     }
 }

@@ -69,7 +69,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // DX Circle Pattern
         public static List<PathControlPoint> GenerateCirclePattern(int end, int rotation = +1)
         {
-
             float centre = (0.GetRotationForLane() + end.GetRotationForLane()) / 2;
             Vector2 centreNode = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, centre == 0.GetRotationForLane() ? centre + 180 : centre);
 

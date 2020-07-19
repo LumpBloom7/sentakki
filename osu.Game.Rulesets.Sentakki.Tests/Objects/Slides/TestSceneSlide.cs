@@ -1,19 +1,7 @@
 using System.Collections.Generic;
-using System;
-using System.Collections;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Lines;
-using osu.Framework.Testing;
 using osu.Game.Rulesets.Objects;
-using osu.Framework.Graphics.Textures;
-using osu.Framework.Allocation;
-using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI.Components;
-using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Tests.Visual;
-using osuTK;
-using osuTK.Graphics;
 using NUnit.Framework;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 
