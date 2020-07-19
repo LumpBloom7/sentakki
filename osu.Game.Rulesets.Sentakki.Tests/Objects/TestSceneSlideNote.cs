@@ -27,8 +27,8 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         {
             base.Content.Add(content = new SentakkiInputManager(new RulesetInfo { ID = 0 }));
 
-            AddStep("Miss Single", () => testSingle(1000));
-            AddStep("Hit Single", () => testSingle(1000, true));
+            AddStep("Miss Single", () => testSingle(2000));
+            AddStep("Hit Single", () => testSingle(2000, true));
             AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject) && (h as DrawableSentakkiHitObject).AllJudged == false));
         }
 
@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         {
             var slide = new Slide
             {
-                SlidePath = new SliderPath(SlidePaths.GenerateStraightPattern(4).ToArray()),
+                SlidePath = new SliderPath(SlidePaths.GenerateUPattern(5).ToArray()),
                 StartTime = Time.Current + 1000,
                 EndTime = Time.Current + 1000 + duration,
             };

@@ -33,6 +33,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 starProg = value;
                 SlideStar.Position = Slidepath.Path.PositionAt(value);
+                if (Auto)
+                    Slidepath.Progress = StarProgress;
             }
         }
         public DrawableSlide(SentakkiHitObject hitObject)
