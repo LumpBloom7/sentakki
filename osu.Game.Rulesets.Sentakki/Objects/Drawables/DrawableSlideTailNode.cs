@@ -13,15 +13,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // Needs work :)
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            bool previousHit = Slide.SlideNodes.IndexOf(this) >= 2 && Slide.SlideNodes[Slide.SlideNodes.IndexOf(this) - 2].IsHit;
             if (!userTriggered)
             {
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
-                    ApplyResult(r => r.Type = previousHit ? HitResult.Good : HitResult.Miss);
+                {
+                    HitPreviousNodes();
+                    ApplyResult(r => r.Type = IsHittable ? HitResult.Good : HitResult.Miss);
+                }
                 return;
             }
 
-            if (!previousHit) return;
+            if (!IsHittable) return;
 
             var result = HitObject.HitWindows.ResultFor(timeOffset);
             if (result == HitResult.None)

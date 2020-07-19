@@ -4,12 +4,15 @@ using osuTK;
 using osuTK.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
+using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideNode : DrawableSentakkiHitObject
     {
         protected DrawableSlide Slide;
+
+        protected int ThisIndex;
         public DrawableSlideNode(Slide.SlideNode node, DrawableSlide slideNote)
             : base(node)
         {
@@ -31,26 +34,38 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 AlwaysPresent = true
             });
         }
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            ThisIndex = Slide.SlideNodes.IndexOf(this);
+        }
+
+        protected bool IsHittable => ThisIndex < 2 || Slide.SlideNodes[ThisIndex - 2].IsHit;
+
+        protected void HitPreviousNodes()
+        {
+            foreach (var node in Slide.SlideNodes)
+            {
+                if (node == this) return;
+                if (!node.Result.HasResult)
+                    node.forceJudgement();
+            }
+        }
 
         // Needs work :)
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            int currentIndex = Slide.SlideNodes.IndexOf(this);
             if (!userTriggered) return;
-            if (currentIndex >= 2 && !Slide.SlideNodes[currentIndex - 2].IsHit)
+            if (!IsHittable)
                 return;
 
-            if (!Slide.SlideNodes[currentIndex - 1].Result.HasResult)
-                Slide.SlideNodes[currentIndex - 1].ForceJudgement();
-
+            HitPreviousNodes();
             ApplyResult(r => r.Type = HitResult.Perfect);
-
-
             Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
         }
         public void UpdateResult() => base.UpdateResult(true);
 
         // Forces this object to have a result.
-        public void ForceJudgement() => ApplyResult(r => r.Type = HitResult.Perfect);
+        private void forceJudgement() => ApplyResult(r => r.Type = HitResult.Perfect);
     }
 }

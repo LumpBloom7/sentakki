@@ -179,10 +179,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (SlideNodes.Children.Last().AllJudged)
             {
                 ApplyResult(r => r.Type = HitResult.Perfect);
-
-                //Make sure the nodes are missed so that the entire slide nodes are judged
-                foreach (var node in SlideNodes)
-                    if (!node.Result.HasResult) node.ForceJudgement();
             }
         }
     }
