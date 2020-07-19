@@ -3,6 +3,8 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Sentakki.Scoring;
+using osu.Game.Rulesets.Sentakki.Judgements;
 using System.Collections.Generic;
 using System.Linq;
 using System;
@@ -34,18 +36,26 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             for (double progress = nodeInterval; progress < 1; progress += nodeInterval)
             {
                 if (progress + nodeInterval > 1)
-                    progress = 1;
-                AddNested(new SlideNode { Progress = progress });
+                    AddNested(new SlideTailNode { StartTime = EndTime });
+                else
+                    AddNested(new SlideNode { Progress = (float)progress, Lane = Lane });
             }
+            AddNested(new Tap { Lane = Lane, StartTime = StartTime });
         }
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
 
         public class SlideNode : SentakkiHitObject
         {
-            public double Progress { get; set; }
+            public virtual float Progress { get; set; }
             protected override HitWindows CreateHitWindows() => HitWindows.Empty;
             public override Judgement CreateJudgement() => new IgnoreJudgement();
+        }
+        public class SlideTailNode : SlideNode
+        {
+            public override float Progress { get; set; } = 1;
+            protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
+            public override Judgement CreateJudgement() => new SentakkiJudgement();
         }
     }
 }
