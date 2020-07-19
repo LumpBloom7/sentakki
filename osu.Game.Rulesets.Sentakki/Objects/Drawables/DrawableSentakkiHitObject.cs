@@ -30,6 +30,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         // Used for the animation update
         protected readonly Bindable<double> AnimationDuration = new Bindable<double>(1000);
+        protected readonly Bindable<double> AdjustedAnimationDuration = new Bindable<double>(1000);
 
         protected override float SamplePlaybackPosition => (SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, HitObject.Lane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
         public SentakkiAction[] HitActions { get; set; } = new[]
@@ -45,6 +46,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 AddRangeInternal(new Drawable[]{
                     breakSound = new SkinnableSound(new SampleInfo("Break"))
                 });
+            AdjustedAnimationDuration.BindValueChanged(_ => invalidateTransforms());
         }
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
@@ -59,6 +61,28 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             drawableSentakkiRuleset = drawableRuleset;
             osuConfig.BindWith(OsuSetting.PositionalHitSounds, userPositionalHitSounds);
             sentakkiConfig?.BindWith(SentakkiRulesetSettings.BreakSounds, breakEnabled);
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            AdjustedAnimationDuration.Value = AnimationDuration.Value * GameplaySpeed;
+        }
+
+        private void invalidateTransforms()
+        {
+            foreach (var transform in Transforms)
+            {
+                transform.Apply(double.MinValue);
+                RemoveTransform(transform);
+            }
+            foreach (Drawable internalChild in InternalChildren)
+            {
+                internalChild.ApplyTransformsAt(double.MinValue, true);
+                internalChild.ClearTransforms(true);
+            }
+            UpdateInitialTransforms();
+            UpdateStateTransforms(State.Value);
         }
 
         protected virtual bool PlayBreakSample => true;

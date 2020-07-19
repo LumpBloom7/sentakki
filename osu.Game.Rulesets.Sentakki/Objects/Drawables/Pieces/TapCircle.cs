@@ -46,7 +46,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             accentColour.BindValueChanged(colour =>
             {
                 explode.Colour = colour.NewValue;
-                glow.Colour = colour.NewValue;
                 circle.Colour = colour.NewValue;
             }, true);
         }
@@ -72,6 +71,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     {
                         //after the flash, we can hide some elements that were behind it
                         circle.FadeOut();
+                        glow.FadeOut();
 
                         this.FadeOut(800);
                     }
