@@ -35,12 +35,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // Needs work :)
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
+            int currentIndex = Slide.SlideNodes.IndexOf(this);
             if (!userTriggered) return;
-            if (Slide.SlideNodes.IndexOf(this) >= 2 && !Slide.SlideNodes[Slide.SlideNodes.IndexOf(this) - 2].IsHit)
+            if (currentIndex >= 2 && !Slide.SlideNodes[currentIndex - 2].IsHit)
                 return;
+
+            if (!Slide.SlideNodes[currentIndex - 1].Result.HasResult)
+                Slide.SlideNodes[currentIndex - 1].ForceJudgement();
+
             ApplyResult(r => r.Type = HitResult.Perfect);
+
+
             Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
         }
         public void UpdateResult() => base.UpdateResult(true);
+
+        // Forces this object to have a result.
+        public void ForceJudgement() => ApplyResult(r => r.Type = HitResult.Perfect);
     }
 }
