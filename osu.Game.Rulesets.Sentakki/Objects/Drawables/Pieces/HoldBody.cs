@@ -13,8 +13,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     {
         private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
-        private readonly Container note;
-        public readonly HoldGlowPiece Glow;
+        public readonly Container Note;
+        private readonly ShadowPiece shadow;
 
         public double Duration = 0;
 
@@ -27,17 +27,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Size = new Vector2(80);
             InternalChildren = new Drawable[]
             {
-                note = new Container
+                Note = new Container
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     RelativeSizeAxes=Axes.Both,
                     Children = new Drawable[]
                     {
-                        new ShadowPiece(),
-                        Glow = new HoldGlowPiece(){
-                            Alpha = 0
-                        },
+                        shadow = new ShadowPiece(),
                         new CircularContainer
                         {
                             RelativeSizeAxes = Axes.Both,
@@ -142,8 +139,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             accentColour.BindValueChanged(colour =>
             {
                 explode.Colour = colour.NewValue;
-                note.Colour = colour.NewValue;
-                Glow.Colour = colour.NewValue;
+                Note.Colour = colour.NewValue;
             }, true);
         }
 
@@ -166,7 +162,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
                         using (BeginDelayedSequence(flash_in, true))
                         {
-                            note.FadeOut();
+                            shadow.FadeOut();
+                            Note.FadeOut();
                             this.FadeOut(800);
                         }
                     }

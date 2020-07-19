@@ -105,70 +105,30 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private readonly DefaultEasingFunction outSine = new DefaultEasingFunction(Easing.OutSine);
         private readonly DefaultEasingFunction inQuint = new DefaultEasingFunction(Easing.InQuint);
 
+        protected override void UpdateInitialTransforms()
+        {
+            double fadeIn = AnimationDuration.Value * GameplaySpeed;
+            double moveTo = HitObject.HitWindows.WindowFor(HitResult.Meh) * 2 * GameplaySpeed;
+
+            using (BeginAbsoluteSequence(HitObject.StartTime - fadeIn - moveTo, true))
+            {
+                this.FadeIn(fadeIn, Easing.OutSine).ScaleTo(1, fadeIn, Easing.OutSine);
+
+                using (BeginDelayedSequence(fadeIn, true))
+                {
+                    blob1.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint);
+                    blob2.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
+                    blob3.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
+                    blob4.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
+                }
+            }
+        }
+
         protected override void Update()
         {
             base.Update();
             Position = HitObject.Position;
             if (Result.HasResult) return;
-
-            double fadeIn = AnimationDuration.Value * GameplaySpeed;
-            double moveTo = HitObject.HitWindows.WindowFor(HitResult.Meh) * 2 * GameplaySpeed;
-            double animStart = HitObject.StartTime - fadeIn - moveTo;
-            double currentProg = Clock.CurrentTime - animStart;
-
-            // Calculate initial entry animation
-            float fadeAmount = Math.Clamp((float)(currentProg / fadeIn), 0, 1);
-
-            Alpha = fadeAmount * (float)outSine.ApplyEasing(fadeAmount);
-            Scale = new Vector2(fadeAmount * (float)outSine.ApplyEasing(fadeAmount));
-
-            // Calculate position
-            float moveAmount = Math.Clamp((float)((currentProg - fadeIn) / moveTo), 0, 1);
-
-            // Used to simplify this crazy arse manual animating
-            float moveAnimFormula(float originalValue) => (float)(originalValue - (originalValue * inQuint.ApplyEasing(moveAmount)));
-
-            blob1.Position = new Vector2(moveAnimFormula(40), 0);
-            blob2.Position = new Vector2(moveAnimFormula(-40), 0);
-            blob3.Position = new Vector2(0, moveAnimFormula(40));
-            blob4.Position = new Vector2(0, moveAnimFormula(-40));
-
-            // Used to simplify this crazy arse manual animating
-            float sizeAnimFormula() => (float)(.5 + .5 * inQuint.ApplyEasing(moveAmount));
-
-            blob1.Scale = new Vector2(sizeAnimFormula());
-            blob2.Scale = new Vector2(sizeAnimFormula());
-            blob3.Scale = new Vector2(sizeAnimFormula());
-            blob4.Scale = new Vector2(sizeAnimFormula());
-
-            // Might be literally jank, but it removes bad edges after animation finishes
-            if (moveAmount == 1)
-            {
-                blob2.Alpha = 0;
-                blob3.Alpha = 0;
-                blob4.Alpha = 0;
-            }
-            else
-            {
-                blob2.Alpha = 1;
-                blob3.Alpha = 1;
-                blob4.Alpha = 1;
-            }
-
-
-            // Handle hidden and fadeIn modifications
-            if (IsHidden)
-            {
-                float hideAmount = Math.Clamp((float)((currentProg - fadeIn) / (moveTo / 2)), 0, 1);
-
-                Alpha = 1 - hideAmount;
-            }
-            else if (IsFadeIn)
-            {
-                // Using existing moveAmount because it serves our needs
-                Alpha = 1 * moveAmount;
-            }
-
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)

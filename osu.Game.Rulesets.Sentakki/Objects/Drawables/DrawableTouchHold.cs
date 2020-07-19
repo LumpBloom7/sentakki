@@ -92,6 +92,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         /// </summary>
         public double? HoldStartTime { get; private set; }
 
+        protected override void UpdateInitialTransforms()
+        {
+            circle.Progress.Current.Value = 0;
+            double fadeIn = AnimationDuration.Value * GameplaySpeed;
+            using (BeginAbsoluteSequence(HitObject.StartTime - fadeIn, true))
+            {
+                this.FadeInFromZero(fadeIn).ScaleTo(1, fadeIn);
+                using (BeginDelayedSequence(fadeIn, true))
+                {
+                    circle.Progress.FillTo(1, (HitObject as IHasDuration).Duration);
+                }
+            }
+        }
+
         protected override void Update()
         {
             base.Update();
@@ -102,33 +116,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 circle.Size = Vector2.One;
                 currentColour = Color4.HotPink;
                 needReset = false;
-            }
-
-            double fadeIn = AnimationDuration.Value * GameplaySpeed;
-            double animStart = HitObject.StartTime - fadeIn;
-            double currentProg = Clock.CurrentTime - animStart;
-
-            // Calculate initial entry animation
-            float fadeAmount = Math.Clamp((float)(currentProg / fadeIn), 0, 1);
-
-            Alpha = fadeAmount;
-            Scale = new Vector2(fadeAmount);
-
-            // Calculate progressbar fill
-            float fillAmount = Math.Clamp((float)((currentProg - fadeIn) / (HitObject as TouchHold).Duration), 0, 1);
-            circle.Progress.Current.Value = float.IsNaN(fillAmount) ? 0 : fillAmount;
-
-            if (IsHidden)
-            {
-                float hideAmount = Math.Min((float)((currentProg - fadeIn) / 125), 1);
-
-                if (hideAmount > 0)
-                {
-                    if (Time.Current >= HitObject.StartTime && activated)
-                        hideAmount /= 2;
-
-                    Alpha = 1 - hideAmount;
-                }
             }
 
             // Input and feedback

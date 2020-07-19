@@ -23,6 +23,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
+            Scale = new Vector2(.22f);
+            Size = new Vector2(299);
+            Alpha = 0;
         }
 
         [BackgroundDependencyLoader]
@@ -31,19 +34,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             lineTexture = textures.Get("HitObjectLine");
             AddInternal(lineSprite = new Sprite()
             {
-                Size = new Vector2(299),
-                Scale = new Vector2(.22f),
+                RelativeSizeAxes = Axes.Both,
                 Rotation = -45,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.BottomLeft,
                 Texture = lineTexture
             });
-        }
-
-        public void UpdateVisual(double progress)
-        {
-            float newSize = .22f + (float)(.78f * progress);
-            lineSprite.Scale = new Vector2(newSize);
         }
     }
 }
