@@ -48,11 +48,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
         {
             base.UpdatePosition(result);
 
-            Vector2 newPos = ToLocalSpace(result.ScreenSpacePosition);
-            newPos.Y = 600 - newPos.Y;
-            newPos -= new Vector2(300);
+            Vector2 newPos = ToLocalSpace(result.ScreenSpacePosition) - new Vector2(300);
 
-            HitObject.Lane = newPos.GetDegreesFromPosition(Vector2.Zero).GetNoteLaneFromDegrees();
+            HitObject.Lane = Vector2.Zero.GetDegreesFromPosition(newPos).GetNoteLaneFromDegrees();
         }
     }
 }

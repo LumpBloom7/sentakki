@@ -46,10 +46,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touchs
         {
             base.UpdatePosition(result);
 
-            Vector2 newPos = ToLocalSpace(result.ScreenSpacePosition);
-            newPos = new Vector2(newPos.X - 300, -(newPos.Y - 300));
+            Vector2 newPos = ToLocalSpace(result.ScreenSpacePosition) - new Vector2(300);
 
-            float angle = newPos.GetDegreesFromPosition(Vector2.Zero);
+            float angle = Vector2.Zero.GetDegreesFromPosition(newPos);
             float distance = Math.Clamp(Vector2.Distance(newPos, Vector2.Zero), 0, 200);
 
             newPos = SentakkiExtensions.GetCircularPosition(distance, angle);
