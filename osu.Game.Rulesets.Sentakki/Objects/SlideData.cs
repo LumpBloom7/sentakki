@@ -9,6 +9,50 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public static class SlidePaths
     {
+        public static List<PathControlPoint>[] ValidPaths => new List<PathControlPoint>[]{
+            GenerateCirclePattern(0),
+            GenerateCirclePattern(1),
+            GenerateCirclePattern(2),
+            GenerateCirclePattern(3),
+            GenerateCirclePattern(4),
+            GenerateCirclePattern(5),
+            GenerateCirclePattern(6),
+            GenerateCirclePattern(7),
+            GenerateCirclePattern(0,-1),
+            GenerateCirclePattern(1,-1),
+            GenerateCirclePattern(2,-1),
+            GenerateCirclePattern(3,-1),
+            GenerateCirclePattern(4,-1),
+            GenerateCirclePattern(5,-1),
+            GenerateCirclePattern(6,-1),
+            GenerateCirclePattern(7,-1),
+            GenerateLPattern(2),
+            GenerateLPattern(3),
+            GenerateLPattern(4),
+            GenerateLPattern(5),
+            GenerateStraightPattern(3),
+            GenerateStraightPattern(4),
+            GenerateStraightPattern(5),
+            GenerateStraightPattern(6),
+            GenerateStraightPattern(7),
+            GenerateThunderPattern(),
+            GenerateUPattern(0),
+            GenerateUPattern(1),
+            GenerateUPattern(2),
+            GenerateUPattern(3),
+            GenerateUPattern(4),
+            GenerateUPattern(5),
+            GenerateUPattern(6),
+            GenerateUPattern(7),
+            GenerateVPattern(0),
+            GenerateVPattern(1),
+            GenerateVPattern(2),
+            GenerateVPattern(3),
+            GenerateVPattern(4),
+            GenerateVPattern(5),
+            GenerateVPattern(6),
+            GenerateVPattern(7),
+        };
         private static Vector2 getPositionInBetween(Vector2 first, Vector2 second, float ratio = .5f) => first + ((second - first) * ratio);
 
         // Covers DX Straight 3-7
@@ -53,7 +97,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         }
 
         // Covers DX L pattern 2-5
-        public static List<PathControlPoint> GenerateLPattern(int start, int end)
+        public static List<PathControlPoint> GenerateLPattern(int end)
         {
             Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0);
             Vector2 Node1Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 6);
