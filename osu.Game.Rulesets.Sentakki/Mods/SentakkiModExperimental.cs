@@ -46,6 +46,13 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             Value = true
         };
 
+        [SettingSource("Enable Slide notes", "Allow SLIDEs to appear")]
+        public BindableBool EnableSlides { get; } = new BindableBool
+        {
+            Default = false,
+            Value = false
+        };
+
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
             if (EnableTwins.Value)
@@ -56,6 +63,9 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
             if (EnablePatternGen.Value)
                 (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.patternv2;
+
+            if (EnableSlides.Value)
+                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.slide;
         }
     }
 }

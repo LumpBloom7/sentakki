@@ -71,19 +71,26 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 case IHasPathWithRepeats hold:
                     breakNote = hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH));
-                    if (Experiments.Value.HasFlag(ConversionExperiments.twins))
+                    if (Experiments.Value.HasFlag(ConversionExperiments.slide) && hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)))
                     {
-                        if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
-                        {
-                            isTwin = true;
-                            notes.Add(createHoldNote(original, true, breakNote));
-                        }
-                        else
-                            foreach (var note in createTapsFromTicks(original).ToList())
-                                yield return note;
+                        notes.Add(createSlideNote(original));
                     }
+                    else
+                    {
+                        if (Experiments.Value.HasFlag(ConversionExperiments.twins))
+                        {
+                            if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
+                            {
+                                isTwin = true;
+                                notes.Add(createHoldNote(original, true, breakNote));
+                            }
+                            else
+                                foreach (var note in createTapsFromTicks(original).ToList())
+                                    yield return note;
+                        }
 
-                    notes.Add(createHoldNote(original, isBreak: breakNote));
+                        notes.Add(createHoldNote(original, isBreak: breakNote));
+                    }
                     break;
 
                 case IHasDuration _:
@@ -118,6 +125,18 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         }
 
         // Individual note generation code, because it's cleaner
+        private SentakkiHitObject createSlideNote(HitObject original, bool twin = false, bool isBreak = false)
+        {
+            int noteLane = getNewLane(twin);
+            return new Slide
+            {
+                SlidePath = new SliderPath(SlidePaths.ValidPaths[rng.Next(0, SlidePaths.ValidPaths.Length)].ToArray()),
+                Lane = noteLane,
+                StartTime = original.StartTime,
+                EndTime = original.GetEndTime()
+            };
+        }
+
         private SentakkiHitObject createHoldNote(HitObject original, bool twin = false, bool isBreak = false)
         {
             int noteLane = getNewLane(twin);
