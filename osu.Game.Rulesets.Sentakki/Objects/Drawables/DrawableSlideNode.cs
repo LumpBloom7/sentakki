@@ -10,6 +10,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideNode : DrawableSentakkiHitObject
     {
+        public override bool HandlePositionalInput => true;
+        private SentakkiInputManager sentakkiActionInputManager;
+        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
         protected DrawableSlide Slide;
 
         protected int ThisIndex;
@@ -67,5 +70,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         // Forces this object to have a result.
         private void forceJudgement() => ApplyResult(r => r.Type = HitResult.Perfect);
+
+        protected override void Update()
+        {
+            if (IsHovered)
+                if (SentakkiActionInputManager.PressedActions.Any())
+                    UpdateResult(true);
+        }
     }
 }
