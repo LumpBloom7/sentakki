@@ -30,6 +30,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 result = HitResult.Meh;
 
             ApplyResult(r => r.Type = result);
+            HitPreviousNodes();
         }
     }
 }
