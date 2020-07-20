@@ -73,9 +73,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void Update()
         {
-            if (IsHovered)
-                if (SentakkiActionInputManager.PressedActions.Any())
-                    UpdateResult(true);
+            if (Time.Current >= Slide.HitObject.StartTime)
+                if (IsHovered)
+                    if (SentakkiActionInputManager.PressedActions.Any())
+                        UpdateResult(true);
         }
     }
 }
