@@ -15,6 +15,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (!userTriggered)
             {
+                if (Slide.Auto && timeOffset > 0)
+                {
+                    HitPreviousNodes();
+                    ApplyResult(r => r.Type = HitResult.Perfect);
+                }
+
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
                 {
                     HitPreviousNodes();

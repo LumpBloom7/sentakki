@@ -111,6 +111,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 slideBodyContainer.Colour = c.NewValue;
             }, true);
             SlideTaps.Child.AccentColour.BindTo(AccentColour);
+            SlideTaps.Child.Auto = Auto;
         }
         protected override void UpdateInitialTransforms()
         {
