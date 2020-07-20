@@ -117,7 +117,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Vector2 centreNode = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, centre == 0.GetRotationForLane() ? centre + 180 : centre);
 
             List<PathControlPoint> SlidePath = new List<PathControlPoint> {
-                new PathControlPoint(SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, 0.GetRotationForLane()+.5f), PathType.PerfectCurve),
+                new PathControlPoint(SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, 0.GetRotationForLane() + .5f), PathType.PerfectCurve),
                 new PathControlPoint(centreNode),
                 new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end), PathType.PerfectCurve)
             };
@@ -130,7 +130,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0);
             Vector2 Node1Pos = getPositionInBetween(Node0Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 5), .51f);
 
-            float angleDiff = (end.GetRotationForLane() + 0.GetRotationForLane()) / 2 + (Math.Abs(end) > 4 ? 0 : 180);
+            float angleDiff = ((end.GetRotationForLane() + 0.GetRotationForLane()) / 2) + (Math.Abs(end) > 4 ? 0 : 180);
             Vector2 Node2Pos = SentakkiExtensions.GetCircularPosition(115, angleDiff);
 
             Vector2 Node4Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end);

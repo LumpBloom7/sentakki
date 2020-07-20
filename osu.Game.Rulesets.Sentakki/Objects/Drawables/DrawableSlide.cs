@@ -94,8 +94,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Origin = Anchor.Centre,
                 }
             });
-
         }
+
         protected override void LoadComplete()
         {
             base.LoadComplete();
