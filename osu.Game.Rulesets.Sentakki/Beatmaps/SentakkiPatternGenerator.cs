@@ -71,7 +71,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 case IHasPathWithRepeats hold:
                     breakNote = hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH));
-                    if (Experiments.Value.HasFlag(ConversionExperiments.slide) && hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)))
+                    if (Experiments.Value.HasFlag(ConversionExperiments.slide) && hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)) && hold.Duration > 500)
                     {
                         notes.Add(createSlideNote(original));
                     }
