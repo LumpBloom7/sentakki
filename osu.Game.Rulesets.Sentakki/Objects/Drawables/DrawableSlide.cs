@@ -28,6 +28,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override double InitialLifetimeOffset => 8000;
 
         private float starProg = 0;
+        private Vector2 previousPosition;
         public float StarProgress
         {
             get => starProg;
@@ -35,6 +36,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 starProg = value;
                 SlideStar.Position = Slidepath.Path.PositionAt(value);
+                if (previousPosition == null)
+                    SlideStar.Rotation = SlideStar.Position.GetDegreesFromPosition(SlideStar.Position);
+                else
+                    SlideStar.Rotation = previousPosition.GetDegreesFromPosition(SlideStar.Position);
+                previousPosition = SlideStar.Position;
+
                 if (Auto)
                     Slidepath.Progress = StarProgress;
             }
