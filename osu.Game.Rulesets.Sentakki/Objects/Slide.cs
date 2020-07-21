@@ -1,14 +1,10 @@
-using osu.Game.Audio;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
-using System.Collections.Generic;
-using System.Linq;
 using System;
-using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
@@ -36,7 +32,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             for (double progress = nodeInterval; progress < 1; progress += nodeInterval)
             {
-                if (progress + nodeInterval > 1)
+                if (progress + nodeInterval >= 1)
                     AddNested(new SlideTailNode { StartTime = EndTime });
                 else
                     AddNested(new SlideNode { Progress = (float)progress, Lane = Lane });
