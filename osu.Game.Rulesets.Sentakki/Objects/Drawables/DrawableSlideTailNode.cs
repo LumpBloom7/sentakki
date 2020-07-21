@@ -17,14 +17,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 if (Slide.Auto && timeOffset > 0)
                 {
-                    HitPreviousNodes();
                     ApplyResult(r => r.Type = HitResult.Perfect);
+                    HitPreviousNodes();
                 }
 
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
                 {
-                    HitPreviousNodes();
                     ApplyResult(r => r.Type = IsHittable ? HitResult.Good : HitResult.Miss);
+                    HitPreviousNodes();
                 }
                 return;
             }

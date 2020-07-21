@@ -54,8 +54,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!IsHittable)
                 return;
 
-            HitPreviousNodes();
             ApplyResult(r => r.Type = HitResult.Perfect);
+            HitPreviousNodes();
             Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
         }
         public void UpdateResult() => base.UpdateResult(true);
