@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!IsHittable) return;
 
             var result = HitObject.HitWindows.ResultFor(timeOffset);
-            if (timeOffset < 0 && result == HitResult.None)
+            if (result == HitResult.None)
                 result = HitResult.Meh;
 
             ApplyResult(r => r.Type = result);
