@@ -10,6 +10,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideNode : DrawableSentakkiHitObject
     {
+        public override bool DisplayResult => false;
         public override bool HandlePositionalInput => true;
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;

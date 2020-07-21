@@ -5,6 +5,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideTailNode : DrawableSlideNode
     {
+        public override bool DisplayResult => true;
         public DrawableSlideTailNode(Slide.SlideNode node, DrawableSlide slideNote)
             : base(node, slideNote)
         {

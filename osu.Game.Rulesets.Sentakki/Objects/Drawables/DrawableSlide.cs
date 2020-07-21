@@ -15,6 +15,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlide : DrawableSentakkiHitObject
     {
+        public override bool DisplayResult => false;
+
         public Container<DrawableSlideNode> SlideNodes;
         public Container<DrawableTap> SlideTaps;
         public SlideBody Slidepath;
