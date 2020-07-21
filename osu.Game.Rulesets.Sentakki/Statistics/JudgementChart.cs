@@ -42,7 +42,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new NoteEntry
                 {
                     ObjectName = "Slide",
-                    HitEvents = new List<HitEvent>(),
+                    HitEvents = hitEvents.Where(e => e.HitObject is Slide.SlideTailNode).ToList(),
                     Position = new Vector2(0, .32f),
                     InitialLifetimeOffset = entry_animation_duration * 2
                 },
