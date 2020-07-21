@@ -18,12 +18,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public override bool DisplayResult => false;
 
         public Container<DrawableSlideNode> SlideNodes;
-        public Container<DrawableTap> SlideTaps;
+        public Container<DrawableSlideTap> SlideTaps;
         public SlideBody Slidepath;
 
         // Allows us to manage the slide body independently from the Nested Tap drawable, which will handle itself
         private Container slideBodyContainer;
-        public Container SlideStar;
+        public StarPiece SlideStar;
 
         protected override double InitialLifetimeOffset => 8000;
 
@@ -61,26 +61,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         new Container{
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
-                            Child = SlideStar = new Container
+                            Child = SlideStar = new StarPiece
                             {
                                 Alpha = 0,
                                 Scale = Vector2.Zero,
                                 Position = Slidepath.Path.PositionAt(0),
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                CornerExponent = 2f,
+                                RelativeSizeAxes  = Axes.None,
                                 Size = new Vector2(80),
-                                CornerRadius = 40,
-                                Masking = true,
-                                BorderColour = Color4.White,
-                                BorderThickness = 2,
-                                Child = new Box
-                                {
-                                    Colour = Color4.White,
-                                    RelativeSizeAxes = Axes.Both,
-                                    Alpha = .5f,
-                                    AlwaysPresent = true
-                                }
                             }
                         },
                         SlideNodes = new Container<DrawableSlideNode>
@@ -90,7 +79,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         },
                     }
                 },
-                SlideTaps = new Container<DrawableTap>
+                SlideTaps = new Container<DrawableSlideTap>
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -140,7 +129,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (hitObject)
             {
                 case Tap x:
-                    return new DrawableTap(x)
+                    return new DrawableSlideTap(x)
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
@@ -174,7 +163,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 case DrawableSlideNode node:
                     SlideNodes.Add(node);
                     break;
-                case DrawableTap tap:
+                case DrawableSlideTap tap:
                     SlideTaps.Child = tap;
                     break;
             }
