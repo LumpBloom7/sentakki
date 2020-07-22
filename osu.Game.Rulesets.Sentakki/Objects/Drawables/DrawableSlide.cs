@@ -137,7 +137,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (hitObject)
             {
                 case Tap x:
-                    return new DrawableSlideTap(x)
+                    return new DrawableSlideTap(x, this)
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
