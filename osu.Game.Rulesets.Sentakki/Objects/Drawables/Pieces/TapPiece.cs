@@ -3,24 +3,27 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class TapCircle : CompositeDrawable
+    public class TapPiece : CompositeDrawable
     {
         private readonly CirclePiece circle;
         private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
         private readonly ShadowPiece glow;
 
-        public TapCircle()
+        public TapPiece()
         {
             Size = new Vector2(80);
 
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
+            Scale = new Vector2(0f);
+            Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE);
 
             InternalChildren = new Drawable[]
             {

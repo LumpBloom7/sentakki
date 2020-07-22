@@ -2,31 +2,30 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class SlideStarBody : CompositeDrawable
+    public class SlideTapPiece : CompositeDrawable
     {
         private readonly StarPiece star;
-        //private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
-        //private readonly ShadowPiece glow;
 
-        public SlideStarBody()
+        public SlideTapPiece()
         {
             Size = new Vector2(80);
 
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
+            Scale = new Vector2(0f);
+            Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE);
 
             InternalChildren = new Drawable[]
             {
-                //glow = new ShadowPiece(),
                 star = new StarPiece(),
-                //flash = new FlashPiece(),
                 explode = new ExplodePiece(),
             };
         }
@@ -52,22 +51,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         private void updateState(ValueChangedEvent<ArmedState> state)
         {
-            //glow.FadeOut(400);
-
             switch (state.NewValue)
             {
                 case ArmedState.Hit:
                     const double flash_in = 40;
-                    //const double flash_out = 100;
 
                     explode.FadeIn(flash_in);
                     this.ScaleTo(1.5f, 400, Easing.OutQuad);
 
                     using (BeginDelayedSequence(flash_in, true))
                     {
-                        //after the flash, we can hide some elements that were behind it
                         star.FadeOut();
-                        //glow.FadeOut();
 
                         this.FadeOut(800);
                     }
