@@ -28,7 +28,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override double InitialLifetimeOffset => 8000;
 
         private float starProg = 0;
-        private Vector2 previousPosition;
+        private Vector2? previousPosition = null;
         public float StarProgress
         {
             get => starProg;
@@ -37,9 +37,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 starProg = value;
                 SlideStar.Position = Slidepath.Path.PositionAt(value);
                 if (previousPosition == null)
-                    SlideStar.Rotation = SlideStar.Position.GetDegreesFromPosition(SlideStar.Position);
+                    SlideStar.Rotation = SlideStar.Position.GetDegreesFromPosition(Slidepath.Path.PositionAt(value + .001f));
                 else
-                    SlideStar.Rotation = previousPosition.GetDegreesFromPosition(SlideStar.Position);
+                    SlideStar.Rotation = previousPosition.Value.GetDegreesFromPosition(SlideStar.Position);
                 previousPosition = SlideStar.Position;
 
                 if (Auto)
@@ -113,6 +113,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
         protected override void UpdateInitialTransforms()
         {
+            this.TransformTo(nameof(StarProgress), 0f);
             using (BeginAbsoluteSequence(HitObject.StartTime - 500, true))
             {
                 Slidepath.FadeInFromZero(500);
