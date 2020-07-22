@@ -58,7 +58,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private void load(SentakkiRulesetConfigManager settings)
         {
             settings?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDuration);
-            HitObjectLine.Colour = HitObject.NoteColor;
+            AccentColour.BindValueChanged(c => HitObjectLine.Colour = c.NewValue, true);
         }
 
         protected override void UpdateInitialTransforms()
