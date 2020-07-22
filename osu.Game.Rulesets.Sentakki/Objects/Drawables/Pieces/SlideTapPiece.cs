@@ -11,7 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
     public class SlideTapPiece : CompositeDrawable
     {
-        private readonly StarPiece star;
+        public readonly StarPiece Star;
         private readonly ExplodePiece explode;
 
         public SlideTapPiece()
@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
             InternalChildren = new Drawable[]
             {
-                star = new StarPiece(),
+                Star = new StarPiece(),
                 explode = new ExplodePiece(),
             };
         }
@@ -45,7 +45,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             accentColour.BindValueChanged(colour =>
             {
                 explode.Colour = colour.NewValue;
-                star.Colour = colour.NewValue;
+                Star.Colour = colour.NewValue;
             }, true);
         }
 
@@ -61,7 +61,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
                     using (BeginDelayedSequence(flash_in, true))
                     {
-                        star.FadeOut();
+                        Star.FadeOut();
 
                         this.FadeOut(800);
                     }
