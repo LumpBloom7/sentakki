@@ -32,19 +32,16 @@ namespace osu.Game.Rulesets.Sentakki.Replays
             }
         }
 
-        public override List<IInput> GetPendingInputs()
+        public override void CollectPendingInputs(List<IInput> inputs)
         {
-            return new List<IInput>
+            inputs.Add(new MousePositionAbsoluteInput
             {
-                new MousePositionAbsoluteInput
-                {
-                    Position = GamefieldToScreenSpace(Position)
-                },
-                new ReplayState<SentakkiAction>
-                {
-                    PressedActions = CurrentFrame?.Actions ?? new List<SentakkiAction>()
-                }
-            };
+                Position = GamefieldToScreenSpace(Position),
+            });
+            inputs.Add(new ReplayState<SentakkiAction>
+            {
+                PressedActions = CurrentFrame?.Actions ?? new List<SentakkiAction>(),
+            });
         }
     }
 }
