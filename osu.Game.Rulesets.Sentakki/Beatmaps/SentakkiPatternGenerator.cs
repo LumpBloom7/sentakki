@@ -130,7 +130,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             int noteLane = getNewLane(twin);
             return new Slide
             {
-                SlidePath = new SliderPath(SlidePaths.ValidPaths[rng.Next(0, SlidePaths.ValidPaths.Length)].ToArray()),
+                SlidePath = SlidePaths.ValidPaths[rng.Next(0, SlidePaths.ValidPaths.Length)],
                 Lane = noteLane,
                 StartTime = original.StartTime,
                 EndTime = original.GetEndTime()

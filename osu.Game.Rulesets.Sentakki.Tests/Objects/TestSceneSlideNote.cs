@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         {
             var slide = new Slide
             {
-                SlidePath = new SliderPath(SlidePaths.GenerateUPattern(5).ToArray()),
+                SlidePath = SlidePaths.GenerateUPattern(5),
                 StartTime = Time.Current + 1000,
                 EndTime = Time.Current + 1000 + duration,
             };

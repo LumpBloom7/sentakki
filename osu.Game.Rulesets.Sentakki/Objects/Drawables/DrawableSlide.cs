@@ -63,7 +63,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Slidepath = new SlideBody
                         {
                             Alpha = 0,
-                            Path = (hitObject as Slide).SlidePath,
+                            Path = (hitObject as Slide).SlidePath.Path,
                         },
                         new Container{
                             Anchor = Anchor.Centre,

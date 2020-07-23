@@ -6,6 +6,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
     public class TestSceneStraightSlide : TestSceneSlide
     {
-        protected override List<PathControlPoint> CreatePattern() => SlidePaths.GenerateStraightPattern(EndPath);
+        protected override SentakkiSlidePath CreatePattern() => SlidePaths.GenerateStraightPattern(EndPath);
     }
 }

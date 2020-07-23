@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     {
         public override Color4 NoteColor => HasTwin ? Color4.Gold : Color4.Aqua;
         public static readonly float SLIDE_CHEVRON_DISTANCE = 25;
-        public SliderPath SlidePath;
+        public SentakkiSlidePath SlidePath;
 
         public double EndTime
         {
@@ -26,7 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             base.CreateNestedHitObjects();
 
-            var distance = SlidePath.Distance;
+            var distance = SlidePath.Path.Distance;
             int chevrons = (int)Math.Ceiling(distance / Slide.SLIDE_CHEVRON_DISTANCE);
             double nodeInterval = 1.0 / chevrons * 5; // Node every 5 chevrons.
 

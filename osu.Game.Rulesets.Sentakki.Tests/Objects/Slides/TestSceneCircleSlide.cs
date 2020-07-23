@@ -15,6 +15,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 RefreshSlide();
             });
         }
-        protected override List<PathControlPoint> CreatePattern() => SlidePaths.GenerateCirclePattern(EndPath, clockwise ? 1 : -1);
+        protected override SentakkiSlidePath CreatePattern() => SlidePaths.GenerateCirclePattern(EndPath, clockwise ? 1 : -1);
     }
 }

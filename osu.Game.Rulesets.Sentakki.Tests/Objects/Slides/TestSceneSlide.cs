@@ -4,6 +4,7 @@ using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
 using NUnit.Framework;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
@@ -23,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 
             Add(slide = new SlideBody()
             {
-                Path = new SliderPath(CreatePattern().ToArray())
+                Path = CreatePattern().Path
             });
 
             AddSliderStep("Path offset", 0, 7, 0, p =>
@@ -40,11 +41,11 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 slide.Progress = p;
             });
         }
-        protected abstract List<PathControlPoint> CreatePattern();
+        protected abstract SentakkiSlidePath CreatePattern();
 
         protected void RefreshSlide()
         {
-            slide.Path = new SliderPath(CreatePattern().ToArray());
+            slide.Path = CreatePattern().Path;
         }
     }
 }

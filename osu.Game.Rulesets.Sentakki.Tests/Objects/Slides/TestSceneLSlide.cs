@@ -6,6 +6,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
     public class TestSceneLSlide : TestSceneSlide
     {
-        protected override List<PathControlPoint> CreatePattern() => SlidePaths.GenerateLPattern(EndPath);
+        protected override SentakkiSlidePath CreatePattern() => SlidePaths.GenerateLPattern(EndPath);
     }
 }
