@@ -33,9 +33,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             for (double progress = nodeInterval; progress < 1; progress += nodeInterval)
             {
                 if (progress + nodeInterval >= 1)
-                    AddNested(new SlideTailNode { StartTime = EndTime });
+                    AddNested(new SlideTailNode { StartTime = EndTime, Lane = Lane + SlidePath.EndLane });
                 else
-                    AddNested(new SlideNode { Progress = (float)progress, Lane = Lane });
+                    AddNested(new SlideNode { Progress = (float)progress });
             }
             AddNested(new Tap { Lane = Lane, StartTime = StartTime });
         }
