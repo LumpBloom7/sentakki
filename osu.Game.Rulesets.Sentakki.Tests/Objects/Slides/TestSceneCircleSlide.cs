@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Framework.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
@@ -15,6 +16,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 RefreshSlide();
             });
         }
-        protected override SentakkiSlidePath CreatePattern() => SlidePaths.GenerateCirclePattern(EndPath, clockwise ? 1 : -1);
+        protected override SentakkiSlidePath CreatePattern() => SlidePaths.GenerateCirclePattern(EndPath, clockwise ? RotationDirection.Clockwise : RotationDirection.CounterClockwise);
     }
 }

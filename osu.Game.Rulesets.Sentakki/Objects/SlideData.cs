@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using osuTK;
+using osu.Framework.Graphics;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -18,14 +19,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             GenerateCirclePattern(5),
             GenerateCirclePattern(6),
             GenerateCirclePattern(7),
-            GenerateCirclePattern(0,-1),
-            GenerateCirclePattern(1,-1),
-            GenerateCirclePattern(2,-1),
-            GenerateCirclePattern(3,-1),
-            GenerateCirclePattern(4,-1),
-            GenerateCirclePattern(5,-1),
-            GenerateCirclePattern(6,-1),
-            GenerateCirclePattern(7,-1),
+            GenerateCirclePattern(0, RotationDirection.CounterClockwise),
+            GenerateCirclePattern(1, RotationDirection.CounterClockwise),
+            GenerateCirclePattern(2, RotationDirection.CounterClockwise),
+            GenerateCirclePattern(3, RotationDirection.CounterClockwise),
+            GenerateCirclePattern(4, RotationDirection.CounterClockwise),
+            GenerateCirclePattern(5, RotationDirection.CounterClockwise),
+            GenerateCirclePattern(6, RotationDirection.CounterClockwise),
+            GenerateCirclePattern(7, RotationDirection.CounterClockwise),
             GenerateLPattern(2),
             GenerateLPattern(3),
             GenerateLPattern(4),
@@ -119,9 +120,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         }
 
         // DX Circle Pattern
-        public static SentakkiSlidePath GenerateCirclePattern(int end, int rotation = +1)
+        public static SentakkiSlidePath GenerateCirclePattern(int end, RotationDirection direction = RotationDirection.Clockwise)
         {
-            float centre = (0.GetRotationForLane() + end.GetRotationForLane()) / 2 + (rotation < 0 ? 180 : 0);
+            float centre = (0.GetRotationForLane() + end.GetRotationForLane()) / 2 + (direction == RotationDirection.CounterClockwise ? 180 : 0);
             Vector2 centreNode = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, centre == 0.GetRotationForLane() ? centre + 180 : centre);
 
             List<PathControlPoint> SlidePath = new List<PathControlPoint> {
