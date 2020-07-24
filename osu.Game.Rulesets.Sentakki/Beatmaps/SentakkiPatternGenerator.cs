@@ -133,7 +133,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 SlidePath = SlidePaths.ValidPaths[rng.Next(0, SlidePaths.ValidPaths.Length)],
                 Lane = noteLane,
                 StartTime = original.StartTime,
-                EndTime = original.GetEndTime()
+                EndTime = original.GetEndTime(),
+                Samples = original.Samples
             };
         }
 

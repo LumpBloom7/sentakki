@@ -37,7 +37,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 else
                     AddNested(new SlideNode { Progress = (float)progress });
             }
-            AddNested(new Tap { Lane = Lane, StartTime = StartTime });
+            AddNested(new Tap { Lane = Lane, StartTime = StartTime, Samples = Samples });
         }
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
