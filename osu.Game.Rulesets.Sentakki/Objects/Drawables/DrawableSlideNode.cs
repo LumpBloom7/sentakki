@@ -3,12 +3,14 @@ using osuTK;
 using osu.Framework.Graphics;
 using System.Linq;
 using osu.Framework.Allocation;
+using osu.Game.Rulesets.Objects.Drawables;
 using osu.Framework.Bindables;
 using osu.Game.Skinning;
 using osu.Game.Audio;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Screens.Play;
+using osu.Game.Rulesets.Judgements;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -46,6 +48,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.LoadComplete();
             ThisIndex = Slide.SlideNodes.IndexOf(this);
             if (ThisIndex == 0) AddInternal(slideSound = new SkinnableSound(new SampleInfo("slide")));
+
+            OnNewResult += (DrawableHitObject hitObject, JudgementResult result) =>
+            {
+                Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
+            };
+            OnRevertResult += (DrawableHitObject hitObject, JudgementResult result) =>
+            {
+                Slide.Slidepath.Progress = ThisIndex > 0 ? (Slide.SlideNodes[ThisIndex - 1].HitObject as Slide.SlideNode).Progress : 0;
+            };
         }
 
         protected bool IsHittable => ThisIndex < 2 || Slide.SlideNodes[ThisIndex - 2].IsHit;
@@ -75,7 +86,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 {
                     ApplyResult(r => r.Type = HitResult.Perfect);
                     HitPreviousNodes(true);
-                    Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
                 }
                 if (isTailNode && !HitObject.HitWindows.CanBeHit(timeOffset))
                 {
@@ -102,7 +112,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             ApplyResult(r => r.Type = result);
 
             HitPreviousNodes(result > HitResult.Miss);
-            Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
         }
         public void UpdateResult() => base.UpdateResult(true);
 
@@ -111,6 +120,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void Update()
         {
+            base.Update();
             if (Time.Current >= Slide.HitObject.StartTime)
                 if (IsHovered)
                     if (SentakkiActionInputManager.PressedActions.Any())
@@ -125,6 +135,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 const float balance_adjust_amount = 0.4f;
                 slideSound.Balance.Value = balance_adjust_amount * (userPositionalHitSounds.Value ? SamplePlaybackPosition - 0.5f : 0);
                 slideSound.Play();
+            }
+        }
+        protected override void UpdateStateTransforms(ArmedState state)
+        {
+            base.UpdateStateTransforms(state);
+
+            switch (state)
+            {
+                case ArmedState.Hit:
+                    Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
+                    break;
             }
         }
     }
