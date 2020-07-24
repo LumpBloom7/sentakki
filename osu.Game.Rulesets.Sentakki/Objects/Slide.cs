@@ -4,6 +4,7 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
+using osu.Framework.Graphics.Containers;
 using System;
 using osuTK.Graphics;
 
@@ -22,6 +23,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         }
         public double Duration { get; set; }
 
+        public SlideTailNode Tail;
+        public Tap Tap;
+
         protected override void CreateNestedHitObjects()
         {
             base.CreateNestedHitObjects();
@@ -34,8 +38,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             {
                 if (progress + nodeInterval >= 1)
                     AddNested(new SlideTailNode { StartTime = EndTime, Lane = Lane + SlidePath.EndLane });
+                else if (progress == nodeInterval)
+                    AddNested(new SlideFirstNode { StartTime = StartTime + (Duration * progress), Progress = (float)progress });
                 else
-                    AddNested(new SlideNode { Progress = (float)progress });
+                    AddNested(new SlideNode { StartTime = StartTime + (Duration * progress), Progress = (float)progress });
             }
             AddNested(new Tap { Lane = Lane, StartTime = StartTime, Samples = Samples });
         }
@@ -48,6 +54,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             public virtual float Progress { get; set; }
             protected override HitWindows CreateHitWindows() => HitWindows.Empty;
             public override Judgement CreateJudgement() => new IgnoreJudgement();
+        }
+        public class SlideFirstNode : SlideNode
+        {
         }
         public class SlideTailNode : SlideNode
         {

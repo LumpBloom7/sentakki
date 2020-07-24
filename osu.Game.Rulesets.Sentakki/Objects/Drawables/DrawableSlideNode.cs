@@ -38,31 +38,37 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected bool IsHittable => ThisIndex < 2 || Slide.SlideNodes[ThisIndex - 2].IsHit;
 
-        protected void HitPreviousNodes()
+        protected void HitPreviousNodes(bool successful = false)
         {
             foreach (var node in Slide.SlideNodes)
             {
                 if (node == this) return;
                 if (!node.Result.HasResult)
-                    node.forceJudgement();
+                    node.forceJudgement(successful);
             }
         }
 
         // Needs work :)
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
+            if (!userTriggered && timeOffset > 0 && Auto)
+            {
+                ApplyResult(r => r.Type = HitResult.Perfect);
+                HitPreviousNodes(true);
+                Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
+            }
             if (!userTriggered) return;
             if (!IsHittable)
                 return;
 
             ApplyResult(r => r.Type = HitResult.Perfect);
-            HitPreviousNodes();
+            HitPreviousNodes(true);
             Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
         }
         public void UpdateResult() => base.UpdateResult(true);
 
         // Forces this object to have a result.
-        private void forceJudgement() => ApplyResult(r => r.Type = HitResult.Perfect);
+        private void forceJudgement(bool successful = false) => ApplyResult(r => r.Type = successful ? HitResult.Perfect : HitResult.Miss);
 
         protected override void Update()
         {

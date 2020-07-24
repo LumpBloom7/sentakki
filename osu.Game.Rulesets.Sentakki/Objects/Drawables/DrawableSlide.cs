@@ -41,9 +41,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 else
                     SlideStar.Rotation = previousPosition.Value.GetDegreesFromPosition(SlideStar.Position);
                 previousPosition = SlideStar.Position;
-
-                if (Auto)
-                    Slidepath.Progress = StarProgress;
             }
         }
         public DrawableSlide(SentakkiHitObject hitObject)
@@ -109,7 +106,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 slideBodyContainer.Colour = c.NewValue;
             }, true);
             SlideTaps.Child.AccentColour.BindTo(AccentColour);
-            SlideTaps.Child.Auto = Auto;
         }
         protected override void UpdateInitialTransforms()
         {
@@ -139,18 +135,29 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 case Tap x:
                     return new DrawableSlideTap(x, this)
                     {
+                        Auto = Auto,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                     };
+                case Slide.SlideFirstNode firstNode:
+                    return new DrawableSlideFirstNode(firstNode, this)
+                    {
+                        Auto = Auto,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre
+                    };
+
                 case Slide.SlideTailNode tailNode:
                     return new DrawableSlideTailNode(tailNode, this)
                     {
+                        Auto = Auto,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre
                     };
                 case Slide.SlideNode node:
                     return new DrawableSlideNode(node, this)
                     {
+                        Auto = Auto,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                     };
@@ -165,9 +172,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             switch (hitObject)
             {
-                case DrawableSlideTailNode tailNode:
-                    SlideNodes.Add(tailNode);
-                    break;
                 case DrawableSlideNode node:
                     SlideNodes.Add(node);
                     break;

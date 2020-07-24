@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 if (Slide.Auto && timeOffset > 0)
                 {
                     ApplyResult(r => r.Type = HitResult.Perfect);
-                    HitPreviousNodes();
+                    HitPreviousNodes(true);
                 }
 
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
@@ -37,7 +37,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 result = HitResult.Meh;
 
             ApplyResult(r => r.Type = result);
-            HitPreviousNodes();
+            HitPreviousNodes(result > HitResult.Miss);
         }
     }
 }
