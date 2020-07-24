@@ -1,6 +1,4 @@
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -8,7 +6,6 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osuTK;
-using osuTK.Graphics;
 using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
@@ -139,21 +136,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                     };
-                case Slide.SlideFirstNode firstNode:
-                    return new DrawableSlideFirstNode(firstNode, this)
-                    {
-                        Auto = Auto,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre
-                    };
-
-                case Slide.SlideTailNode tailNode:
-                    return new DrawableSlideTailNode(tailNode, this)
-                    {
-                        Auto = Auto,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre
-                    };
                 case Slide.SlideNode node:
                     return new DrawableSlideNode(node, this)
                     {
@@ -168,8 +150,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
         {
-            base.AddNestedHitObject(hitObject);
-
             switch (hitObject)
             {
                 case DrawableSlideNode node:
@@ -179,6 +159,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     SlideTaps.Child = tap;
                     break;
             }
+            base.AddNestedHitObject(hitObject);
         }
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {

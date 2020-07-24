@@ -1,16 +1,27 @@
 using osu.Game.Rulesets.Scoring;
-using System.Diagnostics;
 using osuTK;
-using osuTK.Graphics;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Shapes;
 using System.Linq;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
+using osu.Game.Skinning;
+using osu.Game.Audio;
+using osu.Game.Configuration;
+using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Screens.Play;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideNode : DrawableSentakkiHitObject
     {
-        public override bool DisplayResult => false;
+
+        [Resolved(canBeNull: true)]
+        private GameplayClock gameplayClock { get; set; }
+
+        private readonly Bindable<bool> userPositionalHitSounds = new Bindable<bool>(false);
+        private SkinnableSound slideSound;
+
+        public override bool DisplayResult => (HitObject as Slide.SlideNode).Progress == 1;
         public override bool HandlePositionalInput => true;
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
@@ -34,9 +45,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.LoadComplete();
             ThisIndex = Slide.SlideNodes.IndexOf(this);
+            if (ThisIndex == 0) AddInternal(slideSound = new SkinnableSound(new SampleInfo("slide")));
         }
 
         protected bool IsHittable => ThisIndex < 2 || Slide.SlideNodes[ThisIndex - 2].IsHit;
+        private bool isTailNode => (HitObject as Slide.SlideNode).IsTailNote;
 
         protected void HitPreviousNodes(bool successful = false)
         {
@@ -48,21 +61,47 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        // Needs work :)
+        [BackgroundDependencyLoader(true)]
+        private void load(OsuConfigManager osuConfig, SentakkiRulesetConfigManager sentakkiConfig)
+        {
+            osuConfig.BindWith(OsuSetting.PositionalHitSounds, userPositionalHitSounds);
+        }
+
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            if (!userTriggered && timeOffset > 0 && Auto)
+            if (!userTriggered)
             {
-                ApplyResult(r => r.Type = HitResult.Perfect);
-                HitPreviousNodes(true);
-                Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
+                if (timeOffset > 0 && Auto)
+                {
+                    ApplyResult(r => r.Type = HitResult.Perfect);
+                    HitPreviousNodes(true);
+                    Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
+                }
+                if (isTailNode && !HitObject.HitWindows.CanBeHit(timeOffset))
+                {
+                    ApplyResult(r => r.Type = IsHittable ? HitResult.Good : HitResult.Miss);
+                    HitPreviousNodes();
+                }
+                return;
             }
-            if (!userTriggered) return;
             if (!IsHittable)
                 return;
 
-            ApplyResult(r => r.Type = HitResult.Perfect);
-            HitPreviousNodes(true);
+
+            HitResult result;
+
+            if (isTailNode)
+            {
+                result = HitObject.HitWindows.ResultFor(timeOffset);
+                if (result == HitResult.None)
+                    result = HitResult.Meh;
+            }
+            else
+                result = HitResult.Perfect;
+
+            ApplyResult(r => r.Type = result);
+
+            HitPreviousNodes(result > HitResult.Miss);
             Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
         }
         public void UpdateResult() => base.UpdateResult(true);
@@ -76,6 +115,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 if (IsHovered)
                     if (SentakkiActionInputManager.PressedActions.Any())
                         UpdateResult(true);
+        }
+
+        public override void PlaySamples()
+        {
+            base.PlaySamples();
+            if (slideSound != null && Result.Type != HitResult.Miss && (!gameplayClock?.IsSeeking ?? false))
+            {
+                const float balance_adjust_amount = 0.4f;
+                slideSound.Balance.Value = balance_adjust_amount * (userPositionalHitSounds.Value ? SamplePlaybackPosition - 0.5f : 0);
+                slideSound.Play();
+            }
         }
     }
 }
