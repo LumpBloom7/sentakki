@@ -122,11 +122,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // DX Circle Pattern
         public static SentakkiSlidePath GenerateCirclePattern(int end, RotationDirection direction = RotationDirection.Clockwise)
         {
-            float centre = (0.GetRotationForLane() + end.GetRotationForLane()) / 2 + (direction == RotationDirection.CounterClockwise ? 180 : 0);
+            float centre = ((0.GetRotationForLane() + end.GetRotationForLane()) / 2) + (direction == RotationDirection.CounterClockwise ? 180 : 0);
             Vector2 centreNode = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, centre == 0.GetRotationForLane() ? centre + 180 : centre);
 
             List<PathControlPoint> SlidePath = new List<PathControlPoint> {
-                new PathControlPoint(SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, 0.GetRotationForLane() + .5f), PathType.PerfectCurve),
+                new PathControlPoint(SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, 0.GetRotationForLane() + (direction == RotationDirection.CounterClockwise ? -.5f : .5f)), PathType.PerfectCurve),
                 new PathControlPoint(centreNode),
                 new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end), PathType.PerfectCurve)
             };
