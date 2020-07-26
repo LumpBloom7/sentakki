@@ -124,6 +124,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             const double time_fade_miss = 400 /* time_fade_miss = 400 */;
             switch (state)
             {
+                case ArmedState.Hit:
+                    this.FadeOut();
+                    break;
                 case ArmedState.Miss:
                     using (BeginDelayedSequence((HitObject as IHasDuration).Duration + SlideNodes.Last().Result.TimeOffset, true))
                     {
