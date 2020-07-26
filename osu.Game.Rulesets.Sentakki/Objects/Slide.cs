@@ -55,7 +55,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             public virtual float Progress { get; set; }
 
             public bool IsTailNote => Progress == 1;
-            protected override HitWindows CreateHitWindows() => IsTailNote ? new SentakkiHitWindows() : HitWindows.Empty;
+            protected override HitWindows CreateHitWindows() => IsTailNote ? new SentakkiSlideHitWindows() : HitWindows.Empty;
             public override Judgement CreateJudgement() => IsTailNote ? new SentakkiJudgement() : (Judgement)new IgnoreJudgement();
         }
     }
