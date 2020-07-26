@@ -150,14 +150,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 case Tap x:
                     return new DrawableSlideTap(x, this)
                     {
-                        Auto = Auto,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                     };
                 case Slide.SlideNode node:
                     return new DrawableSlideNode(node, this)
                     {
-                        Auto = Auto,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                     };
