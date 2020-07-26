@@ -73,7 +73,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     breakNote = hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH));
                     if (Experiments.Value.HasFlag(ConversionExperiments.slide) && hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)) && hold.Duration > 400)
                     {
-                        notes.Add(createSlideNote(original));
+                        notes.Add(createSlideNote(original, isBreak: breakNote));
                     }
                     else
                     {
@@ -134,7 +134,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 Lane = noteLane,
                 StartTime = original.StartTime,
                 EndTime = original.GetEndTime(),
-                Samples = original.Samples
+                Samples = original.Samples,
+                IsBreak = isBreak
             };
         }
 
