@@ -6,6 +6,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osuTK;
+using osuTK.Graphics;
 using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
@@ -117,7 +118,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 }
             }
         }
-        protected override void UpdateStateTransforms(ArmedState state) { }
+        protected override void UpdateStateTransforms(ArmedState state)
+        {
+            base.UpdateStateTransforms(state);
+            const double time_fade_miss = 400 /* time_fade_miss = 400 */;
+            switch (state)
+            {
+                case ArmedState.Miss:
+                    using (BeginDelayedSequence((HitObject as IHasDuration).Duration + SlideNodes.Last().Result.TimeOffset, true))
+                    {
+                        slideBodyContainer.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss);
+                        this.Delay(time_fade_miss).Expire();
+                    }
+                    break;
+            }
+        }
 
         protected override void ClearNestedHitObjects()
         {
@@ -165,7 +180,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (SlideNodes.Children.Last().AllJudged)
             {
-                ApplyResult(r => r.Type = HitResult.Perfect);
+                ApplyResult(r => r.Type = SlideNodes.Children.Last().Result.IsHit ? HitResult.Perfect : HitResult.Miss);
             }
         }
     }

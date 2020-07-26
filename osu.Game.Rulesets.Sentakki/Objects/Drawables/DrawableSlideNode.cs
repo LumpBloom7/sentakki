@@ -50,7 +50,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             OnNewResult += (DrawableHitObject hitObject, JudgementResult result) =>
             {
-                Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
+                if (result.IsHit)
+                    Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
             };
             OnRevertResult += (DrawableHitObject hitObject, JudgementResult result) =>
             {
