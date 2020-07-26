@@ -1,4 +1,4 @@
-﻿using osu.Framework.Allocation;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Sentakki.Configuration;
@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     public class DrawableTap : DrawableSentakkiHitObject
     {
         public readonly HitReceptor HitArea;
-        public readonly TapCircle CirclePiece;
+        public readonly Drawable TapVisual;
         public readonly HitObjectLine HitObjectLine;
         protected override double InitialLifetimeOffset => 8000;
 
@@ -31,11 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AlwaysPresent = true;
             AddRangeInternal(new Drawable[] {
                 HitObjectLine = new HitObjectLine(),
-                CirclePiece = new TapCircle()
-                {
-                    Scale = new Vector2(0f),
-                    Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE)
-                },
+                TapVisual = CreateTapRepresentation(),
                 HitArea = new HitReceptor()
                 {
                     Hit = () =>
@@ -56,11 +52,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }, true);
         }
 
+        protected virtual Drawable CreateTapRepresentation() => new TapPiece();
+
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager settings)
         {
             settings?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDuration);
-            HitObjectLine.Colour = HitObject.NoteColor;
+            AccentColour.BindValueChanged(c => HitObjectLine.Colour = c.NewValue, true);
         }
 
         protected override void UpdateInitialTransforms()
@@ -69,12 +67,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             double animStart = HitObject.StartTime - (animTime * 2);
             using (BeginAbsoluteSequence(animStart, true))
             {
-                CirclePiece.FadeInFromZero(animTime).ScaleTo(1, animTime);
+                TapVisual.FadeInFromZero(animTime).ScaleTo(1, animTime);
                 HitObjectLine.FadeInFromZero(animTime);
                 using (BeginDelayedSequence(animTime, true))
                 {
                     var excessDistance = (-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * HitObject.HitWindows.WindowFor(HitResult.Miss);
-                    CirclePiece.MoveToY((float)(-SentakkiPlayfield.INTERSECTDISTANCE + excessDistance), animTime + HitObject.HitWindows.WindowFor(HitResult.Miss));
+                    TapVisual.MoveToY((float)(-SentakkiPlayfield.INTERSECTDISTANCE + excessDistance), animTime + HitObject.HitWindows.WindowFor(HitResult.Miss));
                     HitObjectLine.ScaleTo(1, animTime);
                 }
             }
@@ -118,7 +116,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
 
                 case ArmedState.Miss:
-                    CirclePiece.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                    TapVisual.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
                        .MoveToOffset(new Vector2(0, -100), time_fade_hit, Easing.OutCubic)
                        .FadeOut(time_fade_miss);
