@@ -31,7 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             for (double progress = nodeInterval; progress < 1; progress += nodeInterval)
             {
-                if (1 - progress > nodeInterval * .4f)
+                if (1 - progress >= nodeInterval * .6f)
                     AddNested(new SlideNode
                     {
                         StartTime = StartTime + (Duration * progress),
