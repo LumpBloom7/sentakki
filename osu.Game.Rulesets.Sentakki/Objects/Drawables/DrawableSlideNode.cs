@@ -82,7 +82,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private void load(OsuConfigManager osuConfig, SentakkiRulesetConfigManager sentakkiConfig)
         {
             osuConfig.BindWith(OsuSetting.PositionalHitSounds, userPositionalHitSounds);
-            sentakkiConfig.BindWith(SentakkiRulesetSettings.SlideSounds, playSlideSample);
+            sentakkiConfig?.BindWith(SentakkiRulesetSettings.SlideSounds, playSlideSample);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -142,17 +142,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 const float balance_adjust_amount = 0.4f;
                 slideSound.Balance.Value = balance_adjust_amount * (userPositionalHitSounds.Value ? SamplePlaybackPosition - 0.5f : 0);
                 slideSound.Play();
-            }
-        }
-        protected override void UpdateStateTransforms(ArmedState state)
-        {
-            base.UpdateStateTransforms(state);
-
-            switch (state)
-            {
-                case ArmedState.Hit:
-                    Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
-                    break;
             }
         }
     }
