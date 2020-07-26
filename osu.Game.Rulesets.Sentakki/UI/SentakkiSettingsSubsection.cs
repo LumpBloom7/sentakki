@@ -43,6 +43,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 },
                 new SettingsCheckbox
                 {
+                    LabelText = "Play Slide sample when beginning to slide",
+                    Bindable = config.GetBindable<bool>(SentakkiRulesetSettings.SlideSounds)
+                },
+                new SettingsCheckbox
+                {
                     LabelText = "Show note start indicators",
                     Bindable = config.GetBindable<bool>(SentakkiRulesetSettings.ShowNoteStartIndicators)
                 },

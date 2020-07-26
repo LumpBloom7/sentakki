@@ -47,7 +47,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.LoadComplete();
             ThisIndex = Slide.SlideNodes.IndexOf(this);
-            if (ThisIndex == 0) AddInternal(slideSound = new SkinnableSound(new SampleInfo("slide")));
 
             OnNewResult += (DrawableHitObject hitObject, JudgementResult result) =>
             {
@@ -57,6 +56,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 Slide.Slidepath.Progress = ThisIndex > 0 ? (Slide.SlideNodes[ThisIndex - 1].HitObject as Slide.SlideNode).Progress : 0;
             };
+        }
+
+        protected override void LoadSamples()
+        {
+            base.LoadSamples();
+            AddInternal(slideSound = new SkinnableSound(new SampleInfo("slide")));
         }
 
         protected bool IsHittable => ThisIndex < 2 || Slide.SlideNodes[ThisIndex - 2].IsHit;
@@ -72,10 +77,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
+        private readonly Bindable<bool> playSlideSample = new Bindable<bool>(true);
         [BackgroundDependencyLoader(true)]
         private void load(OsuConfigManager osuConfig, SentakkiRulesetConfigManager sentakkiConfig)
         {
             osuConfig.BindWith(OsuSetting.PositionalHitSounds, userPositionalHitSounds);
+            sentakkiConfig.BindWith(SentakkiRulesetSettings.SlideSounds, playSlideSample);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -130,7 +137,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public override void PlaySamples()
         {
             base.PlaySamples();
-            if (slideSound != null && Result.Type != HitResult.Miss && (!gameplayClock?.IsSeeking ?? false))
+            if (ThisIndex == 0 && playSlideSample.Value && slideSound != null && Result.Type != HitResult.Miss && (!gameplayClock?.IsSeeking ?? false))
             {
                 const float balance_adjust_amount = 0.4f;
                 slideSound.Balance.Value = balance_adjust_amount * (userPositionalHitSounds.Value ? SamplePlaybackPosition - 0.5f : 0);
