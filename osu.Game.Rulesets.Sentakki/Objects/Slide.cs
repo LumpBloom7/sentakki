@@ -31,12 +31,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             for (double progress = nodeInterval; progress < 1; progress += nodeInterval)
             {
-                AddNested(new SlideNode
-                {
-                    StartTime = StartTime + (Duration * progress),
-                    Lane = Lane,
-                    Progress = (float)progress
-                });
+                if (1 - progress > nodeInterval * .4f)
+                    AddNested(new SlideNode
+                    {
+                        StartTime = StartTime + (Duration * progress),
+                        Lane = Lane,
+                        Progress = (float)progress
+                    });
             }
             AddNested(new SlideNode
             {
