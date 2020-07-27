@@ -15,6 +15,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         public override bool DisplayResult => false;
 
+        protected override bool PlayBreakSample => false;
+
         public Container<DrawableSlideNode> SlideNodes;
         public Container<DrawableSlideTap> SlideTaps;
         public SlideBody Slidepath;
