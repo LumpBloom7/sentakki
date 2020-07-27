@@ -127,7 +127,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         AccentColour = { BindTarget = AccentColour }
                     };
 
-                case Hold.HoldHead _:
+                case Tap _:
                     return new DrawableHoldHead(this)
                     {
                         Anchor = Anchor.TopCentre,
@@ -157,16 +157,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 using (BeginDelayedSequence(animTime, true))
                 {
+                    var tailHitWindow = Tail.HitObject.HitWindows.WindowFor(HitResult.Meh);
                     // This is the movable length (not including start position)
                     float totalMovableDistance = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
                     float originalStretchAmount = (float)(totalMovableDistance / animTime * (HitObject as IHasDuration).Duration);
                     float stretchAmount = Math.Clamp((float)(totalMovableDistance / animTime * (HitObject as IHasDuration).Duration), 0, totalMovableDistance);
                     float stretchTime = (float)(stretchAmount / totalMovableDistance * animTime);
-                    float excessDistance = (float)((-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * 144);
+                    float excessDistance = (float)((-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * tailHitWindow);
 
                     NoteBody.ResizeHeightTo(80 + stretchAmount, stretchTime)
                             .Delay((HitObject as IHasDuration).Duration)
-                            .MoveToY(-SentakkiPlayfield.INTERSECTDISTANCE + (Width / 2) + excessDistance, animTime + 144)
+                            .MoveToY(-SentakkiPlayfield.INTERSECTDISTANCE + (Width / 2) + excessDistance, animTime + tailHitWindow)
                             .Delay(animTime - stretchTime)
                             .ResizeHeightTo(80, stretchTime);
 
