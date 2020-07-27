@@ -56,7 +56,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
             float prevAngle = 0;
             Container currentSegment = new Container();
-            for (double i = 0; i < chevrons; ++i)
+            for (double i = 1; i < chevrons; ++i)
             {
                 Vector2 currentPos = Path.PositionAt(i * chevronInterval);
                 Vector2 nextPos = Path.PositionAt((i + 1) * chevronInterval);
@@ -70,12 +70,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     Rotation = angle,
                 });
 
-                if (i > 0 && ((i % 5 == 0 && chevrons - 1 - i > 2) || i == chevrons - 1))
+                if (i % 5 == 0 && chevrons - 1 - i > 2)
                 {
                     segments.Add(currentSegment);
                     currentSegment = new Container();
                 }
             }
+            segments.Add(currentSegment);
             AddRangeInternal(segments);
         }
         private void updateProgress(float progress)
