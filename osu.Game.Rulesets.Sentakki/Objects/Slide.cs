@@ -27,18 +27,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             var distance = SlidePath.Path.Distance;
             int chevrons = (int)Math.Ceiling(distance / Slide.SLIDE_CHEVRON_DISTANCE);
-            double nodeInterval = 1.0 / chevrons * 5; // Node every 5 chevrons.
+            double chevronInterval = 1.0 / chevrons;
 
-            for (double progress = nodeInterval; progress < 1; progress += nodeInterval)
+            for (int i = 5; i < chevrons - 2; i += 5)
             {
-                if (1 - progress >= nodeInterval * .6f)
-                    AddNested(new SlideNode
-                    {
-                        StartTime = StartTime + (Duration * progress),
-                        Lane = Lane,
-                        Progress = (float)progress
-                    });
+                var progress = i * chevronInterval;
+                AddNested(new SlideNode
+                {
+                    StartTime = StartTime + (Duration * progress),
+                    Lane = Lane,
+                    Progress = (float)progress
+                });
             }
+
             AddNested(new SlideNode
             {
                 StartTime = EndTime,

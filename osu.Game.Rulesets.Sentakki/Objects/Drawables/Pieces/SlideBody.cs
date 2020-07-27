@@ -80,11 +80,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         }
         private void updateProgress(float progress)
         {
-            double segmentInterval = 1.0 / segments.Count;
-            int segmentsCompleted = (int)Math.Ceiling(progress / segmentInterval);
+            double segmentBounds = -chevronInterval;
 
-            for (int i = 1; i <= segments.Count; ++i)
-                segments[i - 1].Alpha = i <= segmentsCompleted ? 0 : 1;
+            foreach (var segment in segments)
+            {
+                segmentBounds += segment.Count * chevronInterval;
+                segment.Alpha = (progress > segmentBounds) ? 0 : 1;
+            }
         }
 
         private class SlideChevron : Sprite
