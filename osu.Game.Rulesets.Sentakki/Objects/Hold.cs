@@ -19,7 +19,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             {
                 isBreak = value;
                 Head.IsBreak = value;
-                Tail.IsBreak = value;
             }
         }
         private List<IList<HitSampleInfo>> nodeSamples = new List<IList<HitSampleInfo>>();
@@ -74,7 +73,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             }
         }
 
-        public readonly HoldHead Head = new HoldHead();
+        public readonly Tap Head = new Tap();
 
         public readonly HoldTail Tail = new HoldTail();
 
@@ -90,7 +89,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
 
-        public class HoldHead : SentakkiHitObject { }
         public class HoldTail : SentakkiHitObject { }
     }
 }
