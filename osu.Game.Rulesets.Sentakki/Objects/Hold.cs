@@ -2,6 +2,7 @@
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Scoring;
 using System.Collections.Generic;
 using System.Linq;
 using osuTK;
@@ -89,6 +90,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
 
-        public class HoldTail : SentakkiHitObject { }
+        public class HoldTail : SentakkiHitObject
+        {
+            protected override HitWindows CreateHitWindows() => new SentakkiHoldHitWindows();
+        }
     }
 }
