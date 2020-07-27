@@ -105,7 +105,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 slideBodyContainer.Colour = c.NewValue;
             }, true);
-            SlideTaps.Child.AccentColour.BindTo(AccentColour);
         }
         protected override void UpdateInitialTransforms()
         {
@@ -154,12 +153,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
+                        AccentColour = { BindTarget = AccentColour }
                     };
                 case Slide.SlideNode node:
                     return new DrawableSlideNode(node, this)
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
+                        AccentColour = { BindTarget = AccentColour }
                     };
             }
 
