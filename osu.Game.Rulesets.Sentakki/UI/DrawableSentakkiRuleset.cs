@@ -1,4 +1,5 @@
 using System.Linq;
+using osu.Framework.Bindables;
 using osu.Framework.Audio.Track;
 using osu.Framework.Allocation;
 using osu.Game.Beatmaps;
@@ -12,6 +13,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Play;
 using System.Collections.Generic;
+using System;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -23,15 +25,16 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
         }
 
-        private readonly Track speedAdjustmentTrack = new TrackVirtual(0);
+        private Track speedAdjustmentTrack => workingBeatmap.Value.Track;
 
         public double GameplaySpeed => speedAdjustmentTrack.AggregateFrequency.Value * speedAdjustmentTrack.AggregateTempo.Value;
 
+        private Bindable<WorkingBeatmap> workingBeatmap;
+
         [BackgroundDependencyLoader(true)]
-        private void load()
+        private void load(Bindable<WorkingBeatmap> WorkingBeatmap)
         {
-            foreach (var mod in Mods.OfType<IApplicableToTrack>())
-                mod.ApplyToTrack(speedAdjustmentTrack);
+            workingBeatmap = WorkingBeatmap;
         }
 
         protected override Playfield CreatePlayfield() => new SentakkiPlayfield();
