@@ -58,7 +58,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                         Alpha= 0,
                         AlwaysPresent = true
                     }
-},
+                },
                 new Container
                 {
                     Masking = true,

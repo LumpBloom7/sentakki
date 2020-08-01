@@ -207,8 +207,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 case ArmedState.Hit:
                     using (BeginDelayedSequence((HitObject as IHasDuration).Duration + Tail.Result.TimeOffset, true))
                     {
-                        this.ScaleTo(1f, time_fade_hit);
                         HitObjectLine.FadeOut();
+                        using (BeginDelayedSequence(time_fade_miss, true))
+                        {
+                            this.FadeOut();
+                            Expire();
+                        }
                     }
                     break;
 
@@ -223,6 +227,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                         using (BeginDelayedSequence(time_fade_miss, true))
                         {
+                            this.FadeOut();
                             Expire();
                         }
                     }
