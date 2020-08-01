@@ -98,6 +98,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         /// </summary>
         public double? HoldStartTime { get; private set; }
 
+        protected override void InvalidateTransforms()
+        {
+        }
+
         protected override void UpdateInitialTransforms()
         {
             double fadeIn = AnimationDuration.Value * GameplaySpeed;
