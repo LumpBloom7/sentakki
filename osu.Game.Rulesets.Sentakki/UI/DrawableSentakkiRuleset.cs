@@ -27,7 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private Track speedAdjustmentTrack => workingBeatmap.Value.Track;
 
-        public double GameplaySpeed => speedAdjustmentTrack.AggregateFrequency.Value * speedAdjustmentTrack.AggregateTempo.Value;
+        public double GameplaySpeed => speedAdjustmentTrack.Rate;
 
         private Bindable<WorkingBeatmap> workingBeatmap;
 
