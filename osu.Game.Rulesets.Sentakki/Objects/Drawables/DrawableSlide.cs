@@ -13,8 +13,6 @@ using osuTK.Graphics;
 using System.Linq;
 using osu.Game.Beatmaps;
 
-
-
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlide : DrawableSentakkiHitObject
