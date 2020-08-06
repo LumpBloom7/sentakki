@@ -126,7 +126,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             get
             {
-                double delay = workingBeatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(HitObject.StartTime).BeatLength;
+                double delay = workingBeatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(HitObject.StartTime).BeatLength * (HitObject as Slide).SlideShootDelay;
                 if (delay >= (HitObject as IHasDuration).Duration - 50)
                     return 0;
                 return delay;
