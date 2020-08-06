@@ -69,6 +69,33 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
                 switch (h)
                 {
+                    case DrawableSlide slide:
+                        foreach (var nested in slide.NestedHitObjects.Where(obj => obj.IsAlive && !h.IsHit && time >= h.HitObject.StartTime - relax_leniency))
+                        {
+                            switch (nested)
+                            {
+                                case DrawableSlideTap slideTap:
+                                    if (slideTap.HitArea.IsHovered)
+                                    {
+                                        Debug.Assert(slideTap.HitObject.HitWindows != null);
+                                        requiresHit |= slideTap.HitObject.HitWindows.CanBeHit(time - slideTap.HitObject.StartTime);
+                                    }
+                                    break;
+                                case DrawableSlideNode slideNode:
+                                    if (slideNode.IsHovered)
+                                    {
+                                        if (slideNode.IsTailNode)
+                                        {
+                                            Debug.Assert(slideNode.HitObject.HitWindows != null);
+                                            requiresHit |= slideNode.HitObject.HitWindows.CanBeHit(time - slideNode.HitObject.StartTime);
+                                        }
+                                        else requiresHit = true;
+                                    }
+                                    break;
+                            }
+                        }
+                        break;
+
                     case DrawableTap tap:
                         if (tap.HitArea.IsHovered)
                         {
