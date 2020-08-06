@@ -47,6 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             sentakkiInputManager.AllowUserPresses = false;
         }
 
+        private bool holdingSlide = false;
         public void Update(Playfield playfield)
         {
             if (hasReplay)
@@ -69,6 +70,27 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
                 switch (h)
                 {
+                    case DrawableSlide slide:
+                        foreach (var nested in slide.NestedHitObjects.Where(obj => obj.IsAlive && !h.IsHit && time >= h.HitObject.StartTime - relax_leniency))
+                        {
+                            switch (nested)
+                            {
+                                case DrawableSlideTap slideTap:
+                                    if (time < slideTap.HitObject.StartTime - relax_leniency)
+                                        break;
+                                    holdingSlide = true;
+                                    break;
+                                case DrawableSlideNode slideNode:
+                                    if (time < slide.HitObject.StartTime)
+                                        break;
+                                    if (slideNode.IsHovered)
+                                        holdingSlide = true;
+                                    break;
+                            }
+                        }
+                        requiresHold = holdingSlide;
+                        break;
+
                     case DrawableTap tap:
                         if (tap.HitArea.IsHovered)
                         {

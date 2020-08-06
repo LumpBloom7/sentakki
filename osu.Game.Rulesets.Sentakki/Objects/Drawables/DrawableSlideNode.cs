@@ -66,7 +66,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         protected bool IsHittable => ThisIndex < 2 || Slide.SlideNodes[ThisIndex - 2].IsHit;
-        private bool isTailNode => (HitObject as Slide.SlideNode).IsTailNote;
+        public bool IsTailNode => (HitObject as Slide.SlideNode).IsTailNote;
 
         protected void HitPreviousNodes(bool successful = false)
         {
@@ -95,7 +95,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     ApplyResult(r => r.Type = HitResult.Perfect);
                     HitPreviousNodes(true);
                 }
-                if (isTailNode && !HitObject.HitWindows.CanBeHit(timeOffset))
+                if (IsTailNode && !HitObject.HitWindows.CanBeHit(timeOffset))
                 {
                     ApplyResult(r => r.Type = IsHittable ? HitResult.Good : HitResult.Miss);
                     HitPreviousNodes();
@@ -108,7 +108,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             HitResult result;
 
-            if (isTailNode)
+            if (IsTailNode)
             {
                 result = HitObject.HitWindows.ResultFor(timeOffset);
                 if (result == HitResult.None)
