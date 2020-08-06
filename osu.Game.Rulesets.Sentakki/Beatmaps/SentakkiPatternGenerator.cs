@@ -71,7 +71,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 case IHasPathWithRepeats hold:
                     breakNote = hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH));
-                    if (Experiments.Value.HasFlag(ConversionExperiments.slide) && hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)) && hold.Duration > 400)
+                    if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)) && hold.Duration >= 500)
                     {
                         notes.Add(createSlideNote(original, isBreak: breakNote));
                     }
@@ -94,7 +94,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     break;
 
                 case IHasDuration _:
-                    yield return Conversions.CreateTouchHold(original);
+                    yield return CreateTouchHold(original);
                     break;
 
                 default:
@@ -125,6 +125,13 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         }
 
         // Individual note generation code, because it's cleaner
+        public static SentakkiHitObject CreateTouchHold(HitObject original) => new TouchHold
+        {
+            StartTime = original.StartTime,
+            EndTime = (original as IHasDuration).EndTime,
+            Samples = original.Samples,
+        };
+
         private SentakkiHitObject createSlideNote(HitObject original, bool twin = false, bool isBreak = false)
         {
             int noteLane = getNewLane(twin);

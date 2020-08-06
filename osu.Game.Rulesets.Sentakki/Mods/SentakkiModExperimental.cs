@@ -38,21 +38,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             Default = false,
             Value = true,
         };
-
-        [SettingSource("Use pattern generator for osu converts", "Use a pattern generator to generate convert beatmaps")]
-        public BindableBool EnablePatternGen { get; } = new BindableBool
-        {
-            Default = false,
-            Value = true
-        };
-
-        [SettingSource("Enable Slide notes", "Allow SLIDEs to appear")]
-        public BindableBool EnableSlides { get; } = new BindableBool
-        {
-            Default = false,
-            Value = false
-        };
-
+        
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
             if (EnableTwins.Value)
@@ -60,12 +46,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
             if (EnableTouch.Value)
                 (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.touch;
-
-            if (EnablePatternGen.Value)
-                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.patternv2;
-
-            if (EnableSlides.Value)
-                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.slide;
         }
     }
 }

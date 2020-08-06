@@ -45,7 +45,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             GenerateUPattern(5),
             GenerateUPattern(6),
             GenerateUPattern(7),
-            GenerateVPattern(0),
             GenerateVPattern(1),
             GenerateVPattern(2),
             GenerateVPattern(3),
