@@ -25,18 +25,17 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
         }
 
-        private Track speedAdjustmentTrack => workingBeatmap.Value.Track;
+        private readonly Track speedAdjustmentTrack = new TrackVirtual(0);
 
         public double GameplaySpeed => speedAdjustmentTrack.Rate;
 
-        private Bindable<WorkingBeatmap> workingBeatmap;
-
         [BackgroundDependencyLoader(true)]
-        private void load(Bindable<WorkingBeatmap> WorkingBeatmap)
+        private void load()
         {
-            workingBeatmap = WorkingBeatmap;
+            foreach (var mod in Mods.OfType<IApplicableToTrack>())
+                mod.ApplyToTrack(speedAdjustmentTrack);
         }
-
+        
         protected override Playfield CreatePlayfield() => new SentakkiPlayfield();
 
         protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new SentakkiFramedReplayInputHandler(replay);
