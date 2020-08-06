@@ -47,6 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             sentakkiInputManager.AllowUserPresses = false;
         }
 
+        private bool holdingSlide = false;
         public void Update(Playfield playfield)
         {
             if (hasReplay)
@@ -75,25 +76,19 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                             switch (nested)
                             {
                                 case DrawableSlideTap slideTap:
-                                    if (slideTap.HitArea.IsHovered)
-                                    {
-                                        Debug.Assert(slideTap.HitObject.HitWindows != null);
-                                        requiresHit |= slideTap.HitObject.HitWindows.CanBeHit(time - slideTap.HitObject.StartTime);
-                                    }
+                                    if (time < slideTap.HitObject.StartTime - relax_leniency)
+                                        break;
+                                    holdingSlide = true;
                                     break;
                                 case DrawableSlideNode slideNode:
+                                    if (time < slide.HitObject.StartTime)
+                                        break;
                                     if (slideNode.IsHovered)
-                                    {
-                                        if (slideNode.IsTailNode)
-                                        {
-                                            Debug.Assert(slideNode.HitObject.HitWindows != null);
-                                            requiresHit |= slideNode.HitObject.HitWindows.CanBeHit(time - slideNode.HitObject.StartTime);
-                                        }
-                                        else requiresHit = true;
-                                    }
+                                        holdingSlide = true;
                                     break;
                             }
                         }
+                        requiresHold = holdingSlide;
                         break;
 
                     case DrawableTap tap:
