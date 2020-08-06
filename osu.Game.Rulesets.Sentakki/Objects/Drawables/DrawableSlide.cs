@@ -49,6 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 previousPosition = SlideStar.Position;
             }
         }
+
         public DrawableSlide(SentakkiHitObject hitObject)
             : base(hitObject)
         {
@@ -113,10 +114,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }, true);
         }
 
+        protected override void InvalidateTransforms()
+        {
+
+        }
+
         [Resolved]
         private Bindable<WorkingBeatmap> workingBeatmap { get; set; }
 
-        public double ShootDelay => workingBeatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(HitObject.StartTime).BeatLength;
+        public double ShootDelay
+        {
+            get
+            {
+                double delay = workingBeatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(HitObject.StartTime).BeatLength;
+                if (delay >= (HitObject as IHasDuration).Duration - 50)
+                    return 0;
+                return delay;
+            }
+        }
 
         protected override void UpdateInitialTransforms()
         {
@@ -125,7 +140,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 Slidepath.FadeIn(500);
                 using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
                 {
-                    //???
                     SlideStar.FadeIn(100).ScaleTo(1, 100);
                     this.Delay(100 + ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - 50 - ShootDelay);
                 }
