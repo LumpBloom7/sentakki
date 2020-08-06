@@ -1,3 +1,5 @@
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Scoring;
@@ -5,9 +7,13 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Beatmaps.ControlPoints;
 using osuTK;
 using osuTK.Graphics;
 using System.Linq;
+using osu.Game.Beatmaps;
+
+
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -25,7 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private Container slideBodyContainer;
         public StarPiece SlideStar;
 
-        protected override double InitialLifetimeOffset => 8000;
+        protected override double InitialLifetimeOffset => 500;
 
         private float starProg = 0;
         private Vector2? previousPosition = null;
@@ -106,19 +112,26 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 slideBodyContainer.Colour = c.NewValue;
             }, true);
         }
+
+        [Resolved]
+        private Bindable<WorkingBeatmap> workingBeatmap { get; set; }
+
+        public double ShootDelay => workingBeatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(HitObject.StartTime).BeatLength;
+
         protected override void UpdateInitialTransforms()
         {
-            this.TransformTo(nameof(StarProgress), 0f);
             using (BeginAbsoluteSequence(HitObject.StartTime - 500, true))
             {
-                Slidepath.FadeInFromZero(500);
+                Slidepath.FadeIn(500);
                 using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
                 {
-                    SlideStar.FadeInFromZero(100).ScaleTo(1, 100);
-                    this.Delay(100).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - 50);
+                    //???
+                    SlideStar.FadeIn(100).ScaleTo(1, 100);
+                    this.Delay(100 + ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - 50 - ShootDelay);
                 }
             }
         }
+
         protected override void UpdateStateTransforms(ArmedState state)
         {
             base.UpdateStateTransforms(state);

@@ -1,3 +1,4 @@
+using osu.Framework.Bindables;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -13,6 +14,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public override Color4 NoteColor => IsBreak ? Color4.OrangeRed : HasTwin ? Color4.Gold : Color4.Aqua;
         public static readonly float SLIDE_CHEVRON_DISTANCE = 25;
         public SentakkiSlidePath SlidePath;
+
+        // The delay (in beats) before the animation star starts moving along the path
+        private BindableInt slideShootDelay = new BindableInt(1);
+
+        public int SlideShootDelay
+        {
+            get => slideShootDelay.Value;
+            set => slideShootDelay.Value = value;
+        }
 
         public double EndTime
         {
@@ -34,7 +44,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 var progress = i * chevronInterval;
                 AddNested(new SlideNode
                 {
-                    StartTime = StartTime + (Duration * progress),
                     Lane = Lane,
                     Progress = (float)progress
                 });

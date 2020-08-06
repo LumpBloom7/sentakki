@@ -9,6 +9,7 @@ using osu.Game.Skinning;
 using osu.Game.Audio;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Screens.Play;
 using osu.Game.Rulesets.Judgements;
 
@@ -47,6 +48,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.LoadComplete();
             ThisIndex = Slide.SlideNodes.IndexOf(this);
+
+            // Adjust StartTime to account for the delay, likely a shite way if I do say so myself. Need to revisit.
+            HitObject.StartTime = Slide.HitObject.StartTime + Slide.ShootDelay + (((Slide.HitObject as IHasDuration).Duration - Slide.ShootDelay) * (HitObject as Slide.SlideNode).Progress);
 
             OnNewResult += (DrawableHitObject hitObject, JudgementResult result) =>
             {
