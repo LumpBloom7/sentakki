@@ -93,8 +93,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     }
                     break;
 
-                case IHasDuration _:
-                    yield return CreateTouchHold(original);
+                case IHasDuration th:
+                    if (th.Duration >= 100)
+                        yield return CreateTouchHold(original);
                     break;
 
                 default:
