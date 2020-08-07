@@ -29,7 +29,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private Container slideBodyContainer;
         public StarPiece SlideStar;
 
-        protected override double InitialLifetimeOffset => 500;
+        protected override double InitialLifetimeOffset => 1000;
 
         private float starProg = 0;
         private Vector2? previousPosition = null;
@@ -135,10 +135,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             using (BeginAbsoluteSequence(HitObject.StartTime - 500, true))
             {
-                Slidepath.FadeIn(500);
+                Slidepath.FadeInFromZero(500);
                 using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
                 {
-                    SlideStar.FadeIn(100).ScaleTo(1, 100);
+                    SlideStar.FadeInFromZero(100).ScaleTo(1, 100);
                     this.Delay(100 + ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - 50 - ShootDelay);
                 }
             }
