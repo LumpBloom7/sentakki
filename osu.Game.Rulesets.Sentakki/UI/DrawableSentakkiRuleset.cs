@@ -1,4 +1,5 @@
 using System.Linq;
+using osu.Framework.Bindables;
 using osu.Framework.Audio.Track;
 using osu.Framework.Allocation;
 using osu.Game.Beatmaps;
@@ -12,6 +13,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Play;
 using System.Collections.Generic;
+using System;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -25,7 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private readonly Track speedAdjustmentTrack = new TrackVirtual(0);
 
-        public double GameplaySpeed => speedAdjustmentTrack.AggregateFrequency.Value * speedAdjustmentTrack.AggregateTempo.Value;
+        public double GameplaySpeed => speedAdjustmentTrack.Rate;
 
         [BackgroundDependencyLoader(true)]
         private void load()
@@ -33,7 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             foreach (var mod in Mods.OfType<IApplicableToTrack>())
                 mod.ApplyToTrack(speedAdjustmentTrack);
         }
-
+        
         protected override Playfield CreatePlayfield() => new SentakkiPlayfield();
 
         protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new SentakkiFramedReplayInputHandler(replay);
@@ -46,6 +48,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             switch (h)
             {
+                case Slide slide:
+                    return new DrawableSlide(slide);
+
                 case Touch touchNote:
                     return new DrawableTouch(touchNote);
 

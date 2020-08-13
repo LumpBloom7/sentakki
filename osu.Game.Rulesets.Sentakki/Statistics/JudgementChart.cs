@@ -35,14 +35,14 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new NoteEntry
                 {
                     ObjectName = "Hold",
-                    HitEvents = hitEvents.Where(e => (e.HitObject is Hold.HoldHead || e.HitObject is Hold.HoldTail) && !(e.HitObject as SentakkiHitObject).IsBreak).ToList(),
+                    HitEvents = hitEvents.Where(e => e.HitObject is Hold.HoldTail).ToList(),
                     Position = new Vector2(0, .16f),
                     InitialLifetimeOffset = entry_animation_duration * 1
                 },
                 new NoteEntry
                 {
                     ObjectName = "Slide",
-                    HitEvents = new List<HitEvent>(),
+                    HitEvents = hitEvents.Where(e => e.HitObject is Slide.SlideNode node && node.IsTailNote).ToList(),
                     Position = new Vector2(0, .32f),
                     InitialLifetimeOffset = entry_animation_duration * 2
                 },

@@ -21,6 +21,7 @@ using osu.Game.Rulesets.Replays.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.UI;
 using System.Collections.Generic;
+using System;
 using osu.Game.Rulesets.Sentakki.Edit;
 using osu.Game.Rulesets.Edit;
 using osuTK;
@@ -83,7 +84,7 @@ namespace osu.Game.Rulesets.Sentakki
                     };
 
                 default:
-                    return new Mod[] { null };
+                    return Array.Empty<Mod>();
             }
         }
 

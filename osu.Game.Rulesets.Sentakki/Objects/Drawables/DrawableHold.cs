@@ -127,7 +127,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         AccentColour = { BindTarget = AccentColour }
                     };
 
-                case Hold.HoldHead _:
+                case Tap _:
                     return new DrawableHoldHead(this)
                     {
                         Anchor = Anchor.TopCentre,
@@ -143,7 +143,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private void load(SentakkiRulesetConfigManager settings)
         {
             settings?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDuration);
-            HitObjectLine.Colour = HitObject.NoteColor;
+            AccentColour.BindValueChanged(c => HitObjectLine.Colour = c.NewValue, true);
         }
 
         protected override void UpdateInitialTransforms()
@@ -157,16 +157,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 using (BeginDelayedSequence(animTime, true))
                 {
+                    var tailHitWindow = Tail.HitObject.HitWindows.WindowFor(HitResult.Meh);
                     // This is the movable length (not including start position)
                     float totalMovableDistance = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
                     float originalStretchAmount = (float)(totalMovableDistance / animTime * (HitObject as IHasDuration).Duration);
                     float stretchAmount = Math.Clamp((float)(totalMovableDistance / animTime * (HitObject as IHasDuration).Duration), 0, totalMovableDistance);
                     float stretchTime = (float)(stretchAmount / totalMovableDistance * animTime);
-                    float excessDistance = (float)((-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * 144);
+                    float excessDistance = (float)((-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * tailHitWindow);
 
                     NoteBody.ResizeHeightTo(80 + stretchAmount, stretchTime)
                             .Delay((HitObject as IHasDuration).Duration)
-                            .MoveToY(-SentakkiPlayfield.INTERSECTDISTANCE + (Width / 2) + excessDistance, animTime + 144)
+                            .MoveToY(-SentakkiPlayfield.INTERSECTDISTANCE + (Width / 2) + excessDistance, animTime + tailHitWindow)
                             .Delay(animTime - stretchTime)
                             .ResizeHeightTo(80, stretchTime);
 
@@ -206,8 +207,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 case ArmedState.Hit:
                     using (BeginDelayedSequence((HitObject as IHasDuration).Duration + Tail.Result.TimeOffset, true))
                     {
-                        this.ScaleTo(1f, time_fade_hit);
                         HitObjectLine.FadeOut();
+                        using (BeginDelayedSequence(time_fade_miss, true))
+                        {
+                            this.FadeOut();
+                            Expire();
+                        }
                     }
                     break;
 
@@ -222,6 +227,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                         using (BeginDelayedSequence(time_fade_miss, true))
                         {
+                            this.FadeOut();
                             Expire();
                         }
                     }

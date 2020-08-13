@@ -6,6 +6,13 @@ namespace osu.Game.Rulesets.Sentakki
 {
     public static class SentakkiExtensions
     {
+        public static int NormalizePath(this int path)
+        {
+            while (path < 0) path += 8;
+            path %= 8;
+            return path;
+        }
+
         public static float GetRotationForLane(this int lane)
         {
             while (lane < 0) lane += 8;

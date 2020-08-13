@@ -46,7 +46,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 AddRangeInternal(new Drawable[]{
                     breakSound = new SkinnableSound(new SampleInfo("Break"))
                 });
-            AdjustedAnimationDuration.BindValueChanged(_ => invalidateTransforms());
+            AdjustedAnimationDuration.BindValueChanged(_ => InvalidateTransforms());
         }
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
@@ -69,7 +69,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AdjustedAnimationDuration.Value = AnimationDuration.Value * GameplaySpeed;
         }
 
-        private void invalidateTransforms()
+        protected virtual void InvalidateTransforms()
         {
             foreach (var transform in Transforms)
             {
@@ -81,8 +81,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 internalChild.ApplyTransformsAt(double.MinValue, true);
                 internalChild.ClearTransforms(true);
             }
-            UpdateInitialTransforms();
-            UpdateStateTransforms(State.Value);
+            using (BeginAbsoluteSequence(HitObject.StartTime - InitialLifetimeOffset))
+            {
+                UpdateInitialTransforms();
+                double offset = Result?.TimeOffset ?? 0;
+                using (BeginDelayedSequence(InitialLifetimeOffset + offset))
+                    UpdateStateTransforms(State.Value);
+            }
         }
 
         protected virtual bool PlayBreakSample => true;

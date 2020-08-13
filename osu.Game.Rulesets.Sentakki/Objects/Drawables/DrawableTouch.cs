@@ -154,6 +154,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             ApplyResult(r => r.Type = result);
         }
 
+        protected override void InvalidateTransforms()
+        {
+        }
+
         protected override void UpdateStateTransforms(ArmedState state)
         {
             base.UpdateStateTransforms(state);

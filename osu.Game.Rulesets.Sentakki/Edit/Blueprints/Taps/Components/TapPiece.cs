@@ -59,7 +59,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps.Components
 
         public void UpdateFrom(DrawableTap drawableTap)
         {
-            Position = SentakkiExtensions.GetCircularPosition(-drawableTap.CirclePiece.Position.Y, drawableTap.HitObject.Lane.GetRotationForLane());
+            Position = SentakkiExtensions.GetCircularPosition(-drawableTap.TapVisual.Position.Y, drawableTap.HitObject.Lane.GetRotationForLane());
         }
     }
 }
