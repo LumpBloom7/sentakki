@@ -15,11 +15,13 @@ using osu.Game.Beatmaps;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlide : DrawableSentakkiHitObject
+    public class DrawableSlide : DrawableSentakkiHitObject, IDrawableHitObjectWithProxiedApproach
     {
         public override bool DisplayResult => false;
 
         protected override bool PlayBreakSample => false;
+
+        public Drawable ProxiedLayer => Slidepath;
 
         public Container<DrawableSlideNode> SlideNodes;
         public Container<DrawableSlideTap> SlideTaps;
