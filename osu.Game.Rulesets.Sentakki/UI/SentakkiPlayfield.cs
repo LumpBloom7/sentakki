@@ -66,7 +66,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             {
                 new PlayfieldVisualisation(),
                 ring = new SentakkiRing(),
-                slidebodyContainer = new  SlideBodyProxyContainer(),
+                slidebodyContainer = new SlideBodyProxyContainer(),
                 lanedPlayfield = new Container()
                 {
                     Anchor = Anchor.Centre,
@@ -77,7 +77,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 {
                     RelativeSizeAxes = Axes.Both,
                 }
-});
+            });
 
             foreach (var angle in LANEANGLES)
             {
@@ -129,7 +129,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             switch (h.HitObject)
             {
                 case SentakkiLanedHitObject laned:
-                    lanes[laned.Lane.NormalizePath()].Add(h);
+                    lanes[laned.Lane].Add(h);
                     break;
                 default:
                     base.Add(h);
@@ -142,7 +142,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             switch (h.HitObject)
             {
                 case SentakkiLanedHitObject laned:
-                    return lanes[laned.Lane.NormalizePath()].Remove(h);
+                    return lanes[laned.Lane].Remove(h);
                 default:
                     return base.Remove(h);
             }

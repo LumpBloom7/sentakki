@@ -53,7 +53,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private int offset = 0;
         private int offset2 = 0;
 
-        private int getNewLane(bool twin = false) => patternlist[currentPattern].Invoke(twin);
+        private int getNewLane(bool twin = false) => patternlist[currentPattern].Invoke(twin).NormalizePath();
 
         public void CreateNewPattern()
         {
