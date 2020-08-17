@@ -15,10 +15,5 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 HitObjectContainer
             });
         }
-
-        public override void Add(DrawableHitObject hitObject)
-        {
-            HitObjectContainer.Add(hitObject);
-        }
     }
 }

@@ -16,12 +16,10 @@ using System;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableTouch : DrawableSentakkiHitObject, IDrawableHitObjectWithProxiedApproach
+    public class DrawableTouch : DrawableSentakkiHitObject
     {
         // IsHovered is used
         public override bool HandlePositionalInput => true;
-
-        public Drawable ProxiedLayer => this;
 
         protected override float SamplePlaybackPosition => ((HitObject as Touch).Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
 
