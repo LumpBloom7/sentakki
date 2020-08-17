@@ -32,7 +32,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected readonly Bindable<double> AnimationDuration = new Bindable<double>(1000);
         protected readonly Bindable<double> AdjustedAnimationDuration = new Bindable<double>(1000);
 
-        protected override float SamplePlaybackPosition => (SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, HitObject.Lane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
+        protected override float SamplePlaybackPosition
+        {
+            get
+            {
+                if (HitObject is SentakkiLanedHitObject x)
+                    return (SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, x.Lane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
+                else
+                    return Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
+            }
+        }
+
         public SentakkiAction[] HitActions { get; set; } = new[]
         {
             SentakkiAction.Button1,

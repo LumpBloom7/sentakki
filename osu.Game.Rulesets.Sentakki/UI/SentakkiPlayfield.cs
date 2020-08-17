@@ -67,7 +67,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 new PlayfieldVisualisation(),
                 ring = new SentakkiRing(),
                 slidebodyContainer = new  SlideBodyProxyContainer(),
-                //HitObjectContainer,
                 lanedPlayfield = new Container()
                 {
                     Anchor = Anchor.Centre,
@@ -127,13 +126,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     }
             };
 
-            switch (h)
+            switch (h.HitObject)
             {
-                case DrawableTap tap:
-                    lanes[tap.HitObject.Lane.NormalizePath()].Add(tap);
-                    break;
-                case DrawableHold hold:
-                    lanes[hold.HitObject.Lane.NormalizePath()].Add(hold);
+                case SentakkiLanedHitObject laned:
+                    lanes[laned.Lane.NormalizePath()].Add(h);
                     break;
                 default:
                     base.Add(h);
@@ -143,12 +139,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public override bool Remove(DrawableHitObject h)
         {
-            switch (h)
+            switch (h.HitObject)
             {
-                case DrawableTap tap:
-                    return lanes[tap.HitObject.Lane.NormalizePath()].Remove(tap);
-                case DrawableHold hold:
-                    return lanes[hold.HitObject.Lane.NormalizePath()].Remove(hold);
+                case SentakkiLanedHitObject laned:
+                    return lanes[laned.Lane.NormalizePath()].Remove(h);
                 default:
                     return base.Remove(h);
             }
@@ -182,12 +176,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     };
                     break;
                 default:
+                    var lane = (judgedObject.HitObject as SentakkiLanedHitObject).Lane;
                     explosion = new DrawableSentakkiJudgement(result, sentakkiObj)
                     {
                         Origin = Anchor.Centre,
                         Anchor = Anchor.Centre,
-                        Position = SentakkiExtensions.GetPositionAlongLane(240, sentakkiObj.HitObject.Lane),
-                        Rotation = sentakkiObj.HitObject.Lane.GetRotationForLane(),
+                        Position = SentakkiExtensions.GetPositionAlongLane(240, lane),
+                        Rotation = lane.GetRotationForLane(),
                     };
                     break;
             }

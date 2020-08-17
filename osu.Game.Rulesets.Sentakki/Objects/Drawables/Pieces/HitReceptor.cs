@@ -21,18 +21,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public Func<bool> Hit;
         public Action Release;
 
-        public int? NotePath = null;
+        private SentakkiLanedHitObject hitObject = null;
         public bool HoverAction()
         {
-            if (!NotePath.HasValue || !SentakkiActionInputManager.CurrentPath.Contains(NotePath.Value))
+            if (hitObject is null || !SentakkiActionInputManager.CurrentPath.Contains(hitObject.Lane))
             {
                 if (SentakkiActionInputManager.PressedActions.Any(action => OnPressed(action)))
                     actions.AddRange(SentakkiActionInputManager.PressedActions.Except(actions));
             }
             return false;
         }
-        public HitReceptor()
+        public HitReceptor(SentakkiLanedHitObject hitObject = null)
         {
+            this.hitObject = hitObject;
             RelativeSizeAxes = Axes.None;
             Size = new Vector2(240);
             Anchor = Anchor.Centre;
@@ -44,8 +45,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             if (IsHovered)
             {
-                if (NotePath.HasValue)
-                    SentakkiActionInputManager.CurrentPath.Add(NotePath.Value);
+                if (hitObject != null)
+                    SentakkiActionInputManager.CurrentPath.Add(hitObject.Lane);
                 actions.Add(action);
                 return Hit?.Invoke() ?? false;
             }
@@ -58,15 +59,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             if (!actions.Any())
             {
                 Release?.Invoke();
-                if (NotePath.HasValue)
-                    SentakkiActionInputManager.CurrentPath.Remove(NotePath.Value);
+                if (hitObject != null)
+                    SentakkiActionInputManager.CurrentPath.Remove(hitObject.Lane);
             }
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            if (NotePath.HasValue)
-                SentakkiActionInputManager.CurrentPath.Remove(NotePath.Value);
+            if (hitObject != null)
+                SentakkiActionInputManager.CurrentPath.Remove(hitObject.Lane);
             if (actions.Any())
             {
                 actions.Clear();

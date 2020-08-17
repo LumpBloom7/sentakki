@@ -9,7 +9,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public class Slide : SentakkiHitObject, IHasDuration
+    public class Slide : SentakkiLanedHitObject, IHasDuration
     {
         public override Color4 NoteColor => IsBreak ? Color4.OrangeRed : HasTwin ? Color4.Gold : Color4.Aqua;
         public static readonly float SLIDE_CHEVRON_DISTANCE = 25;
@@ -44,7 +44,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 var progress = i * chevronInterval;
                 AddNested(new SlideNode
                 {
-                    Lane = Lane,
                     Progress = (float)progress
                 });
             }
@@ -55,13 +54,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 Lane = Lane + SlidePath.EndLane,
                 Progress = 1
             });
+
             AddNested(new Tap { Lane = Lane, StartTime = StartTime, Samples = Samples, IsBreak = IsBreak });
         }
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
         public override Judgement CreateJudgement() => new IgnoreJudgement();
 
-        public class SlideNode : SentakkiHitObject
+        public class SlideNode : SentakkiLanedHitObject
         {
             public virtual float Progress { get; set; }
 

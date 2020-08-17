@@ -84,12 +84,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     },
                 }
             });
-
-            hitObject.LaneBindable.BindValueChanged(r =>
-            {
-                Rotation = r.NewValue.GetRotationForLane();
-                HitArea.NotePath = r.NewValue;
-            }, true);
         }
 
         protected override void AddNestedHitObject(DrawableHitObject hitObject)

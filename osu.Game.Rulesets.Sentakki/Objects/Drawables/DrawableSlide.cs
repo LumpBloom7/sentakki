@@ -61,6 +61,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AddRangeInternal(new Drawable[]
             {
                 slideBodyContainer = new Container{
+                    Rotation = -22.5f,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Children = new Drawable[]{
@@ -101,12 +102,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void LoadComplete()
         {
             base.LoadComplete();
-            HitObject.LaneBindable.BindValueChanged(l =>
-            {
-                // The slide paths always start from lane 0, so we need to compensate for that
-                slideBodyContainer.Rotation = l.NewValue.GetRotationForLane() - 22.5f;
-                SlideTaps.Child.HitObject.Lane = l.NewValue;
-            }, true);
 
             AccentColour.BindValueChanged(c =>
             {
@@ -116,7 +111,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void InvalidateTransforms()
         {
-
         }
 
         [Resolved]

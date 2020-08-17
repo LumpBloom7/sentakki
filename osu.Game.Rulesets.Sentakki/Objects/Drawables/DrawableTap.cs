@@ -45,11 +45,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Position = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE),
                 },
             });
-            hitObject.LaneBindable.BindValueChanged(r =>
-            {
-                Rotation = r.NewValue.GetRotationForLane();
-                HitArea.NotePath = r.NewValue;
-            }, true);
         }
 
         protected virtual Drawable CreateTapRepresentation() => new TapPiece();
