@@ -8,11 +8,14 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.UI;
 using osuTK;
 using System;
+using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -30,6 +33,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
         public static readonly float DOTSIZE = 20f;
         public static readonly float INTERSECTDISTANCE = 296.5f;
         public static readonly float NOTESTARTDISTANCE = 66f;
+
+        private readonly List<Lane> lanes = new List<Lane>();
+        private readonly Container lanedPlayfield;
 
         public static readonly float[] LANEANGLES =
         {
@@ -61,13 +67,26 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 new PlayfieldVisualisation(),
                 ring = new SentakkiRing(),
                 slidebodyContainer = new  SlideBodyProxyContainer(),
-                HitObjectContainer,
+                //HitObjectContainer,
+                lanedPlayfield = new Container()
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                },
                 touchNoteContainer = new TouchNoteProxyContainer(),
                 judgementLayer = new JudgementContainer<DrawableSentakkiJudgement>
                 {
                     RelativeSizeAxes = Axes.Both,
                 }
-            });
+});
+
+            foreach (var angle in LANEANGLES)
+            {
+                var lane = new Lane { Rotation = angle };
+                lanes.Add(lane);
+                lanedPlayfield.Add(lane);
+                AddNested(lane);
+            }
         }
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
@@ -107,8 +126,34 @@ namespace osu.Game.Rulesets.Sentakki.UI
                             break;
                     }
             };
-            base.Add(h);
+
+            switch (h)
+            {
+                case DrawableTap tap:
+                    lanes[tap.HitObject.Lane.NormalizePath()].Add(tap);
+                    break;
+                case DrawableHold hold:
+                    lanes[hold.HitObject.Lane.NormalizePath()].Add(hold);
+                    break;
+                default:
+                    base.Add(h);
+                    break;
+            }
         }
+
+        public override bool Remove(DrawableHitObject h)
+        {
+            switch (h)
+            {
+                case DrawableTap tap:
+                    return lanes[tap.HitObject.Lane.NormalizePath()].Remove(tap);
+                case DrawableHold hold:
+                    return lanes[hold.HitObject.Lane.NormalizePath()].Remove(hold);
+                default:
+                    return base.Remove(h);
+            }
+        }
+
 
         private void onNewResult(DrawableHitObject judgedObject, JudgementResult result)
         {
