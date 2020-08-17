@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AddRangeInternal(new Drawable[] {
                 HitObjectLine = new HitObjectLine(),
                 TapVisual = CreateTapRepresentation(),
-                HitArea = new HitReceptor()
+                HitArea = new HitReceptor(HitObject as SentakkiLanedHitObject)
                 {
                     Hit = () =>
                     {

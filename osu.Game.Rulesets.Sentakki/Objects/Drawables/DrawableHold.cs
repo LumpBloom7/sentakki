@@ -56,7 +56,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 },
                 headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
                 tailContainer = new Container<DrawableHoldTail> { RelativeSizeAxes = Axes.Both },
-                HitArea = new HitReceptor
+                HitArea = new HitReceptor(HitObject as SentakkiLanedHitObject)
                 {
                     Position = new Vector2(0,-SentakkiPlayfield.INTERSECTDISTANCE),
                     Hit = () => {
