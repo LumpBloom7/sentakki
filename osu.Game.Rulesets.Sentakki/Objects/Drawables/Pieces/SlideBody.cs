@@ -14,6 +14,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
     public class SlideBody : CompositeDrawable
     {
+        // This will be proxied, so a must.
+        public override bool RemoveWhenNotAlive => false;
+
         private float progress = 0;
         public float Progress
         {
