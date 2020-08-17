@@ -7,7 +7,7 @@
     <EmbeddedResource Include="Resources\**\*.*" />
   </ItemGroup>
   <ItemGroup Label="Code Analysis">
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0" PrivateAssets="All" />
   </ItemGroup>
   <PropertyGroup Label="Code Analysis">
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)CodeAnalysis\sentakki.ruleset</CodeAnalysisRuleSet>
