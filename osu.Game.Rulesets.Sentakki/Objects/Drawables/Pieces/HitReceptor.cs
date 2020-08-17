@@ -21,7 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public Func<bool> Hit;
         public Action Release;
 
-        public int? NotePath = null;
+        public int? NotePath;
         public bool HoverAction()
         {
             if (!NotePath.HasValue || !SentakkiActionInputManager.CurrentPath.Contains(NotePath.Value))

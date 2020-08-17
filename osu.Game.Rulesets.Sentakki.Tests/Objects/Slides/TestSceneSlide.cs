@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
     {
         protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 
-        protected int StartPath = 0;
+        protected int StartPath;
         protected int EndPath;
 
         private readonly SlideBody slide;

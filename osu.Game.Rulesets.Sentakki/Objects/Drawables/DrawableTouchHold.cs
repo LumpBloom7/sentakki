@@ -56,7 +56,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
-        private double timeHeld = 0;
+        private double timeHeld;
 
         private readonly BindableBool activated = new BindableBool(false);
 

@@ -71,7 +71,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
         }
         public class NoteEntry : Container
         {
-            public double InitialLifetimeOffset = 0;
+            public double InitialLifetimeOffset;
             private Container progressBox;
             private RollingCounter<long> noteCounter;
 
@@ -219,7 +219,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
 
             private class ChartBar : Container
             {
-                public double InitialLifetimeOffset = 0;
+                public double InitialLifetimeOffset;
 
                 private HitResult result;
 

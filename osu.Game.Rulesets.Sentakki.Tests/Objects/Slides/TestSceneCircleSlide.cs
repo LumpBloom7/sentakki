@@ -7,7 +7,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
     public class TestSceneCircleSlide : TestSceneSlide
     {
-        private bool clockwise = false;
+        private bool clockwise;
         public TestSceneCircleSlide()
         {
             AddToggleStep("Clockwise", b =>

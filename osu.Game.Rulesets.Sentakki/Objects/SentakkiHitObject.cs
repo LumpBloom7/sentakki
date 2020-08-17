@@ -12,8 +12,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public abstract class SentakkiHitObject : HitObject
     {
-        public virtual bool IsBreak { get; set; } = false;
-        public virtual bool HasTwin { get; set; } = false;
+        public virtual bool IsBreak { get; set; }
+        public virtual bool HasTwin { get; set; }
 
         public override Judgement CreateJudgement() => IsBreak ? new SentakkiBreakJudgement() : new SentakkiJudgement();
 

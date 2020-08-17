@@ -20,10 +20,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         [Resolved(canBeNull: true)]
         private GameplayClock gameplayClock { get; set; }
 
-        public bool IsHidden = false;
-        public bool IsFadeIn = false;
+        public bool IsHidden;
+        public bool IsFadeIn;
 
-        public bool Auto = false;
+        public bool Auto;
 
         // Used in the editor
         public bool IsVisible => Time.Current >= HitObject.StartTime - AnimationDuration.Value;

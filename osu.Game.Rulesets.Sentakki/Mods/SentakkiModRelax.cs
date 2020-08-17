@@ -47,7 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             sentakkiInputManager.AllowUserPresses = false;
         }
 
-        private bool holdingSlide = false;
+        private bool holdingSlide;
         public void Update(Playfield playfield)
         {
             if (hasReplay)

@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public readonly Container Note;
         private readonly ShadowPiece shadow;
 
-        public double Duration = 0;
+        public double Duration;
 
         public HoldBody()
         {

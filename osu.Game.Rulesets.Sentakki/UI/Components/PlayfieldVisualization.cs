@@ -142,7 +142,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             indexOffset = (indexOffset + index_change) % bars_per_visualiser;
         }
 
-        private double delta = 0;
+        private double delta;
         protected override void Update()
         {
             base.Update();

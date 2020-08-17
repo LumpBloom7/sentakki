@@ -33,8 +33,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override double InitialLifetimeOffset => 1000;
 
-        private float starProg = 0;
-        private Vector2? previousPosition = null;
+        private float starProg;
+        private Vector2? previousPosition;
         public float StarProgress
         {
             get => starProg;
