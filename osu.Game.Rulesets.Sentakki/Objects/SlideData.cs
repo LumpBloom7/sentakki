@@ -149,7 +149,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             return new SentakkiSlidePath(SlidePath.ToArray(), end);
         }
 
-        public static SentakkiSlidePath GenerateUPattern(int end)
+        public static SentakkiSlidePath GenerateUPattern(int end, bool reversed = false)
         {
             Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0);
             Vector2 Node1Pos = getPositionInBetween(Node0Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 5), .51f);
@@ -164,11 +164,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 new PathControlPoint(Node0Pos,PathType.Linear),
                 new PathControlPoint(Node1Pos, PathType.PerfectCurve),
                 new PathControlPoint(Node2Pos),
-                new PathControlPoint(Node3Pos, PathType.Linear),
-                new PathControlPoint(Node4Pos)
-            }.ToArray();
-
-            return new SentakkiSlidePath(controlPoints, end);
+                new PathControlPoint(Node3Pos, PathType.PerfectCurve),
+                new PathControlPoint(Node4Pos,PathType.Linear)
+            };
+            if (reversed) controlPoints.Reverse();
+            return new SentakkiSlidePath(controlPoints.ToArray(), end);
         }
     }
 }
