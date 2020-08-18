@@ -119,10 +119,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         }
 
         // Covers DX L pattern 2-5
-        public static SentakkiSlidePath GenerateLPattern(int end, bool mirrored)
+        public static SentakkiSlidePath GenerateLPattern(int end, bool mirrored = false)
         {
             Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0);
-            Vector2 Node1Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 6);
+            Vector2 Node1Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, mirrored ? 2 : 6);
             Vector2 Node2Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end);
 
             var controlPoints = new List<PathControlPoint>{
