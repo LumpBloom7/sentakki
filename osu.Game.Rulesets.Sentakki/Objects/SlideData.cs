@@ -186,24 +186,41 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public static SentakkiSlidePath GenerateCupPattern(int end, bool mirrored = false)
         {
             float r = 270 / 2f;
-            Vector2 loopOrigin = SentakkiExtensions.GetCircularPosition(r, 90);
 
-            Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0);
-            Vector2 Node1Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, 300);
+            int x = mirrored ? (-end).NormalizePath() : end;
+
+            float originAngle = 90;
+            float angle1 = 300;
+            float angle2 = 269;
+            float angle3 = 230;
 
             float loopEndAngle = 0;
-            if (end == 0) loopEndAngle = 60;
-            else if (end == 1) loopEndAngle = 90;
-            else if (end == 2) loopEndAngle = 180;
-            else if (end == 3) loopEndAngle = 240;
-            else if (end == 4) loopEndAngle = 300;
-            else if (end == 5) loopEndAngle = 330;
-            else if (end == 6) loopEndAngle = 360;
-            else if (end == 7) loopEndAngle = 390;
 
-            Vector2 Node2Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, 269);
-            Vector2 Node3Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, 230 + (end >= 3 ? 180 : 0));
-            Vector2 Node4Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, (230 + (end >= 3 ? 180 : 0) + loopEndAngle) / 2);
+            if (x == 0) loopEndAngle = 60;
+            else if (x == 1) loopEndAngle = 90;
+            else if (x == 2) loopEndAngle = 180;
+            else if (x == 3) loopEndAngle = 240;
+            else if (x == 4) loopEndAngle = 300;
+            else if (x == 5) loopEndAngle = 330;
+            else if (x == 6) loopEndAngle = 360;
+            else if (x == 7) loopEndAngle = 390;
+
+            if (mirrored)
+            {
+                originAngle = -originAngle + 45;
+                angle1 = -angle1 + 45;
+                angle2 = -angle2 + 45;
+                angle3 = -angle3 + 45;
+                loopEndAngle = -loopEndAngle + 45;
+            }
+
+            Vector2 loopOrigin = SentakkiExtensions.GetCircularPosition(r, originAngle);
+
+            Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0);
+            Vector2 Node1Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, angle1);
+            Vector2 Node2Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, angle2);
+            Vector2 Node3Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, angle3);
+            Vector2 Node4Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, ((angle3 + loopEndAngle) / 2) + (x >= 3 ? 180 : 0));
             Vector2 Node5Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, loopEndAngle);
             Vector2 Node6Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end);
 
