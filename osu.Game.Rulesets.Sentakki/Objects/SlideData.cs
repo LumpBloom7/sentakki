@@ -182,5 +182,42 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             return new SentakkiSlidePath(controlPoints.ToArray(), end);
         }
+
+        public static SentakkiSlidePath GenerateCupPattern(int end, bool mirrored = false)
+        {
+            float r = 270 / 2f;
+            Vector2 loopOrigin = SentakkiExtensions.GetCircularPosition(r, 90);
+
+            Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0);
+            Vector2 Node1Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, 300);
+
+            float loopEndAngle = 0;
+            if (end == 0) loopEndAngle = 60;
+            else if (end == 1) loopEndAngle = 90;
+            else if (end == 2) loopEndAngle = 180;
+            else if (end == 3) loopEndAngle = 240;
+            else if (end == 4) loopEndAngle = 300;
+            else if (end == 5) loopEndAngle = 330;
+            else if (end == 6) loopEndAngle = 360;
+            else if (end == 7) loopEndAngle = 390;
+
+            Vector2 Node2Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, 269);
+            Vector2 Node3Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, 230 + (end >= 3 ? 180 : 0));
+            Vector2 Node4Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, (230 + (end >= 3 ? 180 : 0) + loopEndAngle) / 2);
+            Vector2 Node5Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, loopEndAngle);
+            Vector2 Node6Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end);
+
+            var controlPoints = new List<PathControlPoint>{
+                new PathControlPoint(Node0Pos, PathType.Linear),
+                new PathControlPoint(Node1Pos, PathType.PerfectCurve),
+                new PathControlPoint(Node2Pos),
+                new PathControlPoint(Node3Pos, PathType.PerfectCurve),
+                new PathControlPoint(Node4Pos),
+                new PathControlPoint(Node5Pos,PathType.PerfectCurve),
+                new PathControlPoint(Node6Pos, PathType.Linear),
+            };
+
+            return new SentakkiSlidePath(controlPoints.ToArray(), end);
+        }
     }
 }
