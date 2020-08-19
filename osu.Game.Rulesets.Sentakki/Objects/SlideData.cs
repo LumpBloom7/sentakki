@@ -64,7 +64,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             GenerateVPattern(5),
             GenerateVPattern(6),
             GenerateVPattern(7),
+            GenerateCupPattern(0),
+            GenerateCupPattern(1),
+            GenerateCupPattern(2),
+            GenerateCupPattern(3),
+            GenerateCupPattern(4),
+            GenerateCupPattern(5),
+            GenerateCupPattern(6),
+            GenerateCupPattern(7),
+            GenerateCupPattern(0, true),
+            GenerateCupPattern(1, true),
+            GenerateCupPattern(2, true),
+            GenerateCupPattern(3, true),
+            GenerateCupPattern(4, true),
+            GenerateCupPattern(5, true),
+            GenerateCupPattern(6, true),
+            GenerateCupPattern(7, true),
         };
+
         private static Vector2 getPositionInBetween(Vector2 first, Vector2 second, float ratio = .5f) => first + ((second - first) * ratio);
 
         // Covers DX Straight 3-7
