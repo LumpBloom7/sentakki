@@ -9,6 +9,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public SliderPath Path { get; set; }
 
+        // The minimum duration that this pattern can have, used in converts
+        public double MinDuration => Path.Distance / 2;
+
         public SentakkiSlidePath(PathControlPoint[] pathControlPoints, int endLane)
         {
             Path = new SliderPath(pathControlPoints);
