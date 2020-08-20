@@ -23,11 +23,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         private readonly SlideBody slide;
         private readonly Container nodes;
 
-
         public TestSceneSlide()
         {
             Add(new SentakkiRing());
-
 
             Add(slide = new SlideBody()
             {
