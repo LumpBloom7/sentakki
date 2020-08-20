@@ -75,7 +75,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     {
                         notes.Add(createSlideNote(original, isBreak: breakNote));
                     }
-                    else
+                    if (!notes.Any())
                     {
                         if (Experiments.Value.HasFlag(ConversionExperiments.twins))
                         {
@@ -137,7 +137,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         {
             int noteLane = getNewLane(twin);
 
-            var validPaths = SlidePaths.ValidPaths.Where(p => ((IHasDuration)original).Duration >= p.MinDuration).ToArray();
+            var validPaths = SlidePaths.ValidPaths.Where(p => ((IHasDuration)original).Duration >= p.MinDuration && ((IHasDuration)original).Duration <= p.MaxDuration).ToArray();
+            if (!validPaths.Any()) return null;
 
             return new Slide
             {
