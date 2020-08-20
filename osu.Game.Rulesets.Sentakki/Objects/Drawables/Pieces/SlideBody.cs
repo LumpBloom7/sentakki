@@ -59,12 +59,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
             float prevAngle = 0;
             Container currentSegment = new Container();
-            for (double i = 1; i < chevrons; ++i)
+
+            // We add the chevrons starting from the last, so that earlier ones remain on top
+            for (double i = chevrons - 1; i > 0; --i)
             {
+                Vector2 prevPos = Path.PositionAt((i - 1) * chevronInterval);
                 Vector2 currentPos = Path.PositionAt(i * chevronInterval);
-                Vector2 nextPos = Path.PositionAt((i + 1) * chevronInterval);
-                float angle = currentPos.GetDegreesFromPosition(nextPos);
-                if (i == chevrons - 1) angle = prevAngle;
+
+                float angle = prevPos.GetDegreesFromPosition(currentPos);
+                if (i == 1) angle = prevAngle;
                 prevAngle = angle;
 
                 currentSegment.Add(new SlideChevron
@@ -79,6 +82,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     currentSegment = new Container();
                 }
             }
+
             segments.Add(currentSegment);
             AddRangeInternal(segments);
         }
@@ -86,8 +90,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             double segmentBounds = -chevronInterval;
 
-            foreach (var segment in segments)
+            for (int i = segments.Count - 1; i >= 0; i--)
             {
+                var segment = segments[i];
                 segmentBounds += segment.Count * chevronInterval;
                 segment.Alpha = (progress > segmentBounds) ? 0 : 1;
             }
