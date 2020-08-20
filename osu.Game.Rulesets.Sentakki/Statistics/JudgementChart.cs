@@ -204,17 +204,20 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
 
                 protected override Easing RollingEasing => Easing.OutPow10;
 
-                public TotalNoteCounter()
-                {
-                    DisplayedCountSpriteText.Anchor = Anchor.Centre;
-                    DisplayedCountSpriteText.Origin = Anchor.Centre;
-                    DisplayedCountSpriteText.Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold);
-                }
-
                 protected override string FormatCount(long count) => count.ToString("N0");
 
                 public override void Increment(long amount)
                     => Current.Value += amount;
+
+                protected override OsuSpriteText CreateSpriteText()
+                {
+                    return new OsuSpriteText
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold),
+                    };
+                }
             }
 
             private class ChartBar : Container
