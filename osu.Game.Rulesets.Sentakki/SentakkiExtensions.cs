@@ -13,6 +13,25 @@ namespace osu.Game.Rulesets.Sentakki
             return path;
         }
 
+        public static float GetDeltaAngle(float a, float b)
+        {
+            float x = b;
+            float y = a;
+
+            if (a > b)
+            {
+                x = a;
+                y = b;
+            }
+
+            if (x - y < 180)
+                x -= y;
+            else
+                x = 360 - x + y;
+
+            return x;
+        }
+
         public static float GetRotationForLane(this int lane)
         {
             while (lane < 0) lane += 8;

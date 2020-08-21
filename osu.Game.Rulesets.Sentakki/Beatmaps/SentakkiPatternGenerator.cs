@@ -71,11 +71,11 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 case IHasPathWithRepeats hold:
                     breakNote = hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH));
-                    if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)) && hold.Duration >= 500)
+                    if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)) && hold.Duration >= 350)
                     {
                         notes.Add(createSlideNote(original, isBreak: breakNote));
                     }
-                    else
+                    if (!notes.Any())
                     {
                         if (Experiments.Value.HasFlag(ConversionExperiments.twins))
                         {
@@ -136,9 +136,13 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private SentakkiHitObject createSlideNote(HitObject original, bool twin = false, bool isBreak = false)
         {
             int noteLane = getNewLane(twin);
+
+            var validPaths = SlidePaths.ValidPaths.Where(p => ((IHasDuration)original).Duration >= p.MinDuration && ((IHasDuration)original).Duration <= p.MaxDuration).ToArray();
+            if (!validPaths.Any()) return null;
+
             return new Slide
             {
-                SlidePath = SlidePaths.ValidPaths[rng.Next(0, SlidePaths.ValidPaths.Length)],
+                SlidePath = validPaths[rng.Next(validPaths.Length)],
                 Lane = noteLane,
                 StartTime = original.StartTime,
                 EndTime = original.GetEndTime(),
