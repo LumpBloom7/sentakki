@@ -57,7 +57,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             int chevrons = (int)Math.Ceiling(distance / Slide.SLIDE_CHEVRON_DISTANCE);
             chevronInterval = 1.0 / chevrons;
 
-            float prevAngle = 0;
+            float? prevAngle = null;
             Container currentSegment = new Container();
 
             // We add the chevrons starting from the last, so that earlier ones remain on top
@@ -67,13 +67,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 Vector2 currentPos = Path.PositionAt(i * chevronInterval);
 
                 float angle = prevPos.GetDegreesFromPosition(currentPos);
-                if (i == 1) angle = prevAngle;
+                bool shouldHide = SentakkiExtensions.GetDeltaAngle(prevAngle ?? angle, angle) >= 89;
                 prevAngle = angle;
 
                 currentSegment.Add(new SlideChevron
                 {
                     Position = currentPos,
                     Rotation = angle,
+                    Alpha = shouldHide ? 0 : 1,
                 });
 
                 if (i % 5 == 0 && chevrons - 1 - i > 2)
