@@ -49,9 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             HitObject.LaneBindable.BindValueChanged(l => SlideBodies.Rotation = HitObject.Lane.GetRotationForLane(), true);
         }
 
-        protected override void InvalidateTransforms()
-        {
-        }
+        protected override void InvalidateTransforms() { }
 
         protected override void ClearNestedHitObjects()
         {

@@ -91,9 +91,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AccentColour.BindValueChanged(c => Colour = c.NewValue, true);
         }
 
-        protected override void InvalidateTransforms()
-        {
-        }
+        protected override void InvalidateTransforms() { }
 
         [Resolved]
         private Bindable<WorkingBeatmap> workingBeatmap { get; set; }
