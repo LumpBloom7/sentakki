@@ -25,6 +25,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SkinnableSound slideSound;
 
         public override bool HandlePositionalInput => true;
+        public override bool DisplayResult => false;
+
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
         protected DrawableSlideBody Slide;
