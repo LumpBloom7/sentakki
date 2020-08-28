@@ -4,12 +4,10 @@ using osu.Framework.Graphics.Containers;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Tests.Visual;
-using osuTK;
-using osuTK.Graphics;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
@@ -36,7 +34,8 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         {
             var slide = new Slide
             {
-                SlidePath = SlidePaths.GenerateUPattern(5),
+                IsBreak = true,
+                SlidePathIDs = new List<int>() { 25, 27 },
                 StartTime = Time.Current + 1000,
                 EndTime = Time.Current + 1000 + duration,
             };

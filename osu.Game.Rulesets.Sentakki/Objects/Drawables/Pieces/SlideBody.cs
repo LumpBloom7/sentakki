@@ -12,7 +12,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class SlideBody : CompositeDrawable
+    public class SlideVisual : CompositeDrawable
     {
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             }
         }
 
-        public SlideBody()
+        public SlideVisual()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;

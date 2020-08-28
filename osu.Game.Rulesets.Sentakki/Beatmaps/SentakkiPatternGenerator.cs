@@ -137,12 +137,12 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         {
             int noteLane = getNewLane(twin);
 
-            var validPaths = SlidePaths.ValidPaths.Where(p => ((IHasDuration)original).Duration >= p.MinDuration && ((IHasDuration)original).Duration <= p.MaxDuration).ToArray();
+            var validPaths = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.MinDuration && ((IHasDuration)original).Duration <= p.MaxDuration).ToList();
             if (!validPaths.Any()) return null;
 
             return new Slide
             {
-                SlidePath = validPaths[rng.Next(validPaths.Length)],
+                SlidePathIDs = new List<int> { SlidePaths.VALIDPATHS.IndexOf(validPaths[rng.Next(validPaths.Count)]) },
                 Lane = noteLane,
                 StartTime = original.StartTime,
                 EndTime = original.GetEndTime(),

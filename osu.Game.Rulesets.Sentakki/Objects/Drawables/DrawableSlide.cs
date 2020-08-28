@@ -1,13 +1,8 @@
-using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Types;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
-using osu.Game.Beatmaps.ControlPoints;
 using osuTK;
 using osuTK.Graphics;
 using System.Linq;
@@ -15,40 +10,16 @@ using osu.Game.Beatmaps;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlide : DrawableSentakkiHitObject, IDrawableHitObjectWithProxiedApproach
+    public class DrawableSlide : DrawableSentakkiHitObject
     {
         public override bool DisplayResult => false;
 
         protected override bool PlayBreakSample => false;
 
-        public Drawable ProxiedLayer => Slidepath;
-
-        public Container<DrawableSlideNode> SlideNodes;
+        public Container<DrawableSlideBody> SlideBodies;
         public Container<DrawableSlideTap> SlideTaps;
-        public SlideBody Slidepath;
-
-        // Allows us to manage the slide body independently from the Nested Tap drawable, which will handle itself
-        private Container slideBodyContainer;
-        public StarPiece SlideStar;
 
         protected override double InitialLifetimeOffset => 1000;
-
-        private float starProg = 0;
-        private Vector2? previousPosition = null;
-        public float StarProgress
-        {
-            get => starProg;
-            set
-            {
-                starProg = value;
-                SlideStar.Position = Slidepath.Path.PositionAt(value);
-                if (previousPosition == null)
-                    SlideStar.Rotation = SlideStar.Position.GetDegreesFromPosition(Slidepath.Path.PositionAt(value + .001f));
-                else
-                    SlideStar.Rotation = previousPosition.Value.GetDegreesFromPosition(SlideStar.Position);
-                previousPosition = SlideStar.Position;
-            }
-        }
 
         public DrawableSlide(SentakkiHitObject hitObject)
             : base(hitObject)
@@ -60,35 +31,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AlwaysPresent = true;
             AddRangeInternal(new Drawable[]
             {
-                slideBodyContainer = new Container{
+                SlideBodies = new Container<DrawableSlideBody>{
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Children = new Drawable[]{
-                        Slidepath = new SlideBody
-                        {
-                            Alpha = 0,
-                            Path = (hitObject as Slide).SlidePath.Path,
-                        },
-                        new Container{
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Child = SlideStar = new StarPiece
-                            {
-                                Alpha = 0,
-                                Scale = Vector2.Zero,
-                                Position = Slidepath.Path.PositionAt(0),
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                RelativeSizeAxes  = Axes.None,
-                                Size = new Vector2(80),
-                            }
-                        },
-                        SlideNodes = new Container<DrawableSlideNode>
-                        {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                        },
-                    }
                 },
                 SlideTaps = new Container<DrawableSlideTap>
                 {
@@ -103,72 +48,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.LoadComplete();
             HitObject.LaneBindable.BindValueChanged(l =>
             {
-                // The slide paths always start from lane 0, so we need to compensate for that
-                slideBodyContainer.Rotation = l.NewValue.GetRotationForLane() - 22.5f;
+                SlideBodies.Rotation = HitObject.Lane.GetRotationForLane();
                 SlideTaps.Child.HitObject.Lane = l.NewValue;
-            }, true);
-
-            AccentColour.BindValueChanged(c =>
-            {
-                slideBodyContainer.Colour = c.NewValue;
             }, true);
         }
 
         protected override void InvalidateTransforms()
         {
-
-        }
-
-        [Resolved]
-        private Bindable<WorkingBeatmap> workingBeatmap { get; set; }
-
-        public double ShootDelay
-        {
-            get
-            {
-                double delay = workingBeatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(HitObject.StartTime).BeatLength * (HitObject as Slide).SlideShootDelay / 2;
-                if (delay >= (HitObject as IHasDuration).Duration - 50)
-                    return 0;
-                return delay;
-            }
-        }
-
-        protected override void UpdateInitialTransforms()
-        {
-            using (BeginAbsoluteSequence(HitObject.StartTime - 500, true))
-            {
-                Slidepath.FadeInFromZero(500);
-                using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
-                {
-                    SlideStar.FadeInFromZero(100).ScaleTo(1, 100);
-                    this.Delay(100 + ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - 50 - ShootDelay);
-                }
-            }
-        }
-
-        protected override void UpdateStateTransforms(ArmedState state)
-        {
-            base.UpdateStateTransforms(state);
-            const double time_fade_miss = 400 /* time_fade_miss = 400 */;
-            switch (state)
-            {
-                case ArmedState.Hit:
-                    this.FadeOut();
-                    break;
-                case ArmedState.Miss:
-                    using (BeginDelayedSequence((HitObject as IHasDuration).Duration + SlideNodes.Last().Result.TimeOffset, true))
-                    {
-                        slideBodyContainer.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss);
-                        this.Delay(time_fade_miss).Expire();
-                    }
-                    break;
-            }
         }
 
         protected override void ClearNestedHitObjects()
         {
             base.ClearNestedHitObjects();
-            SlideNodes.Clear();
+            SlideBodies.Clear();
         }
 
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
@@ -178,13 +70,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 case Tap x:
                     return new DrawableSlideTap(x, this)
                     {
+                        AutoBindable = { BindTarget = AutoBindable },
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         AccentColour = { BindTarget = AccentColour }
                     };
-                case Slide.SlideNode node:
-                    return new DrawableSlideNode(node, this)
+                case SlideBody slideBody:
+                    return new DrawableSlideBody(slideBody)
                     {
+                        AutoBindable = { BindTarget = AutoBindable },
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         AccentColour = { BindTarget = AccentColour }
@@ -198,8 +92,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             switch (hitObject)
             {
-                case DrawableSlideNode node:
-                    SlideNodes.Add(node);
+                case DrawableSlideBody node:
+                    SlideBodies.Add(node);
                     break;
                 case DrawableSlideTap tap:
                     SlideTaps.Child = tap;
@@ -207,12 +101,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
             base.AddNestedHitObject(hitObject);
         }
+
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            if (SlideNodes.Children.Last().AllJudged)
-            {
-                ApplyResult(r => r.Type = SlideNodes.Children.Last().Result.IsHit ? HitResult.Perfect : HitResult.Miss);
-            }
+            if (NestedHitObjects.All(n => n.Result.HasResult && Time.Current >= n.LatestTransformEndTime))
+                ApplyResult(r => r.Type = HitResult.Perfect);
         }
     }
 }

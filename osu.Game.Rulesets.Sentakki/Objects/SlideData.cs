@@ -10,7 +10,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public static class SlidePaths
     {
-        public static SentakkiSlidePath[] ValidPaths => new SentakkiSlidePath[]{
+        public static readonly List<SentakkiSlidePath> VALIDPATHS = new List<SentakkiSlidePath>{
             GenerateCirclePattern(0),
             GenerateCirclePattern(1),
             GenerateCirclePattern(2),
