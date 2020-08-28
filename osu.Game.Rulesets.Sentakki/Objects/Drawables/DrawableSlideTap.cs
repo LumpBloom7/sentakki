@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             double animStart = HitObject.StartTime - animTime;
             using (BeginAbsoluteSequence(animStart, true))
             {
-                (TapVisual as SlideTapPiece).Star.Spin((slide.HitObject as IHasDuration).Duration, RotationDirection.CounterClockwise, 0).Loop();
+                (TapVisual as SlideTapPiece).Stars.Spin((slide.HitObject as IHasDuration).Duration, RotationDirection.CounterClockwise, 0).Loop();
             }
         }
     }

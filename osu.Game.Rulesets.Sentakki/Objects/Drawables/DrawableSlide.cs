@@ -1,3 +1,4 @@
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Scoring;
@@ -10,6 +11,8 @@ using osu.Game.Beatmaps;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
+    // Cached so that SlideTapPiece can access via DI, and adjust visuals to account for multiple slide bodies
+    [Cached]
     public class DrawableSlide : DrawableSentakkiHitObject
     {
         public override bool DisplayResult => false;
