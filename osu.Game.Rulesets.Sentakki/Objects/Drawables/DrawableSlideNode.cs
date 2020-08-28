@@ -55,6 +55,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             OnNewResult += (DrawableHitObject hitObject, JudgementResult result) =>
             {
+                hitPreviousNodes(result.Type >= HitResult.Perfect);
                 if (result.IsHit)
                     Slide.Slidepath.Progress = (HitObject as SlideBody.SlideNode).Progress;
             };
@@ -73,13 +74,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected bool IsHittable => ThisIndex < 2 || Slide.SlideNodes[ThisIndex - 2].IsHit;
         public bool IsTailNode => (HitObject as SlideBody.SlideNode).IsTailNote;
 
-        public void HitPreviousNodes(bool successful = false)
+        private void hitPreviousNodes(bool successful = false)
         {
             foreach (var node in Slide.SlideNodes)
             {
                 if (node == this) return;
                 if (!node.Result.HasResult)
-                    node.forceJudgement(successful);
+                    node.ForceJudgement(successful);
             }
         }
 
@@ -96,10 +97,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!userTriggered)
             {
                 if (timeOffset > 0 && Auto)
-                {
                     ApplyResult(r => r.Type = HitResult.Perfect);
-                    HitPreviousNodes(true);
-                }
                 return;
             }
 
@@ -110,12 +108,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             result = HitResult.Perfect;
 
             ApplyResult(r => r.Type = result);
-            HitPreviousNodes(result > HitResult.Miss);
         }
-        public void UpdateResult() => base.UpdateResult(true);
 
         // Forces this object to have a result.
-        private void forceJudgement(bool successful = false) => ApplyResult(r => r.Type = successful ? HitResult.Perfect : HitResult.Miss);
+        public void ForceJudgement(bool successful = false) => ApplyResult(r => r.Type = successful ? HitResult.Perfect : HitResult.Miss);
 
         protected override void Update()
         {

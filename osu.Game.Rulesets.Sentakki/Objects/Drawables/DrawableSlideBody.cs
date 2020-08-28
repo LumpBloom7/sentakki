@@ -181,11 +181,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             if (!userTriggered)
             {
-                if (Auto && timeOffset > 0)
-                    ApplyResult(r => r.Type = HitResult.Perfect);
-
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
                 {
+                    SlideNodes.Last().ForceJudgement(false);
                     if (SlideNodes.Count(node => !node.Result.IsHit) <= 2)
                         ApplyResult(r => r.Type = HitResult.Good);
                     else
