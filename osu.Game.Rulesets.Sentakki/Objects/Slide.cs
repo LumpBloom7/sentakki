@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public List<int> SlidePathIDs;
 
         // The delay (in beats) before the animation star starts moving along the path
-        private BindableInt slideShootDelay = new BindableInt(1);
+        private readonly BindableInt slideShootDelay = new BindableInt(1);
 
         public int SlideShootDelay
         {
@@ -35,7 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             base.CreateNestedHitObjects();
 
-            AddNested(new Tap { Lane = Lane, StartTime = StartTime, Samples = Samples, IsBreak = IsBreak });
+            AddNested(new Tap { LaneBindable = { BindTarget = LaneBindable }, StartTime = StartTime, Samples = Samples, IsBreak = IsBreak });
             createSlideBodies();
         }
 

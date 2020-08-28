@@ -1,4 +1,3 @@
-
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
@@ -12,7 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     public class SlideBody : SentakkiHitObject, IHasDuration
     {
         // The delay (in beats) before the animation star starts moving along the path
-        private BindableInt slideShootDelay = new BindableInt(1);
+        private readonly BindableInt slideShootDelay = new BindableInt(1);
 
         public int SlideShootDelay
         {

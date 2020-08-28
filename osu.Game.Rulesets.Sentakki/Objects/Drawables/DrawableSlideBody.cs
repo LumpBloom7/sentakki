@@ -88,15 +88,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.LoadComplete();
 
-            AccentColour.BindValueChanged(c =>
-            {
-                Colour = c.NewValue;
-            }, true);
+            AccentColour.BindValueChanged(c => Colour = c.NewValue, true);
         }
 
         protected override void InvalidateTransforms()
         {
-
         }
 
         [Resolved]
@@ -190,7 +186,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
                 {
-                    //SlideNodes.Last().HitPreviousNodes(false);
                     if (SlideNodes.Count(node => !node.Result.IsHit) <= 2)
                         ApplyResult(r => r.Type = HitResult.Good);
                     else
