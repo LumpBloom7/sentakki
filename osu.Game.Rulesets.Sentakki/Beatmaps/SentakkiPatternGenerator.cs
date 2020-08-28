@@ -69,6 +69,14 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     breakNote = hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH));
                     if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)) && hold.Duration >= 350)
                     {
+                        if (Experiments.Value.HasFlag(ConversionExperiments.twins))
+                        {
+                            if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
+                            {
+                                isTwin = true;
+                                notes.Add(createSlideNote(original, true, breakNote));
+                            }
+                        }
                         notes.Add(createSlideNote(original, isBreak: breakNote));
                     }
                     if (!notes.Any())
