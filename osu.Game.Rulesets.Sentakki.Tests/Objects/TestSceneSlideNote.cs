@@ -35,9 +35,22 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             var slide = new Slide
             {
                 IsBreak = true,
-                SlidePathIDs = new List<int>() { 25, 27 },
+                SlideInfoList = new List<SentakkiSlideInfo>
+                {
+                    new SentakkiSlideInfo {
+                        ID = 25,
+                        Duration = 1000,
+                    },
+                    new SentakkiSlideInfo {
+                        ID = 27,
+                        Duration = 1500,
+                    },
+                    new SentakkiSlideInfo {
+                        ID = 0,
+                        Duration = 2000,
+                    }
+                },
                 StartTime = Time.Current + 1000,
-                EndTime = Time.Current + 1000 + duration,
             };
 
             slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });

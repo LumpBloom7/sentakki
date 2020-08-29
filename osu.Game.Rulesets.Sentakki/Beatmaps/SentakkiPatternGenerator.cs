@@ -143,13 +143,18 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             var validPaths = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.MinDuration && ((IHasDuration)original).Duration <= p.MaxDuration).ToList();
             if (!validPaths.Any()) return null;
+            int selectedSlideID = SlidePaths.VALIDPATHS.IndexOf(validPaths[rng.Next(validPaths.Count)]);
 
             return new Slide
             {
-                SlidePathIDs = new List<int> { SlidePaths.VALIDPATHS.IndexOf(validPaths[rng.Next(validPaths.Count)]) },
+                SlideInfoList = new List<SentakkiSlideInfo>{
+                    new SentakkiSlideInfo{
+                        ID = selectedSlideID,
+                        Duration = ((IHasDuration)original).Duration
+                    }
+                },
                 Lane = noteLane,
                 StartTime = original.StartTime,
-                EndTime = original.GetEndTime(),
                 Samples = original.Samples,
                 IsBreak = isBreak
             };

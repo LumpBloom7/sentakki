@@ -8,48 +8,36 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public class Slide : SentakkiHitObject, IHasDuration
+    // This is the main object used to summon slides, includes a TAP and one or more "SlideBodies"
+    public class Slide : SentakkiHitObject
     {
         public override Color4 NoteColor => IsBreak ? Color4.OrangeRed : HasTwin ? Color4.Gold : Color4.Aqua;
 
-        public static readonly float SLIDE_CHEVRON_DISTANCE = 25;
-        public List<int> SlidePathIDs;
-
-        // The delay (in beats) before the animation star starts moving along the path
-        private readonly BindableInt slideShootDelay = new BindableInt(1);
-
-        public int SlideShootDelay
-        {
-            get => slideShootDelay.Value;
-            set => slideShootDelay.Value = value;
-        }
-
-        public double EndTime
-        {
-            get => StartTime + Duration;
-            set => Duration = value - StartTime;
-        }
-        public double Duration { get; set; }
+        public List<SentakkiSlideInfo> SlideInfoList = new List<SentakkiSlideInfo>();
 
         protected override void CreateNestedHitObjects()
         {
             base.CreateNestedHitObjects();
 
-            AddNested(new Tap { LaneBindable = { BindTarget = LaneBindable }, StartTime = StartTime, Samples = Samples, IsBreak = IsBreak });
+            AddNested(new Tap
+            {
+                LaneBindable = { BindTarget = LaneBindable },
+                StartTime = StartTime,
+                Samples = Samples,
+                IsBreak = IsBreak
+            });
             createSlideBodies();
         }
 
         private void createSlideBodies()
         {
-            foreach (var SlideID in SlidePathIDs)
+            foreach (var SlideInfo in SlideInfoList)
             {
                 AddNested(new SlideBody
                 {
-                    Lane = SlidePaths.VALIDPATHS[SlideID].EndLane + Lane,
+                    Lane = SlideInfo.SlidePath.EndLane + Lane,
                     StartTime = StartTime,
-                    EndTime = EndTime,
-                    SlideShootDelay = SlideShootDelay,
-                    SlidePath = SlidePaths.VALIDPATHS[SlideID]
+                    SlideInfo = SlideInfo
                 });
             }
         }

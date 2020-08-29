@@ -10,14 +10,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class SlideBody : SentakkiHitObject, IHasDuration
     {
-        // The delay (in beats) before the animation star starts moving along the path
-        private readonly BindableInt slideShootDelay = new BindableInt(1);
-
-        public int SlideShootDelay
-        {
-            get => slideShootDelay.Value;
-            set => slideShootDelay.Value = value;
-        }
+        public static readonly float SLIDE_CHEVRON_DISTANCE = 25;
 
         public double EndTime
         {
@@ -25,16 +18,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set => Duration = value - StartTime;
         }
 
-        public double Duration { get; set; }
+        public double Duration
+        {
+            get => SlideInfo.Duration;
+            set => SlideInfo.Duration = value;
+        }
 
-        public SentakkiSlidePath SlidePath;
+        public SentakkiSlideInfo SlideInfo { get; set; }
 
         protected override void CreateNestedHitObjects()
         {
             base.CreateNestedHitObjects();
 
-            var distance = SlidePath.Path.Distance;
-            int chevrons = (int)Math.Ceiling(distance / Slide.SLIDE_CHEVRON_DISTANCE);
+            var distance = SlideInfo.SlidePath.Path.Distance;
+            int chevrons = (int)Math.Ceiling(distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
             double chevronInterval = 1.0 / chevrons;
 
             for (int i = 5; i < chevrons - 2; i += 5)

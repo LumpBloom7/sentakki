@@ -55,15 +55,13 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                             newSlide = new Slide
                             {
                                 StartTime = slide.StartTime,
-                                EndTime = slide.EndTime,
                                 Samples = slide.Samples,
                                 IsBreak = slide.IsBreak,
                                 Lane = slide.Lane,
-                                SlidePathIDs = new List<int>(),
                                 HasTwin = slide.HasTwin,
                             };
 
-                        newSlide.SlidePathIDs.AddRange(slide.SlidePathIDs);
+                        newSlide.SlideInfoList.AddRange(slide.SlideInfoList);
                     }
                     if (newSlide != null)
                         senBeatmap.HitObjects.Add(newSlide);

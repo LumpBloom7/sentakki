@@ -60,7 +60,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 Slidepath = new SlideVisual
                 {
                     Alpha = 0,
-                    Path = (hitObject as SlideBody).SlidePath.Path,
+                    Path = (hitObject as SlideBody).SlideInfo.SlidePath.Path,
                 },
                 new Container{
                     Anchor = Anchor.Centre,
@@ -100,7 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             get
             {
-                double delay = workingBeatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(HitObject.StartTime).BeatLength * (HitObject as SlideBody).SlideShootDelay / 2;
+                double delay = workingBeatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(HitObject.StartTime).BeatLength * (HitObject as SlideBody).SlideInfo.ShootDelay / 2;
                 if (delay >= (HitObject as IHasDuration).Duration - 50)
                     return 0;
                 return delay;

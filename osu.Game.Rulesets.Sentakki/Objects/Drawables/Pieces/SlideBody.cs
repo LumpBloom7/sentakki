@@ -54,7 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             segments = new List<Container>();
             var distance = Path.Distance;
-            int chevrons = (int)Math.Ceiling(distance / Slide.SLIDE_CHEVRON_DISTANCE);
+            int chevrons = (int)Math.Ceiling(distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
             chevronInterval = 1.0 / chevrons;
 
             float? prevAngle = null;
