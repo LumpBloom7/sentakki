@@ -45,6 +45,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         // Touch notes always appear above other notes, regardless of start time
         private readonly TouchNoteProxyContainer touchNoteContainer;
+
+        // Slide body always appear under other notes, regardless of start time
+        private readonly SlideBodyProxyContainer slidebodyContainer;
+
         public SentakkiPlayfield()
         {
             Anchor = Anchor.Centre;
@@ -56,6 +60,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             {
                 new PlayfieldVisualisation(),
                 ring = new SentakkiRing(),
+                slidebodyContainer = new  SlideBodyProxyContainer(),
                 HitObjectContainer,
                 touchNoteContainer = new TouchNoteProxyContainer(),
                 judgementLayer = new JudgementContainer<DrawableSentakkiJudgement>
@@ -92,9 +97,16 @@ namespace osu.Game.Rulesets.Sentakki.UI
             h.OnLoadComplete += d =>
             {
                 if (d is IDrawableHitObjectWithProxiedApproach c)
-                    touchNoteContainer.Add(c.ProxiedLayer.CreateProxy());
+                    switch (d)
+                    {
+                        case DrawableSlide _:
+                            slidebodyContainer.Add(c.ProxiedLayer.CreateProxy());
+                            break;
+                        case DrawableTouch _:
+                            touchNoteContainer.Add(c.ProxiedLayer.CreateProxy());
+                            break;
+                    }
             };
-
             base.Add(h);
         }
 
@@ -147,7 +159,16 @@ namespace osu.Game.Rulesets.Sentakki.UI
             {
                 RelativeSizeAxes = Axes.Both;
             }
-            public void Add(Drawable tochNoteProxy) => AddInternal(tochNoteProxy);
+            public void Add(Drawable touchNoteProxy) => AddInternal(touchNoteProxy);
+        }
+
+        private class SlideBodyProxyContainer : LifetimeManagementContainer
+        {
+            public SlideBodyProxyContainer()
+            {
+                RelativeSizeAxes = Axes.Both;
+            }
+            public void Add(Drawable slideBodyProxy) => AddInternal(slideBodyProxy);
         }
     }
 }

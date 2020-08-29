@@ -4,11 +4,11 @@ using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
-    public class TestSceneThunderSlide : TestSceneSlide
+    public class TestSceneCupSlide : TestSceneSlide
     {
         private bool mirrored = false;
 
-        public TestSceneThunderSlide()
+        public TestSceneCupSlide()
         {
             AddToggleStep("Mirrored", b =>
             {
@@ -16,6 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 RefreshSlide();
             });
         }
-        protected override SentakkiSlidePath CreatePattern() => SlidePaths.GenerateThunderPattern(mirrored);
+
+        protected override SentakkiSlidePath CreatePattern() => SlidePaths.GenerateCupPattern(EndPath, mirrored);
     }
 }

@@ -14,6 +14,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
     public class SlideBody : CompositeDrawable
     {
+        // This will be proxied, so a must.
+        public override bool RemoveWhenNotAlive => false;
+
         private float progress = 0;
         public float Progress
         {
@@ -54,20 +57,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             int chevrons = (int)Math.Ceiling(distance / Slide.SLIDE_CHEVRON_DISTANCE);
             chevronInterval = 1.0 / chevrons;
 
-            float prevAngle = 0;
+            float? prevAngle = null;
             Container currentSegment = new Container();
-            for (double i = 1; i < chevrons; ++i)
+
+            // We add the chevrons starting from the last, so that earlier ones remain on top
+            for (double i = chevrons - 1; i > 0; --i)
             {
+                Vector2 prevPos = Path.PositionAt((i - 1) * chevronInterval);
                 Vector2 currentPos = Path.PositionAt(i * chevronInterval);
-                Vector2 nextPos = Path.PositionAt((i + 1) * chevronInterval);
-                float angle = currentPos.GetDegreesFromPosition(nextPos);
-                if (i == chevrons - 1) angle = prevAngle;
+
+                float angle = prevPos.GetDegreesFromPosition(currentPos);
+                bool shouldHide = SentakkiExtensions.GetDeltaAngle(prevAngle ?? angle, angle) >= 89;
                 prevAngle = angle;
 
                 currentSegment.Add(new SlideChevron
                 {
                     Position = currentPos,
                     Rotation = angle,
+                    Alpha = shouldHide ? 0 : 1,
                 });
 
                 if (i % 5 == 0 && chevrons - 1 - i > 2)
@@ -76,6 +83,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     currentSegment = new Container();
                 }
             }
+
             segments.Add(currentSegment);
             AddRangeInternal(segments);
         }
@@ -83,8 +91,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             double segmentBounds = -chevronInterval;
 
-            foreach (var segment in segments)
+            for (int i = segments.Count - 1; i >= 0; i--)
             {
+                var segment = segments[i];
                 segmentBounds += segment.Count * chevronInterval;
                 segment.Alpha = (progress > segmentBounds) ? 0 : 1;
             }
