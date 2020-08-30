@@ -39,7 +39,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             Value = false
         };
 
-
         [SettingSource("Touch notes", "Allow TOUCHs to appear")]
         public BindableBool EnableTouch { get; } = new BindableBool
         {
