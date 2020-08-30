@@ -69,7 +69,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     breakNote = hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH));
                     if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)) && hold.Duration >= 350)
                     {
-                        if (Experiments.Value.HasFlag(ConversionExperiments.twins))
+                        if (Experiments.Value.HasFlag(ConversionExperiments.twinSlides))
                         {
                             if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
                             {
@@ -81,7 +81,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     }
                     if (!notes.Any())
                     {
-                        if (Experiments.Value.HasFlag(ConversionExperiments.twins))
+                        if (Experiments.Value.HasFlag(ConversionExperiments.twinNotes))
                         {
                             if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
                             {
@@ -110,7 +110,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     }
                     else
                     {
-                        if (Experiments.Value.HasFlag(ConversionExperiments.twins) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP))
+                        if (Experiments.Value.HasFlag(ConversionExperiments.twinNotes) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP))
                         {
                             isTwin = true;
                             notes.Add(createTapNote(original, true, breakNote));
