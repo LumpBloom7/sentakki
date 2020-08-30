@@ -76,6 +76,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                                 isTwin = true;
                                 notes.Add(createSlideNote(original, true, breakNote));
                             }
+                            else
+                                foreach (var note in createTapsFromTicks(original).ToList())
+                                    yield return note;
                         }
                         notes.Add(createSlideNote(original, isBreak: breakNote));
                     }
