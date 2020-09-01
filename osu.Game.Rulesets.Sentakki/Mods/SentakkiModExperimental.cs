@@ -26,7 +26,14 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override double ScoreMultiplier => 1.00;
 
         [SettingSource("Twin notes", "Allow more than one note to share the same times")]
-        public BindableBool EnableTwins { get; } = new BindableBool
+        public BindableBool EnableTwinNotes { get; } = new BindableBool
+        {
+            Default = false,
+            Value = false
+        };
+
+        [SettingSource("Twin slides", "Allow more than one note to share the same times")]
+        public BindableBool EnableTwinSlides { get; } = new BindableBool
         {
             Default = false,
             Value = false
@@ -38,11 +45,14 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             Default = false,
             Value = true,
         };
-        
+
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
-            if (EnableTwins.Value)
-                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.twins;
+            if (EnableTwinNotes.Value)
+                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.twinNotes;
+
+            if (EnableTwinSlides.Value)
+                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.twinSlides;
 
             if (EnableTouch.Value)
                 (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.touch;

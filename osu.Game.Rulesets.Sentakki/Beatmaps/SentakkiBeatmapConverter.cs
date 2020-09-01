@@ -13,8 +13,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
     public enum ConversionExperiments
     {
         none = 0,
-        twins = 1,
-        touch = 2,
+        twinNotes = 1,
+        twinSlides = 2,
+        touch = 4,
     }
 
     public class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObject>
