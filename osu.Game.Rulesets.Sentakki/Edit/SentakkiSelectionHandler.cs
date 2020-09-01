@@ -33,6 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                         touch.Position = newPos;
                         break;
                     }
+                    case Slide _:
                     case Tap _:
                     case Hold _:
                     {

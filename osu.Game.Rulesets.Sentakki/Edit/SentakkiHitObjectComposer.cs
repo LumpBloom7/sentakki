@@ -22,6 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             new HoldCompositionTool(),
             new TouchHoldCompositionTool(),
             new TouchCompositionTool(),
+            new SlideCompositionTool(),
         };
 
         protected override ComposeBlueprintContainer CreateBlueprintContainer(IEnumerable<DrawableHitObject> hitObjects)

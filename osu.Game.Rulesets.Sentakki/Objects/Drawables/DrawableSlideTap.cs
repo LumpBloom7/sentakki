@@ -24,10 +24,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             double animTime = AnimationDuration.Value / 2 * GameplaySpeed;
             double animStart = HitObject.StartTime - animTime;
-            double spinDuration = ((Slide)slide.HitObject).SlideInfoList.FirstOrDefault().Duration;
+
+            double spinDuration = ((slide.HitObject is Slide x) && x.SlideInfoList.Any()) ? x.SlideInfoList.Min(i => i.Duration) : 0;
             using (BeginAbsoluteSequence(animStart, true))
             {
-                (TapVisual as SlideTapPiece).Stars.Spin(spinDuration, RotationDirection.CounterClockwise, 0).Loop();
+                if (spinDuration > 0)
+                    (TapVisual as SlideTapPiece).Stars.Spin(spinDuration, RotationDirection.CounterClockwise, 0).Loop();
             }
         }
     }
