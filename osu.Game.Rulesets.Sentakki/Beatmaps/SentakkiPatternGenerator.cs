@@ -49,7 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private int offset = 0;
         private int offset2 = 0;
 
-        private int getNewLane(bool twin = false) => patternlist[currentPattern].Invoke(twin);
+        private int getNewLane(bool twin = false) => patternlist[currentPattern].Invoke(twin).NormalizePath();
 
         public void CreateNewPattern()
         {
@@ -69,18 +69,34 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     breakNote = hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH));
                     if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)) && hold.Duration >= 350)
                     {
+                        List<Slide> slides = new List<Slide>();
                         if (Experiments.Value.HasFlag(ConversionExperiments.twinSlides))
                         {
                             if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
                             {
                                 isTwin = true;
-                                notes.Add(createSlideNote(original, true, breakNote));
+                                slides.Add((Slide)createSlideNote(original, true, breakNote));
                             }
                             else
                                 foreach (var note in createTapsFromTicks(original).ToList())
                                     yield return note;
                         }
-                        notes.Add(createSlideNote(original, isBreak: breakNote));
+                        slides.Add((Slide)createSlideNote(original, isBreak: breakNote));
+
+                        // Clean up potential duplicates
+                        if (slides.Count >= 2)
+                        {
+                            // Merge if lanes are identical
+                            if (slides.First().Lane == slides.Last().Lane)
+                            {
+                                // Make sure that both slides patterns are unique
+                                if (!slides.First().SlideInfoList.Exists(x => x.ID == slides.Last().SlideInfoList.First().ID))
+                                    slides.First().SlideInfoList.AddRange(slides.Last().SlideInfoList);
+
+                                slides.Remove(slides.Last());
+                            }
+                        }
+                        notes.AddRange(slides);
                     }
                     if (!notes.Any())
                     {
