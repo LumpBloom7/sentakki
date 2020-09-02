@@ -11,7 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
     public class SlideTapPiece : CompositeDrawable
     {
-        public readonly StarPiece Star;
+        public readonly Container Stars;
         private readonly ExplodePiece explode;
 
         public SlideTapPiece()
@@ -25,7 +25,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
             InternalChildren = new Drawable[]
             {
-                Star = new StarPiece(),
+                Stars = new Container(){
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Child = new StarPiece()
+                },
                 explode = new ExplodePiece(),
             };
         }
@@ -34,9 +39,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
 
         [BackgroundDependencyLoader]
-        private void load(DrawableHitObject drawableObject)
+        private void load(DrawableHitObject drawableObject, DrawableSlide slideObject)
         {
             Tap osuObject = (Tap)drawableObject.HitObject;
+
+            if (slideObject.HitObject.NestedHitObjects.Count > 2) // One is the tap, the others are slidebodies, which we are using
+                Stars.Add(new StarPiece { Rotation = 36 });
 
             state.BindTo(drawableObject.State);
             state.BindValueChanged(updateState, true);
@@ -45,7 +53,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             accentColour.BindValueChanged(colour =>
             {
                 explode.Colour = colour.NewValue;
-                Star.Colour = colour.NewValue;
+                Stars.Colour = colour.NewValue;
             }, true);
         }
 
@@ -61,7 +69,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
                     using (BeginDelayedSequence(flash_in, true))
                     {
-                        Star.FadeOut();
+                        Stars.FadeOut();
 
                         this.FadeOut(800);
                     }

@@ -20,14 +20,14 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         protected int StartPath = 0;
         protected int EndPath;
 
-        private readonly SlideBody slide;
+        private readonly SlideVisual slide;
         private readonly Container nodes;
 
         public TestSceneSlide()
         {
             Add(new SentakkiRing());
 
-            Add(slide = new SlideBody()
+            Add(slide = new SlideVisual()
             {
                 Path = CreatePattern().Path
             });

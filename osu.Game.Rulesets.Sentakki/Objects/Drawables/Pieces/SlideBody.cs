@@ -12,7 +12,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class SlideBody : CompositeDrawable
+    public class SlideVisual : CompositeDrawable
     {
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             }
         }
 
-        public SlideBody()
+        public SlideVisual()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
@@ -54,7 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             segments = new List<Container>();
             var distance = Path.Distance;
-            int chevrons = (int)Math.Ceiling(distance / Slide.SLIDE_CHEVRON_DISTANCE);
+            int chevrons = (int)Math.Ceiling(distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
             chevronInterval = 1.0 / chevrons;
 
             float? prevAngle = null;
