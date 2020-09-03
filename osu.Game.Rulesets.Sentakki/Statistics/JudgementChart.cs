@@ -206,9 +206,6 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
 
                 protected override string FormatCount(long count) => count.ToString("N0");
 
-                public override void Increment(long amount)
-                    => Current.Value += amount;
-
                 protected override OsuSpriteText CreateSpriteText()
                 {
                     return new OsuSpriteText
