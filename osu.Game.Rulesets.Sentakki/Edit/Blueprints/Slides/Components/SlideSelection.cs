@@ -37,13 +37,14 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Components
         public override void UpdateFrom(Slide hitObject)
         {
             base.UpdateFrom(hitObject);
-            starPiece.Rotation = hitObject.Lane.GetRotationForLane();
+            Rotation = hitObject.Lane.GetRotationForLane();
         }
 
         public void UpdateFrom(DrawableSlide drawableSlide)
         {
-            starPiece.Rotation = drawableSlide.SlideTaps.Child.Rotation;
-            starPiece.Position = SentakkiExtensions.GetCircularPosition(-drawableSlide.SlideTaps.Child.TapVisual.Position.Y, drawableSlide.HitObject.Lane.GetRotationForLane());
+            Rotation = drawableSlide.HitObject.Lane.GetRotationForLane();
+            starPiece.Rotation = ((SlideTapPiece)drawableSlide.SlideTaps.Child.TapVisual).Stars.Rotation;
+            Position = SentakkiExtensions.GetCircularPosition(-drawableSlide.SlideTaps.Child.TapVisual.Position.Y, drawableSlide.HitObject.Lane.GetRotationForLane());
         }
     }
 }
