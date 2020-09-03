@@ -42,11 +42,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Components
 
             public SlideEditPath()
             {
-                PathRadius = 20;
+                PathRadius = 23;
                 Position = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0);
             }
 
-            protected override Color4 ColourAt(float position) => position < .2f ? Color4.White : Color4.Transparent;
+            protected override Color4 ColourAt(float position) => position <= .2f ? Color4.White : Color4.Transparent;
         }
     }
 }
