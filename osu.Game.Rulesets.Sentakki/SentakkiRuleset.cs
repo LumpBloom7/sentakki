@@ -122,6 +122,16 @@ namespace osu.Game.Rulesets.Sentakki
                         Size = new Vector2(1, 250)
                     }),
                 }
+            },
+            new StatisticRow
+            {
+                Columns = new[]
+                {
+                    new StatisticItem(string.Empty, new SimpleStatisticTable(3, new SimpleStatisticItem[]
+                    {
+                        new UnstableRate(score.HitEvents)
+                    }))
+                }
             }
         };
 
