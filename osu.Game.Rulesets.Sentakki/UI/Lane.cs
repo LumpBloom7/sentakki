@@ -1,20 +1,10 @@
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Rulesets.Objects.Drawables;
-using osu.Framework.Input.Bindings;
-using osu.Framework.Input.Events;
 using osu.Game.Rulesets.UI;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Objects.Types;
-using osu.Game.Rulesets.Replays;
-using osu.Game.Screens.Play;
 using static osu.Game.Input.Handlers.ReplayInputHandler;
 using osuTK;
-using Microsoft.EntityFrameworkCore.Internal;
+using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -39,6 +29,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
             internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
             public override bool HandlePositionalInput => true;
+
+            private BindableInt currentKeys = new BindableInt(0);
             public LaneReceptor()
             {
                 Position = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, 0);
@@ -49,28 +41,39 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
                 CornerRadius = 120;
                 CornerExponent = 2;
+                currentKeys.BindValueChanged(handleKeyPress);
             }
 
             protected override void Update()
             {
                 base.Update();
-                ReplayState<SentakkiAction> state = new ReplayState<SentakkiAction>()
+                if (IsHovered)
+                    currentKeys.Value = SentakkiActionInputManager.PressedActions.Where(x => x < SentakkiAction.Key1).Count();
+                else
+                    currentKeys.Value = 0;
+            }
+
+            private void handleKeyPress(ValueChangedEvent<int> keys)
+            {
+                ReplayState<SentakkiAction> RemovalState = new ReplayState<SentakkiAction>()
                 {
                     PressedActions = SentakkiActionInputManager.PressedActions.ToList()
                 };
 
-                if (IsHovered && SentakkiActionInputManager.PressedActions.Any(x => x < SentakkiAction.Key1))
-                {
-                    if (!state.PressedActions.Contains(SentakkiAction.Key1 + ((Lane)Parent).LaneNumber))
-                        state.PressedActions.Add(SentakkiAction.Key1 + ((Lane)Parent).LaneNumber);
-                }
-                else
-                {
-                    if (state.PressedActions.Contains(SentakkiAction.Key1 + ((Lane)Parent).LaneNumber))
-                        state.PressedActions.RemoveAll(x => x == SentakkiAction.Key1 + ((Lane)Parent).LaneNumber);
-                }
+                RemovalState.PressedActions.RemoveAll(x => x == SentakkiAction.Key1 + ((Lane)Parent).LaneNumber);
 
-                state.Apply(SentakkiActionInputManager.CurrentState, SentakkiActionInputManager);
+                if (keys.NewValue > keys.OldValue || keys.NewValue == 0)
+                    RemovalState.Apply(SentakkiActionInputManager.CurrentState, sentakkiActionInputManager);
+
+                if (keys.NewValue > keys.OldValue)
+                {
+                    ReplayState<SentakkiAction> NewState = new ReplayState<SentakkiAction>()
+                    {
+                        PressedActions = SentakkiActionInputManager.PressedActions.ToList()
+                    };
+                    NewState.PressedActions.Add(SentakkiAction.Key1 + ((Lane)Parent).LaneNumber);
+                    NewState.Apply(SentakkiActionInputManager.CurrentState, sentakkiActionInputManager);
+                }
             }
         }
     }
