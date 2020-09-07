@@ -12,9 +12,11 @@ using osu.Game.Rulesets.Scoring;
 using osuTK;
 using osuTK.Graphics;
 using System;
+using osu.Framework.Input.Bindings;
+
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableHold : DrawableSentakkiHitObject
+    public class DrawableHold : DrawableSentakkiHitObject, IKeyBindingHandler<SentakkiAction>
     {
         public override bool DisplayResult => false;
 
@@ -28,7 +30,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private readonly Container<DrawableHoldHead> headContainer;
         private readonly Container<DrawableHoldTail> tailContainer;
 
-        public readonly HitReceptor HitArea;
         public readonly HoldBody NoteBody;
         public readonly HitObjectLine HitObjectLine;
         protected override double InitialLifetimeOffset => 8000;
@@ -56,33 +57,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 },
                 headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
                 tailContainer = new Container<DrawableHoldTail> { RelativeSizeAxes = Axes.Both },
-                HitArea = new HitReceptor(HitObject as SentakkiLanedHitObject)
-                {
-                    Position = new Vector2(0,-SentakkiPlayfield.INTERSECTDISTANCE),
-                    Hit = () => {
-                        if (AllJudged || HoldStartTime != null)
-                            return false;
-
-                        if(beginHoldAt(Time.Current - Head.HitObject.StartTime))
-                        {
-                            Head.UpdateResult();
-                            NoteBody.Note.FadeColour(AccentColour.Value,50);
-                        }
-
-                        return true;
-                    },
-                    Release = () =>
-                    {
-                        if(AllJudged) return;
-                        if(HoldStartTime is null) return;
-
-                        Tail.UpdateResult();
-                        HoldStartTime = null;
-                        isHitting.Value = false;
-                        if(!AllJudged)
-                        NoteBody.Note.FadeColour(Color4.Gray,100);
-                    },
-                }
             });
         }
 
@@ -176,13 +150,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.Update();
             if (Result.HasResult) return;
-
-            // Let autoplay mimic players.
-            if (Auto)
-                if (Time.Current >= HitObject.StartTime)
-                    HitArea.Hit.Invoke();
-                else
-                    HitArea.Release.Invoke(); //Make sure note is released...To avoid autoplay rewind visual issue.
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -237,6 +204,35 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             HoldStartTime = Time.Current;
             isHitting.Value = true;
             return true;
+        }
+
+        public virtual bool OnPressed(SentakkiAction action)
+        {
+            if (AllJudged)
+                return false;
+
+            if (action != SentakkiAction.Key1 + ((SentakkiLanedHitObject)HitObject).Lane)
+                return false;
+
+            if (beginHoldAt(Time.Current - Head.HitObject.StartTime))
+            {
+                Head.UpdateResult();
+                NoteBody.Note.FadeColour(AccentColour.Value, 50);
+            }
+
+            return true;
+        }
+
+        public void OnReleased(SentakkiAction action)
+        {
+            if (AllJudged) return;
+            if (HoldStartTime is null) return;
+
+            Tail.UpdateResult();
+            HoldStartTime = null;
+            isHitting.Value = false;
+            if (!AllJudged)
+                NoteBody.Note.FadeColour(Color4.Gray, 100);
         }
     }
 }

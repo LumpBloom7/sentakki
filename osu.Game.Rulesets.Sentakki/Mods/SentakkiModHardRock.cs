@@ -22,12 +22,12 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             {
                 switch (d)
                 {
-                    case DrawableHold hold:
-                        hold.HitArea.Size = new Vector2(160);
+                    case DrawableHold _:
+                        //hold.HitArea.Size = new Vector2(160);
                         break;
 
-                    case DrawableTap tap:
-                        tap.HitArea.Size = new Vector2(160);
+                    case DrawableTap _:
+                        //tap.HitArea.Size = new Vector2(160);
                         break;
                 }
             }

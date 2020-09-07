@@ -25,9 +25,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
             AddInternal(slideBodyProxyContainer = new SortedDrawableProxyContainer());
             AddInternal(lanedNoteProxyContainer = new SortedDrawableProxyContainer());
 
-            foreach (var angle in SentakkiPlayfield.LANEANGLES)
+            for (int i = 0; i < 8; ++i)
             {
-                var lane = new Lane { Rotation = angle, };
+                var lane = new Lane
+                {
+                    Rotation = i.GetRotationForLane(),
+                    LaneNumber = i
+                };
                 Lanes.Add(lane);
                 AddInternal(lane);
                 AddNested(lane);
