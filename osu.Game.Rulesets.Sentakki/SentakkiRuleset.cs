@@ -96,6 +96,14 @@ namespace osu.Game.Rulesets.Sentakki
             new KeyBinding(InputKey.X, SentakkiAction.Button2),
             new KeyBinding(InputKey.MouseLeft, SentakkiAction.Button1),
             new KeyBinding(InputKey.MouseRight, SentakkiAction.Button2),
+            new KeyBinding(InputKey.Number1, SentakkiAction.Key1),
+            new KeyBinding(InputKey.Number2, SentakkiAction.Key2),
+            new KeyBinding(InputKey.Number3, SentakkiAction.Key3),
+            new KeyBinding(InputKey.Number4, SentakkiAction.Key4),
+            new KeyBinding(InputKey.Number5, SentakkiAction.Key5),
+            new KeyBinding(InputKey.Number6, SentakkiAction.Key6),
+            new KeyBinding(InputKey.Number7, SentakkiAction.Key7),
+            new KeyBinding(InputKey.Number8, SentakkiAction.Key8),
         };
 
         public override StatisticRow[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap) => new[]

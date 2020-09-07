@@ -50,5 +50,29 @@ namespace osu.Game.Rulesets.Sentakki
 
         [Description("Button 2")]
         Button2,
+
+        [Description("Key 1")]
+        Key1,
+
+        [Description("Key 2")]
+        Key2,
+
+        [Description("Key 3")]
+        Key3,
+
+        [Description("Key 4")]
+        Key4,
+
+        [Description("Key 5")]
+        Key5,
+
+        [Description("Key 6")]
+        Key6,
+
+        [Description("Key 7")]
+        Key7,
+
+        [Description("Key 8")]
+        Key8,
     }
 }
