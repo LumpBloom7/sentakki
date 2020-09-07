@@ -42,7 +42,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new NoteEntry
                 {
                     ObjectName = "Slide",
-                    HitEvents = hitEvents.Where(e => e.HitObject is Slide.SlideNode node && node.IsTailNote).ToList(),
+                    HitEvents = hitEvents.Where(e => e.HitObject is SlideBody).ToList(),
                     Position = new Vector2(0, .32f),
                     InitialLifetimeOffset = entry_animation_duration * 2
                 },
@@ -204,17 +204,17 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
 
                 protected override Easing RollingEasing => Easing.OutPow10;
 
-                public TotalNoteCounter()
-                {
-                    DisplayedCountSpriteText.Anchor = Anchor.Centre;
-                    DisplayedCountSpriteText.Origin = Anchor.Centre;
-                    DisplayedCountSpriteText.Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold);
-                }
-
                 protected override string FormatCount(long count) => count.ToString("N0");
 
-                public override void Increment(long amount)
-                    => Current.Value += amount;
+                protected override OsuSpriteText CreateSpriteText()
+                {
+                    return new OsuSpriteText
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold),
+                    };
+                }
             }
 
             private class ChartBar : Container

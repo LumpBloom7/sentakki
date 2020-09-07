@@ -1,17 +1,13 @@
 using osu.Framework.Bindables;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
-using osuTK;
-using osuTK.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Game.Audio;
 using osu.Game.Beatmaps.ControlPoints;
-using System.Diagnostics;
 using System.Threading;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
@@ -71,13 +67,40 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 case IHasPathWithRepeats hold:
                     breakNote = hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH));
-                    if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)) && hold.Duration >= 500)
+                    if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)) && hold.Duration >= 350)
                     {
-                        notes.Add(createSlideNote(original, isBreak: breakNote));
+                        List<Slide> slides = new List<Slide>();
+                        if (Experiments.Value.HasFlag(ConversionExperiments.twinSlides))
+                        {
+                            if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
+                            {
+                                isTwin = true;
+                                slides.Add((Slide)createSlideNote(original, true, breakNote));
+                            }
+                            else
+                                foreach (var note in createTapsFromTicks(original).ToList())
+                                    yield return note;
+                        }
+                        slides.Add((Slide)createSlideNote(original, isBreak: breakNote));
+
+                        // Clean up potential duplicates
+                        if (slides.Count >= 2)
+                        {
+                            // Merge if lanes are identical
+                            if (slides.First().Lane == slides.Last().Lane)
+                            {
+                                // Make sure that both slides patterns are unique
+                                if (!slides.First().SlideInfoList.Exists(x => x.ID == slides.Last().SlideInfoList.First().ID))
+                                    slides.First().SlideInfoList.AddRange(slides.Last().SlideInfoList);
+
+                                slides.Remove(slides.Last());
+                            }
+                        }
+                        notes.AddRange(slides);
                     }
-                    else
+                    if (!notes.Any())
                     {
-                        if (Experiments.Value.HasFlag(ConversionExperiments.twins))
+                        if (Experiments.Value.HasFlag(ConversionExperiments.twinNotes))
                         {
                             if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
                             {
@@ -106,7 +129,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     }
                     else
                     {
-                        if (Experiments.Value.HasFlag(ConversionExperiments.twins) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP))
+                        if (Experiments.Value.HasFlag(ConversionExperiments.twinNotes) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP))
                         {
                             isTwin = true;
                             notes.Add(createTapNote(original, true, breakNote));
@@ -136,12 +159,21 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private SentakkiHitObject createSlideNote(HitObject original, bool twin = false, bool isBreak = false)
         {
             int noteLane = getNewLane(twin);
+
+            var validPaths = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.MinDuration && ((IHasDuration)original).Duration <= p.MaxDuration).ToList();
+            if (!validPaths.Any()) return null;
+            int selectedSlideID = SlidePaths.VALIDPATHS.IndexOf(validPaths[rng.Next(validPaths.Count)]);
+
             return new Slide
             {
-                SlidePath = SlidePaths.ValidPaths[rng.Next(0, SlidePaths.ValidPaths.Length)],
+                SlideInfoList = new List<SentakkiSlideInfo>{
+                    new SentakkiSlideInfo{
+                        ID = selectedSlideID,
+                        Duration = ((IHasDuration)original).Duration
+                    }
+                },
                 Lane = noteLane,
                 StartTime = original.StartTime,
-                EndTime = original.GetEndTime(),
                 Samples = original.Samples,
                 IsBreak = isBreak
             };

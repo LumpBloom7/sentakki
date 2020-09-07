@@ -4,12 +4,10 @@ using osu.Framework.Graphics.Containers;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Tests.Visual;
-using osuTK;
-using osuTK.Graphics;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
@@ -36,9 +34,23 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         {
             var slide = new Slide
             {
-                SlidePath = SlidePaths.GenerateUPattern(5),
+                IsBreak = true,
+                SlideInfoList = new List<SentakkiSlideInfo>
+                {
+                    new SentakkiSlideInfo {
+                        ID = 25,
+                        Duration = 1000,
+                    },
+                    new SentakkiSlideInfo {
+                        ID = 27,
+                        Duration = 1500,
+                    },
+                    new SentakkiSlideInfo {
+                        ID = 0,
+                        Duration = 2000,
+                    }
+                },
                 StartTime = Time.Current + 1000,
-                EndTime = Time.Current + 1000 + duration,
             };
 
             slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });

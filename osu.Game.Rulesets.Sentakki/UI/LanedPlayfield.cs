@@ -39,7 +39,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
             switch (hitObject)
             {
                 case DrawableSlide s:
-                    slideBodyProxyContainer.Add(s.Slidepath.CreateProxy());
+                    foreach (var x in s.SlideBodies)
+                        slideBodyProxyContainer.Add(x.CreateProxy());
                     break;
                 case DrawableTap t:
                     lanedNoteProxyContainer.Add(t.TapVisual.CreateProxy());

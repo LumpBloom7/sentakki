@@ -23,7 +23,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public bool IsHidden = false;
         public bool IsFadeIn = false;
 
-        public bool Auto = false;
+        public readonly BindableBool AutoBindable = new BindableBool(false);
+        public bool Auto
+        {
+            get => AutoBindable.Value;
+            set => AutoBindable.Value = value;
+        }
 
         // Used in the editor
         public bool IsVisible => Time.Current >= HitObject.StartTime - AnimationDuration.Value;

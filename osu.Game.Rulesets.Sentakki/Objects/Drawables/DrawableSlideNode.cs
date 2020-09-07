@@ -24,21 +24,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private readonly Bindable<bool> userPositionalHitSounds = new Bindable<bool>(false);
         private SkinnableSound slideSound;
 
-        public override bool DisplayResult => (HitObject as Slide.SlideNode).Progress == 1;
         public override bool HandlePositionalInput => true;
+        public override bool DisplayResult => false;
+
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
-        protected DrawableSlide Slide;
+        protected DrawableSlideBody Slide;
 
         protected int ThisIndex;
-        public DrawableSlideNode(Slide.SlideNode node, DrawableSlide slideNote)
+        public DrawableSlideNode(SlideBody.SlideNode node, DrawableSlideBody slideNote)
             : base(node)
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Slide = slideNote;
             RelativeSizeAxes = Axes.None;
-            Position = slideNote.Slidepath.Path.PositionAt((HitObject as Slide.SlideNode).Progress);
+            Position = slideNote.Slidepath.Path.PositionAt((HitObject as SlideBody.SlideNode).Progress);
             Size = new Vector2(160);
             CornerExponent = 2f;
             CornerRadius = 80;
@@ -50,16 +51,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             ThisIndex = Slide.SlideNodes.IndexOf(this);
 
             // Adjust StartTime to account for the delay, likely a shite way if I do say so myself. Need to revisit.
-            HitObject.StartTime = Slide.HitObject.StartTime + Slide.ShootDelay + (((Slide.HitObject as IHasDuration).Duration - Slide.ShootDelay) * (HitObject as Slide.SlideNode).Progress);
+            HitObject.StartTime = Slide.HitObject.StartTime + Slide.ShootDelay + (((Slide.HitObject as IHasDuration).Duration - Slide.ShootDelay) * (HitObject as SlideBody.SlideNode).Progress);
 
             OnNewResult += (DrawableHitObject hitObject, JudgementResult result) =>
             {
+                hitPreviousNodes(result.Type >= HitResult.Perfect);
                 if (result.IsHit)
-                    Slide.Slidepath.Progress = (HitObject as Slide.SlideNode).Progress;
+                    Slide.Slidepath.Progress = (HitObject as SlideBody.SlideNode).Progress;
             };
             OnRevertResult += (DrawableHitObject hitObject, JudgementResult result) =>
             {
-                Slide.Slidepath.Progress = ThisIndex > 0 ? (Slide.SlideNodes[ThisIndex - 1].HitObject as Slide.SlideNode).Progress : 0;
+                Slide.Slidepath.Progress = ThisIndex > 0 ? (Slide.SlideNodes[ThisIndex - 1].HitObject as SlideBody.SlideNode).Progress : 0;
             };
         }
 
@@ -70,15 +72,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         protected bool IsHittable => ThisIndex < 2 || Slide.SlideNodes[ThisIndex - 2].IsHit;
-        public bool IsTailNode => (HitObject as Slide.SlideNode).IsTailNote;
+        public bool IsTailNode => (HitObject as SlideBody.SlideNode).IsTailNote;
 
-        protected void HitPreviousNodes(bool successful = false)
+        private void hitPreviousNodes(bool successful = false)
         {
             foreach (var node in Slide.SlideNodes)
             {
                 if (node == this) return;
                 if (!node.Result.HasResult)
-                    node.forceJudgement(successful);
+                    node.ForceJudgement(successful);
             }
         }
 
@@ -95,40 +97,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!userTriggered)
             {
                 if (timeOffset > 0 && Auto)
-                {
                     ApplyResult(r => r.Type = HitResult.Perfect);
-                    HitPreviousNodes(true);
-                }
-                if (IsTailNode && !HitObject.HitWindows.CanBeHit(timeOffset))
-                {
-                    ApplyResult(r => r.Type = IsHittable ? HitResult.Good : HitResult.Miss);
-                    HitPreviousNodes();
-                }
                 return;
             }
+
             if (!IsHittable)
                 return;
 
-
             HitResult result;
-
-            if (IsTailNode)
-            {
-                result = HitObject.HitWindows.ResultFor(timeOffset);
-                if (result == HitResult.None)
-                    result = HitResult.Meh;
-            }
-            else
-                result = HitResult.Perfect;
+            result = HitResult.Perfect;
 
             ApplyResult(r => r.Type = result);
-
-            HitPreviousNodes(result > HitResult.Miss);
         }
-        public void UpdateResult() => base.UpdateResult(true);
 
         // Forces this object to have a result.
-        private void forceJudgement(bool successful = false) => ApplyResult(r => r.Type = successful ? HitResult.Perfect : HitResult.Miss);
+        public void ForceJudgement(bool successful = false) => ApplyResult(r => r.Type = successful ? HitResult.Perfect : HitResult.Miss);
 
         protected override void Update()
         {
