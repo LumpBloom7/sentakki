@@ -34,12 +34,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
             public LaneReceptor()
             {
                 Position = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, 0);
-                Size = new Vector2(240);
+                Size = new Vector2(300);
 
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
 
-                CornerRadius = 120;
+                CornerRadius = 150;
                 CornerExponent = 2;
                 currentKeys.BindValueChanged(handleKeyPress);
             }
