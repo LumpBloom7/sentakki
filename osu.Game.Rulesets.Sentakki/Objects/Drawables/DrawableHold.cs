@@ -228,6 +228,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (AllJudged) return;
             if (HoldStartTime is null) return;
 
+            if (action != SentakkiAction.Key1 + ((SentakkiLanedHitObject)HitObject).Lane)
+                return;
+
             Tail.UpdateResult();
             HoldStartTime = null;
             isHitting.Value = false;
