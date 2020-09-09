@@ -118,9 +118,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void Update()
         {
             base.Update();
+
+            var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+            bool isTouched = touchInput.ActiveSources.Any(s => ReceivePositionalInputAt(touchInput.GetTouchPosition(s) ?? new Vector2(float.MinValue)));
             activated.Value = Time.Current >= HitObject.StartTime
                             && Time.Current <= (HitObject as IHasDuration)?.EndTime
-                            && (Auto || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
+                            && (Auto || isTouched || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
 
             if (Result.HasResult) return;
 
