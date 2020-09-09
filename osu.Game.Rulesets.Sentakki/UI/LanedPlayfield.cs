@@ -50,7 +50,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     break;
             }
 
-            Lanes[(hitObject.HitObject as SentakkiLanedHitObject).Lane].Add(hitObject);
+            ((SentakkiLanedHitObject)hitObject.HitObject).LaneBindable.BindValueChanged(lane =>
+            {
+                if (lane.OldValue != lane.NewValue)
+                    Lanes[lane.OldValue].Remove(hitObject);
+                Lanes[lane.NewValue].Add(hitObject);
+            }, true);
         }
 
         public override bool Remove(DrawableHitObject hitObject) => Lanes[(hitObject.HitObject as SentakkiLanedHitObject).Lane].Remove(hitObject);
