@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         {
             int taps = HitObjects.Count(b => b is Tap);
             int holds = HitObjects.Count(h => h is Hold);
-            int centreHolds = HitObjects.Count(h => h is TouchHold);
+            int touchHolds = HitObjects.Count(h => h is TouchHold);
             int touchs = HitObjects.Count(h => h is Touch);
             int slides = HitObjects.Count(h => h is Slide);
 
@@ -34,8 +34,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 },
                 new BeatmapStatistic
                 {
-                    Name = "Spinner Hold Count",
-                    Content = centreHolds.ToString(),
+                    Name = "TouchHold Count",
+                    Content = touchHolds.ToString(),
                     CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Spinners),
                 },
                 new BeatmapStatistic
