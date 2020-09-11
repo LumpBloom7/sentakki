@@ -1,8 +1,10 @@
 ﻿using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Objects;
 using System.Collections.Generic;
 using System.Linq;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
@@ -22,31 +24,39 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 {
                     Name = "Tap Count",
                     Content = taps.ToString(),
-                    Icon = FontAwesome.Solid.Circle
+                    CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Circles),
                 },
                 new BeatmapStatistic
                 {
                     Name = "Hold Count",
                     Content = holds.ToString(),
-                    Icon = FontAwesome.Solid.Circle
+                    CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Sliders),
                 },
                 new BeatmapStatistic
                 {
                     Name = "Spinner Hold Count",
                     Content = centreHolds.ToString(),
-                    Icon = FontAwesome.Solid.Circle
+                    CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Spinners),
                 },
                 new BeatmapStatistic
                 {
                     Name = "Touch Count",
                     Content = touchs.ToString(),
-                    Icon = FontAwesome.Solid.Circle
+                    CreateIcon = () => new SpriteIcon
+                    {
+                        Icon = FontAwesome.Regular.HandPointRight,
+                        Scale = new Vector2(.7f)
+                    },
                 },
                 new BeatmapStatistic
                 {
                     Name = "Slide Count",
                     Content = slides.ToString(),
-                    Icon = FontAwesome.Solid.Circle
+                    CreateIcon = () => new SpriteIcon
+                    {
+                        Icon = FontAwesome.Regular.Star,
+                        Scale = new Vector2(.7f)
+                    },
                 },
             };
         }
