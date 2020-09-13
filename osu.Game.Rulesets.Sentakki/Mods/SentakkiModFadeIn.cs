@@ -18,6 +18,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override double ScoreMultiplier => 1.06;
         public override bool Ranked => true;
 
+        public override bool HasImplementation => false;
+
         public void ApplyToDrawableHitObjects(IEnumerable<DrawableHitObject> drawables)
         {
             foreach (var d in drawables.OfType<DrawableSentakkiHitObject>())

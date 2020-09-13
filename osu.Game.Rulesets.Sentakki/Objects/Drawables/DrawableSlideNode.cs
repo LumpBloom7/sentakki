@@ -50,9 +50,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.LoadComplete();
             ThisIndex = Slide.SlideNodes.IndexOf(this);
 
-            // Adjust StartTime to account for the delay, likely a shite way if I do say so myself. Need to revisit.
-            HitObject.StartTime = Slide.HitObject.StartTime + Slide.ShootDelay + (((Slide.HitObject as IHasDuration).Duration - Slide.ShootDelay) * (HitObject as SlideBody.SlideNode).Progress);
-
             OnNewResult += (DrawableHitObject hitObject, JudgementResult result) =>
             {
                 hitPreviousNodes(result.Type >= HitResult.Perfect);

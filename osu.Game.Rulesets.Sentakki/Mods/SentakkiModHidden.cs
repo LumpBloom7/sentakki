@@ -11,6 +11,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override string Description => @"Play with fading notes.";
         public override double ScoreMultiplier => 1.06;
 
+        public override bool HasImplementation => false;
+
         public override void ApplyToDrawableHitObjects(IEnumerable<DrawableHitObject> drawables)
         {
             foreach (var d in drawables.OfType<DrawableSentakkiHitObject>())

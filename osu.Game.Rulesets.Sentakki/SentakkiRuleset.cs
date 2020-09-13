@@ -73,7 +73,6 @@ namespace osu.Game.Rulesets.Sentakki
                     return new Mod[]
                     {
                         new SentakkiModAutoplay(),
-                        new SentakkiModRelax()
                     };
 
                 case ModType.Fun:
@@ -125,6 +124,16 @@ namespace osu.Game.Rulesets.Sentakki
                         RelativeSizeAxes = Axes.X,
                         Size = new Vector2(1, 250)
                     }),
+                }
+            },
+            new StatisticRow
+            {
+                Columns = new[]
+                {
+                    new StatisticItem(string.Empty, new SimpleStatisticTable(3, new SimpleStatisticItem[]
+                    {
+                        new UnstableRate(score.HitEvents)
+                    }))
                 }
             }
         };
