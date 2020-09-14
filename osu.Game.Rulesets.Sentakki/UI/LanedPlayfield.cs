@@ -22,9 +22,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
 
-            AddInternal(slideBodyProxyContainer = new SortedDrawableProxyContainer());
-            AddInternal(lanedNoteProxyContainer = new SortedDrawableProxyContainer());
-
             foreach (var angle in SentakkiPlayfield.LANEANGLES)
             {
                 var lane = new Lane { Rotation = angle, };
@@ -32,6 +29,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 AddInternal(lane);
                 AddNested(lane);
             }
+
+            AddInternal(slideBodyProxyContainer = new SortedDrawableProxyContainer());
+            AddInternal(lanedNoteProxyContainer = new SortedDrawableProxyContainer());
         }
 
         public override void Add(DrawableHitObject hitObject)
