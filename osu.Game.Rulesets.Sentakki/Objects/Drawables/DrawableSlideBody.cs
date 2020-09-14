@@ -151,6 +151,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (hitObject)
             {
                 case SlideBody.SlideNode node:
+                    node.StartTime = HitObject.StartTime + ShootDelay + (((HitObject as IHasDuration).Duration - ShootDelay) * node.Progress);
                     return new DrawableSlideNode(node, this)
                     {
                         Anchor = Anchor.Centre,
