@@ -8,8 +8,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    // This is the main object used to summon slides, includes a TAP and one or more "SlideBodies"
-    public class Slide : SentakkiHitObject
+    public class Slide : SentakkiLanedHitObject
     {
         public override Color4 NoteColor => IsBreak ? Color4.OrangeRed : HasTwin ? Color4.Gold : Color4.Aqua;
 

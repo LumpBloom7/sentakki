@@ -11,6 +11,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
     public class TapPiece : CompositeDrawable
     {
+        // This will be proxied, so a must.
+        public override bool RemoveWhenNotAlive => false;
+
         private readonly CirclePiece circle;
         private readonly FlashPiece flash;
         private readonly ExplodePiece explode;

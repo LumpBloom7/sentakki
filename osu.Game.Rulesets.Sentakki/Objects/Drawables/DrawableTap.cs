@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AddRangeInternal(new Drawable[] {
                 HitObjectLine = new HitObjectLine(),
                 TapVisual = CreateTapRepresentation(),
-                HitArea = new HitReceptor()
+                HitArea = new HitReceptor(HitObject as SentakkiLanedHitObject)
                 {
                     Hit = () =>
                     {
@@ -45,11 +45,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Position = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE),
                 },
             });
-            hitObject.LaneBindable.BindValueChanged(r =>
-            {
-                Rotation = r.NewValue.GetRotationForLane();
-                HitArea.NotePath = r.NewValue;
-            }, true);
         }
 
         protected virtual Drawable CreateTapRepresentation() => new TapPiece();

@@ -5,11 +5,14 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.UI;
 using osuTK;
 using System;
+using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -28,6 +31,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
         public static readonly float INTERSECTDISTANCE = 296.5f;
         public static readonly float NOTESTARTDISTANCE = 66f;
 
+        private readonly LanedPlayfield lanedPlayfield;
+
         public static readonly float[] LANEANGLES =
         {
             22.5f,
@@ -40,12 +45,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             337.5f
         };
 
-        // Touch notes always appear above other notes, regardless of start time
-        private readonly TouchNoteProxyContainer touchNoteContainer;
-
-        // Slide body always appear under other notes, regardless of start time
-        private readonly SlideBodyProxyContainer slidebodyContainer;
-
         public SentakkiPlayfield()
         {
             Anchor = Anchor.Centre;
@@ -57,14 +56,14 @@ namespace osu.Game.Rulesets.Sentakki.UI
             {
                 new PlayfieldVisualisation(),
                 ring = new SentakkiRing(),
-                slidebodyContainer = new  SlideBodyProxyContainer(),
-                HitObjectContainer,
-                touchNoteContainer = new TouchNoteProxyContainer(),
+                lanedPlayfield = new LanedPlayfield(),
+                HitObjectContainer, // This only contains Touch and TouchHolds, which should appear above others note types. Might consider separating to another playfield.
                 judgementLayer = new JudgementContainer<DrawableSentakkiJudgement>
                 {
                     RelativeSizeAxes = Axes.Both,
                 }
             });
+            AddNested(lanedPlayfield);
         }
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
@@ -91,20 +90,32 @@ namespace osu.Game.Rulesets.Sentakki.UI
         public override void Add(DrawableHitObject h)
         {
             h.OnNewResult += onNewResult;
-            h.OnLoadComplete += d =>
+            switch (h)
             {
-                if (d is IDrawableHitObjectWithProxiedApproach c)
-                    switch (d)
-                    {
-                        case DrawableSlide _:
-                            slidebodyContainer.Add(c.ProxiedLayer.CreateProxy());
-                            break;
-                        case DrawableTouch _:
-                            touchNoteContainer.Add(c.ProxiedLayer.CreateProxy());
-                            break;
-                    }
-            };
-            base.Add(h);
+                case DrawableTap _:
+                case DrawableHold _:
+                case DrawableSlide _:
+                    lanedPlayfield.Add(h);
+                    break;
+
+                default:
+                    base.Add(h);
+                    break;
+            }
+        }
+
+        public override bool Remove(DrawableHitObject h)
+        {
+            switch (h)
+            {
+                case DrawableTap _:
+                case DrawableHold _:
+                case DrawableSlide _:
+                    return lanedPlayfield.Remove(h);
+
+                default:
+                    return base.Remove(h);
+            }
         }
 
         private void onNewResult(DrawableHitObject judgedObject, JudgementResult result)
@@ -115,31 +126,24 @@ namespace osu.Game.Rulesets.Sentakki.UI
             var sentakkiObj = (DrawableSentakkiHitObject)judgedObject;
 
             DrawableSentakkiJudgement explosion;
-            switch (judgedObject)
+            switch (judgedObject.HitObject)
             {
-                case DrawableTouch t:
+                case SentakkiLanedHitObject laned:
                     explosion = new DrawableSentakkiJudgement(result, sentakkiObj)
                     {
                         Origin = Anchor.Centre,
                         Anchor = Anchor.Centre,
-                        Position = t.Position
+                        Position = SentakkiExtensions.GetPositionAlongLane(240, laned.Lane),
+                        Rotation = laned.Lane.GetRotationForLane(),
                     };
                     break;
 
-                case DrawableTouchHold _:
-                    explosion = new DrawableSentakkiJudgement(result, sentakkiObj)
-                    {
-                        Origin = Anchor.Centre,
-                        Anchor = Anchor.Centre,
-                    };
-                    break;
                 default:
                     explosion = new DrawableSentakkiJudgement(result, sentakkiObj)
                     {
                         Origin = Anchor.Centre,
                         Anchor = Anchor.Centre,
-                        Position = SentakkiExtensions.GetPositionAlongLane(240, sentakkiObj.HitObject.Lane),
-                        Rotation = sentakkiObj.HitObject.Lane.GetRotationForLane(),
+                        Position = sentakkiObj.Position
                     };
                     break;
             }
@@ -148,24 +152,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             if (result.IsHit && judgedObject.HitObject.Kiai)
                 ring.KiaiBeat();
-        }
-
-        private class TouchNoteProxyContainer : LifetimeManagementContainer
-        {
-            public TouchNoteProxyContainer()
-            {
-                RelativeSizeAxes = Axes.Both;
-            }
-            public void Add(Drawable touchNoteProxy) => AddInternal(touchNoteProxy);
-        }
-
-        private class SlideBodyProxyContainer : LifetimeManagementContainer
-        {
-            public SlideBodyProxyContainer()
-            {
-                RelativeSizeAxes = Axes.Both;
-            }
-            public void Add(Drawable slideBodyProxy) => AddInternal(slideBodyProxy);
         }
     }
 }

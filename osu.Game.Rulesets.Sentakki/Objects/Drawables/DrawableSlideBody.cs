@@ -18,6 +18,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideBody : DrawableSentakkiHitObject
     {
+        public override bool RemoveWhenNotAlive => false;
+
         public override bool DisplayResult => true;
 
         protected override bool PlayBreakSample => false;

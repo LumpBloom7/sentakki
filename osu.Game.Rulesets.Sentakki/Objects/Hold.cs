@@ -10,7 +10,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public class Hold : SentakkiHitObject, IHasDuration
+    public class Hold : SentakkiLanedHitObject, IHasDuration
     {
         private bool isBreak = false;
         public override bool IsBreak
@@ -90,7 +90,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
 
-        public class HoldTail : SentakkiHitObject
+        public class HoldTail : SentakkiLanedHitObject
         {
             protected override HitWindows CreateHitWindows() => new SentakkiHoldHitWindows();
         }

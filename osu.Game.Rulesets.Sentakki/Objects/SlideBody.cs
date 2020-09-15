@@ -8,7 +8,7 @@ using System;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public class SlideBody : SentakkiHitObject, IHasDuration
+    public class SlideBody : SentakkiLanedHitObject, IHasDuration
     {
         public static readonly float SLIDE_CHEVRON_DISTANCE = 25;
 
