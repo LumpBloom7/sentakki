@@ -136,11 +136,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 return;
             }
+
             var result = HitObject.HitWindows.ResultFor(timeOffset);
-            if (timeOffset < 0 && result <= HitResult.Miss)
+
+            if (result == HitResult.None)
                 return;
-            if (result >= HitResult.Meh && result < HitResult.Great && timeOffset < 0)
-                result = HitResult.Great;
+
+            if (timeOffset < 0)
+            {
+                if (result <= HitResult.Miss) return;
+
+                if (result < HitResult.Great) result = HitResult.Great;
+            }
 
             ApplyResult(r => r.Type = result);
         }
