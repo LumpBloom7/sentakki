@@ -4,6 +4,7 @@ namespace osu.Game.Rulesets.Sentakki.Judgements
 {
     public class SentakkiBreakJudgement : SentakkiJudgement
     {
+        public override HitResult MaxResult => HitResult.Perfect;
         protected override int NumericResultFor(HitResult result)
         {
             switch (result)
