@@ -1,4 +1,5 @@
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Scoring;
@@ -15,6 +16,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     [Cached]
     public class DrawableSlide : DrawableSentakkiHitObject
     {
+        public BindableBool AutoTouchBindable = new BindableBool();
+
         public override bool DisplayResult => false;
 
         protected override bool PlayBreakSample => false;
@@ -75,6 +78,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     return new DrawableSlideBody(slideBody)
                     {
                         AutoBindable = { BindTarget = AutoBindable },
+                        AutoTouchBindable = { BindTarget = AutoTouchBindable },
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         AccentColour = { BindTarget = AccentColour }

@@ -18,6 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideBody : DrawableSentakkiHitObject
     {
+        public BindableBool AutoTouchBindable = new BindableBool();
         public override bool RemoveWhenNotAlive => false;
 
         public override bool DisplayResult => true;
@@ -157,7 +158,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         AccentColour = { BindTarget = AccentColour },
-                        AutoBindable = { BindTarget = AutoBindable }
+                        AutoBindable = { BindTarget = AutoBindable },
+                        AutoTouchBindable = { BindTarget = AutoTouchBindable }
                     };
             }
 

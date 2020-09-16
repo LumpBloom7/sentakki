@@ -18,6 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideNode : DrawableSentakkiHitObject
     {
+        public BindableBool AutoTouchBindable = new BindableBool();
 
         [Resolved(canBeNull: true)]
         private GameplayClock gameplayClock { get; set; }
@@ -92,9 +93,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            if (!userTriggered)
+            if (!userTriggered || AutoTouchBindable.Value)
             {
-                if (timeOffset > 0 && Auto)
+                if (timeOffset > 0 && (Auto || AutoTouchBindable.Value))
                     ApplyResult(r => r.Type = HitResult.Perfect);
                 return;
             }

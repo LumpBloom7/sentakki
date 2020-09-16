@@ -18,6 +18,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTouch : DrawableSentakkiHitObject
     {
+        public BindableBool AutoTouchBindable = new BindableBool();
+
         // IsHovered is used
         public override bool HandlePositionalInput => true;
 
@@ -140,9 +142,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             Debug.Assert(HitObject.HitWindows != null);
 
-            if (!userTriggered)
+            if (!userTriggered || AutoTouchBindable.Value)
             {
-                if (Auto && timeOffset > 0)
+                if ((Auto || AutoTouchBindable.Value) && timeOffset > 0)
                     ApplyResult(r => r.Type = HitResult.Perfect);
 
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
