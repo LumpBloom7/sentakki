@@ -1,5 +1,6 @@
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Difficulty;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Difficulty.Skills;
 using osu.Game.Rulesets.Mods;
@@ -15,11 +16,25 @@ namespace osu.Game.Rulesets.Sentakki.Difficulty
 
         protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills, double clockRate)
         {
+            int maxCombo = 0;
+            foreach (var h in beatmap.HitObjects)
+            {
+                if (h is Hold)
+                    maxCombo += 2;
+                else if (h is Slide s)
+                    maxCombo += 1 + s.SlideInfoList.Count;
+                else
+                    ++maxCombo;
+            }
+
+            Console.WriteLine("Max combo(" + beatmap.BeatmapInfo.Version.ToString() + "): " + maxCombo.ToString());
+
             return new DifficultyAttributes
             {
                 StarRating = beatmap.BeatmapInfo.StarDifficulty * 1.25f, // Inflate SR of converts, to encourage players to try lower diffs, without hurting their fragile ego.
                 Mods = mods,
-                Skills = skills
+                Skills = skills,
+                MaxCombo = maxCombo
             };
         }
 
