@@ -15,15 +15,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
     public class SentakkiModAutoplay : ModAutoplay<SentakkiHitObject>, IApplicableToDrawableHitObjects
     {
 
-        private string getRandomCharacter()
-        {
-            string[] characters = {
-                "Mai-chan",
-                "Sen-kun"
-            };
+        private string getRandomCharacter() => RNG.NextBool() ? "Mai-chan" : "Sen-kun";
 
-            return characters[RNG.Next(0, characters.Length)];
-        }
         public override Score CreateReplayScore(IBeatmap beatmap)
         {
 
