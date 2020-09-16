@@ -9,6 +9,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Utils;
+using System;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {
@@ -29,6 +30,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 Replay = new SentakkiAutoGenerator(beatmap).Generate(),
             };
         }
+
+        public override Type[] IncompatibleMods => base.IncompatibleMods.Append(typeof(SentakkiModAutoTouch)).ToArray();
 
         public void ApplyToDrawableHitObjects(IEnumerable<DrawableHitObject> drawables)
         {

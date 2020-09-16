@@ -15,10 +15,8 @@ using System;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableTouchHold : DrawableSentakkiHitObject
+    public class DrawableTouchHold : DrawableSentakkiTouchHitObject
     {
-        public BindableBool AutoTouchBindable = new BindableBool();
-
         private readonly TouchHoldCircle circle;
 
         public override bool HandlePositionalInput => true;
@@ -100,10 +98,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         /// </summary>
         public double? HoldStartTime { get; private set; }
 
-        protected override void InvalidateTransforms()
-        {
-        }
-
         protected override void UpdateInitialTransforms()
         {
             double fadeIn = AnimationDuration.Value * GameplaySpeed;
@@ -125,7 +119,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             bool isTouched = touchInput.ActiveSources.Any(s => ReceivePositionalInputAt(touchInput.GetTouchPosition(s) ?? new Vector2(float.MinValue)));
             activated.Value = Time.Current >= HitObject.StartTime
                             && Time.Current <= (HitObject as IHasDuration)?.EndTime
-                            && (Auto || AutoTouchBindable.Value || isTouched || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
+                            && (Auto || AutoTouch || isTouched || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
 
             if (Result.HasResult) return;
 

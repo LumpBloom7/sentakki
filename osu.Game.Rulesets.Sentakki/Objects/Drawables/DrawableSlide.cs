@@ -14,10 +14,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     // Cached so that SlideTapPiece can access via DI, and adjust visuals to account for multiple slide bodies
     [Cached]
-    public class DrawableSlide : DrawableSentakkiHitObject
+    public class DrawableSlide : DrawableSentakkiTouchHitObject
     {
-        public BindableBool AutoTouchBindable = new BindableBool();
-
         public override bool DisplayResult => false;
 
         protected override bool PlayBreakSample => false;
@@ -53,8 +51,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.LoadComplete();
         }
-
-        protected override void InvalidateTransforms() { }
 
         protected override void ClearNestedHitObjects()
         {
