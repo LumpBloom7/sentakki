@@ -27,8 +27,6 @@ namespace osu.Game.Rulesets.Sentakki.Difficulty
                     ++maxCombo;
             }
 
-            Console.WriteLine("Max combo(" + beatmap.BeatmapInfo.Version.ToString() + "): " + maxCombo.ToString());
-
             return new DifficultyAttributes
             {
                 StarRating = beatmap.BeatmapInfo.StarDifficulty * 1.25f, // Inflate SR of converts, to encourage players to try lower diffs, without hurting their fragile ego.
