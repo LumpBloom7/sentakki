@@ -43,7 +43,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Position = slideNote.Slidepath.Path.PositionAt((HitObject as SlideBody.SlideNode).Progress);
             Size = new Vector2(240);
             CornerExponent = 2f;
-            CornerRadius = 80;
+            CornerRadius = 120;
             Masking = true;
         }
         protected override void LoadComplete()
