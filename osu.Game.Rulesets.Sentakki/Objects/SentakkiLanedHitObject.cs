@@ -1,4 +1,5 @@
 using osu.Framework.Bindables;
+using osu.Game.Rulesets.Sentakki;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {

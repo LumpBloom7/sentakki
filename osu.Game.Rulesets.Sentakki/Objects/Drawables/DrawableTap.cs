@@ -6,6 +6,8 @@ using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Framework.Utils;
 using osuTK;
 using osuTK.Graphics;
@@ -14,9 +16,8 @@ using System.Diagnostics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableTap : DrawableSentakkiHitObject
+    public class DrawableTap : DrawableSentakkiHitObject, IKeyBindingHandler<SentakkiAction>
     {
-        public readonly HitReceptor HitArea;
         public readonly Drawable TapVisual;
         public readonly HitObjectLine HitObjectLine;
         protected override double InitialLifetimeOffset => 8000;
@@ -32,18 +33,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AddRangeInternal(new Drawable[] {
                 HitObjectLine = new HitObjectLine(),
                 TapVisual = CreateTapRepresentation(),
-                HitArea = new HitReceptor(HitObject as SentakkiLanedHitObject)
-                {
-                    Hit = () =>
-                    {
-                        if (AllJudged)
-                            return false;
-
-                        UpdateResult(true);
-                        return true;
-                    },
-                    Position = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE),
-                },
             });
         }
 
@@ -122,5 +111,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
             }
         }
+
+        public virtual bool OnPressed(SentakkiAction action)
+        {
+            if (action != SentakkiAction.Key1 + ((SentakkiLanedHitObject)HitObject).Lane)
+                return false;
+
+            return UpdateResult(true);
+        }
+
+        public void OnReleased(SentakkiAction action) { }
     }
 }
