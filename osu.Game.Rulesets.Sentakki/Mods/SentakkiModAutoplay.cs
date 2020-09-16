@@ -8,19 +8,34 @@ using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Drawables;
 using System.Collections.Generic;
 using System.Linq;
+using osu.Framework.Utils;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {
     public class SentakkiModAutoplay : ModAutoplay<SentakkiHitObject>, IApplicableToDrawableHitObjects
     {
-        public override Score CreateReplayScore(IBeatmap beatmap) => new Score
+
+        private string getRandomCharacter()
         {
-            ScoreInfo = new ScoreInfo
+            string[] characters = {
+                "Mai-chan",
+                "Sen-kun"
+            };
+
+            return characters[RNG.Next(0, characters.Length)];
+        }
+        public override Score CreateReplayScore(IBeatmap beatmap)
+        {
+
+            return new Score
             {
-                User = new User { Username = "Mai-chan" },
-            },
-            Replay = new SentakkiAutoGenerator(beatmap).Generate(),
-        };
+                ScoreInfo = new ScoreInfo
+                {
+                    User = new User { Username = getRandomCharacter() },
+                },
+                Replay = new SentakkiAutoGenerator(beatmap).Generate(),
+            };
+        }
 
         public void ApplyToDrawableHitObjects(IEnumerable<DrawableHitObject> drawables)
         {
