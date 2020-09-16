@@ -35,7 +35,6 @@ namespace osu.Game.Rulesets.Sentakki
 
         public IEnumerable<SentakkiAction> PressedActions => KeyBindingContainer.PressedActions;
 
-
         // For makeshift virtual input handling
         public void TriggerPressed(SentakkiAction action) => KeyBindingContainer.TriggerPressed(action);
         public void TriggerReleased(SentakkiAction action) => KeyBindingContainer.TriggerReleased(action);
