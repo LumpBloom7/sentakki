@@ -60,25 +60,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             private void handleKeyPress(ValueChangedEvent<int> keys)
             {
-                ReplayState<SentakkiAction> RemovalState = new ReplayState<SentakkiAction>()
-                {
-                    PressedActions = SentakkiActionInputManager.PressedActions.ToList()
-                };
-
-                RemovalState.PressedActions.RemoveAll(x => x == SentakkiAction.Key1 + ((Lane)Parent).LaneNumber);
-
                 if (keys.NewValue > keys.OldValue || keys.NewValue == 0)
-                    RemovalState.Apply(SentakkiActionInputManager.CurrentState, sentakkiActionInputManager);
+                    SentakkiActionInputManager.TriggerReleased(SentakkiAction.Key1 + ((Lane)Parent).LaneNumber);
 
                 if (keys.NewValue > keys.OldValue)
-                {
-                    ReplayState<SentakkiAction> NewState = new ReplayState<SentakkiAction>()
-                    {
-                        PressedActions = SentakkiActionInputManager.PressedActions.ToList()
-                    };
-                    NewState.PressedActions.Add(SentakkiAction.Key1 + ((Lane)Parent).LaneNumber);
-                    NewState.Apply(SentakkiActionInputManager.CurrentState, sentakkiActionInputManager);
-                }
+                    SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + ((Lane)Parent).LaneNumber);
             }
         }
     }

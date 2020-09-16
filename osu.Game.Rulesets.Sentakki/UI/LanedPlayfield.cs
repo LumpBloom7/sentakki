@@ -22,9 +22,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
 
-            AddInternal(slideBodyProxyContainer = new SortedDrawableProxyContainer());
-            AddInternal(lanedNoteProxyContainer = new SortedDrawableProxyContainer());
-
             for (int i = 0; i < 8; ++i)
             {
                 var lane = new Lane
@@ -36,6 +33,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 AddInternal(lane);
                 AddNested(lane);
             }
+
+            AddInternal(slideBodyProxyContainer = new SortedDrawableProxyContainer());
+            AddInternal(lanedNoteProxyContainer = new SortedDrawableProxyContainer());
         }
 
         public override void Add(DrawableHitObject hitObject)
@@ -54,7 +54,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     break;
             }
 
-            Lanes[(hitObject.HitObject as SentakkiLanedHitObject).Lane].Add(hitObject);
+            ((SentakkiLanedHitObject)hitObject.HitObject).LaneBindable.BindValueChanged(lane =>
+            {
+                if (lane.OldValue != lane.NewValue)
+                    Lanes[lane.OldValue].Remove(hitObject);
+                Lanes[lane.NewValue].Add(hitObject);
+            }, true);
         }
 
         public override bool Remove(DrawableHitObject hitObject) => Lanes[(hitObject.HitObject as SentakkiLanedHitObject).Lane].Remove(hitObject);
