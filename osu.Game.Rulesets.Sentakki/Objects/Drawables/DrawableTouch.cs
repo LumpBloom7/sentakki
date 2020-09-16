@@ -12,7 +12,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Transforms;
 using osu.Game.Rulesets.Sentakki.Configuration;
-using System;
+using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -35,14 +35,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private readonly CircularContainer dot;
 
-        public readonly HitReceptor HitArea;
-
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
         public DrawableTouch(Touch hitObject) : base(hitObject)
         {
-            Size = new Vector2(80);
+            Size = new Vector2(300);
             Position = hitObject.Position;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
@@ -78,19 +76,39 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Colour = Color4.White,
                     }
                 },
-                flash = new TouchFlashPiece(),
-                explode = new ExplodePiece(),
-                HitArea = new HitReceptor{
-                    Hit = () =>
-                    {
-                        if (AllJudged)
-                            return false;
-
-                        UpdateResult(true);
-                        return false;
-                    },
-                }
+                flash = new TouchFlashPiece{
+                    RelativeSizeAxes = Axes.None,
+                    Size = new Vector2(80)
+                },
+                explode = new ExplodePiece{
+                    RelativeSizeAxes = Axes.None,
+                    Size = new Vector2(80)
+                },
             });
+
+            trackedKeys.BindValueChanged(x =>
+            {
+                if (AllJudged)
+                    return;
+
+                UpdateResult(true);
+            });
+        }
+
+        private BindableInt trackedKeys = new BindableInt(0);
+
+        protected override void Update()
+        {
+            base.Update();
+            int count = 0;
+            var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+
+            if (touchInput.ActiveSources.Any())
+                count = touchInput.ActiveSources.Where(x => ReceivePositionalInputAt(touchInput.GetTouchPosition(x) ?? new Vector2(float.MinValue))).Count();
+            else if (IsHovered)
+                count = SentakkiActionInputManager.PressedActions.Where(x => x < SentakkiAction.Key1).Count();
+
+            trackedKeys.Value = count;
         }
 
         [BackgroundDependencyLoader(true)]
@@ -98,10 +116,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
         }
-
-        // Easing functions for manual use.
-        private readonly DefaultEasingFunction outSine = new DefaultEasingFunction(Easing.OutSine);
-        private readonly DefaultEasingFunction inQuint = new DefaultEasingFunction(Easing.InQuint);
 
         protected override void UpdateInitialTransforms()
         {

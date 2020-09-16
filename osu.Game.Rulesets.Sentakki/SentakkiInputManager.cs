@@ -8,6 +8,7 @@ namespace osu.Game.Rulesets.Sentakki
 {
     public class SentakkiInputManager : RulesetInputManager<SentakkiAction>
     {
+        protected override bool MapMouseToLatestTouch => false;
         public bool AllowUserPresses
         {
             set => ((SentakkiKeyBindingContainer)KeyBindingContainer).AllowUserPresses = value;

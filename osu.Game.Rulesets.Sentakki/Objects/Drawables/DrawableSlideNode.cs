@@ -12,6 +12,7 @@ using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Screens.Play;
 using osu.Game.Rulesets.Judgements;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -40,9 +41,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Slide = slideNote;
             RelativeSizeAxes = Axes.None;
             Position = slideNote.Slidepath.Path.PositionAt((HitObject as SlideBody.SlideNode).Progress);
-            Size = new Vector2(160);
+            Size = new Vector2(240);
             CornerExponent = 2f;
-            CornerRadius = 80;
+            CornerRadius = 120;
             Masking = true;
         }
         protected override void LoadComplete()
@@ -114,9 +115,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.Update();
             if (Time.Current >= Slide.HitObject.StartTime)
-                if (IsHovered)
-                    if (SentakkiActionInputManager.PressedActions.Any())
-                        UpdateResult(true);
+            {
+                var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+                bool isTouched = touchInput.ActiveSources.Any(s => ReceivePositionalInputAt(touchInput.GetTouchPosition(s) ?? new Vector2(float.MinValue)));
+
+                if (isTouched || (IsHovered && SentakkiActionInputManager.PressedActions.Any()))
+                    UpdateResult(true);
+            }
         }
 
         public override void PlaySamples()

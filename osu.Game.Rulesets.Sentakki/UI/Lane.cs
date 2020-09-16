@@ -47,10 +47,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
             protected override void Update()
             {
                 base.Update();
-                if (IsHovered)
-                    currentKeys.Value = SentakkiActionInputManager.PressedActions.Where(x => x < SentakkiAction.Key1).Count();
-                else
-                    currentKeys.Value = 0;
+                int count = 0;
+                var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+
+                if (touchInput.ActiveSources.Any())
+                    count = touchInput.ActiveSources.Where(x => ReceivePositionalInputAt(touchInput.GetTouchPosition(x) ?? new Vector2(float.MinValue))).Count();
+                else if (IsHovered)
+                    count = SentakkiActionInputManager.PressedActions.Where(x => x < SentakkiAction.Key1).Count();
+
+                currentKeys.Value = count;
             }
 
             private void handleKeyPress(ValueChangedEvent<int> keys)
