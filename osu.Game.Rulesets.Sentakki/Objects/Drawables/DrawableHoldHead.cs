@@ -1,6 +1,5 @@
 ﻿using osu.Game.Rulesets.Scoring;
 using System.Diagnostics;
-using System;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {

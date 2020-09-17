@@ -123,17 +123,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                             .Delay(animTime - stretchTime)
                             .ResizeHeightTo(80, stretchTime);
 
-                    if (HoldStartTime == null)
+                    if (HoldStartTime == null && !Auto)
                         NoteBody.Note.Delay(animTime).FadeColour(Color4.Gray, 100);
 
                     HitObjectLine.ScaleTo(1, animTime);
                 }
             }
-        }
-        protected override void Update()
-        {
-            base.Update();
-            if (Result.HasResult) return;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
