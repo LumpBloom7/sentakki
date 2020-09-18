@@ -152,7 +152,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     else
                         result = HitResult.Miss;
 
-                    if (result >= headContainer.First().Result.Type) result = headContainer.First().Result.Type;
+                    // Hold is over, but head windows are still active.
+                    // Only happens on super short holds
+                    // Force a miss on the head in this case
+                    if (!headContainer.First().Result.HasResult)
+                        headContainer.First().MissForcefully();
+
+                    else if (result >= headContainer.First().Result.Type)
+                        result = headContainer.First().Result.Type;
+
                     if (Auto) result = HitResult.Perfect;
                     ApplyResult(r => r.Type = result);
                 }
