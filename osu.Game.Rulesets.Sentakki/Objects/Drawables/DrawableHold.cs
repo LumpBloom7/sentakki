@@ -158,7 +158,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     if (!headContainer.First().Result.HasResult)
                         headContainer.First().MissForcefully();
 
-                    else if (result >= headContainer.First().Result.Type)
+                    if (result >= headContainer.First().Result.Type)
                         result = headContainer.First().Result.Type;
 
                     if (Auto) result = HitResult.Perfect;
@@ -219,10 +219,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (HoldStartTime.HasValue)
                 TotalHoldTime += Math.Max(Time.Current - HoldStartTime.Value, 0);
+
             HoldStartTime = null;
             isHitting.Value = false;
         }
-
 
         public virtual bool OnPressed(SentakkiAction action)
         {
