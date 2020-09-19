@@ -5,9 +5,6 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using System.Collections.Generic;
 using System.Linq;
-using osuTK;
-using osuTK.Graphics;
-using osu.Game.Rulesets.Sentakki.Judgements;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
@@ -71,8 +68,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             AddNested(Head);
         }
-
-        public override Judgement CreateJudgement() => new SentakkiJudgement();
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
 
