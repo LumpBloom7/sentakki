@@ -1,4 +1,5 @@
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Scoring;
@@ -13,7 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     // Cached so that SlideTapPiece can access via DI, and adjust visuals to account for multiple slide bodies
     [Cached]
-    public class DrawableSlide : DrawableSentakkiHitObject
+    public class DrawableSlide : DrawableSentakkiTouchHitObject
     {
         public override bool DisplayResult => false;
 
@@ -51,8 +52,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.LoadComplete();
         }
 
-        protected override void InvalidateTransforms() { }
-
         protected override void ClearNestedHitObjects()
         {
             base.ClearNestedHitObjects();
@@ -75,6 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     return new DrawableSlideBody(slideBody)
                     {
                         AutoBindable = { BindTarget = AutoBindable },
+                        AutoTouchBindable = { BindTarget = AutoTouchBindable },
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         AccentColour = { BindTarget = AccentColour }
