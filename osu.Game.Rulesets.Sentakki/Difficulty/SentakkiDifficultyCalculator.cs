@@ -19,9 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Difficulty
             int maxCombo = 0;
             foreach (var h in beatmap.HitObjects)
             {
-                if (h is Hold)
-                    maxCombo += 2;
-                else if (h is Slide s)
+                if (h is Slide s)
                     maxCombo += 1 + s.SlideInfoList.Count;
                 else
                     ++maxCombo;
