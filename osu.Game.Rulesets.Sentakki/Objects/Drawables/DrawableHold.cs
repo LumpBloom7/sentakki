@@ -45,7 +45,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             : base(hitObject)
         {
             AccentColour.Value = hitObject.NoteColor;
-            Size = new Vector2(80);
+            Size = new Vector2(75);
             Position = Vector2.Zero;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
@@ -133,11 +133,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     float stretchTime = (float)(stretchAmount / totalMovableDistance * animTime);
                     float excessDistance = (float)((-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * tailHitWindow);
 
-                    NoteBody.ResizeHeightTo(80 + stretchAmount, stretchTime)
+                    NoteBody.ResizeHeightTo(75 + stretchAmount, stretchTime)
                             .Delay((HitObject as IHasDuration).Duration)
                             .MoveToY(-SentakkiPlayfield.INTERSECTDISTANCE + (Width / 2) + excessDistance, animTime + tailHitWindow)
                             .Delay(animTime - stretchTime)
-                            .ResizeHeightTo(80, stretchTime);
+                            .ResizeHeightTo(75, stretchTime);
 
                     if (HoldStartTime == null)
                         NoteBody.Note.Delay(animTime).FadeColour(Color4.Gray, 100);

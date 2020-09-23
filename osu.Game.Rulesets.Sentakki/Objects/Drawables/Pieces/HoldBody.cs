@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
 
@@ -24,10 +25,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public HoldBody()
         {
             Scale = Vector2.Zero;
-            Position = new Vector2(0, -26);
+            Position = new Vector2(0, -(SentakkiPlayfield.NOTESTARTDISTANCE - 37.5f));
             Anchor = Anchor.Centre;
             Origin = Anchor.BottomCentre;
-            Size = new Vector2(80);
+            Size = new Vector2(75);
             InternalChildren = new Drawable[]
             {
                 Note = new Container
@@ -88,7 +89,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                             CornerExponent = 2.5f,
                             CornerRadius = 5f,
                             Rotation = 45,
-                            Position = new Vector2(0, -40),
+                            Position = new Vector2(0, -37.5f),
                             Size = new Vector2(20),
                             BorderColour = Color4.Gray,
                             BorderThickness = 2,
@@ -107,7 +108,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                             CornerExponent = 2.5f,
                             CornerRadius = 5f,
                             Rotation = 45,
-                            Position = new Vector2(0, 40),
+                            Position = new Vector2(0, 37.5f),
                             Size = new Vector2(20),
                             BorderColour = Color4.Gray,
                             BorderThickness = 2,
