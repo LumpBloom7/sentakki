@@ -16,7 +16,7 @@ using osu.Game.Beatmaps;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideBody : DrawableSentakkiHitObject
+    public class DrawableSlideBody : DrawableSentakkiTouchHitObject
     {
         public override bool RemoveWhenNotAlive => false;
 
@@ -93,8 +93,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AccentColour.BindValueChanged(c => Colour = c.NewValue, true);
         }
 
-        protected override void InvalidateTransforms() { }
-
         [Resolved]
         private Bindable<WorkingBeatmap> workingBeatmap { get; set; }
 
@@ -157,7 +155,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         AccentColour = { BindTarget = AccentColour },
-                        AutoBindable = { BindTarget = AutoBindable }
+                        AutoBindable = { BindTarget = AutoBindable },
+                        AutoTouchBindable = { BindTarget = AutoTouchBindable }
                     };
             }
 

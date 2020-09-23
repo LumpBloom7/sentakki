@@ -69,6 +69,7 @@ namespace osu.Game.Rulesets.Sentakki
                     return new Mod[]
                     {
                         new SentakkiModAutoplay(),
+                        new SentakkiModAutoTouch()
                     };
 
                 case ModType.Fun:

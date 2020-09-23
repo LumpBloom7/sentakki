@@ -16,9 +16,8 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideNode : DrawableSentakkiHitObject
+    public class DrawableSlideNode : DrawableSentakkiTouchHitObject
     {
-
         [Resolved(canBeNull: true)]
         private GameplayClock gameplayClock { get; set; }
 
@@ -92,9 +91,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            if (!userTriggered)
+            if (!userTriggered || AutoTouch)
             {
-                if (timeOffset > 0 && Auto)
+                if (timeOffset > 0 && (Auto || AutoTouch))
                     ApplyResult(r => r.Type = HitResult.Perfect);
                 return;
             }

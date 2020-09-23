@@ -5,6 +5,7 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
@@ -54,9 +55,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public readonly HoldHead Head = new HoldHead();
 
-        protected override void CreateNestedHitObjects()
+        protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            base.CreateNestedHitObjects();
+            base.CreateNestedHitObjects(cancellationToken);
 
             AddNested(Head);
         }
