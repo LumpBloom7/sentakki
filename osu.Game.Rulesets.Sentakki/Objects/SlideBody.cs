@@ -5,6 +5,7 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
 using System;
+using System.Threading;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
@@ -26,9 +27,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public SentakkiSlideInfo SlideInfo { get; set; }
 
-        protected override void CreateNestedHitObjects()
+        protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            base.CreateNestedHitObjects();
+            base.CreateNestedHitObjects(cancellationToken);
 
             var distance = SlideInfo.SlidePath.Path.Distance;
             int chevrons = (int)Math.Ceiling(distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
