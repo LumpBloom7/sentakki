@@ -6,6 +6,7 @@ using osu.Game.Rulesets.Objects.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
@@ -35,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             patternGen.Experiments.BindTo(EnabledExperiments);
         }
 
-        protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap)
+        protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap, CancellationToken cancellationToken)
         {
             if ((original as IHasCombo).NewCombo)
                 patternGen.CreateNewPattern();

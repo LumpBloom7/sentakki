@@ -4,6 +4,7 @@ using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
@@ -14,9 +15,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public List<SentakkiSlideInfo> SlideInfoList = new List<SentakkiSlideInfo>();
 
-        protected override void CreateNestedHitObjects()
+        protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            base.CreateNestedHitObjects();
+            base.CreateNestedHitObjects(cancellationToken);
 
             AddNested(new Tap
             {
