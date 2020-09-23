@@ -6,23 +6,13 @@ using osu.Game.Rulesets.Sentakki.Scoring;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using osuTK;
-using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Hold : SentakkiLanedHitObject, IHasDuration
     {
-        private bool isBreak = false;
-        public override bool IsBreak
-        {
-            get => isBreak;
-            set
-            {
-                isBreak = value;
-                Head.IsBreak = value;
-            }
-        }
+        public override bool IsBreak { get; set; }
+
         private List<IList<HitSampleInfo>> nodeSamples = new List<IList<HitSampleInfo>>();
 
         public List<IList<HitSampleInfo>> NodeSamples
@@ -30,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             get => nodeSamples;
             set
             {
-                Tail.Samples = value.Last();
+                Samples = value.Last();
                 Head.Samples = value.First();
             }
         }
@@ -41,17 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set => Duration = value - StartTime;
         }
 
-        private double duration;
-
-        public double Duration
-        {
-            get => duration;
-            set
-            {
-                duration = value;
-                Tail.StartTime = EndTime;
-            }
-        }
+        public double Duration { get; set; }
 
         public override double StartTime
         {
@@ -60,7 +40,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             {
                 base.StartTime = value;
                 Head.StartTime = value;
-                Tail.StartTime = EndTime;
             }
         }
 
@@ -71,29 +50,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             {
                 base.Lane = value;
                 Head.Lane = value;
-                Tail.Lane = value;
             }
         }
 
-        public readonly Tap Head = new Tap();
-
-        public readonly HoldTail Tail = new HoldTail();
+        public readonly HoldHead Head = new HoldHead();
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
             base.CreateNestedHitObjects(cancellationToken);
 
             AddNested(Head);
-            AddNested(Tail);
         }
-
-        public override Judgement CreateJudgement() => new IgnoreJudgement();
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
 
-        public class HoldTail : SentakkiLanedHitObject
+        public class HoldHead : SentakkiLanedHitObject
         {
-            protected override HitWindows CreateHitWindows() => new SentakkiHoldHitWindows();
+            public override Judgement CreateJudgement() => new IgnoreJudgement();
+            protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
         }
     }
 }
