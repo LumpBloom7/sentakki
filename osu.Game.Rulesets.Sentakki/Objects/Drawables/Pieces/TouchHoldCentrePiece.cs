@@ -22,12 +22,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
-            Size = new Vector2(60);
+            Size = new Vector2(80);
             Masking = true;
             BorderThickness = 2;
             BorderColour = Color4.Black;
             CornerRadius = 2.5f;
-            CornerRadius = 15;
+            CornerRadius = 20f;
             Rotation = 45;
             InternalChildren = new Drawable[]{
                 new Container {

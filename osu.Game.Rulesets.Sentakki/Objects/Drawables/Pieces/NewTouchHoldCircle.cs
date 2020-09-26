@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 flash = new FlashPiece{
                     Rotation = 45,
                     CornerExponent = 2.5f,
-                    CornerRadius = 22.5f,
+                    CornerRadius = 27.5f,
                 },
                 ProgressPiece = new TouchHoldProgressPiece(),
                 centrePiece = new TouchHoldCentrePiece()

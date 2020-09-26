@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Colour = Color4.SlateGray;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Size = new Vector2(90);
+            Size = new Vector2(110);
             Scale = new Vector2(0f);
             RelativeSizeAxes = Axes.None;
             Alpha = 0;
