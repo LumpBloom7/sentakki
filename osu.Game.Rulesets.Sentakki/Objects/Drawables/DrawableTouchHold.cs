@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTouchHold : DrawableSentakkiTouchHitObject
     {
-        private readonly TouchHoldCircle circle;
+        private readonly NewTouchHoldCircle circle;
 
         public override bool HandlePositionalInput => true;
 
@@ -32,13 +32,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AccentColour.Value = Color4.HotPink;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Size = new Vector2(120);
+            Size = new Vector2(80);
             Scale = new Vector2(0f);
             RelativeSizeAxes = Axes.None;
             Alpha = 0;
             AlwaysPresent = true;
             AddRangeInternal(new Drawable[] {
-                circle = new TouchHoldCircle(){ Duration = hitObject.Duration },
+                circle = new NewTouchHoldCircle(){ Duration = hitObject.Duration },
             });
 
             OnNewResult += (DrawableHitObject obj, JudgementResult result) =>
@@ -106,7 +106,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 this.FadeInFromZero(fadeIn).ScaleTo(1, fadeIn);
                 using (BeginDelayedSequence(fadeIn, true))
                 {
-                    circle.Progress.FillTo(1, (HitObject as IHasDuration).Duration);
+                    circle.ProgressPiece.TransformBindableTo(circle.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
                 }
             }
         }
