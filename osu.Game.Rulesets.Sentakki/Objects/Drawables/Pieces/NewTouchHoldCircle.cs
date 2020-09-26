@@ -21,6 +21,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private readonly FlashPiece flash;
         private readonly TouchHoldCentrePiece centrePiece;
 
+        private readonly Drawable dot;
+
         public double Duration;
         public NewTouchHoldCircle()
         {
@@ -35,7 +37,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     CornerRadius = 27.5f,
                 },
                 ProgressPiece = new TouchHoldProgressPiece(),
-                centrePiece = new TouchHoldCentrePiece()
+                centrePiece = new TouchHoldCentrePiece(),
+                dot = new CircularContainer
+                {
+                    Size = new Vector2(20),
+                    Masking = true,
+                    BorderColour = Color4.Gray,
+                    BorderThickness = 2,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        AlwaysPresent = true,
+                        Colour = Color4.White,
+                    }
+                },
             };
         }
 
@@ -74,6 +91,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                         //after the flash, we can hide some elements that were behind it
                         ProgressPiece.FadeOut();
                         centrePiece.FadeOut();
+                        dot.FadeOut();
 
                         this.FadeOut(800);
                     }
