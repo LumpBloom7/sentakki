@@ -32,7 +32,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             {
                 glow = new ShadowPiece(),
                 circle = new CirclePiece(),
-                flash = new FlashPiece(),
+                flash = new FlashPiece(){
+                    CornerRadius = 40,
+                    CornerExponent = 2
+                },
                 explode = new ExplodePiece(),
             };
         }

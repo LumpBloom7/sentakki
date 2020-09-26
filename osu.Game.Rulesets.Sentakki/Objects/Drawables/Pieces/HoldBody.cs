@@ -122,7 +122,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                         }
                     }
                 },
-                flash = new FlashPiece(),
+                flash = new FlashPiece(){
+                    CornerRadius = 40,
+                    CornerExponent = 2
+                },
                 explode = new ExplodePiece()
             };
         }

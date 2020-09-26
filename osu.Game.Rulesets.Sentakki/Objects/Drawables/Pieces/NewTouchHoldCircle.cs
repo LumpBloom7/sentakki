@@ -18,6 +18,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     public class NewTouchHoldCircle : CircularContainer
     {
         public readonly TouchHoldProgressPiece ProgressPiece;
+        private readonly FlashPiece flash;
+        private readonly TouchHoldCentrePiece centrePiece;
+
         public double Duration;
         public NewTouchHoldCircle()
         {
@@ -26,8 +29,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             InternalChildren = new Drawable[]{
+                flash = new FlashPiece{
+                    Rotation = 45,
+                    CornerExponent = 2.5f,
+                    CornerRadius = 22.5f,
+                },
                 ProgressPiece = new TouchHoldProgressPiece(),
-                new TouchHoldCentrePiece()
+                centrePiece = new TouchHoldCentrePiece()
             };
         }
 
@@ -52,11 +60,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             {
                 case ArmedState.Hit:
                     const double flash_in = 40;
-                    //const double flash_out = 100;
+                    const double flash_out = 100;
 
-                    // flash.Delay(Duration).FadeTo(0.8f, flash_in)
-                    //      .Then()
-                    //      .FadeOut(flash_out);
+                    flash.Delay(Duration).FadeTo(0.8f, flash_in)
+                          .Then()
+                          .FadeOut(flash_out);
 
                     // explode.Delay(Duration).FadeIn(flash_in);
                     this.Delay(Duration).ScaleTo(1.5f, 400, Easing.OutQuad);
@@ -64,11 +72,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     using (BeginDelayedSequence(Duration + flash_in, true))
                     {
                         //after the flash, we can hide some elements that were behind it
-                        // Progress.FadeOut();
-                        // fillCircle.FadeOut();
-                        // outline.FadeOut();
-                        // ring.FadeOut();
-                        // text.FadeOut();
+                        ProgressPiece.FadeOut();
+                        centrePiece.FadeOut();
 
                         this.FadeOut(800);
                     }
