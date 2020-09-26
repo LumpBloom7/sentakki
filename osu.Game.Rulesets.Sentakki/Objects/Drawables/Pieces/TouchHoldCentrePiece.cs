@@ -24,11 +24,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Anchor = Anchor.Centre;
             Size = new Vector2(80);
             Masking = true;
-            BorderThickness = 2;
-            BorderColour = Color4.Black;
+            //BorderThickness = 2;
+            //BorderColour = Color4.Gray;
             CornerRadius = 2.5f;
             CornerRadius = 20f;
             Rotation = 45;
+            EdgeEffect = new EdgeEffectParameters
+            {
+                Type = EdgeEffectType.Shadow,
+                Colour = Color4.Black,
+                Radius = 10f,
+            };
             InternalChildren = new Drawable[]{
                 new Container {
                     Origin = Anchor.Centre,
@@ -74,9 +80,23 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                             Colour = colours.Red,
                         },
                     }
-                }
+                },
+                new CircularContainer
+                {
+                    Size = new Vector2(20),
+                    Masking = true,
+                    BorderColour = Color4.Gray,
+                    BorderThickness = 2,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        AlwaysPresent = true,
+                        Colour = Color4.White,
+                    }
+                },
             };
         }
-
     }
 }

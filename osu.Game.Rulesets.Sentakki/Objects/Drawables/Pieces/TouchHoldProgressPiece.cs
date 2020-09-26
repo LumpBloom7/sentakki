@@ -39,7 +39,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Anchor = Anchor.Centre;
             Masking = true;
             BorderColour = Color4.White;
-            BorderThickness = 4;
+            BorderThickness = 3;
+            Alpha = .8f;
             Size = new Vector2(110);
             CornerRadius = 2.5f;
             CornerRadius = 27.5f;
