@@ -50,6 +50,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
+        [Resolved]
+        private OsuColour colours { get; set; }
+
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (Time.Current < HitObject.StartTime) return;
@@ -59,19 +62,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             double result = TotalHoldTime / (HitObject as IHasDuration).Duration;
 
-            ApplyResult(r =>
-            {
-                if (result >= .9)
-                    r.Type = HitResult.Perfect;
-                else if (result >= .75)
-                    r.Type = HitResult.Great;
-                else if (result >= .5)
-                    r.Type = HitResult.Good;
-                else if (result >= .25)
-                    r.Type = HitResult.Ok;
-                else if (Time.Current >= (HitObject as IHasDuration)?.EndTime)
-                    r.Type = HitResult.Miss;
-            });
+            HitResult resultType;
+
+            if (result >= .9)
+                resultType = HitResult.Perfect;
+            else if (result >= .75)
+                resultType = HitResult.Great;
+            else if (result >= .5)
+                resultType = HitResult.Good;
+            else if (result >= .25)
+                resultType = HitResult.Ok;
+            else
+                resultType = HitResult.Miss;
+
+            AccentColour.Value = colours.ForHitResult(resultType);
+
+            ApplyResult(r => r.Type = resultType);
         }
 
         [BackgroundDependencyLoader(true)]

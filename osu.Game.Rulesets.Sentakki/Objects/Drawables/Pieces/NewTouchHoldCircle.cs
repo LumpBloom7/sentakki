@@ -21,8 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private readonly FlashPiece flash;
         private readonly TouchHoldCentrePiece centrePiece;
 
-        private readonly Drawable dot;
-
+        private readonly Drawable explode;
         public double Duration;
         public NewTouchHoldCircle()
         {
@@ -38,21 +37,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 },
                 ProgressPiece = new TouchHoldProgressPiece(),
                 centrePiece = new TouchHoldCentrePiece(),
-                dot = new CircularContainer
-                {
-                    Size = new Vector2(20),
-                    Masking = true,
-                    BorderColour = Color4.Gray,
-                    BorderThickness = 2,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        AlwaysPresent = true,
-                        Colour = Color4.White,
-                    }
-                },
+                explode = new ExplodePiece(),
             };
         }
 
@@ -68,6 +53,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             accentColour.BindTo(drawableObject.AccentColour);
             accentColour.BindValueChanged(colour =>
             {
+                explode.Colour = colour.NewValue;
             }, true);
         }
 
@@ -83,7 +69,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                           .Then()
                           .FadeOut(flash_out);
 
-                    // explode.Delay(Duration).FadeIn(flash_in);
+                    explode.Delay(Duration).FadeIn(flash_in);
                     this.Delay(Duration).ScaleTo(1.5f, 400, Easing.OutQuad);
 
                     using (BeginDelayedSequence(Duration + flash_in, true))
@@ -91,7 +77,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                         //after the flash, we can hide some elements that were behind it
                         ProgressPiece.FadeOut();
                         centrePiece.FadeOut();
-                        dot.FadeOut();
 
                         this.FadeOut(800);
                     }
