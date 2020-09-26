@@ -12,6 +12,8 @@ using osuTK;
 using osuTK.Graphics;
 using System.Linq;
 using System;
+using osu.Framework.Extensions.Color4Extensions;
+using osu.Game.Rulesets.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -29,10 +31,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableTouchHold(TouchHold hitObject)
             : base(hitObject)
         {
-            AccentColour.Value = Color4.HotPink;
+            Colour = Color4.SlateGray;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Size = new Vector2(80);
+            Size = new Vector2(90);
             Scale = new Vector2(0f);
             RelativeSizeAxes = Axes.None;
             Alpha = 0;
@@ -41,24 +43,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 circle = new NewTouchHoldCircle(){ Duration = hitObject.Duration },
             });
 
-            OnNewResult += (DrawableHitObject obj, JudgementResult result) =>
+            isHitting.BindValueChanged(b =>
             {
-                AccentColour.Value = colours.ForHitResult(result.Type);
-            };
-            OnRevertResult += (DrawableHitObject obj, JudgementResult result) =>
-            {
-                AccentColour.Value = Color4.HotPink;
-            };
-            activated.BindValueChanged(b =>
-            {
-                circle.FadeTo(b.NewValue ? 1 : .5f, 100);
-                circle.ScaleTo(b.NewValue ? 1 : .8f, 100);
+                if (b.NewValue) beginHoldAt(Time.Current);
+                else endHold();
             });
         }
-
-        private double timeHeld = 0;
-
-        private readonly BindableBool activated = new BindableBool(false);
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
@@ -67,7 +57,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (userTriggered || Time.Current < (HitObject as IHasDuration)?.EndTime)
                 return;
 
-            double result = timeHeld / (HitObject as IHasDuration).Duration;
+            double result = TotalHoldTime / (HitObject as IHasDuration).Duration;
 
             ApplyResult(r =>
             {
@@ -90,14 +80,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
         }
 
-        [Resolved]
-        private OsuColour colours { get; set; }
-
-        /// <summary>
-        /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
-        /// </summary>
-        public double? HoldStartTime { get; private set; }
-
         protected override void UpdateInitialTransforms()
         {
             double fadeIn = AnimationDuration.Value * GameplaySpeed;
@@ -111,44 +93,41 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
+        public IBindable<bool> IsHitting => isHitting;
+
+        private readonly Bindable<bool> isHitting = new Bindable<bool>();
+
+        /// <summary>
+        /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
+        /// </summary>
+        public double? HoldStartTime { get; private set; }
+        public double TotalHoldTime = 0;
+
+        private void beginHoldAt(double timeOffset)
+        {
+            HoldStartTime = Math.Max(Time.Current, HitObject.StartTime);
+            Colour = Color4.White;
+        }
+
+        private void endHold()
+        {
+            if (HoldStartTime.HasValue)
+                TotalHoldTime += Math.Max(Time.Current - HoldStartTime.Value, 0);
+
+            HoldStartTime = null;
+            Colour = Color4.SlateGray;
+        }
+
+
         protected override void Update()
         {
             base.Update();
 
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
             bool isTouched = touchInput.ActiveSources.Any(s => ReceivePositionalInputAt(touchInput.GetTouchPosition(s) ?? new Vector2(float.MinValue)));
-            activated.Value = Time.Current >= HitObject.StartTime
+            isHitting.Value = Time.Current >= HitObject.StartTime
                             && Time.Current <= (HitObject as IHasDuration)?.EndTime
                             && (Auto || AutoTouch || isTouched || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
-
-            if (Result.HasResult) return;
-
-            // Input and feedback
-            if (Time.Current >= HitObject.StartTime && Time.Current <= (HitObject as IHasDuration)?.EndTime)
-            {
-                if (activated.Value)
-                {
-                    double prevProg = timeHeld / (HitObject as IHasDuration).Duration;
-                    timeHeld += Time.Elapsed;
-                    double progress = timeHeld / (HitObject as IHasDuration).Duration;
-
-                    if (progress >= .25f && prevProg < .25f)
-                    {
-                        circle.ResizeTo(1.033f, 100);
-                        this.TransformBindableTo(AccentColour, colours.ForHitResult(HitResult.Meh), 100);
-                    }
-                    else if (progress >= .50f && prevProg < .50f)
-                    {
-                        circle.ResizeTo(1.066f, 100);
-                        this.TransformBindableTo(AccentColour, colours.ForHitResult(HitResult.Good), 100);
-                    }
-                    else if (progress >= .75f && prevProg < .75f)
-                    {
-                        circle.ResizeTo(1.1f, 100);
-                        this.TransformBindableTo(AccentColour, colours.ForHitResult(HitResult.Great), 100);
-                    }
-                }
-            }
         }
 
         protected override void UpdateStateTransforms(ArmedState state)
