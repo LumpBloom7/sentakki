@@ -99,8 +99,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        public IBindable<bool> IsHitting => isHitting;
-
         private readonly Bindable<bool> isHitting = new Bindable<bool>();
 
         /// <summary>
@@ -144,7 +142,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    this.Delay((HitObject as IHasDuration).Duration).ScaleTo(1f, time_fade_hit).Expire();
+                    this.Delay((HitObject as IHasDuration).Duration + time_fade_hit).Expire();
                     break;
 
                 case ArmedState.Miss:

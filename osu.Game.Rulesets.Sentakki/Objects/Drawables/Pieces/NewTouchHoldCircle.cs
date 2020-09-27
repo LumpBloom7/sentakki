@@ -64,21 +64,23 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 case ArmedState.Hit:
                     const double flash_in = 40;
                     const double flash_out = 100;
-
-                    flash.Delay(Duration).FadeTo(0.8f, flash_in)
-                          .Then()
-                          .FadeOut(flash_out);
-
-                    explode.Delay(Duration).FadeIn(flash_in);
-                    this.Delay(Duration).ScaleTo(1.5f, 400, Easing.OutQuad);
-
-                    using (BeginDelayedSequence(Duration + flash_in, true))
+                    using (BeginDelayedSequence(Duration, true))
                     {
-                        //after the flash, we can hide some elements that were behind it
-                        ProgressPiece.FadeOut();
-                        centrePiece.FadeOut();
+                        flash.FadeTo(0.8f, flash_in)
+                            .Then()
+                            .FadeOut(flash_out);
 
-                        this.FadeOut(800);
+                        explode.FadeIn(flash_in);
+                        this.ScaleTo(1.5f, 400, Easing.OutQuad);
+
+                        using (BeginDelayedSequence(flash_in, true))
+                        {
+                            //after the flash, we can hide some elements that were behind it
+                            ProgressPiece.FadeOut();
+                            centrePiece.FadeOut();
+
+                            this.FadeOut(800);
+                        }
                     }
                     break;
             }
