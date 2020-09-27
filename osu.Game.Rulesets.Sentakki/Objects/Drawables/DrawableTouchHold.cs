@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTouchHold : DrawableSentakkiTouchHitObject
     {
-        private readonly NewTouchHoldCircle circle;
+        private readonly TouchHoldBody circle;
 
         public override bool HandlePositionalInput => true;
 
@@ -40,7 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Alpha = 0;
             AlwaysPresent = true;
             AddRangeInternal(new Drawable[] {
-                circle = new NewTouchHoldCircle(){ Duration = hitObject.Duration },
+                circle = new TouchHoldBody(){ Duration = hitObject.Duration },
             });
 
             isHitting.BindValueChanged(b =>

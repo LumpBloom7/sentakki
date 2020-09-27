@@ -15,7 +15,7 @@ using osu.Framework.Graphics.Effects;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class NewTouchHoldCircle : CircularContainer
+    public class TouchHoldBody : CircularContainer
     {
         public readonly TouchHoldProgressPiece ProgressPiece;
         private readonly FlashPiece flash;
@@ -23,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         private readonly Drawable explode;
         public double Duration;
-        public NewTouchHoldCircle()
+        public TouchHoldBody()
         {
             RelativeSizeAxes = Axes.Both;
             Size = Vector2.One;
