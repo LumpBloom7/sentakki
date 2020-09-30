@@ -93,6 +93,5 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 }
             };
         }
-
     }
 }
