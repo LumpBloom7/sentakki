@@ -3,6 +3,7 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Scoring;
+using osu.Game.Rulesets.Sentakki.Judgements;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -66,7 +67,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public class HoldHead : SentakkiLanedHitObject
         {
-            public override Judgement CreateJudgement() => new IgnoreJudgement();
+            public override Judgement CreateJudgement() => new SentakkiJudgement();
             protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
         }
     }

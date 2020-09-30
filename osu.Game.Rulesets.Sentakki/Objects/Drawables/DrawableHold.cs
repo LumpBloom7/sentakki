@@ -156,9 +156,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     if (!headContainer.First().Result.HasResult)
                         headContainer.First().MissForcefully();
 
-                    if (result >= headContainer.First().Result.Type)
-                        result = headContainer.First().Result.Type;
-
                     if (Auto) result = HitResult.Perfect;
                     ApplyResult(r => r.Type = result);
                 }
