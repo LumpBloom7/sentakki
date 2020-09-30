@@ -1,4 +1,4 @@
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Framework.Graphics;
@@ -6,14 +6,11 @@ using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Judgements;
 using osu.Game.Graphics;
 using osuTK;
 using osuTK.Graphics;
 using System.Linq;
 using System;
-using osu.Framework.Extensions.Color4Extensions;
-using osu.Game.Rulesets.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -36,9 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Colour = Color4.SlateGray;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Size = new Vector2(110);
             Scale = new Vector2(0f);
-            RelativeSizeAxes = Axes.None;
             Alpha = 0;
             AlwaysPresent = true;
             AddRangeInternal(new Drawable[] {
