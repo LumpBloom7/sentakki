@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             foreach (var d in drawables.OfType<DrawableSentakkiHitObject>())
             {
                 d.Auto = true;
-                foreach (DrawableSentakkiHitObject nested in d.NestedHitObjects)
+                foreach (DrawableSentakkiHitObject nested in d.NestedHitObjects.Where(obj => obj is DrawableSentakkiHitObject))
                     nested.Auto = true;
             }
         }

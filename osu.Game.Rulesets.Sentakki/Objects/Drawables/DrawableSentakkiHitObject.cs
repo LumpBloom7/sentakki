@@ -1,6 +1,7 @@
 ﻿using osu.Framework.Allocation;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Objects;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Skinning;
@@ -9,6 +10,10 @@ using osu.Game.Configuration;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Framework.Bindables;
 using osu.Game.Screens.Play;
+using System.Collections.Generic;
+using osu.Game.Rulesets.Judgements;
+using System.Linq;
+using osu.Framework.Graphics.Containers;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -59,9 +64,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (hitObject.IsBreak)
                 AddRangeInternal(new Drawable[]{
-                    breakSound = new SkinnableSound(new SampleInfo("Break"))
+                    breakSound = new SkinnableSound(new SampleInfo("Break")),
                 });
+            AddInternal(nestedBreakObjects = new Container<SentakkiDrawableBreak>());
             AdjustedAnimationDuration.BindValueChanged(_ => InvalidateTransforms());
+            OnNewResult += applyBreakResult;
         }
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
@@ -115,6 +122,47 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 breakSound.Balance.Value = balance_adjust_amount * (userPositionalHitSounds.Value ? SamplePlaybackPosition - 0.5f : 0);
                 breakSound.Play();
             }
+        }
+
+        private Container<SentakkiDrawableBreak> nestedBreakObjects;
+
+        protected override void ClearNestedHitObjects()
+        {
+            base.ClearNestedHitObjects();
+            nestedBreakObjects.Clear();
+        }
+        protected override void AddNestedHitObject(DrawableHitObject hitObject)
+        {
+            base.AddNestedHitObject(hitObject);
+            if (hitObject is SentakkiDrawableBreak x)
+                nestedBreakObjects.Add(x);
+        }
+
+        protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
+        {
+            if (hitObject is SentakkiHitObject.SentakkiBreakDummyObject x)
+                return new SentakkiDrawableBreak(x);
+
+            return base.CreateNestedHitObject(hitObject);
+        }
+
+        private void applyBreakResult(DrawableHitObject hitObject, JudgementResult judgement)
+        {
+            if (hitObject != this) return;
+            foreach (SentakkiDrawableBreak breakObj in nestedBreakObjects)
+                breakObj.ApplyHitResult(judgement.Type);
+
+
+
+        }
+
+        public class SentakkiDrawableBreak : DrawableHitObject
+        {
+            public override bool DisplayResult => false;
+            public SentakkiDrawableBreak(SentakkiHitObject.SentakkiBreakDummyObject hitObject)
+            : base(hitObject) { }
+
+            public void ApplyHitResult(HitResult result) => ApplyResult(r => r.Type = result);
         }
     }
 }
