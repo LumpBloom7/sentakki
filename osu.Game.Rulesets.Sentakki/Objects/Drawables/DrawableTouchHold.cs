@@ -1,4 +1,4 @@
-﻿using osu.Framework.Allocation;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Framework.Graphics;
@@ -27,6 +27,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
         protected override double InitialLifetimeOffset => 4000;
+
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => circle.ReceivePositionalInputAt(screenSpacePos);
 
         public DrawableTouchHold(TouchHold hitObject)
             : base(hitObject)

@@ -23,10 +23,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         private readonly Drawable explode;
         public double Duration;
+
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => centrePiece.ReceivePositionalInputAt(screenSpacePos);
+
         public TouchHoldBody()
         {
-            RelativeSizeAxes = Axes.Both;
-            Size = Vector2.One;
+            Size = new Vector2(110);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             InternalChildren = new Drawable[]{
