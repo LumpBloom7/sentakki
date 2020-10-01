@@ -10,6 +10,7 @@ using osu.Game.Screens.Ranking.Statistics;
 using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Difficulty;
 using osu.Game.Rulesets.Sentakki.Mods;
@@ -24,6 +25,7 @@ using osu.Game.Rulesets.UI;
 using System.Collections.Generic;
 using System;
 using osuTK;
+using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki
 {
@@ -124,7 +126,7 @@ namespace osu.Game.Rulesets.Sentakki
             {
                 Columns = new[]
                 {
-                    new StatisticItem("Judgement Distribution", new JudgementChart(score.HitEvents)
+                    new StatisticItem("Judgement Distribution", new JudgementChart(score.HitEvents.Where(e=>e.HitObject is SentakkiHitObject).ToList())
                     {
                         RelativeSizeAxes = Axes.X,
                         Size = new Vector2(1, 250)

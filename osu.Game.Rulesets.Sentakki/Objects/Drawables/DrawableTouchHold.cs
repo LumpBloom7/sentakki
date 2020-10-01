@@ -6,7 +6,6 @@ using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Judgements;
 using osu.Game.Graphics;
 using osuTK;
 using osuTK.Graphics;
@@ -17,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTouchHold : DrawableSentakkiTouchHitObject
     {
-        private readonly TouchHoldCircle circle;
+        private readonly TouchHoldBody touchHoldBody;
 
         public override bool HandlePositionalInput => true;
 
@@ -26,39 +25,30 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override double InitialLifetimeOffset => 4000;
 
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => touchHoldBody.ReceivePositionalInputAt(screenSpacePos);
+
         public DrawableTouchHold(TouchHold hitObject)
             : base(hitObject)
         {
-            AccentColour.Value = Color4.HotPink;
+            Colour = Color4.SlateGray;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Size = new Vector2(120);
             Scale = new Vector2(0f);
-            RelativeSizeAxes = Axes.None;
             Alpha = 0;
             AlwaysPresent = true;
             AddRangeInternal(new Drawable[] {
-                circle = new TouchHoldCircle(){ Duration = hitObject.Duration },
+                touchHoldBody = new TouchHoldBody(){ Duration = hitObject.Duration },
             });
 
-            OnNewResult += (DrawableHitObject obj, JudgementResult result) =>
+            isHitting.BindValueChanged(b =>
             {
-                AccentColour.Value = colours.ForHitResult(result.Type);
-            };
-            OnRevertResult += (DrawableHitObject obj, JudgementResult result) =>
-            {
-                AccentColour.Value = Color4.HotPink;
-            };
-            activated.BindValueChanged(b =>
-            {
-                circle.FadeTo(b.NewValue ? 1 : .5f, 100);
-                circle.ScaleTo(b.NewValue ? 1 : .8f, 100);
+                if (b.NewValue) beginHold();
+                else endHold();
             });
         }
 
-        private double timeHeld = 0;
-
-        private readonly BindableBool activated = new BindableBool(false);
+        [Resolved]
+        private OsuColour colours { get; set; }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
@@ -67,21 +57,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (userTriggered || Time.Current < (HitObject as IHasDuration)?.EndTime)
                 return;
 
-            double result = timeHeld / (HitObject as IHasDuration).Duration;
+            double result = totalHoldTime / (HitObject as IHasDuration).Duration;
 
-            ApplyResult(r =>
-            {
-                if (result >= .9)
-                    r.Type = HitResult.Perfect;
-                else if (result >= .75)
-                    r.Type = HitResult.Great;
-                else if (result >= .5)
-                    r.Type = HitResult.Good;
-                else if (result >= .25)
-                    r.Type = HitResult.Ok;
-                else if (Time.Current >= (HitObject as IHasDuration)?.EndTime)
-                    r.Type = HitResult.Miss;
-            });
+            HitResult resultType;
+
+            if (result >= .9)
+                resultType = HitResult.Perfect;
+            else if (result >= .75)
+                resultType = HitResult.Great;
+            else if (result >= .5)
+                resultType = HitResult.Good;
+            else if (result >= .25)
+                resultType = HitResult.Ok;
+            else
+                resultType = HitResult.Miss;
+
+            AccentColour.Value = colours.ForHitResult(resultType);
+
+            ApplyResult(r => r.Type = resultType);
         }
 
         [BackgroundDependencyLoader(true)]
@@ -89,14 +82,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
         }
-
-        [Resolved]
-        private OsuColour colours { get; set; }
-
-        /// <summary>
-        /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
-        /// </summary>
-        public double? HoldStartTime { get; private set; }
 
         protected override void UpdateInitialTransforms()
         {
@@ -106,10 +91,34 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 this.FadeInFromZero(fadeIn).ScaleTo(1, fadeIn);
                 using (BeginDelayedSequence(fadeIn, true))
                 {
-                    circle.Progress.FillTo(1, (HitObject as IHasDuration).Duration);
+                    touchHoldBody.ProgressPiece.TransformBindableTo(touchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
                 }
             }
         }
+
+        private readonly Bindable<bool> isHitting = new Bindable<bool>();
+
+        /// <summary>
+        /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
+        /// </summary>
+        private double? holdStartTime;
+        private double totalHoldTime;
+
+        private void beginHold()
+        {
+            holdStartTime = Math.Max(Time.Current, HitObject.StartTime);
+            Colour = Color4.White;
+        }
+
+        private void endHold()
+        {
+            if (holdStartTime.HasValue)
+                totalHoldTime += Math.Max(Time.Current - holdStartTime.Value, 0);
+
+            holdStartTime = null;
+            Colour = Color4.SlateGray;
+        }
+
 
         protected override void Update()
         {
@@ -117,38 +126,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
             bool isTouched = touchInput.ActiveSources.Any(s => ReceivePositionalInputAt(touchInput.GetTouchPosition(s) ?? new Vector2(float.MinValue)));
-            activated.Value = Time.Current >= HitObject.StartTime
+            isHitting.Value = Time.Current >= HitObject.StartTime
                             && Time.Current <= (HitObject as IHasDuration)?.EndTime
                             && (Auto || AutoTouch || isTouched || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
-
-            if (Result.HasResult) return;
-
-            // Input and feedback
-            if (Time.Current >= HitObject.StartTime && Time.Current <= (HitObject as IHasDuration)?.EndTime)
-            {
-                if (activated.Value)
-                {
-                    double prevProg = timeHeld / (HitObject as IHasDuration).Duration;
-                    timeHeld += Time.Elapsed;
-                    double progress = timeHeld / (HitObject as IHasDuration).Duration;
-
-                    if (progress >= .25f && prevProg < .25f)
-                    {
-                        circle.ResizeTo(1.033f, 100);
-                        this.TransformBindableTo(AccentColour, colours.ForHitResult(HitResult.Meh), 100);
-                    }
-                    else if (progress >= .50f && prevProg < .50f)
-                    {
-                        circle.ResizeTo(1.066f, 100);
-                        this.TransformBindableTo(AccentColour, colours.ForHitResult(HitResult.Good), 100);
-                    }
-                    else if (progress >= .75f && prevProg < .75f)
-                    {
-                        circle.ResizeTo(1.1f, 100);
-                        this.TransformBindableTo(AccentColour, colours.ForHitResult(HitResult.Great), 100);
-                    }
-                }
-            }
         }
 
         protected override void UpdateStateTransforms(ArmedState state)
@@ -159,7 +139,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    this.Delay((HitObject as IHasDuration).Duration).ScaleTo(1f, time_fade_hit).Expire();
+                    this.Delay((HitObject as IHasDuration).Duration + time_fade_hit).Expire();
                     break;
 
                 case ArmedState.Miss:
