@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            base.CreateNestedHitObjects(cancellationToken);
+            //base.CreateNestedHitObjects(cancellationToken);
 
             AddNested(new Tap
             {

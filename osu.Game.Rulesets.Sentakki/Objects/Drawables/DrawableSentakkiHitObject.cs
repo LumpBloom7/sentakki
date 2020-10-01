@@ -1,6 +1,7 @@
 ﻿using osu.Framework.Allocation;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Objects;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Skinning;
@@ -9,6 +10,11 @@ using osu.Game.Configuration;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Framework.Bindables;
 using osu.Game.Screens.Play;
+using System.Collections.Generic;
+using osu.Game.Rulesets.Judgements;
+using System.Linq;
+using osu.Framework.Graphics.Containers;
+using System;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -59,8 +65,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (hitObject.IsBreak)
                 AddRangeInternal(new Drawable[]{
-                    breakSound = new SkinnableSound(new SampleInfo("Break"))
+                    breakSound = new SkinnableSound(new SampleInfo("Break")),
                 });
+            AddInternal(scorePaddingObjects = new Container<DrawableScorePaddingObject>());
             AdjustedAnimationDuration.BindValueChanged(_ => InvalidateTransforms());
         }
 
@@ -115,6 +122,38 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 breakSound.Balance.Value = balance_adjust_amount * (userPositionalHitSounds.Value ? SamplePlaybackPosition - 0.5f : 0);
                 breakSound.Play();
             }
+        }
+
+        private Container<DrawableScorePaddingObject> scorePaddingObjects;
+
+        protected override void ClearNestedHitObjects()
+        {
+            base.ClearNestedHitObjects();
+            scorePaddingObjects.Clear();
+        }
+        protected override void AddNestedHitObject(DrawableHitObject hitObject)
+        {
+            base.AddNestedHitObject(hitObject);
+            if (hitObject is DrawableScorePaddingObject x)
+                scorePaddingObjects.Add(x);
+        }
+
+        protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
+        {
+            if (hitObject is ScorePaddingObject x)
+                return new DrawableScorePaddingObject(x);
+
+            return base.CreateNestedHitObject(hitObject);
+        }
+
+        protected new void ApplyResult(Action<JudgementResult> application)
+        {
+            // Apply judgement to this object
+            base.ApplyResult(application);
+
+            // Also give Break note score padding a judgement
+            foreach (var breakObj in scorePaddingObjects)
+                breakObj.ApplyResult(application);
         }
     }
 }

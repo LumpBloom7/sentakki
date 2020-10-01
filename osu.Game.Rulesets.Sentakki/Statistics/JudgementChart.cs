@@ -12,6 +12,7 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Graphics.UserInterface;
 using osuTK.Graphics;
 using osuTK;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace osu.Game.Rulesets.Sentakki.Statistics
 {
@@ -102,10 +103,10 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                     }
                 }
 
-                Color4 textColour = HitEvents.Count == 0 ? Color4Extensions.FromHex("bcbcbc") : (GreatCount == HitEvents.Count) ? Color4.White : Color4Extensions.FromHex("#3c5394");
-                Color4 boxColour = HitEvents.Count == 0 ? Color4Extensions.FromHex("808080") : (GreatCount == HitEvents.Count) ? Color4Extensions.FromHex("fda908") : Color4Extensions.FromHex("#DCE9F9");
-                Color4 borderColour = HitEvents.Count == 0 ? Color4Extensions.FromHex("536277") : (GreatCount == HitEvents.Count) ? Color4Extensions.FromHex("fda908") : Color4Extensions.FromHex("#98b8df");
-                Color4 numberColour = (GreatCount == HitEvents.Count && HitEvents.Count > 0) ? Color4.White : Color4Extensions.FromHex("#3c5394");
+                Color4 textColour = !HitEvents.Any() ? Color4Extensions.FromHex("bcbcbc") : (GreatCount == HitEvents.Count) ? Color4.White : Color4Extensions.FromHex("#3c5394");
+                Color4 boxColour = !HitEvents.Any() ? Color4Extensions.FromHex("808080") : (GreatCount == HitEvents.Count) ? Color4Extensions.FromHex("fda908") : Color4Extensions.FromHex("#DCE9F9");
+                Color4 borderColour = !HitEvents.Any() ? Color4Extensions.FromHex("536277") : (GreatCount == HitEvents.Count) ? Color4Extensions.FromHex("fda908") : Color4Extensions.FromHex("#98b8df");
+                Color4 numberColour = (GreatCount == HitEvents.Count && HitEvents.Any()) ? Color4.White : Color4Extensions.FromHex("#3c5394");
 
                 Anchor = Anchor.TopCentre;
                 Origin = Anchor.TopCentre;
@@ -153,7 +154,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                         Children = new Drawable[]{
                             new Box{
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = (HitEvents.Count ==0) ? Color4Extensions.FromHex("343434"):Color4.DarkGray,
+                                Colour = !HitEvents.Any() ? Color4Extensions.FromHex("343434"):Color4.DarkGray,
                             }
                         }
                     },
