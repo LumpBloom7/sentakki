@@ -1,4 +1,4 @@
-﻿using osu.Framework.Allocation;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Framework.Graphics;
@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTouchHold : DrawableSentakkiTouchHitObject
     {
-        private readonly TouchHoldBody circle;
+        private readonly TouchHoldBody touchHoldBody;
 
         public override bool HandlePositionalInput => true;
 
@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override double InitialLifetimeOffset => 4000;
 
-        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => circle.ReceivePositionalInputAt(screenSpacePos);
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => touchHoldBody.ReceivePositionalInputAt(screenSpacePos);
 
         public DrawableTouchHold(TouchHold hitObject)
             : base(hitObject)
@@ -37,7 +37,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Alpha = 0;
             AlwaysPresent = true;
             AddRangeInternal(new Drawable[] {
-                circle = new TouchHoldBody(){ Duration = hitObject.Duration },
+                touchHoldBody = new TouchHoldBody(){ Duration = hitObject.Duration },
             });
 
             isHitting.BindValueChanged(b =>
@@ -91,7 +91,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 this.FadeInFromZero(fadeIn).ScaleTo(1, fadeIn);
                 using (BeginDelayedSequence(fadeIn, true))
                 {
-                    circle.ProgressPiece.TransformBindableTo(circle.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
+                    touchHoldBody.ProgressPiece.TransformBindableTo(touchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
                 }
             }
         }
