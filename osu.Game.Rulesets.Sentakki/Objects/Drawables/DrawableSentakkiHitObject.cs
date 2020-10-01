@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using osu.Game.Rulesets.Judgements;
 using System.Linq;
 using osu.Framework.Graphics.Containers;
+using System;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -68,7 +69,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 });
             AddInternal(scorePaddingObjects = new Container<DrawableScorePaddingObject>());
             AdjustedAnimationDuration.BindValueChanged(_ => InvalidateTransforms());
-            OnNewResult += applyBreakResult;
         }
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
@@ -146,11 +146,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             return base.CreateNestedHitObject(hitObject);
         }
 
-        private void applyBreakResult(DrawableHitObject hitObject, JudgementResult judgement)
+        protected new void ApplyResult(Action<JudgementResult> application)
         {
-            if (hitObject != this) return;
-            foreach (DrawableScorePaddingObject breakObj in scorePaddingObjects)
-                breakObj.ApplyResult(r => r.Type = judgement.Type);
+            // Apply judgement to this object
+            base.ApplyResult(application);
+
+            // Also give Break note score padding a judgement
+            foreach (var breakObj in scorePaddingObjects)
+                breakObj.ApplyResult(application);
         }
     }
 }
