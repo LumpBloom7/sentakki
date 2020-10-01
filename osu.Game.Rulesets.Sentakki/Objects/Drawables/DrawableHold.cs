@@ -78,12 +78,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             switch (hitObject)
             {
-                case Hold.HoldHead _:
-                    return new DrawableHoldHead(this)
+                case Hold.HoldHead head:
+                    return new DrawableHoldHead(head)
                     {
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
-                        AccentColour = { BindTarget = AccentColour }
+                        AccentColour = { BindTarget = AccentColour },
+                        AutoBindable = { BindTarget = AutoBindable }
                     };
             }
 

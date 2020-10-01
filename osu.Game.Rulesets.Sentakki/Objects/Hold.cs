@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set
             {
                 Samples = value.Last();
-                Head.Samples = value.First();
+                nodeSamples = value;
             }
         }
 
@@ -34,33 +34,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public double Duration { get; set; }
 
-        public override double StartTime
-        {
-            get => base.StartTime;
-            set
-            {
-                base.StartTime = value;
-                Head.StartTime = value;
-            }
-        }
-
-        public override int Lane
-        {
-            get => base.Lane;
-            set
-            {
-                base.Lane = value;
-                Head.Lane = value;
-            }
-        }
-
-        public readonly HoldHead Head = new HoldHead();
-
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
             base.CreateNestedHitObjects(cancellationToken);
 
-            AddNested(Head);
+            AddNested(new HoldHead
+            {
+                IsBreak = IsBreak,
+                StartTime = StartTime,
+                Lane = Lane,
+                Samples = nodeSamples.First()
+            });
         }
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
