@@ -28,7 +28,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             if (IsBreak)
                 for (int i = 0; i < 4; ++i)
-                    AddNested(new ScorePaddingObject());
+                    AddNested(new ScorePaddingObject() { StartTime = this.GetEndTime() });
         }
     }
 }
