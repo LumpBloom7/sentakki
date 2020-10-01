@@ -15,12 +15,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private readonly CircularProgress yellowProgress;
         private readonly CircularProgress greenProgress;
         private readonly CircularProgress blueProgress;
-        private readonly OsuColour colours = new OsuColour();
 
         public BindableDouble ProgressBindable = new BindableDouble();
 
         public TouchHoldProgressPiece()
         {
+            OsuColour colours = new OsuColour();
             ProgressBindable.BindValueChanged(p =>
             {
                 redProgress.Current.Value = Math.Min(p.NewValue, .25);

@@ -42,7 +42,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             isHitting.BindValueChanged(b =>
             {
-                if (b.NewValue) beginHoldAt(Time.Current);
+                if (b.NewValue) beginHold();
                 else endHold();
             });
         }
@@ -104,7 +104,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public double? HoldStartTime { get; private set; }
         public double TotalHoldTime = 0;
 
-        private void beginHoldAt(double timeOffset)
+        private void beginHold()
         {
             HoldStartTime = Math.Max(Time.Current, HitObject.StartTime);
             Colour = Color4.White;
