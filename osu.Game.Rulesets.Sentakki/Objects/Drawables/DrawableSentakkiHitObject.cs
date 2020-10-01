@@ -66,7 +66,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 AddRangeInternal(new Drawable[]{
                     breakSound = new SkinnableSound(new SampleInfo("Break")),
                 });
-            AddInternal(nestedBreakObjects = new Container<SentakkiDrawableBreak>());
+            AddInternal(scorePaddingObjects = new Container<DrawableScorePaddingObject>());
             AdjustedAnimationDuration.BindValueChanged(_ => InvalidateTransforms());
             OnNewResult += applyBreakResult;
         }
@@ -124,24 +124,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        private Container<SentakkiDrawableBreak> nestedBreakObjects;
+        private Container<DrawableScorePaddingObject> scorePaddingObjects;
 
         protected override void ClearNestedHitObjects()
         {
             base.ClearNestedHitObjects();
-            nestedBreakObjects.Clear();
+            scorePaddingObjects.Clear();
         }
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
         {
             base.AddNestedHitObject(hitObject);
-            if (hitObject is SentakkiDrawableBreak x)
-                nestedBreakObjects.Add(x);
+            if (hitObject is DrawableScorePaddingObject x)
+                scorePaddingObjects.Add(x);
         }
 
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
         {
-            if (hitObject is SentakkiHitObject.SentakkiBreakDummyObject x)
-                return new SentakkiDrawableBreak(x);
+            if (hitObject is ScorePaddingObject x)
+                return new DrawableScorePaddingObject(x);
 
             return base.CreateNestedHitObject(hitObject);
         }
@@ -149,20 +149,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private void applyBreakResult(DrawableHitObject hitObject, JudgementResult judgement)
         {
             if (hitObject != this) return;
-            foreach (SentakkiDrawableBreak breakObj in nestedBreakObjects)
-                breakObj.ApplyHitResult(judgement.Type);
-
-
-
-        }
-
-        public class SentakkiDrawableBreak : DrawableHitObject
-        {
-            public override bool DisplayResult => false;
-            public SentakkiDrawableBreak(SentakkiHitObject.SentakkiBreakDummyObject hitObject)
-            : base(hitObject) { }
-
-            public void ApplyHitResult(HitResult result) => ApplyResult(r => r.Type = result);
+            foreach (DrawableScorePaddingObject breakObj in scorePaddingObjects)
+                breakObj.ApplyResult(r => r.Type = judgement.Type);
         }
     }
 }

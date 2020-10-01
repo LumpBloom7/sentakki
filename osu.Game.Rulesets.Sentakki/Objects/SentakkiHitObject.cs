@@ -28,17 +28,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             if (IsBreak)
                 for (int i = 0; i < 5; ++i)
-                    AddNested(new SentakkiBreakDummyObject()
-                    {
-                        StartTime = StartTime
-                    });
-        }
-
-        // Used to increase weighting of notes with break modifier
-        public class SentakkiBreakDummyObject : HitObject
-        {
-            protected override HitWindows CreateHitWindows() => HitWindows.Empty;
-            public override Judgement CreateJudgement() => new SentakkiJudgement();
+                    AddNested(new ScorePaddingObject());
         }
     }
 }
