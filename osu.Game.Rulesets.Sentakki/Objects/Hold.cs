@@ -7,6 +7,7 @@ using osu.Game.Rulesets.Sentakki.Judgements;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
@@ -43,7 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 IsBreak = IsBreak,
                 StartTime = StartTime,
                 Lane = Lane,
-                Samples = nodeSamples.First()
+                Samples = nodeSamples.FirstOr(new List<HitSampleInfo>())
             });
         }
 
