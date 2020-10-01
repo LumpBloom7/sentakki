@@ -75,7 +75,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         RelativeSizeAxes  = Axes.None,
-                        Size = new Vector2(80),
+                        Size = new Vector2(75),
                     }
                 },
                 SlideNodes = new Container<DrawableSlideNode>

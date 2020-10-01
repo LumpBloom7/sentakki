@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         public SlideTapPiece()
         {
-            Size = new Vector2(80);
+            Size = new Vector2(75);
 
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
