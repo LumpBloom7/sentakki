@@ -27,7 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             base.CreateNestedHitObjects(cancellationToken);
 
             if (IsBreak)
-                for (int i = 0; i < 5; ++i)
+                for (int i = 0; i < 4; ++i)
                     AddNested(new ScorePaddingObject());
         }
     }
