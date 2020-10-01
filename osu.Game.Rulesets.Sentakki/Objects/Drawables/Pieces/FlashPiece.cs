@@ -15,14 +15,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Origin = Anchor.Centre;
             Blending = BlendingParameters.Additive;
             Alpha = 0;
-            Child = new CircularContainer
+            Masking = true;
+            Child = new Box
             {
-                Masking = true,
-                RelativeSizeAxes = Axes.Both,
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both
-                }
+                RelativeSizeAxes = Axes.Both
             };
         }
     }
