@@ -1,4 +1,4 @@
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Framework.Graphics;
@@ -57,7 +57,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (userTriggered || Time.Current < (HitObject as IHasDuration)?.EndTime)
                 return;
 
-            double result = TotalHoldTime / (HitObject as IHasDuration).Duration;
+            double result = totalHoldTime / (HitObject as IHasDuration).Duration;
 
             HitResult resultType;
 
@@ -101,21 +101,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         /// <summary>
         /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
         /// </summary>
-        public double? HoldStartTime { get; private set; }
-        public double TotalHoldTime = 0;
+        private double? holdStartTime;
+        private double totalHoldTime;
 
         private void beginHold()
         {
-            HoldStartTime = Math.Max(Time.Current, HitObject.StartTime);
+            holdStartTime = Math.Max(Time.Current, HitObject.StartTime);
             Colour = Color4.White;
         }
 
         private void endHold()
         {
-            if (HoldStartTime.HasValue)
-                TotalHoldTime += Math.Max(Time.Current - HoldStartTime.Value, 0);
+            if (holdStartTime.HasValue)
+                totalHoldTime += Math.Max(Time.Current - holdStartTime.Value, 0);
 
-            HoldStartTime = null;
+            holdStartTime = null;
             Colour = Color4.SlateGray;
         }
 
