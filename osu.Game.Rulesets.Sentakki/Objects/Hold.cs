@@ -3,9 +3,11 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Scoring;
+using osu.Game.Rulesets.Sentakki.Judgements;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
@@ -21,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set
             {
                 Samples = value.Last();
-                Head.Samples = value.First();
+                nodeSamples = value;
             }
         }
 
@@ -33,40 +35,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public double Duration { get; set; }
 
-        public override double StartTime
-        {
-            get => base.StartTime;
-            set
-            {
-                base.StartTime = value;
-                Head.StartTime = value;
-            }
-        }
-
-        public override int Lane
-        {
-            get => base.Lane;
-            set
-            {
-                base.Lane = value;
-                Head.Lane = value;
-            }
-        }
-
-        public readonly HoldHead Head = new HoldHead();
-
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
             base.CreateNestedHitObjects(cancellationToken);
 
-            AddNested(Head);
+            AddNested(new HoldHead
+            {
+                IsBreak = IsBreak,
+                StartTime = StartTime,
+                Lane = Lane,
+                Samples = nodeSamples.FirstOr(new List<HitSampleInfo>())
+            });
         }
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
 
         public class HoldHead : SentakkiLanedHitObject
         {
-            public override Judgement CreateJudgement() => new IgnoreJudgement();
+            public override Judgement CreateJudgement() => new SentakkiJudgement();
             protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
         }
     }

@@ -78,12 +78,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             switch (hitObject)
             {
-                case Hold.HoldHead _:
-                    return new DrawableHoldHead(this)
+                case Hold.HoldHead head:
+                    return new DrawableHoldHead(head)
                     {
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
-                        AccentColour = { BindTarget = AccentColour }
+                        AccentColour = { BindTarget = AccentColour },
+                        AutoBindable = { BindTarget = AutoBindable }
                     };
             }
 
@@ -155,9 +156,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     // Force a miss on the head in this case
                     if (!headContainer.First().Result.HasResult)
                         headContainer.First().MissForcefully();
-
-                    if (result >= headContainer.First().Result.Type)
-                        result = headContainer.First().Result.Type;
 
                     if (Auto) result = HitResult.Perfect;
                     ApplyResult(r => r.Type = result);
