@@ -123,8 +123,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
             if (!judgedObject.DisplayResult || !DisplayJudgements.Value)
                 return;
 
+            if (!(judgedObject is DrawableSentakkiHitObject)) return;
+
             var sentakkiObj = judgedObject as DrawableSentakkiHitObject;
-            if (sentakkiObj is null) return;
 
             DrawableSentakkiJudgement explosion;
             switch (judgedObject.HitObject)

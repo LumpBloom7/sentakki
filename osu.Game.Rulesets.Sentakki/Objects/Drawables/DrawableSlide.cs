@@ -101,7 +101,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (NestedHitObjects.All(n => n.Result.HasResult && Time.Current >= n.LatestTransformEndTime))
-                ApplyResult(r => r.Type = HitResult.Perfect);
+                ApplyResult(r => r.Type = r.Judgement.MaxResult);
         }
     }
 }
