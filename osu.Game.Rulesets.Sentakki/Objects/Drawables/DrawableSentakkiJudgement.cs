@@ -41,11 +41,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 switch (Result.Type)
                 {
-                    case HitResult.Perfect:
-                        sentakkiJudgementText.Text = "Critical";
-                        sentakkiJudgementText.Colour = Color4.Yellow;
-                        break;
-
                     case HitResult.Great:
                         sentakkiJudgementText.Text = "Perfect";
                         break;

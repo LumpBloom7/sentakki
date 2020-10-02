@@ -140,14 +140,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     double totalHoldRatio = TotalHoldTime / ((IHasDuration)HitObject).Duration;
                     HitResult result;
 
-                    if (totalHoldRatio >= .9)
-                        result = HitResult.Perfect;
-                    else if (totalHoldRatio >= .75)
+                    if (totalHoldRatio >= .75)
                         result = HitResult.Great;
                     else if (totalHoldRatio >= .5)
                         result = HitResult.Good;
                     else if (totalHoldRatio >= .25)
-                        result = HitResult.Ok;
+                        result = HitResult.Meh;
                     else
                         result = HitResult.Miss;
 
@@ -157,7 +155,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     if (!headContainer.First().Result.HasResult)
                         headContainer.First().MissForcefully();
 
-                    if (Auto) result = HitResult.Perfect;
+                    if (Auto) result = HitResult.Great;
                     ApplyResult(r => r.Type = result);
                 }
             }

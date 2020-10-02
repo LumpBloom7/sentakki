@@ -90,7 +90,6 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 {
                     switch (e.Result)
                     {
-                        case HitResult.Perfect:
                         case HitResult.Great:
                             ++GreatCount;
                             goto case HitResult.Good;

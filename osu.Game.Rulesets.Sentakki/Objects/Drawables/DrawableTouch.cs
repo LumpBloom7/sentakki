@@ -143,7 +143,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!userTriggered || AutoTouch)
             {
                 if ((Auto || AutoTouch) && timeOffset > 0)
-                    ApplyResult(r => r.Type = HitResult.Perfect);
+                    ApplyResult(r => r.Type = HitResult.Great);
 
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
                     ApplyResult(r => r.Type = HitResult.Miss);

@@ -185,7 +185,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 {
                     SlideNodes.Last().ForceJudgement(false);
                     if (SlideNodes.Count(node => !node.Result.IsHit) <= 2)
-                        ApplyResult(r => r.Type = HitResult.Good);
+                        ApplyResult(r => r.Type = HitResult.Meh);
                     else
                         ApplyResult(r => r.Type = HitResult.Miss);
                 }
