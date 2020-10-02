@@ -17,12 +17,20 @@ namespace osu.Game.Rulesets.Sentakki.Difficulty
         protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills, double clockRate)
         {
             int maxCombo = 0;
-            foreach (var h in beatmap.HitObjects)
+            foreach (SentakkiHitObject h in beatmap.HitObjects)
             {
-                if (h is Slide s)
-                    maxCombo += 1 + s.SlideInfoList.Count;
-                else
-                    ++maxCombo;
+                switch (h)
+                {
+                    case Slide slide:
+                        maxCombo += 1 + slide.SlideInfoList.Count + (slide.IsBreak ? 4 : 0);
+                        break;
+                    case Hold hold:
+                        maxCombo += 2 + (hold.IsBreak ? 8 : 0);
+                        break;
+                    default:
+                        maxCombo += 1 + (h.IsBreak ? 4 : 0);
+                        break;
+                }
             }
 
             return new DifficultyAttributes
