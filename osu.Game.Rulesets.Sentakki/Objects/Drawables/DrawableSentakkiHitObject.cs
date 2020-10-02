@@ -116,7 +116,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public override void PlaySamples()
         {
             base.PlaySamples();
-            if (PlayBreakSample && breakSound != null && Result.Type == HitResult.Perfect && breakEnabled.Value && (!gameplayClock?.IsSeeking ?? false))
+            if (PlayBreakSample && breakSound != null && Result.Type == HitResult.Great && breakEnabled.Value && (!gameplayClock?.IsSeeking ?? false))
             {
                 const float balance_adjust_amount = 0.4f;
                 breakSound.Balance.Value = balance_adjust_amount * (userPositionalHitSounds.Value ? SamplePlaybackPosition - 0.5f : 0);
