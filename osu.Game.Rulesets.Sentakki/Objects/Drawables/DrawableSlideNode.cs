@@ -94,21 +94,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!userTriggered || AutoTouch)
             {
                 if (timeOffset > 0 && (Auto || AutoTouch))
-                    ApplyResult(r => r.Type = HitResult.Perfect);
+                    ApplyResult(r => r.Type = r.Judgement.MaxResult);
                 return;
             }
 
             if (!IsHittable)
                 return;
 
-            HitResult result;
-            result = HitResult.Perfect;
-
-            ApplyResult(r => r.Type = result);
+            ApplyResult(r => r.Type = r.Judgement.MaxResult);
         }
 
         // Forces this object to have a result.
-        public void ForceJudgement(bool successful = false) => ApplyResult(r => r.Type = successful ? HitResult.Perfect : HitResult.Miss);
+        public void ForceJudgement(bool successful = false) => ApplyResult(r => r.Type = successful ? r.Judgement.MaxResult : r.Judgement.MinResult);
 
         protected override void Update()
         {
