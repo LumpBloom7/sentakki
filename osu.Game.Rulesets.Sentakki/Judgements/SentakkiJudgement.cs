@@ -5,6 +5,6 @@ namespace osu.Game.Rulesets.Sentakki.Judgements
 {
     public class SentakkiJudgement : Judgement
     {
-        public override HitResult MaxResult => HitResult.Perfect;
+        public override HitResult MaxResult => HitResult.Great;
     }
 }

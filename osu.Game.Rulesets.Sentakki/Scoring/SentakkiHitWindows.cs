@@ -8,7 +8,6 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
         {
             switch (result)
             {
-                case HitResult.Perfect:
                 case HitResult.Great:
                 case HitResult.Good:
                 case HitResult.Meh:
@@ -24,7 +23,6 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
             new DifficultyRange(HitResult.Meh, 144, 144, 144),
             new DifficultyRange(HitResult.Good, 96, 96, 96),
             new DifficultyRange(HitResult.Great, 48, 48, 48),
-            new DifficultyRange(HitResult.Perfect, 16, 16, 16)
         };
     }
 }
