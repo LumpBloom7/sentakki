@@ -1,17 +1,10 @@
-using NUnit.Framework;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Game.Beatmaps;
-using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Tests.Visual;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
-    public class TestSceneSlideNote : TestSceneHitObject
+    public class TestSceneSlideNote : TestSceneSentakkiHitObject
     {
         protected override IBeatmap CreateBeatmap(RulesetInfo ruleset)
         {

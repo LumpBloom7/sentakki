@@ -2,18 +2,12 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Beatmaps;
-using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Tests.Visual;
-using osuTK;
-using osuTK.Graphics;
-using System.Linq;
 using osu.Framework.Utils;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
-    public class TestSceneTouchNote : TestSceneHitObject
+    public class TestSceneTouchNote : TestSceneSentakkiHitObject
     {
         protected override IBeatmap CreateBeatmap(RulesetInfo ruleset)
         {
