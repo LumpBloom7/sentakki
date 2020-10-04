@@ -39,13 +39,36 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
             circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
 
-            Add(new DrawableTap(circle)
+            Add(new TestDrawableTap(circle, auto)
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Depth = depthIndex++,
-                Auto = auto
             });
+        }
+
+        protected class TestDrawableTap : DrawableTap
+        {
+            private readonly bool auto;
+
+            public TestDrawableTap(Tap h, bool auto)
+                : base(h)
+            {
+                this.auto = auto;
+            }
+
+            public void TriggerJudgement() => UpdateResult(true);
+
+            protected override void CheckForResult(bool userTriggered, double timeOffset)
+            {
+                if (auto && !userTriggered && timeOffset > 0)
+                {
+                    // force success
+                    ApplyResult(r => r.Type = r.Judgement.MaxResult);
+                }
+                else
+                    base.CheckForResult(userTriggered, timeOffset);
+            }
         }
     }
 }

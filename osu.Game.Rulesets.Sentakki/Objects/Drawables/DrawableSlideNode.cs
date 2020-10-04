@@ -93,7 +93,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (!userTriggered || AutoTouch)
             {
-                if (timeOffset > 0 && (Auto || AutoTouch))
+                if (timeOffset > 0 && AutoTouch)
                     ApplyResult(r => r.Type = r.Judgement.MaxResult);
                 return;
             }

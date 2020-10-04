@@ -84,7 +84,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
                         AccentColour = { BindTarget = AccentColour },
-                        AutoBindable = { BindTarget = AutoBindable }
                     };
             }
 
@@ -122,7 +121,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                             .Delay(animTime - stretchTime)
                             .ResizeHeightTo(75, stretchTime);
 
-                    if (HoldStartTime == null && !Auto)
+                    if (HoldStartTime == null)
                         NoteBody.Note.Delay(animTime).FadeColour(Color4.Gray, 100);
 
                     HitObjectLine.ScaleTo(1, animTime);
@@ -155,7 +154,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     if (!headContainer.First().Result.HasResult)
                         headContainer.First().MissForcefully();
 
-                    if (Auto) result = HitResult.Great;
                     ApplyResult(r => r.Type = result);
                 }
             }

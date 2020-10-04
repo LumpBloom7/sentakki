@@ -44,7 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Depth = depthIndex++,
-                Auto = auto
+                AutoTouch = auto
             });
         }
     }

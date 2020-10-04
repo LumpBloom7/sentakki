@@ -55,18 +55,13 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
             slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
 
-            DrawableSlide dSlide;
-
-            Add(dSlide = new DrawableSlide(slide)
+            Add(new DrawableSlide(slide)
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Depth = depthIndex++,
-                Auto = auto
+                AutoTouch = auto
             });
-
-            foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects)
-                nested.Auto = auto;
         }
     }
 }
