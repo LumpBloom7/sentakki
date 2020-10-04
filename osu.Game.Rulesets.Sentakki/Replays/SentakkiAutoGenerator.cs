@@ -7,6 +7,9 @@ using osuTK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using osu.Game.Rulesets.Sentakki.Scoring;
+using Microsoft.EntityFrameworkCore.Query.Expressions;
+using System.Diagnostics;
 
 namespace osu.Game.Rulesets.Sentakki.Replays
 {
@@ -19,8 +22,6 @@ namespace osu.Game.Rulesets.Sentakki.Replays
 
         public new Beatmap<SentakkiHitObject> Beatmap => (Beatmap<SentakkiHitObject>)base.Beatmap;
 
-        private List<SentakkiHitObject> lanedHitObjects;
-
         public SentakkiAutoGenerator(IBeatmap beatmap)
             : base(beatmap)
         {
@@ -32,11 +33,10 @@ namespace osu.Game.Rulesets.Sentakki.Replays
             //add some frames at the beginning so the cursor doesnt suddenly appear on the first note
             Frames.Add(new SentakkiReplayFrame { Position = new Vector2(-1000), Time = -500 });
 
-            lanedHitObjects = Beatmap.HitObjects.Where(h => h is SentakkiLanedHitObject).ToList();
-
             var pointGroups = generateActionPoints().GroupBy(a => a.Time).OrderBy(g => g.First().Time);
 
             var actions = new List<SentakkiAction>();
+            var TouchReplayEvents = new TouchReplayEvent[10];
 
             foreach (var group in pointGroups)
             {
@@ -44,21 +44,28 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                 {
                     switch (point)
                     {
-                        case HitPoint _:
-                            actions.Add(SentakkiAction.Key1 + point.Lane);
+                        case KeyDown e:
+                            actions.Add(SentakkiAction.Key1 + e.Lane);
                             break;
 
-                        case ReleasePoint _:
-                            actions.Remove(SentakkiAction.Key1 + point.Lane);
+                        case KeyUp e:
+                            actions.Remove(SentakkiAction.Key1 + e.Lane);
+                            break;
+                        case TouchDown e:
+                            TouchReplayEvents[e.PointNumber] = e.TouchReplayEvent;
+                            break;
+                        case TouchUp e:
+                            TouchReplayEvents[e.PointNumber] = null;
                             break;
                     }
                 }
 
                 // todo: can be removed once FramedReplayInputHandler correctly handles rewinding before first frame.
                 if (Replay.Frames.Count == 0)
-                    Replay.Frames.Add(new SentakkiReplayFrame(group.First().Time - 1, new Vector2(-1000)));
+                    Replay.Frames.Add(new SentakkiReplayFrame(group.First().Time - 1, new Vector2(-1000), Array.Empty<TouchReplayEvent>()));
 
-                Replay.Frames.Add(new SentakkiReplayFrame(group.First().Time, new Vector2(-1000), actions.ToArray()));
+
+                Replay.Frames.Add(new SentakkiReplayFrame(group.First().Time, new Vector2(-1000), TouchReplayEvents.ToList().ToArray(), actions.ToArray()));
             }
 
             return Replay;
@@ -66,53 +73,122 @@ namespace osu.Game.Rulesets.Sentakki.Replays
 
         private IEnumerable<IActionPoint> generateActionPoints()
         {
-            for (int i = 0; i < lanedHitObjects.Count; i++)
-            {
-                var currentObject = lanedHitObjects[i] as SentakkiLanedHitObject;
-                var nextObjectInColumn = GetNextObject(i) as SentakkiLanedHitObject; // Get the next object that requires pressing the same button
+            var touchPointInUsedUntil = new double?[10];
 
+            for (int i = 0; i < Beatmap.HitObjects.Count; i++)
+            {
+                var currentObject = Beatmap.HitObjects[i];
                 double endTime = currentObject.GetEndTime();
 
-                bool canDelayKeyUp = nextObjectInColumn == null ||
-                                     nextObjectInColumn.StartTime > endTime + RELEASE_DELAY;
+                int nextAvailableTouchPoint() => Array.IndexOf(touchPointInUsedUntil, touchPointInUsedUntil.First(t => !t.HasValue || t.Value < currentObject.StartTime));
 
-                double calculatedDelay = canDelayKeyUp ? RELEASE_DELAY : (nextObjectInColumn.StartTime - endTime) * 0.9;
+                switch (currentObject)
+                {
+                    case SentakkiLanedHitObject laned:
+                        var nextObjectInColumn = GetNextObject(i) as SentakkiLanedHitObject; // Get the next object that requires pressing the same button
 
-                yield return new HitPoint { Time = currentObject.StartTime, Lane = currentObject.Lane };
+                        bool canDelayKeyUp = nextObjectInColumn == null ||
+                                             nextObjectInColumn.StartTime > endTime + RELEASE_DELAY;
 
-                yield return new ReleasePoint { Time = endTime + calculatedDelay, Lane = currentObject.Lane };
+                        double calculatedDelay = canDelayKeyUp ? RELEASE_DELAY : (nextObjectInColumn.StartTime - endTime) * 0.9;
+
+                        yield return new KeyDown { Time = currentObject.StartTime, Lane = laned.Lane };
+                        yield return new KeyUp { Time = endTime + calculatedDelay, Lane = laned.Lane };
+
+                        if (laned is Slide s)
+                        {
+                            foreach (var slideInfo in s.SlideInfoList)
+                            {
+                                double delay = Beatmap.ControlPointInfo.TimingPointAt(currentObject.StartTime).BeatLength * slideInfo.ShootDelay / 2;
+                                if (delay >= slideInfo.Duration - 50) delay = 0;
+                                yield return new TouchDown
+                                {
+                                    Time = currentObject.StartTime + delay,
+                                    TouchReplayEvent = new TouchReplayEvent(slideInfo.SlidePath.Path, slideInfo.Duration - delay, currentObject.StartTime + delay, s.Lane.GetRotationForLane() - 22.5f),
+                                    PointNumber = nextAvailableTouchPoint()
+                                };
+                                yield return new TouchUp { Time = currentObject.StartTime + slideInfo.Duration, PointNumber = nextAvailableTouchPoint() };
+                                touchPointInUsedUntil[nextAvailableTouchPoint()] = currentObject.StartTime + slideInfo.Duration;
+                            }
+                        }
+                        break;
+
+                    case Touch t:
+                        yield return new TouchDown
+                        {
+                            Time = currentObject.StartTime,
+                            PointNumber = nextAvailableTouchPoint(),
+                            TouchReplayEvent = new TouchReplayEvent(t.Position, 10, currentObject.StartTime)
+                        };
+                        yield return new TouchUp { Time = endTime + 10, PointNumber = nextAvailableTouchPoint() };
+                        touchPointInUsedUntil[nextAvailableTouchPoint()] = endTime + 10;
+                        break;
+
+                    case TouchHold _:
+                        yield return new TouchDown
+                        {
+                            Time = currentObject.StartTime,
+                            PointNumber = nextAvailableTouchPoint(),
+                            TouchReplayEvent = new TouchReplayEvent(Vector2.Zero, 10, currentObject.StartTime)
+                        };
+                        yield return new TouchUp { Time = endTime + 10, PointNumber = nextAvailableTouchPoint() };
+                        touchPointInUsedUntil[nextAvailableTouchPoint()] = endTime + 10;
+                        break;
+                }
             }
         }
 
         protected override HitObject GetNextObject(int currentIndex)
         {
-            int desiredLane = (lanedHitObjects[currentIndex] as SentakkiLanedHitObject).Lane;
+            int desiredLane = (Beatmap.HitObjects[currentIndex] as SentakkiLanedHitObject).Lane;
 
-            for (int i = currentIndex + 1; i < lanedHitObjects.Count; i++)
+            for (int i = currentIndex + 1; i < Beatmap.HitObjects.Count; i++)
             {
-                if ((lanedHitObjects[i] as SentakkiLanedHitObject).Lane == desiredLane)
-                    return lanedHitObjects[i];
+                if (Beatmap.HitObjects[i] is SentakkiLanedHitObject laned && laned.Lane == desiredLane)
+                    return Beatmap.HitObjects[i];
             }
 
             return null;
         }
 
+
         private interface IActionPoint
         {
             double Time { get; set; }
+        }
+        private interface ILanedActionPoint : IActionPoint
+        {
             int Lane { get; set; }
         }
+        private interface ITouchActionPoint : IActionPoint
+        {
+            TouchReplayEvent TouchReplayEvent { get; set; }
+            int PointNumber { get; set; }
+        }
 
-        private struct HitPoint : IActionPoint
+        private struct KeyDown : ILanedActionPoint
         {
             public double Time { get; set; }
             public int Lane { get; set; }
         }
 
-        private struct ReleasePoint : IActionPoint
+        private struct KeyUp : ILanedActionPoint
         {
             public double Time { get; set; }
             public int Lane { get; set; }
+        }
+        private struct TouchDown : ITouchActionPoint
+        {
+            public double Time { get; set; }
+            public TouchReplayEvent TouchReplayEvent { get; set; }
+            public int PointNumber { get; set; }
+
+        }
+        private struct TouchUp : ITouchActionPoint
+        {
+            public double Time { get; set; }
+            public TouchReplayEvent TouchReplayEvent { get; set; }
+            public int PointNumber { get; set; }
         }
     }
 }

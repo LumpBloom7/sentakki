@@ -1,5 +1,6 @@
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
+using osu.Framework.Utils;
 using System;
 
 namespace osu.Game.Rulesets.Sentakki
@@ -65,6 +66,23 @@ namespace osu.Game.Rulesets.Sentakki
                     result = i;
             }
             return result;
+        }
+
+        public static Vector2 RotatePointAroundOrigin(Vector2 point, Vector2 origin, float angle)
+        {
+            angle = -angle;
+
+            point.X -= origin.X;
+            point.Y -= origin.Y;
+
+            Vector2 ret;
+            ret.X = point.X * MathF.Cos(MathUtils.DegreesToRadians(angle)) + point.Y * MathF.Sin(MathUtils.DegreesToRadians(angle));
+            ret.Y = point.X * -MathF.Sin(MathUtils.DegreesToRadians(angle)) + point.Y * MathF.Cos(MathUtils.DegreesToRadians(angle));
+
+            ret.X += origin.X;
+            ret.Y += origin.Y;
+
+            return ret;
         }
     }
 }

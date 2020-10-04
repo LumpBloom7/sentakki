@@ -7,6 +7,7 @@ using osu.Game.Rulesets.UI;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using osu.Framework.Allocation;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {

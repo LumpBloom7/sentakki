@@ -2,25 +2,30 @@
 using osu.Game.Beatmaps;
 using osu.Game.Replays.Legacy;
 using osu.Game.Rulesets.Replays;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Replays.Types;
+using osu.Framework.Input;
 using osuTK;
+using osu.Framework.Input.Events;
 
 namespace osu.Game.Rulesets.Sentakki.Replays
 {
     public class SentakkiReplayFrame : ReplayFrame, IConvertibleReplayFrame
     {
-        public ReplayEvent NoteEvent = ReplayEvent.none;
         public Vector2 Position;
         public List<SentakkiAction> Actions = new List<SentakkiAction>();
+
+        public TouchReplayEvent[] TouchReplayEvents { get; set; }
 
         public SentakkiReplayFrame()
         {
         }
 
-        public SentakkiReplayFrame(double time, Vector2 position, params SentakkiAction[] actions)
+        public SentakkiReplayFrame(double time, Vector2 position, TouchReplayEvent[] TRE, params SentakkiAction[] actions)
             : base(time)
         {
             Position = position;
+            TouchReplayEvents = TRE;
             Actions.AddRange(actions);
         }
 
@@ -42,15 +47,31 @@ namespace osu.Game.Rulesets.Sentakki.Replays
             return new LegacyReplayFrame(Time, Position.X, Position.Y, state);
         }
     }
-
-    public enum ReplayEvent
+    public class TouchReplayEvent
     {
-        none,
-        TapDown,
-        TapUp,
-        TouchHoldDown,
-        TouchHoldUp,
-        HoldDown,
-        HoldUp
+        public TouchReplayEvent(Vector2 Position, double Duration, double startTime, float rotation = 0)
+        {
+            MovementPath = new SliderPath(new PathControlPoint[]{
+                new PathControlPoint(Position)
+            });
+            this.Duration = Duration;
+            StartTime = startTime;
+            Rotation = rotation;
+        }
+
+        public TouchReplayEvent(SliderPath path, double Duration, double startTime, float rotation = 0)
+        {
+            MovementPath = path;
+            this.Duration = Duration;
+            StartTime = startTime;
+            Rotation = rotation;
+        }
+
+
+        public SliderPath MovementPath;
+        public double Duration;
+        public double StartTime;
+        public float Rotation = 0;
+
     }
 }

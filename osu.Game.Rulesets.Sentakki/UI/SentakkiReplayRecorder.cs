@@ -4,6 +4,7 @@ using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.Replays;
 using osu.Game.Rulesets.UI;
 using osuTK;
+using System;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -15,6 +16,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
         }
 
         protected override ReplayFrame HandleFrame(Vector2 mousePosition, List<SentakkiAction> actions, ReplayFrame previousFrame)
-            => new SentakkiReplayFrame(Time.Current, mousePosition, actions.ToArray());
+            => new SentakkiReplayFrame(Time.Current, mousePosition, Array.Empty<TouchReplayEvent>(), actions.ToArray());
     }
 }
