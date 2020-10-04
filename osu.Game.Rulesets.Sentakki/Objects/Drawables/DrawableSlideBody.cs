@@ -184,7 +184,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
                 {
                     SlideNodes.Last().ForceJudgement(false);
-                    if (SlideNodes.Count(node => !node.Result.IsHit) <= 2)
+                    if (SlideNodes.Count(node => !node.Result.IsHit) <= 2 && SlideNodes.Count > 2)
                         ApplyResult(r => r.Type = HitResult.Meh);
                     else
                         ApplyResult(r => r.Type = HitResult.Miss);
