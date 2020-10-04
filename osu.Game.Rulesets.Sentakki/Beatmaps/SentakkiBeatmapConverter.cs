@@ -23,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
     {
         // todo: Check for conversion types that should be supported (ie. Beatmap.HitObjects.Any(h => h is IHasXPosition))
         // https://github.com/ppy/osu/tree/master/osu.Game/Rulesets/Objects/Types
-        public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition);
+        public override bool CanConvert() => true;
 
         public Bindable<ConversionExperiments> EnabledExperiments = new Bindable<ConversionExperiments>();
 

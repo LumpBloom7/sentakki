@@ -187,6 +187,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         ApplyResult(r => r.Type = HitResult.Meh);
                     else
                         ApplyResult(r => r.Type = HitResult.Miss);
+
+                    SlideNodes.Last().ForceJudgement(false);
                 }
 
                 return;

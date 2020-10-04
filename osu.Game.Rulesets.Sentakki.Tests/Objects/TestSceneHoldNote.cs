@@ -12,73 +12,28 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
-    [TestFixture]
-    public class TestSceneHoldNote : OsuTestScene
+    public class TestSceneHoldNote : TestSceneHitObject
     {
-        private readonly Container content;
-        protected override Container<Drawable> Content => content;
-
-        private int depthIndex;
-
-        public TestSceneHoldNote()
+        protected override IBeatmap CreateBeatmap(RulesetInfo ruleset)
         {
-            base.Content.Add(content = new SentakkiInputManager(new RulesetInfo { ID = 0 }));
-
-            AddStep("Miss Insane Short", () => testSingle(100));
-            AddStep("Hit Insane Short", () => testSingle(100, true));
-            AddStep("Miss Very Short", () => testSingle(200));
-            AddStep("Hit Very Short", () => testSingle(200, true));
-            AddStep("Miss Short", () => testSingle(500));
-            AddStep("Hit Short", () => testSingle(500, true));
-            AddStep("Miss Medium", () => testSingle(750));
-            AddStep("Hit Medium", () => testSingle(750, true));
-            AddStep("Miss Long", () => testSingle(1000));
-            AddStep("Hit Long", () => testSingle(1000, true));
-            AddStep("Miss Very Long", () => testSingle(3000));
-            AddStep("Hit Very Long", () => testSingle(3000, true));
-            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject) && (h as DrawableSentakkiHitObject).AllJudged == false));
-        }
-
-        private void testSingle(double duration, bool auto = false)
-        {
-            var circle = new Hold
+            var beatmap = new Beatmap<SentakkiHitObject>()
             {
-                StartTime = Time.Current + 1000,
-                EndTime = Time.Current + 1000 + duration,
+                BeatmapInfo =
+                {
+                    Ruleset = CreateRuleset()?.RulesetInfo ?? ruleset
+                },
             };
 
-            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
-
-            Add(new TestDrawableHold(circle, auto)
+            for (int i = 0; i < 8; ++i)
             {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Depth = depthIndex++,
-            });
-        }
-
-        protected class TestDrawableHold : DrawableHold
-        {
-            private readonly bool auto;
-
-            public TestDrawableHold(Hold h, bool auto)
-                : base(h)
-            {
-                this.auto = auto;
-            }
-
-            public void TriggerJudgement() => UpdateResult(true);
-
-            protected override void CheckForResult(bool userTriggered, double timeOffset)
-            {
-                if (auto && !userTriggered && timeOffset > 0)
+                beatmap.HitObjects.Add(new Hold
                 {
-                    // force success
-                    ApplyResult(r => r.Type = r.Judgement.MaxResult);
-                }
-                else
-                    base.CheckForResult(userTriggered, timeOffset);
+                    StartTime = 500 + (200 * i),
+                    Duration = 100 + (200 * i),
+                    Lane = i
+                });
             }
+            return beatmap;
         }
     }
 }

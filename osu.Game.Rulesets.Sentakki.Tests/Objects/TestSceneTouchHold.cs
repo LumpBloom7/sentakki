@@ -11,40 +11,24 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
-    [TestFixture]
-    public class TestSceneTouchHold : OsuTestScene
+    public class TestSceneTouchHold : TestSceneHitObject
     {
-        private readonly Container content;
-        protected override Container<Drawable> Content => content;
-
-        private int depthIndex;
-
-        public TestSceneTouchHold()
+        protected override IBeatmap CreateBeatmap(RulesetInfo ruleset)
         {
-            base.Content.Add(content = new SentakkiInputManager(new RulesetInfo { ID = 0 }));
-
-            AddStep("Miss Single", () => testSingle());
-            AddStep("Hit Single", () => testSingle(true));
-            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject) && (h as DrawableSentakkiHitObject).AllJudged == false));
-        }
-
-        private void testSingle(bool auto = false)
-        {
-            var circle = new TouchHold
+            var beatmap = new Beatmap<SentakkiHitObject>()
             {
-                StartTime = Time.Current + 1000,
-                Duration = 5000,
+                BeatmapInfo =
+                {
+                    Ruleset = CreateRuleset()?.RulesetInfo ?? ruleset
+                },
             };
-
-            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
-
-            Add(new DrawableTouchHold(circle)
+            beatmap.HitObjects.Add(new TouchHold
             {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Depth = depthIndex++,
-                AutoTouch = auto
+                StartTime = 500,
+                Duration = 1500
             });
+
+            return beatmap;
         }
     }
 }

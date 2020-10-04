@@ -9,66 +9,52 @@ using osu.Game.Tests.Visual;
 using osuTK;
 using osuTK.Graphics;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
-    [TestFixture]
-    public class TestSceneBreakNote : OsuTestScene
+    public class TestSceneBreakNote : TestSceneHitObject
     {
-        private readonly Container content;
-        protected override Container<Drawable> Content => content;
-
-        private int depthIndex;
-
-        public TestSceneBreakNote()
+        protected override IBeatmap CreateBeatmap(RulesetInfo ruleset)
         {
-            base.Content.Add(content = new SentakkiInputManager(new RulesetInfo { ID = 0 }));
-
-            AddStep("Miss Single", () => testSingle());
-            AddStep("Hit Single", () => testSingle(true));
-            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject) && (h as DrawableSentakkiHitObject).AllJudged == false));
-        }
-
-        private void testSingle(bool auto = false)
-        {
-            var circle = new Tap
+            var beatmap = new Beatmap<SentakkiHitObject>()
             {
-                IsBreak = true,
-                StartTime = Time.Current + 1000,
-            };
-
-            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
-
-            Add(new TestDrawableTap(circle, auto)
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Depth = depthIndex++,
-            });
-        }
-
-        protected class TestDrawableTap : DrawableTap
-        {
-            private readonly bool auto;
-
-            public TestDrawableTap(Tap h, bool auto)
-                : base(h)
-            {
-                this.auto = auto;
-            }
-
-            public void TriggerJudgement() => UpdateResult(true);
-
-            protected override void CheckForResult(bool userTriggered, double timeOffset)
-            {
-                if (auto && !userTriggered && timeOffset > 0)
+                BeatmapInfo =
                 {
-                    // force success
-                    ApplyResult(r => r.Type = r.Judgement.MaxResult);
-                }
-                else
-                    base.CheckForResult(userTriggered, timeOffset);
+                    Ruleset = CreateRuleset()?.RulesetInfo ?? ruleset
+                },
+            };
+            for (int i = 0; i < 8; ++i)
+            {
+                beatmap.HitObjects.Add(new Tap
+                {
+                    IsBreak = true,
+                    StartTime = 500,
+                    Lane = i
+                });
+                beatmap.HitObjects.Add(new Hold
+                {
+                    IsBreak = true,
+                    StartTime = 1000,
+                    Duration = 300,
+                    Lane = (i + 3).NormalizePath()
+                });
+                beatmap.HitObjects.Add(new Slide
+                {
+                    IsBreak = true,
+                    SlideInfoList = new List<SentakkiSlideInfo>
+                    {
+                        new SentakkiSlideInfo {
+                            ID = 1,
+                            Duration = 500,
+                        }
+                    },
+                    StartTime = 1500,
+                    Lane = (i + 7).NormalizePath()
+                });
             }
+
+            return beatmap;
         }
     }
 }

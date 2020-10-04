@@ -11,30 +11,19 @@ using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
-    [TestFixture]
-    public class TestSceneSlideNote : OsuTestScene
+    public class TestSceneSlideNote : TestSceneHitObject
     {
-        private readonly Container content;
-        protected override Container<Drawable> Content => content;
-
-        protected override Ruleset CreateRuleset() => new SentakkiRuleset();
-
-        private int depthIndex;
-
-        public TestSceneSlideNote()
+        protected override IBeatmap CreateBeatmap(RulesetInfo ruleset)
         {
-            base.Content.Add(content = new SentakkiInputManager(new RulesetInfo { ID = 0 }));
-
-            AddStep("Miss Single", () => testSingle(2000));
-            AddStep("Hit Single", () => testSingle(2000, true));
-            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject) && (h as DrawableSentakkiHitObject).AllJudged == false));
-        }
-
-        private void testSingle(double duration, bool auto = false)
-        {
-            var slide = new Slide
+            var beatmap = new Beatmap<SentakkiHitObject>()
             {
-                IsBreak = true,
+                BeatmapInfo =
+                {
+                    Ruleset = CreateRuleset()?.RulesetInfo ?? ruleset
+                },
+            };
+            beatmap.HitObjects.Add(new Slide
+            {
                 SlideInfoList = new List<SentakkiSlideInfo>
                 {
                     new SentakkiSlideInfo {
@@ -50,18 +39,10 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                         Duration = 2000,
                     }
                 },
-                StartTime = Time.Current + 1000,
-            };
-
-            slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
-
-            Add(new DrawableSlide(slide)
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Depth = depthIndex++,
-                AutoTouch = auto
+                StartTime = 500,
             });
+            return beatmap;
         }
+
     }
 }

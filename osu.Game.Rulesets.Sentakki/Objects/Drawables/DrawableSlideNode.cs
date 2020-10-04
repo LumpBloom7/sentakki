@@ -52,7 +52,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             OnNewResult += (DrawableHitObject hitObject, JudgementResult result) =>
             {
-                hitPreviousNodes(result.Type >= HitResult.Great);
+                hitPreviousNodes(result.Type == result.Judgement.MaxResult);
                 if (result.IsHit)
                     Slide.Slidepath.Progress = (HitObject as SlideBody.SlideNode).Progress;
             };
@@ -123,7 +123,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public override void PlaySamples()
         {
             base.PlaySamples();
-            if (ThisIndex == 0 && playSlideSample.Value && slideSound != null && Result.Type != HitResult.Miss && (!gameplayClock?.IsSeeking ?? false))
+            if (ThisIndex == 0 && playSlideSample.Value && slideSound != null && Result.Type != Result.Judgement.MinResult && (!gameplayClock?.IsSeeking ?? false))
             {
                 const float balance_adjust_amount = 0.4f;
                 slideSound.Balance.Value = balance_adjust_amount * (userPositionalHitSounds.Value ? SamplePlaybackPosition - 0.5f : 0);
