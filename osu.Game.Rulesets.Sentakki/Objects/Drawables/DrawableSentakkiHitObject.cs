@@ -20,11 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSentakkiHitObject : DrawableHitObject<SentakkiHitObject>
     {
-        private readonly Bindable<bool> userPositionalHitSounds = new Bindable<bool>(false);
-        private readonly SkinnableSound breakSound;
-
-        [Resolved(canBeNull: true)]
-        private GameplayClock gameplayClock { get; set; }
+        private readonly PausableSkinnableSound breakSound;
 
         public bool IsHidden = false;
         public bool IsFadeIn = false;
@@ -65,7 +61,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (hitObject.IsBreak)
                 AddRangeInternal(new Drawable[]{
-                    breakSound = new SkinnableSound(new SampleInfo("Break")),
+                    breakSound = new PausableSkinnableSound(new SampleInfo("Break")),
                 });
             AddInternal(scorePaddingObjects = new Container<DrawableScorePaddingObject>());
             AdjustedAnimationDuration.BindValueChanged(_ => InvalidateTransforms());
@@ -78,10 +74,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private readonly Bindable<bool> breakEnabled = new Bindable<bool>(true);
 
         [BackgroundDependencyLoader(true)]
-        private void load(DrawableSentakkiRuleset drawableRuleset, OsuConfigManager osuConfig, SentakkiRulesetConfigManager sentakkiConfig)
+        private void load(DrawableSentakkiRuleset drawableRuleset, SentakkiRulesetConfigManager sentakkiConfig)
         {
             drawableSentakkiRuleset = drawableRuleset;
-            osuConfig.BindWith(OsuSetting.PositionalHitSounds, userPositionalHitSounds);
             sentakkiConfig?.BindWith(SentakkiRulesetSettings.BreakSounds, breakEnabled);
         }
 
@@ -116,10 +111,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public override void PlaySamples()
         {
             base.PlaySamples();
-            if (PlayBreakSample && breakSound != null && Result.Type == HitResult.Great && breakEnabled.Value && (!gameplayClock?.IsSeeking ?? false))
+            if (PlayBreakSample && breakSound != null && Result.Type == Result.Judgement.MaxResult && breakEnabled.Value)
             {
-                const float balance_adjust_amount = 0.4f;
-                breakSound.Balance.Value = balance_adjust_amount * (userPositionalHitSounds.Value ? SamplePlaybackPosition - 0.5f : 0);
+                breakSound.Balance.Value = CalculateSamplePlaybackBalance(SamplePlaybackPosition);
                 breakSound.Play();
             }
         }
