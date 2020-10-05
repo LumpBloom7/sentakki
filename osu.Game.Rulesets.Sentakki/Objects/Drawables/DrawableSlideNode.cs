@@ -18,11 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideNode : DrawableSentakkiTouchHitObject
     {
-        [Resolved(canBeNull: true)]
-        private GameplayClock gameplayClock { get; set; }
-
-        private readonly Bindable<bool> userPositionalHitSounds = new Bindable<bool>(false);
-        private SkinnableSound slideSound;
+        private PausableSkinnableSound slideSound;
 
         public override bool HandlePositionalInput => true;
         public override bool DisplayResult => false;
@@ -65,7 +61,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void LoadSamples()
         {
             base.LoadSamples();
-            AddInternal(slideSound = new SkinnableSound(new SampleInfo("slide")));
+            AddInternal(slideSound = new PausableSkinnableSound(new SampleInfo("slide")));
         }
 
         protected bool IsHittable => ThisIndex < 2 || Slide.SlideNodes[ThisIndex - 2].IsHit;
@@ -83,9 +79,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private readonly Bindable<bool> playSlideSample = new Bindable<bool>(true);
         [BackgroundDependencyLoader(true)]
-        private void load(OsuConfigManager osuConfig, SentakkiRulesetConfigManager sentakkiConfig)
+        private void load(SentakkiRulesetConfigManager sentakkiConfig)
         {
-            osuConfig.BindWith(OsuSetting.PositionalHitSounds, userPositionalHitSounds);
             sentakkiConfig?.BindWith(SentakkiRulesetSettings.SlideSounds, playSlideSample);
         }
 
@@ -125,10 +120,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public override void PlaySamples()
         {
             base.PlaySamples();
-            if (ThisIndex == 0 && playSlideSample.Value && slideSound != null && Result.Type != Result.Judgement.MinResult && (!gameplayClock?.IsSeeking ?? false))
+            if (ThisIndex == 0 && playSlideSample.Value && slideSound != null && Result.Type != Result.Judgement.MinResult)
             {
-                const float balance_adjust_amount = 0.4f;
-                slideSound.Balance.Value = balance_adjust_amount * (userPositionalHitSounds.Value ? SamplePlaybackPosition - 0.5f : 0);
+                slideSound.Balance.Value = CalculateSamplePlaybackBalance(SamplePlaybackPosition);
                 slideSound.Play();
             }
         }
