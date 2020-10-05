@@ -15,7 +15,9 @@ namespace osu.Game.Rulesets.Sentakki.Replays
 {
     public class SentakkiAutoGenerator : AutoGenerator
     {
-        public const double RELEASE_DELAY = 20;
+        public const double KEY_RELEASE_DELAY = 20;
+        public const double TOUCH_RELEASE_DELAY = 50;
+        public const double TOUCH_REACT_DELAY = 200;
 
         protected Replay Replay;
         protected List<ReplayFrame> Frames => Replay.Frames;
@@ -88,9 +90,9 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                         var nextObjectInColumn = GetNextObject(i) as SentakkiLanedHitObject; // Get the next object that requires pressing the same button
 
                         bool canDelayKeyUp = nextObjectInColumn == null ||
-                                             nextObjectInColumn.StartTime > endTime + RELEASE_DELAY;
+                                             nextObjectInColumn.StartTime > endTime + KEY_RELEASE_DELAY;
 
-                        double calculatedDelay = canDelayKeyUp ? RELEASE_DELAY : (nextObjectInColumn.StartTime - endTime) * 0.9;
+                        double calculatedDelay = canDelayKeyUp ? KEY_RELEASE_DELAY : (nextObjectInColumn.StartTime - endTime) * 0.9;
 
                         yield return new KeyDown { Time = currentObject.StartTime, Lane = laned.Lane };
                         yield return new KeyUp { Time = endTime + calculatedDelay, Lane = laned.Lane };
@@ -107,8 +109,8 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                                     TouchReplayEvent = new TouchReplayEvent(slideInfo.SlidePath.Path, slideInfo.Duration - delay, currentObject.StartTime + delay, s.Lane.GetRotationForLane() - 22.5f),
                                     PointNumber = nextAvailableTouchPoint()
                                 };
-                                yield return new TouchUp { Time = currentObject.StartTime + slideInfo.Duration, PointNumber = nextAvailableTouchPoint() };
-                                touchPointInUsedUntil[nextAvailableTouchPoint()] = currentObject.StartTime + slideInfo.Duration;
+                                yield return new TouchUp { Time = currentObject.StartTime + slideInfo.Duration + TOUCH_RELEASE_DELAY, PointNumber = nextAvailableTouchPoint() };
+                                touchPointInUsedUntil[nextAvailableTouchPoint()] = currentObject.StartTime + slideInfo.Duration + TOUCH_REACT_DELAY;
                             }
                         }
                         break;
@@ -118,10 +120,10 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                         {
                             Time = currentObject.StartTime,
                             PointNumber = nextAvailableTouchPoint(),
-                            TouchReplayEvent = new TouchReplayEvent(t.Position, RELEASE_DELAY, currentObject.StartTime)
+                            TouchReplayEvent = new TouchReplayEvent(t.Position, TOUCH_RELEASE_DELAY, currentObject.StartTime)
                         };
-                        yield return new TouchUp { Time = endTime + RELEASE_DELAY, PointNumber = nextAvailableTouchPoint() };
-                        touchPointInUsedUntil[nextAvailableTouchPoint()] = endTime + RELEASE_DELAY;
+                        yield return new TouchUp { Time = endTime + TOUCH_RELEASE_DELAY, PointNumber = nextAvailableTouchPoint() };
+                        touchPointInUsedUntil[nextAvailableTouchPoint()] = endTime + TOUCH_REACT_DELAY;
                         break;
 
                     case TouchHold _:
@@ -129,10 +131,10 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                         {
                             Time = currentObject.StartTime,
                             PointNumber = nextAvailableTouchPoint(),
-                            TouchReplayEvent = new TouchReplayEvent(Vector2.Zero, RELEASE_DELAY, currentObject.StartTime)
+                            TouchReplayEvent = new TouchReplayEvent(Vector2.Zero, TOUCH_RELEASE_DELAY, currentObject.StartTime)
                         };
-                        yield return new TouchUp { Time = endTime + RELEASE_DELAY, PointNumber = nextAvailableTouchPoint() };
-                        touchPointInUsedUntil[nextAvailableTouchPoint()] = endTime + RELEASE_DELAY;
+                        yield return new TouchUp { Time = endTime + TOUCH_RELEASE_DELAY, PointNumber = nextAvailableTouchPoint() };
+                        touchPointInUsedUntil[nextAvailableTouchPoint()] = endTime + TOUCH_REACT_DELAY;
                         break;
                 }
             }
