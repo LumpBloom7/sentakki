@@ -118,10 +118,10 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                         {
                             Time = currentObject.StartTime,
                             PointNumber = nextAvailableTouchPoint(),
-                            TouchReplayEvent = new TouchReplayEvent(t.Position, 10, currentObject.StartTime)
+                            TouchReplayEvent = new TouchReplayEvent(t.Position, RELEASE_DELAY, currentObject.StartTime)
                         };
-                        yield return new TouchUp { Time = endTime + 10, PointNumber = nextAvailableTouchPoint() };
-                        touchPointInUsedUntil[nextAvailableTouchPoint()] = endTime + 10;
+                        yield return new TouchUp { Time = endTime + RELEASE_DELAY, PointNumber = nextAvailableTouchPoint() };
+                        touchPointInUsedUntil[nextAvailableTouchPoint()] = endTime + RELEASE_DELAY;
                         break;
 
                     case TouchHold _:
@@ -129,10 +129,10 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                         {
                             Time = currentObject.StartTime,
                             PointNumber = nextAvailableTouchPoint(),
-                            TouchReplayEvent = new TouchReplayEvent(Vector2.Zero, 10, currentObject.StartTime)
+                            TouchReplayEvent = new TouchReplayEvent(Vector2.Zero, RELEASE_DELAY, currentObject.StartTime)
                         };
-                        yield return new TouchUp { Time = endTime + 10, PointNumber = nextAvailableTouchPoint() };
-                        touchPointInUsedUntil[nextAvailableTouchPoint()] = endTime + 10;
+                        yield return new TouchUp { Time = endTime + RELEASE_DELAY, PointNumber = nextAvailableTouchPoint() };
+                        touchPointInUsedUntil[nextAvailableTouchPoint()] = endTime + RELEASE_DELAY;
                         break;
                 }
             }
