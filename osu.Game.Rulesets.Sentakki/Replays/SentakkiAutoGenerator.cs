@@ -10,6 +10,8 @@ using System.Linq;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using Microsoft.EntityFrameworkCore.Query.Expressions;
 using System.Diagnostics;
+using osu.Game.Rulesets.Objects.Types;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace osu.Game.Rulesets.Sentakki.Replays
 {
@@ -66,7 +68,6 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                 if (Replay.Frames.Count == 0)
                     Replay.Frames.Add(new SentakkiReplayFrame(group.First().Time - 1, new Vector2(-1000), Array.Empty<TouchReplayEvent>()));
 
-
                 Replay.Frames.Add(new SentakkiReplayFrame(group.First().Time, new Vector2(-1000), TouchReplayEvents.ToList().ToArray(), actions.ToArray()));
             }
 
@@ -115,23 +116,13 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                         }
                         break;
 
-                    case Touch t:
-                        yield return new TouchDown
-                        {
-                            Time = currentObject.StartTime,
-                            PointNumber = nextAvailableTouchPoint(),
-                            TouchReplayEvent = new TouchReplayEvent(t.Position, TOUCH_RELEASE_DELAY, currentObject.StartTime)
-                        };
-                        yield return new TouchUp { Time = endTime + TOUCH_RELEASE_DELAY, PointNumber = nextAvailableTouchPoint() };
-                        touchPointInUsedUntil[nextAvailableTouchPoint()] = endTime + TOUCH_REACT_DELAY;
-                        break;
-
+                    case Touch _:
                     case TouchHold _:
                         yield return new TouchDown
                         {
                             Time = currentObject.StartTime,
                             PointNumber = nextAvailableTouchPoint(),
-                            TouchReplayEvent = new TouchReplayEvent(Vector2.Zero, TOUCH_RELEASE_DELAY, currentObject.StartTime)
+                            TouchReplayEvent = new TouchReplayEvent((currentObject is Touch x) ? x.Position : Vector2.Zero, TOUCH_RELEASE_DELAY, currentObject.StartTime)
                         };
                         yield return new TouchUp { Time = endTime + TOUCH_RELEASE_DELAY, PointNumber = nextAvailableTouchPoint() };
                         touchPointInUsedUntil[nextAvailableTouchPoint()] = endTime + TOUCH_REACT_DELAY;
@@ -152,7 +143,6 @@ namespace osu.Game.Rulesets.Sentakki.Replays
 
             return null;
         }
-
 
         private interface IActionPoint
         {
@@ -184,7 +174,6 @@ namespace osu.Game.Rulesets.Sentakki.Replays
             public double Time { get; set; }
             public TouchReplayEvent TouchReplayEvent { get; set; }
             public int PointNumber { get; set; }
-
         }
         private struct TouchUp : ITouchActionPoint
         {

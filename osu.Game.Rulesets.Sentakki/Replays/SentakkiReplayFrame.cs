@@ -2,11 +2,8 @@
 using osu.Game.Beatmaps;
 using osu.Game.Replays.Legacy;
 using osu.Game.Rulesets.Replays;
-using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Replays.Types;
-using osu.Framework.Input;
 using osuTK;
-using osu.Framework.Input.Events;
 
 namespace osu.Game.Rulesets.Sentakki.Replays
 {
@@ -46,32 +43,5 @@ namespace osu.Game.Rulesets.Sentakki.Replays
 
             return new LegacyReplayFrame(Time, Position.X, Position.Y, state);
         }
-    }
-    public class TouchReplayEvent
-    {
-        public TouchReplayEvent(Vector2 Position, double Duration, double startTime, float rotation = 0)
-        {
-            MovementPath = new SliderPath(new PathControlPoint[]{
-                new PathControlPoint(Position)
-            });
-            this.Duration = Duration;
-            StartTime = startTime;
-            Rotation = rotation;
-        }
-
-        public TouchReplayEvent(SliderPath path, double Duration, double startTime, float rotation = 0)
-        {
-            MovementPath = path;
-            this.Duration = Duration;
-            StartTime = startTime;
-            Rotation = rotation;
-        }
-
-
-        public SliderPath MovementPath;
-        public double Duration;
-        public double StartTime;
-        public float Rotation = 0;
-
     }
 }

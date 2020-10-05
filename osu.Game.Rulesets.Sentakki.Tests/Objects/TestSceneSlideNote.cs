@@ -36,6 +36,5 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             });
             return beatmap;
         }
-
     }
 }
