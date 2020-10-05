@@ -60,7 +60,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             private void handleKeyPress(ValueChangedEvent<int> keys)
             {
-                if (sentakkiActionInputManager.ReplayInputHandler != null) return;
                 if (keys.NewValue > keys.OldValue || keys.NewValue == 0)
                     SentakkiActionInputManager.TriggerReleased(SentakkiAction.Key1 + ((Lane)Parent).LaneNumber);
 

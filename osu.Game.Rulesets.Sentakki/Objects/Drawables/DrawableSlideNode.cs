@@ -110,6 +110,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void Update()
         {
             base.Update();
+            if (AutoTouch) return;
+
             if (Time.Current >= Slide.HitObject.StartTime)
             {
                 var touchInput = SentakkiActionInputManager.CurrentState.Touch;

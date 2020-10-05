@@ -127,8 +127,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             isHitting.Value = Time.Current >= HitObject.StartTime
                             && Time.Current <= (HitObject as IHasDuration)?.EndTime
                             && (AutoTouch || isTouched || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
-
-            Console.WriteLine("SS Centre: " + ScreenSpaceDrawQuad.Centre);
         }
 
         protected override void UpdateStateTransforms(ArmedState state)

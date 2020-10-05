@@ -100,6 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void Update()
         {
             base.Update();
+            if (AutoTouch) return;
             int count = 0;
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
 
