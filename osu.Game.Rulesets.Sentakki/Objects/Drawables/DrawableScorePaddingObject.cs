@@ -10,5 +10,9 @@ public class DrawableScorePaddingObject : DrawableHitObject<ScorePaddingObject>
     {
     }
 
-    public new void ApplyResult(Action<JudgementResult> application) => base.ApplyResult(application);
+    public new void ApplyResult(Action<JudgementResult> application)
+    {
+        if (!Result.HasResult)
+            base.ApplyResult(application);
+    }
 }

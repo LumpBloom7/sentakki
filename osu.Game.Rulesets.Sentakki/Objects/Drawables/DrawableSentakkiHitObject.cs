@@ -143,6 +143,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected new void ApplyResult(Action<JudgementResult> application)
         {
             // Apply judgement to this object
+            if (Result.HasResult) return;
             base.ApplyResult(application);
 
             // Also give Break note score padding a judgement
