@@ -85,7 +85,7 @@ namespace osu.Game.Rulesets.Sentakki
             return result;
         }
 
-        public static Vector2 RotatePointAroundOrigin(Vector2 point, Vector2 origin, float angle)
+        public static Vector2 RotatePointAroundOrigin(this Vector2 point, Vector2 origin, float angle)
         {
             angle = -angle;
 

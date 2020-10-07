@@ -16,6 +16,8 @@ namespace osu.Game.Rulesets.Sentakki.Replays
         public const double TOUCH_RELEASE_DELAY = 50;
         public const double TOUCH_REACT_DELAY = 200;
 
+        public readonly Vector2 AUTOPLAY_COORD_OFFSET = new Vector2(300);
+
         protected Replay Replay;
         protected List<ReplayFrame> Frames => Replay.Frames;
 
@@ -93,10 +95,14 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                         yield return new TouchDown
                         {
                             Time = currentObject.StartTime,
-                            TouchReplayEvent = new TouchReplayEvent(SentakkiExtensions.GetCircularPosition(295.5f, laned.Lane.GetRotationForLane()), 0, currentObject.StartTime),
+                            TouchReplayEvent = new TouchReplayEvent
+                            {
+                                Position = SentakkiExtensions.GetCircularPosition(295.5f, laned.Lane.GetRotationForLane()),
+                                StartTime = currentObject.StartTime,
+                                Offset = AUTOPLAY_COORD_OFFSET
+                            },
                             PointNumber = nextAvailableTouchPoint()
                         };
-                        yield return new KeyUp { Time = endTime + calculatedDelay, Lane = laned.Lane };
 
                         if (laned is Slide s)
                         {
@@ -107,7 +113,14 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                                 yield return new TouchDown
                                 {
                                     Time = currentObject.StartTime + delay,
-                                    TouchReplayEvent = new TouchReplayEvent(slideInfo.SlidePath.Path, slideInfo.Duration - delay, currentObject.StartTime + delay, s.Lane.GetRotationForLane() - 22.5f),
+                                    TouchReplayEvent = new TouchReplayEvent
+                                    {
+                                        MovementPath = slideInfo.SlidePath.Path,
+                                        StartTime = currentObject.StartTime + delay,
+                                        Duration = slideInfo.Duration - delay,
+                                        Offset = AUTOPLAY_COORD_OFFSET,
+                                        Rotation = s.Lane.GetRotationForLane() - 22.5f
+                                    },
                                     PointNumber = nextAvailableTouchPoint()
                                 };
                                 yield return new TouchUp { Time = currentObject.StartTime + slideInfo.Duration + TOUCH_RELEASE_DELAY, PointNumber = nextAvailableTouchPoint() };
@@ -129,7 +142,12 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                         {
                             Time = currentObject.StartTime,
                             PointNumber = nextAvailableTouchPoint(),
-                            TouchReplayEvent = new TouchReplayEvent((currentObject is Touch x) ? x.Position : Vector2.Zero, TOUCH_RELEASE_DELAY, currentObject.StartTime)
+                            TouchReplayEvent = new TouchReplayEvent
+                            {
+                                Position = (currentObject is Touch t) ? t.Position : Vector2.Zero,
+                                StartTime = currentObject.StartTime,
+                                Offset = AUTOPLAY_COORD_OFFSET,
+                            },
                         };
                         yield return new TouchUp { Time = endTime + TOUCH_RELEASE_DELAY, PointNumber = nextAvailableTouchPoint() };
                         touchPointInUsedUntil[nextAvailableTouchPoint()] = endTime + TOUCH_REACT_DELAY;

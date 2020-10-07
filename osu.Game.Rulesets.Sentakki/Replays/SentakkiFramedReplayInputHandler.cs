@@ -34,31 +34,35 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                 return NextFrame != null ? Interpolation.ValueAt(CurrentTime.Value, frame.Position, NextFrame.Position, frame.Time, NextFrame.Time) : frame.Position;
             }
         }
+        private TouchInput getTouchInputStateOf(TouchSource touchSource)
+        {
+            var currTouchReplay = CurrentFrame?.TouchReplayEvents?[(int)touchSource];
+            var nextTouchReplay = NextFrame?.TouchReplayEvents?[(int)touchSource];
+
+            if (currTouchReplay is null)
+            {
+                return new TouchInput(new Touch(touchSource, Vector2.Zero), false);
+            }
+            else if (CurrentTime.Value >= currTouchReplay?.EndTime && nextTouchReplay != null)
+            {
+                var interpPos = Interpolation.ValueAt(CurrentTime.Value,
+                currTouchReplay.PositionAtTime(CurrentTime.Value),
+                nextTouchReplay.PositionAtTime(CurrentTime.Value),
+                currTouchReplay.EndTime, nextTouchReplay.StartTime);
+
+                return new TouchInput(new Touch(touchSource, GamefieldToScreenSpace(interpPos)), true);
+            }
+            else
+            {
+                return new TouchInput(new Touch(touchSource, GamefieldToScreenSpace(currTouchReplay.PositionAtTime(CurrentTime.Value))), true);
+            }
+        }
 
         public override void CollectPendingInputs(List<IInput> inputs)
         {
-            if (CurrentFrame != null && CurrentFrame.TouchReplayEvents != null)
-            {
-                for (int i = 0; i < 10; ++i)
-                {
-                    var activeTouchPoint = CurrentFrame.TouchReplayEvents[i];
-                    if (activeTouchPoint == null)
-                    {
-                        inputs.Add(new TouchInput(new Touch((TouchSource)i, Vector2.Zero), false));
-                    }
-                    else
-                    {
-                        //get point position
-                        double percentage = Math.Clamp(Interpolation.ValueAt(CurrentTime.Value, 0D, 1D, activeTouchPoint.StartTime, activeTouchPoint.StartTime + activeTouchPoint.Duration), 0, 1);
-
-                        var position = activeTouchPoint.MovementPath.PositionAt(percentage);
-
-                        position = SentakkiExtensions.RotatePointAroundOrigin(position, Vector2.Zero, activeTouchPoint.Rotation) + new Vector2(300);
-
-                        inputs.Add(new TouchInput(new Touch((TouchSource)i, GamefieldToScreenSpace(position)), true));
-                    }
-                }
-            }
+            //Poll touch inputs
+            for (int i = 0; i < 10; ++i)
+                inputs.Add(getTouchInputStateOf((TouchSource)i));
 
             inputs.Add(new MousePositionAbsoluteInput
             {
