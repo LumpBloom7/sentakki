@@ -50,12 +50,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        public SentakkiAction[] HitActions { get; set; } = new[]
-        {
-            SentakkiAction.Button1,
-            SentakkiAction.Button2,
-        };
-
         public DrawableSentakkiHitObject(SentakkiHitObject hitObject)
             : base(hitObject)
         {
