@@ -16,12 +16,10 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableTouch : DrawableSentakkiTouchHitObject
+    public class DrawableTouch : DrawableSentakkiHitObject
     {
         // IsHovered is used
         public override bool HandlePositionalInput => true;
-
-        protected override float SamplePlaybackPosition => ((HitObject as Touch).Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
 
         protected override double InitialLifetimeOffset => 6000;
 
@@ -140,9 +138,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             Debug.Assert(HitObject.HitWindows != null);
 
-            if (!userTriggered || AutoTouch)
+            if (!userTriggered || Auto)
             {
-                if ((Auto || AutoTouch) && timeOffset > 0)
+                if (Auto && timeOffset > 0)
                     ApplyResult(r => r.Type = HitResult.Great);
 
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))

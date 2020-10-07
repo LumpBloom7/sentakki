@@ -14,7 +14,7 @@ using System;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableTouchHold : DrawableSentakkiTouchHitObject
+    public class DrawableTouchHold : DrawableSentakkiHitObject
     {
         private readonly TouchHoldBody touchHoldBody;
 
@@ -126,7 +126,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             bool isTouched = touchInput.ActiveSources.Any(s => ReceivePositionalInputAt(touchInput.GetTouchPosition(s) ?? new Vector2(float.MinValue)));
             isHitting.Value = Time.Current >= HitObject.StartTime
                             && Time.Current <= (HitObject as IHasDuration)?.EndTime
-                            && (Auto || AutoTouch || isTouched || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
+                            && (Auto || isTouched || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
         }
 
         protected override void UpdateStateTransforms(ArmedState state)

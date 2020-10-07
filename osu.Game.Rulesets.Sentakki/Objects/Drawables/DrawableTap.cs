@@ -16,13 +16,13 @@ using System.Diagnostics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableTap : DrawableSentakkiHitObject, IKeyBindingHandler<SentakkiAction>
+    public class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHandler<SentakkiAction>
     {
         public readonly Drawable TapVisual;
         public readonly HitObjectLine HitObjectLine;
         protected override double InitialLifetimeOffset => 8000;
 
-        public DrawableTap(SentakkiHitObject hitObject)
+        public DrawableTap(Tap hitObject)
             : base(hitObject)
         {
             AccentColour.Value = hitObject.NoteColor;

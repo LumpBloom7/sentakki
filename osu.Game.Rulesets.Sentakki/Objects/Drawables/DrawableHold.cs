@@ -17,10 +17,8 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableHold : DrawableSentakkiHitObject, IKeyBindingHandler<SentakkiAction>
+    public class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingHandler<SentakkiAction>
     {
-        public IBindable<bool> IsHitting => isHitting;
-
         private readonly Bindable<bool> isHitting = new Bindable<bool>();
 
         public DrawableHoldHead Head => headContainer.Child;

@@ -29,14 +29,14 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new NoteEntry
                 {
                     ObjectName = "Tap",
-                    HitEvents = hitEvents.Where(e=> e.HitObject is Tap x && !x.IsBreak).ToList(),
+                    HitEvents = hitEvents.Where(e=> e.HitObject is Tap x && !x.Break).ToList(),
                     Position = new Vector2(0, 0),
                     InitialLifetimeOffset = entry_animation_duration * 0
                 },
                 new NoteEntry
                 {
                     ObjectName = "Hold",
-                    HitEvents = hitEvents.Where(e => (e.HitObject is Hold x || e.HitObject is Hold.HoldHead) && (e.HitObject as SentakkiHitObject).IsBreak).ToList(),
+                    HitEvents = hitEvents.Where(e => (e.HitObject is Hold x || e.HitObject is Hold.HoldHead) && (e.HitObject as SentakkiLanedHitObject).Break).ToList(),
                     Position = new Vector2(0, .16f),
                     InitialLifetimeOffset = entry_animation_duration * 1
                 },
@@ -64,7 +64,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new NoteEntry
                 {
                     ObjectName = "Break",
-                    HitEvents = hitEvents.Where(e => (e.HitObject as SentakkiHitObject).IsBreak).ToList(),
+                    HitEvents = hitEvents.Where(e => (e.HitObject as SentakkiLanedHitObject).Break).ToList(),
                     Position = new Vector2(0, .80f),
                     InitialLifetimeOffset = entry_animation_duration * 5
                 },

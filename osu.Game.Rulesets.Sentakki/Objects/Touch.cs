@@ -9,7 +9,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     {
         public Vector2 Position { get; set; }
 
-        public override bool IsBreak => false;
         public override Color4 NoteColor => HasTwin ? Color4.Gold : Color4.Cyan;
         protected override HitWindows CreateHitWindows() => new SentakkiTouchHitWindows();
     }

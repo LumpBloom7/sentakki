@@ -22,13 +22,16 @@ namespace osu.Game.Rulesets.Sentakki.Difficulty
                 switch (h)
                 {
                     case Slide slide:
-                        maxCombo += 1 + slide.SlideInfoList.Count + (slide.IsBreak ? 4 : 0);
+                        maxCombo += 1 + slide.SlideInfoList.Count + (slide.Break ? 4 : 0);
                         break;
                     case Hold hold:
-                        maxCombo += 2 + (hold.IsBreak ? 8 : 0);
+                        maxCombo += 2 + (hold.Break ? 8 : 0);
+                        break;
+                    case Tap tap:
+                        maxCombo += 1 + (tap.Break ? 4 : 0);
                         break;
                     default:
-                        maxCombo += 1 + (h.IsBreak ? 4 : 0);
+                        ++maxCombo;
                         break;
                 }
             }

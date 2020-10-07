@@ -16,7 +16,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideNode : DrawableSentakkiTouchHitObject
+    public class DrawableSlideNode : DrawableSentakkiHitObject
     {
         private PausableSkinnableSound slideSound;
 
@@ -86,9 +86,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            if (!userTriggered || AutoTouch)
+            if (!userTriggered || Auto)
             {
-                if (timeOffset > 0 && (Auto || AutoTouch))
+                if (timeOffset > 0 && Auto)
                     ApplyResult(r => r.Type = r.Judgement.MaxResult);
                 return;
             }

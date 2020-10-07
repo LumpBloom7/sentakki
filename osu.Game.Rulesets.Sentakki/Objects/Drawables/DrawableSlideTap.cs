@@ -9,8 +9,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideTap : DrawableTap
     {
-        private DrawableSlide slide;
-        public DrawableSlideTap(SentakkiHitObject hitObject, DrawableSlide slide)
+        private readonly DrawableSlide slide;
+        public DrawableSlideTap(Tap hitObject, DrawableSlide slide)
             : base(hitObject)
         {
             this.slide = slide;

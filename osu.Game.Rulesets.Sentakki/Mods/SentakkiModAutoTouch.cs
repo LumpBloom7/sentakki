@@ -23,8 +23,14 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public void ApplyToDrawableHitObjects(IEnumerable<DrawableHitObject> drawables)
         {
             foreach (var d in drawables.OfType<DrawableSentakkiHitObject>())
-                if (d is DrawableSentakkiTouchHitObject t)
-                    t.AutoTouch = true;
+                switch (d)
+                {
+                    case DrawableSlide _:
+                    case DrawableTouch _:
+                    case DrawableTouchHold _:
+                        d.Auto = true;
+                        break;
+                }
         }
     }
 }

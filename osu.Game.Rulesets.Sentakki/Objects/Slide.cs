@@ -11,7 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Slide : SentakkiLanedHitObject
     {
-        public override Color4 NoteColor => IsBreak ? Color4.OrangeRed : HasTwin ? Color4.Gold : Color4.Aqua;
+        public override Color4 NoteColor => Break ? Color4.OrangeRed : HasTwin ? Color4.Gold : Color4.Aqua;
 
         public List<SentakkiSlideInfo> SlideInfoList = new List<SentakkiSlideInfo>();
 
@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 LaneBindable = { BindTarget = LaneBindable },
                 StartTime = StartTime,
                 Samples = Samples,
-                IsBreak = IsBreak
+                Break = Break
             });
             createSlideBodies();
         }

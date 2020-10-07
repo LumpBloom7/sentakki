@@ -35,7 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             foreach (var mod in Mods.OfType<IApplicableToTrack>())
                 mod.ApplyToTrack(speedAdjustmentTrack);
         }
-        
+
         protected override Playfield CreatePlayfield() => new SentakkiPlayfield();
 
         protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new SentakkiFramedReplayInputHandler(replay);

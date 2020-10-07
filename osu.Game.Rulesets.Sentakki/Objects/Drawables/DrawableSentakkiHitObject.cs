@@ -20,7 +20,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSentakkiHitObject : DrawableHitObject<SentakkiHitObject>
     {
-        private readonly PausableSkinnableSound breakSound;
 
         public bool IsHidden = false;
         public bool IsFadeIn = false;
@@ -32,32 +31,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             set => AutoBindable.Value = value;
         }
 
-        // Used in the editor
-        public bool IsVisible => Time.Current >= HitObject.StartTime - AnimationDuration.Value;
-
         // Used for the animation update
         protected readonly Bindable<double> AnimationDuration = new Bindable<double>(1000);
         protected readonly Bindable<double> AdjustedAnimationDuration = new Bindable<double>(1000);
 
-        protected override float SamplePlaybackPosition
-        {
-            get
-            {
-                if (HitObject is SentakkiLanedHitObject x)
-                    return (SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, x.Lane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
-                else
-                    return Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
-            }
-        }
+        protected override float SamplePlaybackPosition => Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
 
         public DrawableSentakkiHitObject(SentakkiHitObject hitObject)
             : base(hitObject)
         {
-            if (hitObject.IsBreak)
-                AddRangeInternal(new Drawable[]{
-                    breakSound = new PausableSkinnableSound(new SampleInfo("Break")),
-                });
-            AddInternal(scorePaddingObjects = new Container<DrawableScorePaddingObject>());
             AdjustedAnimationDuration.BindValueChanged(_ => InvalidateTransforms());
         }
 
@@ -65,13 +47,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public double GameplaySpeed => drawableSentakkiRuleset?.GameplaySpeed ?? 1;
 
-        private readonly Bindable<bool> breakEnabled = new Bindable<bool>(true);
 
         [BackgroundDependencyLoader(true)]
-        private void load(DrawableSentakkiRuleset drawableRuleset, SentakkiRulesetConfigManager sentakkiConfig)
+        private void load(DrawableSentakkiRuleset drawableRuleset)
         {
             drawableSentakkiRuleset = drawableRuleset;
-            sentakkiConfig?.BindWith(SentakkiRulesetSettings.BreakSounds, breakEnabled);
         }
 
         protected override void Update()
@@ -101,48 +81,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        protected virtual bool PlayBreakSample => true;
-        public override void PlaySamples()
-        {
-            base.PlaySamples();
-            if (PlayBreakSample && breakSound != null && Result.Type == Result.Judgement.MaxResult && breakEnabled.Value)
-            {
-                breakSound.Balance.Value = CalculateSamplePlaybackBalance(SamplePlaybackPosition);
-                breakSound.Play();
-            }
-        }
-
-        private Container<DrawableScorePaddingObject> scorePaddingObjects;
-
-        protected override void ClearNestedHitObjects()
-        {
-            base.ClearNestedHitObjects();
-            scorePaddingObjects.Clear();
-        }
-        protected override void AddNestedHitObject(DrawableHitObject hitObject)
-        {
-            base.AddNestedHitObject(hitObject);
-            if (hitObject is DrawableScorePaddingObject x)
-                scorePaddingObjects.Add(x);
-        }
-
-        protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
-        {
-            if (hitObject is ScorePaddingObject x)
-                return new DrawableScorePaddingObject(x);
-
-            return base.CreateNestedHitObject(hitObject);
-        }
-
-        protected new void ApplyResult(Action<JudgementResult> application)
+        protected new virtual void ApplyResult(Action<JudgementResult> application)
         {
             // Apply judgement to this object
             if (Result.HasResult) return;
             base.ApplyResult(application);
-
-            // Also give Break note score padding a judgement
-            foreach (var breakObj in scorePaddingObjects)
-                breakObj.ApplyResult(application);
         }
     }
 }

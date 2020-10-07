@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         {
             var circle = new Tap
             {
-                IsBreak = true,
+                Break = true,
                 StartTime = Time.Current + 1000,
             };
 

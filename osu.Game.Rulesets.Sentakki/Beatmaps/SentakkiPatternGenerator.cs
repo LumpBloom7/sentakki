@@ -175,7 +175,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 Lane = noteLane,
                 StartTime = original.StartTime,
                 Samples = original.Samples,
-                IsBreak = isBreak
+                Break = isBreak
             };
         }
 
@@ -184,7 +184,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             int noteLane = getNewLane(twin);
             return new Hold
             {
-                IsBreak = isBreak,
+                Break = isBreak,
                 Lane = noteLane,
                 NodeSamples = (original as IHasPathWithRepeats).NodeSamples,
                 StartTime = original.StartTime,
@@ -242,7 +242,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             int noteLane = getNewLane(twin);
             return new Tap
             {
-                IsBreak = isBreak,
+                Break = isBreak,
                 Lane = noteLane,
                 Samples = original.Samples,
                 StartTime = original.StartTime,

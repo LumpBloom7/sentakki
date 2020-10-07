@@ -4,11 +4,11 @@ using System.Diagnostics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableHoldHead : DrawableSentakkiHitObject
+    public class DrawableHoldHead : DrawableSentakkiLanedHitObject
     {
         protected override bool PlayBreakSample => false;
 
-        public DrawableHoldHead(SentakkiHitObject hitObject)
+        public DrawableHoldHead(Hold.HoldHead hitObject)
             : base(hitObject)
         {
         }

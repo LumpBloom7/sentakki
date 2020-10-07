@@ -16,13 +16,11 @@ using osu.Game.Beatmaps;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideBody : DrawableSentakkiTouchHitObject
+    public class DrawableSlideBody : DrawableSentakkiHitObject
     {
         public override bool RemoveWhenNotAlive => false;
 
         public override bool DisplayResult => true;
-
-        protected override bool PlayBreakSample => false;
 
         public Container<DrawableSlideNode> SlideNodes;
 
@@ -156,7 +154,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Origin = Anchor.Centre,
                         AccentColour = { BindTarget = AccentColour },
                         AutoBindable = { BindTarget = AutoBindable },
-                        AutoTouchBindable = { BindTarget = AutoTouchBindable }
                     };
             }
 

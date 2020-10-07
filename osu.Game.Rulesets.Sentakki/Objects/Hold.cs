@@ -13,8 +13,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Hold : SentakkiLanedHitObject, IHasDuration
     {
-        public override bool IsBreak { get; set; }
-
         private List<IList<HitSampleInfo>> nodeSamples = new List<IList<HitSampleInfo>>();
 
         public List<IList<HitSampleInfo>> NodeSamples
@@ -41,7 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             AddNested(new HoldHead
             {
-                IsBreak = IsBreak,
+                Break = Break,
                 StartTime = StartTime,
                 Lane = Lane,
                 Samples = nodeSamples.FirstOr(new List<HitSampleInfo>())
