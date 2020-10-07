@@ -90,7 +90,12 @@ namespace osu.Game.Rulesets.Sentakki.Replays
 
                         double calculatedDelay = canDelayKeyUp ? KEY_RELEASE_DELAY : (nextObjectInColumn.StartTime - endTime) * 0.9;
 
-                        yield return new KeyDown { Time = currentObject.StartTime, Lane = laned.Lane };
+                        yield return new TouchDown
+                        {
+                            Time = currentObject.StartTime,
+                            TouchReplayEvent = new TouchReplayEvent(SentakkiExtensions.GetCircularPosition(295.5f, laned.Lane.GetRotationForLane()), 0, currentObject.StartTime),
+                            PointNumber = nextAvailableTouchPoint()
+                        };
                         yield return new KeyUp { Time = endTime + calculatedDelay, Lane = laned.Lane };
 
                         if (laned is Slide s)
@@ -109,6 +114,13 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                                 touchPointInUsedUntil[nextAvailableTouchPoint()] = currentObject.StartTime + slideInfo.Duration + TOUCH_REACT_DELAY;
                             }
                         }
+                        else
+                        {
+                            yield return new TouchUp { Time = currentObject.GetEndTime() + TOUCH_RELEASE_DELAY, PointNumber = nextAvailableTouchPoint() };
+                            touchPointInUsedUntil[nextAvailableTouchPoint()] = currentObject.GetEndTime() + TOUCH_REACT_DELAY;
+                        }
+
+
                         break;
 
                     case Touch _:
