@@ -27,7 +27,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public readonly HoldBody NoteBody;
         public readonly HitObjectLine HitObjectLine;
-        protected override double InitialLifetimeOffset => 8000;
 
         /// <summary>
         /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
@@ -44,7 +43,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Position = Vector2.Zero;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            AlwaysPresent = true;
             AddRangeInternal(new Drawable[]{
                 HitObjectLine = new HitObjectLine(),
                 NoteBody = new HoldBody{
@@ -98,33 +96,30 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void UpdateInitialTransforms()
         {
-            double animTime = AnimationDuration.Value / 2 * GameplaySpeed;
-            double animStart = HitObject.StartTime - (animTime * 2);
-            using (BeginAbsoluteSequence(animStart, true))
+            base.UpdateInitialTransforms();
+            double animTime = AdjustedAnimationDuration / 2;
+            HitObjectLine.FadeInFromZero(animTime);
+            NoteBody.FadeInFromZero(animTime).ScaleTo(1, animTime);
+
+            using (BeginDelayedSequence(animTime, true))
             {
-                HitObjectLine.FadeInFromZero(animTime);
-                NoteBody.FadeInFromZero(animTime).ScaleTo(1, animTime);
+                // This is the movable length (not including start position)
+                float totalMovableDistance = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
+                float originalStretchAmount = (float)(totalMovableDistance / animTime * (HitObject as IHasDuration).Duration);
+                float stretchAmount = Math.Clamp((float)(totalMovableDistance / animTime * (HitObject as IHasDuration).Duration), 0, totalMovableDistance);
+                float stretchTime = (float)(stretchAmount / totalMovableDistance * animTime);
+                float excessDistance = (float)((-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime);
 
-                using (BeginDelayedSequence(animTime, true))
-                {
-                    // This is the movable length (not including start position)
-                    float totalMovableDistance = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
-                    float originalStretchAmount = (float)(totalMovableDistance / animTime * (HitObject as IHasDuration).Duration);
-                    float stretchAmount = Math.Clamp((float)(totalMovableDistance / animTime * (HitObject as IHasDuration).Duration), 0, totalMovableDistance);
-                    float stretchTime = (float)(stretchAmount / totalMovableDistance * animTime);
-                    float excessDistance = (float)((-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime);
+                NoteBody.ResizeHeightTo(75 + stretchAmount, stretchTime)
+                        .Delay((HitObject as IHasDuration).Duration)
+                        .MoveToY(-SentakkiPlayfield.INTERSECTDISTANCE + (Width / 2), animTime)
+                        .Delay(animTime - stretchTime)
+                        .ResizeHeightTo(75, stretchTime);
 
-                    NoteBody.ResizeHeightTo(75 + stretchAmount, stretchTime)
-                            .Delay((HitObject as IHasDuration).Duration)
-                            .MoveToY(-SentakkiPlayfield.INTERSECTDISTANCE + (Width / 2), animTime)
-                            .Delay(animTime - stretchTime)
-                            .ResizeHeightTo(75, stretchTime);
+                if (HoldStartTime == null && !Auto)
+                    NoteBody.Note.Delay(animTime).FadeColour(Color4.Gray, 100);
 
-                    if (HoldStartTime == null && !Auto)
-                        NoteBody.Note.Delay(animTime).FadeColour(Color4.Gray, 100);
-
-                    HitObjectLine.ScaleTo(1, animTime);
-                }
+                HitObjectLine.ScaleTo(1, animTime);
             }
         }
 

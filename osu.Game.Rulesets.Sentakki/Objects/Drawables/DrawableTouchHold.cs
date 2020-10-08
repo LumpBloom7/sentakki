@@ -23,8 +23,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
-        protected override double InitialLifetimeOffset => 4000;
-
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => touchHoldBody.ReceivePositionalInputAt(screenSpacePos);
 
         public DrawableTouchHold(TouchHold hitObject)
@@ -83,14 +81,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void UpdateInitialTransforms()
         {
-            double fadeIn = AnimationDuration.Value * GameplaySpeed;
-            using (BeginAbsoluteSequence(HitObject.StartTime - fadeIn, true))
+            base.UpdateInitialTransforms();
+            double fadeIn = AdjustedAnimationDuration;
+            this.FadeInFromZero(fadeIn).ScaleTo(1, fadeIn);
+            using (BeginDelayedSequence(fadeIn, true))
             {
-                this.FadeInFromZero(fadeIn).ScaleTo(1, fadeIn);
-                using (BeginDelayedSequence(fadeIn, true))
-                {
-                    touchHoldBody.ProgressPiece.TransformBindableTo(touchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
-                }
+                touchHoldBody.ProgressPiece.TransformBindableTo(touchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
             }
         }
 

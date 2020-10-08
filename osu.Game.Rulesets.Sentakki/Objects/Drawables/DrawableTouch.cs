@@ -21,7 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // IsHovered is used
         public override bool HandlePositionalInput => true;
 
-        protected override double InitialLifetimeOffset => 6000;
+        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset + HitObject.HitWindows.WindowFor(HitResult.Meh) * 2 * GameplaySpeed;
 
         private readonly TouchBlob blob1;
         private readonly TouchBlob blob2;
@@ -117,20 +117,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void UpdateInitialTransforms()
         {
-            double fadeIn = AnimationDuration.Value * GameplaySpeed;
+            base.UpdateInitialTransforms();
+            double fadeIn = AdjustedAnimationDuration;
             double moveTo = HitObject.HitWindows.WindowFor(HitResult.Meh) * 2 * GameplaySpeed;
 
-            using (BeginAbsoluteSequence(HitObject.StartTime - fadeIn - moveTo, true))
-            {
-                this.FadeIn(fadeIn, Easing.OutSine).ScaleTo(1, fadeIn, Easing.OutSine);
+            this.FadeIn(fadeIn, Easing.OutSine).ScaleTo(1, fadeIn, Easing.OutSine);
 
-                using (BeginDelayedSequence(fadeIn, true))
-                {
-                    blob1.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint);
-                    blob2.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
-                    blob3.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
-                    blob4.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
-                }
+            using (BeginDelayedSequence(fadeIn, true))
+            {
+                blob1.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint);
+                blob2.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
+                blob3.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
+                blob4.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
             }
         }
 

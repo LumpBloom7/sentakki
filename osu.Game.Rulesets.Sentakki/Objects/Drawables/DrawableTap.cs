@@ -20,7 +20,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         public readonly Drawable TapVisual;
         public readonly HitObjectLine HitObjectLine;
-        protected override double InitialLifetimeOffset => 8000;
 
         public DrawableTap(Tap hitObject)
             : base(hitObject)
@@ -29,7 +28,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
-            AlwaysPresent = true;
             AddRangeInternal(new Drawable[] {
                 HitObjectLine = new HitObjectLine(),
                 TapVisual = CreateTapRepresentation(),
@@ -47,18 +45,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void UpdateInitialTransforms()
         {
-            double animTime = AnimationDuration.Value / 2 * GameplaySpeed;
-            double animStart = HitObject.StartTime - (animTime * 2);
-            using (BeginAbsoluteSequence(animStart, true))
+            base.UpdateInitialTransforms();
+            double animTime = AdjustedAnimationDuration / 2;
+            TapVisual.FadeInFromZero(animTime).ScaleTo(1, animTime);
+            HitObjectLine.FadeInFromZero(animTime);
+            using (BeginDelayedSequence(animTime, true))
             {
-                TapVisual.FadeInFromZero(animTime).ScaleTo(1, animTime);
-                HitObjectLine.FadeInFromZero(animTime);
-                using (BeginDelayedSequence(animTime, true))
-                {
-                    var excessDistance = (-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * HitObject.HitWindows.WindowFor(HitResult.Miss);
-                    TapVisual.MoveToY((float)(-SentakkiPlayfield.INTERSECTDISTANCE + excessDistance), animTime + HitObject.HitWindows.WindowFor(HitResult.Miss));
-                    HitObjectLine.ScaleTo(1, animTime);
-                }
+                var excessDistance = (-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * HitObject.HitWindows.WindowFor(HitResult.Miss);
+                TapVisual.MoveToY((float)(-SentakkiPlayfield.INTERSECTDISTANCE + excessDistance), animTime + HitObject.HitWindows.WindowFor(HitResult.Miss));
+                HitObjectLine.ScaleTo(1, animTime);
             }
         }
 
