@@ -32,16 +32,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 HitObjectLine = new HitObjectLine(),
                 TapVisual = CreateTapRepresentation(),
             });
+            AccentColour.BindValueChanged(c => HitObjectLine.Colour = c.NewValue, true);
         }
 
         protected virtual Drawable CreateTapRepresentation() => new TapPiece();
-
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager settings)
-        {
-            settings?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDuration);
-            AccentColour.BindValueChanged(c => HitObjectLine.Colour = c.NewValue, true);
-        }
 
         protected override void UpdateInitialTransforms()
         {

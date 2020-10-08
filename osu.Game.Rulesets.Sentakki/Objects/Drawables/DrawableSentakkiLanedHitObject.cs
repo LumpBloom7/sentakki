@@ -40,6 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private void load(SentakkiRulesetConfigManager sentakkiConfig)
         {
             sentakkiConfig?.BindWith(SentakkiRulesetSettings.BreakSounds, breakSoundsEnabled);
+            sentakkiConfig?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDuration);
         }
 
         protected virtual bool PlayBreakSample => true;
