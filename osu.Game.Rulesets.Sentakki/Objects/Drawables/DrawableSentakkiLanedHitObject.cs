@@ -46,7 +46,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public override void PlaySamples()
         {
             base.PlaySamples();
-            if (PlayBreakSample && breakSound != null && Result.Type == Result.Judgement.MaxResult && breakSoundsEnabled.Value)
+            if (HitObject.Break && PlayBreakSample && breakSound != null && Result.Type == Result.Judgement.MaxResult && breakSoundsEnabled.Value)
             {
                 breakSound.Balance.Value = CalculateSamplePlaybackBalance(SamplePlaybackPosition);
                 breakSound.Play();
