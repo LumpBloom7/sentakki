@@ -11,7 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Slide : SentakkiLanedHitObject
     {
-        public override Color4 NoteColor => Break ? Color4.OrangeRed : HasTwin ? Color4.Gold : Color4.Aqua;
+        protected override Color4 DefaultNoteColour => Color4.Aqua;
 
         public List<SentakkiSlideInfo> SlideInfoList = new List<SentakkiSlideInfo>();
 

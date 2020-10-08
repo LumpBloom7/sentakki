@@ -8,17 +8,35 @@ using osuTK;
 using osuTK.Graphics;
 using osu.Framework.Extensions.Color4Extensions;
 using System.Threading;
+using osu.Game.Beatmaps.ControlPoints;
+using osu.Game.Beatmaps;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public abstract class SentakkiHitObject : HitObject
     {
-        public virtual bool HasTwin { get; set; } = false;
+        public bool HasTwin { get; set; }
 
         public override Judgement CreateJudgement() => new SentakkiJudgement();
 
-        public virtual Color4 NoteColor => HasTwin ? Color4.Gold : Color4Extensions.FromHex("ff0064");
+        public Bindable<Color4> ColourBindable = new Bindable<Color4>();
+        public Color4 NoteColour
+        {
+            get => ColourBindable.Value;
+            private set => ColourBindable.Value = value;
+        }
+
+        protected virtual Color4 DefaultNoteColour => Color4Extensions.FromHex("FF0064");
 
         protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
+
+        protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, BeatmapDifficulty difficulty)
+        {
+            base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
+
+            bool isBreak = this is SentakkiLanedHitObject x && x.Break;
+
+            NoteColour = isBreak ? Color4.OrangeRed : (HasTwin ? Color4.Gold : DefaultNoteColour);
+        }
     }
 }

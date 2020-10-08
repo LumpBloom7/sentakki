@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableHold(Hold hitObject)
             : base(hitObject)
         {
-            AccentColour.Value = hitObject.NoteColor;
+            AccentColour.BindTo(HitObject.ColourBindable);
             Size = new Vector2(75);
             Position = Vector2.Zero;
             Anchor = Anchor.Centre;

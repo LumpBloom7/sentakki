@@ -38,13 +38,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public DrawableTouch(Touch hitObject) : base(hitObject)
         {
+            AccentColour.BindTo(HitObject.ColourBindable);
+            AccentColour.BindValueChanged(c => Colour = c.NewValue, true);
             Size = new Vector2(300);
             Position = hitObject.Position;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Alpha = 0;
             Scale = Vector2.Zero;
-            Colour = HitObject.NoteColor;
+
             AlwaysPresent = true;
             AddRangeInternal(new Drawable[]{
                 blob1 = new TouchBlob{

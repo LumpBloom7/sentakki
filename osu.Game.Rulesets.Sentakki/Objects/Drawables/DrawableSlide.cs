@@ -26,7 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableSlide(SentakkiHitObject hitObject)
             : base(hitObject)
         {
-            AccentColour.Value = hitObject.NoteColor;
+            AccentColour.BindTo(HitObject.ColourBindable);
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;

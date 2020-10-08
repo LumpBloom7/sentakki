@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableTap(Tap hitObject)
             : base(hitObject)
         {
-            AccentColour.Value = hitObject.NoteColor;
+            AccentColour.BindTo(HitObject.ColourBindable);
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;

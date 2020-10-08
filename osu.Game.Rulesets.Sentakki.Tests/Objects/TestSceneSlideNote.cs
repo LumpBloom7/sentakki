@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         {
             var slide = new Slide
             {
-                Break = true,
+                //Break = true,
                 SlideInfoList = new List<SentakkiSlideInfo>
                 {
                     new SentakkiSlideInfo {

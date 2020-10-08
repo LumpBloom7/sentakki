@@ -7,9 +7,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Touch : SentakkiHitObject
     {
+        protected override Color4 DefaultNoteColour => Color4.Aqua;
+
         public Vector2 Position { get; set; }
 
-        public override Color4 NoteColor => HasTwin ? Color4.Gold : Color4.Cyan;
         protected override HitWindows CreateHitWindows() => new SentakkiTouchHitWindows();
     }
 }

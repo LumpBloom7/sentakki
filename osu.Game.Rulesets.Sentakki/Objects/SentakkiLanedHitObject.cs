@@ -31,7 +31,5 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 for (int i = 0; i < 4; ++i)
                     AddNested(new ScorePaddingObject() { StartTime = this.GetEndTime() });
         }
-
-        public override Color4 NoteColor => Break ? Color4.OrangeRed : base.NoteColor;
     }
 }
