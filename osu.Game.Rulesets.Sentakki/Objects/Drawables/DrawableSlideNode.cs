@@ -48,7 +48,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             OnNewResult += (DrawableHitObject hitObject, JudgementResult result) =>
             {
-                hitPreviousNodes(result.Type >= HitResult.Great);
+                hitPreviousNodes(result.Type == result.Judgement.MaxResult);
                 if (result.IsHit)
                     Slide.Slidepath.Progress = (HitObject as SlideBody.SlideNode).Progress;
             };
