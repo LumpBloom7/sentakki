@@ -57,7 +57,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             public virtual float Progress { get; set; }
 
-            public bool IsTailNote => Progress == 1;
             protected override HitWindows CreateHitWindows() => HitWindows.Empty;
             public override Judgement CreateJudgement() => new IgnoreJudgement();
         }

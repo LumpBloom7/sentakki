@@ -60,7 +60,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         protected bool IsHittable => ThisIndex < 2 || Slide.SlideNodes[ThisIndex - 2].IsHit;
-        public bool IsTailNode => (HitObject as SlideBody.SlideNode).IsTailNote;
 
         private void hitPreviousNodes(bool successful = false)
         {
