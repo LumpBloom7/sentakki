@@ -12,6 +12,7 @@ using osuTK.Graphics;
 using System.Linq;
 using System.Diagnostics;
 using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Judgements;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -81,13 +82,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Origin = Anchor.Centre,
                 },
             });
-        }
-
-        protected override void LoadComplete()
-        {
-            base.LoadComplete();
 
             AccentColour.BindValueChanged(c => Colour = c.NewValue, true);
+
+            OnNewResult += queueProgressUpdate;
+            OnRevertResult += queueProgressUpdate;
         }
 
         [Resolved]
@@ -102,6 +101,34 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     return 0;
                 return delay;
             }
+        }
+
+        // We want to ensure that the correct progress is visually shown on screen
+        // I don't think that OnRevert of HitObjects is ordered properly
+        // So just to make sure, when multiple OnReverts are called, we just queue for a forced update on the visuals
+        // This makes sure that we always have the right visuals shown.
+        private bool pendingProgressUpdate;
+
+        private void queueProgressUpdate(DrawableHitObject hitObject, JudgementResult result)
+        {
+            pendingProgressUpdate = true;
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            if (pendingProgressUpdate)
+                updatePathProgress();
+        }
+
+        private void updatePathProgress()
+        {
+            var target = SlideNodes.LastOrDefault(x => x.Result.IsHit);
+            if (target == null)
+                Slidepath.Progress = 0;
+            else Slidepath.Progress = (target.HitObject as SlideBody.SlideNode).Progress;
+
+            pendingProgressUpdate = false;
         }
 
         protected override void UpdateInitialTransforms()
@@ -153,6 +180,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Origin = Anchor.Centre,
                         AccentColour = { BindTarget = AccentColour },
                         AutoBindable = { BindTarget = AutoBindable },
+                        ThisIndex = SlideNodes.Count
                     };
             }
 
@@ -169,6 +197,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
             base.AddNestedHitObject(hitObject);
         }
+
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             Debug.Assert(HitObject.HitWindows != null);
@@ -179,7 +208,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
                 {
-                    SlideNodes.Last().ForceJudgement(false);
+                    SlideNodes.Last().ForcefullyMiss();
                     if (SlideNodes.Count(node => !node.Result.IsHit) <= 2 && SlideNodes.Count > 2)
                         ApplyResult(r => r.Type = HitResult.Meh);
                     else

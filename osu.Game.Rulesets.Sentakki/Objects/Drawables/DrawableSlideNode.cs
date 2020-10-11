@@ -1,6 +1,7 @@
 using osuTK;
 using osu.Framework.Graphics;
 using System.Linq;
+using System;
 using osu.Framework.Allocation;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Framework.Bindables;
@@ -8,6 +9,7 @@ using osu.Game.Skinning;
 using osu.Game.Audio;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Judgements;
+using osu.Framework.Extensions.IEnumerableExtensions;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -22,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
         protected DrawableSlideBody Slide;
 
-        protected int ThisIndex;
+        public int ThisIndex;
         public DrawableSlideNode(SlideBody.SlideNode node, DrawableSlideBody slideNote)
             : base(node)
         {
@@ -36,42 +38,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             CornerRadius = 120;
             Masking = true;
         }
-        protected override void LoadComplete()
-        {
-            base.LoadComplete();
-            ThisIndex = Slide.SlideNodes.IndexOf(this);
-
-            OnNewResult += (DrawableHitObject hitObject, JudgementResult result) =>
-            {
-                hitPreviousNodes(result.Type == result.Judgement.MaxResult);
-                if (result.IsHit)
-                    Slide.Slidepath.Progress = (HitObject as SlideBody.SlideNode).Progress;
-            };
-            OnRevertResult += (DrawableHitObject hitObject, JudgementResult result) =>
-            {
-                Slide.Slidepath.Progress = ThisIndex > 0 ? (Slide.SlideNodes[ThisIndex - 1].HitObject as SlideBody.SlideNode).Progress : 0;
-            };
-        }
 
         protected override void LoadSamples()
         {
             base.LoadSamples();
-            AddInternal(slideSound = new PausableSkinnableSound(new SampleInfo("slide")));
+            if (ThisIndex == 0)
+                AddInternal(slideSound = new PausableSkinnableSound(new SampleInfo("slide")));
         }
 
         protected bool IsHittable => ThisIndex < 2 || Slide.SlideNodes[ThisIndex - 2].IsHit;
 
-        private void hitPreviousNodes(bool successful = false)
-        {
-            foreach (var node in Slide.SlideNodes)
-            {
-                if (node == this) return;
-                if (!node.Result.HasResult)
-                    node.ForceJudgement(successful);
-            }
-        }
-
         private readonly Bindable<bool> playSlideSample = new Bindable<bool>(true);
+
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager sentakkiConfig)
         {
@@ -94,7 +72,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         // Forces this object to have a result.
-        public void ForceJudgement(bool successful = false) => ApplyResult(r => r.Type = successful ? r.Judgement.MaxResult : r.Judgement.MinResult);
+        public void ForcefullyMiss() => ApplyResult(r => r.Type = r.Judgement.MinResult);
+
+        protected new void ApplyResult(Action<JudgementResult> application)
+        {
+            if (ThisIndex > 0)
+                Slide.SlideNodes[ThisIndex - 1]?.ApplyResult(application);
+
+            if (!Result.HasResult)
+                base.ApplyResult(application);
+        }
 
         protected override void Update()
         {
@@ -112,7 +99,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public override void PlaySamples()
         {
             base.PlaySamples();
-            if (ThisIndex == 0 && playSlideSample.Value && slideSound != null && Result.Type != Result.Judgement.MinResult)
+            if (playSlideSample.Value && slideSound != null && Result.Type != Result.Judgement.MinResult)
             {
                 slideSound.Balance.Value = CalculateSamplePlaybackBalance(SamplePlaybackPosition);
                 slideSound.Play();
