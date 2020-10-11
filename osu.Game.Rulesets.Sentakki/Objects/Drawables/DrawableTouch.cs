@@ -7,10 +7,8 @@ using osu.Game.Rulesets.Scoring;
 using osuTK;
 using osuTK.Graphics;
 using System.Diagnostics;
-using osu.Game.Rulesets.Sentakki.UI;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Transforms;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using System.Linq;
 

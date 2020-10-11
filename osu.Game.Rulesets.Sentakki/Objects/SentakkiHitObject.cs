@@ -4,10 +4,8 @@ using osu.Game.Rulesets.Sentakki.Judgements;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Objects;
-using osuTK;
 using osuTK.Graphics;
 using osu.Framework.Extensions.Color4Extensions;
-using System.Threading;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Beatmaps;
 

@@ -1,4 +1,3 @@
-using osu.Game.Rulesets.Scoring;
 using osuTK;
 using osu.Framework.Graphics;
 using System.Linq;
@@ -7,12 +6,8 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Framework.Bindables;
 using osu.Game.Skinning;
 using osu.Game.Audio;
-using osu.Game.Configuration;
 using osu.Game.Rulesets.Sentakki.Configuration;
-using osu.Game.Rulesets.Objects.Types;
-using osu.Game.Screens.Play;
 using osu.Game.Rulesets.Judgements;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {

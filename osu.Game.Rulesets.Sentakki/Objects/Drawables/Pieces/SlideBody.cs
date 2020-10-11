@@ -1,4 +1,3 @@
-using osu.Framework.Graphics.Lines;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Textures;
@@ -8,7 +7,6 @@ using osu.Framework.Allocation;
 using System.Collections.Generic;
 using System;
 using osuTK;
-using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {

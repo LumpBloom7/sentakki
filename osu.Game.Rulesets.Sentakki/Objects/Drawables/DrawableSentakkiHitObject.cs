@@ -1,19 +1,9 @@
 ﻿using osu.Framework.Allocation;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Objects;
 using osu.Framework.Graphics;
-using osu.Game.Rulesets.Scoring;
-using osu.Game.Skinning;
-using osu.Game.Audio;
-using osu.Game.Configuration;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Framework.Bindables;
-using osu.Game.Screens.Play;
-using System.Collections.Generic;
 using osu.Game.Rulesets.Judgements;
-using System.Linq;
-using osu.Framework.Graphics.Containers;
 using System;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables

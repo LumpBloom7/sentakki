@@ -7,7 +7,6 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
-using osu.Game.Beatmaps.ControlPoints;
 using osuTK;
 using osuTK.Graphics;
 using System.Linq;

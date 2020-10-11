@@ -1,5 +1,4 @@
-﻿using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Scoring;
+﻿using osu.Game.Rulesets.Scoring;
 using System.Diagnostics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables

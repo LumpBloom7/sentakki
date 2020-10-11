@@ -1,8 +1,5 @@
-using osu.Framework.Bindables;
 using osu.Game.Rulesets.Judgements;
-using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using osuTK.Graphics;
@@ -17,8 +14,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            //base.CreateNestedHitObjects(cancellationToken);
-
             AddNested(new Tap
             {
                 LaneBindable = { BindTarget = LaneBindable },
