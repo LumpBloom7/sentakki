@@ -64,7 +64,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new NoteEntry
                 {
                     ObjectName = "Break",
-                    HitEvents = hitEvents.Where(e => (e.HitObject as SentakkiLanedHitObject).Break).ToList(),
+                    HitEvents = hitEvents.Where(e => e.HitObject is SentakkiLanedHitObject x && x.Break).ToList(),
                     Position = new Vector2(0, .80f),
                     InitialLifetimeOffset = entry_animation_duration * 5
                 },
