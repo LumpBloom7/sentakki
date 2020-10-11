@@ -51,7 +51,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
             });
 
-            AccentColour.BindValueChanged(c => HitObjectLine.Colour = c.NewValue);
+            AccentColour.BindValueChanged(c => HitObjectLine.Colour = c.NewValue, true);
         }
 
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
