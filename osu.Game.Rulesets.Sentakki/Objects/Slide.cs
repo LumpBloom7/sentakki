@@ -3,11 +3,22 @@ using osu.Game.Rulesets.Scoring;
 using System.Collections.Generic;
 using System.Threading;
 using osuTK.Graphics;
+using osu.Game.Rulesets.Objects.Types;
+using System.Linq;
+using System;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public class Slide : SentakkiLanedHitObject
+    public class Slide : SentakkiLanedHitObject, IHasDuration
     {
+        public double Duration
+        {
+            get => SlideInfoList.Any() ? SlideInfoList.Max(s => s.Duration) : 0;
+            set => throw new NotSupportedException();
+        }
+
+        public double EndTime => StartTime + Duration;
+
         protected override Color4 DefaultNoteColour => Color4.Aqua;
 
         public List<SentakkiSlideInfo> SlideInfoList = new List<SentakkiSlideInfo>();
