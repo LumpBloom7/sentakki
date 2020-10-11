@@ -26,7 +26,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 HitObjectLine = new HitObjectLine(),
                 TapVisual = CreateTapRepresentation(),
             });
-            AccentColour.BindValueChanged(c => HitObjectLine.Colour = c.NewValue, true);
         }
 
         protected virtual Drawable CreateTapRepresentation() => new TapPiece();
@@ -78,7 +77,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 case ArmedState.Hit:
                     this.Delay(400).FadeOut().Expire();
-                    HitObjectLine.FadeOut();
 
                     break;
 
@@ -87,7 +85,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
                        .MoveToOffset(new Vector2(0, -100), time_fade_hit, Easing.OutCubic)
                        .FadeOut(time_fade_miss);
-                    HitObjectLine.FadeOut();
 
                     this.ScaleTo(1f, time_fade_miss).Expire();
 

@@ -48,8 +48,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 },
                 headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
             });
-
-            AccentColour.BindValueChanged(c => HitObjectLine.Colour = c.NewValue, true);
         }
 
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
@@ -157,7 +155,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 case ArmedState.Hit:
                     using (BeginDelayedSequence((HitObject as IHasDuration).Duration, true))
                     {
-                        HitObjectLine.FadeOut();
                         using (BeginDelayedSequence(time_fade_miss, true))
                         {
                             this.FadeOut();
@@ -173,7 +170,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                             .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
                             .MoveToOffset(new Vector2(0, -100), time_fade_hit, Easing.OutCubic)
                             .FadeOut(time_fade_miss);
-                        HitObjectLine.FadeOut();
 
                         using (BeginDelayedSequence(time_fade_miss, true))
                         {

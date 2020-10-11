@@ -137,8 +137,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         [BackgroundDependencyLoader]
         private void load(DrawableHitObject drawableObject)
         {
-            Hold osuObject = (Hold)drawableObject.HitObject;
-
             state.BindTo(drawableObject.State);
             state.BindValueChanged(updateState, true);
 

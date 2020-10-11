@@ -1,4 +1,4 @@
-﻿using osu.Framework.Allocation;
+using osu.Framework.Allocation;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Framework.Graphics;

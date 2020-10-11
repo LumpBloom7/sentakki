@@ -45,8 +45,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         [BackgroundDependencyLoader]
         private void load(DrawableHitObject drawableObject, DrawableSlide slideObject)
         {
-            Tap osuObject = (Tap)drawableObject.HitObject;
-
             if (slideObject.HitObject.NestedHitObjects.Count > 2) // One is the tap, the others are slidebodies, which we are using
                 Stars.Add(new StarPiece { Rotation = 36 });
 
@@ -74,7 +72,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     using (BeginDelayedSequence(flash_in, true))
                     {
                         Stars.FadeOut();
-
                         this.FadeOut(800);
                     }
 
