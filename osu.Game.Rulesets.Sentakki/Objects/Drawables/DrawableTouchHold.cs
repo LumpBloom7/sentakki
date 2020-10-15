@@ -33,7 +33,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Origin = Anchor.Centre;
             Scale = new Vector2(0f);
             Alpha = 0;
-            AlwaysPresent = true;
             AddRangeInternal(new Drawable[] {
                 touchHoldBody = new TouchHoldBody(){ Duration = hitObject.Duration },
             });

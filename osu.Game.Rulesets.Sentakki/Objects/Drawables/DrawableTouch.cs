@@ -45,7 +45,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Alpha = 0;
             Scale = Vector2.Zero;
 
-            AlwaysPresent = true;
             AddRangeInternal(new Drawable[]{
                 blob1 = new TouchBlob{
                     Position = new Vector2(40, 0)

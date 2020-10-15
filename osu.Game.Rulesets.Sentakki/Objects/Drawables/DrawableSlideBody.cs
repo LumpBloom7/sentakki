@@ -53,7 +53,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
-            AlwaysPresent = true;
             Rotation = -22.5f;
             AddRangeInternal(new Drawable[]
             {
