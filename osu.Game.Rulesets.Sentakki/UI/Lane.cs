@@ -49,10 +49,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             private readonly Bindable<LaneInputMode> laneInputMode = new Bindable<LaneInputMode>();
 
-            [BackgroundDependencyLoader]
+            [BackgroundDependencyLoader(true)]
             private void load(SentakkiRulesetConfigManager sentakkiConfig)
             {
-                sentakkiConfig.BindWith(SentakkiRulesetSettings.LaneInputMode, laneInputMode);
+                sentakkiConfig?.BindWith(SentakkiRulesetSettings.LaneInputMode, laneInputMode);
             }
 
             protected override void Update()
