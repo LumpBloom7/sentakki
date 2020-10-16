@@ -26,6 +26,25 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public readonly HoldBody NoteBody;
         public readonly HitObjectLine HitObjectLine;
 
+        public override double LifetimeStart
+        {
+            get => base.LifetimeStart;
+            set
+            {
+                base.LifetimeStart = value;
+                NoteBody.LifetimeStart = value;
+            }
+        }
+        public override double LifetimeEnd
+        {
+            get => base.LifetimeEnd;
+            set
+            {
+                base.LifetimeEnd = value;
+                NoteBody.LifetimeEnd = value;
+            }
+        }
+
         /// <summary>
         /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
         /// </summary>

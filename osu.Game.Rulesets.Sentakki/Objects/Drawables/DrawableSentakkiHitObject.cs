@@ -31,7 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableSentakkiHitObject(SentakkiHitObject hitObject)
             : base(hitObject)
         {
-            AnimationDuration.BindValueChanged(_ => queueTransformReset(), true);
+            AnimationDuration.BindValueChanged(_ => queueTransformReset());
         }
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;

@@ -15,6 +15,26 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public readonly Drawable TapVisual;
         public readonly HitObjectLine HitObjectLine;
 
+        public override double LifetimeStart
+        {
+            get => base.LifetimeStart;
+            set
+            {
+                base.LifetimeStart = value;
+                TapVisual.LifetimeStart = value;
+            }
+        }
+        public override double LifetimeEnd
+        {
+            get => base.LifetimeEnd;
+            set
+            {
+                base.LifetimeEnd = value;
+                TapVisual.LifetimeEnd = value;
+            }
+        }
+
+
         public DrawableTap(Tap hitObject)
             : base(hitObject)
         {
