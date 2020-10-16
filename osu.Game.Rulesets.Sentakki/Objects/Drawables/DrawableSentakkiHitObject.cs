@@ -5,6 +5,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Judgements;
 using System;
+using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -66,14 +67,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             // The transform is reset as soon as this function begins
             // This includes the usual LoadComplete() call, or rewind resets
+            // This does not exclude rewinds from the Reset, since there would be a brief moment where the state haven't changed yet, and the update is still working.
             transformResetQueued = false;
         }
 
         private bool transformResetQueued;
-
         protected virtual void ResetTransforms()
         {
-            foreach (var transform in Transforms)
+            foreach (var transform in Transforms.ToList())
             {
                 transform.Apply(double.MinValue);
                 RemoveTransform(transform);
