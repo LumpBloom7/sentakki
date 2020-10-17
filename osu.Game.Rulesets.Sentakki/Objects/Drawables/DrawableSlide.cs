@@ -5,6 +5,8 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects;
 using osuTK;
 using System.Linq;
+using osu.Game.Rulesets.Sentakki.Configuration;
+using System;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -16,8 +18,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public Container<DrawableSlideBody> SlideBodies;
         public Container<DrawableSlideTap> SlideTaps;
-
-        protected override double InitialLifetimeOffset => 1000;
 
         public DrawableSlide(SentakkiHitObject hitObject)
             : base(hitObject)
@@ -38,6 +38,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Origin = Anchor.Centre,
                 }
             });
+        }
+
+        [BackgroundDependencyLoader(true)]
+        private void load(SentakkiRulesetConfigManager sentakkiConfig)
+        {
+            // This is to ensure the container is alive when the child is.
+            sentakkiConfig?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDuration);
         }
 
         protected override void ClearNestedHitObjects()

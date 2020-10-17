@@ -13,10 +13,12 @@ using System.Linq;
 using System.Diagnostics;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Sentakki.Configuration;
+using System;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideBody : DrawableSentakkiHitObject
+    public class DrawableSlideBody : DrawableSentakkiLanedHitObject
     {
         public override bool RemoveWhenNotAlive => false;
 
@@ -26,8 +28,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public SlideVisual Slidepath;
         public StarPiece SlideStar;
-
-        protected override double InitialLifetimeOffset => 1000 + (HitObject as IHasDuration).Duration;
 
         private float starProg = 0;
         private Vector2? previousPosition = null;
@@ -46,7 +46,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        public DrawableSlideBody(SentakkiHitObject hitObject)
+        public DrawableSlideBody(SentakkiLanedHitObject hitObject)
             : base(hitObject)
         {
             AccentColour.BindTo(HitObject.ColourBindable);
@@ -87,6 +87,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             OnNewResult += queueProgressUpdate;
             OnRevertResult += queueProgressUpdate;
         }
+
 
         [Resolved]
         private Bindable<WorkingBeatmap> workingBeatmap { get; set; }
@@ -130,16 +131,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             pendingProgressUpdate = false;
         }
 
+        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset / 2;
+
         protected override void UpdateInitialTransforms()
         {
-            using (BeginAbsoluteSequence(HitObject.StartTime - 500, true))
+            Slidepath.FadeInFromZero(AdjustedAnimationDuration / 2);
+            using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
             {
-                Slidepath.FadeInFromZero(500);
-                using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
-                {
-                    SlideStar.FadeInFromZero(100).ScaleTo(1, 100);
-                    this.Delay(100 + ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - 50 - ShootDelay);
-                }
+                SlideStar.FadeInFromZero(100).ScaleTo(1, 100);
+                this.Delay(100 + ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - 50 - ShootDelay);
             }
         }
 
