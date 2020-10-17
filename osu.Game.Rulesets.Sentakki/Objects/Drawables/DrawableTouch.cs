@@ -29,7 +29,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private readonly TouchFlashPiece flash;
         private readonly ExplodePiece explode;
 
-        private readonly CircularContainer dot;
+        private readonly DotPiece dot;
 
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
@@ -58,21 +58,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 blob4 = new TouchBlob{
                     Position = new Vector2(0, -40)
                 },
-                dot = new CircularContainer
-                {
-                    Size = new Vector2(20),
-                    Masking = true,
-                    BorderColour = Color4.Gray,
-                    BorderThickness = 2,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        AlwaysPresent = true,
-                        Colour = Color4.White,
-                    }
-                },
+                dot = new DotPiece(),
                 flash = new TouchFlashPiece{
                     RelativeSizeAxes = Axes.None,
                     Size = new Vector2(80)

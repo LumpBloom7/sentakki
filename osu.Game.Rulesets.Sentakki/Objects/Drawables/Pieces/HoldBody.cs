@@ -39,88 +39,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     Children = new Drawable[]
                     {
                         shadow = new ShadowPiece(),
-                        new CircularContainer
+                        new RingPiece(),
+                        new DotPiece(squared: true)
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Masking = true,
-                            BorderThickness = 17.35f,
-                            BorderColour = Color4.Gray,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Alpha = 0,
-                                AlwaysPresent = true,
-                            }
-                        },
-                        new Container
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding(1),
-                            Child = new CircularContainer
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Masking = true,
-                                BorderThickness = 15,
-                                BorderColour = Color4.White,
-                                Child = new Box
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Alpha = 0,
-                                    AlwaysPresent = true,
-                                }
-                            }
-                        },
-                        new CircularContainer
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Masking = true,
-                            BorderThickness = 2,
-                            BorderColour = Color4.Gray,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Alpha = 0,
-                                AlwaysPresent = true,
-                            }
-                        },
-                        new Container
-                        {
-                            Masking = true,
-                            CornerExponent = 2.5f,
-                            CornerRadius = 5f,
                             Rotation = 45,
                             Position = new Vector2(0, -37.5f),
-                            Size = new Vector2(20),
-                            BorderColour = Color4.Gray,
-                            BorderThickness = 2,
                             Anchor = Anchor.BottomCentre,
-                            Origin = Anchor.Centre,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                AlwaysPresent = true,
-                                Colour = Color4.White,
-                            }
                         },
-                        new Container
+                        new DotPiece(squared: true)
                         {
-                            Masking = true,
-                            CornerExponent = 2.5f,
-                            CornerRadius = 5f,
                             Rotation = 45,
                             Position = new Vector2(0, 37.5f),
-                            Size = new Vector2(20),
-                            BorderColour = Color4.Gray,
-                            BorderThickness = 2,
                             Anchor = Anchor.TopCentre,
-                            Origin = Anchor.Centre,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                AlwaysPresent = true,
-                                Colour = Color4.White,
-                            }
-                        }
+                        },
                     }
                 },
                 flash = new FlashPiece(){
