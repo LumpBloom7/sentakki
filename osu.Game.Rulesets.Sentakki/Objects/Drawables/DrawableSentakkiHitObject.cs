@@ -51,7 +51,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void Update()
         {
             base.Update();
-            if (transformResetQueued) ResetTransforms();
+
+            // Using SkinChanged to achieve our goals of resetting the transforms,
+            // since that is the only publicly accessible function that calls the base Clear/Apply Transforms
+            // We also avoid doing this if the state is not idle, since there is little benefit in doing so
+            // And it avoids drawable pieces not having the correct state
+            // And it avoids samples repeatedly playing again and again, while sliding the slider
+            if (transformResetQueued && State.Value == ArmedState.Idle) SkinChanged(CurrentSkin, true);
         }
 
         // We need to make sure the current transform resets, perhaps due to animation duration being changed
@@ -67,31 +73,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             // The transform is reset as soon as this function begins
             // This includes the usual LoadComplete() call, or rewind resets
-            // This does not exclude rewinds from the Reset, since there would be a brief moment where the state haven't changed yet, and the update is still working.
             transformResetQueued = false;
         }
 
         private bool transformResetQueued;
-        protected virtual void ResetTransforms()
-        {
-            foreach (var transform in Transforms.ToList())
-            {
-                transform.Apply(double.MinValue);
-                RemoveTransform(transform);
-            }
-            foreach (Drawable internalChild in InternalChildren)
-            {
-                internalChild.ApplyTransformsAt(double.MinValue, true);
-                internalChild.ClearTransforms(true);
-            }
-            using (BeginAbsoluteSequence(HitObject.StartTime - InitialLifetimeOffset, true))
-            {
-                UpdateInitialTransforms();
-                double offset = Result?.TimeOffset ?? 0;
-                using (BeginDelayedSequence(InitialLifetimeOffset + offset, true))
-                    UpdateStateTransforms(State.Value);
-            }
-        }
 
         protected new virtual void ApplyResult(Action<JudgementResult> application)
         {
