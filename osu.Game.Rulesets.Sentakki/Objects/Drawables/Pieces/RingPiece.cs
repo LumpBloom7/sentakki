@@ -9,7 +9,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
     public class RingPiece : CompositeDrawable
     {
-        public RingPiece(float thickness = 18, float outlineThickness = 1)
+        public RingPiece(float thickness = 18, float outlineThickness = 2)
         {
             RelativeSizeAxes = Axes.Both;
             Anchor = Anchor.Centre;
