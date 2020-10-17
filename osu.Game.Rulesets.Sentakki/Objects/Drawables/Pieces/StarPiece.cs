@@ -27,7 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Texture = starTexture,
-                Size = new Vector2(1.8f)
+                Size = new Vector2(1.5f)
             });
         }
     }
