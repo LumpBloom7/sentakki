@@ -1,9 +1,9 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Statistics;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Statistics;
 using osu.Game.Tests.Visual;
-using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Statistics
 {

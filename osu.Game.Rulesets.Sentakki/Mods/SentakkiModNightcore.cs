@@ -1,5 +1,5 @@
-﻿using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Mods;
+﻿using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {

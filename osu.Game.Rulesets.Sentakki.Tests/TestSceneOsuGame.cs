@@ -2,10 +2,10 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Platform;
-using osu.Game.Tests.Visual;
-using osuTK.Graphics;
-using osu.Game.Users;
 using osu.Game.Online.API;
+using osu.Game.Tests.Visual;
+using osu.Game.Users;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Tests
 {

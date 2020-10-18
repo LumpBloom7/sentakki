@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using osu.Game.Replays;
-using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.Replays;
+using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.UI;
 using osuTK;
 

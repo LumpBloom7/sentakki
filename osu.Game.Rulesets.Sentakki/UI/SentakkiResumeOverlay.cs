@@ -1,14 +1,14 @@
+using System;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Game.Skinning;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Game.Audio;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Screens.Play;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Cursor;
+using osu.Game.Skinning;
 using osuTK.Graphics;
-using System;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {

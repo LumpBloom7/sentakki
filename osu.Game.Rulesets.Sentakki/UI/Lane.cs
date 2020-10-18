@@ -1,10 +1,9 @@
+using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.UI;
-using static osu.Game.Input.Handlers.ReplayInputHandler;
 using osuTK;
-using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -30,7 +29,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             public override bool HandlePositionalInput => true;
 
-            private BindableInt currentKeys = new BindableInt(0);
+            private readonly BindableInt currentKeys = new BindableInt(0);
+
             public LaneReceptor()
             {
                 Position = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, 0);

@@ -1,7 +1,7 @@
+using System;
+using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Judgements;
-using System;
 
 public class DrawableScorePaddingObject : DrawableHitObject<ScorePaddingObject>
 {

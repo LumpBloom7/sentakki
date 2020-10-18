@@ -1,6 +1,6 @@
-﻿using osu.Game.Configuration;
+﻿using System.ComponentModel;
+using osu.Game.Configuration;
 using osu.Game.Rulesets.Configuration;
-using System.ComponentModel;
 
 namespace osu.Game.Rulesets.Sentakki.Configuration
 {

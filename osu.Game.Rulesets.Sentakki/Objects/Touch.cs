@@ -1,7 +1,7 @@
-using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Rulesets.Scoring;
-using osuTK.Graphics;
+using osu.Game.Rulesets.Sentakki.Scoring;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {

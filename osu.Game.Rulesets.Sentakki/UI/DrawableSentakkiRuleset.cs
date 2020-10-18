@@ -1,19 +1,17 @@
+using System.Collections.Generic;
 using System.Linq;
-using osu.Framework.Bindables;
-using osu.Framework.Audio.Track;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Track;
 using osu.Game.Beatmaps;
 using osu.Game.Input.Handlers;
 using osu.Game.Replays;
+using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Replays;
-using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Play;
-using System.Collections.Generic;
-using System;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {

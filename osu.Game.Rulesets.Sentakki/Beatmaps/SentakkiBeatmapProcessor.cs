@@ -1,10 +1,6 @@
-using System;
 using System.Linq;
-using osu.Framework.Graphics;
 using osu.Game.Beatmaps;
-using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {

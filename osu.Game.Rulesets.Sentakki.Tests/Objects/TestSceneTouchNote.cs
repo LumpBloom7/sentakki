@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Linq;
+using NUnit.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Beatmaps;
@@ -7,8 +8,6 @@ using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Tests.Visual;
 using osuTK;
-using osuTK.Graphics;
-using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {

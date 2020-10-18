@@ -1,15 +1,15 @@
-﻿using osu.Game.Beatmaps;
-using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Replays;
-using osu.Game.Rulesets.Mods;
-using osu.Game.Scoring;
-using osu.Game.Users;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Objects.Drawables;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Utils;
-using System;
+using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Replays;
+using osu.Game.Scoring;
+using osu.Game.Users;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {

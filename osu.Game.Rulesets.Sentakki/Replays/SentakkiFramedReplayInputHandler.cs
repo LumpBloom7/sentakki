@@ -1,10 +1,10 @@
-﻿using osu.Framework.Input.StateChanges;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using osu.Framework.Input.StateChanges;
 using osu.Framework.Utils;
 using osu.Game.Replays;
 using osu.Game.Rulesets.Replays;
 using osuTK;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace osu.Game.Rulesets.Sentakki.Replays
 {

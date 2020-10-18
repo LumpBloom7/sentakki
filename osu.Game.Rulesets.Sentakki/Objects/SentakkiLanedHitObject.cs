@@ -1,6 +1,6 @@
+using System.Threading;
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Objects;
-using System.Threading;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {

@@ -9,7 +9,6 @@ namespace osu.Game.Rulesets.Sentakki.Replays
 {
     public class SentakkiReplayFrame : ReplayFrame, IConvertibleReplayFrame
     {
-        public ReplayEvent NoteEvent = ReplayEvent.none;
         public Vector2 Position;
         public List<SentakkiAction> Actions = new List<SentakkiAction>();
 
@@ -41,16 +40,5 @@ namespace osu.Game.Rulesets.Sentakki.Replays
 
             return new LegacyReplayFrame(Time, Position.X, Position.Y, state);
         }
-    }
-
-    public enum ReplayEvent
-    {
-        none,
-        TapDown,
-        TapUp,
-        TouchHoldDown,
-        TouchHoldUp,
-        HoldDown,
-        HoldUp
     }
 }

@@ -1,18 +1,18 @@
-﻿using osu.Framework.Allocation;
+﻿using System;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
+using osu.Game.Online.API;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Skinning;
+using osu.Game.Users;
 using osuTK;
 using osuTK.Graphics;
-using System;
-using osu.Game.Online.API;
-using osu.Game.Users;
-using osu.Game.Skinning;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components
 {

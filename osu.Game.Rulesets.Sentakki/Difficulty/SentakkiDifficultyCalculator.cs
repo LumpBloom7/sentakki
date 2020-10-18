@@ -1,11 +1,11 @@
+using System;
+using System.Collections.Generic;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Difficulty;
-using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Difficulty.Skills;
 using osu.Game.Rulesets.Mods;
-using System;
-using System.Collections.Generic;
+using osu.Game.Rulesets.Sentakki.Objects;
 
 
 namespace osu.Game.Rulesets.Sentakki.Difficulty

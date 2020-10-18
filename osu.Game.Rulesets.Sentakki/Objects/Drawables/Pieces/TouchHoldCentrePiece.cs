@@ -1,11 +1,10 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.UserInterface;
 using osu.Game.Graphics;
 using osuTK;
 using osuTK.Graphics;
-using osu.Framework.Graphics.Effects;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {

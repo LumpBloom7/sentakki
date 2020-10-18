@@ -1,18 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
-using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Scoring;
 using osu.Game.Graphics.UserInterface;
-using osuTK.Graphics;
+using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK;
-using Microsoft.EntityFrameworkCore.Internal;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Statistics
 {

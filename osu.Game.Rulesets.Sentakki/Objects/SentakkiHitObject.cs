@@ -1,13 +1,13 @@
 ﻿using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
+using osu.Game.Beatmaps;
+using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
 using osu.Game.Rulesets.Sentakki.Scoring;
-using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Objects;
 using osuTK.Graphics;
-using osu.Framework.Extensions.Color4Extensions;
-using osu.Game.Beatmaps.ControlPoints;
-using osu.Game.Beatmaps;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {

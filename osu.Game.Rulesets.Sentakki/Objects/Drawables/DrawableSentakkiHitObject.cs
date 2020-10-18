@@ -1,11 +1,9 @@
+using System;
 using osu.Framework.Allocation;
-using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Rulesets.Objects.Drawables;
-using osu.Framework.Graphics;
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Judgements;
-using System;
-using System.Linq;
+using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.UI;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {

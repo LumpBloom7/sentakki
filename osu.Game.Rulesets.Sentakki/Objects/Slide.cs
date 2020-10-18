@@ -1,11 +1,11 @@
-using osu.Game.Rulesets.Judgements;
-using osu.Game.Rulesets.Scoring;
-using System.Collections.Generic;
-using System.Threading;
-using osuTK.Graphics;
-using osu.Game.Rulesets.Objects.Types;
-using System.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Scoring;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {

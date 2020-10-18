@@ -1,15 +1,15 @@
-﻿using osu.Framework.Allocation;
-using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Objects;
-using osu.Framework.Graphics;
-using osu.Game.Skinning;
-using osu.Game.Audio;
-using osu.Game.Rulesets.Sentakki.Configuration;
+﻿using System;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Game.Rulesets.Judgements;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using System;
+using osu.Game.Audio;
+using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Skinning;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {

@@ -1,16 +1,14 @@
+using System.Diagnostics;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osuTK;
 using osuTK.Graphics;
-using System.Diagnostics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
-using osu.Game.Rulesets.Sentakki.Configuration;
-using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
