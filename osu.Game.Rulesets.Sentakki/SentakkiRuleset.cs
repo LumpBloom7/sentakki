@@ -152,5 +152,15 @@ namespace osu.Game.Rulesets.Sentakki
         {
             Texture = new TextureStore(new TextureLoaderStore(CreateResourceStore()), false).Get("Textures/Icon2"),
         };
+
+        protected override IEnumerable<HitResult> GetValidHitResults()
+        {
+            return new[]
+            {
+                HitResult.Great,
+                HitResult.Good,
+                HitResult.Meh,
+            };
+        }
     }
 }
