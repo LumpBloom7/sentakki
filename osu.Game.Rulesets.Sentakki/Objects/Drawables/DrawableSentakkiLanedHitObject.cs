@@ -18,7 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public new SentakkiLanedHitObject HitObject => (SentakkiLanedHitObject)base.HitObject;
         private readonly PausableSkinnableSound breakSound;
 
-        protected override float SamplePlaybackPosition => SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, HitObject.Lane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2) + .5f;
+        protected override float SamplePlaybackPosition => (SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, HitObject.Lane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
 
         public DrawableSentakkiLanedHitObject(SentakkiLanedHitObject hitObject)
                     : base(hitObject)

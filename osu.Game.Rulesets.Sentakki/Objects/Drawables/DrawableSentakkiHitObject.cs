@@ -21,7 +21,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             set => AutoBindable.Value = value;
         }
 
-
         // Used for the animation update
         protected readonly Bindable<double> AnimationDuration = new Bindable<double>(1000);
 
@@ -38,7 +37,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public double GameplaySpeed => drawableSentakkiRuleset?.GameplaySpeed ?? 1;
 
         protected double AdjustedAnimationDuration => AnimationDuration.Value * GameplaySpeed;
-
 
         [BackgroundDependencyLoader(true)]
         private void load(DrawableSentakkiRuleset drawableRuleset)

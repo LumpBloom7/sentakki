@@ -34,7 +34,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-
         public DrawableTap(Tap hitObject)
             : base(hitObject)
         {

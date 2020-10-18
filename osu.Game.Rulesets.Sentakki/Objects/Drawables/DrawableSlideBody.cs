@@ -86,7 +86,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             OnRevertResult += queueProgressUpdate;
         }
 
-
         [Resolved]
         private Bindable<WorkingBeatmap> workingBeatmap { get; set; }
 
