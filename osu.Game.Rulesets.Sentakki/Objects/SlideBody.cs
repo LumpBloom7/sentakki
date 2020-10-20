@@ -1,14 +1,14 @@
-using osu.Framework.Bindables;
+using System;
+using System.Threading;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
-using System;
+using osu.Game.Rulesets.Sentakki.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public class SlideBody : SentakkiHitObject, IHasDuration
+    public class SlideBody : SentakkiLanedHitObject, IHasDuration
     {
         public static readonly float SLIDE_CHEVRON_DISTANCE = 25;
 
@@ -26,9 +26,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public SentakkiSlideInfo SlideInfo { get; set; }
 
-        protected override void CreateNestedHitObjects()
+        protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            base.CreateNestedHitObjects();
+            base.CreateNestedHitObjects(cancellationToken);
 
             var distance = SlideInfo.SlidePath.Path.Distance;
             int chevrons = (int)Math.Ceiling(distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
@@ -57,7 +57,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             public virtual float Progress { get; set; }
 
-            public bool IsTailNote => Progress == 1;
             protected override HitWindows CreateHitWindows() => HitWindows.Empty;
             public override Judgement CreateJudgement() => new IgnoreJudgement();
         }

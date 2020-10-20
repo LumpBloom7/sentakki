@@ -1,17 +1,18 @@
-﻿using osu.Framework.Allocation;
+﻿using System;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
+using osu.Game.Online.API;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Skinning;
+using osu.Game.Users;
 using osuTK;
 using osuTK.Graphics;
-using System;
-using osu.Game.Online.API;
-using osu.Game.Users;
-using osu.Game.Skinning;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components
 {
@@ -21,6 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
         public SentakkiRing()
         {
+            Size = new Vector2(SentakkiPlayfield.RINGSIZE);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Scale = Vector2.Zero;
@@ -28,65 +30,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
             InternalChildren = new Drawable[]
             {
-                new Container
-                {
-                    Name = "Ring",
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Size = new Vector2(SentakkiPlayfield.RINGSIZE),
-                    FillAspectRatio = 1,
-                    Children = new Drawable[]{
-                        new CircularContainer{
-                            RelativeSizeAxes = Axes.Both,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Masking = true,
-                            BorderThickness = 8.35f,
-                            BorderColour = Color4.Gray,
-                            Children = new Drawable[]
-                            {
-                                new Box
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Alpha = 0,
-                                    AlwaysPresent = true,
-                                },
-                            }
-                        },
-                        new Container{
-                            RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding(1),
-                            Child = new CircularContainer{
-                                RelativeSizeAxes = Axes.Both,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Masking = true,
-                                BorderThickness = 6,
-                                BorderColour = Color4.White,
-                                Child = new Box
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Alpha = 0,
-                                    AlwaysPresent = true,
-                                },
-                            },
-                        },
-                        new CircularContainer{
-                            RelativeSizeAxes = Axes.Both,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Masking = true,
-                            BorderThickness = 2,
-                            BorderColour = Color4.Gray,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Alpha = 0,
-                                AlwaysPresent = true,
-                            },
-                        },
-                    }
-                },
+                new RingPiece(8),
                 spawnIndicator = new Container
                 {
                     Name = "Spawn indicatiors",
@@ -99,38 +43,15 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             // Add dots to the actual ring
             foreach (float pathAngle in SentakkiPlayfield.LANEANGLES)
             {
-                AddInternal(new CircularContainer
+                AddInternal(new DotPiece
                 {
-                    Name = "Dot",
-                    Size = new Vector2(SentakkiPlayfield.DOTSIZE),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    RelativeSizeAxes = Axes.None,
-                    Masking = true,
-                    BorderColour = Color4.Gray,
-                    BorderThickness = 2,
                     Position = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
-                    Child = new Box
-                    {
-                        AlwaysPresent = true,
-                        RelativeSizeAxes = Axes.Both,
-                    }
                 });
 
-                spawnIndicator.Add(new CircularContainer
+                spawnIndicator.Add(new DotPiece(new Vector2(16, 8))
                 {
-                    Size = new Vector2(16, 8),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Masking = true,
-                    BorderColour = Color4.Gray,
-                    BorderThickness = 2f,
                     Rotation = pathAngle,
                     Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both
-                    }
                 });
             }
         }

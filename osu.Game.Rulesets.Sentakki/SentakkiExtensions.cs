@@ -1,6 +1,6 @@
+using System;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
-using System;
 
 namespace osu.Game.Rulesets.Sentakki
 {

@@ -1,6 +1,6 @@
-﻿using osu.Game.Configuration;
+﻿using System.ComponentModel;
+using osu.Game.Configuration;
 using osu.Game.Rulesets.Configuration;
-using System.ComponentModel;
 
 namespace osu.Game.Rulesets.Sentakki.Configuration
 {
@@ -24,6 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
             Set(SentakkiRulesetSettings.RingOpacity, 1f, 0f, 1f, 0.01f);
             Set(SentakkiRulesetSettings.BreakSounds, true);
             Set(SentakkiRulesetSettings.SlideSounds, true);
+            Set(SentakkiRulesetSettings.LaneInputMode, LaneInputMode.Button);
         }
     }
 
@@ -34,6 +35,13 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
         Difficulty,
         Skin,
     }
+
+    public enum LaneInputMode
+    {
+        Button,
+        Sensor,
+    }
+
     public enum SentakkiRulesetSettings
     {
         KiaiEffects,
@@ -45,5 +53,6 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
         BreakSounds,
         TouchAnimationDuration,
         SlideSounds,
+        LaneInputMode
     }
 }

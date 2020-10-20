@@ -1,30 +1,32 @@
-﻿using osu.Framework.Graphics;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Bindings;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
-using osu.Game.Scoring;
 using osu.Game.Overlays.Settings;
-using osu.Game.Screens.Ranking.Statistics;
 using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
+using osu.Game.Rulesets.Edit;
+using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Replays.Types;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Difficulty;
+using osu.Game.Rulesets.Sentakki.Edit;
 using osu.Game.Rulesets.Sentakki.Mods;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Rulesets.Sentakki.Statistics;
 using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Replays.Types;
-using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.UI;
-using System.Collections.Generic;
-using System;
-using osu.Game.Rulesets.Sentakki.Edit;
-using osu.Game.Rulesets.Edit;
+using osu.Game.Scoring;
+using osu.Game.Screens.Ranking.Statistics;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki
@@ -41,6 +43,9 @@ namespace osu.Game.Rulesets.Sentakki
 
         public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) =>
             new SentakkiBeatmapConverter(beatmap, this);
+
+        public override IBeatmapProcessor CreateBeatmapProcessor(IBeatmap beatmap) =>
+            new SentakkiBeatmapProcessor(beatmap);
 
         public override DifficultyCalculator CreateDifficultyCalculator(WorkingBeatmap beatmap) =>
             new SentakkiDifficultyCalculator(this, beatmap);
@@ -73,6 +78,7 @@ namespace osu.Game.Rulesets.Sentakki
                     return new Mod[]
                     {
                         new SentakkiModAutoplay(),
+                        new SentakkiModAutoTouch()
                     };
 
                 case ModType.Fun:
@@ -100,6 +106,14 @@ namespace osu.Game.Rulesets.Sentakki
             new KeyBinding(InputKey.X, SentakkiAction.Button2),
             new KeyBinding(InputKey.MouseLeft, SentakkiAction.Button1),
             new KeyBinding(InputKey.MouseRight, SentakkiAction.Button2),
+            new KeyBinding(InputKey.Number1, SentakkiAction.Key1),
+            new KeyBinding(InputKey.Number2, SentakkiAction.Key2),
+            new KeyBinding(InputKey.Number3, SentakkiAction.Key3),
+            new KeyBinding(InputKey.Number4, SentakkiAction.Key4),
+            new KeyBinding(InputKey.Number5, SentakkiAction.Key5),
+            new KeyBinding(InputKey.Number6, SentakkiAction.Key6),
+            new KeyBinding(InputKey.Number7, SentakkiAction.Key7),
+            new KeyBinding(InputKey.Number8, SentakkiAction.Key8),
         };
 
         public override StatisticRow[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap) => new[]
@@ -119,7 +133,7 @@ namespace osu.Game.Rulesets.Sentakki
             {
                 Columns = new[]
                 {
-                    new StatisticItem("Judgement Distribution", new JudgementChart(score.HitEvents)
+                    new StatisticItem("Judgement Distribution", new JudgementChart(score.HitEvents.Where(e=>e.HitObject is SentakkiHitObject).ToList())
                     {
                         RelativeSizeAxes = Axes.X,
                         Size = new Vector2(1, 250)
@@ -142,5 +156,15 @@ namespace osu.Game.Rulesets.Sentakki
         {
             Texture = new TextureStore(new TextureLoaderStore(CreateResourceStore()), false).Get("Textures/Icon2"),
         };
+
+        protected override IEnumerable<HitResult> GetValidHitResults()
+        {
+            return new[]
+            {
+                HitResult.Great,
+                HitResult.Good,
+                HitResult.Meh,
+            };
+        }
     }
 }

@@ -2,8 +2,8 @@
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
 
@@ -11,6 +11,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
     public class HoldBody : CompositeDrawable
     {
+        // This will be proxied, so a must.
+        public override bool RemoveWhenNotAlive => false;
+
         private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
         public readonly Container Note;
@@ -21,10 +24,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public HoldBody()
         {
             Scale = Vector2.Zero;
-            Position = new Vector2(0, -26);
+            Position = new Vector2(0, -(SentakkiPlayfield.NOTESTARTDISTANCE - 37.5f));
             Anchor = Anchor.Centre;
             Origin = Anchor.BottomCentre;
-            Size = new Vector2(80);
+            Size = new Vector2(75);
             InternalChildren = new Drawable[]
             {
                 Note = new Container
@@ -35,91 +38,25 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     Children = new Drawable[]
                     {
                         shadow = new ShadowPiece(),
-                        new CircularContainer
+                        new RingPiece(),
+                        new DotPiece(squared: true)
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Masking = true,
-                            BorderThickness = 17.35f,
-                            BorderColour = Color4.Gray,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Alpha = 0,
-                                AlwaysPresent = true,
-                            }
-                        },
-                        new Container
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding(1),
-                            Child = new CircularContainer
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Masking = true,
-                                BorderThickness = 15,
-                                BorderColour = Color4.White,
-                                Child = new Box
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                    Alpha = 0,
-                                    AlwaysPresent = true,
-                                }
-                            }
-                        },
-                        new CircularContainer
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Masking = true,
-                            BorderThickness = 2,
-                            BorderColour = Color4.Gray,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Alpha = 0,
-                                AlwaysPresent = true,
-                            }
-                        },
-                        new Container
-                        {
-                            Masking = true,
-                            CornerExponent = 2.5f,
-                            CornerRadius = 5f,
                             Rotation = 45,
-                            Position = new Vector2(0, -40),
-                            Size = new Vector2(20),
-                            BorderColour = Color4.Gray,
-                            BorderThickness = 2,
+                            Position = new Vector2(0, -37.5f),
                             Anchor = Anchor.BottomCentre,
-                            Origin = Anchor.Centre,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                AlwaysPresent = true,
-                                Colour = Color4.White,
-                            }
                         },
-                        new Container
+                        new DotPiece(squared: true)
                         {
-                            Masking = true,
-                            CornerExponent = 2.5f,
-                            CornerRadius = 5f,
                             Rotation = 45,
-                            Position = new Vector2(0, 40),
-                            Size = new Vector2(20),
-                            BorderColour = Color4.Gray,
-                            BorderThickness = 2,
+                            Position = new Vector2(0, 37.5f),
                             Anchor = Anchor.TopCentre,
-                            Origin = Anchor.Centre,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                AlwaysPresent = true,
-                                Colour = Color4.White,
-                            }
-                        }
+                        },
                     }
                 },
-                flash = new FlashPiece(),
+                flash = new FlashPiece(){
+                    CornerRadius = 40,
+                    CornerExponent = 2
+                },
                 explode = new ExplodePiece()
             };
         }
@@ -130,8 +67,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         [BackgroundDependencyLoader]
         private void load(DrawableHitObject drawableObject)
         {
-            Hold osuObject = (Hold)drawableObject.HitObject;
-
             state.BindTo(drawableObject.State);
             state.BindValueChanged(updateState, true);
 

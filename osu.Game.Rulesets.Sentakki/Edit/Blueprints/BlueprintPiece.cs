@@ -23,7 +23,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints
         /// <param name="hitObject">The <see cref="SentakkiHitObject"/> to reference properties from.</param>
         public virtual void UpdateFrom(T hitObject)
         {
-            Position = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, hitObject.Lane.GetRotationForLane());
+            if (hitObject is SentakkiLanedHitObject lho)
+                Position = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, lho.Lane.GetRotationForLane());
+            else
+                Position = hitObject.Position;
         }
     }
 }

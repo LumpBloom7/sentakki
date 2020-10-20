@@ -42,9 +42,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Components
 
         public void UpdateFrom(DrawableSlide drawableSlide)
         {
-            Rotation = drawableSlide.HitObject.Lane.GetRotationForLane();
+            var lho = drawableSlide.HitObject as SentakkiLanedHitObject;
+            Rotation = lho.Lane.GetRotationForLane();
             starPiece.Rotation = ((SlideTapPiece)drawableSlide.SlideTaps.Child.TapVisual).Stars.Rotation;
-            Position = SentakkiExtensions.GetCircularPosition(-drawableSlide.SlideTaps.Child.TapVisual.Position.Y, drawableSlide.HitObject.Lane.GetRotationForLane());
+            Position = SentakkiExtensions.GetCircularPosition(-drawableSlide.SlideTaps.Child.TapVisual.Position.Y, lho.Lane.GetRotationForLane());
         }
     }
 }

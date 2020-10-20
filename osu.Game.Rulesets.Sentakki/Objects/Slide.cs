@@ -1,30 +1,36 @@
-using osu.Framework.Bindables;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
-using System;
-using System.Collections.Generic;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    // This is the main object used to summon slides, includes a TAP and one or more "SlideBodies"
-    public class Slide : SentakkiHitObject
+    public class Slide : SentakkiLanedHitObject, IHasDuration
     {
-        public override Color4 NoteColor => IsBreak ? Color4.OrangeRed : HasTwin ? Color4.Gold : Color4.Aqua;
+        public double Duration
+        {
+            get => SlideInfoList.Any() ? SlideInfoList.Max(s => s.Duration) : 0;
+            set => throw new NotSupportedException();
+        }
+
+        public double EndTime => StartTime + Duration;
+
+        protected override Color4 DefaultNoteColour => Color4.Aqua;
 
         public List<SentakkiSlideInfo> SlideInfoList = new List<SentakkiSlideInfo>();
 
-        protected override void CreateNestedHitObjects()
+        protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            base.CreateNestedHitObjects();
-
             AddNested(new Tap
             {
                 LaneBindable = { BindTarget = LaneBindable },
                 StartTime = StartTime,
                 Samples = Samples,
-                IsBreak = IsBreak
+                Break = Break
             });
             createSlideBodies();
         }

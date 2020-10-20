@@ -1,9 +1,8 @@
-﻿using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics;
+﻿using System.Collections.Generic;
+using System.Linq;
+using osu.Framework.Graphics.Sprites;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Objects;
-using System.Collections.Generic;
-using System.Linq;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps

@@ -13,9 +13,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints
 
         protected override bool AlwaysShowWhenSelected => true;
 
-        protected override bool ShouldBeAlive =>
-            (DrawableObject.IsAlive && DrawableObject.IsPresent && (DrawableObject as DrawableSentakkiHitObject).IsVisible) || (AlwaysShowWhenSelected && State == SelectionState.Selected);
-
         protected SentakkiSelectionBlueprint(DrawableHitObject drawableObject)
             : base(drawableObject)
         {

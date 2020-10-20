@@ -1,5 +1,5 @@
-﻿using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Judgements;
+﻿using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
@@ -8,6 +8,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
     {
         protected override bool FailCondition(HealthProcessor healthProcessor, JudgementResult result)
             => !(result.Judgement is IgnoreJudgement)
-               && result.Type != HitResult.Great && result.Type != HitResult.Perfect;
+               && result.Type < result.Judgement.MaxResult;
     }
 }

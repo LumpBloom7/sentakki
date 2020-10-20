@@ -13,10 +13,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Padding = new MarginPadding(1);
-        }
-
-        protected override void LoadComplete()
-        {
             Child = new CircularContainer
             {
                 Alpha = .5f,

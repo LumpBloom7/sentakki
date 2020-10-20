@@ -11,6 +11,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
     public class TapPiece : CompositeDrawable
     {
+        // This will be proxied, so a must.
+        public override bool RemoveWhenNotAlive => false;
+
         private readonly CirclePiece circle;
         private readonly FlashPiece flash;
         private readonly ExplodePiece explode;
@@ -18,7 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         public TapPiece()
         {
-            Size = new Vector2(80);
+            Size = new Vector2(75);
 
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
@@ -29,7 +32,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             {
                 glow = new ShadowPiece(),
                 circle = new CirclePiece(),
-                flash = new FlashPiece(),
+                flash = new FlashPiece(){
+                    CornerRadius = 40,
+                    CornerExponent = 2
+                },
                 explode = new ExplodePiece(),
             };
         }
@@ -40,8 +46,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         [BackgroundDependencyLoader]
         private void load(DrawableHitObject drawableObject)
         {
-            Tap osuObject = (Tap)drawableObject.HitObject;
-
             state.BindTo(drawableObject.State);
             state.BindValueChanged(updateState, true);
 

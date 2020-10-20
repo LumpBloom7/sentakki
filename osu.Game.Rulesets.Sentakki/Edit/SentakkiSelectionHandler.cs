@@ -15,12 +15,12 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             if (SelectedBlueprints.Count() > 1)
                 return true;
 
-            foreach (var h in SelectedHitObjects.OfType<SentakkiHitObject>())
+            foreach (var h in SelectedBlueprints.Where(x => x.HitObject is SentakkiHitObject))
             {
                 var newPos = ToLocalSpace(moveEvent.ScreenSpacePosition);
                 newPos = new Vector2(newPos.X - 300, newPos.Y - 300);
 
-                switch (h)
+                switch (h.HitObject)
                 {
                     case TouchHold _:
                         continue;
@@ -33,11 +33,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                         touch.Position = newPos;
                         break;
                     }
-                    case Slide _:
-                    case Tap _:
-                    case Hold _:
+                    case SentakkiLanedHitObject lho:
                     {
-                        h.Lane = Vector2.Zero.GetDegreesFromPosition(newPos).GetNoteLaneFromDegrees();
+                        lho.Lane = Vector2.Zero.GetDegreesFromPosition(newPos).GetNoteLaneFromDegrees();
                         break;
                     }
                 }

@@ -21,10 +21,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds.Components
         {
             InternalChildren = new Drawable[]{
                 notebody = new CircularContainer{
-                    Position = new Vector2(0, -26),
+                    Position = new Vector2(0, -(SentakkiPlayfield.NOTESTARTDISTANCE - 37.5f)),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.BottomCentre,
-                    Size = new Vector2(80),
+                    Size = new Vector2(75),
                     Masking = true,
                     BorderColour = Colour4.White,
                     BorderThickness = 5,
@@ -40,7 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds.Components
                             CornerExponent = 2.5f,
                             CornerRadius = 5f,
                             Rotation = 45,
-                            Position = new Vector2(0, -40),
+                            Position = new Vector2(0, -37.5f),
                             Size = new Vector2(20),
                             BorderColour = Color4.Gray,
                             BorderThickness = 2,
@@ -59,7 +59,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds.Components
                             CornerExponent = 2.5f,
                             CornerRadius = 5f,
                             Rotation = 45,
-                            Position = new Vector2(0, 40),
+                            Position = new Vector2(0, 37.5f),
                             Size = new Vector2(20),
                             BorderColour = Color4.Gray,
                             BorderThickness = 2,
@@ -87,14 +87,14 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds.Components
         {
             //base.UpdateFrom(hitObject);
             Rotation = hitObject.Lane.GetRotationForLane();
-            notebody.Position = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE + 40);
+            notebody.Position = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE + 37.5f);
         }
 
         public void UpdateFrom(DrawableHold drawableHold)
         {
             notebody.Position = drawableHold.NoteBody.Position;
             notebody.Height = drawableHold.NoteBody.Height;
-            Rotation = drawableHold.Rotation;
+            Rotation = drawableHold.HitObject.Lane.GetRotationForLane();
         }
     }
 }

@@ -1,31 +1,23 @@
+using System.Diagnostics;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osuTK;
 using osuTK.Graphics;
-using System.Diagnostics;
-using osu.Game.Rulesets.Sentakki.UI;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Transforms;
-using osu.Game.Rulesets.Sentakki.Configuration;
-using System;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableTouch : DrawableSentakkiHitObject, IDrawableHitObjectWithProxiedApproach
+    public class DrawableTouch : DrawableSentakkiHitObject
     {
         // IsHovered is used
         public override bool HandlePositionalInput => true;
 
-        public Drawable ProxiedLayer => this;
-
-        protected override float SamplePlaybackPosition => ((HitObject as Touch).Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
-
-        protected override double InitialLifetimeOffset => 6000;
+        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset + HitObject.HitWindows.WindowFor(HitResult.Meh) * 2 * GameplaySpeed;
 
         private readonly TouchBlob blob1;
         private readonly TouchBlob blob2;
@@ -35,23 +27,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private readonly TouchFlashPiece flash;
         private readonly ExplodePiece explode;
 
-        private readonly CircularContainer dot;
-
-        public readonly HitReceptor HitArea;
+        private readonly DotPiece dot;
 
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
         public DrawableTouch(Touch hitObject) : base(hitObject)
         {
-            Size = new Vector2(80);
+            AccentColour.BindTo(HitObject.ColourBindable);
+            AccentColour.BindValueChanged(c => Colour = c.NewValue, true);
+            Size = new Vector2(300);
             Position = hitObject.Position;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Alpha = 0;
             Scale = Vector2.Zero;
-            Colour = HitObject.NoteColor;
-            AlwaysPresent = true;
+
             AddRangeInternal(new Drawable[]{
                 blob1 = new TouchBlob{
                     Position = new Vector2(40, 0)
@@ -65,34 +56,41 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 blob4 = new TouchBlob{
                     Position = new Vector2(0, -40)
                 },
-                dot = new CircularContainer
-                {
-                    Size = new Vector2(20),
-                    Masking = true,
-                    BorderColour = Color4.Gray,
-                    BorderThickness = 2,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        AlwaysPresent = true,
-                        Colour = Color4.White,
-                    }
+                dot = new DotPiece(),
+                flash = new TouchFlashPiece{
+                    RelativeSizeAxes = Axes.None,
+                    Size = new Vector2(80)
                 },
-                flash = new TouchFlashPiece(),
-                explode = new ExplodePiece(),
-                HitArea = new HitReceptor{
-                    Hit = () =>
-                    {
-                        if (AllJudged)
-                            return false;
-
-                        UpdateResult(true);
-                        return false;
-                    },
-                }
+                explode = new ExplodePiece{
+                    RelativeSizeAxes = Axes.None,
+                    Size = new Vector2(80)
+                },
             });
+
+            trackedKeys.BindValueChanged(x =>
+            {
+                if (AllJudged)
+                    return;
+
+                UpdateResult(true);
+            });
+        }
+
+        private BindableInt trackedKeys = new BindableInt(0);
+
+        protected override void Update()
+        {
+            Position = HitObject.Position;
+            base.Update();
+            int count = 0;
+            var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+
+            if (touchInput.ActiveSources.Any())
+                count = touchInput.ActiveSources.Where(x => ReceivePositionalInputAt(touchInput.GetTouchPosition(x) ?? new Vector2(float.MinValue))).Count();
+            else if (IsHovered)
+                count = SentakkiActionInputManager.PressedActions.Where(x => x < SentakkiAction.Key1).Count();
+
+            trackedKeys.Value = count;
         }
 
         [BackgroundDependencyLoader(true)]
@@ -101,44 +99,31 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
         }
 
-        // Easing functions for manual use.
-        private readonly DefaultEasingFunction outSine = new DefaultEasingFunction(Easing.OutSine);
-        private readonly DefaultEasingFunction inQuint = new DefaultEasingFunction(Easing.InQuint);
-
         protected override void UpdateInitialTransforms()
         {
-            double fadeIn = AnimationDuration.Value * GameplaySpeed;
+            base.UpdateInitialTransforms();
+            double fadeIn = AdjustedAnimationDuration;
             double moveTo = HitObject.HitWindows.WindowFor(HitResult.Meh) * 2 * GameplaySpeed;
 
-            using (BeginAbsoluteSequence(HitObject.StartTime - fadeIn - moveTo, true))
+            this.FadeIn(fadeIn, Easing.OutSine).ScaleTo(1, fadeIn, Easing.OutSine);
+
+            using (BeginDelayedSequence(fadeIn, true))
             {
-                this.FadeIn(fadeIn, Easing.OutSine).ScaleTo(1, fadeIn, Easing.OutSine);
-
-                using (BeginDelayedSequence(fadeIn, true))
-                {
-                    blob1.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint);
-                    blob2.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
-                    blob3.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
-                    blob4.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
-                }
+                blob1.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint);
+                blob2.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
+                blob3.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
+                blob4.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
             }
-        }
-
-        protected override void Update()
-        {
-            base.Update();
-            Position = HitObject.Position;
-            if (Result.HasResult) return;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             Debug.Assert(HitObject.HitWindows != null);
 
-            if (!userTriggered)
+            if (!userTriggered || Auto)
             {
                 if (Auto && timeOffset > 0)
-                    ApplyResult(r => r.Type = HitResult.Perfect);
+                    ApplyResult(r => r.Type = HitResult.Great);
 
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
                     ApplyResult(r => r.Type = HitResult.Miss);
@@ -159,10 +144,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
 
             ApplyResult(r => r.Type = result);
-        }
-
-        protected override void InvalidateTransforms()
-        {
         }
 
         protected override void UpdateStateTransforms(ArmedState state)
