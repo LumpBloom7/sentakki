@@ -1,8 +1,8 @@
-﻿using osu.Game.Rulesets.Sentakki.Objects.Drawables;
+﻿using System.Collections.Generic;
+using System.Linq;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
-using System.Collections.Generic;
-using System.Linq;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {

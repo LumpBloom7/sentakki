@@ -1,10 +1,9 @@
-﻿using osu.Game.Beatmaps;
+﻿using System.Collections.Generic;
+using osu.Game.Beatmaps;
 using osu.Game.Replays;
-using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Replays;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK;
-using System;
-using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.Replays
 {

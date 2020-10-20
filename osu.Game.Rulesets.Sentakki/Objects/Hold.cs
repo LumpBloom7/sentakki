@@ -1,20 +1,17 @@
-﻿using osu.Game.Audio;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using osu.Game.Audio;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using Microsoft.EntityFrameworkCore.Internal;
+using osu.Game.Rulesets.Sentakki.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Hold : SentakkiLanedHitObject, IHasDuration
     {
-        public override bool IsBreak { get; set; }
-
         private List<IList<HitSampleInfo>> nodeSamples = new List<IList<HitSampleInfo>>();
 
         public List<IList<HitSampleInfo>> NodeSamples
@@ -41,10 +38,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             AddNested(new HoldHead
             {
-                IsBreak = IsBreak,
+                Break = Break,
                 StartTime = StartTime,
                 Lane = Lane,
-                Samples = nodeSamples.FirstOr(new List<HitSampleInfo>())
+                Samples = nodeSamples.Any() ? nodeSamples.First() : new List<HitSampleInfo>()
             });
         }
 

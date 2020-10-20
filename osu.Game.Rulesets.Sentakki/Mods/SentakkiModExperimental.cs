@@ -1,13 +1,9 @@
-﻿using osu.Game.Beatmaps;
-using osu.Game.Rulesets.Sentakki.Beatmaps;
-using osu.Game.Rulesets.Mods;
+﻿using osu.Framework.Bindables;
 using osu.Framework.Graphics.Sprites;
-using osu.Framework.Bindables;
+using osu.Game.Beatmaps;
 using osu.Game.Configuration;
-using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Rulesets.UI;
-using System.ComponentModel;
+using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Sentakki.Beatmaps;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {

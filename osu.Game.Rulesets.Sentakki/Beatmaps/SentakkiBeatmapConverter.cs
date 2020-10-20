@@ -1,12 +1,12 @@
-﻿using osu.Framework.Bindables;
-using osu.Game.Beatmaps;
-using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Types;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using osu.Framework.Bindables;
+using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {

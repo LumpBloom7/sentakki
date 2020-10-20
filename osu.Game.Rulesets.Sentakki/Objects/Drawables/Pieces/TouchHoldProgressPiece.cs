@@ -1,3 +1,4 @@
+using System;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -5,7 +6,6 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Game.Graphics;
 using osuTK;
 using osuTK.Graphics;
-using System;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {

@@ -1,7 +1,7 @@
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using System;
 using System.Collections.Generic;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         protected override int Compare(Drawable x, Drawable y)
         {
-            // Put earlier hitobjects towards the end of the list, so they handle input first
+            // Put earlier hitobjects towards the end of the list, so they show above the rest
             int i = drawableMap[y].CompareTo(drawableMap[x]);
             return i == 0 ? CompareReverseChildID(x, y) : i;
         }

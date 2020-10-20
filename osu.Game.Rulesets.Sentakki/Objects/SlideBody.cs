@@ -1,11 +1,10 @@
-using osu.Framework.Bindables;
+using System;
+using System.Threading;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
-using System;
-using System.Threading;
+using osu.Game.Rulesets.Sentakki.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
@@ -58,7 +57,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             public virtual float Progress { get; set; }
 
-            public bool IsTailNote => Progress == 1;
             protected override HitWindows CreateHitWindows() => HitWindows.Empty;
             public override Judgement CreateJudgement() => new IgnoreJudgement();
         }

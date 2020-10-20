@@ -1,31 +1,31 @@
-﻿using osu.Framework.Graphics;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Bindings;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
-using osu.Game.Scoring;
 using osu.Game.Overlays.Settings;
-using osu.Game.Screens.Ranking.Statistics;
 using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
+using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Replays.Types;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
-using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Difficulty;
 using osu.Game.Rulesets.Sentakki.Mods;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Rulesets.Sentakki.Statistics;
 using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Replays.Types;
-using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.UI;
-using System.Collections.Generic;
-using System;
+using osu.Game.Scoring;
+using osu.Game.Screens.Ranking.Statistics;
 using osuTK;
-using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki
 {
@@ -41,6 +41,9 @@ namespace osu.Game.Rulesets.Sentakki
 
         public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) =>
             new SentakkiBeatmapConverter(beatmap, this);
+
+        public override IBeatmapProcessor CreateBeatmapProcessor(IBeatmap beatmap) =>
+            new SentakkiBeatmapProcessor(beatmap);
 
         public override DifficultyCalculator CreateDifficultyCalculator(WorkingBeatmap beatmap) =>
             new SentakkiDifficultyCalculator(this, beatmap);

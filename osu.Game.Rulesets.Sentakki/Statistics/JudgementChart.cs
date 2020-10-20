@@ -1,18 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
-using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Scoring;
 using osu.Game.Graphics.UserInterface;
-using osuTK.Graphics;
+using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK;
-using Microsoft.EntityFrameworkCore.Internal;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Statistics
 {
@@ -29,14 +28,14 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new NoteEntry
                 {
                     ObjectName = "Tap",
-                    HitEvents = hitEvents.Where(e=> e.HitObject is Tap x && !x.IsBreak).ToList(),
+                    HitEvents = hitEvents.Where(e=> e.HitObject is Tap x && !x.Break).ToList(),
                     Position = new Vector2(0, 0),
                     InitialLifetimeOffset = entry_animation_duration * 0
                 },
                 new NoteEntry
                 {
                     ObjectName = "Hold",
-                    HitEvents = hitEvents.Where(e => (e.HitObject is Hold x || e.HitObject is Hold.HoldHead) && (e.HitObject as SentakkiHitObject).IsBreak).ToList(),
+                    HitEvents = hitEvents.Where(e => (e.HitObject is Hold x || e.HitObject is Hold.HoldHead) && (e.HitObject as SentakkiLanedHitObject).Break).ToList(),
                     Position = new Vector2(0, .16f),
                     InitialLifetimeOffset = entry_animation_duration * 1
                 },
@@ -64,7 +63,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new NoteEntry
                 {
                     ObjectName = "Break",
-                    HitEvents = hitEvents.Where(e => (e.HitObject as SentakkiHitObject).IsBreak).ToList(),
+                    HitEvents = hitEvents.Where(e => e.HitObject is SentakkiLanedHitObject x && x.Break).ToList(),
                     Position = new Vector2(0, .80f),
                     InitialLifetimeOffset = entry_animation_duration * 5
                 },

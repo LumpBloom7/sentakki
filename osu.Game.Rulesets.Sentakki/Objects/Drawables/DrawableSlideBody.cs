@@ -1,35 +1,31 @@
+using System.Diagnostics;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
-using osu.Game.Beatmaps.ControlPoints;
 using osuTK;
 using osuTK.Graphics;
-using System.Linq;
-using System.Diagnostics;
-using osu.Game.Beatmaps;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideBody : DrawableSentakkiTouchHitObject
+    public class DrawableSlideBody : DrawableSentakkiLanedHitObject
     {
         public override bool RemoveWhenNotAlive => false;
 
         public override bool DisplayResult => true;
 
-        protected override bool PlayBreakSample => false;
-
         public Container<DrawableSlideNode> SlideNodes;
 
         public SlideVisual Slidepath;
         public StarPiece SlideStar;
-
-        protected override double InitialLifetimeOffset => 1000 + (HitObject as IHasDuration).Duration;
 
         private float starProg = 0;
         private Vector2? previousPosition = null;
@@ -48,14 +44,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        public DrawableSlideBody(SentakkiHitObject hitObject)
+        public DrawableSlideBody(SentakkiLanedHitObject hitObject)
             : base(hitObject)
         {
-            AccentColour.Value = hitObject.NoteColor;
+            AccentColour.BindTo(HitObject.ColourBindable);
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
-            AlwaysPresent = true;
             Rotation = -22.5f;
             AddRangeInternal(new Drawable[]
             {
@@ -84,13 +79,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Origin = Anchor.Centre,
                 },
             });
-        }
-
-        protected override void LoadComplete()
-        {
-            base.LoadComplete();
 
             AccentColour.BindValueChanged(c => Colour = c.NewValue, true);
+
+            OnNewResult += queueProgressUpdate;
+            OnRevertResult += queueProgressUpdate;
         }
 
         [Resolved]
@@ -107,16 +100,43 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
+        // We want to ensure that the correct progress is visually shown on screen
+        // I don't think that OnRevert of HitObjects is ordered properly
+        // So just to make sure, when multiple OnReverts are called, we just queue for a forced update on the visuals
+        // This makes sure that we always have the right visuals shown.
+        private bool pendingProgressUpdate;
+
+        private void queueProgressUpdate(DrawableHitObject hitObject, JudgementResult result)
+        {
+            pendingProgressUpdate = true;
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            if (pendingProgressUpdate)
+                updatePathProgress();
+        }
+
+        private void updatePathProgress()
+        {
+            var target = SlideNodes.LastOrDefault(x => x.Result.IsHit);
+            if (target == null)
+                Slidepath.Progress = 0;
+            else Slidepath.Progress = (target.HitObject as SlideBody.SlideNode).Progress;
+
+            pendingProgressUpdate = false;
+        }
+
+        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset / 2;
+
         protected override void UpdateInitialTransforms()
         {
-            using (BeginAbsoluteSequence(HitObject.StartTime - 500, true))
+            Slidepath.FadeInFromZero(AdjustedAnimationDuration / 2);
+            using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
             {
-                Slidepath.FadeInFromZero(500);
-                using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
-                {
-                    SlideStar.FadeInFromZero(100).ScaleTo(1, 100);
-                    this.Delay(100 + ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - 50 - ShootDelay);
-                }
+                SlideStar.FadeInFromZero(100).ScaleTo(1, 100);
+                this.Delay(100 + ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - 50 - ShootDelay);
             }
         }
 
@@ -156,7 +176,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Origin = Anchor.Centre,
                         AccentColour = { BindTarget = AccentColour },
                         AutoBindable = { BindTarget = AutoBindable },
-                        AutoTouchBindable = { BindTarget = AutoTouchBindable }
+                        ThisIndex = SlideNodes.Count
                     };
             }
 
@@ -173,6 +193,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
             base.AddNestedHitObject(hitObject);
         }
+
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             Debug.Assert(HitObject.HitWindows != null);
@@ -183,7 +204,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
                 {
-                    SlideNodes.Last().ForceJudgement(false);
+                    SlideNodes.Last().ForcefullyMiss();
                     if (SlideNodes.Count(node => !node.Result.IsHit) <= 2 && SlideNodes.Count > 2)
                         ApplyResult(r => r.Type = HitResult.Meh);
                     else

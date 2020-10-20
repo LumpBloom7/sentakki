@@ -1,38 +1,30 @@
+using System.Linq;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Configuration;
 using osuTK;
-using osuTK.Graphics;
-using System.Linq;
-using osu.Game.Beatmaps;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     // Cached so that SlideTapPiece can access via DI, and adjust visuals to account for multiple slide bodies
     [Cached]
-    public class DrawableSlide : DrawableSentakkiTouchHitObject
+    public class DrawableSlide : DrawableSentakkiHitObject
     {
         public override bool DisplayResult => false;
-
-        protected override bool PlayBreakSample => false;
 
         public Container<DrawableSlideBody> SlideBodies;
         public Container<DrawableSlideTap> SlideTaps;
 
-        protected override double InitialLifetimeOffset => 1000;
-
         public DrawableSlide(SentakkiHitObject hitObject)
             : base(hitObject)
         {
-            AccentColour.Value = hitObject.NoteColor;
+            AccentColour.BindTo(HitObject.ColourBindable);
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
-            AlwaysPresent = true;
             AddRangeInternal(new Drawable[]
             {
                 SlideBodies = new Container<DrawableSlideBody>{
@@ -47,9 +39,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
-        protected override void LoadComplete()
+        [BackgroundDependencyLoader(true)]
+        private void load(SentakkiRulesetConfigManager sentakkiConfig)
         {
-            base.LoadComplete();
+            // This is to ensure the container is alive when the child is.
+            sentakkiConfig?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDuration);
         }
 
         protected override void ClearNestedHitObjects()
@@ -74,7 +68,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     return new DrawableSlideBody(slideBody)
                     {
                         AutoBindable = { BindTarget = AutoBindable },
-                        AutoTouchBindable = { BindTarget = AutoTouchBindable },
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         AccentColour = { BindTarget = AccentColour }

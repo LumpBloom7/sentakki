@@ -1,35 +1,46 @@
-using osu.Framework.Allocation;
-using osu.Framework.Bindables;
+using System.Diagnostics;
 using osu.Framework.Graphics;
-using osu.Game.Rulesets.Sentakki.Configuration;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.UI;
-using osu.Framework.Input.Bindings;
-using osu.Framework.Input.Events;
-using osu.Framework.Utils;
 using osuTK;
 using osuTK.Graphics;
-using System;
-using System.Diagnostics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableTap : DrawableSentakkiHitObject, IKeyBindingHandler<SentakkiAction>
+    public class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHandler<SentakkiAction>
     {
         public readonly Drawable TapVisual;
         public readonly HitObjectLine HitObjectLine;
-        protected override double InitialLifetimeOffset => 8000;
 
-        public DrawableTap(SentakkiHitObject hitObject)
+        public override double LifetimeStart
+        {
+            get => base.LifetimeStart;
+            set
+            {
+                base.LifetimeStart = value;
+                TapVisual.LifetimeStart = value;
+            }
+        }
+        public override double LifetimeEnd
+        {
+            get => base.LifetimeEnd;
+            set
+            {
+                base.LifetimeEnd = value;
+                TapVisual.LifetimeEnd = value;
+            }
+        }
+
+        public DrawableTap(Tap hitObject)
             : base(hitObject)
         {
-            AccentColour.Value = hitObject.NoteColor;
+            AccentColour.BindTo(HitObject.ColourBindable);
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
-            AlwaysPresent = true;
             AddRangeInternal(new Drawable[] {
                 HitObjectLine = new HitObjectLine(),
                 TapVisual = CreateTapRepresentation(),
@@ -38,27 +49,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected virtual Drawable CreateTapRepresentation() => new TapPiece();
 
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager settings)
-        {
-            settings?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDuration);
-            AccentColour.BindValueChanged(c => HitObjectLine.Colour = c.NewValue, true);
-        }
-
         protected override void UpdateInitialTransforms()
         {
-            double animTime = AnimationDuration.Value / 2 * GameplaySpeed;
-            double animStart = HitObject.StartTime - (animTime * 2);
-            using (BeginAbsoluteSequence(animStart, true))
+            base.UpdateInitialTransforms();
+            double animTime = AdjustedAnimationDuration / 2;
+            TapVisual.FadeInFromZero(animTime).ScaleTo(1, animTime);
+            HitObjectLine.FadeInFromZero(animTime);
+            using (BeginDelayedSequence(animTime, true))
             {
-                TapVisual.FadeInFromZero(animTime).ScaleTo(1, animTime);
-                HitObjectLine.FadeInFromZero(animTime);
-                using (BeginDelayedSequence(animTime, true))
-                {
-                    var excessDistance = (-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * HitObject.HitWindows.WindowFor(HitResult.Miss);
-                    TapVisual.MoveToY((float)(-SentakkiPlayfield.INTERSECTDISTANCE + excessDistance), animTime + HitObject.HitWindows.WindowFor(HitResult.Miss));
-                    HitObjectLine.ScaleTo(1, animTime);
-                }
+                var excessDistance = (-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * HitObject.HitWindows.WindowFor(HitResult.Miss);
+                TapVisual.MoveToY((float)(-SentakkiPlayfield.INTERSECTDISTANCE + excessDistance), animTime + HitObject.HitWindows.WindowFor(HitResult.Miss));
+                HitObjectLine.ScaleTo(1, animTime);
             }
         }
 
@@ -95,7 +96,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 case ArmedState.Hit:
                     this.Delay(400).FadeOut().Expire();
-                    HitObjectLine.FadeOut();
 
                     break;
 
@@ -104,7 +104,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
                        .MoveToOffset(new Vector2(0, -100), time_fade_hit, Easing.OutCubic)
                        .FadeOut(time_fade_miss);
-                    HitObjectLine.FadeOut();
 
                     this.ScaleTo(1f, time_fade_miss).Expire();
 

@@ -1,18 +1,14 @@
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Judgements;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.UI;
 using osuTK;
-using System;
-using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
