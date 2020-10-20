@@ -9,6 +9,8 @@ using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touchs;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Screens.Edit.Compose.Components;
+using osu.Game.Screens.Edit.Components.TernaryButtons;
+using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Edit
 {
@@ -38,6 +40,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             }
 
             return base.CreateBlueprintFor(hitObject);
+        }
+
+        protected override IEnumerable<TernaryButton> CreateTernaryButtons()
+        {
+            return base.CreateTernaryButtons().Skip(1);
         }
     }
 }
