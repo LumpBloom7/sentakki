@@ -14,14 +14,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public double Duration
         {
             get => SlideInfoList.Any() ? SlideInfoList.Max(s => s.Duration) : 0;
-            set => throw new NotSupportedException();
+            set => SlideInfoList.First().Duration = value;
         }
 
         public double EndTime => StartTime + Duration;
 
         protected override Color4 DefaultNoteColour => Color4.Aqua;
 
-        public List<SentakkiSlideInfo> SlideInfoList = new List<SentakkiSlideInfo>();
+        public List<SentakkiSlideInfo> SlideInfoList = new List<SentakkiSlideInfo> { new SentakkiSlideInfo { ID = 0 } };
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {

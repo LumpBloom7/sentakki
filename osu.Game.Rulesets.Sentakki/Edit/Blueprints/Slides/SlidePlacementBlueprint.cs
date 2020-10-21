@@ -7,6 +7,8 @@ using osu.Framework.Graphics;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Framework.Input.Events;
 using osuTK.Input;
+using System.Linq;
+
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 {
     public class SlidePlacementBlueprint : PlacementBlueprint
@@ -38,12 +40,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                 return;
 
             base.OnMouseUp(e);
-            /* if (HitObject.EndTime < HitObject.StartTime)
+            if (HitObject.EndTime <= HitObject.StartTime)
             {
-                var tmp = HitObject.StartTime;
-                HitObject.StartTime = HitObject.EndTime;
-                HitObject.EndTime = tmp;
-            } */
+                EndPlacement(false);
+                return;
+            }
             EndPlacement(true);
         }
 
@@ -67,7 +68,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             }
             else
             {
-                //HitObject.EndTime = EditorClock.CurrentTime;
+                HitObject.SlideInfoList.First().Duration = EditorClock.CurrentTime - HitObject.StartTime;
             }
         }
     }

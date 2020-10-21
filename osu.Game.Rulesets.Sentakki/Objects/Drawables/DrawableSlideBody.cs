@@ -132,11 +132,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void UpdateInitialTransforms()
         {
+            double duration = (HitObject as IHasDuration).Duration - 50 - ShootDelay;
+            if (duration <= 0)
+            {
+                duration = 0;
+            }
             Slidepath.FadeInFromZero(AdjustedAnimationDuration / 2);
             using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
             {
                 SlideStar.FadeInFromZero(100).ScaleTo(1, 100);
-                this.Delay(100 + ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - 50 - ShootDelay);
+                this.Delay(100 + ShootDelay).TransformTo(nameof(StarProgress), 1f, duration);
             }
         }
 
