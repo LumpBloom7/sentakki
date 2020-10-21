@@ -10,13 +10,16 @@ using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
+using System.Linq;
+using osu.Game.Screens.Edit;
+using System;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Components
 {
     public class SlideSelection : BlueprintPiece<Slide>
     {
         // This needs to be shrunk because the AABB box has larger margins for some reason
-        //public Quad SelectionBoundaries => notebody.ScreenSpaceDrawQuad.AABBFloat.Shrink(10f);
+        public Quad SelectionBoundaries => starPiece.ScreenSpaceDrawQuad.AABBFloat;
 
         private Drawable starPiece;
 
@@ -24,7 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Components
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Size = new Vector2(80);
+            Size = new Vector2(75);
             AddInternal(starPiece = new StarPiece());
         }
 
@@ -33,6 +36,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Components
         {
             Colour = colours.Yellow;
         }
+
+        [Resolved]
+        private EditorClock editorClock { get; set; }
 
         public override void UpdateFrom(Slide hitObject)
         {
@@ -44,8 +50,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Components
         {
             var lho = drawableSlide.HitObject as SentakkiLanedHitObject;
             Rotation = lho.Lane.GetRotationForLane();
-            starPiece.Rotation = ((SlideTapPiece)drawableSlide.SlideTaps.Child.TapVisual).Stars.Rotation;
-            Position = SentakkiExtensions.GetCircularPosition(-drawableSlide.SlideTaps.Child.TapVisual.Position.Y, lho.Lane.GetRotationForLane());
+            if (editorClock.CurrentTimeAccurate < drawableSlide.HitObject.StartTime)
+                starPiece.Rotation = ((SlideTapPiece)drawableSlide.SlideTaps.Child.TapVisual).Stars.Rotation;
+            else
+                starPiece.Rotation = 0;
+            starPiece.Position = new Vector2(0, Math.Max(drawableSlide.SlideTaps.Child.TapVisual.Position.Y, -296.5f));
         }
     }
 }
