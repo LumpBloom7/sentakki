@@ -29,7 +29,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableSentakkiHitObject(SentakkiHitObject hitObject)
             : base(hitObject)
         {
-            AnimationDuration.BindValueChanged(_ => queueTransformReset());
         }
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
@@ -42,6 +41,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private void load(DrawableSentakkiRuleset drawableRuleset)
         {
             drawableSentakkiRuleset = drawableRuleset;
+        }
+
+        protected override void LoadAsyncComplete()
+        {
+            base.LoadAsyncComplete();
+            AnimationDuration.BindValueChanged(_ => queueTransformReset(), true);
         }
 
         protected override void Update()
