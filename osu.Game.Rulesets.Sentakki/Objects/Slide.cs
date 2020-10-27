@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using ManagedBass;
+using osu.Game.Audio;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -17,6 +19,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set => throw new NotSupportedException();
         }
 
+        public List<IList<HitSampleInfo>> NodeSamples = new List<IList<HitSampleInfo>>();
+
         public double EndTime => StartTime + Duration;
 
         protected override Color4 DefaultNoteColour => Color4.Aqua;
@@ -29,7 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             {
                 LaneBindable = { BindTarget = LaneBindable },
                 StartTime = StartTime,
-                Samples = Samples,
+                Samples = NodeSamples.Any() ? NodeSamples.First() : new List<HitSampleInfo>(),
                 Break = Break
             });
             createSlideBodies();
@@ -43,7 +47,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 {
                     Lane = SlideInfo.SlidePath.EndLane + Lane,
                     StartTime = StartTime,
-                    SlideInfo = SlideInfo
+                    SlideInfo = SlideInfo,
+                    Samples = NodeSamples.Any() ? NodeSamples.Last() : new List<HitSampleInfo>(),
                 });
             }
         }
