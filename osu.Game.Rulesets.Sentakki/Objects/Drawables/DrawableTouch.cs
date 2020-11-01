@@ -17,17 +17,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // IsHovered is used
         public override bool HandlePositionalInput => true;
 
-        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset + HitObject.HitWindows.WindowFor(HitResult.Meh) * 2 * GameplaySpeed;
-
-        private readonly TouchBlob blob1;
-        private readonly TouchBlob blob2;
-        private readonly TouchBlob blob3;
-        private readonly TouchBlob blob4;
+        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset + HitObject.HitWindows.WindowFor(HitResult.Meh);
 
         private readonly TouchFlashPiece flash;
         private readonly ExplodePiece explode;
 
-        private readonly DotPiece dot;
+        private readonly TouchBody touchBody;
 
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
@@ -35,35 +30,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableTouch(Touch hitObject) : base(hitObject)
         {
             AccentColour.BindTo(HitObject.ColourBindable);
-            AccentColour.BindValueChanged(c => Colour = c.NewValue, true);
-            Size = new Vector2(300);
+
+            Size = new Vector2(150);
             Position = hitObject.Position;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Alpha = 0;
-            Scale = Vector2.Zero;
 
             AddRangeInternal(new Drawable[]{
-                blob1 = new TouchBlob{
-                    Position = new Vector2(40, 0)
-                },
-                blob2 = new TouchBlob{
-                    Position = new Vector2(-40, 0)
-                },
-                blob3 = new TouchBlob{
-                    Position = new Vector2(0, 40)
-                },
-                blob4 = new TouchBlob{
-                    Position = new Vector2(0, -40)
-                },
-                dot = new DotPiece(),
+                touchBody = new TouchBody(),
                 flash = new TouchFlashPiece{
                     RelativeSizeAxes = Axes.None,
-                    Size = new Vector2(80)
+                    Size = new Vector2(105)
                 },
                 explode = new ExplodePiece{
                     RelativeSizeAxes = Axes.None,
-                    Size = new Vector2(80)
+                    Size = new Vector2(105)
                 },
             });
 
@@ -96,22 +78,25 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private void load(SentakkiRulesetConfigManager sentakkiConfigs)
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
+            AccentColour.BindValueChanged(c =>
+            {
+                flash.Colour = c.NewValue;
+                explode.Colour = c.NewValue;
+            }, true);
         }
 
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            double fadeIn = AdjustedAnimationDuration;
-            double moveTo = HitObject.HitWindows.WindowFor(HitResult.Meh) * 2 * GameplaySpeed;
+            double FadeIn = AdjustedAnimationDuration / 2;
+            double moveTo = HitObject.HitWindows.WindowFor(HitResult.Meh);
 
-            this.FadeIn(fadeIn, Easing.OutSine).ScaleTo(1, fadeIn, Easing.OutSine);
+            this.FadeInFromZero(FadeIn);
 
-            using (BeginDelayedSequence(fadeIn, true))
+            using (BeginDelayedSequence(AdjustedAnimationDuration, true))
             {
-                blob1.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint);
-                blob2.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
-                blob3.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
-                blob4.MoveTo(new Vector2(0), moveTo, Easing.InQuint).ScaleTo(1, moveTo, Easing.InQuint).Then().FadeOut();
+                touchBody.ResizeTo(90, moveTo, Easing.InCirc);
+                touchBody.BorderContainer.Delay(moveTo).FadeIn();
             }
         }
 
@@ -160,9 +145,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                          .Then()
                          .FadeOut(flash_out);
 
-                    dot.Delay(flash_in).FadeOut();
-
                     explode.FadeIn(flash_in);
+                    touchBody.FadeOut();
                     this.ScaleTo(1.5f, 400, Easing.OutQuad);
 
                     this.Delay(time_fade_hit).FadeOut().Expire();
