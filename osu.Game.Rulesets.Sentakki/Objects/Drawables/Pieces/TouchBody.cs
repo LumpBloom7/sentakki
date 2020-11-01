@@ -16,10 +16,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public Container PieceContainer;
         public TouchBody()
         {
-            Size = new Vector2(150);
+            Size = new Vector2(130);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-
             InternalChildren = new Drawable[]{
                 BorderContainer = new Container{
                     Anchor = Anchor.Centre,
@@ -61,21 +60,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                             Origin = Anchor.TopCentre,
                             Rotation = 90
                         },
-                        new CircularContainer
-                        {
-                            Size = new Vector2(20),
-                            Masking = true,
-                            BorderColour = Color4.Gray,
-                            BorderThickness = 2,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                AlwaysPresent = true,
-                                Colour = Color4.White,
-                            }
-                         }
+                        new DotPiece()
                     }
                 }
             };
