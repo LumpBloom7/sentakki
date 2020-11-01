@@ -11,8 +11,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         protected override double InitialLifetimeOffset => AdjustedAnimationDuration;
 
-        public bool IsHidden = false;
-        public bool IsFadeIn = false;
+        public bool IsHidden;
+        public bool IsFadeIn;
 
         public readonly BindableBool AutoBindable = new BindableBool(false);
         public bool Auto

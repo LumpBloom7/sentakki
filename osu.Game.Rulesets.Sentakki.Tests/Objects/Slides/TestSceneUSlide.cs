@@ -4,7 +4,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
     public class TestSceneUSlide : TestSceneSlide
     {
-        private bool reversed = false;
+        private bool reversed;
 
         public TestSceneUSlide()
         {

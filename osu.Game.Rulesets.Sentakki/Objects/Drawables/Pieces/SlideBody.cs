@@ -15,7 +15,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
 
-        private float progress = 0;
+        private float progress;
         public float Progress
         {
             get => progress;
@@ -47,7 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         private List<Container> segments = new List<Container>();
 
-        private double chevronInterval = 0;
+        private double chevronInterval;
         private void createVisuals()
         {
             segments = new List<Container>();

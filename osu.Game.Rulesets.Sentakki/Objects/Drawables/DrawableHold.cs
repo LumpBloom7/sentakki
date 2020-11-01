@@ -50,7 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         /// </summary>
         public double? HoldStartTime { get; private set; }
 
-        public double TotalHoldTime = 0;
+        public double TotalHoldTime;
 
         public DrawableHold(Hold hitObject)
             : base(hitObject)

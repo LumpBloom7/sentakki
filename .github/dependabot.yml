@@ -6,7 +6,3 @@ updates:
     interval: weekly
     time: "12:00"
   open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: Microsoft.EntityFrameworkCore.Sqlite
-    versions:
-    - "> 3.1.4"

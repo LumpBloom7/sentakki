@@ -142,16 +142,16 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             indexOffset = (indexOffset + index_change) % bars_per_visualiser;
         }
 
-        private double delta = 0;
+        private double timeDelta;
         protected override void Update()
         {
             base.Update();
 
-            delta += Math.Abs(Time.Elapsed);
-            if (delta >= time_between_updates)
+            timeDelta += Math.Abs(Time.Elapsed);
+            if (timeDelta >= time_between_updates)
             {
                 updateAmplitudes();
-                delta %= time_between_updates;
+                timeDelta %= time_between_updates;
             }
 
             float decayFactor = Math.Abs((float)Time.Elapsed) * decay_per_milisecond;
