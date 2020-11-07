@@ -6,8 +6,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
     public class SentakkiBeatmapProcessor : BeatmapProcessor
     {
-        private const int stack_distance = 3;
-
         public SentakkiBeatmapProcessor(IBeatmap beatmap)
             : base(beatmap)
         {

@@ -7,7 +7,6 @@ using osu.Game.Rulesets.Difficulty.Skills;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 
-
 namespace osu.Game.Rulesets.Sentakki.Difficulty
 {
     public class SentakkiDifficultyCalculator : DifficultyCalculator
