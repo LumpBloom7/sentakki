@@ -62,9 +62,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Origin = Anchor.Centre;
             AddRangeInternal(new Drawable[]{
                 HitObjectLine = new HitObjectLine(),
-                NoteBody = new HoldBody{
-                    Duration = hitObject.Duration
-                },
+                NoteBody = new HoldBody(),
                 headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
             });
         }
@@ -164,37 +162,31 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        protected override void UpdateStateTransforms(ArmedState state)
+        protected override void UpdateHitStateTransforms(ArmedState state)
         {
-            base.UpdateStateTransforms(state);
+            base.UpdateHitStateTransforms(state);
             const double time_fade_hit = 400, time_fade_miss = 400;
 
             switch (state)
             {
                 case ArmedState.Hit:
-                    using (BeginDelayedSequence((HitObject as IHasDuration).Duration, true))
+                    using (BeginDelayedSequence(time_fade_miss, true))
                     {
-                        using (BeginDelayedSequence(time_fade_miss, true))
-                        {
-                            this.FadeOut();
-                            Expire();
-                        }
+                        this.FadeOut();
+                        Expire();
                     }
                     break;
 
                 case ArmedState.Miss:
-                    using (BeginDelayedSequence((HitObject as IHasDuration).Duration, true))
-                    {
-                        NoteBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
-                            .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
-                            .MoveToOffset(new Vector2(0, -100), time_fade_hit, Easing.OutCubic)
-                            .FadeOut(time_fade_miss);
+                    NoteBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
+                        .MoveToOffset(new Vector2(0, -100), time_fade_hit, Easing.OutCubic)
+                        .FadeOut(time_fade_miss);
 
-                        using (BeginDelayedSequence(time_fade_miss, true))
-                        {
-                            this.FadeOut();
-                            Expire();
-                        }
+                    using (BeginDelayedSequence(time_fade_miss, true))
+                    {
+                        this.FadeOut();
+                        Expire();
                     }
                     break;
             }

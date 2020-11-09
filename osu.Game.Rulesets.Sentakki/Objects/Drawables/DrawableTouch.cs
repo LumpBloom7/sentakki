@@ -128,9 +128,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             ApplyResult(r => r.Type = result);
         }
 
-        protected override void UpdateStateTransforms(ArmedState state)
+        protected override void UpdateHitStateTransforms(ArmedState state)
         {
-            base.UpdateStateTransforms(state);
+            base.UpdateHitStateTransforms(state);
             const double time_fade_hit = 400, time_fade_miss = 400;
 
             switch (state)

@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Scale = new Vector2(0f);
             Alpha = 0;
             AddRangeInternal(new Drawable[] {
-                touchHoldBody = new TouchHoldBody(){ Duration = hitObject.Duration },
+                touchHoldBody = new TouchHoldBody(),
             });
 
             isHitting.BindValueChanged(b =>
@@ -124,19 +124,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                             && (Auto || isTouched || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
         }
 
-        protected override void UpdateStateTransforms(ArmedState state)
+        protected override void UpdateHitStateTransforms(ArmedState state)
         {
-            base.UpdateStateTransforms(state);
+            base.UpdateHitStateTransforms(state);
             const double time_fade_hit = 400, time_fade_miss = 400;
 
             switch (state)
             {
                 case ArmedState.Hit:
-                    this.Delay((HitObject as IHasDuration).Duration + time_fade_hit).Expire();
+                    this.Delay(time_fade_hit).Expire();
                     break;
 
                 case ArmedState.Miss:
-                    this.Delay((HitObject as IHasDuration).Duration).ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss);
+                    this.ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss).Expire();
                     break;
             }
         }
