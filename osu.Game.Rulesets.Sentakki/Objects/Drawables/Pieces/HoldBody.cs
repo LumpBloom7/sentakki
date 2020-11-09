@@ -19,8 +19,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public readonly Container Note;
         private readonly ShadowPiece shadow;
 
-        public double Duration;
-
         public HoldBody()
         {
             Scale = Vector2.Zero;
@@ -86,21 +84,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     const double flash_in = 40;
                     const double flash_out = 100;
 
-                    flash.Delay(Duration).FadeTo(0.8f, flash_in)
+                    flash.FadeTo(0.8f, flash_in)
                              .Then()
                              .FadeOut(flash_out);
 
-                    using (BeginDelayedSequence(Duration, true))
-                    {
-                        explode.FadeIn(flash_in);
-                        this.ScaleTo(1.5f, 400, Easing.OutQuad);
+                    explode.FadeIn(flash_in);
+                    this.ScaleTo(1.5f, 400, Easing.OutQuad);
 
-                        using (BeginDelayedSequence(flash_in, true))
-                        {
-                            shadow.FadeOut();
-                            Note.FadeOut();
-                            this.FadeOut(800);
-                        }
+                    using (BeginDelayedSequence(flash_in, true))
+                    {
+                        shadow.FadeOut();
+                        Note.FadeOut();
+                        this.FadeOut(800);
                     }
                     break;
             }

@@ -16,7 +16,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private readonly TouchHoldCentrePiece centrePiece;
 
         private readonly Drawable explode;
-        public double Duration;
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => centrePiece.ReceivePositionalInputAt(screenSpacePos);
 
@@ -60,23 +59,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 case ArmedState.Hit:
                     const double flash_in = 40;
                     const double flash_out = 100;
-                    using (BeginDelayedSequence(Duration, true))
+                    flash.FadeTo(0.8f, flash_in)
+                        .Then()
+                        .FadeOut(flash_out);
+
+                    explode.FadeIn(flash_in);
+                    this.ScaleTo(1.5f, 400, Easing.OutQuad);
+
+                    using (BeginDelayedSequence(flash_in, true))
                     {
-                        flash.FadeTo(0.8f, flash_in)
-                            .Then()
-                            .FadeOut(flash_out);
+                        //after the flash, we can hide some elements that were behind it
+                        ProgressPiece.FadeOut();
+                        centrePiece.FadeOut();
 
-                        explode.FadeIn(flash_in);
-                        this.ScaleTo(1.5f, 400, Easing.OutQuad);
-
-                        using (BeginDelayedSequence(flash_in, true))
-                        {
-                            //after the flash, we can hide some elements that were behind it
-                            ProgressPiece.FadeOut();
-                            centrePiece.FadeOut();
-
-                            this.FadeOut(800);
-                        }
+                        this.FadeOut(800);
                     }
                     break;
             }

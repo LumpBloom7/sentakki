@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     : base(hitObject)
         {
             AddRangeInternal(new Drawable[]{
-                breakSound = new PausableSkinnableSound(new SampleInfo("Break")),
+                breakSound = new PausableSkinnableSound(new SampleInfo("Gameplay/Break")),
             });
             AddInternal(scorePaddingObjects = new Container<DrawableScorePaddingObject>());
         }

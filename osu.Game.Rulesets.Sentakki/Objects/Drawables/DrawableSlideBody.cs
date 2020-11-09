@@ -140,9 +140,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        protected override void UpdateStateTransforms(ArmedState state)
+        protected override void UpdateHitStateTransforms(ArmedState state)
         {
-            base.UpdateStateTransforms(state);
+            base.UpdateHitStateTransforms(state);
             const double time_fade_miss = 400 /* time_fade_miss = 400 */;
             switch (state)
             {
@@ -150,10 +150,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     this.FadeOut();
                     break;
                 case ArmedState.Miss:
-                    using (BeginDelayedSequence((HitObject as IHasDuration).Duration))
-                    {
-                        this.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss).Expire();
-                    }
+                    this.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss).Expire();
                     break;
             }
         }
