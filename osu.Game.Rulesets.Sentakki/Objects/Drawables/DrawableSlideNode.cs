@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.LoadSamples();
             if (ThisIndex == 0)
-                AddInternal(slideSound = new PausableSkinnableSound(new SampleInfo("slide")));
+                AddInternal(slideSound = new PausableSkinnableSound(new SampleInfo("Gameplay/slide")));
         }
 
         protected bool IsHittable => ThisIndex < 2 || Slide.SlideNodes[ThisIndex - 2].IsHit;

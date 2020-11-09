@@ -41,13 +41,14 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     Font = OsuFont.Torus.With(size: 50),
                     Colour = Color4.White,
                 },
-                countSound = new SkinnableSound(new SampleInfo("Taka"))
+                countSound = new SkinnableSound(new SampleInfo("Gameplay/Taka"))
             };
             tickCount.BindValueChanged(
                 ticks =>
                 {
                     counterText.Text = (ticks.NewValue == 4) ? "" : ticks.NewValue.ToString();
-                    if (ticks.NewValue % 4 != 0) countSound?.Play();
+                    if (ticks.NewValue % 4 != 0)
+                        countSound?.Play();
                     if (ticks.NewValue <= 0) Resume();
                 }
             );
