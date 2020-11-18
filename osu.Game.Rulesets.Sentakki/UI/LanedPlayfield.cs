@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using osu.Framework.Graphics;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
@@ -24,7 +25,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 var lane = new Lane
                 {
                     Rotation = i.GetRotationForLane(),
-                    LaneNumber = i
+                    LaneNumber = i,
+                    OnLoaded = OnHitObjectLoaded
                 };
                 Lanes.Add(lane);
                 AddInternal(lane);
@@ -33,6 +35,37 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             AddInternal(slideBodyProxyContainer = new SortedDrawableProxyContainer());
             AddInternal(lanedNoteProxyContainer = new SortedDrawableProxyContainer());
+        }
+
+        public void OnHitObjectLoaded(Drawable hitObject)
+        {
+            switch (hitObject)
+            {
+                case DrawableSlide s:
+                    foreach (var x in s.SlideBodies)
+                        slideBodyProxyContainer.Add(x.CreateProxy());
+                    break;
+                case DrawableTap t:
+                    lanedNoteProxyContainer.Add(t.TapVisual.CreateProxy());
+                    break;
+                case DrawableHold h:
+                    lanedNoteProxyContainer.Add(h.NoteBody.CreateProxy());
+                    break;
+            }
+        }
+
+        public override void Add(HitObject h)
+        {
+            switch (h)
+            {
+                case SentakkiLanedHitObject laned:
+                    Lanes[laned.Lane].Add(h);
+                    break;
+
+                default:
+                    base.Add(h);
+                    break;
+            }
         }
 
         public override void Add(DrawableHitObject hitObject)

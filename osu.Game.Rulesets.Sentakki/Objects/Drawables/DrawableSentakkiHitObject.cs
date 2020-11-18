@@ -2,6 +2,7 @@ using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI;
 
@@ -23,7 +24,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override float SamplePlaybackPosition => Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
 
-        public DrawableSentakkiHitObject(SentakkiHitObject hitObject)
+        public DrawableSentakkiHitObject() : this(null) { }
+
+        public DrawableSentakkiHitObject(SentakkiHitObject hitObject = null)
             : base(hitObject)
         {
         }
@@ -38,6 +41,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private void load(DrawableSentakkiRuleset drawableRuleset)
         {
             drawableSentakkiRuleset = drawableRuleset;
+        }
+
+        protected override void OnApply(HitObject hitObject)
+        {
+            base.OnApply(hitObject);
+
+            AccentColour.UnbindFrom(((SentakkiHitObject)hitObject).ColourBindable);
+            AccentColour.BindTo(((SentakkiHitObject)hitObject).ColourBindable);
+        }
+
+        protected override void OnFree(HitObject hitObject)
+        {
+            base.OnFree(hitObject);
+
+            AccentColour.UnbindFrom(((SentakkiHitObject)hitObject).ColourBindable);
         }
 
         protected override void LoadAsyncComplete()
@@ -64,7 +82,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private void queueTransformReset()
         {
             transformResetQueued = true;
-            LifetimeStart = HitObject.StartTime - InitialLifetimeOffset;
+            //LifetimeStart = HitObject.StartTime - InitialLifetimeOffset;
         }
 
         protected override void UpdateInitialTransforms()

@@ -46,20 +46,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             switch (h)
             {
-                case Slide slide:
-                    return new DrawableSlide(slide);
 
                 case Touch touchNote:
                     return new DrawableTouch(touchNote);
 
-                case Hold holdNote:
-                    return new DrawableHold(holdNote);
-
                 case TouchHold touchHold:
                     return new DrawableTouchHold(touchHold);
-
-                case Tap tapNote:
-                    return new DrawableTap(tapNote);
             }
 
             return null;

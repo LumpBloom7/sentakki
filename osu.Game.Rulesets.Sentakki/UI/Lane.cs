@@ -1,10 +1,16 @@
+using System;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Pooling;
 using osu.Framework.Input.Bindings;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.UI;
 using osuTK;
 
@@ -13,6 +19,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
     public class Lane : Playfield
     {
         public int LaneNumber { get; set; }
+
+        public Action<Drawable> OnLoaded;
 
         public Lane()
         {
@@ -24,6 +32,31 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 new LaneReceptor()
             });
         }
+
+        private DrawableSentakkiRuleset drawableSentakkiRuleset;
+        private SentakkiRulesetConfigManager sentakkiRulesetConfig;
+
+        [BackgroundDependencyLoader(true)]
+        private void load(DrawableSentakkiRuleset drawableRuleset, SentakkiRulesetConfigManager sentakkiRulesetConfigManager)
+        {
+            drawableSentakkiRuleset = drawableRuleset;
+            sentakkiRulesetConfig = sentakkiRulesetConfigManager;
+
+            registerPool<Tap, DrawableTap>(8);
+            registerPool<Hold, DrawableHold>(8);
+            registerPool<Slide, DrawableSlide>(2);
+        }
+
+        private void registerPool<TObject, TDrawable>(int initialSize, int? maximumSize = null)
+            where TObject : HitObject
+            where TDrawable : DrawableHitObject, new()
+            => RegisterPool<TObject, TDrawable>(CreatePool<TDrawable>(initialSize, maximumSize));
+
+        protected virtual DrawablePool<TDrawable> CreatePool<TDrawable>(int initialSize, int? maximumSize = null)
+            where TDrawable : DrawableHitObject, new()
+            => new DrawableSentakkiPool<TDrawable>(OnLoaded, initialSize, maximumSize);
+
+        protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
 
         public class LaneReceptor : CompositeDrawable, IKeyBindingHandler<SentakkiAction>
         {

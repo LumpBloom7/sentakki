@@ -59,8 +59,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         private void updateState(ValueChangedEvent<ArmedState> state)
         {
-            glow.FadeOut(400);
-
             switch (state.NewValue)
             {
                 case ArmedState.Hit:

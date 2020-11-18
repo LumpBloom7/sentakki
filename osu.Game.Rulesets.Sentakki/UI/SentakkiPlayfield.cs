@@ -1,9 +1,12 @@
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Pooling;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI.Components;
@@ -63,11 +66,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
         }
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
+        private SentakkiRulesetConfigManager sentakkiRulesetConfig;
 
         [BackgroundDependencyLoader(true)]
-        private void load(DrawableSentakkiRuleset drawableRuleset)
+        private void load(DrawableSentakkiRuleset drawableRuleset, SentakkiRulesetConfigManager sentakkiRulesetConfigManager)
         {
             drawableSentakkiRuleset = drawableRuleset;
+            sentakkiRulesetConfig = sentakkiRulesetConfigManager;
         }
 
         protected override void Update()
@@ -82,6 +87,20 @@ namespace osu.Game.Rulesets.Sentakki.UI
         }
 
         protected override GameplayCursorContainer CreateCursor() => new SentakkiCursorContainer();
+
+        public override void Add(HitObject h)
+        {
+            switch (h)
+            {
+                case SentakkiLanedHitObject _:
+                    lanedPlayfield.Add(h);
+                    break;
+
+                default:
+                    base.Add(h);
+                    break;
+            }
+        }
 
         public override void Add(DrawableHitObject h)
         {

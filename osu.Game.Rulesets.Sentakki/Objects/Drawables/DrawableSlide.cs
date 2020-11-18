@@ -18,10 +18,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public Container<DrawableSlideBody> SlideBodies;
         public Container<DrawableSlideTap> SlideTaps;
 
-        public DrawableSlide(SentakkiHitObject hitObject)
-            : base(hitObject)
+        public DrawableSlide() : this(null) { }
+
+        public DrawableSlide(SentakkiHitObject hitObject = null)
+            : base(hitObject) { }
+
+        [BackgroundDependencyLoader(true)]
+        private void load(SentakkiRulesetConfigManager sentakkiConfig)
         {
-            AccentColour.BindTo(HitObject.ColourBindable);
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
@@ -37,13 +41,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Origin = Anchor.Centre,
                 }
             });
-        }
-
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfig)
-        {
-            // This is to ensure the container is alive when the child is.
-            sentakkiConfig?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDuration);
         }
 
         protected override void ClearNestedHitObjects()

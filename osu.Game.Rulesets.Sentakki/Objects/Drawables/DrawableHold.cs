@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -21,10 +22,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public DrawableHoldHead Head => headContainer.Child;
 
-        private readonly Container<DrawableHoldHead> headContainer;
+        private Container<DrawableHoldHead> headContainer;
 
-        public readonly HoldBody NoteBody;
-        public readonly HitObjectLine HitObjectLine;
+        public HoldBody NoteBody;
+        public HitObjectLine HitObjectLine;
 
         public override double LifetimeStart
         {
@@ -52,10 +53,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public double TotalHoldTime;
 
-        public DrawableHold(Hold hitObject)
-            : base(hitObject)
+        public DrawableHold() : this(null) { }
+
+        public DrawableHold(Hold hitObject = null)
+            : base(hitObject) { }
+
+        [BackgroundDependencyLoader]
+        private void load()
         {
-            AccentColour.BindTo(HitObject.ColourBindable);
             Size = new Vector2(75);
             Position = Vector2.Zero;
             Anchor = Anchor.Centre;
@@ -65,6 +70,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 NoteBody = new HoldBody(),
                 headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
             });
+        }
+
+        protected override void OnFree(HitObject hitObject)
+        {
+            base.OnFree(hitObject);
+
+            HoldStartTime = null;
+            TotalHoldTime = 0;
         }
 
         protected override void AddNestedHitObject(DrawableHitObject hitObject)

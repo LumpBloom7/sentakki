@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -12,8 +13,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHandler<SentakkiAction>
     {
-        public readonly Drawable TapVisual;
-        public readonly HitObjectLine HitObjectLine;
+        public Drawable TapVisual;
+        public HitObjectLine HitObjectLine;
 
         public override double LifetimeStart
         {
@@ -34,10 +35,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        public DrawableTap(Tap hitObject)
-            : base(hitObject)
+        public DrawableTap() : this(null) { }
+
+        public DrawableTap(Tap hitObject = null)
+            : base(hitObject) { }
+
+        [BackgroundDependencyLoader]
+        private void load()
         {
-            AccentColour.BindTo(HitObject.ColourBindable);
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
