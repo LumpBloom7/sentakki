@@ -9,7 +9,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 {
     public class SentakkiHitObjectLifetimeEntry : HitObjectLifetimeEntry
     {
-        protected override double InitialLifetimeOffset => initialLifetimeOffsetFor((SentakkiHitObject)HitObject);
+        protected override double InitialLifetimeOffset => initialLifetimeOffsetFor(HitObject);
 
 
         private DrawableSentakkiRuleset drawableRuleset;

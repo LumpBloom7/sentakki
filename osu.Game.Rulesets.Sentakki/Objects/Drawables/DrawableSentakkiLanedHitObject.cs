@@ -54,7 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void ClearNestedHitObjects()
         {
             base.ClearNestedHitObjects();
-            scorePaddingObjects.Clear();
+            scorePaddingObjects.Clear(false);
         }
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
         {

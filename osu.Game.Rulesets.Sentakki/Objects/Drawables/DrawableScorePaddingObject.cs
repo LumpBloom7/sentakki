@@ -6,6 +6,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableScorePaddingObject : DrawableHitObject<ScorePaddingObject>
     {
+        public DrawableScorePaddingObject() : this(null) { }
+
         public DrawableScorePaddingObject(ScorePaddingObject hitObject)
             : base(hitObject)
         {

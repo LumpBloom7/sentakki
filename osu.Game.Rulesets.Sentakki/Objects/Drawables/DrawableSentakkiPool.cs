@@ -18,9 +18,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override T CreateNewDrawable() => base.CreateNewDrawable().With(o =>
         {
-            var senObject = (DrawableSentakkiHitObject)(object)o;
-
-            senObject.OnLoadComplete += onLoaded;
+            if (o is DrawableSentakkiHitObject senObject)
+                senObject.OnLoadComplete += onLoaded;
         });
     }
 }
