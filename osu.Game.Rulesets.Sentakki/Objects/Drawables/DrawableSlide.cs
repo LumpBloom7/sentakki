@@ -1,4 +1,5 @@
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Storage.Internal;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -46,19 +47,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void ClearNestedHitObjects()
         {
             base.ClearNestedHitObjects();
-            SlideBodies.Clear();
+            SlideBodies.Clear(false);
+            SlideTaps.Clear(false);
         }
 
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
         {
             switch (hitObject)
             {
-                case Tap x:
+                case SlideTap x:
                     return new DrawableSlideTap(x, this)
                     {
                         AutoBindable = { BindTarget = AutoBindable },
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
                         AccentColour = { BindTarget = AccentColour }
                     };
                 case SlideBody slideBody:

@@ -44,7 +44,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             registerPool<Tap, DrawableTap>(8);
             registerPool<Hold, DrawableHold>(8);
+
             registerPool<Slide, DrawableSlide>(2);
+            registerPool<SlideTap, DrawableSlideTap>(2);
         }
 
         private void registerPool<TObject, TDrawable>(int initialSize, int? maximumSize = null)

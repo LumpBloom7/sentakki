@@ -28,8 +28,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            AddNested(new Tap
+            AddNested(new SlideTap
             {
+                HasTwin = HasTwin || SlideInfoList.Count > 1,
                 LaneBindable = { BindTarget = LaneBindable },
                 StartTime = StartTime,
                 Samples = NodeSamples.Any() ? NodeSamples.First() : new List<HitSampleInfo>(),
@@ -44,6 +45,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             {
                 AddNested(new SlideBody
                 {
+                    HasTwin = HasTwin || SlideInfoList.Count > 1,
                     Lane = SlideInfo.SlidePath.EndLane + Lane,
                     StartTime = StartTime,
                     SlideInfo = SlideInfo,

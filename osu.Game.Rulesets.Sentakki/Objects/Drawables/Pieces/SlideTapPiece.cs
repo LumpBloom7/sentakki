@@ -15,6 +15,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public override bool RemoveWhenNotAlive => false;
 
         public readonly Container Stars;
+        public readonly StarPiece SecondStar;
 
         private readonly ExplodePiece explode;
 
@@ -33,7 +34,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Child = new StarPiece()
+                    Children = new Drawable[]{
+                        new StarPiece(),
+                        SecondStar = new StarPiece { Rotation = 36 }
+                    }
                 },
                 explode = new ExplodePiece(),
             };
@@ -43,11 +47,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
 
         [BackgroundDependencyLoader]
-        private void load(DrawableHitObject drawableObject, DrawableSlide slideObject)
+        private void load(DrawableHitObject drawableObject)
         {
-            if (slideObject.HitObject.NestedHitObjects.Count > 2) // One is the tap, the others are slidebodies, which we are using
-                Stars.Add(new StarPiece { Rotation = 36 });
-
             state.BindTo(drawableObject.State);
             state.BindValueChanged(updateState, true);
 
