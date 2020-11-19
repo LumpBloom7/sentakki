@@ -1,5 +1,8 @@
 using System;
 using System.Threading;
+using Newtonsoft.Json;
+using osu.Game.Beatmaps;
+using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -41,6 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 var progress = i * chevronInterval;
                 AddNested(new SlideNode
                 {
+                    StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
                     Progress = (float)progress
                 });
             }
@@ -50,6 +54,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 StartTime = EndTime,
                 Progress = 1
             });
+        }
+
+        [JsonIgnore]
+        public double ShootDelay { get; private set; }
+
+        protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, BeatmapDifficulty difficulty)
+        {
+            base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
+
+            double delay = controlPointInfo.TimingPointAt(StartTime).BeatLength * SlideInfo.ShootDelay / 2;
+            if (delay < Duration - 50)
+                ShootDelay = delay;
         }
 
         protected override HitWindows CreateHitWindows() => new SentakkiSlideHitWindows();

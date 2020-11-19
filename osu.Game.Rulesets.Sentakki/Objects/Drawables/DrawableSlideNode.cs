@@ -5,6 +5,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Game.Audio;
 using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Skinning;
 using osuTK;
@@ -13,6 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideNode : DrawableSentakkiHitObject
     {
+        public new SlideBody.SlideNode HitObject => (SlideBody.SlideNode)base.HitObject;
         private PausableSkinnableSound slideSound;
 
         public override bool HandlePositionalInput => true;
@@ -23,6 +25,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected DrawableSlideBody Slide;
 
         public int ThisIndex;
+
+        public DrawableSlideNode() : this(null, null) { }
         public DrawableSlideNode(SlideBody.SlideNode node, DrawableSlideBody slideNote)
             : base(node)
         {
@@ -30,11 +34,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Origin = Anchor.Centre;
             Slide = slideNote;
             RelativeSizeAxes = Axes.None;
-            Position = slideNote.Slidepath.Path.PositionAt((HitObject as SlideBody.SlideNode).Progress);
             Size = new Vector2(240);
             CornerExponent = 2f;
             CornerRadius = 120;
             Masking = true;
+        }
+
+        protected override void OnParentReceived(DrawableHitObject parent)
+        {
+            base.OnParentReceived(parent);
+            Position = ((DrawableSlideBody)parent).HitObject.SlideInfo.SlidePath.Path.PositionAt(HitObject.Progress);
+            //ThisIndex = ((DrawableSlideBody)parent).SlideNodes.IndexOf(this);
         }
 
         protected override void LoadSamples()

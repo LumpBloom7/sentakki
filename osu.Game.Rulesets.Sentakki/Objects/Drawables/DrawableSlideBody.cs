@@ -18,6 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideBody : DrawableSentakkiLanedHitObject
     {
+        public new SlideBody HitObject => (SlideBody)base.HitObject;
         public override bool RemoveWhenNotAlive => false;
 
         public override bool DisplayResult => true;
@@ -44,10 +45,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        public DrawableSlideBody(SentakkiLanedHitObject hitObject)
+        public DrawableSlideBody() : this(null) { }
+
+        public DrawableSlideBody(SlideBody hitObject)
             : base(hitObject)
         {
-            AccentColour.BindTo(HitObject.ColourBindable);
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
@@ -57,7 +64,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 Slidepath = new SlideVisual
                 {
                     Alpha = 0,
-                    Path = (hitObject as SlideBody).SlideInfo.SlidePath.Path,
                 },
                 new Container{
                     Anchor = Anchor.Centre,
@@ -66,9 +72,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     {
                         Alpha = 0,
                         Scale = Vector2.Zero,
-                        Position = Slidepath.Path.PositionAt(0),
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
+                        Position = SentakkiExtensions.GetCircularPosition(296.5f,22.5f),
                         RelativeSizeAxes  = Axes.None,
                         Size = new Vector2(75),
                     }
@@ -80,24 +86,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 },
             });
 
-            AccentColour.BindValueChanged(c => Colour = c.NewValue, true);
-
+            AccentColour.BindValueChanged(c => Colour = c.NewValue);
             OnNewResult += queueProgressUpdate;
             OnRevertResult += queueProgressUpdate;
         }
 
-        [Resolved]
-        private Bindable<WorkingBeatmap> workingBeatmap { get; set; }
-
-        public double ShootDelay
+        protected override void OnApply(HitObject hitObject)
         {
-            get
-            {
-                double delay = workingBeatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(HitObject.StartTime).BeatLength * (HitObject as SlideBody).SlideInfo.ShootDelay / 2;
-                if (delay >= (HitObject as IHasDuration).Duration - 50)
-                    return 0;
-                return delay;
-            }
+            base.OnApply(hitObject);
+            Slidepath.Path = ((SlideBody)hitObject).SlideInfo.SlidePath.Path;
         }
 
         // We want to ensure that the correct progress is visually shown on screen
@@ -136,7 +133,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
             {
                 SlideStar.FadeInFromZero(100).ScaleTo(1, 100);
-                this.Delay(100 + ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - 50 - ShootDelay);
+                this.Delay(100 + HitObject.ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - 50 - HitObject.ShootDelay);
             }
         }
 
@@ -166,7 +163,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (hitObject)
             {
                 case SlideBody.SlideNode node:
-                    node.StartTime = HitObject.StartTime + ShootDelay + (((HitObject as IHasDuration).Duration - ShootDelay) * node.Progress);
                     return new DrawableSlideNode(node, this)
                     {
                         Anchor = Anchor.Centre,
