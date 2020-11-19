@@ -107,7 +107,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     {
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
-                        AccentColour = { BindTarget = AccentColour },
                         AutoBindable = { BindTarget = AutoBindable }
                     };
             }
@@ -121,6 +120,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             double animTime = AdjustedAnimationDuration / 2;
             HitObjectLine.FadeInFromZero(animTime);
             NoteBody.FadeInFromZero(animTime).ScaleTo(1, animTime);
+
+            NoteBody.Note.FadeColour(AccentColour.Value);
 
             using (BeginDelayedSequence(animTime, true))
             {
