@@ -43,13 +43,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
             {
                 case DrawableSlide s:
                     foreach (var x in s.SlideBodies)
-                        slideBodyProxyContainer.Add(x.CreateProxy());
+                        slideBodyProxyContainer.Add(x.CreateProxy(), s);
                     break;
                 case DrawableTap t:
-                    lanedNoteProxyContainer.Add(t.TapVisual.CreateProxy());
+                    lanedNoteProxyContainer.Add(t.TapVisual.CreateProxy(), t);
                     break;
                 case DrawableHold h:
-                    lanedNoteProxyContainer.Add(h.NoteBody.CreateProxy());
+                    lanedNoteProxyContainer.Add(h.NoteBody.CreateProxy(), h);
                     break;
             }
         }
@@ -74,13 +74,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
             {
                 case DrawableSlide s:
                     foreach (var x in s.SlideBodies)
-                        slideBodyProxyContainer.Add(x.CreateProxy());
+                        slideBodyProxyContainer.Add(x.CreateProxy(), hitObject);
                     break;
                 case DrawableTap t:
-                    lanedNoteProxyContainer.Add(t.TapVisual.CreateProxy());
+                    lanedNoteProxyContainer.Add(t.TapVisual.CreateProxy(), hitObject);
                     break;
                 case DrawableHold h:
-                    lanedNoteProxyContainer.Add(h.NoteBody.CreateProxy());
+                    lanedNoteProxyContainer.Add(h.NoteBody.CreateProxy(), hitObject);
                     break;
             }
 
