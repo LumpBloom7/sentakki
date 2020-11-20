@@ -14,7 +14,7 @@ jobs:
     - name: Fetch all tags
       run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
     - name: Get current tag
-      run: echo "::set-env name=CURRENT_TAG::$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1))"
+      run: echo "CURRENT_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_ENV
     - name: Install dependencies
       run: dotnet restore
     - name: Build
