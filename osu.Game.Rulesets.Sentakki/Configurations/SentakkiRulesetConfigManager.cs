@@ -18,7 +18,6 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
             Set(SentakkiRulesetSettings.KiaiEffects, true);
             Set(SentakkiRulesetSettings.AnimationDuration, 1000, 100, 2000, 100.0);
             Set(SentakkiRulesetSettings.TouchAnimationDuration, 500, 50, 1000, 50.0);
-            Set(SentakkiRulesetSettings.MaimaiJudgements, false);
             Set(SentakkiRulesetSettings.ShowNoteStartIndicators, false);
             Set(SentakkiRulesetSettings.RingColor, ColorOption.Default);
             Set(SentakkiRulesetSettings.RingOpacity, 1f, 0f, 1f, 0.01f);
@@ -46,7 +45,6 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
     {
         KiaiEffects,
         AnimationDuration,
-        MaimaiJudgements,
         RingOpacity,
         ShowNoteStartIndicators,
         RingColor,

@@ -28,11 +28,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             {
                 new SettingsCheckbox
                 {
-                    LabelText = "Use maimai style judgement text (In-game only)",
-                    Current = config.GetBindable<bool>(SentakkiRulesetSettings.MaimaiJudgements)
-                },
-                new SettingsCheckbox
-                {
                     LabelText = "Show Kiai effects",
                     Current = config.GetBindable<bool>(SentakkiRulesetSettings.KiaiEffects)
                 },
