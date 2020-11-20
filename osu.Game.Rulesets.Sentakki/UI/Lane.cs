@@ -51,6 +51,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
             registerPool<SlideTap, DrawableSlideTap>(2);
             registerPool<SlideBody, DrawableSlideBody>(2);
 
+            registerPool<TouchHold, DrawableTouchHold>(1, 1);
+
             registerPool<ScorePaddingObject, DrawableScorePaddingObject>(40);
         }
 

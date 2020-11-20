@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Game.Graphics;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -16,7 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTouchHold : DrawableSentakkiHitObject
     {
-        private readonly TouchHoldBody touchHoldBody;
+        private TouchHoldBody touchHoldBody;
 
         public override bool HandlePositionalInput => true;
 
@@ -25,9 +27,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => touchHoldBody.ReceivePositionalInputAt(screenSpacePos);
 
+        public DrawableTouchHold() : this(null) { }
+
         public DrawableTouchHold(TouchHold hitObject)
             : base(hitObject)
         {
+        }
+
+        [BackgroundDependencyLoader(true)]
+        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
+        {
+            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
             Colour = Color4.SlateGray;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
@@ -72,10 +82,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             ApplyResult(r => r.Type = resultType);
         }
 
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
+        protected override void OnFree(HitObject hitObject)
         {
-            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
+            base.OnFree(hitObject);
+
+            holdStartTime = null;
+            totalHoldTime = 0;
         }
 
         protected override void UpdateInitialTransforms()
