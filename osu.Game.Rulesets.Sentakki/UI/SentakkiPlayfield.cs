@@ -63,6 +63,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 }
             });
             AddNested(lanedPlayfield);
+            NewResult += onNewResult;
         }
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
