@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json;
+using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Judgements;
@@ -42,11 +44,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             for (int i = 5; i < chevrons - 2; i += 5)
             {
                 var progress = i * chevronInterval;
-                AddNested(new SlideNode
+                SlideNode node;
+                AddNested(node = new SlideNode
                 {
                     StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
                     Progress = (float)progress
                 });
+
+                // Add the slide sample to first node
+                if (i == 5)
+                    node.Samples.Add(new SlideNode.NodeHitSampleInfo());
             }
 
             AddNested(new SlideNode
@@ -77,6 +84,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             protected override HitWindows CreateHitWindows() => HitWindows.Empty;
             public override Judgement CreateJudgement() => new IgnoreJudgement();
+
+            public class NodeHitSampleInfo : HitSampleInfo
+            {
+                private static string[] lookupNames { get; } = { "Gameplay/slide" };
+
+                public override IEnumerable<string> LookupNames => lookupNames;
+            }
         }
     }
 }

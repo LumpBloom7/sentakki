@@ -5,6 +5,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Game.Audio;
 using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Skinning;
@@ -15,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     public class DrawableSlideNode : DrawableSentakkiHitObject
     {
         public new SlideBody.SlideNode HitObject => (SlideBody.SlideNode)base.HitObject;
-        private PausableSkinnableSound slideSound;
+        //private PausableSkinnableSound slideSound;
 
         public override bool HandlePositionalInput => true;
         public override bool DisplayResult => false;
@@ -26,13 +27,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public int ThisIndex;
 
-        public DrawableSlideNode() : this(null, null) { }
-        public DrawableSlideNode(SlideBody.SlideNode node, DrawableSlideBody slideNote)
+        public DrawableSlideNode() : this(null) { }
+        public DrawableSlideNode(SlideBody.SlideNode node)
             : base(node)
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Slide = slideNote;
             RelativeSizeAxes = Axes.None;
             Size = new Vector2(240);
             CornerExponent = 2f;
@@ -43,15 +43,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void OnParentReceived(DrawableHitObject parent)
         {
             base.OnParentReceived(parent);
-            Position = ((DrawableSlideBody)parent).HitObject.SlideInfo.SlidePath.Path.PositionAt(HitObject.Progress);
-            //ThisIndex = ((DrawableSlideBody)parent).SlideNodes.IndexOf(this);
-        }
-
-        protected override void LoadSamples()
-        {
-            base.LoadSamples();
-            if (ThisIndex == 0)
-                AddInternal(slideSound = new PausableSkinnableSound(new SampleInfo("Gameplay/slide")));
+            Slide = (DrawableSlideBody)parent;
+            Position = Slide.HitObject.SlideInfo.SlidePath.Path.PositionAt(HitObject.Progress);
+            ThisIndex = Slide.SlideNodes.IndexOf(this);
         }
 
         protected bool IsHittable => ThisIndex < 2 || Slide.SlideNodes[ThisIndex - 2].IsHit;
@@ -94,23 +88,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void Update()
         {
             base.Update();
-            if (Time.Current >= Slide.HitObject.StartTime)
+            if (Slide.HitObject != null)
             {
-                var touchInput = SentakkiActionInputManager.CurrentState.Touch;
-                bool isTouched = touchInput.ActiveSources.Any(s => ReceivePositionalInputAt(touchInput.GetTouchPosition(s) ?? new Vector2(float.MinValue)));
+                if (Time.Current >= Slide.HitObject.StartTime)
+                {
+                    var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+                    bool isTouched = touchInput.ActiveSources.Any(s => ReceivePositionalInputAt(touchInput.GetTouchPosition(s) ?? new Vector2(float.MinValue)));
 
-                if (isTouched || (IsHovered && SentakkiActionInputManager.PressedActions.Any()))
-                    UpdateResult(true);
-            }
-        }
-
-        public override void PlaySamples()
-        {
-            base.PlaySamples();
-            if (playSlideSample.Value && slideSound != null && Result.Type != Result.Judgement.MinResult)
-            {
-                slideSound.Balance.Value = CalculateSamplePlaybackBalance(SamplePlaybackPosition);
-                slideSound.Play();
+                    if (isTouched || (IsHovered && SentakkiActionInputManager.PressedActions.Any()))
+                        UpdateResult(true);
+                }
             }
         }
     }

@@ -158,7 +158,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void ClearNestedHitObjects()
         {
             base.ClearNestedHitObjects();
-            SlideNodes.Clear();
+            SlideNodes.Clear(false);
         }
 
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
@@ -166,13 +166,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (hitObject)
             {
                 case SlideBody.SlideNode node:
-                    return new DrawableSlideNode(node, this)
+                    return new DrawableSlideNode(node)
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         AccentColour = { BindTarget = AccentColour },
                         AutoBindable = { BindTarget = AutoBindable },
-                        ThisIndex = SlideNodes.Count
                     };
             }
 
@@ -181,13 +180,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
         {
+            base.AddNestedHitObject(hitObject);
             switch (hitObject)
             {
                 case DrawableSlideNode node:
                     SlideNodes.Add(node);
                     break;
             }
-            base.AddNestedHitObject(hitObject);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
