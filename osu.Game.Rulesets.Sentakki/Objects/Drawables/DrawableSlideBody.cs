@@ -96,6 +96,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.OnApply(hitObject);
             Slidepath.Path = ((SlideBody)hitObject).SlideInfo.SlidePath.Path;
             updatePathProgress();
+            previousPosition = null;
         }
 
         // We want to ensure that the correct progress is visually shown on screen
