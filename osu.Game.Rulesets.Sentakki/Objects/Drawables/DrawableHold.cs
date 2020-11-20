@@ -95,7 +95,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void ClearNestedHitObjects()
         {
             base.ClearNestedHitObjects();
-            headContainer.Clear();
+            headContainer.Clear(false);
         }
 
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)

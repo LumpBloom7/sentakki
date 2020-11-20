@@ -43,7 +43,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
             sentakkiRulesetConfig = sentakkiRulesetConfigManager;
 
             registerPool<Tap, DrawableTap>(8);
+
             registerPool<Hold, DrawableHold>(8);
+            registerPool<Hold.HoldHead, DrawableHoldHead>(8);
 
             registerPool<Slide, DrawableSlide>(2);
             registerPool<SlideTap, DrawableSlideTap>(2);
