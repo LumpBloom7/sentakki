@@ -3,6 +3,7 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
@@ -19,19 +20,23 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override double InitialLifetimeOffset => base.InitialLifetimeOffset + HitObject.HitWindows.WindowFor(HitResult.Meh);
 
-        private readonly TouchFlashPiece flash;
-        private readonly ExplodePiece explode;
+        private TouchFlashPiece flash;
+        private ExplodePiece explode;
 
-        private readonly TouchBody touchBody;
+        private TouchBody touchBody;
 
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
+        public DrawableTouch() : this(null) { }
         public DrawableTouch(Touch hitObject) : base(hitObject)
         {
-            AccentColour.BindTo(HitObject.ColourBindable);
+        }
+
+        [BackgroundDependencyLoader(true)]
+        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
+        {
             Size = new Vector2(130);
-            Position = hitObject.Position;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Alpha = 0;
@@ -54,6 +59,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 UpdateResult(true);
             });
+
+            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
+            AccentColour.BindValueChanged(c =>
+            {
+                flash.Colour = c.NewValue;
+                explode.Colour = c.NewValue;
+            }, true);
+        }
+
+        protected override void OnApply(HitObject hitObject)
+        {
+            base.OnApply(hitObject);
+            Position = ((Touch)hitObject).Position;
         }
 
         private BindableInt trackedKeys = new BindableInt(0);
@@ -70,17 +88,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 count = SentakkiActionInputManager.PressedActions.Where(x => x < SentakkiAction.Key1).Count();
 
             trackedKeys.Value = count;
-        }
-
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
-        {
-            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
-            AccentColour.BindValueChanged(c =>
-            {
-                flash.Colour = c.NewValue;
-                explode.Colour = c.NewValue;
-            }, true);
         }
 
         protected override void UpdateInitialTransforms()

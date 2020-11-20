@@ -73,7 +73,23 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             drawableSentakkiRuleset = drawableRuleset;
             sentakkiRulesetConfig = sentakkiRulesetConfigManager;
+
+
+            registerPool<TouchHold, DrawableTouchHold>(1, 1);
+
+            registerPool<Objects.Touch, DrawableTouch>(8);
         }
+
+        private void registerPool<TObject, TDrawable>(int initialSize, int? maximumSize = null)
+            where TObject : HitObject
+            where TDrawable : DrawableHitObject, new()
+            => RegisterPool<TObject, TDrawable>(CreatePool<TDrawable>(initialSize, maximumSize));
+
+        protected virtual DrawablePool<TDrawable> CreatePool<TDrawable>(int initialSize, int? maximumSize = null)
+            where TDrawable : DrawableHitObject, new()
+            => new DrawableSentakkiPool<TDrawable>(null, initialSize, maximumSize);
+
+        protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
 
         protected override void Update()
         {
