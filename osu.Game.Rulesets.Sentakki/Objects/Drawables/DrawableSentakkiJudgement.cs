@@ -12,46 +12,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSentakkiJudgement : DrawableJudgement
     {
-        [Resolved]
-        private OsuColour colours { get; set; }
-
-        private OsuSpriteText sentakkiJudgementText;
-
         public DrawableSentakkiJudgement(JudgementResult result, DrawableSentakkiHitObject judgedObject)
             : base(result, judgedObject)
         {
         }
 
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager settings)
+        protected override void ApplyHitAnimations()
         {
-            JudgementBody.Child = sentakkiJudgementText = new OsuSpriteText
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Text = Result.Type.GetDescription().ToUpperInvariant(),
-                Font = OsuFont.Numeric.With(size: 20),
-                Colour = colours.ForHitResult(Result.Type),
-                Scale = new Vector2(0.85f, 1),
-            };
+            JudgementBody.ScaleTo(0.9f);
+            JudgementBody.ScaleTo(1, 50, Easing.OutElastic);
 
-            if (settings != null && settings.Get<bool>(SentakkiRulesetSettings.MaimaiJudgements))
-            {
-                switch (Result.Type)
-                {
-                    case HitResult.Great:
-                        sentakkiJudgementText.Text = "Perfect";
-                        break;
-
-                    case HitResult.Good:
-                        sentakkiJudgementText.Text = "Great";
-                        break;
-
-                    case HitResult.Meh:
-                        sentakkiJudgementText.Text = "Good";
-                        break;
-                }
-            }
+            JudgementBody.Delay(50)
+                         .ScaleTo(0.8f, 300)
+                         .FadeOut(250);
         }
     }
 }
