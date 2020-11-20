@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             var note = TapVisual as SlideTapPiece;
 
-            if (HitObject.NestedHitObjects.Count > 2)
+            if (slide.SlideBodies.Count > 1)
                 note.SecondStar.Alpha = 1;
             else
                 note.SecondStar.Alpha = 0;

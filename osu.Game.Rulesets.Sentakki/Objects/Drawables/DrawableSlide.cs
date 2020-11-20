@@ -10,8 +10,6 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    // Cached so that SlideTapPiece can access via DI, and adjust visuals to account for multiple slide bodies
-    [Cached]
     public class DrawableSlide : DrawableSentakkiHitObject
     {
         public override bool DisplayResult => false;
