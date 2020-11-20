@@ -42,20 +42,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public override PlayfieldAdjustmentContainer CreatePlayfieldAdjustmentContainer() => new SentakkiPlayfieldAdjustmentContainer();
 
-        public override DrawableHitObject<SentakkiHitObject> CreateDrawableRepresentation(SentakkiHitObject h)
-        {
-            switch (h)
-            {
-
-                case Touch touchNote:
-                    return new DrawableTouch(touchNote);
-
-                case TouchHold touchHold:
-                    return new DrawableTouchHold(touchHold);
-            }
-
-            return null;
-        }
+        public override DrawableHitObject<SentakkiHitObject> CreateDrawableRepresentation(SentakkiHitObject h) => null;
 
         protected override ResumeOverlay CreateResumeOverlay() => new SentakkiResumeOverlay();
 
