@@ -44,7 +44,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             else
                 note.SecondStar.Alpha = 0;
 
-
             double spinDuration = ((Slide)slide.HitObject).SlideInfoList.FirstOrDefault().Duration;
             note.Stars.Spin(spinDuration, RotationDirection.CounterClockwise, 0).Loop();
         }

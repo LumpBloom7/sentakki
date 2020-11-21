@@ -11,7 +11,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
     {
         protected override double InitialLifetimeOffset => initialLifetimeOffsetFor(HitObject);
 
-
         private DrawableSentakkiRuleset drawableRuleset;
 
         public double GameplaySpeed => drawableRuleset?.GameplaySpeed ?? 1;
@@ -33,7 +32,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             });
         }
 
-
         private void bindAnimationDuration()
         {
             switch (HitObject)
@@ -46,7 +44,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDurationBindable);
                     break;
             }
-
         }
 
         private double initialLifetimeOffsetFor(HitObject hitObject)

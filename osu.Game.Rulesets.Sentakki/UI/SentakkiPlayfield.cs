@@ -78,9 +78,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             drawableSentakkiRuleset = drawableRuleset;
             sentakkiRulesetConfig = sentakkiRulesetConfigManager;
 
-
             registerPool<TouchHold, DrawableTouchHold>(2);
-
             registerPool<Objects.Touch, DrawableTouch>(8);
         }
 
