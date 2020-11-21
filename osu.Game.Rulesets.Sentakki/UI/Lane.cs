@@ -52,7 +52,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             registerPool<SlideBody, DrawableSlideBody>(2);
             registerPool<SlideBody.SlideNode, DrawableSlideNode>(10);
 
-            registerPool<ScorePaddingObject, DrawableScorePaddingObject>(40);
+            registerPool<ScorePaddingObject, DrawableScorePaddingObject>(20);
         }
 
         private void registerPool<TObject, TDrawable>(int initialSize, int? maximumSize = null)
