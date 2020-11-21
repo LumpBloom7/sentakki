@@ -99,6 +99,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             previousPosition = null;
         }
 
+        private DrawableSlide slide;
+
+        protected override void OnParentReceived(DrawableHitObject parent)
+        {
+            base.OnParentReceived(parent);
+            slide = (DrawableSlide)parent;
+            AccentColour.BindTo(slide.AccentColour);
+        }
+        protected override void OnFree(HitObject hitObject)
+        {
+            AccentColour.UnbindFrom(slide.AccentColour);
+        }
+
         // We want to ensure that the correct progress is visually shown on screen
         // I don't think that OnRevert of HitObjects is ordered properly
         // So just to make sure, when multiple OnReverts are called, we just queue for a forced update on the visuals

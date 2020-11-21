@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using osu.Framework.Graphics;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 
@@ -23,6 +24,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnParentReceived(parent);
             slide = (DrawableSlide)parent;
+            AccentColour.BindTo(slide.AccentColour);
+        }
+        protected override void OnFree(HitObject hitObject)
+        {
+            AccentColour.UnbindFrom(slide.AccentColour);
         }
 
         protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
