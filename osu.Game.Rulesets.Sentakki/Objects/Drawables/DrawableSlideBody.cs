@@ -183,7 +183,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        AccentColour = { BindTarget = AccentColour },
                         AutoBindable = { BindTarget = AutoBindable },
                     };
             }

@@ -57,7 +57,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     return new DrawableSlideTap(x, this)
                     {
                         AutoBindable = { BindTarget = AutoBindable },
-                        AccentColour = { BindTarget = AccentColour }
                     };
                 case SlideBody slideBody:
                     return new DrawableSlideBody(slideBody)
@@ -65,7 +64,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         AutoBindable = { BindTarget = AutoBindable },
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        AccentColour = { BindTarget = AccentColour }
                     };
             }
 
