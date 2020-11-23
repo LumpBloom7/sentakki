@@ -35,7 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             ApplyResult(r => r.Type = result);
         }
 
-        public void UpdateResult() => base.UpdateResult(true);
+        public void UpdateResult() => UpdateResult(true);
 
         public void MissForcefully() => ApplyResult(r => r.Type = HitResult.Miss);
     }

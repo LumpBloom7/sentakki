@@ -18,24 +18,25 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // IsHovered is used
         public override bool HandlePositionalInput => true;
 
+        // This HitObject uses a completely different offset
         protected override double InitialLifetimeOffset => base.InitialLifetimeOffset + HitObject.HitWindows.WindowFor(HitResult.Meh);
 
         private TouchFlashPiece flash;
         private ExplodePiece explode;
-
         private TouchBody touchBody;
 
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
         public DrawableTouch() : this(null) { }
-        public DrawableTouch(Touch hitObject) : base(hitObject)
-        {
-        }
+        public DrawableTouch(Touch hitObject)
+            : base(hitObject) { }
 
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager sentakkiConfigs)
         {
+            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
+
             Size = new Vector2(130);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
@@ -60,7 +61,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 UpdateResult(true);
             });
 
-            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
             AccentColour.BindValueChanged(c =>
             {
                 flash.Colour = c.NewValue;
@@ -109,13 +109,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             Debug.Assert(HitObject.HitWindows != null);
 
+            // Don't allow for user input if auto is enabled for touch based objects (AutoTouch mod)
             if (!userTriggered || Auto)
             {
                 if (Auto && timeOffset > 0)
-                    ApplyResult(r => r.Type = HitResult.Great);
-
-                if (!HitObject.HitWindows.CanBeHit(timeOffset))
-                    ApplyResult(r => r.Type = HitResult.Miss);
+                    ApplyResult(r => r.Type = r.Judgement.MaxResult);
+                else if (!HitObject.HitWindows.CanBeHit(timeOffset))
+                    ApplyResult(r => r.Type = r.Judgement.MinResult);
 
                 return;
             }
@@ -126,11 +126,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
 
             if (timeOffset < 0)
-            {
-                if (result <= HitResult.Miss) return;
-
-                if (result < HitResult.Great) result = HitResult.Great;
-            }
+                result = Result.Judgement.MaxResult;
 
             ApplyResult(r => r.Type = result);
         }

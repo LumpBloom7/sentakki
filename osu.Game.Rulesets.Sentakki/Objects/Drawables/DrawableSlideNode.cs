@@ -16,7 +16,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     public class DrawableSlideNode : DrawableSentakkiHitObject
     {
         public new SlideBody.SlideNode HitObject => (SlideBody.SlideNode)base.HitObject;
-        //private PausableSkinnableSound slideSound;
 
         public override bool HandlePositionalInput => true;
         public override bool DisplayResult => false;
@@ -25,7 +24,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
         protected DrawableSlideBody Slide;
 
-        public int ThisIndex;
+        // Used to determine the node order
+        private int thisIndex;
+
+        // Hits are only possible if this the second node before this one is hit
+        // If the second node before this one doesn't exist, it is allowed as this is one of the first nodes
+        protected bool IsHittable => thisIndex < 2 || Slide.SlideNodes[thisIndex - 2].IsHit;
 
         public DrawableSlideNode() : this(null) { }
         public DrawableSlideNode(SlideBody.SlideNode node)
@@ -45,10 +49,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.OnParentReceived(parent);
             Slide = (DrawableSlideBody)parent;
             Position = Slide.HitObject.SlideInfo.SlidePath.Path.PositionAt(HitObject.Progress);
-            ThisIndex = Slide.SlideNodes.IndexOf(this);
+            thisIndex = Slide.SlideNodes.IndexOf(this);
         }
-
-        protected bool IsHittable => ThisIndex < 2 || Slide.SlideNodes[ThisIndex - 2].IsHit;
 
         private readonly Bindable<bool> playSlideSample = new Bindable<bool>(true);
 
@@ -60,6 +62,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
+            // Don't allow for user input if auto is enabled for touch based objects (AutoTouch mod)
             if (!userTriggered || Auto)
             {
                 if (timeOffset > 0 && Auto)
@@ -71,18 +74,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
 
             ApplyResult(r => r.Type = r.Judgement.MaxResult);
-        }
-
-        // Forces this object to have a result.
-        public void ForcefullyMiss() => ApplyResult(r => r.Type = r.Judgement.MinResult);
-
-        protected new void ApplyResult(Action<JudgementResult> application)
-        {
-            if (ThisIndex > 0)
-                Slide.SlideNodes[ThisIndex - 1]?.ApplyResult(application);
-
-            if (!Result.HasResult)
-                base.ApplyResult(application);
         }
 
         protected override void Update()
@@ -100,5 +91,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 }
             }
         }
+
+        protected override void ApplyResult(Action<JudgementResult> application)
+        {
+            // Judge the previous node, because that isn't guaranteed due to the leniency;
+            if (thisIndex > 0)
+                Slide.SlideNodes[thisIndex - 1]?.ApplyResult(application);
+
+            base.ApplyResult(application);
+        }
+
+        // Forcefully miss this node, used when players fail to complete the slide on time.
+        public void ForcefullyMiss() => ApplyResult(r => r.Type = r.Judgement.MinResult);
     }
 }

@@ -8,17 +8,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideTap : DrawableTap
     {
+        protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
+
         private DrawableSlide slide;
 
-        public DrawableSlideTap() : this(null, null) { }
-
-        public DrawableSlideTap(SlideTap hitObject, DrawableSlide slide)
-            : base(hitObject)
-        {
-            this.slide = slide;
-            Anchor = Anchor.Centre;
-            Origin = Anchor.Centre;
-        }
+        public DrawableSlideTap() : this(null) { }
+        public DrawableSlideTap(SlideTap hitObject)
+            : base(hitObject) { }
 
         protected override void OnParentReceived(DrawableHitObject parent)
         {
@@ -26,12 +22,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             slide = (DrawableSlide)parent;
             AccentColour.BindTo(slide.AccentColour);
         }
+
         protected override void OnFree(HitObject hitObject)
         {
+            base.OnFree(hitObject);
             AccentColour.UnbindFrom(slide.AccentColour);
         }
-
-        protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
 
         protected override void UpdateInitialTransforms()
         {

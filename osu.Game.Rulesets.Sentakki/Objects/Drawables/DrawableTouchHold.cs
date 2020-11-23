@@ -18,8 +18,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTouchHold : DrawableSentakkiHitObject
     {
-        private TouchHoldBody touchHoldBody;
-
         public override bool HandlePositionalInput => true;
 
         private SentakkiInputManager sentakkiActionInputManager;
@@ -27,12 +25,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => touchHoldBody.ReceivePositionalInputAt(screenSpacePos);
 
+        private TouchHoldBody touchHoldBody;
+
         public DrawableTouchHold() : this(null) { }
 
         public DrawableTouchHold(TouchHold hitObject)
-            : base(hitObject)
-        {
-        }
+            : base(hitObject) { }
 
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager sentakkiConfigs)
@@ -56,31 +54,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         [Resolved]
         private OsuColour colours { get; set; }
-
-        protected override void CheckForResult(bool userTriggered, double timeOffset)
-        {
-            if (Time.Current < HitObject.StartTime) return;
-
-            if (userTriggered || Time.Current < (HitObject as IHasDuration)?.EndTime)
-                return;
-
-            double result = totalHoldTime / (HitObject as IHasDuration).Duration;
-
-            HitResult resultType;
-
-            if (result >= .75)
-                resultType = HitResult.Great;
-            else if (result >= .5)
-                resultType = HitResult.Good;
-            else if (result >= .25)
-                resultType = HitResult.Meh;
-            else
-                resultType = HitResult.Miss;
-
-            AccentColour.Value = colours.ForHitResult(resultType);
-
-            ApplyResult(r => r.Type = resultType);
-        }
 
         protected override void OnFree(HitObject hitObject)
         {
@@ -134,6 +107,27 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             isHitting.Value = Time.Current >= HitObject.StartTime
                             && Time.Current <= (HitObject as IHasDuration)?.EndTime
                             && (Auto || isTouched || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
+        }
+
+        protected override void CheckForResult(bool userTriggered, double timeOffset)
+        {
+            if (Time.Current < (HitObject as IHasDuration)?.EndTime) return;
+
+            double result = totalHoldTime / (HitObject as IHasDuration).Duration;
+
+            HitResult resultType;
+
+            if (result >= .75)
+                resultType = HitResult.Great;
+            else if (result >= .5)
+                resultType = HitResult.Good;
+            else if (result >= .25)
+                resultType = HitResult.Meh;
+            else
+                resultType = HitResult.Miss;
+
+            AccentColour.Value = colours.ForHitResult(resultType);
+            ApplyResult(r => r.Type = resultType);
         }
 
         protected override void UpdateHitStateTransforms(ArmedState state)

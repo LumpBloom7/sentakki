@@ -20,13 +20,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override float SamplePlaybackPosition => (SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, HitObject.Lane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
 
+        private readonly Container<DrawableScorePaddingObject> scorePaddingObjects;
         public DrawableSentakkiLanedHitObject(SentakkiLanedHitObject hitObject)
                     : base(hitObject)
         {
             AddRangeInternal(new Drawable[]{
                 breakSound = new PausableSkinnableSound(new SampleInfo("Gameplay/Break")),
+                scorePaddingObjects = new Container<DrawableScorePaddingObject>()
             });
-            AddInternal(scorePaddingObjects = new Container<DrawableScorePaddingObject>());
         }
 
         private readonly Bindable<bool> breakSoundsEnabled = new Bindable<bool>(true);
@@ -49,20 +50,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        private readonly Container<DrawableScorePaddingObject> scorePaddingObjects;
-
-        protected override void ClearNestedHitObjects()
-        {
-            base.ClearNestedHitObjects();
-            scorePaddingObjects.Clear(false);
-        }
-        protected override void AddNestedHitObject(DrawableHitObject hitObject)
-        {
-            base.AddNestedHitObject(hitObject);
-            if (hitObject is DrawableScorePaddingObject x)
-                scorePaddingObjects.Add(x);
-        }
-
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
         {
             if (hitObject is ScorePaddingObject x)
@@ -70,6 +57,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             return base.CreateNestedHitObject(hitObject);
         }
+
+        protected override void AddNestedHitObject(DrawableHitObject hitObject)
+        {
+            base.AddNestedHitObject(hitObject);
+            if (hitObject is DrawableScorePaddingObject x)
+                scorePaddingObjects.Add(x);
+        }
+
+        protected override void ClearNestedHitObjects()
+        {
+            base.ClearNestedHitObjects();
+            scorePaddingObjects.Clear(false);
+        }
+
 
         protected override void ApplyResult(Action<JudgementResult> application)
         {

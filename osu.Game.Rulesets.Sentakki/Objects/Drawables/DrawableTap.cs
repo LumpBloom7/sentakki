@@ -13,8 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHandler<SentakkiAction>
     {
-        public Drawable TapVisual;
-        public HitObjectLine HitObjectLine;
+        protected virtual Drawable CreateTapRepresentation() => new TapPiece();
 
         public override double LifetimeStart
         {
@@ -35,6 +34,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
+        public Drawable TapVisual;
+        public HitObjectLine HitObjectLine;
+
         public DrawableTap() : this(null) { }
 
         public DrawableTap(Tap hitObject = null)
@@ -51,8 +53,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 TapVisual = CreateTapRepresentation(),
             });
         }
-
-        protected virtual Drawable CreateTapRepresentation() => new TapPiece();
 
         protected override void UpdateInitialTransforms()
         {
@@ -75,18 +75,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!userTriggered)
             {
                 if (Auto && timeOffset > 0)
-                    ApplyResult(r => r.Type = HitResult.Great);
-
-                if (!HitObject.HitWindows.CanBeHit(timeOffset))
-                {
-                    ApplyResult(r => r.Type = HitResult.Miss);
-                }
+                    ApplyResult(r => r.Type = r.Judgement.MaxResult);
+                else if (!HitObject.HitWindows.CanBeHit(timeOffset))
+                    ApplyResult(r => r.Type = r.Judgement.MinResult);
 
                 return;
             }
 
             var result = HitObject.HitWindows.ResultFor(timeOffset);
-            if (result == HitResult.None || (result == HitResult.Miss && Time.Current < HitObject.StartTime))
+            if (result == HitResult.None)
                 return;
 
             ApplyResult(r => r.Type = result);
@@ -101,7 +98,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 case ArmedState.Hit:
                     this.Delay(400).FadeOut().Expire();
-
                     break;
 
                 case ArmedState.Miss:
@@ -118,7 +114,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public virtual bool OnPressed(SentakkiAction action)
         {
-            if (action != SentakkiAction.Key1 + ((SentakkiLanedHitObject)HitObject).Lane)
+            if (action != SentakkiAction.Key1 + HitObject.Lane)
                 return false;
 
             return UpdateResult(true);

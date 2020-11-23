@@ -42,11 +42,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
-        protected override void ClearNestedHitObjects()
+        protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            base.ClearNestedHitObjects();
-            SlideBodies.Clear(false);
-            SlideTaps.Clear(false);
+            // We also make sure all transforms have finished to avoid jank
+            if (NestedHitObjects.All(n => n.Result.HasResult && Time.Current >= n.LatestTransformEndTime))
+                ApplyResult(r => r.Type = r.Judgement.MaxResult);
         }
 
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
@@ -54,7 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (hitObject)
             {
                 case SlideTap x:
-                    return new DrawableSlideTap(x, this)
+                    return new DrawableSlideTap(x)
                     {
                         AutoBindable = { BindTarget = AutoBindable },
                     };
@@ -84,10 +84,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.AddNestedHitObject(hitObject);
         }
 
-        protected override void CheckForResult(bool userTriggered, double timeOffset)
+        protected override void ClearNestedHitObjects()
         {
-            if (NestedHitObjects.All(n => n.Result.HasResult && Time.Current >= n.LatestTransformEndTime))
-                ApplyResult(r => r.Type = r.Judgement.MaxResult);
+            base.ClearNestedHitObjects();
+            SlideBodies.Clear(false);
+            SlideTaps.Clear(false);
         }
     }
 }

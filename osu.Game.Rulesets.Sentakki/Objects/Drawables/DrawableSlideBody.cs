@@ -19,9 +19,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     public class DrawableSlideBody : DrawableSentakkiLanedHitObject
     {
         public new SlideBody HitObject => (SlideBody)base.HitObject;
+
         public override bool RemoveWhenNotAlive => false;
 
-        public override bool DisplayResult => true;
+        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset / 2;
 
         public Container<DrawableSlideNode> SlideNodes;
 
@@ -46,11 +47,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         public DrawableSlideBody() : this(null) { }
-
         public DrawableSlideBody(SlideBody hitObject)
-            : base(hitObject)
-        {
-        }
+            : base(hitObject) { }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -130,17 +128,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 updatePathProgress();
         }
 
+        // Used to hide and show segments accurately
         private void updatePathProgress()
         {
             var target = SlideNodes.LastOrDefault(x => x.Result.IsHit);
             if (target == null)
                 Slidepath.Progress = 0;
-            else Slidepath.Progress = (target.HitObject as SlideBody.SlideNode).Progress;
+            else Slidepath.Progress = target.HitObject.Progress;
 
             pendingProgressUpdate = false;
         }
-
-        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset / 2;
 
         protected override void UpdateInitialTransforms()
         {
@@ -150,6 +147,36 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 SlideStar.FadeInFromZero(100).ScaleTo(1, 100);
                 this.Delay(100 + HitObject.ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - 50 - HitObject.ShootDelay);
             }
+        }
+
+        protected override void CheckForResult(bool userTriggered, double timeOffset)
+        {
+            Debug.Assert(HitObject.HitWindows != null);
+
+            // Player completed all nodes, we consider this user triggered
+            if (SlideNodes.All(node => node.Result.HasResult))
+                userTriggered = true;
+
+            if (!userTriggered)
+            {
+                if (!HitObject.HitWindows.CanBeHit(timeOffset))
+                {
+                    // Miss the last node to ensure that all of them have results
+                    SlideNodes.Last().ForcefullyMiss();
+                    if (SlideNodes.Count(node => !node.Result.IsHit) <= 2 && SlideNodes.Count > 2)
+                        ApplyResult(r => r.Type = HitResult.Meh);
+                    else
+                        ApplyResult(r => r.Type = r.Judgement.MinResult);
+                }
+
+                return;
+            }
+
+            var result = HitObject.HitWindows.ResultFor(timeOffset);
+            if (result == HitResult.None)
+                result = HitResult.Meh;
+
+            ApplyResult(r => r.Type = result);
         }
 
         protected override void UpdateHitStateTransforms(ArmedState state)
@@ -166,12 +193,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     this.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss).Expire();
                     break;
             }
-        }
-
-        protected override void ClearNestedHitObjects()
-        {
-            base.ClearNestedHitObjects();
-            SlideNodes.Clear(false);
         }
 
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
@@ -201,31 +222,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        protected override void CheckForResult(bool userTriggered, double timeOffset)
+        protected override void ClearNestedHitObjects()
         {
-            Debug.Assert(HitObject.HitWindows != null);
-            if (SlideNodes.All(node => node.Result.HasResult))
-                userTriggered = true;
-
-            if (!userTriggered)
-            {
-                if (!HitObject.HitWindows.CanBeHit(timeOffset))
-                {
-                    SlideNodes.Last().ForcefullyMiss();
-                    if (SlideNodes.Count(node => !node.Result.IsHit) <= 2 && SlideNodes.Count > 2)
-                        ApplyResult(r => r.Type = HitResult.Meh);
-                    else
-                        ApplyResult(r => r.Type = HitResult.Miss);
-                }
-
-                return;
-            }
-
-            var result = HitObject.HitWindows.ResultFor(timeOffset);
-            if (result == HitResult.None)
-                result = HitResult.Meh;
-
-            ApplyResult(r => r.Type = result);
+            base.ClearNestedHitObjects();
+            SlideNodes.Clear(false);
         }
     }
 }

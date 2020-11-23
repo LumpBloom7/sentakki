@@ -27,9 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableSentakkiHitObject() : this(null) { }
 
         public DrawableSentakkiHitObject(SentakkiHitObject hitObject = null)
-            : base(hitObject)
-        {
-        }
+            : base(hitObject) { }
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
 
@@ -43,16 +41,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             drawableSentakkiRuleset = drawableRuleset;
         }
 
-        protected override void OnApply(HitObject hitObject)
-        {
-            base.OnApply(hitObject);
-            AccentColour.Value = ((SentakkiHitObject)hitObject).NoteColour;
-        }
-
         protected override void LoadAsyncComplete()
         {
             base.LoadAsyncComplete();
             AnimationDuration.BindValueChanged(_ => queueTransformReset(), true);
+        }
+
+        protected override void OnApply(HitObject hitObject)
+        {
+            base.OnApply(hitObject);
+            AccentColour.Value = ((SentakkiHitObject)hitObject).NoteColour;
         }
 
         protected override void Update()
@@ -88,8 +86,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected new virtual void ApplyResult(Action<JudgementResult> application)
         {
             // Apply judgement to this object
-            if (Result.HasResult) return;
-            base.ApplyResult(application);
+            if (!Result.HasResult)
+                base.ApplyResult(application);
         }
     }
 }
