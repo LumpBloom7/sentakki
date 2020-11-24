@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -96,7 +95,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             holdStartTime = null;
             Colour = Color4.SlateGray;
         }
-
 
         protected override void Update()
         {

@@ -21,15 +21,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!userTriggered)
             {
                 if (Auto && timeOffset > 0)
-                    ApplyResult(r => r.Type = HitResult.Great);
+                    ApplyResult(r => r.Type = r.Judgement.MaxResult);
 
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
-                    ApplyResult(r => r.Type = HitResult.Miss);
+                    ApplyResult(r => r.Type = r.Judgement.MinResult);
                 return;
             }
 
             var result = HitObject.HitWindows.ResultFor(timeOffset);
-            if (result == HitResult.None || (result == HitResult.Miss && Time.Current < HitObject.StartTime))
+            if (result == HitResult.None)
                 return;
 
             ApplyResult(r => r.Type = result);

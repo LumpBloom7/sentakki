@@ -71,7 +71,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             scorePaddingObjects.Clear(false);
         }
 
-
         protected override void ApplyResult(Action<JudgementResult> application)
         {
             base.ApplyResult(application);
