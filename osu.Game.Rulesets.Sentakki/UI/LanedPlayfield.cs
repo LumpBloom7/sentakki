@@ -26,7 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 {
                     Rotation = i.GetRotationForLane(),
                     LaneNumber = i,
-                    OnLoaded = OnHitObjectLoaded
+                    OnLoaded = onHitObjectLoaded
                 };
                 Lanes.Add(lane);
                 AddInternal(lane);
@@ -35,23 +35,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             AddInternal(slideBodyProxyContainer = new SortedDrawableProxyContainer());
             AddInternal(lanedNoteProxyContainer = new SortedDrawableProxyContainer());
-        }
-
-        public void OnHitObjectLoaded(Drawable hitObject)
-        {
-            switch (hitObject)
-            {
-                case DrawableSlide s:
-                    foreach (var x in s.SlideBodies)
-                        slideBodyProxyContainer.Add(x.CreateProxy(), s);
-                    break;
-                case DrawableTap t:
-                    lanedNoteProxyContainer.Add(t.TapVisual.CreateProxy(), t);
-                    break;
-                case DrawableHold h:
-                    lanedNoteProxyContainer.Add(h.NoteBody.CreateProxy(), h);
-                    break;
-            }
         }
 
         public override void Add(HitObject h)
@@ -70,20 +53,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public override void Add(DrawableHitObject hitObject)
         {
-            switch (hitObject)
-            {
-                case DrawableSlide s:
-                    foreach (var x in s.SlideBodies)
-                        slideBodyProxyContainer.Add(x.CreateProxy(), hitObject);
-                    break;
-                case DrawableTap t:
-                    lanedNoteProxyContainer.Add(t.TapVisual.CreateProxy(), hitObject);
-                    break;
-                case DrawableHold h:
-                    lanedNoteProxyContainer.Add(h.NoteBody.CreateProxy(), hitObject);
-                    break;
-            }
-
             ((SentakkiLanedHitObject)hitObject.HitObject).LaneBindable.BindValueChanged(lane =>
             {
                 if (lane.OldValue != lane.NewValue)
@@ -93,5 +62,22 @@ namespace osu.Game.Rulesets.Sentakki.UI
         }
 
         public override bool Remove(DrawableHitObject hitObject) => Lanes[(hitObject.HitObject as SentakkiLanedHitObject).Lane].Remove(hitObject);
+
+        private void onHitObjectLoaded(Drawable hitObject)
+        {
+            switch (hitObject)
+            {
+                case DrawableSlide s:
+                    foreach (var x in s.SlideBodies)
+                        slideBodyProxyContainer.Add(x.CreateProxy(), s);
+                    break;
+                case DrawableTap t:
+                    lanedNoteProxyContainer.Add(t.TapVisual.CreateProxy(), t);
+                    break;
+                case DrawableHold h:
+                    lanedNoteProxyContainer.Add(h.NoteBody.CreateProxy(), h);
+                    break;
+            }
+        }
     }
 }

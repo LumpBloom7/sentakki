@@ -42,27 +42,20 @@ namespace osu.Game.Rulesets.Sentakki.UI
             drawableSentakkiRuleset = drawableRuleset;
             sentakkiRulesetConfig = sentakkiRulesetConfigManager;
 
-            registerPool<Tap, DrawableTap>(8);
+            RegisterPool<Tap, DrawableTap>(8);
 
-            registerPool<Hold, DrawableHold>(8);
-            registerPool<Hold.HoldHead, DrawableHoldHead>(8);
+            RegisterPool<Hold, DrawableHold>(8);
+            RegisterPool<Hold.HoldHead, DrawableHoldHead>(8);
 
-            registerPool<Slide, DrawableSlide>(2);
-            registerPool<SlideTap, DrawableSlideTap>(2);
-            registerPool<SlideBody, DrawableSlideBody>(2);
-            registerPool<SlideBody.SlideNode, DrawableSlideNode>(10);
+            RegisterPool<Slide, DrawableSlide>(2);
+            RegisterPool<SlideTap, DrawableSlideTap>(2);
+            RegisterPool<SlideBody, DrawableSlideBody>(2);
+            RegisterPool<SlideBody.SlideNode, DrawableSlideNode>(10);
 
-            registerPool<ScorePaddingObject, DrawableScorePaddingObject>(20);
+            RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(20);
         }
 
-        private void registerPool<TObject, TDrawable>(int initialSize, int? maximumSize = null)
-            where TObject : HitObject
-            where TDrawable : DrawableHitObject, new()
-            => RegisterPool<TObject, TDrawable>(CreatePool<TDrawable>(initialSize, maximumSize));
-
-        protected virtual DrawablePool<TDrawable> CreatePool<TDrawable>(int initialSize, int? maximumSize = null)
-            where TDrawable : DrawableHitObject, new()
-            => new DrawableSentakkiPool<TDrawable>(OnLoaded, initialSize, maximumSize);
+        protected override void OnNewDrawableHitObject(DrawableHitObject d) => OnLoaded?.Invoke(d);
 
         protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
 
