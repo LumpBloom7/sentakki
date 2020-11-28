@@ -15,6 +15,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTouch : DrawableSentakkiHitObject
     {
+        protected new Touch HitObject => (Touch)base.HitObject;
+
         // IsHovered is used
         public override bool HandlePositionalInput => true;
 
@@ -68,10 +70,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }, true);
         }
 
-        protected override void OnApply(HitObject hitObject)
+        protected override void OnApply()
         {
-            base.OnApply(hitObject);
-            Position = ((Touch)hitObject).Position;
+            base.OnApply();
+            Position = HitObject.Position;
         }
 
         private BindableInt trackedKeys = new BindableInt(0);

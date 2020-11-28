@@ -87,10 +87,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             OnRevertResult += queueProgressUpdate;
         }
 
-        protected override void OnApply(HitObject hitObject)
+        protected override void OnApply()
         {
-            base.OnApply(hitObject);
-            Slidepath.Path = ((SlideBody)hitObject).SlideInfo.SlidePath.Path;
+            base.OnApply();
+            Slidepath.Path = HitObject.SlideInfo.SlidePath.Path;
             updatePathProgress();
             previousPosition = null;
         }
@@ -103,8 +103,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             slide = (DrawableSlide)parent;
             AccentColour.BindTo(slide.AccentColour);
         }
-        protected override void OnFree(HitObject hitObject)
+        protected override void OnFree()
         {
+            base.OnFree();
             AccentColour.UnbindFrom(slide.AccentColour);
         }
 

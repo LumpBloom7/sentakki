@@ -47,10 +47,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AnimationDuration.BindValueChanged(_ => queueTransformReset(), true);
         }
 
-        protected override void OnApply(HitObject hitObject)
+        protected override void OnApply()
         {
-            base.OnApply(hitObject);
-            AccentColour.Value = ((SentakkiHitObject)hitObject).NoteColour;
+            base.OnApply();
+            AccentColour.Value = HitObject.NoteColour;
         }
 
         protected override void Update()

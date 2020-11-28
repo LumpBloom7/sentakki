@@ -54,9 +54,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         [Resolved]
         private OsuColour colours { get; set; }
 
-        protected override void OnFree(HitObject hitObject)
+        protected override void OnFree()
         {
-            base.OnFree(hitObject);
+            base.OnFree();
 
             holdStartTime = null;
             totalHoldTime = 0;

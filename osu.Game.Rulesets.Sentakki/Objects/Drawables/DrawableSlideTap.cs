@@ -23,9 +23,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AccentColour.BindTo(slide.AccentColour);
         }
 
-        protected override void OnFree(HitObject hitObject)
+        protected override void OnFree()
         {
-            base.OnFree(hitObject);
+            base.OnFree();
             AccentColour.UnbindFrom(slide.AccentColour);
         }
 

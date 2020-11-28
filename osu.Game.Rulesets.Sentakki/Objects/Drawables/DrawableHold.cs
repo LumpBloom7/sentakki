@@ -62,10 +62,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
-        protected override void OnFree(HitObject hitObject)
+        protected override void OnFree()
         {
-            base.OnFree(hitObject);
-
+            base.OnFree();
             HoldStartTime = null;
             TotalHoldTime = 0;
         }
