@@ -42,11 +42,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
             switch (h)
             {
                 case SentakkiLanedHitObject laned:
-                    Lanes[laned.Lane].Add(h);
-                    break;
-
-                default:
-                    base.Add(h);
+                    laned.LaneBindable.BindValueChanged(lane =>
+                    {
+                        if (lane.OldValue != lane.NewValue)
+                            Lanes[lane.OldValue].Remove(h);
+                        Lanes[lane.NewValue].Add(h);
+                    }, true);
                     break;
             }
         }
