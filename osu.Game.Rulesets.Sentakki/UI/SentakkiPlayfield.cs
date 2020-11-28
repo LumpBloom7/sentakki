@@ -111,37 +111,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             }
         }
 
-        public override void Add(DrawableHitObject h)
-        {
-            h.OnNewResult += onNewResult;
-            switch (h)
-            {
-                case DrawableTap _:
-                case DrawableHold _:
-                case DrawableSlide _:
-                    lanedPlayfield.Add(h);
-                    break;
-
-                default:
-                    base.Add(h);
-                    break;
-            }
-        }
-
-        public override bool Remove(DrawableHitObject h)
-        {
-            switch (h)
-            {
-                case DrawableTap _:
-                case DrawableHold _:
-                case DrawableSlide _:
-                    return lanedPlayfield.Remove(h);
-
-                default:
-                    return base.Remove(h);
-            }
-        }
-
         private void onNewResult(DrawableHitObject judgedObject, JudgementResult result)
         {
             if (!judgedObject.DisplayResult || !DisplayJudgements.Value || !(judgedObject is DrawableSentakkiHitObject))
