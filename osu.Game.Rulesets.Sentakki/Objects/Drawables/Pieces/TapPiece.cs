@@ -40,48 +40,49 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             };
         }
 
-        private readonly IBindable<ArmedState> state = new Bindable<ArmedState>();
         private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
 
         [BackgroundDependencyLoader]
         private void load(DrawableHitObject drawableObject)
         {
-            state.BindTo(drawableObject.State);
-            state.BindValueChanged(updateState, true);
-
             accentColour.BindTo(drawableObject.AccentColour);
             accentColour.BindValueChanged(colour =>
             {
                 explode.Colour = colour.NewValue;
                 circle.Colour = colour.NewValue;
             }, true);
+
+            drawableObject.ApplyCustomUpdateState += updateState;
         }
 
-        private void updateState(ValueChangedEvent<ArmedState> state)
+        private void updateState(DrawableHitObject drawableObject, ArmedState state)
         {
-            switch (state.NewValue)
+            using (BeginAbsoluteSequence(drawableObject.HitStateUpdateTime, true))
             {
-                case ArmedState.Hit:
-                    const double flash_in = 40;
-                    const double flash_out = 100;
+                switch (state)
+                {
+                    case ArmedState.Hit:
+                        const double flash_in = 40;
+                        const double flash_out = 100;
 
-                    flash.FadeTo(0.8f, flash_in)
-                         .Then()
-                         .FadeOut(flash_out);
+                        flash.FadeTo(0.8f, flash_in)
+                             .Then()
+                             .FadeOut(flash_out);
 
-                    explode.FadeIn(flash_in);
-                    this.ScaleTo(1.5f, 400, Easing.OutQuad);
+                        explode.FadeIn(flash_in);
+                        this.ScaleTo(1.5f, 400, Easing.OutQuad);
 
-                    using (BeginDelayedSequence(flash_in, true))
-                    {
-                        //after the flash, we can hide some elements that were behind it
-                        circle.FadeOut();
-                        glow.FadeOut();
+                        using (BeginDelayedSequence(flash_in, true))
+                        {
+                            //after the flash, we can hide some elements that were behind it
+                            circle.FadeOut();
+                            glow.FadeOut();
 
-                        this.FadeOut(800);
-                    }
+                            this.FadeOut(800);
+                        }
 
-                    break;
+                        break;
+                }
             }
         }
     }

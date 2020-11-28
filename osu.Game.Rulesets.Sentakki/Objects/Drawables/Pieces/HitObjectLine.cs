@@ -21,15 +21,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Alpha = 0;
         }
 
-        private readonly IBindable<ArmedState> state = new Bindable<ArmedState>();
         private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
 
         [BackgroundDependencyLoader]
         private void load(DrawableHitObject drawableObject, TextureStore textures)
         {
-            state.BindTo(drawableObject.State);
-            state.BindValueChanged(updateState, true);
-
             accentColour.BindTo(drawableObject.AccentColour);
             accentColour.BindValueChanged(colour => Colour = colour.NewValue, true);
 
@@ -41,16 +37,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 Origin = Anchor.BottomLeft,
                 Texture = textures.Get("HitObjectLine")
             });
+
+            drawableObject.ApplyCustomUpdateState += updateState;
         }
 
-        private void updateState(ValueChangedEvent<ArmedState> state)
+        private void updateState(DrawableHitObject drawableObject, ArmedState state)
         {
-            switch (state.NewValue)
+            using (BeginAbsoluteSequence(drawableObject.HitStateUpdateTime, true))
             {
-                case ArmedState.Miss:
-                case ArmedState.Hit:
-                    this.FadeOut();
-                    break;
+                switch (state)
+                {
+                    case ArmedState.Miss:
+                    case ArmedState.Hit:
+                        this.FadeOut();
+                        break;
+                }
             }
         }
     }
