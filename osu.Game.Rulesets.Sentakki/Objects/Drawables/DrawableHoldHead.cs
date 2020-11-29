@@ -5,8 +5,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableHoldHead : DrawableSentakkiLanedHitObject
     {
-        protected override bool PlayBreakSample => false;
-
         public DrawableHoldHead() : this(null) { }
 
         public DrawableHoldHead(Hold.HoldHead hitObject)

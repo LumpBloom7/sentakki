@@ -12,6 +12,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Slide : SentakkiLanedHitObject, IHasDuration
     {
+        protected override bool NeedBreakSample => false;
+
         public double Duration
         {
             get => SlideInfoList.Any() ? SlideInfoList.Max(s => s.Duration) : 0;
