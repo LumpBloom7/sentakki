@@ -49,14 +49,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             thisIndex = Slide.SlideNodes.IndexOf(this);
         }
 
-        private readonly Bindable<bool> playSlideSample = new Bindable<bool>(true);
-
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfig)
-        {
-            sentakkiConfig?.BindWith(SentakkiRulesetSettings.SlideSounds, playSlideSample);
-        }
-
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             // Don't allow for user input if auto is enabled for touch based objects (AutoTouch mod)
