@@ -186,7 +186,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 case ArmedState.Hit:
                     SlideStar.FadeOut();
-                    this.Delay(2000).FadeOut(); // Hack to make sure sounds stay alive
                     break;
                 case ArmedState.Miss:
                     this.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss).Expire();
