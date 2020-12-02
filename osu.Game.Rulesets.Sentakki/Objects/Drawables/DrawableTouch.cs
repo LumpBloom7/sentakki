@@ -3,6 +3,7 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
@@ -14,24 +15,31 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTouch : DrawableSentakkiHitObject
     {
+        protected new Touch HitObject => (Touch)base.HitObject;
+
         // IsHovered is used
         public override bool HandlePositionalInput => true;
 
+        // This HitObject uses a completely different offset
         protected override double InitialLifetimeOffset => base.InitialLifetimeOffset + HitObject.HitWindows.WindowFor(HitResult.Meh);
 
-        private readonly TouchFlashPiece flash;
-        private readonly ExplodePiece explode;
-
-        private readonly TouchBody touchBody;
+        private TouchFlashPiece flash;
+        private ExplodePiece explode;
+        private TouchBody touchBody;
 
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
-        public DrawableTouch(Touch hitObject) : base(hitObject)
+        public DrawableTouch() : this(null) { }
+        public DrawableTouch(Touch hitObject)
+            : base(hitObject) { }
+
+        [BackgroundDependencyLoader(true)]
+        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
         {
-            AccentColour.BindTo(HitObject.ColourBindable);
+            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
+
             Size = new Vector2(130);
-            Position = hitObject.Position;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Alpha = 0;
@@ -54,6 +62,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 UpdateResult(true);
             });
+
+            AccentColour.BindValueChanged(c =>
+            {
+                flash.Colour = c.NewValue;
+                explode.Colour = c.NewValue;
+            }, true);
+        }
+
+        protected override void OnApply()
+        {
+            base.OnApply();
+            Position = HitObject.Position;
         }
 
         private BindableInt trackedKeys = new BindableInt(0);
@@ -70,17 +90,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 count = SentakkiActionInputManager.PressedActions.Where(x => x < SentakkiAction.Key1).Count();
 
             trackedKeys.Value = count;
-        }
-
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
-        {
-            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
-            AccentColour.BindValueChanged(c =>
-            {
-                flash.Colour = c.NewValue;
-                explode.Colour = c.NewValue;
-            }, true);
         }
 
         protected override void UpdateInitialTransforms()
@@ -102,13 +111,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             Debug.Assert(HitObject.HitWindows != null);
 
+            // Don't allow for user input if auto is enabled for touch based objects (AutoTouch mod)
             if (!userTriggered || Auto)
             {
                 if (Auto && timeOffset > 0)
-                    ApplyResult(r => r.Type = HitResult.Great);
-
-                if (!HitObject.HitWindows.CanBeHit(timeOffset))
-                    ApplyResult(r => r.Type = HitResult.Miss);
+                    ApplyResult(r => r.Type = r.Judgement.MaxResult);
+                else if (!HitObject.HitWindows.CanBeHit(timeOffset))
+                    ApplyResult(r => r.Type = r.Judgement.MinResult);
 
                 return;
             }
@@ -119,11 +128,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
 
             if (timeOffset < 0)
-            {
-                if (result <= HitResult.Miss) return;
-
-                if (result < HitResult.Great) result = HitResult.Great;
-            }
+                result = Result.Judgement.MaxResult;
 
             ApplyResult(r => r.Type = result);
         }

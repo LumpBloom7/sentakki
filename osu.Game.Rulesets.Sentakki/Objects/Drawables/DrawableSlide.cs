@@ -9,8 +9,6 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    // Cached so that SlideTapPiece can access via DI, and adjust visuals to account for multiple slide bodies
-    [Cached]
     public class DrawableSlide : DrawableSentakkiHitObject
     {
         public override bool DisplayResult => false;
@@ -18,10 +16,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public Container<DrawableSlideBody> SlideBodies;
         public Container<DrawableSlideTap> SlideTaps;
 
-        public DrawableSlide(SentakkiHitObject hitObject)
-            : base(hitObject)
+        public DrawableSlide() : this(null) { }
+
+        public DrawableSlide(SentakkiHitObject hitObject = null)
+            : base(hitObject) { }
+
+        [BackgroundDependencyLoader(true)]
+        private void load(SentakkiRulesetConfigManager sentakkiConfig)
         {
-            AccentColour.BindTo(HitObject.ColourBindable);
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
@@ -39,30 +41,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfig)
+        protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            // This is to ensure the container is alive when the child is.
-            sentakkiConfig?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDuration);
-        }
-
-        protected override void ClearNestedHitObjects()
-        {
-            base.ClearNestedHitObjects();
-            SlideBodies.Clear();
+            // We also make sure all transforms have finished to avoid jank
+            if (NestedHitObjects.All(n => n.Result.HasResult && Time.Current >= n.LatestTransformEndTime))
+                ApplyResult(r => r.Type = r.Judgement.MaxResult);
         }
 
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
         {
             switch (hitObject)
             {
-                case Tap x:
-                    return new DrawableSlideTap(x, this)
+                case SlideTap x:
+                    return new DrawableSlideTap(x)
                     {
                         AutoBindable = { BindTarget = AutoBindable },
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        AccentColour = { BindTarget = AccentColour }
                     };
                 case SlideBody slideBody:
                     return new DrawableSlideBody(slideBody)
@@ -70,7 +63,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         AutoBindable = { BindTarget = AutoBindable },
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        AccentColour = { BindTarget = AccentColour }
                     };
             }
 
@@ -91,10 +83,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.AddNestedHitObject(hitObject);
         }
 
-        protected override void CheckForResult(bool userTriggered, double timeOffset)
+        protected override void ClearNestedHitObjects()
         {
-            if (NestedHitObjects.All(n => n.Result.HasResult && Time.Current >= n.LatestTransformEndTime))
-                ApplyResult(r => r.Type = r.Judgement.MaxResult);
+            base.ClearNestedHitObjects();
+            SlideBodies.Clear(false);
+            SlideTaps.Clear(false);
         }
     }
 }

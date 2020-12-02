@@ -4,11 +4,9 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics;
-using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
@@ -24,7 +22,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiJudgementPiece judgementBody;
 
         private HitResult result = HitResult.Great;
-
 
         [BackgroundDependencyLoader]
         private void load()
@@ -71,7 +68,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             this.Delay(350).Expire(true);
         }
-
 
         private class SentakkiJudgementPiece : DefaultJudgementPiece
         {

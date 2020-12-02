@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using osu.Framework.Bindables;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
@@ -17,14 +17,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingHandler<SentakkiAction>
     {
-        private readonly Bindable<bool> isHitting = new Bindable<bool>();
-
         public DrawableHoldHead Head => headContainer.Child;
 
-        private readonly Container<DrawableHoldHead> headContainer;
+        private Container<DrawableHoldHead> headContainer;
 
-        public readonly HoldBody NoteBody;
-        public readonly HitObjectLine HitObjectLine;
+        public HoldBody NoteBody;
+        public HitObjectLine HitObjectLine;
 
         public override double LifetimeStart
         {
@@ -45,17 +43,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        /// <summary>
-        /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
-        /// </summary>
-        public double? HoldStartTime { get; private set; }
+        public DrawableHold() : this(null) { }
 
-        public double TotalHoldTime;
+        public DrawableHold(Hold hitObject = null)
+            : base(hitObject) { }
 
-        public DrawableHold(Hold hitObject)
-            : base(hitObject)
+        [BackgroundDependencyLoader]
+        private void load()
         {
-            AccentColour.BindTo(HitObject.ColourBindable);
             Size = new Vector2(75);
             Position = Vector2.Zero;
             Anchor = Anchor.Centre;
@@ -67,39 +62,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
-        protected override void AddNestedHitObject(DrawableHitObject hitObject)
+        protected override void OnFree()
         {
-            base.AddNestedHitObject(hitObject);
-
-            switch (hitObject)
-            {
-                case DrawableHoldHead head:
-                    headContainer.Child = head;
-                    break;
-            }
-        }
-
-        protected override void ClearNestedHitObjects()
-        {
-            base.ClearNestedHitObjects();
-            headContainer.Clear();
-        }
-
-        protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
-        {
-            switch (hitObject)
-            {
-                case Hold.HoldHead head:
-                    return new DrawableHoldHead(head)
-                    {
-                        Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre,
-                        AccentColour = { BindTarget = AccentColour },
-                        AutoBindable = { BindTarget = AutoBindable }
-                    };
-            }
-
-            return base.CreateNestedHitObject(hitObject);
+            base.OnFree();
+            HoldStartTime = null;
+            TotalHoldTime = 0;
         }
 
         protected override void UpdateInitialTransforms()
@@ -108,6 +75,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             double animTime = AdjustedAnimationDuration / 2;
             HitObjectLine.FadeInFromZero(animTime);
             NoteBody.FadeInFromZero(animTime).ScaleTo(1, animTime);
+
+            NoteBody.Note.FadeColour(AccentColour.Value);
 
             using (BeginDelayedSequence(animTime, true))
             {
@@ -133,32 +102,28 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            if (!userTriggered)
+            if (Time.Current > HitObject.GetEndTime())
             {
-                if (Time.Current > HitObject.GetEndTime())
-                {
-                    endHold();
-                    double totalHoldRatio = TotalHoldTime / ((IHasDuration)HitObject).Duration;
-                    HitResult result;
+                endHold();
+                double totalHoldRatio = TotalHoldTime / ((IHasDuration)HitObject).Duration;
+                HitResult result;
 
-                    if (totalHoldRatio >= .75)
-                        result = HitResult.Great;
-                    else if (totalHoldRatio >= .5)
-                        result = HitResult.Good;
-                    else if (totalHoldRatio >= .25)
-                        result = HitResult.Meh;
-                    else
-                        result = HitResult.Miss;
+                if (totalHoldRatio >= .75 || Auto)
+                    result = HitResult.Great;
+                else if (totalHoldRatio >= .5)
+                    result = HitResult.Good;
+                else if (totalHoldRatio >= .25)
+                    result = HitResult.Meh;
+                else
+                    result = HitResult.Miss;
 
-                    // Hold is over, but head windows are still active.
-                    // Only happens on super short holds
-                    // Force a miss on the head in this case
-                    if (!headContainer.First().Result.HasResult)
-                        headContainer.First().MissForcefully();
+                // Hold is over, but head windows are still active.
+                // Only happens on super short holds
+                // Force a miss on the head in this case
+                if (!headContainer.First().Result.HasResult)
+                    headContainer.First().MissForcefully();
 
-                    if (Auto) result = HitResult.Great;
-                    ApplyResult(r => r.Type = result);
-                }
+                ApplyResult(r => r.Type = result);
             }
         }
 
@@ -171,10 +136,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 case ArmedState.Hit:
                     using (BeginDelayedSequence(time_fade_miss, true))
-                    {
                         this.FadeOut();
-                        Expire();
-                    }
                     break;
 
                 case ArmedState.Miss:
@@ -184,13 +146,48 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         .FadeOut(time_fade_miss);
 
                     using (BeginDelayedSequence(time_fade_miss, true))
-                    {
                         this.FadeOut();
-                        Expire();
-                    }
                     break;
             }
         }
+
+        protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
+        {
+            switch (hitObject)
+            {
+                case Hold.HoldHead head:
+                    return new DrawableHoldHead(head)
+                    {
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        AutoBindable = { BindTarget = AutoBindable }
+                    };
+            }
+            return base.CreateNestedHitObject(hitObject);
+        }
+
+        protected override void AddNestedHitObject(DrawableHitObject hitObject)
+        {
+            base.AddNestedHitObject(hitObject);
+            switch (hitObject)
+            {
+                case DrawableHoldHead head:
+                    headContainer.Child = head;
+                    break;
+            }
+        }
+
+        protected override void ClearNestedHitObjects()
+        {
+            base.ClearNestedHitObjects();
+            headContainer.Clear(false);
+        }
+
+        /// <summary>
+        /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
+        /// </summary>
+        public double? HoldStartTime { get; private set; }
+        public double TotalHoldTime;
 
         private bool beginHoldAt(double timeOffset)
         {
@@ -198,7 +195,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return false;
 
             HoldStartTime = Math.Max(Time.Current, HitObject.StartTime);
-            isHitting.Value = true;
             return true;
         }
 
@@ -208,7 +204,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 TotalHoldTime += Math.Max(Time.Current - HoldStartTime.Value, 0);
 
             HoldStartTime = null;
-            isHitting.Value = false;
         }
 
         public virtual bool OnPressed(SentakkiAction action)
@@ -216,7 +211,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (AllJudged)
                 return false;
 
-            if (action != SentakkiAction.Key1 + ((SentakkiLanedHitObject)HitObject).Lane)
+            if (action != SentakkiAction.Key1 + HitObject.Lane)
                 return false;
 
             if (beginHoldAt(Time.Current - Head.HitObject.StartTime))
@@ -233,7 +228,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (AllJudged) return;
             if (HoldStartTime is null) return;
 
-            if (action != SentakkiAction.Key1 + ((SentakkiLanedHitObject)HitObject).Lane)
+            if (action != SentakkiAction.Key1 + HitObject.Lane)
                 return;
 
             endHold();

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -12,8 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHandler<SentakkiAction>
     {
-        public readonly Drawable TapVisual;
-        public readonly HitObjectLine HitObjectLine;
+        protected virtual Drawable CreateTapRepresentation() => new TapPiece();
 
         public override double LifetimeStart
         {
@@ -34,10 +34,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        public DrawableTap(Tap hitObject)
-            : base(hitObject)
+        public Drawable TapVisual;
+        public HitObjectLine HitObjectLine;
+
+        public DrawableTap() : this(null) { }
+
+        public DrawableTap(Tap hitObject = null)
+            : base(hitObject) { }
+
+        [BackgroundDependencyLoader]
+        private void load()
         {
-            AccentColour.BindTo(HitObject.ColourBindable);
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
@@ -46,8 +53,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 TapVisual = CreateTapRepresentation(),
             });
         }
-
-        protected virtual Drawable CreateTapRepresentation() => new TapPiece();
 
         protected override void UpdateInitialTransforms()
         {
@@ -70,18 +75,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!userTriggered)
             {
                 if (Auto && timeOffset > 0)
-                    ApplyResult(r => r.Type = HitResult.Great);
-
-                if (!HitObject.HitWindows.CanBeHit(timeOffset))
-                {
-                    ApplyResult(r => r.Type = HitResult.Miss);
-                }
+                    ApplyResult(r => r.Type = r.Judgement.MaxResult);
+                else if (!HitObject.HitWindows.CanBeHit(timeOffset))
+                    ApplyResult(r => r.Type = r.Judgement.MinResult);
 
                 return;
             }
 
             var result = HitObject.HitWindows.ResultFor(timeOffset);
-            if (result == HitResult.None || (result == HitResult.Miss && Time.Current < HitObject.StartTime))
+            if (result == HitResult.None)
                 return;
 
             ApplyResult(r => r.Type = result);
@@ -96,7 +98,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 case ArmedState.Hit:
                     this.Delay(400).FadeOut().Expire();
-
                     break;
 
                 case ArmedState.Miss:
@@ -113,7 +114,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public virtual bool OnPressed(SentakkiAction action)
         {
-            if (action != SentakkiAction.Key1 + ((SentakkiLanedHitObject)HitObject).Lane)
+            if (action != SentakkiAction.Key1 + HitObject.Lane)
                 return false;
 
             return UpdateResult(true);

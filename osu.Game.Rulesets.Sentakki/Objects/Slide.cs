@@ -12,6 +12,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Slide : SentakkiLanedHitObject, IHasDuration
     {
+        protected override bool NeedBreakSample => false;
+
         public double Duration
         {
             get => SlideInfoList.Any() ? SlideInfoList.Max(s => s.Duration) : 0;
@@ -28,8 +30,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            AddNested(new Tap
+            AddNested(new SlideTap
             {
+                HasTwin = HasTwin || SlideInfoList.Count > 1,
                 LaneBindable = { BindTarget = LaneBindable },
                 StartTime = StartTime,
                 Samples = NodeSamples.Any() ? NodeSamples.First() : new List<HitSampleInfo>(),
@@ -44,6 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             {
                 AddNested(new SlideBody
                 {
+                    HasTwin = HasTwin || SlideInfoList.Count > 1,
                     Lane = SlideInfo.SlidePath.EndLane + Lane,
                     StartTime = StartTime,
                     SlideInfo = SlideInfo,

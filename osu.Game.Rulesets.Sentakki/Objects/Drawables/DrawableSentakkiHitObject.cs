@@ -2,6 +2,7 @@ using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI;
 
@@ -23,10 +24,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override float SamplePlaybackPosition => Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
 
-        public DrawableSentakkiHitObject(SentakkiHitObject hitObject)
-            : base(hitObject)
-        {
-        }
+        public DrawableSentakkiHitObject() : this(null) { }
+
+        public DrawableSentakkiHitObject(SentakkiHitObject hitObject = null)
+            : base(hitObject) { }
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
 
@@ -44,6 +45,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.LoadAsyncComplete();
             AnimationDuration.BindValueChanged(_ => queueTransformReset(), true);
+        }
+
+        protected override void OnApply()
+        {
+            base.OnApply();
+            AccentColour.Value = HitObject.NoteColour;
         }
 
         protected override void Update()
@@ -64,7 +71,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private void queueTransformReset()
         {
             transformResetQueued = true;
-            LifetimeStart = HitObject.StartTime - InitialLifetimeOffset;
+            //LifetimeStart = HitObject.StartTime - InitialLifetimeOffset;
         }
 
         protected override void UpdateInitialTransforms()
@@ -79,8 +86,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected new virtual void ApplyResult(Action<JudgementResult> application)
         {
             // Apply judgement to this object
-            if (Result.HasResult) return;
-            base.ApplyResult(application);
+            if (!Result.HasResult)
+                base.ApplyResult(application);
         }
     }
 }

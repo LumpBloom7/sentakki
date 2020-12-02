@@ -1,10 +1,15 @@
+using System;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Pooling;
 using osu.Framework.Input.Bindings;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.UI;
 using osuTK;
@@ -14,6 +19,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
     public class Lane : Playfield
     {
         public int LaneNumber { get; set; }
+
+        public Action<Drawable> OnLoaded;
 
         public Lane()
         {
@@ -25,6 +32,32 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 new LaneReceptor()
             });
         }
+
+        private DrawableSentakkiRuleset drawableSentakkiRuleset;
+        private SentakkiRulesetConfigManager sentakkiRulesetConfig;
+
+        [BackgroundDependencyLoader(true)]
+        private void load(DrawableSentakkiRuleset drawableRuleset, SentakkiRulesetConfigManager sentakkiRulesetConfigManager)
+        {
+            drawableSentakkiRuleset = drawableRuleset;
+            sentakkiRulesetConfig = sentakkiRulesetConfigManager;
+
+            RegisterPool<Tap, DrawableTap>(8);
+
+            RegisterPool<Hold, DrawableHold>(8);
+            RegisterPool<Hold.HoldHead, DrawableHoldHead>(8);
+
+            RegisterPool<Slide, DrawableSlide>(2);
+            RegisterPool<SlideTap, DrawableSlideTap>(2);
+            RegisterPool<SlideBody, DrawableSlideBody>(2);
+            RegisterPool<SlideBody.SlideNode, DrawableSlideNode>(10);
+
+            RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(20);
+        }
+
+        protected override void OnNewDrawableHitObject(DrawableHitObject d) => OnLoaded?.Invoke(d);
+
+        protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
 
         public class LaneReceptor : CompositeDrawable, IKeyBindingHandler<SentakkiAction>
         {
