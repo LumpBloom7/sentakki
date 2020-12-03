@@ -211,12 +211,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         yield return new Tap
                         {
                             Lane = noteLane,
-                            Samples = original.Samples.Select(s => new HitSampleInfo
-                            {
-                                Bank = s.Bank,
-                                Name = @"slidertick",
-                                Volume = s.Volume
-                            }).ToList(),
+                            Samples = original.Samples.Select(s => new HitSampleInfo(@"slidertick", s.Bank, s.Suffix, s.Volume)).ToList(),
                             StartTime = e.Time
                         };
                         break;
