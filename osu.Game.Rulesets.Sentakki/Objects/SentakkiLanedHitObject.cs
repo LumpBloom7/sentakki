@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using NUnit.Framework;
 using osu.Framework.Bindables;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
@@ -56,15 +55,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             // Add break sample
             var sampleList = originalSamples.ToList();
-            if (Break && NeedBreakSample) sampleList.Add(new BreakHitSampleInfo());
+            if (Break && NeedBreakSample) sampleList.Add(new SentakkiHitSampleInfo("Break"));
             base.Samples = sampleList;
-        }
-
-        public class BreakHitSampleInfo : HitSampleInfo
-        {
-            private static string[] lookupNames { get; } = { "Gameplay/Break" };
-
-            public override IEnumerable<string> LookupNames => lookupNames;
         }
     }
 }

@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json;
-using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Judgements;
@@ -38,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             base.CreateNestedHitObjects(cancellationToken);
 
             var distance = SlideInfo.SlidePath.Path.Distance;
-            int chevrons = (int)Math.Ceiling(distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
+            int chevrons = (int)Math.Ceiling(distance / SLIDE_CHEVRON_DISTANCE);
             double chevronInterval = 1.0 / chevrons;
 
             for (int i = 5; i < chevrons - 2; i += 5)
@@ -53,7 +51,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
                 // Add the slide sample to first node
                 if (i == 5)
-                    node.Samples.Add(new SlideNode.NodeHitSampleInfo());
+                    node.Samples.Add(new SentakkiHitSampleInfo("slide"));
             }
 
             AddNested(new SlideNode
@@ -84,13 +82,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             protected override HitWindows CreateHitWindows() => HitWindows.Empty;
             public override Judgement CreateJudgement() => new IgnoreJudgement();
-
-            public class NodeHitSampleInfo : HitSampleInfo
-            {
-                private static string[] lookupNames { get; } = { "Gameplay/slide" };
-
-                public override IEnumerable<string> LookupNames => lookupNames;
-            }
         }
     }
 }
