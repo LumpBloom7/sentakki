@@ -134,6 +134,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void UpdateInitialTransforms()
         {
+            base.UpdateInitialTransforms();
             Slidepath.FadeInFromZero(AdjustedAnimationDuration / 2);
             using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
             {
