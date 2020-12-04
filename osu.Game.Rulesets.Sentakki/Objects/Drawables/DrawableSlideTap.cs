@@ -1,7 +1,5 @@
 ﻿using System.Linq;
 using osu.Framework.Graphics;
-using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
@@ -10,23 +8,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
 
-        private DrawableSlide slide;
+        private DrawableSlide parentSlide => (DrawableSlide)ParentHitObject;
 
         public DrawableSlideTap() : this(null) { }
         public DrawableSlideTap(SlideTap hitObject)
             : base(hitObject) { }
 
-        protected override void OnParentReceived(DrawableHitObject parent)
+        protected override void OnApply()
         {
-            base.OnParentReceived(parent);
-            slide = (DrawableSlide)parent;
-            AccentColour.BindTo(slide.AccentColour);
+            base.OnApply();
+            AccentColour.BindTo(ParentHitObject.AccentColour);
         }
 
         protected override void OnFree()
         {
             base.OnFree();
-            AccentColour.UnbindFrom(slide.AccentColour);
+            AccentColour.UnbindFrom(parentSlide.AccentColour);
         }
 
         protected override void UpdateInitialTransforms()
@@ -35,12 +32,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             var note = TapVisual as SlideTapPiece;
 
-            if (slide.SlideBodies.Count > 1)
+            if (parentSlide.SlideBodies.Count > 1)
                 note.SecondStar.Alpha = 1;
             else
                 note.SecondStar.Alpha = 0;
 
-            double spinDuration = ((Slide)slide.HitObject).SlideInfoList.FirstOrDefault().Duration;
+            double spinDuration = ((Slide)parentSlide.HitObject).SlideInfoList.FirstOrDefault().Duration;
             note.Stars.Spin(spinDuration, RotationDirection.CounterClockwise, 0).Loop();
         }
     }
