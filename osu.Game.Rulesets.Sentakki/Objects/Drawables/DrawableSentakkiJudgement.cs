@@ -37,6 +37,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             judgementBody.JudgementText.Text = result.Type.GetDescription().ToUpperInvariant();
             judgementBody.JudgementText.Colour = colours.ForHitResult(result.Type);
 
+            LifetimeStart = result.TimeAbsolute;
+
             switch (hitObject)
             {
                 case DrawableSentakkiLanedHitObject laned:
@@ -66,7 +68,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                          .ScaleTo(0.8f, 300)
                          .FadeOut(300);
 
-            this.Delay(350).Expire(true);
+            this.Delay(350).Expire();
         }
 
         private class SentakkiJudgementPiece : DefaultJudgementPiece

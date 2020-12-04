@@ -26,10 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             sentakkiConfigs = configManager;
             drawableRuleset = senRuleset;
             bindAnimationDuration();
-            AnimationDurationBindable.BindValueChanged(x =>
-            {
-                LifetimeStart = HitObject.StartTime - InitialLifetimeOffset;
-            });
+            AnimationDurationBindable.BindValueChanged(x => LifetimeStart = HitObject.StartTime - InitialLifetimeOffset, true);
         }
 
         private void bindAnimationDuration()
