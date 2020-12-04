@@ -93,20 +93,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Slidepath.Path = HitObject.SlideInfo.SlidePath.Path;
             updatePathProgress();
             previousPosition = null;
+
+            AccentColour.BindTo(ParentHitObject.AccentColour);
         }
 
-        private DrawableSlide slide;
-
-        protected override void OnParentReceived(DrawableHitObject parent)
-        {
-            base.OnParentReceived(parent);
-            slide = (DrawableSlide)parent;
-            AccentColour.BindTo(slide.AccentColour);
-        }
         protected override void OnFree()
         {
             base.OnFree();
-            AccentColour.UnbindFrom(slide.AccentColour);
+            AccentColour.UnbindFrom(ParentHitObject.AccentColour);
         }
 
         // We want to ensure that the correct progress is visually shown on screen
