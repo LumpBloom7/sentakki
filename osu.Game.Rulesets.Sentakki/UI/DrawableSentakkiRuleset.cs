@@ -21,18 +21,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
         public DrawableSentakkiRuleset(SentakkiRuleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
             : base(ruleset, beatmap, mods)
         {
+            foreach (var mod in Mods.OfType<IApplicableToTrack>())
+                mod.ApplyToTrack(speedAdjustmentTrack);
         }
 
         private readonly Track speedAdjustmentTrack = new TrackVirtual(0);
 
         public double GameplaySpeed => speedAdjustmentTrack.Rate;
-
-        [BackgroundDependencyLoader(true)]
-        private void load()
-        {
-            foreach (var mod in Mods.OfType<IApplicableToTrack>())
-                mod.ApplyToTrack(speedAdjustmentTrack);
-        }
 
         protected override Playfield CreatePlayfield() => new SentakkiPlayfield();
 
