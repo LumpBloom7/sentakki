@@ -31,6 +31,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override void Update()
         {
             base.Update();
+
+            // Used to resolve a potential edge case bug that could happen when abusing the animation speed slider or gameplay rewind
             SortInternal();
         }
     }
