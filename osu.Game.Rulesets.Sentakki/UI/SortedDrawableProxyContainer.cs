@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -25,9 +23,17 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             // Put earlier hitobjects towards the end of the list, so they show above the rest
             int i = getStartTimeOf(drawableMap[y]).CompareTo(getStartTimeOf(drawableMap[x]));
-            return i == 0 ? CompareReverseChildID(x, y) : i;
+            return i == 0 ? base.Compare(x, y) : i;
         }
 
         private double getStartTimeOf(DrawableHitObject hitObject) => hitObject.StartTimeBindable.Value;
+
+        protected override void Update()
+        {
+            base.Update();
+
+            // Used to resolve a potential edge case bug that could happen when abusing the animation speed slider or gameplay rewind
+            SortInternal();
+        }
     }
 }
