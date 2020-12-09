@@ -7,5 +7,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests
     public class TestSceneSentakkiPlayer : PlayerTestScene
     {
         protected override Ruleset CreatePlayerRuleset() => new SentakkiRuleset();
+        protected override bool Autoplay => true;
     }
 }
