@@ -35,10 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 if (path == value)
                     return;
                 path = value;
-                foreach (var segment in segments)
-                    segment.ClearChevrons();
-                segments.Clear(false);
-                createVisuals();
+                updateVisuals();
                 updateProgress(progress);
             }
         }
@@ -59,8 +56,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         }
 
         private double chevronInterval;
-        private void createVisuals()
+        private void updateVisuals()
         {
+            foreach (var segment in segments)
+                segment.ClearChevrons();
+            segments.Clear(false);
+
             var distance = Path.Distance;
             int chevrons = (int)Math.Ceiling(distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
             chevronInterval = 1.0 / chevrons;
