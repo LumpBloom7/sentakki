@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -93,8 +91,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             }
 
             segments.Add(currentSegment);
-
-            Console.WriteLine("Segments: " + segments.Count + ", Chevrons: " + segments.Sum(s => s.ChevronCount));
         }
         private void updateProgress(float progress)
         {
