@@ -32,6 +32,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             get => path;
             set
             {
+                if (path == value)
+                    return;
                 path = value;
                 foreach (var segment in segments)
                     segment.ClearChevrons();
