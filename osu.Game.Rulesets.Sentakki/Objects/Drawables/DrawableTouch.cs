@@ -82,12 +82,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.Update();
             int count = 0;
-            var touchInput = SentakkiActionInputManager.CurrentState.Touch;
 
-            if (touchInput.ActiveSources.Any())
-                count = touchInput.ActiveSources.Where(x => ReceivePositionalInputAt(touchInput.GetTouchPosition(x) ?? new Vector2(float.MinValue))).Count();
-            else if (IsHovered)
-                count = SentakkiActionInputManager.PressedActions.Where(x => x < SentakkiAction.Key1).Count();
+            if (!AllJudged)
+            {
+                var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+                if (touchInput.ActiveSources.Any())
+                {
+                    foreach (var t in touchInput.ActiveSources)
+                        if (ReceivePositionalInputAt(touchInput.GetTouchPosition(t).Value)) ++count;
+                }
+                else if (IsHovered)
+                {
+                    foreach (var a in SentakkiActionInputManager.PressedActions)
+                        if (a < SentakkiAction.Key1) ++count;
+                }
+            }
 
             trackedKeys.Value = count;
         }

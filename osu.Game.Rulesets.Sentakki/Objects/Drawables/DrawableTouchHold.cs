@@ -100,11 +100,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.Update();
 
-            var touchInput = SentakkiActionInputManager.CurrentState.Touch;
-            bool isTouched = touchInput.ActiveSources.Any(s => ReceivePositionalInputAt(touchInput.GetTouchPosition(s) ?? new Vector2(float.MinValue)));
             isHitting.Value = Time.Current >= HitObject.StartTime
                             && Time.Current <= (HitObject as IHasDuration)?.EndTime
-                            && (Auto || isTouched || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
+                            && (Auto || checkForTouchInput() || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -143,6 +141,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     this.ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss).Expire();
                     break;
             }
+        }
+
+        private bool checkForTouchInput()
+        {
+            var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+
+            // Avoiding Linq to minimize allocations, since this would be called every update of this node
+            foreach (var t in touchInput.ActiveSources)
+                if (ReceivePositionalInputAt(touchInput.GetTouchPosition(t).Value))
+                    return true;
+
+            return false;
         }
     }
 }

@@ -22,7 +22,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         // Hits are only possible if this the second node before this one is hit
         // If the second node before this one doesn't exist, it is allowed as this is one of the first nodes
-        protected bool IsHittable => thisIndex < 2 || parentSlide.SlideNodes[thisIndex - 2].IsHit;
+        // All hits can only be done after the parent StartTime
+        protected bool IsHittable => Time.Current > parentSlide.HitObject.StartTime && (thisIndex < 2 || parentSlide.SlideNodes[thisIndex - 2].IsHit);
 
         public DrawableSlideNode() : this(null) { }
         public DrawableSlideNode(SlideBody.SlideNode node)
@@ -57,26 +58,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
             }
 
-            if (!IsHittable)
-                return;
-
             ApplyResult(r => r.Type = r.Judgement.MaxResult);
         }
 
         protected override void Update()
         {
             base.Update();
-            if (parentSlide.HitObject != null)
-            {
-                if (Time.Current >= parentSlide.HitObject.StartTime)
-                {
-                    var touchInput = SentakkiActionInputManager.CurrentState.Touch;
-                    bool isTouched = touchInput.ActiveSources.Any(s => ReceivePositionalInputAt(touchInput.GetTouchPosition(s) ?? new Vector2(float.MinValue)));
+            if (Judged || !IsHittable)
+                return;
 
-                    if (isTouched || (IsHovered && SentakkiActionInputManager.PressedActions.Any()))
-                        UpdateResult(true);
-                }
-            }
+            if (parentSlide.HitObject != null)
+                if (checkForTouchInput() || (IsHovered && SentakkiActionInputManager.PressedActions.Any()))
+                    UpdateResult(true);
         }
 
         protected override void ApplyResult(Action<JudgementResult> application)
@@ -90,5 +83,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         // Forcefully miss this node, used when players fail to complete the slide on time.
         public void ForcefullyMiss() => ApplyResult(r => r.Type = r.Judgement.MinResult);
+
+        private bool checkForTouchInput()
+        {
+            var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+
+            // Avoiding Linq to minimize allocations, since this would be called every update of this node
+            foreach (var t in touchInput.ActiveSources)
+                if (ReceivePositionalInputAt(touchInput.GetTouchPosition(t).Value))
+                    return true;
+
+            return false;
+        }
     }
 }
