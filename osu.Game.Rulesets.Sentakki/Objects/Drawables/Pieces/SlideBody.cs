@@ -1,8 +1,8 @@
 using System;
-using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.Objects;
@@ -32,31 +32,42 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             get => path;
             set
             {
+                if (path == value)
+                    return;
                 path = value;
-                ClearInternal();
-                createVisuals();
+                updateVisuals();
                 updateProgress(progress);
             }
         }
+
+        private readonly Container<SlideSegment> segments;
+        private readonly DrawablePool<SlideSegment> segmentPool;
+        private readonly DrawablePool<SlideChevron> chevronPool;
 
         public SlideVisual()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
+            AddRangeInternal(new Drawable[]{
+                segmentPool = new DrawablePool<SlideSegment>(15),
+                chevronPool = new DrawablePool<SlideChevron>(74),
+                segments = new Container<SlideSegment>(),
+            });
         }
 
-        private List<Container> segments = new List<Container>();
-
         private double chevronInterval;
-        private void createVisuals()
+        private void updateVisuals()
         {
-            segments = new List<Container>();
+            foreach (var segment in segments)
+                segment.ClearChevrons();
+            segments.Clear(false);
+
             var distance = Path.Distance;
             int chevrons = (int)Math.Ceiling(distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
             chevronInterval = 1.0 / chevrons;
 
             float? prevAngle = null;
-            Container currentSegment = new Container();
+            SlideSegment currentSegment = segmentPool.Get();
 
             // We add the chevrons starting from the last, so that earlier ones remain on top
             for (double i = chevrons - 1; i > 0; --i)
@@ -68,22 +79,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 bool shouldHide = SentakkiExtensions.GetDeltaAngle(prevAngle ?? angle, angle) >= 89;
                 prevAngle = angle;
 
-                currentSegment.Add(new SlideChevron
+                currentSegment.Add(chevronPool.Get().With(c =>
                 {
-                    Position = currentPos,
-                    Rotation = angle,
-                    Alpha = shouldHide ? 0 : 1,
-                });
+                    c.Position = currentPos;
+                    c.Rotation = angle;
+                    c.Alpha = shouldHide ? 0 : 1;
+                }));
 
                 if (i % 5 == 0 && chevrons - 1 - i > 2)
                 {
                     segments.Add(currentSegment);
-                    currentSegment = new Container();
+                    currentSegment = segmentPool.Get();
                 }
             }
 
             segments.Add(currentSegment);
-            AddRangeInternal(segments);
         }
         private void updateProgress(float progress)
         {
@@ -92,22 +102,35 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             for (int i = segments.Count - 1; i >= 0; i--)
             {
                 var segment = segments[i];
-                segmentBounds += segment.Count * chevronInterval;
+                segmentBounds += segment.ChevronCount * chevronInterval;
                 segment.Alpha = (progress > segmentBounds) ? 0 : 1;
             }
         }
 
-        private class SlideChevron : Sprite
+        private class SlideSegment : PoolableDrawable
+        {
+            public void ClearChevrons() => ClearInternal(false);
+            public void Add(Drawable drawable) => AddInternal(drawable);
+            public int ChevronCount => InternalChildren.Count;
+        }
+
+        private class SlideChevron : PoolableDrawable
         {
             public SlideChevron()
             {
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
             }
+
             [BackgroundDependencyLoader]
             private void load(TextureStore textures)
             {
-                Texture = textures.Get("slide");
+                AddInternal(new Sprite
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Texture = textures.Get("slide")
+                });
             }
         }
     }
