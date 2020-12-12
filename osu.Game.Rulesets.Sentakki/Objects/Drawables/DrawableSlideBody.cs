@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public override bool RemoveWhenNotAlive => false;
 
-        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset / 2;
+        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset;
 
         public Container<DrawableSlideNode> SlideNodes;
 
@@ -59,7 +59,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 Slidepath = new SlideVisual
                 {
-                    Alpha = 0,
+                    //Alpha = 0,
                 },
                 new Container{
                     Anchor = Anchor.Centre,
@@ -135,7 +135,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            Slidepath.FadeInFromZero(AdjustedAnimationDuration / 2);
+            Slidepath.PerformEntryTransforms(AdjustedAnimationDuration);
             using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
             {
                 SlideStar.FadeInFromZero(100).ScaleTo(1, 100);

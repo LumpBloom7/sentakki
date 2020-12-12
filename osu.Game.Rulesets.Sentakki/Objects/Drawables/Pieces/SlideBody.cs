@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Graphics.Transforms;
 using osu.Game.Rulesets.Objects;
 using osuTK;
 
@@ -84,6 +86,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     c.Position = currentPos;
                     c.Rotation = angle;
                     c.Alpha = shouldHide ? 0 : 1;
+                    c.ShouldHide = shouldHide;
                 }));
 
                 if (i % 5 == 0 && chevrons - 1 - i > 2)
@@ -107,15 +110,39 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             }
         }
 
+
+        public void PerformEntryTransforms(double duration)
+        {
+            int chevrons = (int)Math.Ceiling(Path.Distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
+            double fadeDuration = duration / chevrons;
+            double currentOffset = duration / 2;
+
+            for (int i = segments.Count - 1; i >= 0; i--)
+            {
+                var segment = segments[i];
+                for (int j = segment.Children.Count - 1; j >= 0; j--)
+                {
+                    var chevron = segment.Children[j] as SlideChevron;
+                    if (!chevron.ShouldHide)
+                        chevron.FadeOut().Then().Delay(currentOffset).FadeInFromZero(fadeDuration * 2);
+                    currentOffset += fadeDuration / 2;
+                }
+            }
+        }
+
         private class SlideSegment : PoolableDrawable
         {
             public void ClearChevrons() => ClearInternal(false);
             public void Add(Drawable drawable) => AddInternal(drawable);
             public int ChevronCount => InternalChildren.Count;
+
+            public IReadOnlyList<Drawable> Children => InternalChildren;
         }
 
         private class SlideChevron : PoolableDrawable
         {
+            public bool ShouldHide;
+
             public SlideChevron()
             {
                 Anchor = Anchor.Centre;
