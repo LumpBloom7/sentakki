@@ -124,7 +124,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 {
                     var chevron = segment.Children[j] as SlideChevron;
                     if (!chevron.ShouldHide)
-                        chevron.FadeOut().Then().Delay(currentOffset).FadeInFromZero(fadeDuration * 2);
+                        chevron.FadeOut().ScaleTo(0).Then().Delay(currentOffset).ScaleTo(1, fadeDuration * 2, Easing.InOutElastic).FadeIn(fadeDuration * 2, Easing.InOutElastic);
                     currentOffset += fadeDuration / 2;
                 }
             }
