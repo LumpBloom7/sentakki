@@ -48,7 +48,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private DrawablePool<SlideSegment> segmentPool;
         private DrawablePool<SlideChevron> chevronPool;
 
-        private readonly BindableBool snakingIn = new BindableBool();
+        private readonly BindableBool snakingIn = new BindableBool(true);
 
         public SlideVisual()
         {
@@ -59,7 +59,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager sentakkiConfig)
         {
-            sentakkiConfig.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
+            sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
 
             AddRangeInternal(new Drawable[]{
                 segmentPool = new DrawablePool<SlideSegment>(15),
@@ -120,7 +120,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 segment.Alpha = (progress > segmentBounds) ? 0 : 1;
             }
         }
-
 
         public void PerformEntryAnimation(double duration)
         {
