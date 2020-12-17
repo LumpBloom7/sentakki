@@ -59,7 +59,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager sentakkiConfig)
         {
-            sentakkiConfig.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
+            sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
 
             AddRangeInternal(new Drawable[]{
                 segmentPool = new DrawablePool<SlideSegment>(15),
@@ -76,7 +76,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             segments.Clear(false);
 
             var distance = Path.Distance;
-            int chevrons = (int)Math.Ceiling(distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
+            int chevrons = (int)Math.Round(distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
             chevronInterval = 1.0 / chevrons;
 
             float? prevAngle = null;
@@ -100,7 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     c.ShouldHide = shouldHide;
                 }));
 
-                if (i % 5 == 0 && chevrons - 1 - i > 2)
+                if ((i - 1) % 3 == 0 && chevrons - 1 - i > 1)
                 {
                     segments.Add(currentSegment);
                     currentSegment = segmentPool.Get();
@@ -173,7 +173,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Texture = textures.Get("slide")
+                    Texture = textures.Get("slide"),
+                    Scale = new Vector2(1.2f)
                 });
             }
         }
