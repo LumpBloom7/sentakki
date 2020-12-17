@@ -28,7 +28,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public StarPiece SlideStar;
 
         private float starProg;
-        private Vector2? previousPosition;
         public float StarProgress
         {
             get => starProg;
@@ -36,11 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 starProg = value;
                 SlideStar.Position = Slidepath.Path.PositionAt(value);
-                if (previousPosition == null)
-                    SlideStar.Rotation = SlideStar.Position.GetDegreesFromPosition(Slidepath.Path.PositionAt(value + .001f));
-                else
-                    SlideStar.Rotation = previousPosition.Value.GetDegreesFromPosition(SlideStar.Position);
-                previousPosition = SlideStar.Position;
+                SlideStar.Rotation = Slidepath.Path.PositionAt(value - .01f).GetDegreesFromPosition(Slidepath.Path.PositionAt(value + .01f));
             }
         }
 
@@ -57,10 +52,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Rotation = -22.5f;
             AddRangeInternal(new Drawable[]
             {
-                Slidepath = new SlideVisual
-                {
-                    //Alpha = 0,
-                },
+                Slidepath = new SlideVisual(),
                 new Container{
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -92,7 +84,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.OnApply();
             Slidepath.Path = HitObject.SlideInfo.SlidePath.Path;
             updatePathProgress();
-            previousPosition = null;
+            StarProgress = 0;
 
             AccentColour.BindTo(ParentHitObject.AccentColour);
         }
