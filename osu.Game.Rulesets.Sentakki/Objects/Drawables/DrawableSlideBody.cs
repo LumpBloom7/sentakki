@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -174,10 +175,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    SlideStar.FadeOut();
+                    using (BeginAbsoluteSequence(Math.Max(Result.TimeAbsolute, HitObject.GetEndTime() - HitObject.HitWindows.WindowFor(HitResult.Great))))
+                    {
+                        Slidepath.PerformExitAnimation(200);
+                        SlideStar.FadeOut(200);
+                        this.FadeOut(200).Expire();
+                    }
+
                     break;
                 case ArmedState.Miss:
-                    Slidepath.PerformMissAnimation(time_fade_miss);
+                    Slidepath.PerformExitAnimation(time_fade_miss);
                     this.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss).Expire();
                     break;
             }

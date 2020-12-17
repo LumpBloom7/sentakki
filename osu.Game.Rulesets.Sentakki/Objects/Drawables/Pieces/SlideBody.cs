@@ -146,7 +146,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             }
         }
 
-        public void PerformMissAnimation(double duration)
+        public void PerformExitAnimation(double duration)
         {
             int chevronsLeft = (int)Math.Ceiling(Path.Distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
             double fadeDuration() => duration / chevronsLeft;
