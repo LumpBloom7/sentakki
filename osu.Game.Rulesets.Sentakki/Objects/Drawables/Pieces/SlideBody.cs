@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
@@ -8,6 +9,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Transforms;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Sentakki.Configuration;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
@@ -42,14 +44,23 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             }
         }
 
-        private readonly Container<SlideSegment> segments;
-        private readonly DrawablePool<SlideSegment> segmentPool;
-        private readonly DrawablePool<SlideChevron> chevronPool;
+        private Container<SlideSegment> segments;
+        private DrawablePool<SlideSegment> segmentPool;
+        private DrawablePool<SlideChevron> chevronPool;
+
+        private readonly BindableBool snakingIn = new BindableBool();
 
         public SlideVisual()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
+        }
+
+        [BackgroundDependencyLoader(true)]
+        private void load(SentakkiRulesetConfigManager sentakkiConfig)
+        {
+            sentakkiConfig.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
+
             AddRangeInternal(new Drawable[]{
                 segmentPool = new DrawablePool<SlideSegment>(15),
                 chevronPool = new DrawablePool<SlideChevron>(74),
@@ -111,22 +122,28 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         }
 
 
-        public void PerformEntryTransforms(double duration)
+        public void PerformEntryAnimation(double duration)
         {
-            int chevrons = (int)Math.Ceiling(Path.Distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
-            double fadeDuration = duration / chevrons;
-            double currentOffset = duration / 2;
-
-            for (int i = segments.Count - 1; i >= 0; i--)
+            if (snakingIn.Value)
             {
-                var segment = segments[i];
-                for (int j = segment.Children.Count - 1; j >= 0; j--)
+                int chevrons = (int)Math.Ceiling(Path.Distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
+                double fadeDuration = duration / chevrons;
+                double currentOffset = duration / 2;
+                for (int i = segments.Count - 1; i >= 0; i--)
                 {
-                    var chevron = segment.Children[j] as SlideChevron;
-                    if (!chevron.ShouldHide)
-                        chevron.FadeOut().Then().Delay(currentOffset).FadeInFromZero(fadeDuration * 2);
-                    currentOffset += fadeDuration / 2;
+                    var segment = segments[i];
+                    for (int j = segment.Children.Count - 1; j >= 0; j--)
+                    {
+                        var chevron = segment.Children[j] as SlideChevron;
+                        if (!chevron.ShouldHide)
+                            chevron.FadeOut().Delay(currentOffset).FadeInFromZero(fadeDuration * 2);
+                        currentOffset += fadeDuration / 2;
+                    }
                 }
+            }
+            else
+            {
+                this.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
             }
         }
 

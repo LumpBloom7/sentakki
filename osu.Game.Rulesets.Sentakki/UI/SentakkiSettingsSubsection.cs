@@ -36,6 +36,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     LabelText = "Show note start indicators",
                     Current = config.GetBindable<bool>(SentakkiRulesetSettings.ShowNoteStartIndicators)
                 },
+                new SettingsCheckbox
+                {
+                    LabelText = "Snaking in Slides",
+                    Current = config.GetBindable<bool>(SentakkiRulesetSettings.SnakingSlideBody)
+                },
                 new SettingsEnumDropdown<ColorOption>
                 {
                     LabelText = "Ring Colour",

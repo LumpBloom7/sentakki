@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
@@ -8,6 +9,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osuTK;
 using osuTK.Graphics;
@@ -43,7 +45,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableSlideBody(SlideBody hitObject)
             : base(hitObject) { }
 
-        [BackgroundDependencyLoader]
+        [BackgroundDependencyLoader(true)]
         private void load()
         {
             Size = Vector2.Zero;
@@ -127,7 +129,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            Slidepath.PerformEntryTransforms(AdjustedAnimationDuration);
+            Slidepath.PerformEntryAnimation(AdjustedAnimationDuration);
             using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
             {
                 SlideStar.FadeInFromZero(100).ScaleTo(1, 100);
