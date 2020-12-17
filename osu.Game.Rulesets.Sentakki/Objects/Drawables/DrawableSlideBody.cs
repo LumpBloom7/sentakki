@@ -177,6 +177,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     SlideStar.FadeOut();
                     break;
                 case ArmedState.Miss:
+                    Slidepath.PerformMissAnimation(time_fade_miss);
                     this.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss).Expire();
                     break;
             }

@@ -146,6 +146,30 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             }
         }
 
+        public void PerformMissAnimation(double duration)
+        {
+            int chevronsLeft = (int)Math.Ceiling(Path.Distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
+            double fadeDuration() => duration / chevronsLeft;
+            double currentOffset = 0;
+            for (int i = segments.Count - 1; i >= 0; i--)
+            {
+                var segment = segments[i];
+                if (segment.Alpha == 0)
+                {
+                    chevronsLeft -= segment.ChevronCount;
+                    continue;
+                }
+
+                for (int j = segment.Children.Count - 1; j >= 0; j--)
+                {
+                    var chevron = segment.Children[j] as SlideChevron;
+                    if (!chevron.ShouldHide)
+                        chevron.Delay(currentOffset).FadeOut(fadeDuration() * 2);
+                    currentOffset += fadeDuration() / 2;
+                }
+            }
+        }
+
         private class SlideSegment : PoolableDrawable
         {
             public void ClearChevrons() => ClearInternal(false);
