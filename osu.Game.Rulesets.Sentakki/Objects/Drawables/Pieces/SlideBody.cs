@@ -172,7 +172,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Texture = textures.Get("slide"),
-                    Scale = new Vector2(1.2f)
                 });
             }
         }
