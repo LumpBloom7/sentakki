@@ -32,9 +32,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.None;
-            Size = new Vector2(240);
+            Size = new Vector2(200);
             CornerExponent = 2f;
-            CornerRadius = 120;
+            CornerRadius = 100;
             Masking = true;
         }
 
