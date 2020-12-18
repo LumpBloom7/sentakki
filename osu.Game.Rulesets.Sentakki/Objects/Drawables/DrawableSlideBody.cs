@@ -133,8 +133,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Slidepath.PerformEntryAnimation(AdjustedAnimationDuration);
             using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
             {
-                SlideStar.FadeInFromZero(100).ScaleTo(1, 100);
-                this.Delay(100 + HitObject.ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - 50 - HitObject.ShootDelay);
+                SlideStar.FadeInFromZero(HitObject.ShootDelay).ScaleTo(1, HitObject.ShootDelay);
+                this.Delay(50 + HitObject.ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
             }
         }
 
