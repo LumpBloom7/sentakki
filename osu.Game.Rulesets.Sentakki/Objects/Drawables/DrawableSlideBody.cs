@@ -66,7 +66,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Origin = Anchor.Centre,
                         Position = SentakkiExtensions.GetCircularPosition(296.5f,22.5f),
                         RelativeSizeAxes  = Axes.None,
-                        Size = new Vector2(75),
                     }
                 },
                 SlideNodes = new Container<DrawableSlideNode>
@@ -133,7 +132,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Slidepath.PerformEntryAnimation(AdjustedAnimationDuration);
             using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
             {
-                SlideStar.FadeInFromZero(100).ScaleTo(1, 100);
+                SlideStar.FadeInFromZero(100).ScaleTo(1.25f, 100);
                 this.Delay(100 + HitObject.ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - 50 - HitObject.ShootDelay);
             }
         }
