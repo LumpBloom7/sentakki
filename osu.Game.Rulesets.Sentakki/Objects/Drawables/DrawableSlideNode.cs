@@ -18,12 +18,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private DrawableSlideBody parentSlide => (DrawableSlideBody)ParentHitObject;
 
         // Used to determine the node order
-        private int thisIndex;
+        public int ThisIndex;
 
         // Hits are only possible if this the second node before this one is hit
         // If the second node before this one doesn't exist, it is allowed as this is one of the first nodes
         // All hits can only be done after the parent StartTime
-        protected bool IsHittable => Time.Current > parentSlide.HitObject.StartTime && (thisIndex < 2 || parentSlide.SlideNodes[thisIndex - 2].IsHit);
+        protected bool IsHittable => Time.Current > parentSlide.HitObject.StartTime && (ThisIndex < 2 || parentSlide.SlideNodes[ThisIndex - 2].IsHit);
 
         public DrawableSlideNode() : this(null) { }
         public DrawableSlideNode(SlideBody.SlideNode node)
@@ -32,9 +32,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.None;
-            Size = new Vector2(240);
+            Size = new Vector2(200);
             CornerExponent = 2f;
-            CornerRadius = 120;
+            CornerRadius = 100;
             Masking = true;
         }
 
@@ -45,7 +45,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             // Nodes are applied before being added to the parent playfield, so this node isn't in SlideNodes yet
             // Since we know that the node isn't in the container yet, and that the count is always one higher than the topmost element, we can use that as the predicted index
-            thisIndex = parentSlide.SlideNodes.Count;
+            ThisIndex = parentSlide.SlideNodes.Count;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -75,8 +75,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void ApplyResult(Action<JudgementResult> application)
         {
             // Judge the previous node, because that isn't guaranteed due to the leniency;
-            if (thisIndex > 0)
-                parentSlide.SlideNodes[thisIndex - 1]?.ApplyResult(application);
+            if (ThisIndex > 0)
+                parentSlide.SlideNodes[ThisIndex - 1]?.ApplyResult(application);
 
             base.ApplyResult(application);
         }

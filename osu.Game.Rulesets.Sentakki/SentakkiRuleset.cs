@@ -147,11 +147,18 @@ namespace osu.Game.Rulesets.Sentakki
             }
         };
 
-        public override Drawable CreateIcon() => new Sprite
-        {
-            Texture = new TextureStore(new TextureLoaderStore(CreateResourceStore()), false).Get("Textures/Icon2"),
-        };
+        public override Drawable CreateIcon() {
 
+            var textureStore = new TextureStore(new TextureLoaderStore(CreateResourceStore()), false);
+            foreach(var resource in textureStore.GetAvailableResources()){
+                Console.WriteLine(resource);
+            }
+
+            return new Sprite
+            {
+                Texture = textureStore.Get("Textures/Icon2"),
+            };
+        }
         protected override IEnumerable<HitResult> GetValidHitResults()
         {
             return new[]

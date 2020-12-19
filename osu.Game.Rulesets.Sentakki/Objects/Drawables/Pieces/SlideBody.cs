@@ -19,14 +19,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
 
-        private float progress;
-        public float Progress
+        private int completedSegments;
+        public int CompletedSegments
         {
-            get => progress;
+            get => completedSegments;
             set
             {
-                progress = value;
-                updateProgress(progress);
+                completedSegments = value;
+                updateProgress(completedSegments);
             }
         }
         private SliderPath path;
@@ -40,7 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     return;
                 path = value;
                 updateVisuals();
-                updateProgress(progress);
+                updateProgress(CompletedSegments);
             }
         }
 
@@ -49,6 +49,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private DrawablePool<SlideChevron> chevronPool;
 
         private readonly BindableBool snakingIn = new BindableBool(true);
+
+        public int SegmentCount => segments.Count;
 
         public SlideVisual()
         {
@@ -62,8 +64,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
 
             AddRangeInternal(new Drawable[]{
-                segmentPool = new DrawablePool<SlideSegment>(15),
-                chevronPool = new DrawablePool<SlideChevron>(74),
+                segmentPool = new DrawablePool<SlideSegment>(21),
+                chevronPool = new DrawablePool<SlideChevron>(61),
                 segments = new Container<SlideSegment>(),
             });
         }
@@ -76,7 +78,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             segments.Clear(false);
 
             var distance = Path.Distance;
-            int chevrons = (int)Math.Ceiling(distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
+            int chevrons = (int)Math.Round(distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
             chevronInterval = 1.0 / chevrons;
 
             float? prevAngle = null;
@@ -100,7 +102,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     c.ShouldHide = shouldHide;
                 }));
 
-                if (i % 5 == 0 && chevrons - 1 - i > 2)
+                if (i % 3 == 0 && chevrons - 1 - i > 1)
                 {
                     segments.Add(currentSegment);
                     currentSegment = segmentPool.Get();
@@ -109,15 +111,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
             segments.Add(currentSegment);
         }
-        private void updateProgress(float progress)
-        {
-            double segmentBounds = -chevronInterval;
 
-            for (int i = segments.Count - 1; i >= 0; i--)
+        private void updateProgress(int completedNodes)
+        {
+            for (int i = 1; i <= segments.Count; ++i)
             {
-                var segment = segments[i];
-                segmentBounds += segment.ChevronCount * chevronInterval;
-                segment.Alpha = (progress > segmentBounds) ? 0 : 1;
+                segments[^i].Alpha = i <= completedNodes ? 0 : 1;
             }
         }
 
@@ -196,7 +195,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Texture = textures.Get("slide")
+                    Texture = textures.Get("slide"),
                 });
             }
         }

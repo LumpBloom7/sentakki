@@ -67,7 +67,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         Origin = Anchor.Centre,
                         Position = SentakkiExtensions.GetCircularPosition(296.5f,22.5f),
                         RelativeSizeAxes  = Axes.None,
-                        Size = new Vector2(75),
                     }
                 },
                 SlideNodes = new Container<DrawableSlideNode>
@@ -121,8 +120,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             var target = SlideNodes.LastOrDefault(x => x.Result.IsHit);
             if (target == null)
-                Slidepath.Progress = 0;
-            else Slidepath.Progress = target.HitObject.Progress;
+                Slidepath.CompletedSegments = 0;
+            else
+                Slidepath.CompletedSegments = target.ThisIndex + 1;
 
             pendingProgressUpdate = false;
         }
@@ -133,7 +133,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Slidepath.PerformEntryAnimation(AdjustedAnimationDuration);
             using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
             {
-                SlideStar.FadeInFromZero(HitObject.ShootDelay).ScaleTo(1, HitObject.ShootDelay);
+                SlideStar.FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
                 this.Delay(50 + HitObject.ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
             }
         }
