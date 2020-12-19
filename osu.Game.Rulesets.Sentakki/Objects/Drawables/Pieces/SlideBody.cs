@@ -64,7 +64,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
 
             AddRangeInternal(new Drawable[]{
-                segmentPool = new DrawablePool<SlideSegment>(21),
+                segmentPool = new DrawablePool<SlideSegment>(20),
                 chevronPool = new DrawablePool<SlideChevron>(61),
                 segments = new Container<SlideSegment>(),
             });
@@ -102,14 +102,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     c.ShouldHide = shouldHide;
                 }));
 
-                if (i % 3 == 0 && chevrons - 1 - i > 1)
+                if ((i - 1) % 3 == 0 && chevrons - 1 - i > 2)
                 {
                     segments.Add(currentSegment);
-                    currentSegment = segmentPool.Get();
+                    if (i > 3)
+                        currentSegment = segmentPool.Get();
+                    else
+                        currentSegment = null;
                 }
             }
 
-            segments.Add(currentSegment);
+            // Check for an unadded segment
+            if (currentSegment != null)
+                segments.Add(currentSegment);
         }
 
         private void updateProgress(int completedNodes)

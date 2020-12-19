@@ -39,7 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             int chevrons = (int)Math.Round(distance / SLIDE_CHEVRON_DISTANCE);
             double chevronInterval = 1.0 / chevrons;
 
-            for (int i = 4; i < chevrons - 1; i += 3)
+            for (int i = 4; i < chevrons - 3; i += 3)
             {
                 var progress = i * chevronInterval;
                 SlideNode node;
