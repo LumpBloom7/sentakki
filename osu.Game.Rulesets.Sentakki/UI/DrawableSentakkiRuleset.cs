@@ -12,6 +12,7 @@ using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.UI;
+using osu.Game.Scoring;
 using osu.Game.Screens.Play;
 
 namespace osu.Game.Rulesets.Sentakki.UI
@@ -50,7 +51,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new SentakkiFramedReplayInputHandler(replay);
 
-        protected override ReplayRecorder CreateReplayRecorder(Replay replay) => new SentakkiReplayRecorder(replay, this);
+        protected override ReplayRecorder CreateReplayRecorder(Score score) => new SentakkiReplayRecorder(score, this);
 
         public override PlayfieldAdjustmentContainer CreatePlayfieldAdjustmentContainer() => new SentakkiPlayfieldAdjustmentContainer();
 
