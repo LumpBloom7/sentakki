@@ -51,7 +51,12 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 
         protected abstract SentakkiSlidePath CreatePattern();
 
-        [SetUpSteps]
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            RefreshSlide();
+        }
+
         protected void RefreshSlide()
         {
             slide.Path = CreatePattern().Path;
