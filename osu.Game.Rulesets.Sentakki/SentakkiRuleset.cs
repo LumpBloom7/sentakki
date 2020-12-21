@@ -149,7 +149,7 @@ namespace osu.Game.Rulesets.Sentakki
 
         public override Drawable CreateIcon() => new Sprite
         {
-            Texture = new TextureStore(new TextureLoaderStore(CreateResourceStore()), false).Get("Textures/Icon2"),
+            Texture = new TextureStore(new TextureLoaderStore(CreateResourceStore()), false).Get("Textures/Icon"),
         };
 
         protected override IEnumerable<HitResult> GetValidHitResults()
