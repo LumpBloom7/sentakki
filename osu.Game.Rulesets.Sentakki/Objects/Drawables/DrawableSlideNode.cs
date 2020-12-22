@@ -1,130 +1,100 @@
-using osu.Game.Rulesets.Scoring;
-using osuTK;
-using osu.Framework.Graphics;
+using System;
 using System.Linq;
-using osu.Framework.Allocation;
-using osu.Game.Rulesets.Objects.Drawables;
-using osu.Framework.Bindables;
-using osu.Game.Skinning;
-using osu.Game.Audio;
-using osu.Game.Configuration;
-using osu.Game.Rulesets.Sentakki.Configuration;
-using osu.Game.Rulesets.Objects.Types;
-using osu.Game.Screens.Play;
+using osu.Framework.Graphics;
 using osu.Game.Rulesets.Judgements;
-using Microsoft.EntityFrameworkCore.Internal;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideNode : DrawableSentakkiTouchHitObject
+    public class DrawableSlideNode : DrawableSentakkiHitObject
     {
-        private PausableSkinnableSound slideSound;
+        public new SlideBody.SlideNode HitObject => (SlideBody.SlideNode)base.HitObject;
 
         public override bool HandlePositionalInput => true;
         public override bool DisplayResult => false;
 
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
-        protected DrawableSlideBody Slide;
+        private DrawableSlideBody parentSlide => (DrawableSlideBody)ParentHitObject;
 
-        protected int ThisIndex;
-        public DrawableSlideNode(SlideBody.SlideNode node, DrawableSlideBody slideNote)
+        // Used to determine the node order
+        private int thisIndex;
+
+        // Hits are only possible if this the second node before this one is hit
+        // If the second node before this one doesn't exist, it is allowed as this is one of the first nodes
+        // All hits can only be done after the parent StartTime
+        protected bool IsHittable => Time.Current > parentSlide.HitObject.StartTime && (thisIndex < 2 || parentSlide.SlideNodes[thisIndex - 2].IsHit);
+
+        public DrawableSlideNode() : this(null) { }
+        public DrawableSlideNode(SlideBody.SlideNode node)
             : base(node)
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Slide = slideNote;
             RelativeSizeAxes = Axes.None;
-            Position = slideNote.Slidepath.Path.PositionAt((HitObject as SlideBody.SlideNode).Progress);
             Size = new Vector2(240);
             CornerExponent = 2f;
             CornerRadius = 120;
             Masking = true;
         }
-        protected override void LoadComplete()
+
+        protected override void OnApply()
         {
-            base.LoadComplete();
-            ThisIndex = Slide.SlideNodes.IndexOf(this);
+            base.OnApply();
+            Position = parentSlide.HitObject.SlideInfo.SlidePath.Path.PositionAt(HitObject.Progress);
 
-            OnNewResult += (DrawableHitObject hitObject, JudgementResult result) =>
-            {
-                hitPreviousNodes(result.Type == result.Judgement.MaxResult);
-                if (result.IsHit)
-                    Slide.Slidepath.Progress = (HitObject as SlideBody.SlideNode).Progress;
-            };
-            OnRevertResult += (DrawableHitObject hitObject, JudgementResult result) =>
-            {
-                Slide.Slidepath.Progress = ThisIndex > 0 ? (Slide.SlideNodes[ThisIndex - 1].HitObject as SlideBody.SlideNode).Progress : 0;
-            };
-        }
-
-        protected override void LoadSamples()
-        {
-            base.LoadSamples();
-            AddInternal(slideSound = new PausableSkinnableSound(new SampleInfo("slide")));
-        }
-
-        protected bool IsHittable => ThisIndex < 2 || Slide.SlideNodes[ThisIndex - 2].IsHit;
-        public bool IsTailNode => (HitObject as SlideBody.SlideNode).IsTailNote;
-
-        private void hitPreviousNodes(bool successful = false)
-        {
-            foreach (var node in Slide.SlideNodes)
-            {
-                if (node == this) return;
-                if (!node.Result.HasResult)
-                    node.ForceJudgement(successful);
-            }
-        }
-
-        private readonly Bindable<bool> playSlideSample = new Bindable<bool>(true);
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfig)
-        {
-            sentakkiConfig?.BindWith(SentakkiRulesetSettings.SlideSounds, playSlideSample);
+            // Nodes are applied before being added to the parent playfield, so this node isn't in SlideNodes yet
+            // Since we know that the node isn't in the container yet, and that the count is always one higher than the topmost element, we can use that as the predicted index
+            thisIndex = parentSlide.SlideNodes.Count;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            if (!userTriggered || AutoTouch)
+            // Don't allow for user input if auto is enabled for touch based objects (AutoTouch mod)
+            if (!userTriggered || Auto)
             {
-                if (timeOffset > 0 && AutoTouch)
+                if (timeOffset > 0 && Auto)
                     ApplyResult(r => r.Type = r.Judgement.MaxResult);
                 return;
             }
 
-            if (!IsHittable)
-                return;
-
             ApplyResult(r => r.Type = r.Judgement.MaxResult);
         }
-
-        // Forces this object to have a result.
-        public void ForceJudgement(bool successful = false) => ApplyResult(r => r.Type = successful ? r.Judgement.MaxResult : r.Judgement.MinResult);
 
         protected override void Update()
         {
             base.Update();
-            if (AutoTouch) return;
 
-            if (Time.Current >= Slide.HitObject.StartTime)
-            {
-                var touchInput = SentakkiActionInputManager.CurrentState.Touch;
-                bool isTouched = touchInput.ActiveSources.Any(s => ReceivePositionalInputAt(touchInput.GetTouchPosition(s) ?? new Vector2(float.MinValue)));
+            if (Judged || !IsHittable)
+                return;
 
-                if (isTouched || (IsHovered && SentakkiActionInputManager.PressedActions.Any()))
+            if (parentSlide.HitObject != null)
+                if (checkForTouchInput() || (IsHovered && SentakkiActionInputManager.PressedActions.Any()))
                     UpdateResult(true);
-            }
         }
 
-        public override void PlaySamples()
+        protected override void ApplyResult(Action<JudgementResult> application)
         {
-            base.PlaySamples();
-            if (ThisIndex == 0 && playSlideSample.Value && slideSound != null && Result.Type != Result.Judgement.MinResult)
-            {
-                slideSound.Balance.Value = CalculateSamplePlaybackBalance(SamplePlaybackPosition);
-                slideSound.Play();
-            }
+            // Judge the previous node, because that isn't guaranteed due to the leniency;
+            if (thisIndex > 0)
+                parentSlide.SlideNodes[thisIndex - 1]?.ApplyResult(application);
+
+            base.ApplyResult(application);
+        }
+
+        // Forcefully miss this node, used when players fail to complete the slide on time.
+        public void ForcefullyMiss() => ApplyResult(r => r.Type = r.Judgement.MinResult);
+
+        private bool checkForTouchInput()
+        {
+            var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+
+            // Avoiding Linq to minimize allocations, since this would be called every update of this node
+            foreach (var t in touchInput.ActiveSources)
+                if (ReceivePositionalInputAt(touchInput.GetTouchPosition(t).Value))
+                    return true;
+
+            return false;
         }
     }
 }

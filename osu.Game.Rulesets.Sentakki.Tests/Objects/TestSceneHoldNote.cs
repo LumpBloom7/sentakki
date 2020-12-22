@@ -1,6 +1,5 @@
-﻿using osu.Game.Beatmaps;
+using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Objects;
-
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
     public class TestSceneHoldNote : TestSceneSentakkiHitObject

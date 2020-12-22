@@ -28,50 +28,40 @@ namespace osu.Game.Rulesets.Sentakki.UI
             {
                 new SettingsCheckbox
                 {
-                    LabelText = "Use maimai style judgement text (In-game only)",
-                    Bindable = config.GetBindable<bool>(SentakkiRulesetSettings.MaimaiJudgements)
-                },
-                new SettingsCheckbox
-                {
                     LabelText = "Show Kiai effects",
-                    Bindable = config.GetBindable<bool>(SentakkiRulesetSettings.KiaiEffects)
-                },
-                new SettingsCheckbox
-                {
-                    LabelText = "Play Break sample when hitting BREAKs perfectly",
-                    Bindable = config.GetBindable<bool>(SentakkiRulesetSettings.BreakSounds)
-                },
-                new SettingsCheckbox
-                {
-                    LabelText = "Play Slide sample when beginning to slide",
-                    Bindable = config.GetBindable<bool>(SentakkiRulesetSettings.SlideSounds)
+                    Current = config.GetBindable<bool>(SentakkiRulesetSettings.KiaiEffects)
                 },
                 new SettingsCheckbox
                 {
                     LabelText = "Show note start indicators",
-                    Bindable = config.GetBindable<bool>(SentakkiRulesetSettings.ShowNoteStartIndicators)
+                    Current = config.GetBindable<bool>(SentakkiRulesetSettings.ShowNoteStartIndicators)
                 },
                 new SettingsEnumDropdown<ColorOption>
                 {
                     LabelText = "Ring Colour",
-                    Bindable = config.GetBindable<ColorOption>(SentakkiRulesetSettings.RingColor)
+                    Current = config.GetBindable<ColorOption>(SentakkiRulesetSettings.RingColor)
                 },
                 new SettingsSlider<double, NoteTimeSlider>
                 {
                     LabelText = "Note entry speed",
-                    Bindable = config.GetBindable<double>(SentakkiRulesetSettings.AnimationDuration),
+                    Current = config.GetBindable<double>(SentakkiRulesetSettings.AnimationDuration),
                 },
                 new SettingsSlider<double, TouchTimeSlider>
                 {
                     LabelText = "Touch note fade-in speed",
-                    Bindable = config.GetBindable<double>(SentakkiRulesetSettings.TouchAnimationDuration),
+                    Current = config.GetBindable<double>(SentakkiRulesetSettings.TouchAnimationDuration),
                 },
                 new SettingsSlider<float>
                 {
                     LabelText = "Ring Opacity",
-                    Bindable = config.GetBindable<float>(SentakkiRulesetSettings.RingOpacity),
+                    Current = config.GetBindable<float>(SentakkiRulesetSettings.RingOpacity),
                     KeyboardStep = 0.01f,
                     DisplayAsPercentage = true
+                },
+                new SettingsEnumDropdown<LaneInputMode>
+                {
+                    LabelText = "Lane input mode (Doesn't apply to touch)",
+                    Current = config.GetBindable<LaneInputMode>(SentakkiRulesetSettings.LaneInputMode)
                 },
             };
         }

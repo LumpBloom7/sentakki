@@ -1,12 +1,11 @@
-﻿using osu.Framework.Input.StateChanges;
+using osu.Framework.Input.StateChanges;
 using osu.Framework.Input;
+using System.Collections.Generic;
+using System.Diagnostics;
 using osu.Framework.Utils;
 using osu.Game.Replays;
 using osu.Game.Rulesets.Replays;
 using osuTK;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System;
 
 namespace osu.Game.Rulesets.Sentakki.Replays
@@ -19,6 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Replays
         }
 
         protected override bool IsImportant(SentakkiReplayFrame frame) => true;
+        public bool UsingSensorMode => CurrentFrame.UsingSensorMode;
 
         protected Vector2 Position
         {

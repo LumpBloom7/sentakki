@@ -1,8 +1,8 @@
-﻿using osu.Framework.Input.Bindings;
-using osu.Framework.Input.Events;
-using osu.Game.Rulesets.UI;
 using System.Collections.Generic;
 using System.ComponentModel;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
+using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Sentakki
 {
@@ -44,8 +44,6 @@ namespace osu.Game.Rulesets.Sentakki
             : base(ruleset, 0, SimultaneousBindingMode.Unique)
         {
         }
-
-        public List<int> CurrentPath = new List<int>();
     }
 
     public enum SentakkiAction

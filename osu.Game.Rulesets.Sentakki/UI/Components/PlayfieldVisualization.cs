@@ -1,5 +1,8 @@
-using osuTK;
-using osuTK.Graphics;
+using System;
+using osu.Framework.Allocation;
+using osu.Framework.Audio.Track;
+using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Batches;
 using osu.Framework.Graphics.Colour;
@@ -7,16 +10,13 @@ using osu.Framework.Graphics.OpenGL.Vertices;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Utils;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
-using osu.Game.Skinning;
-using System;
-using osu.Framework.Allocation;
-using osu.Framework.Audio.Track;
-using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
-using osu.Framework.Utils;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Skinning;
+using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components
 {
@@ -142,16 +142,16 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             indexOffset = (indexOffset + index_change) % bars_per_visualiser;
         }
 
-        private double delta = 0;
+        private double timeDelta;
         protected override void Update()
         {
             base.Update();
 
-            delta += Math.Abs(Time.Elapsed);
-            if (delta >= time_between_updates)
+            timeDelta += Math.Abs(Time.Elapsed);
+            if (timeDelta >= time_between_updates)
             {
                 updateAmplitudes();
-                delta %= time_between_updates;
+                timeDelta %= time_between_updates;
             }
 
             float decayFactor = Math.Abs((float)Time.Elapsed) * decay_per_milisecond;

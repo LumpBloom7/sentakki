@@ -1,14 +1,14 @@
-using osu.Framework.Bindables;
-using osu.Game.Beatmaps;
-using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using osu.Game.Audio;
-using osu.Game.Beatmaps.ControlPoints;
 using System.Threading;
+using osu.Framework.Bindables;
+using osu.Game.Audio;
+using osu.Game.Beatmaps;
+using osu.Game.Beatmaps.ControlPoints;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
@@ -45,9 +45,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 return offset;
             }
         };
-        private int currentPattern = 0;
-        private int offset = 0;
-        private int offset2 = 0;
+        private int currentPattern;
+        private int offset;
+        private int offset2;
 
         private int getNewLane(bool twin = false) => patternlist[currentPattern].Invoke(twin).NormalizePath();
 
@@ -60,8 +60,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         public IEnumerable<SentakkiHitObject> GenerateNewNote(HitObject original)
         {
-            bool isTwin = false;
-            List<SentakkiHitObject> notes = new List<SentakkiHitObject>();
             bool breakNote = false;
             switch (original)
             {
@@ -74,7 +72,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         {
                             if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
                             {
-                                isTwin = true;
                                 slides.Add((Slide)createSlideNote(original, true, breakNote));
                             }
                             else
@@ -96,24 +93,23 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                                 slides.Remove(slides.Last());
                             }
                         }
-                        notes.AddRange(slides);
-                    }
-                    if (!notes.Any())
-                    {
-                        if (Experiments.Value.HasFlag(ConversionExperiments.twinNotes))
-                        {
-                            if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
-                            {
-                                isTwin = true;
-                                notes.Add(createHoldNote(original, true, breakNote));
-                            }
-                            else
-                                foreach (var note in createTapsFromTicks(original).ToList())
-                                    yield return note;
-                        }
+                        foreach (var note in slides)
+                            yield return note;
 
-                        notes.Add(createHoldNote(original, isBreak: breakNote));
+                        yield break;
                     }
+                    if (Experiments.Value.HasFlag(ConversionExperiments.twinNotes))
+                    {
+                        if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
+                        {
+                            yield return createHoldNote(original, true, breakNote);
+                        }
+                        else
+                            foreach (var note in createTapsFromTicks(original).ToList())
+                                yield return note;
+                    }
+
+                    yield return createHoldNote(original, isBreak: breakNote);
                     break;
 
                 case IHasDuration th:
@@ -131,20 +127,11 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     {
                         if (Experiments.Value.HasFlag(ConversionExperiments.twinNotes) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP))
                         {
-                            isTwin = true;
-                            notes.Add(createTapNote(original, true, breakNote));
+                            yield return createTapNote(original, true, breakNote);
                         }
-                        notes.Add(createTapNote(original, isBreak: breakNote));
+                        yield return createTapNote(original, isBreak: breakNote);
                     }
                     break;
-            }
-
-            // Twin notes should be a different color
-            foreach (var note in notes)
-            {
-                if (isTwin)
-                    note.HasTwin = true;
-                yield return note;
             }
         }
 
@@ -174,8 +161,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 },
                 Lane = noteLane,
                 StartTime = original.StartTime,
-                Samples = original.Samples,
-                IsBreak = isBreak
+                NodeSamples = (original as IHasPathWithRepeats).NodeSamples,
+                Break = isBreak
             };
         }
 
@@ -184,7 +171,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             int noteLane = getNewLane(twin);
             return new Hold
             {
-                IsBreak = isBreak,
+                Break = isBreak,
                 Lane = noteLane,
                 NodeSamples = (original as IHasPathWithRepeats).NodeSamples,
                 StartTime = original.StartTime,
@@ -224,12 +211,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         yield return new Tap
                         {
                             Lane = noteLane,
-                            Samples = original.Samples.Select(s => new HitSampleInfo
-                            {
-                                Bank = s.Bank,
-                                Name = @"slidertick",
-                                Volume = s.Volume
-                            }).ToList(),
+                            Samples = original.Samples.Select(s => new HitSampleInfo(@"slidertick", s.Bank, s.Suffix, s.Volume)).ToList(),
                             StartTime = e.Time
                         };
                         break;
@@ -242,7 +224,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             int noteLane = getNewLane(twin);
             return new Tap
             {
-                IsBreak = isBreak,
+                Break = isBreak,
                 Lane = noteLane,
                 Samples = original.Samples,
                 StartTime = original.StartTime,

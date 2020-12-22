@@ -1,4 +1,4 @@
-﻿using osu.Game.Beatmaps;
+using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Objects;
 using System.Collections.Generic;
 
@@ -19,20 +19,20 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             {
                 beatmap.HitObjects.Add(new Tap
                 {
-                    IsBreak = true,
+                    Break = true,
                     StartTime = 500,
                     Lane = i
                 });
                 beatmap.HitObjects.Add(new Hold
                 {
-                    IsBreak = true,
+                    Break = true,
                     StartTime = 1000,
                     Duration = 300,
                     Lane = (i + 3).NormalizePath()
                 });
                 beatmap.HitObjects.Add(new Slide
                 {
-                    IsBreak = true,
+                    Break = true,
                     SlideInfoList = new List<SentakkiSlideInfo>
                     {
                         new SentakkiSlideInfo {

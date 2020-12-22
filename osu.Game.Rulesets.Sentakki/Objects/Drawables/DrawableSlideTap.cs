@@ -1,34 +1,44 @@
-﻿using osu.Framework.Graphics;
+﻿using System.Linq;
+using osu.Framework.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
-using osu.Game.Rulesets.Objects.Types;
-using osu.Game.Rulesets.Sentakki.UI;
-using osuTK;
-using System.Linq;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideTap : DrawableTap
     {
-        private DrawableSlide slide;
-        public DrawableSlideTap(SentakkiHitObject hitObject, DrawableSlide slide)
-            : base(hitObject)
+        protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
+
+        private DrawableSlide parentSlide => (DrawableSlide)ParentHitObject;
+
+        public DrawableSlideTap() : this(null) { }
+        public DrawableSlideTap(SlideTap hitObject)
+            : base(hitObject) { }
+
+        protected override void OnApply()
         {
-            this.slide = slide;
+            base.OnApply();
+            AccentColour.BindTo(ParentHitObject.AccentColour);
         }
 
-        protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
+        protected override void OnFree()
+        {
+            base.OnFree();
+            AccentColour.UnbindFrom(parentSlide.AccentColour);
+        }
 
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
 
-            double animTime = AnimationDuration.Value / 2 * GameplaySpeed;
-            double animStart = HitObject.StartTime - animTime;
-            double spinDuration = ((Slide)slide.HitObject).SlideInfoList.FirstOrDefault().Duration;
-            using (BeginAbsoluteSequence(animStart, true))
-            {
-                (TapVisual as SlideTapPiece).Stars.Spin(spinDuration, RotationDirection.CounterClockwise, 0).Loop();
-            }
+            var note = TapVisual as SlideTapPiece;
+
+            if (parentSlide.SlideBodies.Count > 1)
+                note.SecondStar.Alpha = 1;
+            else
+                note.SecondStar.Alpha = 0;
+
+            double spinDuration = ((Slide)parentSlide.HitObject).SlideInfoList.FirstOrDefault().Duration;
+            note.Stars.Spin(spinDuration, RotationDirection.CounterClockwise, 0).Loop();
         }
     }
 }

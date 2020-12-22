@@ -1,10 +1,10 @@
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
+using osu.Game.Rulesets.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
 
@@ -98,24 +98,25 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             };
         }
 
-        private readonly IBindable<ArmedState> state = new Bindable<ArmedState>();
         [BackgroundDependencyLoader]
         private void load(DrawableHitObject drawableObject)
         {
-            state.BindTo(drawableObject.State);
-            state.BindValueChanged(updateState, true);
+            drawableObject.ApplyCustomUpdateState += updateState;
         }
 
-        private void updateState(ValueChangedEvent<ArmedState> state)
+        private void updateState(DrawableHitObject drawableObject, ArmedState state)
         {
-            switch (state.NewValue)
+            using (BeginAbsoluteSequence(drawableObject.HitStateUpdateTime, true))
             {
-                case ArmedState.Hit:
-                    const double flash_in = 40;
+                switch (state)
+                {
+                    case ArmedState.Hit:
+                        const double flash_in = 40;
 
-                    this.Delay(flash_in).FadeOut();
+                        this.Delay(flash_in).FadeOut();
 
-                    break;
+                        break;
+                }
             }
         }
     }

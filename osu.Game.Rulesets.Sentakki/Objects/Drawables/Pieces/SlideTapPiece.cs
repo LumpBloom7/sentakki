@@ -2,8 +2,8 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
 
@@ -15,6 +15,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public override bool RemoveWhenNotAlive => false;
 
         public readonly Container Stars;
+        public readonly StarPiece SecondStar;
 
         private readonly ExplodePiece explode;
 
@@ -33,52 +34,50 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Child = new StarPiece()
+                    Children = new Drawable[]{
+                        new StarPiece(),
+                        SecondStar = new StarPiece { Rotation = 36 }
+                    }
                 },
                 explode = new ExplodePiece(),
             };
         }
 
-        private readonly IBindable<ArmedState> state = new Bindable<ArmedState>();
         private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
 
         [BackgroundDependencyLoader]
-        private void load(DrawableHitObject drawableObject, DrawableSlide slideObject)
+        private void load(DrawableHitObject drawableObject)
         {
-            Tap osuObject = (Tap)drawableObject.HitObject;
-
-            if (slideObject.HitObject.NestedHitObjects.Count > 2) // One is the tap, the others are slidebodies, which we are using
-                Stars.Add(new StarPiece { Rotation = 36 });
-
-            state.BindTo(drawableObject.State);
-            state.BindValueChanged(updateState, true);
-
             accentColour.BindTo(drawableObject.AccentColour);
             accentColour.BindValueChanged(colour =>
             {
                 explode.Colour = colour.NewValue;
                 Stars.Colour = colour.NewValue;
             }, true);
+
+            drawableObject.ApplyCustomUpdateState += updateState;
         }
 
-        private void updateState(ValueChangedEvent<ArmedState> state)
+        private void updateState(DrawableHitObject drawableObject, ArmedState state)
         {
-            switch (state.NewValue)
+            using (BeginAbsoluteSequence(drawableObject.HitStateUpdateTime, true))
             {
-                case ArmedState.Hit:
-                    const double flash_in = 40;
+                switch (state)
+                {
+                    case ArmedState.Hit:
+                        const double flash_in = 40;
 
-                    explode.FadeIn(flash_in);
-                    this.ScaleTo(1.5f, 400, Easing.OutQuad);
+                        explode.FadeIn(flash_in);
+                        this.ScaleTo(1.5f, 400, Easing.OutQuad);
 
-                    using (BeginDelayedSequence(flash_in, true))
-                    {
-                        Stars.FadeOut();
+                        using (BeginDelayedSequence(flash_in, true))
+                        {
+                            Stars.FadeOut();
+                            this.FadeOut(800);
+                        }
 
-                        this.FadeOut(800);
-                    }
-
-                    break;
+                        break;
+                }
             }
         }
     }

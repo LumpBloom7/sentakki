@@ -2,9 +2,9 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Input;
 using osu.Framework.Input.Events;
 using osu.Framework.Input.StateChanges;
-using osu.Framework.Input;
 using osu.Framework.Utils;
 using osu.Game.Rulesets.UI;
 using osuTK;
@@ -18,7 +18,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         protected override Drawable CreateCursor() => cursorSprite = new Sprite
         {
-            Scale = new Vector2(0.3f),
             Origin = Anchor.Centre,
             Texture = cursorTexture,
         };
@@ -26,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            cursorTexture = textures.Get("Icon2");
+            cursorTexture = textures.Get("Icon");
 
             if (cursorSprite != null)
                 cursorSprite.Texture = cursorTexture;

@@ -1,146 +1,92 @@
-﻿using osu.Framework.Allocation;
-using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Objects;
-using osu.Framework.Graphics;
-using osu.Game.Rulesets.Scoring;
-using osu.Game.Skinning;
-using osu.Game.Audio;
-using osu.Game.Configuration;
-using osu.Game.Rulesets.Sentakki.Configuration;
-using osu.Framework.Bindables;
-using osu.Game.Screens.Play;
-using System.Collections.Generic;
-using osu.Game.Rulesets.Judgements;
-using System.Linq;
-using osu.Framework.Graphics.Containers;
 using System;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
+using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.UI;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSentakkiHitObject : DrawableHitObject<SentakkiHitObject>
     {
-        private readonly PausableSkinnableSound breakSound;
-
-        public bool IsHidden = false;
-        public bool IsFadeIn = false;
-
-        // Used in the editor
-        public bool IsVisible => Time.Current >= HitObject.StartTime - AnimationDuration.Value;
+        protected override double InitialLifetimeOffset => AdjustedAnimationDuration;
+        public readonly BindableBool AutoBindable = new BindableBool(false);
+        public bool Auto
+        {
+            get => AutoBindable.Value;
+            set => AutoBindable.Value = value;
+        }
 
         // Used for the animation update
         protected readonly Bindable<double> AnimationDuration = new Bindable<double>(1000);
-        protected readonly Bindable<double> AdjustedAnimationDuration = new Bindable<double>(1000);
 
-        protected override float SamplePlaybackPosition
-        {
-            get
-            {
-                if (HitObject is SentakkiLanedHitObject x)
-                    return (SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, x.Lane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
-                else
-                    return Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
-            }
-        }
+        protected override float SamplePlaybackPosition => Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
 
-        public SentakkiAction[] HitActions { get; set; } = new[]
-        {
-            SentakkiAction.Button1,
-            SentakkiAction.Button2,
-        };
+        public DrawableSentakkiHitObject() : this(null) { }
 
-        public DrawableSentakkiHitObject(SentakkiHitObject hitObject)
-            : base(hitObject)
-        {
-            if (hitObject.IsBreak)
-                AddRangeInternal(new Drawable[]{
-                    breakSound = new PausableSkinnableSound(new SampleInfo("Break")),
-                });
-            AddInternal(scorePaddingObjects = new Container<DrawableScorePaddingObject>());
-            AdjustedAnimationDuration.BindValueChanged(_ => InvalidateTransforms());
-        }
+        public DrawableSentakkiHitObject(SentakkiHitObject hitObject = null)
+            : base(hitObject) { }
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
 
         public double GameplaySpeed => drawableSentakkiRuleset?.GameplaySpeed ?? 1;
 
-        private readonly Bindable<bool> breakEnabled = new Bindable<bool>(true);
+        protected double AdjustedAnimationDuration => AnimationDuration.Value * GameplaySpeed;
 
         [BackgroundDependencyLoader(true)]
-        private void load(DrawableSentakkiRuleset drawableRuleset, SentakkiRulesetConfigManager sentakkiConfig)
+        private void load(DrawableSentakkiRuleset drawableRuleset)
         {
             drawableSentakkiRuleset = drawableRuleset;
-            sentakkiConfig?.BindWith(SentakkiRulesetSettings.BreakSounds, breakEnabled);
+        }
+
+        protected override void LoadAsyncComplete()
+        {
+            base.LoadAsyncComplete();
+            AnimationDuration.BindValueChanged(_ => queueTransformReset(), true);
+        }
+
+        protected override void OnApply()
+        {
+            base.OnApply();
+            AccentColour.Value = HitObject.NoteColour;
         }
 
         protected override void Update()
         {
             base.Update();
-            AdjustedAnimationDuration.Value = AnimationDuration.Value * GameplaySpeed;
+
+            // Using SkinChanged to achieve our goals of resetting the transforms,
+            // since that is the only publicly accessible function that calls the base Clear/Apply Transforms
+            // We also avoid doing this if the state is not idle, since there is little benefit in doing so
+            // And it avoids drawable pieces not having the correct state
+            // And it avoids samples repeatedly playing again and again, while sliding the slider
+            if (transformResetQueued && State.Value == ArmedState.Idle) SkinChanged(CurrentSkin, true);
         }
 
-        protected virtual void InvalidateTransforms()
+        // We need to make sure the current transform resets, perhaps due to animation duration being changed
+        // We don't want to reset the transform of all DHOs immediately,
+        // since repeatedly resetting transforms of non-present DHO is wasteful
+        private void queueTransformReset()
         {
-            foreach (var transform in Transforms)
-            {
-                transform.Apply(double.MinValue);
-                RemoveTransform(transform);
-            }
-            foreach (Drawable internalChild in InternalChildren)
-            {
-                internalChild.ApplyTransformsAt(double.MinValue, true);
-                internalChild.ClearTransforms(true);
-            }
-            using (BeginAbsoluteSequence(HitObject.StartTime - InitialLifetimeOffset))
-            {
-                UpdateInitialTransforms();
-                double offset = Result?.TimeOffset ?? 0;
-                using (BeginDelayedSequence(InitialLifetimeOffset + offset))
-                    UpdateStateTransforms(State.Value);
-            }
+            transformResetQueued = true;
+            //LifetimeStart = HitObject.StartTime - InitialLifetimeOffset;
         }
 
-        protected virtual bool PlayBreakSample => true;
-        public override void PlaySamples()
+        protected override void UpdateInitialTransforms()
         {
-            base.PlaySamples();
-            if (PlayBreakSample && breakSound != null && Result.Type == Result.Judgement.MaxResult && breakEnabled.Value)
-            {
-                breakSound.Balance.Value = CalculateSamplePlaybackBalance(SamplePlaybackPosition);
-                breakSound.Play();
-            }
+            // The transform is reset as soon as this function begins
+            // This includes the usual LoadComplete() call, or rewind resets
+            transformResetQueued = false;
         }
 
-        private Container<DrawableScorePaddingObject> scorePaddingObjects;
+        private bool transformResetQueued;
 
-        protected override void ClearNestedHitObjects()
-        {
-            base.ClearNestedHitObjects();
-            scorePaddingObjects.Clear();
-        }
-        protected override void AddNestedHitObject(DrawableHitObject hitObject)
-        {
-            base.AddNestedHitObject(hitObject);
-            if (hitObject is DrawableScorePaddingObject x)
-                scorePaddingObjects.Add(x);
-        }
-
-        protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
-        {
-            if (hitObject is ScorePaddingObject x)
-                return new DrawableScorePaddingObject(x);
-
-            return base.CreateNestedHitObject(hitObject);
-        }
-
-        protected new void ApplyResult(Action<JudgementResult> application)
+        protected new virtual void ApplyResult(Action<JudgementResult> application)
         {
             // Apply judgement to this object
-            base.ApplyResult(application);
-
-            // Also give Break note score padding a judgement
-            foreach (var breakObj in scorePaddingObjects)
-                breakObj.ApplyResult(application);
+            if (!Result.HasResult)
+                base.ApplyResult(application);
         }
     }
 }

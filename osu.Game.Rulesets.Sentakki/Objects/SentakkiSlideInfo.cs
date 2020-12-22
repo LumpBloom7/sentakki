@@ -1,5 +1,3 @@
-using osu.Game.Rulesets.Sentakki.Objects;
-
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class SentakkiSlideInfo

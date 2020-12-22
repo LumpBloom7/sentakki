@@ -1,13 +1,11 @@
-using System.Collections.Generic;
-using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Framework.Graphics;
+using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
     public class TestSceneCircleSlide : TestSceneSlide
     {
-        private bool clockwise = false;
+        private bool clockwise;
         public TestSceneCircleSlide()
         {
             AddToggleStep("Clockwise", b =>

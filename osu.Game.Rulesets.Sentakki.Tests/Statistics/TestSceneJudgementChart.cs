@@ -1,9 +1,9 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Statistics;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Statistics;
 using osu.Game.Tests.Visual;
-using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Statistics
 {
@@ -44,13 +44,13 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Statistics
             new HitEvent(0,HitResult.Great,new Touch(),new Tap(), null),
             new HitEvent(0,HitResult.Great,new Touch(),new Tap(), null),
             // Breaks
-            new HitEvent(0,HitResult.Great,new Tap(){IsBreak = true},new Tap(), null),
-            new HitEvent(0,HitResult.Good,new Tap(){IsBreak = true},new Tap(), null),
-            new HitEvent(0,HitResult.Good,new Tap(){IsBreak = true},new Tap(), null),
-            new HitEvent(0,HitResult.Good,new Tap(){IsBreak = true},new Tap(), null),
-            new HitEvent(0,HitResult.Good,new Tap(){IsBreak = true},new Tap(), null),
-            new HitEvent(0,HitResult.Good,new Tap(){IsBreak = true},new Tap(), null),
-            new HitEvent(0,HitResult.Meh,new Tap(){IsBreak = true},new Tap(), null),
+            new HitEvent(0,HitResult.Great,new Tap(){Break = true},new Tap(), null),
+            new HitEvent(0,HitResult.Good,new Tap(){Break = true},new Tap(), null),
+            new HitEvent(0,HitResult.Good,new Tap(){Break = true},new Tap(), null),
+            new HitEvent(0,HitResult.Good,new Tap(){Break = true},new Tap(), null),
+            new HitEvent(0,HitResult.Good,new Tap(){Break = true},new Tap(), null),
+            new HitEvent(0,HitResult.Good,new Tap(){Break = true},new Tap(), null),
+            new HitEvent(0,HitResult.Meh,new Tap(){Break = true},new Tap(), null),
         };
         public TestSceneJudgementChart()
         {

@@ -1,5 +1,5 @@
-﻿using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Judgements;
+﻿using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Mods

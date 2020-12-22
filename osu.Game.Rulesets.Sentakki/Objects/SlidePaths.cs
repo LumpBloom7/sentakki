@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using osuTK;
 using osu.Framework.Graphics;
-using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.UI;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {

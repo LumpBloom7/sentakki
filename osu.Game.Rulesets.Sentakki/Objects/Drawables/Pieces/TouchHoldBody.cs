@@ -16,7 +16,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private readonly TouchHoldCentrePiece centrePiece;
 
         private readonly Drawable explode;
-        public double Duration;
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => centrePiece.ReceivePositionalInputAt(screenSpacePos);
 
@@ -37,31 +36,29 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             };
         }
 
-        private readonly IBindable<ArmedState> state = new Bindable<ArmedState>();
         private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures, DrawableHitObject drawableObject)
+        private void load(DrawableHitObject drawableObject)
         {
-            state.BindTo(drawableObject.State);
-            state.BindValueChanged(updateState, true);
-
             accentColour.BindTo(drawableObject.AccentColour);
             accentColour.BindValueChanged(colour =>
             {
                 explode.Colour = colour.NewValue;
             }, true);
+
+            drawableObject.ApplyCustomUpdateState += updateState;
         }
 
-        private void updateState(ValueChangedEvent<ArmedState> state)
+        private void updateState(DrawableHitObject drawableObject, ArmedState state)
         {
-            switch (state.NewValue)
+            using (BeginAbsoluteSequence(drawableObject.HitStateUpdateTime, true))
             {
-                case ArmedState.Hit:
-                    const double flash_in = 40;
-                    const double flash_out = 100;
-                    using (BeginDelayedSequence(Duration, true))
-                    {
+                switch (state)
+                {
+                    case ArmedState.Hit:
+                        const double flash_in = 40;
+                        const double flash_out = 100;
                         flash.FadeTo(0.8f, flash_in)
                             .Then()
                             .FadeOut(flash_out);
@@ -77,8 +74,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
                             this.FadeOut(800);
                         }
-                    }
-                    break;
+                        break;
+                }
             }
         }
     }

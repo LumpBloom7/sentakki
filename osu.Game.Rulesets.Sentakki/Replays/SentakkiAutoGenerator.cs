@@ -1,17 +1,12 @@
-﻿using osu.Game.Beatmaps;
+﻿using System.Collections.Generic;
+using osu.Game.Beatmaps;
 using osu.Game.Replays;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Replays;
 using osuTK;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using osu.Game.Rulesets.Sentakki.Scoring;
-using Microsoft.EntityFrameworkCore.Query.Expressions;
-using System.Diagnostics;
-using osu.Game.Rulesets.Objects.Types;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace osu.Game.Rulesets.Sentakki.Replays
 {
@@ -66,9 +61,9 @@ namespace osu.Game.Rulesets.Sentakki.Replays
 
                 // todo: can be removed once FramedReplayInputHandler correctly handles rewinding before first frame.
                 if (Replay.Frames.Count == 0)
-                    Replay.Frames.Add(new SentakkiReplayFrame(group.First().Time - 1, new Vector2(-1000), Array.Empty<TouchReplayEvent>()));
+                    Replay.Frames.Add(new SentakkiReplayFrame(group.First().Time - 1, new Vector2(-1000), false, Array.Empty<TouchReplayEvent>()));
 
-                Replay.Frames.Add(new SentakkiReplayFrame(group.First().Time, new Vector2(-1000), TouchReplayEvents.ToList().ToArray(), actions.ToArray()));
+                Replay.Frames.Add(new SentakkiReplayFrame(group.First().Time, new Vector2(-1000), false, TouchReplayEvents.ToList().ToArray(), actions.ToArray()));
             }
 
             return Replay;
