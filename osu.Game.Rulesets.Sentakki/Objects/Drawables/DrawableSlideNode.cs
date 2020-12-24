@@ -46,6 +46,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // Nodes are applied before being added to the parent playfield, so this node isn't in SlideNodes yet
             // Since we know that the node isn't in the container yet, and that the count is always one higher than the topmost element, we can use that as the predicted index
             ThisIndex = parentSlide.SlideNodes.Count;
+
+            // To ensure it exists as soon as it should
+            LifetimeStart = parentSlide.HitObject.StartTime;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
