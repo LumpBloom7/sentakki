@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -38,7 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             });
             AddSliderStep("Progress", 0.0f, 1.0f, 0.0f, p =>
             {
-                slide.Progress = p;
+                slide.CompletedSegments = (int)(slide.SegmentCount * p);
             });
 
             Add(nodes = new Container()
@@ -47,9 +48,15 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 Origin = Anchor.Centre,
             });
         }
+
         protected abstract SentakkiSlidePath CreatePattern();
 
-        [SetUpSteps]
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            RefreshSlide();
+        }
+
         protected void RefreshSlide()
         {
             slide.Path = CreatePattern().Path;

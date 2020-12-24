@@ -21,11 +21,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             AddInternal(new Sprite()
             {
-                RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Texture = textures.Get("star"),
-                Size = new Vector2(1.5f)
             });
         }
     }
