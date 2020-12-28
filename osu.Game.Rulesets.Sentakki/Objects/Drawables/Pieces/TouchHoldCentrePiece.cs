@@ -17,7 +17,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Anchor = Anchor.Centre;
             Size = new Vector2(80);
             Masking = true;
-            CornerRadius = 2.5f;
             CornerRadius = 20f;
             Rotation = 45;
             EdgeEffect = new EdgeEffectParameters
