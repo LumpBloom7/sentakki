@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             new SlideCompositionTool(),
         };
 
-        protected override ComposeBlueprintContainer CreateBlueprintContainer(IEnumerable<DrawableHitObject> hitObjects)
-            => new SentakkiBlueprintContainer(hitObjects);
+        protected override ComposeBlueprintContainer CreateBlueprintContainer()
+            => new SentakkiBlueprintContainer(this);
     }
 }

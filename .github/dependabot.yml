@@ -3,10 +3,5 @@ updates:
 - package-ecosystem: nuget
   directory: "/"
   schedule:
-    interval: weekly
-    time: "12:00"
+    interval: daily
   open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: Microsoft.EntityFrameworkCore.Sqlite
-    versions:
-    - "> 3.1.4"

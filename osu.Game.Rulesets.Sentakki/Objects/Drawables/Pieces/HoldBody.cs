@@ -19,8 +19,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public readonly Container Note;
         private readonly ShadowPiece shadow;
 
-        public double Duration = 0;
-
         public HoldBody()
         {
             Scale = Vector2.Zero;
@@ -61,37 +59,37 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             };
         }
 
-        private readonly IBindable<ArmedState> state = new Bindable<ArmedState>();
         private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
 
         [BackgroundDependencyLoader]
         private void load(DrawableHitObject drawableObject)
         {
-            state.BindTo(drawableObject.State);
-            state.BindValueChanged(updateState, true);
-
             accentColour.BindTo(drawableObject.AccentColour);
             accentColour.BindValueChanged(colour =>
             {
                 explode.Colour = colour.NewValue;
                 Note.Colour = colour.NewValue;
             }, true);
+
+            drawableObject.ApplyCustomUpdateState += updateState;
         }
 
-        private void updateState(ValueChangedEvent<ArmedState> state)
+        private void updateState(DrawableHitObject drawableObject, ArmedState state)
         {
-            switch (state.NewValue)
+            if (!(drawableObject is DrawableHold)) return;
+
+            using (BeginAbsoluteSequence(drawableObject.HitStateUpdateTime, true))
             {
-                case ArmedState.Hit:
-                    const double flash_in = 40;
-                    const double flash_out = 100;
+                switch (state)
+                {
+                    case ArmedState.Hit:
+                        const double flash_in = 40;
+                        const double flash_out = 100;
 
-                    flash.Delay(Duration).FadeTo(0.8f, flash_in)
-                             .Then()
-                             .FadeOut(flash_out);
+                        flash.FadeTo(0.8f, flash_in)
+                                 .Then()
+                                 .FadeOut(flash_out);
 
-                    using (BeginDelayedSequence(Duration, true))
-                    {
                         explode.FadeIn(flash_in);
                         this.ScaleTo(1.5f, 400, Easing.OutQuad);
 
@@ -101,8 +99,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                             Note.FadeOut();
                             this.FadeOut(800);
                         }
-                    }
-                    break;
+                        break;
+                }
             }
         }
     }

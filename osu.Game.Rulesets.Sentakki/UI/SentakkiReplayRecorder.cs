@@ -1,20 +1,23 @@
 using System.Collections.Generic;
-using osu.Game.Replays;
 using osu.Game.Rulesets.Replays;
 using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.UI;
+using osu.Game.Scoring;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
     public class SentakkiReplayRecorder : ReplayRecorder<SentakkiAction>
     {
-        public SentakkiReplayRecorder(Replay replay)
-            : base(replay)
+        private readonly DrawableSentakkiRuleset drawableRuleset;
+
+        public SentakkiReplayRecorder(Score score, DrawableSentakkiRuleset ruleset)
+            : base(score)
         {
+            drawableRuleset = ruleset;
         }
 
         protected override ReplayFrame HandleFrame(Vector2 mousePosition, List<SentakkiAction> actions, ReplayFrame previousFrame)
-            => new SentakkiReplayFrame(Time.Current, mousePosition, actions.ToArray());
+            => new SentakkiReplayFrame(Time.Current, mousePosition, drawableRuleset.UseSensorMode, actions.ToArray());
     }
 }

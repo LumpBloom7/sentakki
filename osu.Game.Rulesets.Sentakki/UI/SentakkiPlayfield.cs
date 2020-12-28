@@ -1,9 +1,13 @@
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Pooling;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI.Components;
@@ -15,7 +19,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
     [Cached]
     public class SentakkiPlayfield : Playfield, IRequireHighFrequencyMousePosition
     {
-        private readonly JudgementContainer<DrawableSentakkiJudgement> judgementLayer;
+        private readonly Container<DrawableSentakkiJudgement> judgementLayer;
+        private readonly DrawablePool<DrawableSentakkiJudgement> judgementPool;
 
         private readonly SentakkiRing ring;
         public BindableNumber<int> RevolutionDuration = new BindableNumber<int>(0);
@@ -50,25 +55,34 @@ namespace osu.Game.Rulesets.Sentakki.UI
             Size = new Vector2(600);
             AddRangeInternal(new Drawable[]
             {
+                judgementPool = new DrawablePool<DrawableSentakkiJudgement>(8),
                 new PlayfieldVisualisation(),
                 ring = new SentakkiRing(),
                 lanedPlayfield = new LanedPlayfield(),
                 HitObjectContainer, // This only contains Touch and TouchHolds, which should appear above others note types. Might consider separating to another playfield.
-                judgementLayer = new JudgementContainer<DrawableSentakkiJudgement>
+                judgementLayer = new Container<DrawableSentakkiJudgement>
                 {
                     RelativeSizeAxes = Axes.Both,
                 }
             });
             AddNested(lanedPlayfield);
+            NewResult += onNewResult;
         }
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
+        private SentakkiRulesetConfigManager sentakkiRulesetConfig;
 
         [BackgroundDependencyLoader(true)]
-        private void load(DrawableSentakkiRuleset drawableRuleset)
+        private void load(DrawableSentakkiRuleset drawableRuleset, SentakkiRulesetConfigManager sentakkiRulesetConfigManager)
         {
             drawableSentakkiRuleset = drawableRuleset;
+            sentakkiRulesetConfig = sentakkiRulesetConfigManager;
+
+            RegisterPool<TouchHold, DrawableTouchHold>(2);
+            RegisterPool<Objects.Touch, DrawableTouch>(8);
         }
+
+        protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
 
         protected override void Update()
         {
@@ -83,14 +97,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         protected override GameplayCursorContainer CreateCursor() => new SentakkiCursorContainer();
 
-        public override void Add(DrawableHitObject h)
+        public override void Add(HitObject h)
         {
-            h.OnNewResult += onNewResult;
             switch (h)
             {
-                case DrawableTap _:
-                case DrawableHold _:
-                case DrawableSlide _:
+                case SentakkiLanedHitObject _:
                     lanedPlayfield.Add(h);
                     break;
 
@@ -100,53 +111,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
             }
         }
 
-        public override bool Remove(DrawableHitObject h)
-        {
-            switch (h)
-            {
-                case DrawableTap _:
-                case DrawableHold _:
-                case DrawableSlide _:
-                    return lanedPlayfield.Remove(h);
-
-                default:
-                    return base.Remove(h);
-            }
-        }
-
         private void onNewResult(DrawableHitObject judgedObject, JudgementResult result)
         {
-            if (!judgedObject.DisplayResult || !DisplayJudgements.Value)
+            if (!judgedObject.DisplayResult || !DisplayJudgements.Value || !(judgedObject is DrawableSentakkiHitObject))
                 return;
 
-            if (!(judgedObject is DrawableSentakkiHitObject)) return;
-
-            var sentakkiObj = judgedObject as DrawableSentakkiHitObject;
-
-            DrawableSentakkiJudgement explosion;
-            switch (judgedObject.HitObject)
-            {
-                case SentakkiLanedHitObject laned:
-                    explosion = new DrawableSentakkiJudgement(result, sentakkiObj)
-                    {
-                        Origin = Anchor.Centre,
-                        Anchor = Anchor.Centre,
-                        Position = SentakkiExtensions.GetPositionAlongLane(240, laned.Lane),
-                        Rotation = laned.Lane.GetRotationForLane(),
-                    };
-                    break;
-
-                default:
-                    explosion = new DrawableSentakkiJudgement(result, sentakkiObj)
-                    {
-                        Origin = Anchor.Centre,
-                        Anchor = Anchor.Centre,
-                        Position = sentakkiObj.Position
-                    };
-                    break;
-            }
-
-            judgementLayer.Add(explosion);
+            judgementLayer.Add(judgementPool.Get(j => j.Apply(result, judgedObject)));
 
             if (result.IsHit && judgedObject.HitObject.Kiai)
                 ring.KiaiBeat();

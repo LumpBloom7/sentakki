@@ -49,6 +49,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public class HoldHead : SentakkiLanedHitObject
         {
+            protected override bool NeedBreakSample => false;
+
             public override Judgement CreateJudgement() => new SentakkiJudgement();
             protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
         }

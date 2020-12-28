@@ -28,6 +28,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                     case DrawableSlide _:
                     case DrawableTouch _:
                     case DrawableTouchHold _:
+                    // Slide nodes needs to be handled as well because the pool creates the object outside the DHO context
+                    case DrawableSlideNode _:
                         d.Auto = true;
                         break;
                 }

@@ -1,4 +1,5 @@
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Platform;
@@ -31,12 +32,13 @@ namespace osu.Game.Rulesets.Sentakki.Tests
             public OsuGameSupporter()
             {
                 API = new DummyAPIAccess();
-                API.LocalUser.Value = new User
+                Bindable<User> testUser = new Bindable<User>(new User
                 {
                     IsSupporter = true,
                     Username = "Mai-Chan",
                     Country = new Country { FlagName = @"BE" }
-                };
+                });
+                API.LocalUser.BindTo(testUser);
             }
         }
     }

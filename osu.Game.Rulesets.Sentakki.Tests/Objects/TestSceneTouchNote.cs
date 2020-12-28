@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             var circle = new Touch
             {
                 StartTime = Time.Current + 1000,
-                Position = Vector2.Zero,
+                Position = new Vector2(0, -1),
             };
 
             circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
@@ -46,5 +46,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 Auto = auto
             });
         }
+        protected override Ruleset CreateRuleset() => new SentakkiRuleset();
     }
 }

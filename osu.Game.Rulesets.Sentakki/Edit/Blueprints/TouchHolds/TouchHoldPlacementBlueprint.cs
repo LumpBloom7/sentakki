@@ -49,9 +49,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
             return true;
         }
 
-        public override void UpdatePosition(SnapResult result)
+        public override void UpdateTimeAndPosition(SnapResult result)
         {
-            base.UpdatePosition(result);
+            base.UpdateTimeAndPosition(result);
             if (PlacementActive)
                 HitObject.EndTime = EditorClock.CurrentTime;
         }

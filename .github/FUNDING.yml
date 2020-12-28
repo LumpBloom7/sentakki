@@ -1,6 +1,4 @@
 # These are supported funding model platforms
 
 ko_fi: Bloom
-
-# In the middle of an account transition, unsupported.
-#custom: "https://paypal.me/lumpbloom7"
+custom: ["https://paypal.me/DerrickTimmermans", "https://lumpbloom7.github.io/sponsor"]

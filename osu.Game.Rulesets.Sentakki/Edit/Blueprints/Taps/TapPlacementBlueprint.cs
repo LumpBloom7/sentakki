@@ -44,9 +44,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
             return base.OnMouseDown(e);
         }
 
-        public override void UpdatePosition(SnapResult result)
+        public override void UpdateTimeAndPosition(SnapResult result)
         {
-            base.UpdatePosition(result);
+            base.UpdateTimeAndPosition(result);
 
             Vector2 newPos = ToLocalSpace(result.ScreenSpacePosition) - new Vector2(300);
 

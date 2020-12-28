@@ -28,28 +28,18 @@ namespace osu.Game.Rulesets.Sentakki.UI
             {
                 new SettingsCheckbox
                 {
-                    LabelText = "Use maimai style judgement text (In-game only)",
-                    Current = config.GetBindable<bool>(SentakkiRulesetSettings.MaimaiJudgements)
-                },
-                new SettingsCheckbox
-                {
                     LabelText = "Show Kiai effects",
                     Current = config.GetBindable<bool>(SentakkiRulesetSettings.KiaiEffects)
                 },
                 new SettingsCheckbox
                 {
-                    LabelText = "Play Break sample when hitting BREAKs perfectly",
-                    Current = config.GetBindable<bool>(SentakkiRulesetSettings.BreakSounds)
-                },
-                new SettingsCheckbox
-                {
-                    LabelText = "Play Slide sample when beginning to slide",
-                    Current = config.GetBindable<bool>(SentakkiRulesetSettings.SlideSounds)
-                },
-                new SettingsCheckbox
-                {
                     LabelText = "Show note start indicators",
                     Current = config.GetBindable<bool>(SentakkiRulesetSettings.ShowNoteStartIndicators)
+                },
+                new SettingsCheckbox
+                {
+                    LabelText = "Snaking in Slides",
+                    Current = config.GetBindable<bool>(SentakkiRulesetSettings.SnakingSlideBody)
                 },
                 new SettingsEnumDropdown<ColorOption>
                 {

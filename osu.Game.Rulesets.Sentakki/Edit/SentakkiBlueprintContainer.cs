@@ -16,8 +16,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 {
     public class SentakkiBlueprintContainer : ComposeBlueprintContainer
     {
-        public SentakkiBlueprintContainer(IEnumerable<DrawableHitObject> drawableHitObjects)
-            : base(drawableHitObjects)
+        public SentakkiBlueprintContainer(HitObjectComposer composer)
+            : base(composer)
         {
         }
 

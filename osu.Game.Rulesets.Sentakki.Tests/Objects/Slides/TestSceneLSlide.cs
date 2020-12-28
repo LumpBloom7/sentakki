@@ -4,7 +4,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
     public class TestSceneLSlide : TestSceneSlide
     {
-        private bool mirrored = false;
+        private bool mirrored;
 
         public TestSceneLSlide()
         {

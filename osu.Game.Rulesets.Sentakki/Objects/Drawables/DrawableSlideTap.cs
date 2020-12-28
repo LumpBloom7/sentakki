@@ -6,21 +6,39 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideTap : DrawableTap
     {
-        private readonly DrawableSlide slide;
-        public DrawableSlideTap(Tap hitObject, DrawableSlide slide)
-            : base(hitObject)
+        protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
+
+        private DrawableSlide parentSlide => (DrawableSlide)ParentHitObject;
+
+        public DrawableSlideTap() : this(null) { }
+        public DrawableSlideTap(SlideTap hitObject)
+            : base(hitObject) { }
+
+        protected override void OnApply()
         {
-            this.slide = slide;
+            base.OnApply();
+            AccentColour.BindTo(ParentHitObject.AccentColour);
         }
 
-        protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
+        protected override void OnFree()
+        {
+            base.OnFree();
+            AccentColour.UnbindFrom(parentSlide.AccentColour);
+        }
 
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
 
-            double spinDuration = ((Slide)slide.HitObject).SlideInfoList.FirstOrDefault().Duration;
-            (TapVisual as SlideTapPiece).Stars.Spin(spinDuration, RotationDirection.CounterClockwise, 0).Loop();
+            var note = TapVisual as SlideTapPiece;
+
+            if (parentSlide.SlideBodies.Count > 1)
+                note.SecondStar.Alpha = 1;
+            else
+                note.SecondStar.Alpha = 0;
+
+            double spinDuration = ((Slide)parentSlide.HitObject).SlideInfoList.FirstOrDefault().Duration + 50;
+            note.Stars.Spin(spinDuration, RotationDirection.CounterClockwise, 0).Loop();
         }
     }
 }

@@ -1,7 +1,9 @@
+using System;
 using NUnit.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Testing;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.UI.Components;
@@ -15,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
     {
         protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 
-        protected int StartPath = 0;
+        protected int StartPath;
         protected int EndPath;
 
         private readonly SlideVisual slide;
@@ -24,11 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         public TestSceneSlide()
         {
             Add(new SentakkiRing());
-
-            Add(slide = new SlideVisual()
-            {
-                Path = CreatePattern().Path
-            });
+            Add(slide = new SlideVisual());
 
             AddSliderStep("Path offset", 0, 7, 0, p =>
             {
@@ -41,7 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             });
             AddSliderStep("Progress", 0.0f, 1.0f, 0.0f, p =>
             {
-                slide.Progress = p;
+                slide.CompletedSegments = (int)(slide.SegmentCount * p);
             });
 
             Add(nodes = new Container()
@@ -50,7 +48,14 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 Origin = Anchor.Centre,
             });
         }
+
         protected abstract SentakkiSlidePath CreatePattern();
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            RefreshSlide();
+        }
 
         protected void RefreshSlide()
         {

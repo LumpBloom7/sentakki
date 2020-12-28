@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Bindings;
+using osu.Framework.Platform;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
 using osu.Game.Overlays.Settings;
@@ -71,7 +73,6 @@ namespace osu.Game.Rulesets.Sentakki
                         new SentakkiModHardRock(),
                         new MultiMod(new SentakkiModSuddenDeath(), new SentakkiModPerfect()),
                         new MultiMod(new SentakkiModDoubleTime(), new SentakkiModNightcore()),
-                        new MultiMod(new SentakkiModHidden(), new SentakkiModFadeIn()),
                     };
 
                 case ModType.Automation:
@@ -152,10 +153,7 @@ namespace osu.Game.Rulesets.Sentakki
             }
         };
 
-        public override Drawable CreateIcon() => new Sprite
-        {
-            Texture = new TextureStore(new TextureLoaderStore(CreateResourceStore()), false).Get("Textures/Icon2"),
-        };
+        public override Drawable CreateIcon() => new SentakkiIcon(this);
 
         protected override IEnumerable<HitResult> GetValidHitResults()
         {
@@ -165,6 +163,24 @@ namespace osu.Game.Rulesets.Sentakki
                 HitResult.Good,
                 HitResult.Meh,
             };
+        }
+
+        private class SentakkiIcon : Sprite
+        {
+            private readonly Ruleset ruleset;
+            public SentakkiIcon(Ruleset ruleset)
+            {
+                this.ruleset = ruleset;
+            }
+
+            [BackgroundDependencyLoader]
+            private void load(TextureStore textures, GameHost host)
+            {
+                if (!textures.GetAvailableResources().Contains("Textures/Icon.png"))
+                    textures.AddStore(host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
+
+                Texture = textures.Get("Textures/Icon");
+            }
         }
     }
 }

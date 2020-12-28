@@ -4,6 +4,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Game.Graphics;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -16,8 +17,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTouchHold : DrawableSentakkiHitObject
     {
-        private readonly TouchHoldBody touchHoldBody;
-
         public override bool HandlePositionalInput => true;
 
         private SentakkiInputManager sentakkiActionInputManager;
@@ -25,16 +24,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => touchHoldBody.ReceivePositionalInputAt(screenSpacePos);
 
+        private TouchHoldBody touchHoldBody;
+
+        public DrawableTouchHold() : this(null) { }
+
         public DrawableTouchHold(TouchHold hitObject)
-            : base(hitObject)
+            : base(hitObject) { }
+
+        [BackgroundDependencyLoader(true)]
+        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
         {
+            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
             Colour = Color4.SlateGray;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Scale = new Vector2(0f);
             Alpha = 0;
             AddRangeInternal(new Drawable[] {
-                touchHoldBody = new TouchHoldBody(){ Duration = hitObject.Duration },
+                touchHoldBody = new TouchHoldBody(),
             });
 
             isHitting.BindValueChanged(b =>
@@ -47,35 +54,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         [Resolved]
         private OsuColour colours { get; set; }
 
-        protected override void CheckForResult(bool userTriggered, double timeOffset)
+        protected override void OnFree()
         {
-            if (Time.Current < HitObject.StartTime) return;
+            base.OnFree();
 
-            if (userTriggered || Time.Current < (HitObject as IHasDuration)?.EndTime)
-                return;
-
-            double result = totalHoldTime / (HitObject as IHasDuration).Duration;
-
-            HitResult resultType;
-
-            if (result >= .75)
-                resultType = HitResult.Great;
-            else if (result >= .5)
-                resultType = HitResult.Good;
-            else if (result >= .25)
-                resultType = HitResult.Meh;
-            else
-                resultType = HitResult.Miss;
-
-            AccentColour.Value = colours.ForHitResult(resultType);
-
-            ApplyResult(r => r.Type = resultType);
-        }
-
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
-        {
-            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
+            holdStartTime = null;
+            totalHoldTime = 0;
         }
 
         protected override void UpdateInitialTransforms()
@@ -112,33 +96,63 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Colour = Color4.SlateGray;
         }
 
-
         protected override void Update()
         {
             base.Update();
 
-            var touchInput = SentakkiActionInputManager.CurrentState.Touch;
-            bool isTouched = touchInput.ActiveSources.Any(s => ReceivePositionalInputAt(touchInput.GetTouchPosition(s) ?? new Vector2(float.MinValue)));
             isHitting.Value = Time.Current >= HitObject.StartTime
                             && Time.Current <= (HitObject as IHasDuration)?.EndTime
-                            && (Auto || isTouched || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
+                            && (Auto || checkForTouchInput() || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
         }
 
-        protected override void UpdateStateTransforms(ArmedState state)
+        protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            base.UpdateStateTransforms(state);
+            if (Time.Current < (HitObject as IHasDuration)?.EndTime) return;
+
+            double result = totalHoldTime / (HitObject as IHasDuration).Duration;
+
+            HitResult resultType;
+
+            if (result >= .75)
+                resultType = HitResult.Great;
+            else if (result >= .5)
+                resultType = HitResult.Good;
+            else if (result >= .25)
+                resultType = HitResult.Meh;
+            else
+                resultType = HitResult.Miss;
+
+            AccentColour.Value = colours.ForHitResult(resultType);
+            ApplyResult(r => r.Type = resultType);
+        }
+
+        protected override void UpdateHitStateTransforms(ArmedState state)
+        {
+            base.UpdateHitStateTransforms(state);
             const double time_fade_hit = 400, time_fade_miss = 400;
 
             switch (state)
             {
                 case ArmedState.Hit:
-                    this.Delay((HitObject as IHasDuration).Duration + time_fade_hit).Expire();
+                    this.Delay(time_fade_hit).Expire();
                     break;
 
                 case ArmedState.Miss:
-                    this.Delay((HitObject as IHasDuration).Duration).ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss);
+                    this.ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss).Expire();
                     break;
             }
+        }
+
+        private bool checkForTouchInput()
+        {
+            var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+
+            // Avoiding Linq to minimize allocations, since this would be called every update of this node
+            foreach (var t in touchInput.ActiveSources)
+                if (ReceivePositionalInputAt(touchInput.GetTouchPosition(t).Value))
+                    return true;
+
+            return false;
         }
     }
 }

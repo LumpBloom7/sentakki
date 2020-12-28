@@ -57,9 +57,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             return true;
         }
 
-        public override void UpdatePosition(SnapResult result)
+        public override void UpdateTimeAndPosition(SnapResult result)
         {
-            base.UpdatePosition(result);
+            base.UpdateTimeAndPosition(result);
             if (!PlacementActive)
             {
                 Vector2 newPos = ToLocalSpace(result.ScreenSpacePosition) - new Vector2(300);

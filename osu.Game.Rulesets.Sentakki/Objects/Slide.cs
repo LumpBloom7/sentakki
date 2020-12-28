@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using osu.Game.Audio;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -11,11 +12,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Slide : SentakkiLanedHitObject, IHasDuration
     {
+        protected override bool NeedBreakSample => false;
+
         public double Duration
         {
             get => SlideInfoList.Any() ? SlideInfoList.Max(s => s.Duration) : 0;
             set => SlideInfoList.First().Duration = value;
         }
+
+        public List<IList<HitSampleInfo>> NodeSamples = new List<IList<HitSampleInfo>>();
 
         public double EndTime => StartTime + Duration;
 
@@ -25,11 +30,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            AddNested(new Tap
+            AddNested(new SlideTap
             {
+                HasTwin = HasTwin || SlideInfoList.Count > 1,
                 LaneBindable = { BindTarget = LaneBindable },
                 StartTime = StartTime,
-                Samples = Samples,
+                Samples = NodeSamples.Any() ? NodeSamples.First() : new List<HitSampleInfo>(),
                 Break = Break
             });
             createSlideBodies();
@@ -41,9 +47,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             {
                 AddNested(new SlideBody
                 {
+                    HasTwin = HasTwin || SlideInfoList.Count > 1,
                     Lane = SlideInfo.SlidePath.EndLane + Lane,
                     StartTime = StartTime,
-                    SlideInfo = SlideInfo
+                    SlideInfo = SlideInfo,
+                    Samples = NodeSamples.Any() ? NodeSamples.Last() : new List<HitSampleInfo>(),
                 });
             }
         }

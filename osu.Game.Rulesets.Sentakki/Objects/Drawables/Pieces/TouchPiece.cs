@@ -7,23 +7,29 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class StarPiece : CompositeDrawable
+    public class TouchPiece : CompositeDrawable
     {
-        public StarPiece()
+        private Texture touchTexture;
+        public TouchPiece()
         {
-            RelativeSizeAxes = Axes.Both;
+            Size = new Vector2(75);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
+            RelativePositionAxes = Axes.Both;
         }
 
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
+            touchTexture = textures.Get("Touch");
             AddInternal(new Sprite()
             {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Texture = textures.Get("star"),
+                RelativeSizeAxes = Axes.Both,
+                FillMode = FillMode.Fit,
+                FillAspectRatio = 1,
+                Anchor = Anchor.TopCentre,
+                Origin = Anchor.TopCentre,
+                Texture = touchTexture,
             });
         }
     }
