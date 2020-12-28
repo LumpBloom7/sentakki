@@ -15,35 +15,20 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touchs.Components
     {
         public TouchSelectionPiece()
         {
-            Size = new Vector2(80);
-
-            CornerRadius = 20;
+            Size = new Vector2(105);
+            CornerRadius = 25f;
             CornerExponent = 2.5f;
             Masking = true;
             BorderColour = Colour4.White;
             BorderThickness = 5;
 
             InternalChildren = new Drawable[]{
-                new Box{
+                new Box {
                     Alpha = 0,
                     AlwaysPresent = true,
                     RelativeSizeAxes = Axes.Both
                 },
-                new CircularContainer
-                {
-                    Size = new Vector2(20),
-                    Masking = true,
-                    BorderColour = Color4.Gray,
-                    BorderThickness = 2,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        AlwaysPresent = true,
-                        Colour = Color4.White,
-                    }
-                }
+                new DotPiece(),
             };
         }
 

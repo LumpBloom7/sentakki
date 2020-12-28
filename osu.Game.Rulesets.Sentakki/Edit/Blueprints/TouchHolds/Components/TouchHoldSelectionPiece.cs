@@ -7,42 +7,34 @@ using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Framework.Graphics.Primitives;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds.Components
 {
     public class TouchHoldSelectionPiece : BlueprintPiece<TouchHold>
     {
+        public Quad SelectionBoundaries => ScreenSpaceDrawQuad.AABBFloat.Shrink(10f);
+
         public TouchHoldSelectionPiece()
         {
-            Size = new Vector2(120);
+            Size = new Vector2(110);
             Position = Vector2.Zero;
 
-            CornerRadius = Size.X / 2;
-            CornerExponent = 2;
+            CornerRadius = 27.5f;
+            CornerExponent = 2.5f;
             Masking = true;
             BorderColour = Colour4.White;
             BorderThickness = 5;
+            Rotation = 45;
 
             AddRangeInternal(new Drawable[]{
-                new Box{
+                new Box {
                     AlwaysPresent = true,
                     Alpha = 0,
                     RelativeSizeAxes = Axes.Both
                 },
-                new CircularContainer
-                {
-                    Size = new Vector2(92),
-                    Masking = true,
-                    BorderColour = Color4.White,
-                    BorderThickness = 2,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Alpha = 0
-                    }
-                }
+                new DotPiece(),
             });
         }
 

@@ -5,6 +5,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osuTK;
 using osuTK.Graphics;
 
@@ -28,21 +29,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps.Components
                     Alpha = 0,
                     RelativeSizeAxes = Axes.Both
                 },
-                new CircularContainer
-                {
-                    Size = new Vector2(20),
-                    Masking = true,
-                    BorderColour = Color4.Gray,
-                    BorderThickness = 2,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        AlwaysPresent = true,
-                        Colour = Color4.White,
-                    }
-                }
+                new DotPiece(),
             });
         }
 

@@ -6,6 +6,7 @@ using osu.Framework.Graphics.Primitives;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
@@ -34,43 +35,17 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds.Components
                             Alpha = 0,
                             RelativeSizeAxes = Axes.Both
                         },
-                        new Container
+                        new DotPiece(squared: true)
                         {
-                            Masking = true,
-                            CornerExponent = 2.5f,
-                            CornerRadius = 5f,
                             Rotation = 45,
                             Position = new Vector2(0, -37.5f),
-                            Size = new Vector2(20),
-                            BorderColour = Color4.Gray,
-                            BorderThickness = 2,
                             Anchor = Anchor.BottomCentre,
-                            Origin = Anchor.Centre,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                AlwaysPresent = true,
-                                Colour = Color4.White,
-                            }
                         },
-                        new Container
+                        new DotPiece(squared: true)
                         {
-                            Masking = true,
-                            CornerExponent = 2.5f,
-                            CornerRadius = 5f,
                             Rotation = 45,
                             Position = new Vector2(0, 37.5f),
-                            Size = new Vector2(20),
-                            BorderColour = Color4.Gray,
-                            BorderThickness = 2,
                             Anchor = Anchor.TopCentre,
-                            Origin = Anchor.Centre,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                AlwaysPresent = true,
-                                Colour = Color4.White,
-                            }
                         }
                     },
                 }
