@@ -10,6 +10,6 @@
     <AssemblyName>osu.Game.Rulesets.Sentakki</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ppy.osu.Game" Version="2020.1228.0"/>
+    <PackageReference Include="ppy.osu.Game" Version="2020.1229.0"/>
   </ItemGroup>
 </Project>
