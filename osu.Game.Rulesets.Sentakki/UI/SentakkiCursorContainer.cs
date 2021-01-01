@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            cursorTexture = textures.Get("Icon");
+            cursorTexture = textures.Get("SentakkiIcon.png");
 
             if (cursorSprite != null)
                 cursorSprite.Texture = cursorTexture;
