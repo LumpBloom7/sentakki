@@ -1,25 +1,46 @@
 using System;
+using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Utils;
 using osu.Game.Audio;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Screens.Play;
 using osu.Game.Skinning;
+using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
     public class SentakkiResumeOverlay : ResumeOverlay
     {
+        private readonly string[] supporter_list = new string[]{
+            "Ayato_K ♥",
+            "Bosch ♥",
+            "Dubita ♥",
+            "Ezz ♥ (iOS helper)",
+            "Mae ♥♥",
+            "Nutchapol ♥",
+            "Shiuannie (Artist)",
+            "Smoogipoo ♥♥♥",
+            "Flutterish (Debate starter)",
+            "Slipsy (Discord moderator)",
+            "Nooraldeen (Discord moderator, feedback machine)"
+        }.OrderBy(t => RNG.Next()).ToArray();
+
+        private int currentSupporterIndex;
+
         protected override string Message => "Get ready!";
 
         private double timePassed = 3500;
         private Bindable<int> tickCount = new Bindable<int>(4);
 
         private OsuSpriteText counterText;
+        private OsuSpriteText supporterText;
+
         private readonly SkinnableSound countSound;
 
         private SentakkiCursorContainer localCursorContainer;
@@ -40,6 +61,31 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     Text = "",
                     Font = OsuFont.Torus.With(size: 50),
                     Colour = Color4.White,
+                },
+                new FillFlowContainer{
+                    Direction = FillDirection.Horizontal,
+                    RelativePositionAxes = Axes.Both,
+                    Y = -0.4f,
+                    Anchor = Anchor.BottomCentre,
+                    Origin = Anchor.BottomCentre,
+                    Children = new Drawable[]{
+                        new OsuSpriteText
+                        {
+                            Text = "This ruleset is made possible with the support of ",
+                            Font = OsuFont.Torus.With(size: 20),
+                            Colour = Color4.White,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                        },
+                        supporterText = new OsuSpriteText
+                        {
+                            Text = "Marisa Kirisame",
+                            Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold),
+                            Colour = Color4.HotPink,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                        }
+                    }
                 },
                 countSound = new SkinnableSound(new SampleInfo("Gameplay/Taka"))
             };
@@ -64,6 +110,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override void PopIn()
         {
             base.PopIn();
+            supporterText.Text = getRandomSupporter();
 
             // Reset the countdown
             timePassed = 3500;
@@ -87,6 +134,14 @@ namespace osu.Game.Rulesets.Sentakki.UI
             localCursorContainer?.Expire();
             localCursorContainer = null;
             GameplayCursor?.ActiveCursor?.Show();
+        }
+
+        private string getRandomSupporter()
+        {
+            var tmp = supporter_list[currentSupporterIndex++];
+            if (currentSupporterIndex >= supporter_list.Length) currentSupporterIndex = 0;
+
+            return tmp;
         }
     }
 }
