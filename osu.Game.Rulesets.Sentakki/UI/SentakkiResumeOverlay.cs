@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 {
     public class SentakkiResumeOverlay : ResumeOverlay
     {
-        private readonly string[] supporter_list = new string[]{
+        private static readonly string[] supporter_list = new string[]{
             "Ayato_K ♥",
             "Bosch ♥",
             "Dubita ♥",
@@ -31,7 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             "Nooraldeen (Discord moderator, feedback machine)"
         }.OrderBy(t => RNG.Next()).ToArray();
 
-        private int currentSupporterIndex;
+        private static int currentSupporterIndex;
 
         protected override string Message => "Get ready!";
 
