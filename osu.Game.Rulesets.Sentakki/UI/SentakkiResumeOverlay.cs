@@ -28,7 +28,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
             "Smoogipoo ♥♥♥",
             "Flutterish (Debate starter)",
             "Slipsy (Discord moderator)",
-            "Nooraldeen (Discord moderator, feedback machine)"
+            "Nooraldeen (Discord moderator, feedback machine)",
+            "lazer developers"
         }.OrderBy(t => RNG.Next()).ToArray();
 
         private static int currentSupporterIndex;
@@ -61,6 +62,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     Text = "",
                     Font = OsuFont.Torus.With(size: 50),
                     Colour = Color4.White,
+                    Shadow = true,
+                    ShadowColour = new Color4(0f, 0f, 0f, 0.25f)
                 },
                 new FillFlowContainer{
                     Direction = FillDirection.Horizontal,
@@ -76,6 +79,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                             Colour = Color4.White,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
+                            Shadow = true,
+                            ShadowColour = new Color4(0f, 0f, 0f, 0.25f)
                         },
                         supporterText = new OsuSpriteText
                         {
@@ -84,6 +89,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                             Colour = Color4.HotPink,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
+                            Shadow = true,
+                            ShadowColour = new Color4(0f, 0f, 0f, 0.25f)
                         }
                     }
                 },
