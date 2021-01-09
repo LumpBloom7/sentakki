@@ -26,7 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             "Nutchapol ♥",
             "Shiuannie (Artist)",
             "Smoogipoo ♥♥♥",
-            "Flutterish (Debate starter)",
+            "Flutterish",
             "Slipsy (Discord moderator)",
             "Nooraldeen (Discord moderator, feedback machine)",
             "lazer developers"
@@ -74,7 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     Children = new Drawable[]{
                         new OsuSpriteText
                         {
-                            Text = "This ruleset is made possible with the support of ",
+                            Text = "Sentakki is made with the support of ",
                             Font = OsuFont.Torus.With(size: 20),
                             Colour = Color4.White,
                             Anchor = Anchor.Centre,
