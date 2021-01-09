@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
@@ -17,7 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 {
     public class SentakkiResumeOverlay : ResumeOverlay
     {
-        private static readonly string[] supporter_list = new string[]{
+        private readonly string[] supporter_list = new string[]{
             "Ayato_K ♥",
             "Bosch ♥",
             "Dubita ♥",
@@ -86,7 +87,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                         {
                             Text = "Marisa Kirisame",
                             Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold),
-                            Colour = Color4.HotPink,
+                            Colour = Color4Extensions.FromHex("ff0064"),
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             Shadow = true,
