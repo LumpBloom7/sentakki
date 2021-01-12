@@ -155,9 +155,9 @@ namespace osu.Game.Rulesets.Sentakki
         {
             return new[]
             {
+                HitResult.Perfect,
                 HitResult.Great,
                 HitResult.Good,
-                HitResult.Meh,
             };
         }
 
