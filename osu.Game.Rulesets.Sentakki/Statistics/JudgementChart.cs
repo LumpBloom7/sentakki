@@ -221,25 +221,15 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
             {
                 public double InitialLifetimeOffset;
 
-                private HitResult result;
-
                 public ChartBar(HitResult result, float progress)
                 {
-                    this.result = result;
-                    if (result == HitResult.Perfect)
-                        Console.WriteLine();
                     RelativeSizeAxes = Axes.Both;
                     Size = new Vector2(float.IsNaN(progress) ? 0 : progress, 1);
                     Scale = new Vector2(0, 1);
-                }
-
-                [BackgroundDependencyLoader]
-                private void load(OsuColour colours)
-                {
                     Add(new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = colours.ForHitResult(result)
+                        Colour = result.GetColorForSentakkiResult()
                     });
                 }
 
