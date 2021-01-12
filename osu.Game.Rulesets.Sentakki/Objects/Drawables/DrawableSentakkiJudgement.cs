@@ -45,7 +45,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         timingPiece = new OsuSpriteText{
                             Y = -25,
                             Origin = Anchor.Centre,
-                            Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold),
+                            Font = OsuFont.Torus.With(size: 25, weight: FontWeight.SemiBold),
+                            Shadow = true,
+                            ShadowColour = Color4.Black
                         },
                         judgementPiece = new SentakkiJudgementPiece(result)
                     }
