@@ -43,9 +43,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Scale = new Vector2(0.9f),
                     Children = new Drawable[]{
                         timingPiece = new OsuSpriteText{
-                            Y = -25,
+                            Y = -15,
                             Origin = Anchor.Centre,
-                            Font = OsuFont.Torus.With(size: 25, weight: FontWeight.SemiBold),
+                            Font = OsuFont.Torus.With(size: 20, weight: FontWeight.Bold),
                             Shadow = true,
                             ShadowColour = Color4.Black
                         },
@@ -66,19 +66,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 timingPiece.Alpha = 1;
                 if (result.TimeOffset > 0)
                 {
-                    timingPiece.Text = "Late";
+                    timingPiece.Text = "LATE";
                     timingPiece.Colour = Color4.OrangeRed;
                 }
                 else
                 {
-                    timingPiece.Text = "Early";
+                    timingPiece.Text = "EARLY";
                     timingPiece.Colour = Color4.GreenYellow;
                 }
             }
             else if (result.Type == HitResult.Perfect) // Crit
             {
                 timingPiece.Alpha = 1;
-                timingPiece.Text = "Critical";
+                timingPiece.Text = "CRITICAL";
                 timingPiece.Colour = Color4.Orange;
             }
             else
