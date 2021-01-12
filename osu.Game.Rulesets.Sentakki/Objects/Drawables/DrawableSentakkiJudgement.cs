@@ -1,9 +1,12 @@
-﻿using osu.Framework.Allocation;
+﻿using System;
+using osu.Framework.Allocation;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
@@ -20,7 +23,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public override bool RemoveCompletedTransforms => false;
 
-        private SentakkiJudgementPiece judgementBody;
+
+        private Container judgementBody;
+        private SentakkiJudgementPiece judgementPiece;
+        private OsuSpriteText timingPiece;
 
         private HitResult result = HitResult.Great;
 
@@ -29,14 +35,48 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            AddInternal(judgementBody = new SentakkiJudgementPiece(result));
+            AddInternal(
+                judgementBody = new Container
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Scale = new Vector2(0.9f),
+                    Children = new Drawable[]{
+                        timingPiece = new OsuSpriteText{
+                            Y = -25,
+                            Origin = Anchor.Centre,
+                            Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold),
+                        },
+                        judgementPiece = new SentakkiJudgementPiece(result)
+                    }
+                }
+            );
         }
 
         public void Apply(JudgementResult result, DrawableHitObject hitObject)
         {
             this.result = result.Type;
-            judgementBody.JudgementText.Text = result.Type.GetDescription().ToUpperInvariant();
-            judgementBody.JudgementText.Colour = result.Type.GetColorForSentakkiResult();
+            judgementPiece.JudgementText.Text = result.Type.GetDescription().ToUpperInvariant();
+            judgementPiece.JudgementText.Colour = result.Type.GetColorForSentakkiResult();
+
+            if (Math.Abs(result.TimeOffset) > 20 && result.Type != HitResult.Miss)
+            {
+                timingPiece.Alpha = 1;
+                if (result.TimeOffset > 0)
+                {
+                    timingPiece.Text = "Late";
+                    timingPiece.Colour = Color4.OrangeRed;
+                }
+                else
+                {
+                    timingPiece.Text = "Early";
+                    timingPiece.Colour = Color4.GreenYellow;
+                }
+            }
+            else
+            {
+                timingPiece.Alpha = 0;
+            }
 
             LifetimeStart = result.TimeAbsolute;
 
@@ -76,7 +116,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             public SentakkiJudgementPiece(HitResult result) : base(result)
             {
-                Scale = new Vector2(.9f);
             }
 
             protected override void LoadComplete()
