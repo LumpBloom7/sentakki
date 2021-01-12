@@ -35,7 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new NoteEntry
                 {
                     ObjectName = "Hold",
-                    HitEvents = hitEvents.Where(e => (e.HitObject is Hold x || e.HitObject is Hold.HoldHead) && (e.HitObject as SentakkiLanedHitObject).Break).ToList(),
+                    HitEvents = hitEvents.Where(e => (e.HitObject is Hold x || e.HitObject is Hold.HoldHead) && !(e.HitObject as SentakkiLanedHitObject).Break).ToList(),
                     Position = new Vector2(0, .16f),
                     InitialLifetimeOffset = entry_animation_duration * 1
                 },
