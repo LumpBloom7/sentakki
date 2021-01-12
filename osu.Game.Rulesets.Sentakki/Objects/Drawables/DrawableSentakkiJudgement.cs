@@ -8,6 +8,7 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -35,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             this.result = result.Type;
             judgementBody.JudgementText.Text = result.Type.GetDescription().ToUpperInvariant();
-            judgementBody.JudgementText.Colour = colours.ForHitResult(result.Type);
+            judgementBody.JudgementText.Colour = result.Type.GetColorForSentakkiResult();
 
             LifetimeStart = result.TimeAbsolute;
 
@@ -76,6 +77,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             public SentakkiJudgementPiece(HitResult result) : base(result)
             {
                 Scale = new Vector2(.9f);
+            }
+
+            protected override void LoadComplete()
+            {
+                base.LoadComplete();
+                JudgementText.Scale = Vector2.One;
+                JudgementText.Font = OsuFont.Torus.With(size: 30, weight: FontWeight.Bold);
+                JudgementText.Shadow = true;
+                JudgementText.ShadowColour = Color4.Black;
             }
 
             public new SpriteText JudgementText => base.JudgementText;
