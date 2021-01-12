@@ -61,31 +61,29 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             judgementPiece.JudgementText.Text = result.Type.GetDescription().ToUpperInvariant();
             judgementPiece.JudgementText.Colour = result.Type.GetColorForSentakkiResult();
 
-            if (Math.Abs(result.TimeOffset) > 20 && result.Type != HitResult.Miss)
+            if (result.HitObject.HitWindows is HitWindows.EmptyHitWindows || result.Type == HitResult.Miss)
+            {
+                timingPiece.Alpha = 0;
+            }
+            else
             {
                 timingPiece.Alpha = 1;
-                if (result.TimeOffset > 0)
+                if (result.TimeOffset >= 16)
                 {
                     timingPiece.Text = "LATE";
                     timingPiece.Colour = Color4.OrangeRed;
                 }
-                else
+                else if (result.TimeOffset <= -16)
                 {
                     timingPiece.Text = "EARLY";
                     timingPiece.Colour = Color4.GreenYellow;
                 }
+                else
+                {
+                    timingPiece.Text = "CRITICAL";
+                    timingPiece.Colour = Color4.Orange;
+                }
             }
-            else if (result.Type == HitResult.Perfect) // Crit
-            {
-                timingPiece.Alpha = 1;
-                timingPiece.Text = "CRITICAL";
-                timingPiece.Colour = Color4.Orange;
-            }
-            else
-            {
-                timingPiece.Alpha = 0;
-            }
-
             LifetimeStart = result.TimeAbsolute;
 
             switch (hitObject)
