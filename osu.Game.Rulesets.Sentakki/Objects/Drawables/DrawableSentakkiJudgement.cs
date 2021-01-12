@@ -75,6 +75,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     timingPiece.Colour = Color4.GreenYellow;
                 }
             }
+            else if (result.Type == HitResult.Perfect) // Crit
+            {
+                timingPiece.Alpha = 1;
+                timingPiece.Text = "Critical";
+                timingPiece.Colour = Color4.Orange;
+            }
             else
             {
                 timingPiece.Alpha = 0;
