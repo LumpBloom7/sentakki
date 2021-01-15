@@ -41,6 +41,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     LabelText = "Snaking in Slides",
                     Current = config.GetBindable<bool>(SentakkiRulesetSettings.SnakingSlideBody)
                 },
+                new SettingsCheckbox{
+                    LabelText = "Show detailed judgements",
+                    Current = config.GetBindable<bool>(SentakkiRulesetSettings.DetailedJudgements)
+                },
                 new SettingsEnumDropdown<ColorOption>
                 {
                     LabelText = "Ring Colour",

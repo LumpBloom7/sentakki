@@ -23,6 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
             Set(SentakkiRulesetSettings.RingOpacity, 1f, 0f, 1f, 0.01f);
             Set(SentakkiRulesetSettings.LaneInputMode, LaneInputMode.Button);
             Set(SentakkiRulesetSettings.SnakingSlideBody, true);
+            Set(SentakkiRulesetSettings.DetailedJudgements, false);
         }
     }
 
@@ -49,6 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
         RingColor,
         TouchAnimationDuration,
         LaneInputMode,
-        SnakingSlideBody
+        SnakingSlideBody,
+        DetailedJudgements
     }
 }
