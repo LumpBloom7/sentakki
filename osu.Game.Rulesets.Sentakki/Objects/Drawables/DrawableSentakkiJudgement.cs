@@ -20,11 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     // New Judgement type to completely avoid the problem of legacy skins, they aren't appropriate for custom rulesets that use varied HitResults
     public class DrawableSentakkiJudgement : PoolableDrawable
     {
-        [Resolved]
-        private OsuColour colours { get; set; }
-
         public override bool RemoveCompletedTransforms => false;
-
 
         private Container judgementBody;
         private SentakkiJudgementPiece judgementPiece;
