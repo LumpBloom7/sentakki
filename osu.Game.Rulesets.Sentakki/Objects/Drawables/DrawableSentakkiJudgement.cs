@@ -34,10 +34,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private readonly BindableBool detailedJudgements = new BindableBool();
 
-        [BackgroundDependencyLoader]
+        [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager sentakkiConfigs)
         {
-            sentakkiConfigs.BindWith(SentakkiRulesetSettings.DetailedJudgements, detailedJudgements);
+            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.DetailedJudgements, detailedJudgements);
 
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
