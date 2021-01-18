@@ -31,7 +31,7 @@ Prebuilt binaries are provided for users who doesn't want to create a developmen
 
 Some prerequisites are required before attempting to debug or develop:
 
-* A desktop platform with the .NET Core 3.1 SDK or higher installed.
+* A desktop platform with the .NET 5 SDK or higher installed.
 * An IDE with support for C#, providing auto completion and syntax highlighting. I recommend using Visual Studio 2019 or Visual Studio Code.
 * Other requirements are shared with osu!lazer and osu!framework
 
