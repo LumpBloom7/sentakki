@@ -9,6 +9,8 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
 {
     public class TestSceneResumeOverlay : OsuTestScene
     {
+        protected override Ruleset CreateRuleset() => new SentakkiRuleset();
+
         public TestSceneResumeOverlay()
         {
             CursorContainer cursor;
