@@ -22,8 +22,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         private DrawablePool<TouchPointer> pointerPool;
 
 
-        private int leftCount;
-        private int rightCount;
+        //private int leftCount;
+        //private int rightCount;
 
         public Dictionary<TouchSource, TouchPointer> InUsePointers = new Dictionary<TouchSource, TouchPointer>();
 
@@ -55,7 +55,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 {
                     bool useLeftHand = false;
 
-                    if (newPos.X < 0)
+                    /* if (newPos.X < 0)
                     {
                         if (leftCount <= rightCount)
                             useLeftHand = true;
@@ -69,7 +69,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                     if (useLeftHand) ++leftCount;
                     else ++rightCount;
                     Console.WriteLine(leftCount + ", " + rightCount);
-
+ */
                     AddInternal(pointer = pointerPool.Get());
                     pointer.Scale = new Vector2(useLeftHand ? -1 : 1, 1);
                     InUsePointers[point] = pointer;
