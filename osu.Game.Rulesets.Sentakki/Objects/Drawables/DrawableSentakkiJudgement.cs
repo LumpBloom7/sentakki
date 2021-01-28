@@ -1,42 +1,91 @@
-﻿using osu.Framework.Allocation;
+﻿using System;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Configuration;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     // New Judgement type to completely avoid the problem of legacy skins, they aren't appropriate for custom rulesets that use varied HitResults
     public class DrawableSentakkiJudgement : PoolableDrawable
     {
-        [Resolved]
-        private OsuColour colours { get; set; }
-
         public override bool RemoveCompletedTransforms => false;
 
-        private SentakkiJudgementPiece judgementBody;
+        private Container judgementBody;
+        private SentakkiJudgementPiece judgementPiece;
+        private OsuSpriteText timingPiece;
 
         private HitResult result = HitResult.Great;
 
-        [BackgroundDependencyLoader]
-        private void load()
+        private readonly BindableBool detailedJudgements = new BindableBool();
+
+        [BackgroundDependencyLoader(true)]
+        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
         {
+            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.DetailedJudgements, detailedJudgements);
+
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            AddInternal(judgementBody = new SentakkiJudgementPiece(result));
+            AddInternal(
+                judgementBody = new Container
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Scale = new Vector2(0.9f),
+                    Children = new Drawable[]{
+                        timingPiece = new OsuSpriteText{
+                            Y = -15,
+                            Origin = Anchor.Centre,
+                            Font = OsuFont.Torus.With(size: 20, weight: FontWeight.Bold),
+                            Shadow = true,
+                            ShadowColour = Color4.Black
+                        },
+                        judgementPiece = new SentakkiJudgementPiece(result)
+                    }
+                }
+            );
         }
 
         public void Apply(JudgementResult result, DrawableHitObject hitObject)
         {
             this.result = result.Type;
-            judgementBody.JudgementText.Text = result.Type.GetDescription().ToUpperInvariant();
-            judgementBody.JudgementText.Colour = colours.ForHitResult(result.Type);
+            judgementPiece.JudgementText.Text = result.Type.GetDescription().ToUpperInvariant();
+            judgementPiece.JudgementText.Colour = result.Type.GetColorForSentakkiResult();
 
+            if (result.HitObject.HitWindows is HitWindows.EmptyHitWindows || result.Type == HitResult.Miss || !detailedJudgements.Value)
+            {
+                timingPiece.Alpha = 0;
+            }
+            else
+            {
+                timingPiece.Alpha = 1;
+                if (result.TimeOffset >= 16)
+                {
+                    timingPiece.Text = "LATE";
+                    timingPiece.Colour = Color4.OrangeRed;
+                }
+                else if (result.TimeOffset <= -16)
+                {
+                    timingPiece.Text = "EARLY";
+                    timingPiece.Colour = Color4.GreenYellow;
+                }
+                else
+                {
+                    timingPiece.Text = "CRITICAL";
+                    timingPiece.Colour = Color4.Orange;
+                }
+            }
             LifetimeStart = result.TimeAbsolute;
 
             switch (hitObject)
@@ -75,7 +124,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             public SentakkiJudgementPiece(HitResult result) : base(result)
             {
-                Scale = new Vector2(.9f);
+            }
+
+            protected override void LoadComplete()
+            {
+                base.LoadComplete();
+                JudgementText.Scale = Vector2.One;
+                JudgementText.Font = OsuFont.Torus.With(size: 30, weight: FontWeight.Bold);
+                JudgementText.Shadow = true;
+                JudgementText.ShadowColour = Color4.Black;
             }
 
             public new SpriteText JudgementText => base.JudgementText;

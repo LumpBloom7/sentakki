@@ -153,7 +153,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     // Miss the last node to ensure that all of them have results
                     SlideNodes.Last().ForcefullyMiss();
                     if (SlideNodes.Count(node => !node.Result.IsHit) <= 2 && SlideNodes.Count > 2)
-                        ApplyResult(r => r.Type = HitResult.Meh);
+                        ApplyResult(r => r.Type = HitResult.Good);
                     else
                         ApplyResult(r => r.Type = r.Judgement.MinResult);
                 }
@@ -163,7 +163,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             var result = HitObject.HitWindows.ResultFor(timeOffset);
             if (result == HitResult.None)
-                result = HitResult.Meh;
+                result = HitResult.Good;
 
             ApplyResult(r => r.Type = result);
         }

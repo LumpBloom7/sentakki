@@ -21,7 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public override bool HandlePositionalInput => true;
 
         // This HitObject uses a completely different offset
-        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset + HitObject.HitWindows.WindowFor(HitResult.Meh);
+        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset + HitObject.HitWindows.WindowFor(HitResult.Good);
 
         private TouchFlashPiece flash;
         private ExplodePiece explode;
@@ -105,7 +105,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateInitialTransforms();
             double FadeIn = AdjustedAnimationDuration / 2;
-            double moveTo = HitObject.HitWindows.WindowFor(HitResult.Meh);
+            double moveTo = HitObject.HitWindows.WindowFor(HitResult.Good);
 
             this.FadeInFromZero(FadeIn);
 
