@@ -12,16 +12,19 @@ namespace osu.Game.Rulesets.Sentakki.Replays
         public Vector2 Position;
         public List<SentakkiAction> Actions = new List<SentakkiAction>();
 
+        public TouchReplayEvent[] TouchReplayEvents { get; set; }
+
         public bool UsingSensorMode;
 
         public SentakkiReplayFrame()
         {
         }
 
-        public SentakkiReplayFrame(double time, Vector2 position, bool usingSensorMode, params SentakkiAction[] actions)
+        public SentakkiReplayFrame(double time, Vector2 position, bool usingSensorMode, TouchReplayEvent[] TRE, params SentakkiAction[] actions)
             : base(time)
         {
             Position = position;
+            TouchReplayEvents = TRE;
             Actions.AddRange(actions);
             UsingSensorMode = usingSensorMode;
         }

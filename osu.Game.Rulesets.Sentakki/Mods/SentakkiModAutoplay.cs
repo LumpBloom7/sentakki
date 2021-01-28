@@ -33,10 +33,10 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public void ApplyToDrawableHitObjects(IEnumerable<DrawableHitObject> drawables)
         {
-            foreach (var d in drawables.OfType<DrawableSentakkiHitObject>())
+            /* foreach (var d in drawables.OfType<DrawableSentakkiHitObject>())
             {
                 d.Auto = true;
-            }
+            } */
         }
     }
 }

@@ -1,51 +1,29 @@
-﻿using System.Linq;
-using NUnit.Framework;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
+﻿
 using osu.Game.Beatmaps;
-using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Tests.Visual;
-using osuTK;
+using osu.Framework.Utils;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
-    [TestFixture]
-    public class TestSceneTouchNote : OsuTestScene
+    public class TestSceneTouchNote : TestSceneSentakkiHitObject
     {
-        private readonly Container content;
-        protected override Container<Drawable> Content => content;
-
-        private int depthIndex;
-
-        public TestSceneTouchNote()
+        protected override IBeatmap CreateBeatmap(RulesetInfo ruleset)
         {
-            base.Content.Add(content = new SentakkiInputManager(new RulesetInfo { ID = 0 }));
-
-            AddStep("Miss Single", () => testSingle());
-            AddStep("Hit Single", () => testSingle(true));
-            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject) && (h as DrawableSentakkiHitObject).AllJudged == false));
-        }
-
-        private void testSingle(bool auto = false)
-        {
-            var circle = new Touch
+            var beatmap = new Beatmap<SentakkiHitObject>()
             {
-                StartTime = Time.Current + 1000,
-                Position = new Vector2(0, -1),
+                BeatmapInfo =
+                {
+                    Ruleset = CreateRuleset()?.RulesetInfo ?? ruleset
+                },
             };
+            for (int i = 0; i < 8; ++i)
+                beatmap.HitObjects.Add(new Touch
+                {
+                    StartTime = 500 + (100 * i),
+                    Position = SentakkiExtensions.GetCircularPosition(RNG.NextSingle(250), RNG.NextSingle(360))
+                });
 
-            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
-
-            Add(new DrawableTouch(circle)
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Depth = depthIndex++,
-                Auto = auto
-            });
+            return beatmap;
         }
-        protected override Ruleset CreateRuleset() => new SentakkiRuleset();
     }
 }

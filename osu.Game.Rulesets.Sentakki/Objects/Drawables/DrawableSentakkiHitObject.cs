@@ -11,7 +11,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     public class DrawableSentakkiHitObject : DrawableHitObject<SentakkiHitObject>
     {
         protected override double InitialLifetimeOffset => AdjustedAnimationDuration;
-
         public readonly BindableBool AutoBindable = new BindableBool(false);
         public bool Auto
         {

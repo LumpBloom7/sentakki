@@ -1,5 +1,6 @@
 using System;
 using osu.Game.Rulesets.Scoring;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
@@ -68,6 +69,37 @@ namespace osu.Game.Rulesets.Sentakki
                 default:
                     return Color4.LightGray;
             }
+        }
+
+        public static int GetNoteLaneFromDegrees(this float degrees)
+        {
+            if (degrees < 0) degrees += 360;
+            if (degrees >= 360) degrees %= 360;
+            int result = 0;
+
+            for (int i = 0; i < SentakkiPlayfield.LANEANGLES.Length; ++i)
+            {
+                if (SentakkiPlayfield.LANEANGLES[i] - degrees >= -22.5f && SentakkiPlayfield.LANEANGLES[i] - degrees <= 22.5f)
+                    result = i;
+            }
+            return result;
+        }
+
+        public static Vector2 RotatePointAroundOrigin(Vector2 point, Vector2 origin, float angle)
+        {
+            angle = -angle;
+
+            point.X -= origin.X;
+            point.Y -= origin.Y;
+
+            Vector2 ret;
+            ret.X = (point.X * MathF.Cos(MathUtils.DegreesToRadians(angle))) + (point.Y * MathF.Sin(MathUtils.DegreesToRadians(angle)));
+            ret.Y = (point.X * -MathF.Sin(MathUtils.DegreesToRadians(angle))) + (point.Y * MathF.Cos(MathUtils.DegreesToRadians(angle)));
+
+            ret.X += origin.X;
+            ret.Y += origin.Y;
+
+            return ret;
         }
     }
 }
