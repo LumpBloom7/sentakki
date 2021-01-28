@@ -8,6 +8,9 @@ using osu.Framework.Input;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Colour;
 using System.Collections.Generic;
+using osu.Framework.Graphics.Pooling;
+using osu.Framework.Allocation;
+using System;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components
 {
@@ -16,47 +19,88 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
-        private readonly Container dots;
+        private DrawablePool<TouchPointer> pointerPool;
+
+
+        private int leftCount;
+        private int rightCount;
+
+        public Dictionary<TouchSource, TouchPointer> InUsePointers = new Dictionary<TouchSource, TouchPointer>();
+
 
         public TouchVisualization()
         {
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.Both;
             AlwaysPresent = true;
-            InternalChildren = new Drawable[]
-            {
-                dots = new Container()
-            };
-            for (int i = 0; i < 10; ++i)
-            {
-                dots.Add(new TouchPointer((TouchSource)i));
-            }
         }
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            AddInternal(pointerPool = new DrawablePool<TouchPointer>(2));
+        }
+
 
         protected override void Update()
         {
             base.Update();
 
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
-            List<bool> toShow = new List<bool>(new bool[10]);
             foreach (var point in touchInput.ActiveSources)
             {
-                toShow[(int)point] = true;
-                dots.Children[(int)point].Position = ToLocalSpace(touchInput.GetTouchPosition(point) ?? Vector2.Zero);
+                Vector2 newPos = ToLocalSpace(touchInput.GetTouchPosition(point) ?? Vector2.Zero) - OriginPosition;
+                if (!InUsePointers.TryGetValue(point, out TouchPointer pointer))
+                {
+                    bool useLeftHand = false;
+
+                    if (newPos.X < 0)
+                    {
+                        if (leftCount <= rightCount)
+                            useLeftHand = true;
+                    }
+                    else
+                    {
+                        if (leftCount < rightCount)
+                            useLeftHand = true;
+                    }
+
+                    if (useLeftHand) ++leftCount;
+                    else ++rightCount;
+                    Console.WriteLine(leftCount + ", " + rightCount);
+
+                    AddInternal(pointer = pointerPool.Get());
+                    pointer.Scale = new Vector2(useLeftHand ? -1 : 1, 1);
+                    InUsePointers[point] = pointer;
+                }
+                pointer.Position = newPos;
             }
 
-            for (int i = 0; i < 10; ++i)
+            foreach (var pair in InUsePointers)
             {
-                if (toShow[i])
-                    dots.Children[i].Show();
-                else
-                    dots.Children[i].Hide();
+                if (Time.Current - pair.Value.LastActiveTime >= 50 && pair.Value.InUse)
+                    pair.Value.FinishUsage();
+                else if (!pair.Value.IsInUse)
+                {
+                    InUsePointers.Remove(pair.Key);
+                    if (pair.Value.LeftHand) --leftCount;
+                    else --rightCount;
+                }
             }
         }
 
-        public class TouchPointer : VisibilityContainer
+        public class TouchPointer : PoolableDrawable
         {
-            protected override bool StartHidden => true;
-            public TouchPointer(TouchSource source)
+            public override bool RemoveCompletedTransforms => false;
+
+            public double LastActiveTime;
+            public bool LeftHand => Scale.X == -1;
+
+            public bool InUse;
+
+            [BackgroundDependencyLoader]
+            private void load()
             {
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
@@ -69,7 +113,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Colour = ColourInfo.GradientVertical(Color4.White, colourForSource(source, true))
+                        Colour = ColourInfo.GradientVertical(Color4.White, Color4.Gray)
                     },
                     new SpriteIcon
                     {
@@ -77,59 +121,32 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        Colour = colourForSource(source),
+                        Colour = Color4.Gray,
                     },
-                    new OsuSpriteText
-                    {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Text = ((int)source+1).ToString(),
-                        Font = OsuFont.Torus.With(size: 18,weight: FontWeight.Medium),
-                        Colour = colourForSource(source),
-                        Position = new Vector2(.07f,.175f),
-                        RelativePositionAxes = Axes.Both,
-                    }
                 };
             }
-            protected override void PopIn()
-            {
-                FinishTransforms();
-                this.ScaleTo(1, 50, Easing.OutBack).FadeIn(50);
-            }
 
-            protected override void PopOut()
+            public new Vector2 Position
             {
-                FinishTransforms();
-                this.FadeOut(200).Then().ScaleTo(0);
-            }
-
-            private Color4 colourForSource(TouchSource source, bool light = false)
-            {
-                OsuColour colours = new OsuColour();
-                switch (source)
+                get => base.Position;
+                set
                 {
-                    case TouchSource.Touch1:
-                        return light ? colours.RedLight : colours.Red;
-                    case TouchSource.Touch2:
-                        return light ? colours.PurpleLight : colours.Purple;
-                    case TouchSource.Touch3:
-                        return light ? colours.PinkLight : colours.Pink;
-                    case TouchSource.Touch4:
-                        return light ? colours.BlueLight : colours.BlueDarker;
-                    case TouchSource.Touch5:
-                        return light ? colours.YellowLight : colours.Yellow;
-                    case TouchSource.Touch6:
-                        return light ? colours.GreenLight : colours.Green;
-                    case TouchSource.Touch7:
-                        return light ? colours.Sky : colours.GreySky;
-                    case TouchSource.Touch8:
-                        return light ? colours.Cyan : colours.GreyCyan;
-                    case TouchSource.Touch9:
-                        return light ? colours.Lime : colours.GreyLime;
-                    case TouchSource.Touch10:
-                        return light ? colours.GreyViolet : colours.Violet;
+                    base.Position = value;
+                    LastActiveTime = Time.Current;
                 }
-                return Color4.Blue;
+            }
+            protected override void PrepareForUse()
+            {
+                this.FadeIn();
+                LastActiveTime = Time.Current;
+                LifetimeStart = Time.Current;
+                InUse = true;
+            }
+
+            public void FinishUsage()
+            {
+                this.FadeOut(50).Expire(false);
+                InUse = false;
             }
         }
     }

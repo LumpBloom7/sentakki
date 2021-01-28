@@ -64,7 +64,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 {
                     RelativeSizeAxes = Axes.Both,
                 },
-                new TouchVisualization()
+
             });
             AddNested(lanedPlayfield);
             NewResult += onNewResult;
@@ -81,6 +81,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             RegisterPool<TouchHold, DrawableTouchHold>(2);
             RegisterPool<Objects.Touch, DrawableTouch>(8);
+            AddInternal(new TouchVisualization());
         }
 
         protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
