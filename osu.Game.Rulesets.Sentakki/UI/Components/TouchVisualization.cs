@@ -83,9 +83,9 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                     pair.Value.FinishUsage();
                 else if (!pair.Value.IsInUse)
                 {
-                    InUsePointers.Remove(pair.Key);
+                    InUsePointers.Remove(pair.Key);/*
                     if (pair.Value.LeftHand) --leftCount;
-                    else --rightCount;
+                    else --rightCount; */
                 }
             }
         }
