@@ -155,9 +155,9 @@ namespace osu.Game.Rulesets.Sentakki
         {
             return new[]
             {
+                HitResult.Perfect,
                 HitResult.Great,
                 HitResult.Good,
-                HitResult.Meh,
             };
         }
 
@@ -172,10 +172,10 @@ namespace osu.Game.Rulesets.Sentakki
             [BackgroundDependencyLoader]
             private void load(TextureStore textures, GameHost host)
             {
-                if (!textures.GetAvailableResources().Contains("Textures/Icon.png"))
+                if (!textures.GetAvailableResources().Contains("Textures/SentakkiIcon.png"))
                     textures.AddStore(host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
 
-                Texture = textures.Get("Textures/Icon");
+                Texture = textures.Get("Textures/SentakkiIcon.png");
             }
         }
     }

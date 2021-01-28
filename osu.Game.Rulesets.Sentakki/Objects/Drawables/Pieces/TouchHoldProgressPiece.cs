@@ -35,7 +35,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             BorderThickness = 3;
             Alpha = .8f;
             Size = new Vector2(110);
-            CornerRadius = 2.5f;
             CornerRadius = 27.5f;
             Rotation = 45;
             InternalChildren = new Drawable[]{

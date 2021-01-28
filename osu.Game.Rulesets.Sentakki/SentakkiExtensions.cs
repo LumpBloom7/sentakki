@@ -1,7 +1,9 @@
 using System;
+using osu.Game.Rulesets.Scoring;
 using osu.Framework.Utils;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki
 {
@@ -52,6 +54,21 @@ namespace osu.Game.Rulesets.Sentakki
             float angle = MathHelper.RadiansToDegrees(MathF.Atan2(direction.Y, direction.X));
             if (angle < 0f) angle += 360f;
             return angle + 90;
+        }
+
+        public static Color4 GetColorForSentakkiResult(this HitResult result)
+        {
+            switch (result)
+            {
+                case HitResult.Perfect:
+                    return Color4.Orange;
+                case HitResult.Great:
+                    return Color4.DeepPink;
+                case HitResult.Good:
+                    return Color4.Green;
+                default:
+                    return Color4.LightGray;
+            }
         }
 
         public static int GetNoteLaneFromDegrees(this float degrees)

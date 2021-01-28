@@ -12,6 +12,7 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK;
 using osuTK.Graphics;
+using System;
 
 namespace osu.Game.Rulesets.Sentakki.Statistics
 {
@@ -35,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new NoteEntry
                 {
                     ObjectName = "Hold",
-                    HitEvents = hitEvents.Where(e => (e.HitObject is Hold x || e.HitObject is Hold.HoldHead) && (e.HitObject as SentakkiLanedHitObject).Break).ToList(),
+                    HitEvents = hitEvents.Where(e => (e.HitObject is Hold x || e.HitObject is Hold.HoldHead) && !(e.HitObject as SentakkiLanedHitObject).Break).ToList(),
                     Position = new Vector2(0, .16f),
                     InitialLifetimeOffset = entry_animation_duration * 1
                 },
@@ -81,30 +82,30 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
             [BackgroundDependencyLoader]
             private void load(OsuColour colours)
             {
-                float MehCount = 0;
                 float GoodCount = 0;
                 float GreatCount = 0;
+                float PerfectCount = 0;
 
                 foreach (var e in HitEvents)
                 {
                     switch (e.Result)
                     {
+                        case HitResult.Perfect:
+                            ++PerfectCount;
+                            goto case HitResult.Great;
                         case HitResult.Great:
                             ++GreatCount;
                             goto case HitResult.Good;
                         case HitResult.Good:
                             ++GoodCount;
-                            goto case HitResult.Meh;
-                        case HitResult.Meh:
-                            ++MehCount;
                             break;
                     }
                 }
 
-                Color4 textColour = !HitEvents.Any() ? Color4Extensions.FromHex("bcbcbc") : (GreatCount == HitEvents.Count) ? Color4.White : Color4Extensions.FromHex("#3c5394");
-                Color4 boxColour = !HitEvents.Any() ? Color4Extensions.FromHex("808080") : (GreatCount == HitEvents.Count) ? Color4Extensions.FromHex("fda908") : Color4Extensions.FromHex("#DCE9F9");
-                Color4 borderColour = !HitEvents.Any() ? Color4Extensions.FromHex("536277") : (GreatCount == HitEvents.Count) ? Color4Extensions.FromHex("fda908") : Color4Extensions.FromHex("#98b8df");
-                Color4 numberColour = (GreatCount == HitEvents.Count && HitEvents.Any()) ? Color4.White : Color4Extensions.FromHex("#3c5394");
+                Color4 textColour = !HitEvents.Any() ? Color4Extensions.FromHex("bcbcbc") : (PerfectCount == HitEvents.Count) ? Color4.White : Color4Extensions.FromHex("#3c5394");
+                Color4 boxColour = !HitEvents.Any() ? Color4Extensions.FromHex("808080") : (PerfectCount == HitEvents.Count) ? Color4Extensions.FromHex("fda908") : Color4Extensions.FromHex("#DCE9F9");
+                Color4 borderColour = !HitEvents.Any() ? Color4Extensions.FromHex("536277") : (PerfectCount == HitEvents.Count) ? Color4Extensions.FromHex("fda908") : Color4Extensions.FromHex("#98b8df");
+                Color4 numberColour = (PerfectCount == HitEvents.Count && HitEvents.Any()) ? Color4.White : Color4Extensions.FromHex("#3c5394");
 
                 Anchor = Anchor.TopCentre;
                 Origin = Anchor.TopCentre;
@@ -172,13 +173,13 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 };
 
                 progressBox.AddRange(new Drawable[]{
-                    new ChartBar(HitResult.Meh, MehCount/HitEvents.Count){
-                        InitialLifetimeOffset = InitialLifetimeOffset
-                    },
                     new ChartBar(HitResult.Good, GoodCount/HitEvents.Count){
                         InitialLifetimeOffset = InitialLifetimeOffset
                     },
                     new ChartBar(HitResult.Great, GreatCount/HitEvents.Count){
+                        InitialLifetimeOffset = InitialLifetimeOffset
+                    },
+                    new ChartBar(HitResult.Perfect, PerfectCount/HitEvents.Count){
                         InitialLifetimeOffset = InitialLifetimeOffset
                     },
                 });
@@ -220,23 +221,15 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
             {
                 public double InitialLifetimeOffset;
 
-                private HitResult result;
-
                 public ChartBar(HitResult result, float progress)
                 {
-                    this.result = result;
                     RelativeSizeAxes = Axes.Both;
                     Size = new Vector2(float.IsNaN(progress) ? 0 : progress, 1);
                     Scale = new Vector2(0, 1);
-                }
-
-                [BackgroundDependencyLoader]
-                private void load(OsuColour colours)
-                {
                     Add(new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = colours.ForHitResult(result)
+                        Colour = result.GetColorForSentakkiResult()
                     });
                 }
 
