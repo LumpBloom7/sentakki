@@ -28,17 +28,15 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Text = "",
                     Font = OsuFont.Torus.With(size: 40, weight: FontWeight.SemiBold),
-                    Shadow = true,
-                    ShadowColour = Color4.Black,
+                    ShadowColour = Color4.Gray,
                 },
             };
 
             LivesLeft.BindValueChanged(v =>
             {
                 livesText.Text = v.NewValue.ToString();
-                livesText.FadeColour(Color4.Red, 160).Then().FadeColour(Color4.White, 320);
+                this.FadeColour(Color4.Red, 160).Then().FadeColour(Color4.White, 320);
                 Shake();
             }, true);
         }

@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private readonly Container<DrawableSentakkiJudgement> judgementLayer;
         private readonly DrawablePool<DrawableSentakkiJudgement> judgementPool;
 
-        private readonly SentakkiRing ring;
+        public readonly SentakkiRing Ring;
         public BindableNumber<int> RevolutionDuration = new BindableNumber<int>(0);
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
@@ -57,7 +57,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             {
                 judgementPool = new DrawablePool<DrawableSentakkiJudgement>(8),
                 new PlayfieldVisualisation(),
-                ring = new SentakkiRing(),
+                Ring = new SentakkiRing(),
                 lanedPlayfield = new LanedPlayfield(),
                 HitObjectContainer, // This only contains Touch and TouchHolds, which should appear above others note types. Might consider separating to another playfield.
                 judgementLayer = new Container<DrawableSentakkiJudgement>
@@ -68,8 +68,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             AddNested(lanedPlayfield);
             NewResult += onNewResult;
         }
-
-        public void AddDrawable(Drawable drawable) => AddInternal(drawable);
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
         private SentakkiRulesetConfigManager sentakkiRulesetConfig;
@@ -121,7 +119,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             judgementLayer.Add(judgementPool.Get(j => j.Apply(result, judgedObject)));
 
             if (result.IsHit && judgedObject.HitObject.Kiai)
-                ring.KiaiBeat();
+                Ring.KiaiBeat();
         }
     }
 }
