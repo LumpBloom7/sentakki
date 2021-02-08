@@ -69,6 +69,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
             NewResult += onNewResult;
         }
 
+        public void AddDrawable(Drawable drawable) => AddInternal(drawable);
+
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
         private SentakkiRulesetConfigManager sentakkiRulesetConfig;
 
