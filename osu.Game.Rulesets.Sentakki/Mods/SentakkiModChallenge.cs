@@ -12,6 +12,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.UI;
+using System;
 using System.ComponentModel;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
@@ -31,6 +32,14 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public bool RestartOnFail => false;
         public bool PerformFail() => true;
+
+        public override Type[] IncompatibleMods => new Type[4]
+        {
+            typeof(ModRelax),
+            typeof(ModSuddenDeath),
+            typeof(ModAutoplay),
+            typeof(ModNoFail),
+        };
 
         public enum Lives
         {
@@ -56,7 +65,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public void ApplyToDrawableRuleset(DrawableRuleset<SentakkiHitObject> drawableRuleset)
         {
             LivesLeft.Value = int.Parse(LiveSetting.Value.GetDescription());
-            (drawableRuleset.Playfield as SentakkiPlayfield).AddDrawable(new LiveCounter().With(d => d.LivesLeft.BindTo(LivesLeft)));
+            (drawableRuleset.Playfield as SentakkiPlayfield).Ring.Add(new LiveCounter().With(d => d.LivesLeft.BindTo(LivesLeft)));
         }
 
         public void ApplyToHealthProcessor(HealthProcessor healthProcessor)
@@ -88,5 +97,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
             return LivesLeft.Value <= 0;
         }
+
+
     }
 }
