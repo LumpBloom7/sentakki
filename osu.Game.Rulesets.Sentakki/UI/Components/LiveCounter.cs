@@ -6,6 +6,7 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Graphics.UserInterface;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components
@@ -14,7 +15,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
     {
         public BindableInt LivesLeft = new BindableInt();
 
-        private OsuSpriteText livesText;
+        private LiveRollingCounter livesText;
 
         public LiveCounter(BindableInt livesBindable)
         {
@@ -22,23 +23,18 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
 
-            InternalChildren = new Drawable[]{
-
-                livesText = new OsuSpriteText
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Font = OsuFont.Torus.With(size: 40, weight: FontWeight.SemiBold),
-                    ShadowColour = Color4.Gray,
-                },
-            };
+            InternalChild = livesText = new LiveRollingCounter();
 
             LivesLeft.BindValueChanged(v =>
             {
-                livesText.Text = v.NewValue.ToString();
                 this.FadeColour(Color4.Red, 160).Then().FadeColour(Color4.White, 320);
                 Shake();
             }, true);
+        }
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            livesText.Current.BindTo(LivesLeft);
         }
 
         public void Shake(double? maximumLength = null)
@@ -83,6 +79,28 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                     .Then().ScaleTo(1, 120 * panicDurationMultiplier)
                     .Then().ScaleTo(1 + beatMagnitude, 160 * panicDurationMultiplier)
                     .Then().ScaleTo(1, 320 * panicDurationMultiplier);
+        }
+
+        private class LiveRollingCounter : RollingCounter<int>
+        {
+            protected override double RollingDuration => 1000;
+
+            public LiveRollingCounter()
+            {
+                Anchor = Anchor.Centre;
+                Origin = Anchor.Centre;
+            }
+
+            protected override OsuSpriteText CreateSpriteText()
+            {
+                return new OsuSpriteText
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Font = OsuFont.Torus.With(size: 40, weight: FontWeight.SemiBold),
+                    ShadowColour = Color4.Gray,
+                };
+            }
         }
     }
 }

@@ -12,8 +12,8 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
         private LiveCounter counter;
         private BindableInt lives = new BindableInt
         {
-            MaxValue = 10,
-            Value = 10
+            MaxValue = 500,
+            Value = 500
         };
 
         public TestSceneLiveCounter()
@@ -23,9 +23,11 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
                 Clear();
             });
 
-            AddStep("Create Ring", () => Add(counter = new LiveCounter(lives)));
-            AddUntilStep("Ring loaded", () => counter.IsLoaded);
-            AddStep("Lose a live", () => counter.LivesLeft.Value--);
+            AddStep("Create counter", () => Add(counter = new LiveCounter(lives)));
+            AddUntilStep("Counter loaded", () => counter.IsLoaded);
+            AddStep("Lose a live", () => counter.LivesLeft.Value -= 1);
+            AddStep("Lose two lives", () => counter.LivesLeft.Value -= 2);
+            AddStep("Lose five lives", () => counter.LivesLeft.Value -= 5);
         }
     }
 }
