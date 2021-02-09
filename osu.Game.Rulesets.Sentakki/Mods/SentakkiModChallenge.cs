@@ -59,12 +59,18 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             Value = Lives.Ten,
         };
 
-        public BindableInt LivesLeft = new BindableInt();
+        public BindableInt LivesLeft;
 
         public void ApplyToDrawableRuleset(DrawableRuleset<SentakkiHitObject> drawableRuleset)
         {
-            LivesLeft.Value = int.Parse(LiveSetting.Value.GetDescription());
-            (drawableRuleset.Playfield as SentakkiPlayfield).Ring.Add(new LiveCounter().With(d => d.LivesLeft.BindTo(LivesLeft)));
+            int maxLives = int.Parse(LiveSetting.Value.GetDescription());
+            LivesLeft = new BindableInt()
+            {
+                Value = maxLives,
+                MaxValue = maxLives,
+            };
+
+            (drawableRuleset.Playfield as SentakkiPlayfield).Ring.Add(new LiveCounter(LivesLeft));
         }
 
         public void ApplyToHealthProcessor(HealthProcessor healthProcessor)
@@ -96,7 +102,5 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
             return LivesLeft.Value <= 0;
         }
-
-
     }
 }

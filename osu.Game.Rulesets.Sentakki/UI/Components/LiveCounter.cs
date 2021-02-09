@@ -12,12 +12,13 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 {
     public class LiveCounter : BeatSyncedContainer
     {
-        public BindableInt LivesLeft = new BindableInt(300);
+        public BindableInt LivesLeft = new BindableInt();
 
         private OsuSpriteText livesText;
 
-        public LiveCounter()
+        public LiveCounter(BindableInt livesBindable)
         {
+            LivesLeft.BindTo(livesBindable);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
 
@@ -65,8 +66,23 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
         protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, ChannelAmplitudes amplitudes)
         {
-            if (beatIndex % (int)timingPoint.TimeSignature == 0)
-                this.ScaleTo(1.1f, 200).Then().ScaleTo(1, 120).Then().ScaleTo(1.1f, 160).Then().ScaleTo(1, 320);
+            float livesPercentage = LivesLeft.Value / (float)LivesLeft.MaxValue;
+
+            int panicLevel = 0;
+            if (livesPercentage <= 0.1f) panicLevel = 3;
+            else if (livesPercentage <= 0.25f) panicLevel = 2;
+            else if (livesPercentage <= 0.5f) panicLevel = 1;
+
+            // Heart Rate increases when panicking (lives <= 20% MaxLives)
+            // It also beats harder
+            float panicDurationMultiplier = 1 * MathF.Pow(0.75f, panicLevel);
+            float beatMagnitude = 0.1f + (0.05f * panicLevel);
+
+            if (beatIndex % (int)((int)timingPoint.TimeSignature * Math.Max(panicDurationMultiplier, 0.5f)) == 0)
+                this.ScaleTo(1 + beatMagnitude, 200 * panicDurationMultiplier)
+                    .Then().ScaleTo(1, 120 * panicDurationMultiplier)
+                    .Then().ScaleTo(1 + beatMagnitude, 160 * panicDurationMultiplier)
+                    .Then().ScaleTo(1, 320 * panicDurationMultiplier);
         }
     }
 }
