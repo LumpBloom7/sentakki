@@ -1,12 +1,9 @@
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics;
 using osu.Framework.Bindables;
-using osu.Game.Graphics.Sprites;
+using osu.Framework.Graphics;
 using osu.Game.Graphics;
-using osuTK.Graphics;
-using osu.Framework.Graphics.Sprites;
-using osuTK;
 using osu.Game.Graphics.Containers;
+using osu.Game.Graphics.Sprites;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components
 {

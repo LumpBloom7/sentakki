@@ -1,3 +1,5 @@
+using System;
+using System.ComponentModel;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;
@@ -5,15 +7,12 @@ using osu.Framework.Graphics.Sprites;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.UI;
-using System;
-using System.ComponentModel;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {
