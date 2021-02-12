@@ -39,7 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public BindableBool EnableTouch { get; } = new BindableBool
         {
             Default = false,
-            Value = true,
+            Value = false
         };
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
