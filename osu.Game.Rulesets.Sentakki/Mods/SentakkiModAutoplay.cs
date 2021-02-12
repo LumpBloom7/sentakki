@@ -17,26 +17,18 @@ namespace osu.Game.Rulesets.Sentakki.Mods
     {
         private string getRandomCharacter() => RNG.NextBool() ? "Mai-chan" : "Sen-kun";
 
-        public override Score CreateReplayScore(IBeatmap beatmap)
+        public override Score CreateReplayScore(IBeatmap beatmap, IReadOnlyList<Mod> mods) => new Score
         {
-            return new Score
-            {
-                ScoreInfo = new ScoreInfo
-                {
-                    User = new User { Username = getRandomCharacter() },
-                },
-                Replay = new SentakkiAutoGenerator(beatmap).Generate(),
-            };
-        }
+            ScoreInfo = new ScoreInfo { User = new User { Username = getRandomCharacter() } },
+            Replay = new SentakkiAutoGenerator(beatmap).Generate(),
+        };
 
         public override Type[] IncompatibleMods => base.IncompatibleMods.Append(typeof(SentakkiModAutoTouch)).ToArray();
 
         public void ApplyToDrawableHitObjects(IEnumerable<DrawableHitObject> drawables)
         {
             foreach (var d in drawables.OfType<DrawableSentakkiHitObject>())
-            {
                 d.Auto = true;
-            }
         }
     }
 }
