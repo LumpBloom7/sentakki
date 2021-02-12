@@ -55,8 +55,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         [SettingSource("Number of Lives", "The number of lives you start with.")]
         public Bindable<Lives> LiveSetting { get; } = new Bindable<Lives>
         {
-            Default = Lives.Ten,
-            Value = Lives.Ten,
+            Default = Lives.Fifty,
+            Value = Lives.Fifty,
         };
 
         public BindableInt LivesLeft;
