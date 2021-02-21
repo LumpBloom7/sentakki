@@ -17,7 +17,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public abstract class SentakkiHitObject : HitObject
     {
-        public bool HasTwin { get; set; }
+        public SentakkiHitObject()
+        {
+            // We initialize the note colour to the default value first
+            // The modified colours will be set in the beatmap post-process step
+            ColourBindable.Value = DefaultNoteColour;
+        }
 
         public override Judgement CreateJudgement() => new SentakkiJudgement();
 
@@ -32,14 +37,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
 
-        protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, BeatmapDifficulty difficulty)
-        {
-            base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
-
-            bool isBreak = this is SentakkiLanedHitObject x && x.Break;
-
-            NoteColour = isBreak ? Color4.OrangeRed : (HasTwin ? Color4.Gold : DefaultNoteColour);
-        }
 
         // This special hitsample is used for Sentakki specific samples, with doesn't have bank specific variants
         public class SentakkiHitSampleInfo : HitSampleInfo, IEquatable<SentakkiHitSampleInfo>
