@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;
@@ -60,6 +61,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             Value = Lives.Fifty,
         };
 
+        [JsonIgnore]
         public BindableInt LivesLeft;
 
         public void ApplyToDrawableRuleset(DrawableRuleset<SentakkiHitObject> drawableRuleset)
