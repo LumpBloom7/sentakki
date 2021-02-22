@@ -32,7 +32,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             typeof(SentakkiModChallenge)
         };
 
-
         public void ApplyToDrawableHitObjects(IEnumerable<DrawableHitObject> drawables)
         {
             foreach (var d in drawables.OfType<DrawableSentakkiHitObject>())
