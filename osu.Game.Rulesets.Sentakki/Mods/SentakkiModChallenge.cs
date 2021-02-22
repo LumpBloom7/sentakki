@@ -27,6 +27,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public override bool Ranked => false;
 
+        public override bool RequiresConfiguration => true;
+
         public override double ScoreMultiplier => 1.00;
 
         public bool RestartOnFail => false;
