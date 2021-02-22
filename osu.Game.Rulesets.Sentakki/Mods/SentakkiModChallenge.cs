@@ -44,7 +44,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public enum Lives
         {
-            [Description("1")] One,
             [Description("5")] Five,
             [Description("10")] Ten,
             [Description("20")] Twenty,
