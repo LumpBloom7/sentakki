@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Game.Audio;
-using osu.Game.Beatmaps;
-using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Scoring;
@@ -19,21 +18,25 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     {
         public SentakkiHitObject()
         {
-            // We initialize the note colour to the default value first
-            // The modified colours will be set in the beatmap post-process step
+            // We initialize the note colour to the default value first for test scenes
+            // The colours during gameplay will be set during beatmap post-process
             ColourBindable.Value = DefaultNoteColour;
         }
 
         public override Judgement CreateJudgement() => new SentakkiJudgement();
 
+        [JsonIgnore]
         public Bindable<Color4> ColourBindable = new Bindable<Color4>();
+
+        [JsonIgnore]
         public Color4 NoteColour
         {
             get => ColourBindable.Value;
-            private set => ColourBindable.Value = value;
+            set => ColourBindable.Value = value;
         }
 
-        protected virtual Color4 DefaultNoteColour => Color4Extensions.FromHex("FF0064");
+        [JsonIgnore]
+        public virtual Color4 DefaultNoteColour => Color4Extensions.FromHex("FF0064");
 
         protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
 

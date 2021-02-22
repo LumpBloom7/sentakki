@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public double EndTime => StartTime + Duration;
 
-        protected override Color4 DefaultNoteColour => Color4.Aqua;
+        public override Color4 DefaultNoteColour => Color4.Aqua;
 
         public List<SentakkiSlideInfo> SlideInfoList = new List<SentakkiSlideInfo>();
 

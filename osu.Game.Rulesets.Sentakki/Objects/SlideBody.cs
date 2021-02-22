@@ -14,7 +14,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class SlideBody : SentakkiLanedHitObject, IHasDuration
     {
-        protected override Color4 DefaultNoteColour => Color4.Aqua;
         public static readonly float SLIDE_CHEVRON_DISTANCE = 30f;
 
         public double EndTime
