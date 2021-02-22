@@ -44,13 +44,13 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public enum Lives
         {
-            [Description("5")] Five,
-            [Description("10")] Ten,
-            [Description("20")] Twenty,
-            [Description("50")] Fifty,
-            [Description("100")] Hundred,
-            [Description("200")] TwoHundred,
-            [Description("300")] ThreeHundred,
+            [Description("5")] Five = 5,
+            [Description("10")] Ten = 10,
+            [Description("20")] Twenty = 20,
+            [Description("50")] Fifty = 50,
+            [Description("100")] Hundred = 100,
+            [Description("200")] TwoHundred = 200,
+            [Description("300")] ThreeHundred = 300,
         }
 
         [SettingSource("Number of Lives", "The number of lives you start with.")]
@@ -64,7 +64,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public void ApplyToDrawableRuleset(DrawableRuleset<SentakkiHitObject> drawableRuleset)
         {
-            int maxLives = int.Parse(LiveSetting.Value.GetDescription());
+            int maxLives = (int)LiveSetting.Value;
             LivesLeft = new BindableInt()
             {
                 Value = maxLives,
