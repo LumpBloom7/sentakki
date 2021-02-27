@@ -19,10 +19,10 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
         }
 
         protected override DifficultyRange[] GetRanges() => new DifficultyRange[]{
-            new DifficultyRange(HitResult.Miss, 144, 144, 144),
-            new DifficultyRange(HitResult.Good, 144, 144, 144),
-            new DifficultyRange(HitResult.Great, 96, 96, 96),
-            new DifficultyRange(HitResult.Perfect, 48, 48, 48),
+            new DifficultyRange(HitResult.Miss, 144, 144, 72),
+            new DifficultyRange(HitResult.Good, 144, 144, 72),
+            new DifficultyRange(HitResult.Great, 96, 96, 48),
+            new DifficultyRange(HitResult.Perfect, 48, 48, 24),
         };
     }
 }
