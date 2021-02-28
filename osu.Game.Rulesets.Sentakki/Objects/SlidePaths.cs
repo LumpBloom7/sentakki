@@ -11,14 +11,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     public static class SlidePaths
     {
         public static readonly List<SentakkiSlidePath> VALIDPATHS = new List<SentakkiSlidePath>{
-            GenerateCirclePattern(0),
-            GenerateCirclePattern(1),
             GenerateCirclePattern(2),
             GenerateCirclePattern(3),
             GenerateCirclePattern(4),
             GenerateCirclePattern(5),
             GenerateCirclePattern(6),
             GenerateCirclePattern(7),
+            GenerateCirclePattern(8),
             GenerateCirclePattern(0, RotationDirection.CounterClockwise),
             GenerateCirclePattern(1, RotationDirection.CounterClockwise),
             GenerateCirclePattern(2, RotationDirection.CounterClockwise),
@@ -26,7 +25,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             GenerateCirclePattern(4, RotationDirection.CounterClockwise),
             GenerateCirclePattern(5, RotationDirection.CounterClockwise),
             GenerateCirclePattern(6, RotationDirection.CounterClockwise),
-            GenerateCirclePattern(7, RotationDirection.CounterClockwise),
             GenerateLPattern(1),
             GenerateLPattern(2),
             GenerateLPattern(3),
