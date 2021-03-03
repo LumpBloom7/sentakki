@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using Newtonsoft.Json;
 using osu.Game.Beatmaps;
@@ -7,6 +6,7 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using osuTK.Graphics;
 
@@ -15,7 +15,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     public class SlideBody : SentakkiLanedHitObject, IHasDuration
     {
         protected override Color4 DefaultNoteColour => Color4.Aqua;
-        public static readonly float SLIDE_CHEVRON_DISTANCE = 30f;
 
         public double EndTime
         {
@@ -35,8 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             base.CreateNestedHitObjects(cancellationToken);
 
-            var distance = SlideInfo.SlidePath.Path.Distance;
-            int chevrons = (int)Math.Round(distance / SLIDE_CHEVRON_DISTANCE);
+            int chevrons = SlideVisual.ChevronsInPath(SlideInfo.SlidePath.Path);
             double chevronInterval = 1.0 / chevrons;
 
             for (int i = 4; i < chevrons - 3; i += 3)

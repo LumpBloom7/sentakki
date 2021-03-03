@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -7,10 +8,8 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Graphics.Transforms;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Configuration;
-using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
@@ -70,51 +69,57 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             });
         }
 
-        private double chevronInterval;
+        private const int chevrons_per_eith = 8;
+        private const double ring_radius = 297;
+        private const double chevrons_per_distance = ( chevrons_per_eith * 8 ) / ( 2 * Math.PI * ring_radius );
+        private const double distance_per_chevron = 1 / chevrons_per_distance;
+        private const double dot_distance = /*r*/34;
+        public static int ChevronsInPath (SliderPath path)
+        {
+            return (int)Math.Ceiling((path.Distance - (2 * dot_distance)) * chevrons_per_distance);
+        }
+
         private void updateVisuals()
         {
             foreach (var segment in segments)
                 segment.ClearChevrons();
             segments.Clear(false);
 
-            var distance = Path.Distance;
-            int chevrons = (int)Math.Round(distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
-            chevronInterval = 1.0 / chevrons;
+            var chevronCount = ChevronsInPath( path );
+            var totalDistance = path.Distance;
+            var safeDistance = totalDistance - (dot_distance * 2);
+            var distancePerChevron = safeDistance / chevronCount;
 
-            float? prevAngle = null;
             SlideSegment currentSegment = segmentPool.Get();
+            var reverseSegments = new List<SlideSegment> { currentSegment };
 
-            // We add the chevrons starting from the last, so that earlier ones remain on top
-            for (double i = chevrons - 1; i > 0; --i)
+            float lastAngle = path.PositionAt(0).GetDegreesFromPosition(path.PositionAt(0.1 / totalDistance));
+            for (int i = 0; i < chevronCount; i++)
             {
-                Vector2 prevPos = Path.PositionAt((i - 1) * chevronInterval);
-                Vector2 currentPos = Path.PositionAt(i * chevronInterval);
+                var progress = (double)i / (chevronCount - 1); // from 0 to 1, both inclusive
 
-                float angle = prevPos.GetDegreesFromPosition(currentPos);
-                bool shouldHide = SentakkiExtensions.GetDeltaAngle(prevAngle ?? angle, angle) >= 89;
-                prevAngle = angle;
+                var position = path.PositionAt(((progress * safeDistance) + dot_distance) / totalDistance);
+                var nextPosition = path.PositionAt(((progress * safeDistance) + dot_distance + 0.1) / totalDistance);
+                var angle = position.GetDegreesFromPosition(nextPosition);
 
-                currentSegment.Add(chevronPool.Get().With(c =>
-                {
-                    c.Position = currentPos;
+                currentSegment.Add(chevronPool.Get().With(c => {
+                    c.Position = position;
                     c.Rotation = angle;
-                    c.Alpha = shouldHide ? 0 : 1;
-                    c.ShouldHide = shouldHide;
+                    c.ShouldHide = SentakkiExtensions.GetDeltaAngle( lastAngle, angle ) >= 89;
+                    c.Alpha = c.ShouldHide ? 0 : 1;
+                    c.Depth = i; // earlier ones should remain on top
                 }));
 
-                if ((i - 1) % 3 == 0 && chevrons - 1 - i > 2)
+                // add next segment if not last ( last segment has up to 5 chevrons while all other 3 )
+                if ( i % 3 == 2 && chevronCount - 2 > i )
                 {
-                    segments.Add(currentSegment);
-                    if (i > 3)
-                        currentSegment = segmentPool.Get();
-                    else
-                        currentSegment = null;
+                    currentSegment = segmentPool.Get();
+                    reverseSegments.Add(currentSegment);
                 }
-            }
 
-            // Check for an unadded segment
-            if (currentSegment != null)
-                segments.Add(currentSegment);
+                lastAngle = angle;
+            }
+            segments.AddRange( reverseSegments.Reverse<SlideSegment>() );
         }
 
         private void updateProgress(int completedNodes)
@@ -129,7 +134,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             if (snakingIn.Value)
             {
-                int chevrons = (int)Math.Ceiling(Path.Distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
+                int chevrons = (int)Math.Ceiling(Path.Distance / distance_per_chevron);
                 double fadeDuration = duration / chevrons;
                 double currentOffset = duration / 2;
                 for (int i = segments.Count - 1; i >= 0; i--)
@@ -152,7 +157,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         public void PerformExitAnimation(double duration)
         {
-            int chevronsLeft = (int)Math.Ceiling(Path.Distance / SlideBody.SLIDE_CHEVRON_DISTANCE);
+            int chevronsLeft = (int)Math.Ceiling(Path.Distance / distance_per_chevron);
             double fadeDuration() => duration / chevronsLeft;
             double currentOffset = 0;
             for (int i = segments.Count - 1; i >= 0; i--)
