@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -9,6 +10,7 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Configuration;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
@@ -71,12 +73,46 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         private const int chevrons_per_eith = 8;
         private const double ring_radius = 297;
-        private const double chevrons_per_distance = ( chevrons_per_eith * 8 ) / ( 2 * Math.PI * ring_radius );
+        private const double chevrons_per_distance = (chevrons_per_eith * 8) / (2 * Math.PI * ring_radius);
         private const double distance_per_chevron = 1 / chevrons_per_distance;
-        private const double dot_distance = /*r*/34;
-        public static int ChevronsInPath (SliderPath path)
+        private const double endpoint_distance = /*r*/34;
+
+        public static int ChevronsInPath(SliderPath path)
         {
-            return (int)Math.Ceiling((path.Distance - (2 * dot_distance)) * chevrons_per_distance);
+            var (array, count) = splitIntoContinuousPaths(path);
+            var chevrons = array.Take(count).Sum(p => chevronsInContinuousPath(p));
+            ArrayPool<SliderPath>.Shared.Return(array);
+            return chevrons;
+        }
+
+        /// <returns>A rented array which needs to be returned to <see cref="ArrayPool&lt;SliderPath&gt;.Shared"/></returns>
+        private static (SliderPath[] array, int count) splitIntoContinuousPaths(SliderPath path)
+        {
+            // first node will not split
+            var count = path.ControlPoints.Skip(1).Count(c => c.Type.Value == PathType.Linear) + 1;
+            var paths = ArrayPool<SliderPath>.Shared.Rent(count);
+            int pathIndex = 0;
+            for (int i = 0; i < count; i++) if(paths[i] is null) paths[i] = new SliderPath();
+            paths[0].ControlPoints.Clear();
+            paths[0].ControlPoints.Add(path.ControlPoints[0]);
+            for (int i = 1; i < path.ControlPoints.Count; i++)
+            {
+                var controlPoint = path.ControlPoints[i];
+                paths[pathIndex].ControlPoints.Add(controlPoint);
+                if (controlPoint.Type.Value == PathType.Linear)
+                {
+                    // TODO test the angle here as continuous -> linear can still be smooth
+                    pathIndex++;
+                    paths[pathIndex].ControlPoints.Clear();
+                    paths[pathIndex].ControlPoints.Add(controlPoint);
+                }
+            }
+            return (paths, count);
+        }
+
+        private static int chevronsInContinuousPath(SliderPath path)
+        {
+            return (int)Math.Ceiling((path.Distance - (2 * endpoint_distance)) * chevrons_per_distance);
         }
 
         private void updateVisuals()
@@ -85,40 +121,50 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 segment.ClearChevrons();
             segments.Clear(false);
 
-            var chevronCount = ChevronsInPath( path );
-            var totalDistance = path.Distance;
-            var safeDistance = totalDistance - (dot_distance * 2);
-            var distancePerChevron = safeDistance / chevronCount;
-
-            SlideSegment currentSegment = segmentPool.Get();
-            var reverseSegments = new List<SlideSegment> { currentSegment };
-
-            float lastAngle = path.PositionAt(0).GetDegreesFromPosition(path.PositionAt(0.1 / totalDistance));
-            for (int i = 0; i < chevronCount; i++)
+            var reverseSegments = new List<SlideSegment>();
+            void visualizePath(SliderPath path)
             {
-                var progress = (double)i / (chevronCount - 1); // from 0 to 1, both inclusive
+                var chevronCount = chevronsInContinuousPath(path);
+                var totalDistance = path.Distance;
+                var safeDistance = totalDistance - (endpoint_distance * 2);
+                var distancePerChevron = safeDistance / chevronCount;
 
-                var position = path.PositionAt(((progress * safeDistance) + dot_distance) / totalDistance);
-                var nextPosition = path.PositionAt(((progress * safeDistance) + dot_distance + 0.1) / totalDistance);
-                var angle = position.GetDegreesFromPosition(nextPosition);
+                SlideSegment currentSegment = segmentPool.Get();
+                reverseSegments.Add(currentSegment);
 
-                currentSegment.Add(chevronPool.Get().With(c => {
-                    c.Position = position;
-                    c.Rotation = angle;
-                    c.ShouldHide = SentakkiExtensions.GetDeltaAngle( lastAngle, angle ) >= 89;
-                    c.Alpha = c.ShouldHide ? 0 : 1;
-                    c.Depth = i; // earlier ones should remain on top
-                }));
-
-                // add next segment if not last ( last segment has up to 5 chevrons while all other 3 )
-                if ( i % 3 == 2 && chevronCount - 2 > i )
+                float lastAngle = path.PositionAt(0).GetDegreesFromPosition(path.PositionAt(0.1 / totalDistance));
+                var previousPosition = path.PositionAt(0);
+                for (int i = 0; i < chevronCount; i++)
                 {
-                    currentSegment = segmentPool.Get();
-                    reverseSegments.Add(currentSegment);
-                }
+                    var progress = (double)i / ( chevronCount - 1 ); // from 0 to 1, both inclusive
 
-                lastAngle = angle;
+                    var position = path.PositionAt(((progress * safeDistance) + endpoint_distance) / totalDistance);
+                    var angle = previousPosition.GetDegreesFromPosition(position);
+
+                    currentSegment.Add(chevronPool.Get().With(c => {
+                        c.Position = position;
+                        c.Rotation = angle;
+                        c.ShouldHide = false;
+                        c.Alpha = 1;
+                        c.Depth = i; // earlier ones should remain on top
+                    }));
+
+                    // add next segment if not last ( last segment has up to 5 chevrons while all other 3 )
+                    if ( i % 3 == 2 && chevronCount - 3 > i )
+                    {
+                        currentSegment = segmentPool.Get();
+                        reverseSegments.Add(currentSegment);
+                    }
+
+                    lastAngle = angle;
+                    previousPosition = position;
+                }
             }
+
+            var (paths, count) = splitIntoContinuousPaths(path);
+            for (int i = 0; i < count; i++) visualizePath(paths[i]);
+            ArrayPool<SliderPath>.Shared.Return(paths);
+
             segments.AddRange( reverseSegments.Reverse<SlideSegment>() );
         }
 
