@@ -133,7 +133,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 SlideSegment currentSegment = segmentPool.Get();
                 reverseSegments.Add(currentSegment);
 
-                float lastAngle = path.PositionAt(0).GetDegreesFromPosition(path.PositionAt(0.1 / totalDistance));
                 var previousPosition = path.PositionAt(0);
                 for (int i = 0; i < chevronCount; i++)
                 {
@@ -155,7 +154,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                         reverseSegments.Add(currentSegment);
                     }
 
-                    lastAngle = angle;
                     previousPosition = position;
                 }
             }
