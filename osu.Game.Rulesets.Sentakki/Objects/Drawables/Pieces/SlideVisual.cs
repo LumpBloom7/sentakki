@@ -115,6 +115,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             return (int)Math.Ceiling((path.Distance - (2 * endpoint_distance)) * chevrons_per_distance);
         }
 
+        private int chevronCount;
         private void updateVisuals()
         {
             foreach (var segment in segments)
@@ -125,9 +126,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             void visualizePath(SliderPath path)
             {
                 var chevronCount = chevronsInContinuousPath(path);
+                this.chevronCount += chevronCount;
                 var totalDistance = path.Distance;
                 var safeDistance = totalDistance - (endpoint_distance * 2);
-                var distancePerChevron = safeDistance / chevronCount;
 
                 SlideSegment currentSegment = segmentPool.Get();
                 reverseSegments.Add(currentSegment);
@@ -136,7 +137,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 var previousPosition = path.PositionAt(0);
                 for (int i = 0; i < chevronCount; i++)
                 {
-                    var progress = (double)i / ( chevronCount - 1 ); // from 0 to 1, both inclusive
+                    var progress = (double)i / (chevronCount - 1); // from 0 to 1, both inclusive
 
                     var position = path.PositionAt(((progress * safeDistance) + endpoint_distance) / totalDistance);
                     var angle = previousPosition.GetDegreesFromPosition(position);
@@ -144,8 +145,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     currentSegment.Add(chevronPool.Get().With(c => {
                         c.Position = position;
                         c.Rotation = angle;
-                        c.ShouldHide = false;
-                        c.Alpha = 1;
                         c.Depth = i; // earlier ones should remain on top
                     }));
 
@@ -161,6 +160,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 }
             }
 
+            chevronCount = 0;
             var (paths, count) = splitIntoContinuousPaths(path);
             for (int i = 0; i < count; i++) visualizePath(paths[i]);
             ArrayPool<SliderPath>.Shared.Return(paths);
@@ -180,8 +180,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             if (snakingIn.Value)
             {
-                int chevrons = (int)Math.Ceiling(Path.Distance / distance_per_chevron);
-                double fadeDuration = duration / chevrons;
+                double fadeDuration = duration / chevronCount;
                 double currentOffset = duration / 2;
                 for (int i = segments.Count - 1; i >= 0; i--)
                 {
@@ -189,8 +188,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     for (int j = segment.Children.Count - 1; j >= 0; j--)
                     {
                         var chevron = segment.Children[j] as SlideChevron;
-                        if (!chevron.ShouldHide)
-                            chevron.FadeOut().Delay(currentOffset).FadeInFromZero(fadeDuration * 2);
+                        chevron.FadeOut().Delay(currentOffset).FadeInFromZero(fadeDuration * 2);
                         currentOffset += fadeDuration / 2;
                     }
                 }
@@ -203,7 +201,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         public void PerformExitAnimation(double duration)
         {
-            int chevronsLeft = (int)Math.Ceiling(Path.Distance / distance_per_chevron);
+            int chevronsLeft = chevronCount;
             double fadeDuration() => duration / chevronsLeft;
             double currentOffset = 0;
             for (int i = segments.Count - 1; i >= 0; i--)
@@ -218,8 +216,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 for (int j = segment.Children.Count - 1; j >= 0; j--)
                 {
                     var chevron = segment.Children[j] as SlideChevron;
-                    if (!chevron.ShouldHide)
-                        chevron.Delay(currentOffset).FadeOut(fadeDuration() * 2);
+                    chevron.Delay(currentOffset).FadeOut(fadeDuration() * 2);
                     currentOffset += fadeDuration() / 2;
                 }
             }
@@ -236,8 +233,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         private class SlideChevron : PoolableDrawable
         {
-            public bool ShouldHide;
-
             public SlideChevron()
             {
                 Anchor = Anchor.Centre;
