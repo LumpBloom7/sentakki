@@ -37,7 +37,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             base.CreateNestedHitObjects(cancellationToken);
 
             bool isSampleAdded = false;
-            var distance = SlideInfo.SlidePath.Path.Distance;
+            var distance = SlideInfo.SlidePath.TotalDistance;
             var nodeCount = (int)Math.Floor(distance / 100);
             for (int i = 0; i < nodeCount; i++)
             {

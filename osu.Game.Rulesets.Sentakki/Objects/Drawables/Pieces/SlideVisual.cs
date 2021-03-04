@@ -31,9 +31,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 updateProgress();
             }
         }
-        private SliderPath path;
+        private SentakkiSlidePath path;
 
-        public SliderPath Path
+        public SentakkiSlidePath Path
         {
             get => path;
             set
@@ -71,36 +71,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private const int chevrons_per_eith = 8;
         private const double ring_radius = 297;
         private const double chevrons_per_distance = (chevrons_per_eith * 8) / (2 * Math.PI * ring_radius);
-        private const double distance_per_chevron = 1 / chevrons_per_distance;
         private const double endpoint_distance = /*r*/34;
-
-        /// <returns>A rented array which needs to be returned to <see cref="ArrayPool&lt;SliderPath&gt;.Shared"/></returns>
-        private static (SliderPath[] array, int count) splitIntoContinuousPaths(SliderPath path)
-        {
-            var paths = ArrayPool<SliderPath>.Shared.Rent(path.ControlPoints.Skip(1).SkipLast(1).Count(c => c.Type.Value == null || c.Type.Value == PathType.Linear));
-
-            PathType context = path.ControlPoints[0].Type.Value ?? PathType.Linear;
-            int pathIndex = 0;
-
-            if (paths[0] is null) paths[0] = new SliderPath();
-            paths[0].ControlPoints.Clear();
-            paths[0].ControlPoints.Add(path.ControlPoints[0]);
-
-            for (int i = 1; i < path.ControlPoints.Count; i++)
-            {
-                var controlPoint = path.ControlPoints[i];
-                paths[pathIndex].ControlPoints.Add(controlPoint);
-                context = controlPoint.Type.Value ?? context;
-                if (context == PathType.Linear && i + 1 != path.ControlPoints.Count)
-                {
-                    pathIndex++;
-                    if (paths[pathIndex] == null) paths[pathIndex] = new SliderPath();
-                    paths[pathIndex].ControlPoints.Clear();
-                    paths[pathIndex].ControlPoints.Add(controlPoint);
-                }
-            }
-            return (paths, pathIndex + 1);
-        }
 
         private static int chevronsInContinuousPath(SliderPath path)
         {
@@ -129,9 +100,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
                     var chevron = chevronPool.Get();
                     chevron.Position = position;
-                    chevron.Progress = (runningDistance + distance) / this.path.Distance;
+                    chevron.Progress = (runningDistance + distance) / this.path.TotalDistance;
                     chevron.Rotation = angle;
-                    chevrons.Alpha = 1;
                     chevron.Depth = chevrons.Count;
                     chevrons.Add(chevron);
 
@@ -140,13 +110,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 runningDistance += totalDistance;
             }
 
-            var (paths, count) = splitIntoContinuousPaths(path);
-            for ( int i = 0; i < count; i++ )
+            foreach (var i in path.SlideSegments)
             {
-                createSegment(paths[i]);
+                createSegment(i);
             }
-
-            ArrayPool<SliderPath>.Shared.Return(paths);
         }
 
         private void updateProgress()

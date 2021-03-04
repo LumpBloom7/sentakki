@@ -84,7 +84,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void OnApply()
         {
             base.OnApply();
-            Slidepath.Path = HitObject.SlideInfo.SlidePath.Path;
+            Slidepath.Path = HitObject.SlideInfo.SlidePath;
             updatePathProgress();
             StarProgress = 0;
 

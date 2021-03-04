@@ -1,5 +1,6 @@
 using System.Linq;
 using osu.Game.Rulesets.Objects;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
@@ -7,8 +8,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     {
         // The ending lane of the path, without considering the lane offset of the main body
         public readonly int EndLane;
-
-        public readonly SliderPath Path;
 
         // The minimum duration that this pattern can have, used in converts
         public double MinDuration => TotalDistance / 2;
@@ -33,6 +32,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             SlideSegments = segments;
             TotalDistance = SlideSegments.Sum(p => p.Distance);
             EndLane = endLane;
+        }
+
+        public Vector2 PositionAt(double progress)
+        {
+            if (progress <= 0) return SlideSegments[0].PositionAt(0);
+            if (progress >= 1) return SlideSegments[^1].PositionAt(1);
+
+            double distanceLeft = TotalDistance * progress;
+            int i = 0;
+            while ( distanceLeft > SlideSegments[i].Distance )
+            {
+                distanceLeft -= SlideSegments[i].Distance;
+                i++;
+            }
+
+            return SlideSegments[i].PositionAt(distanceLeft / SlideSegments[i].Distance);
         }
     }
 }

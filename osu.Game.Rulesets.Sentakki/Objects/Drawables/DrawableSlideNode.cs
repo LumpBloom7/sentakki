@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void OnApply()
         {
             base.OnApply();
-            Position = parentSlide.HitObject.SlideInfo.SlidePath.Path.PositionAt(HitObject.Progress);
+            Position = parentSlide.HitObject.SlideInfo.SlidePath.PositionAt(HitObject.Progress);
 
             // Nodes are applied before being added to the parent playfield, so this node isn't in SlideNodes yet
             // Since we know that the node isn't in the container yet, and that the count is always one higher than the topmost element, we can use that as the predicted index

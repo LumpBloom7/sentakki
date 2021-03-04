@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -49,9 +50,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 
         protected void RefreshSlide()
         {
-            slide.Path = CreatePattern().Path;
+            slide.Path = CreatePattern();
             nodes.Clear();
-            foreach (var node in slide.Path.ControlPoints)
+            foreach (var node in slide.Path.SlideSegments.SelectMany(s => s.ControlPoints))
             {
                 nodes.Add(new CircularContainer
                 {
