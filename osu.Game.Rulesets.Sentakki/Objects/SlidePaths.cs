@@ -144,7 +144,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Vector2 Node1Pos = Vector2.Zero;
             Vector2 Node2Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end);
 
-            if (end >= 3 || end <= 5)
+            if (end >= 3 && end <= 5)
             {
                 var path = new SliderPath(new PathControlPoint[]{
                     new PathControlPoint(Node0Pos, PathType.Linear),
