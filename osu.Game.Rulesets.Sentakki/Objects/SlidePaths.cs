@@ -135,9 +135,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Vector2 Node1Pos = Vector2.Zero;
             Vector2 Node2Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end);
 
+            // This is used to determine whether a break is needed
+            bool continuous = end >= 3 && end <= 5;
+            PathType? Node1Type = null;
+            if (!continuous) Node1Type = PathType.Linear;
+
             var controlPoints = new List<PathControlPoint>{
                 new PathControlPoint(Node0Pos, PathType.Linear),
-                new PathControlPoint(Node1Pos, PathType.Linear),
+                new PathControlPoint(Node1Pos, Node1Type),
                 new PathControlPoint(Node2Pos, PathType.Linear)
             }.ToArray();
 
