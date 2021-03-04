@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             bool isSampleAdded = false;
             var distance = SlideInfo.SlidePath.Path.Distance;
-            var nodeCount = (int)Math.Floor(distance / 80);
+            var nodeCount = (int)Math.Floor(distance / 100);
             for (int i = 0; i < nodeCount; i++)
             {
                 var progress = (double)(i + 1) / nodeCount;
@@ -49,7 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     Progress = (float)progress
                 });
 
-                if ( !isSampleAdded )
+                if (!isSampleAdded)
                 {
                     isSampleAdded = true;
                     node.Samples.Add(new SentakkiHitSampleInfo("slide"));
