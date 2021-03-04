@@ -218,7 +218,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
             public void UpdateProgress(double progress)
             {
-                Alpha = progress >= Progress ? 0 : 1;
+                this.FadeTo(progress >= Progress ? 0 : 1);
             }
         }
     }
