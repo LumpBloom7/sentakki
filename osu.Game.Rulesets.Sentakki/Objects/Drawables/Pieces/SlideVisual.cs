@@ -79,11 +79,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private const double endpoint_distance = /*r*/34;
 
         /// <returns>A rented array which needs to be returned to <see cref="ArrayPool&lt;SliderPath&gt;.Shared"/></returns>
-        private static (SliderPath[] autosmoothedarray, SliderPath[] originalarray, int count) splitIntoContinuousPaths(SliderPath path)
+        private static (SliderPath[] array, int count) splitIntoContinuousPaths(SliderPath path)
         {
             var paths = ArrayPool<SliderPath>.Shared.Rent(path.ControlPoints.Skip(1).SkipLast(1).Count(c => c.Type.Value == null || c.Type.Value == PathType.Linear));
-            var originalPaths = ArrayPool<SliderPath>.Shared.Rent(path.ControlPoints.Skip(1).SkipLast(1).Count(c => c.Type.Value == null || c.Type.Value == PathType.Linear));
-            const double auto_smooth_angle = 60;
 
             PathType context = path.ControlPoints[0].Type.Value ?? PathType.Linear;
             int pathIndex = 0;
@@ -91,42 +89,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             if (paths[0] is null) paths[0] = new SliderPath();
             paths[0].ControlPoints.Clear();
             paths[0].ControlPoints.Add(path.ControlPoints[0]);
-            if (originalPaths[0] is null) originalPaths[0] = new SliderPath();
-            originalPaths[0].ControlPoints.Clear();
-            originalPaths[0].ControlPoints.Add(path.ControlPoints[0]);
 
             for (int i = 1; i < path.ControlPoints.Count; i++)
             {
                 var controlPoint = path.ControlPoints[i];
                 paths[pathIndex].ControlPoints.Add(controlPoint);
-                originalPaths[pathIndex].ControlPoints.Add(controlPoint);
                 context = controlPoint.Type.Value ?? context;
                 if (context == PathType.Linear && i + 1 != path.ControlPoints.Count)
                 {
-                    var previousPosition = path.ControlPoints[i - 1].Position.Value;
-                    var nextPosition = path.ControlPoints[i + 1].Position.Value;
-                    var prev = controlPoint.Position.Value.GetDegreesFromPosition(previousPosition);
-                    var next = controlPoint.Position.Value.GetDegreesFromPosition(nextPosition);
-                    if (SentakkiExtensions.GetDeltaAngle(prev, next) >= 180 - auto_smooth_angle)
-                    {
-                        // prev -> +bezier -> current(null) -> +bezier -> next
-                        paths[pathIndex].ControlPoints.RemoveAt(paths[pathIndex].ControlPoints.Count - 1);
-                        paths[pathIndex].ControlPoints.Add(new PathControlPoint((previousPosition + (controlPoint.Position.Value * 8)) / 9, PathType.Bezier));
-                        paths[pathIndex].ControlPoints.Add(new PathControlPoint(controlPoint.Position.Value));
-                        paths[pathIndex].ControlPoints.Add(new PathControlPoint((nextPosition + (controlPoint.Position.Value * 8)) / 9, PathType.Bezier));
-                        continue;
-                    }
-
                     pathIndex++;
                     if (paths[pathIndex] == null) paths[pathIndex] = new SliderPath();
                     paths[pathIndex].ControlPoints.Clear();
                     paths[pathIndex].ControlPoints.Add(controlPoint);
-                    if (originalPaths[pathIndex] == null) originalPaths[pathIndex] = new SliderPath();
-                    originalPaths[pathIndex].ControlPoints.Clear();
-                    originalPaths[pathIndex].ControlPoints.Add(controlPoint);
                 }
             }
-            return (paths, originalPaths, pathIndex + 1);
+            return (paths, pathIndex + 1);
         }
 
         private static int chevronsInContinuousPath(SliderPath path)
@@ -165,17 +142,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 return currentSegment;
             }
 
-            var (paths, originalPaths, count) = splitIntoContinuousPaths(path);
+            var (paths, count) = splitIntoContinuousPaths(path);
             double totalDistance = 0;
             for ( int i = 0; i < count; i++ )
             {
                 var segment = createSegment(paths[i]);
                 segment.StartProgress = (totalDistance + endpoint_distance) / path.Distance;
-                segment.EndProgress = (totalDistance + originalPaths[i].Distance - endpoint_distance) / path.Distance;
+                segment.EndProgress = (totalDistance + paths[i].Distance - endpoint_distance) / path.Distance;
                 segment.Depth = segments.Count;
-                totalDistance += originalPaths[i].Distance;
+                totalDistance += paths[i].Distance;
                 segments.Add(segment);
             }
+
+            ArrayPool<SliderPath>.Shared.Return(paths);
         }
 
         private void updateProgress()
@@ -213,8 +192,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public void PerformExitAnimation(double duration)
         {
             updateProgress();
-            int chevronsLeft = segments.Sum(s => s.ChevronCount);
-            double fadeDuration() => duration / chevronsLeft;
+            int chevronsLeft = segments.Sum(s => s.Children.Count(c => c.Alpha != 0));
+            double fadeDuration = duration / chevronsLeft;
             double currentOffset = 0;
             for (int i = segments.Count - 1; i >= 0; i--)
             {
@@ -222,9 +201,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 for (int j = segment.Children.Count - 1; j >= 0; j--)
                 {
                     var chevron = segment.Children[j] as SlideChevron;
-                    chevron.Delay(currentOffset).FadeOut(fadeDuration() * 2);
-                    currentOffset += fadeDuration() / 2;
-                    chevronsLeft--;
+                    if (chevron.Alpha == 0)
+                    {
+                        continue;
+                    }
+                    chevron.Delay(currentOffset).FadeOut(fadeDuration * 2);
+                    currentOffset += fadeDuration / 2;
                 }
             }
         }
@@ -245,16 +227,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     var progressHere = (double)i / (Children.Count - 1);
                     progressHere = StartProgress + (progressHere * (EndProgress - StartProgress));
 
-                    if (progressHere > progress)
-                        Children[^(i+1)].FadeIn();
-                    else
-                        Children[^(i+1)].FadeOut();
+                    Children[^(i+1)].Alpha = progressHere > progress ? 1 : 0;
                 }
-
-                if (progress >= EndProgress)
-                    this.FadeOut();
-                else
-                    this.FadeIn();
             }
         }
 
