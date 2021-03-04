@@ -37,36 +37,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             base.CreateNestedHitObjects(cancellationToken);
 
             bool isSampleAdded = false;
-            foreach (var (segment,start,end) in SlideVisual.CreateSegmentsFor(SlideInfo.SlidePath.Path))
+            var distance = SlideInfo.SlidePath.Path.Distance;
+            var nodeCount = (int)Math.Floor(distance / 80);
+            for (int i = 0; i < nodeCount; i++)
             {
-                var count = segment.Count();
-                var left = count;
-
-                for ( int i = 0; left > 0; i = left >= 6 ? (i + 3) : (count - 1) )
+                var progress = (double)(i + 1) / nodeCount;
+                SlideNode node;
+                AddNested(node = new SlideNode
                 {
-                    var progress = (double)i / ( count - 1 );
-                    progress = start + ( progress * ( end - start ) );
+                    StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
+                    Progress = (float)progress
+                });
 
-                    SlideNode node;
-                    AddNested(node = new SlideNode
-                    {
-                        StartTime = StartTime + ShootDelay + ( ( Duration - ShootDelay ) * progress ),
-                        Progress = (float)progress
-                    });
-
-                    if ( !isSampleAdded )
-                    {
-                        isSampleAdded = true;
-                        node.Samples.Add(new SentakkiHitSampleInfo("slide"));
-                    }
-
-                    left = count - i - 1;
+                if ( !isSampleAdded )
+                {
+                    isSampleAdded = true;
+                    node.Samples.Add(new SentakkiHitSampleInfo("slide"));
                 }
             }
-            AddNested(new SlideNode {
-                StartTime = EndTime,
-                Progress = 1
-            });
         }
 
         [JsonIgnore]

@@ -39,7 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             });
             AddSliderStep("Progress", 0.0f, 1.0f, 0.0f, p =>
             {
-                slide.CompletedSegments = (int)(slide.SegmentCount * p);
+                slide.Progress = p;
             });
 
             Add(nodes = new Container()

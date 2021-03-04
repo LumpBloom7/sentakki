@@ -119,10 +119,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private void updatePathProgress()
         {
             var target = SlideNodes.LastOrDefault(x => x.Result.IsHit);
-            if (target == null)
-                Slidepath.CompletedSegments = 0;
+            if ( target == null )
+                Slidepath.Progress = 0;
             else
-                Slidepath.CompletedSegments = target.ThisIndex + 1;
+                Slidepath.Progress = target.HitObject.Progress;
 
             pendingProgressUpdate = false;
         }
