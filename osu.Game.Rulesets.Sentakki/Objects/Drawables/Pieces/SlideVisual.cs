@@ -126,7 +126,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         public void PerformEntryAnimation(double duration)
         {
-            updateProgress(); // transforms are reset so we need to reapply them
             if (snakingIn.Value)
             {
                 double fadeDuration = duration / chevrons.Count;
@@ -134,19 +133,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 for (int j = chevrons.Count - 1; j >= 0; j--)
                 {
                     var chevron = chevrons[j];
-                    chevron.FadeOut().Delay(currentOffset).FadeInFromZero(fadeDuration * 2);
+                    chevron.FadeOut().Delay(currentOffset).FadeIn(fadeDuration * 2).Finally(c => c.UpdateProgress(progress));
                     currentOffset += fadeDuration / 2;
                 }
             }
             else
             {
-                this.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
+                this.FadeOut().Delay(duration / 2).FadeIn(duration / 2).Finally(c => c.updateProgress());
             }
         }
 
         public void PerformExitAnimation(double duration)
         {
-            updateProgress();
             int chevronsLeft = chevrons.Count(c => c.Alpha != 0);
             double fadeDuration = duration / chevronsLeft;
             double currentOffset = 0;
@@ -185,7 +183,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
             public void UpdateProgress(double progress)
             {
-                this.FadeTo(progress >= Progress ? 0 : 1);
+                Alpha = progress >= Progress ? 0 : 1;
             }
         }
     }
