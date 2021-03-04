@@ -134,7 +134,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             return (int)Math.Ceiling((path.Distance - (2 * endpoint_distance)) * chevrons_per_distance);
         }
 
-
         private void updateVisuals()
         {
             foreach (var segment in segments)
