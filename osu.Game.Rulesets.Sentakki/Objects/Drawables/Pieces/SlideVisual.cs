@@ -59,7 +59,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
 
             AddRangeInternal(new Drawable[]{
-                chevronPool = new DrawablePool<SlideChevron>(61),
+                chevronPool = new DrawablePool<SlideChevron>(62),
                 chevrons = new Container<SlideChevron>(),
             });
         }
