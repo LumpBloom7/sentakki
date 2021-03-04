@@ -39,6 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             GenerateStraightPattern(5),
             GenerateStraightPattern(6),
             GenerateThunderPattern(),
+            GenerateThunderPattern(true),
             GenerateUPattern(0),
             GenerateUPattern(1),
             GenerateUPattern(2),
