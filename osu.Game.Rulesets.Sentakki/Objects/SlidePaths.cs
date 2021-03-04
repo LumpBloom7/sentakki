@@ -217,7 +217,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Vector2 Node4Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end);
             Vector2 Node3Pos = getPositionInBetween(Node4Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end + (reversed ? -3 : 3)), .51f);
 
-
             var path = new SliderPath(new PathControlPoint[]{
                 new PathControlPoint(Node0Pos,PathType.Linear),
                 new PathControlPoint(Node1Pos, PathType.PerfectCurve),

@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             double distanceLeft = TotalDistance * progress;
             int i = 0;
-            while ( distanceLeft > SlideSegments[i].Distance )
+            while (distanceLeft > SlideSegments[i].Distance)
             {
                 distanceLeft -= SlideSegments[i].Distance;
                 i++;
