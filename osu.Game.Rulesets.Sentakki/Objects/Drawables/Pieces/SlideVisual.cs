@@ -1,6 +1,4 @@
 using System;
-using System.Buffers;
-using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -10,9 +8,7 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Configuration;
-using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
@@ -71,7 +67,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private const int chevrons_per_eith = 8;
         private const double ring_radius = 297;
         private const double chevrons_per_distance = (chevrons_per_eith * 8) / (2 * Math.PI * ring_radius);
-        private const double endpoint_distance = /*r*/34;
+        private const double endpoint_distance = 34; // margin for each end
 
         private static int chevronsInContinuousPath(SliderPath path)
         {
@@ -83,7 +79,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             chevrons.Clear(false);
 
             double runningDistance = 0;
-            void createSegment(SliderPath path)
+            foreach (var path in path.SlideSegments)
             {
                 var chevronCount = chevronsInContinuousPath(path);
                 var totalDistance = path.Distance;
@@ -108,11 +104,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     previousPosition = position;
                 }
                 runningDistance += totalDistance;
-            }
-
-            foreach (var i in path.SlideSegments)
-            {
-                createSegment(i);
             }
         }
 
