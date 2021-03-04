@@ -84,13 +84,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // Covers DX Straight 3-7
         public static SentakkiSlidePath GenerateStraightPattern(int end)
         {
-            var controlPoints = new List<PathControlPoint>{
+            var path = new SliderPath(new PathControlPoint[] {
                 new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0), PathType.Linear),
                 new PathControlPoint(getPositionInBetween(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0),SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end)), PathType.Linear),
                 new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end), PathType.Linear),
-            }.ToArray();
+            });
 
-            return new SentakkiSlidePath(controlPoints, end);
+            return new SentakkiSlidePath(path, end);
         }
 
         private static Vector2 getIntesectPoint(Vector2 A1, Vector2 A2, Vector2 B1, Vector2 B2)
@@ -111,6 +111,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             int lane2 = mirrored ? 2 : 6;
             int lane3 = mirrored ? 6 : 2;
             int lane4 = mirrored ? 7 : 1;
+
             static Vector2 lanestart(int x) => SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, x);
             Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0);
             Vector2 Node1Pos = getIntesectPoint(lanestart(0), lanestart(lane1), lanestart(lane2), lanestart(lane3));
@@ -118,14 +119,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Vector2 Node2Pos = getIntesectPoint(lanestart(lane2), lanestart(lane3), lanestart(lane4), lanestart(4));
             Vector2 Node3Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 4);
 
-            var controlPoints = new List<PathControlPoint>{
-                new PathControlPoint(Node0Pos, PathType.Linear),
-                new PathControlPoint(Node1Pos, PathType.Linear),
-                new PathControlPoint(Node2Pos, PathType.Linear),
-                new PathControlPoint(Node3Pos, PathType.Linear)
+            SliderPath[] segments = new SliderPath[]{
+                new SliderPath(new PathControlPoint[]{
+                    new PathControlPoint(Node0Pos, PathType.Linear),
+                    new PathControlPoint(Node1Pos, PathType.Linear),
+                }),
+                new SliderPath(new PathControlPoint[]{
+                    new PathControlPoint(Node1Pos, PathType.Linear),
+                    new PathControlPoint(Node2Pos, PathType.Linear),
+                }),
+                new SliderPath(new PathControlPoint[]{
+                    new PathControlPoint(Node2Pos, PathType.Linear),
+                    new PathControlPoint(Node3Pos, PathType.Linear),
+                })
             };
 
-            return new SentakkiSlidePath(controlPoints.ToArray(), 4);
+            return new SentakkiSlidePath(segments, 4);
         }
 
         // Covers DX V pattern 1-8
@@ -135,18 +144,30 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Vector2 Node1Pos = Vector2.Zero;
             Vector2 Node2Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end);
 
-            // This is used to determine whether a break is needed
-            bool continuous = end >= 3 && end <= 5;
-            PathType? Node1Type = null;
-            if (!continuous) Node1Type = PathType.Linear;
+            if (end >= 3 || end <= 5)
+            {
+                var path = new SliderPath(new PathControlPoint[]{
+                    new PathControlPoint(Node0Pos, PathType.Linear),
+                    new PathControlPoint(Node1Pos, PathType.Linear),
+                    new PathControlPoint(Node2Pos, PathType.Linear)
+                });
+                return new SentakkiSlidePath(path, end);
+            }
+            else
+            {
+                SliderPath[] segments = new SliderPath[]{
+                    new SliderPath(new PathControlPoint[]{
+                        new PathControlPoint(Node0Pos, PathType.Linear),
+                        new PathControlPoint(Node1Pos, PathType.Linear),
+                    }),
+                    new SliderPath(new PathControlPoint[]{
+                        new PathControlPoint(Node1Pos, PathType.Linear),
+                        new PathControlPoint(Node2Pos, PathType.Linear),
+                    })
+                };
 
-            var controlPoints = new List<PathControlPoint>{
-                new PathControlPoint(Node0Pos, PathType.Linear),
-                new PathControlPoint(Node1Pos, Node1Type),
-                new PathControlPoint(Node2Pos, PathType.Linear)
-            }.ToArray();
-
-            return new SentakkiSlidePath(controlPoints, end);
+                return new SentakkiSlidePath(segments, end);
+            }
         }
 
         // Covers DX L pattern 2-5
@@ -156,13 +177,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Vector2 Node1Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, mirrored ? 2 : 6);
             Vector2 Node2Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end);
 
-            var controlPoints = new List<PathControlPoint>{
-                new PathControlPoint(Node0Pos, PathType.Linear),
-                new PathControlPoint(Node1Pos, PathType.Linear),
-                new PathControlPoint(Node2Pos, PathType.Linear)
-            }.ToArray();
+            var segments = new SliderPath[]{
+                new SliderPath(new PathControlPoint[]{
+                    new PathControlPoint(Node0Pos, PathType.Linear),
+                    new PathControlPoint(Node1Pos, PathType.Linear),
+                }),
+                new SliderPath(new PathControlPoint[]{
+                    new PathControlPoint(Node1Pos, PathType.Linear),
+                    new PathControlPoint(Node2Pos, PathType.Linear),
+                }),
+            };
 
-            return new SentakkiSlidePath(controlPoints, end);
+            return new SentakkiSlidePath(segments, end);
         }
 
         // DX Circle Pattern
@@ -171,13 +197,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             float centre = ((0.GetRotationForLane() + end.GetRotationForLane()) / 2) + (direction == RotationDirection.CounterClockwise ? 180 : 0);
             Vector2 centreNode = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, centre == 0.GetRotationForLane() ? centre + 180 : centre);
 
-            List<PathControlPoint> SlidePath = new List<PathControlPoint> {
+            var path = new SliderPath(new PathControlPoint[]{
                 new PathControlPoint(SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, 0.GetRotationForLane() + (direction == RotationDirection.CounterClockwise ? -.5f : .5f)), PathType.PerfectCurve),
                 new PathControlPoint(centreNode),
                 new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end), PathType.PerfectCurve)
-            };
+            });
 
-            return new SentakkiSlidePath(SlidePath.ToArray(), end);
+            return new SentakkiSlidePath(path, end);
         }
 
         public static SentakkiSlidePath GenerateUPattern(int end, bool reversed = false)
@@ -191,15 +217,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Vector2 Node4Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end);
             Vector2 Node3Pos = getPositionInBetween(Node4Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end + (reversed ? -3 : 3)), .51f);
 
-            var controlPoints = new List<PathControlPoint>{
+
+            var path = new SliderPath(new PathControlPoint[]{
                 new PathControlPoint(Node0Pos,PathType.Linear),
                 new PathControlPoint(Node1Pos, PathType.PerfectCurve),
                 new PathControlPoint(Node2Pos),
                 new PathControlPoint(Node3Pos, PathType.PerfectCurve),
                 new PathControlPoint(Node4Pos,PathType.Linear)
-            };
-
-            return new SentakkiSlidePath(controlPoints.ToArray(), end);
+            });
+            return new SentakkiSlidePath(path, end);
         }
 
         public static SentakkiSlidePath GenerateCupPattern(int end, bool mirrored = false)
@@ -243,17 +269,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Vector2 Node5Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, loopEndAngle);
             Vector2 Node6Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end);
 
-            var controlPoints = new List<PathControlPoint>{
+            var path = new SliderPath(new PathControlPoint[]{
                 new PathControlPoint(Node0Pos, PathType.Linear),
                 new PathControlPoint(Node1Pos, PathType.PerfectCurve),
                 new PathControlPoint(Node2Pos),
                 new PathControlPoint(Node3Pos, PathType.PerfectCurve),
                 new PathControlPoint(Node4Pos),
                 new PathControlPoint(Node5Pos,PathType.PerfectCurve),
-                new PathControlPoint(Node6Pos, PathType.Linear),
-            };
+                new PathControlPoint(Node6Pos, PathType.Linear)
+            });
 
-            return new SentakkiSlidePath(controlPoints.ToArray(), end);
+            return new SentakkiSlidePath(path, end);
         }
     }
 }
