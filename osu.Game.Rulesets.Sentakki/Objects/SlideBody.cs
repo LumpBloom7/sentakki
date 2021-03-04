@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading;
 using Newtonsoft.Json;
 using osu.Game.Beatmaps;
@@ -34,29 +35,37 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             base.CreateNestedHitObjects(cancellationToken);
 
-            int chevrons = SlideVisual.ChevronsInPath(SlideInfo.SlidePath.Path);
-            double chevronInterval = 1.0 / chevrons;
-
-            for (int i = 4; i < chevrons - 3; i += 3)
+            bool isSampleAdded = false;
+            foreach (var (segment,start,end) in SlideVisual.CreateSegmentsFor(SlideInfo.SlidePath.Path))
             {
-                var progress = i * chevronInterval;
-                SlideNode node;
-                AddNested(node = new SlideNode
+                var count = segment.Count();
+                var left = count;
+                int i = 0;
+                foreach (var (pos, rot) in segment)
                 {
-                    StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
-                    Progress = (float)progress
-                });
+                    // skip first node, insert each third chevron unless there are less than 2 left (if so, insert one at the end)
+                    if(i != 0 && ((i % 3 == 0 && left >= 3) || left == 1))
+                    {
+                        var progress = (double)i / (count - 1);
+                        progress = start + (progress * (end - start));
 
-                // Add the slide sample to first node
-                if (i == 4)
-                    node.Samples.Add(new SentakkiHitSampleInfo("slide"));
+                        SlideNode node;
+                        AddNested(node = new SlideNode {
+                            StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
+                            Progress = (float)progress
+                        });
+
+                        if (!isSampleAdded)
+                        {
+                            isSampleAdded = true;
+                            node.Samples.Add(new SentakkiHitSampleInfo("slide"));
+                        }
+                    }
+
+                    i++;
+                    left--;
+                }
             }
-
-            AddNested(new SlideNode
-            {
-                StartTime = EndTime,
-                Progress = 1
-            });
         }
 
         [JsonIgnore]
