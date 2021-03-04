@@ -156,7 +156,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             double totalDistance = 0;
             for (int i = 0; i < count; i++)
             {
-                yield return (createSegment(paths[i]), totalDistance / path.Distance, (totalDistance + paths[i].Distance) / path.Distance);
+                yield return (createSegment(paths[i]), (totalDistance + endpoint_distance) / path.Distance, (totalDistance + paths[i].Distance - endpoint_distance) / path.Distance);
                 totalDistance += paths[i].Distance;
             }
             ArrayPool<SliderPath>.Shared.Return(paths);

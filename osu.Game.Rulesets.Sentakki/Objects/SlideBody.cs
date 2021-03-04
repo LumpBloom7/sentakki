@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using Newtonsoft.Json;
@@ -40,32 +41,32 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             {
                 var count = segment.Count();
                 var left = count;
-                int i = 0;
-                foreach (var (pos, rot) in segment)
+
+                for ( int i = 0; left > 0; i = left >= 6 ? (i + 3) : (count - 1) )
                 {
-                    // skip first node, insert each third chevron unless there are less than 2 left (if so, insert one at the end)
-                    if(i != 0 && ((i % 3 == 0 && left >= 3) || left == 1))
+                    var progress = (double)i / ( count - 1 );
+                    progress = start + ( progress * ( end - start ) );
+
+                    SlideNode node;
+                    AddNested(node = new SlideNode
                     {
-                        var progress = (double)i / (count - 1);
-                        progress = start + (progress * (end - start));
+                        StartTime = StartTime + ShootDelay + ( ( Duration - ShootDelay ) * progress ),
+                        Progress = (float)progress
+                    });
 
-                        SlideNode node;
-                        AddNested(node = new SlideNode {
-                            StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
-                            Progress = (float)progress
-                        });
-
-                        if (!isSampleAdded)
-                        {
-                            isSampleAdded = true;
-                            node.Samples.Add(new SentakkiHitSampleInfo("slide"));
-                        }
+                    if ( !isSampleAdded )
+                    {
+                        isSampleAdded = true;
+                        node.Samples.Add(new SentakkiHitSampleInfo("slide"));
                     }
 
-                    i++;
-                    left--;
+                    left = count - i - 1;
                 }
             }
+            AddNested(new SlideNode {
+                StartTime = EndTime,
+                Progress = 1
+            });
         }
 
         [JsonIgnore]
