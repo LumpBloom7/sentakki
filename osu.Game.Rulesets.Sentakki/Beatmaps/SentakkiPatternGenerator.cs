@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.EnumExtensions;
+using osu.Framework.Utils;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
@@ -148,15 +149,17 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         {
             int noteLane = getNewLane(twin);
 
-            var validPaths = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.MinDuration && ((IHasDuration)original).Duration <= p.MaxDuration).ToList();
+            var validPaths = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.Item1.MinDuration && ((IHasDuration)original).Duration <= p.Item1.MaxDuration).ToList();
             if (!validPaths.Any()) return null;
             int selectedSlideID = SlidePaths.VALIDPATHS.IndexOf(validPaths[rng.Next(validPaths.Count)]);
+            bool mirrored = rng.NextDouble() < 0.5;
 
             return new Slide
             {
                 SlideInfoList = new List<SentakkiSlideInfo>{
                     new SentakkiSlideInfo{
                         ID = selectedSlideID,
+                        Mirrored = mirrored,
                         Duration = ((IHasDuration)original).Duration
                     }
                 },
