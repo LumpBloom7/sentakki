@@ -18,8 +18,8 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
     {
         protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 
-        private int id = 0;
-        private bool mirrored = false;
+        private int id;
+        private bool mirrored;
         private readonly SlideVisual slide;
         private readonly Container nodes;
 
@@ -45,7 +45,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
             });
-
         }
 
         protected SentakkiSlidePath CreatePattern() => SlidePaths.GetSlidePath(id, mirrored);
