@@ -5,6 +5,7 @@ using System.Linq;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
 using osu.Framework.Bindables;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {
@@ -53,6 +54,17 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                     slide.SlideInfoList.ForEach(slideInfo => slideInfo.Mirrored ^= mirrored);
             });
 
+            beatmap.HitObjects.OfType<Touch>().ForEach(touch =>
+            {
+                Vector2 newPosition = touch.Position;
+                if (YAxis.Value)
+                    newPosition.X = -touch.Position.X;
+
+                if (XAxis.Value)
+                    newPosition.Y = -touch.Position.Y;
+
+                touch.Position = newPosition;
+            });
         }
     }
 }
