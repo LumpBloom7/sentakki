@@ -84,7 +84,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void OnApply()
         {
             base.OnApply();
-            Slidepath.Path = HitObject.SlideInfo.SlidePath.Path;
+            Slidepath.Path = HitObject.SlideInfo.SlidePath;
             updatePathProgress();
             StarProgress = 0;
 
@@ -120,9 +120,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             var target = SlideNodes.LastOrDefault(x => x.Result.IsHit);
             if (target == null)
-                Slidepath.CompletedSegments = 0;
+                Slidepath.Progress = 0;
             else
-                Slidepath.CompletedSegments = target.ThisIndex + 1;
+                Slidepath.Progress = target.HitObject.Progress;
 
             pendingProgressUpdate = false;
         }
