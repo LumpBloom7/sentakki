@@ -1,10 +1,10 @@
-using osu.Framework.Extensions.IEnumerableExtensions;
-using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Mods;
 using System.Linq;
+using osu.Framework.Bindables;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
-using osu.Framework.Bindables;
+using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
