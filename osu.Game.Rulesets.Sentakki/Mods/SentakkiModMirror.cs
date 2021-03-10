@@ -26,7 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             Value = false
         };
 
-        [SettingSource("⇔ Mirror horizontally", "Mirror entire playfield across the y-axis")]
+        [SettingSource("⇆ Mirror horizontally", "Mirror entire playfield across the y-axis")]
         public BindableBool HorizontalMirrored { get; } = new BindableBool
         {
             Default = false,
