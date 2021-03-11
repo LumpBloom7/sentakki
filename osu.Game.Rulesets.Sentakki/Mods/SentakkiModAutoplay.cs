@@ -23,7 +23,14 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             Replay = new SentakkiAutoGenerator(beatmap).Generate(),
         };
 
-        public override Type[] IncompatibleMods => base.IncompatibleMods.Append(typeof(SentakkiModAutoTouch)).ToArray();
+        public override Type[] IncompatibleMods => new Type[5]
+        {
+            typeof(ModRelax),
+            typeof(ModSuddenDeath),
+            typeof(ModNoFail),
+            typeof(SentakkiModAutoTouch),
+            typeof(SentakkiModChallenge)
+        };
 
         public void ApplyToDrawableHitObjects(IEnumerable<DrawableHitObject> drawables)
         {

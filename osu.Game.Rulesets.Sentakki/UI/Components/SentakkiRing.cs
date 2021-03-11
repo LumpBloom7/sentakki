@@ -16,7 +16,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components
 {
-    public class SentakkiRing : CompositeDrawable
+    public class SentakkiRing : Container
     {
         private readonly Container spawnIndicator;
 
