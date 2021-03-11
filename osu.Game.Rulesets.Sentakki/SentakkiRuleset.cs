@@ -78,6 +78,11 @@ namespace osu.Game.Rulesets.Sentakki
                         new SentakkiModAutoTouch()
                     };
 
+                case ModType.Conversion:
+                    return new Mod[]{
+                        new SentakkiModMirror(),
+                    };
+
                 case ModType.Fun:
                     return new Mod[]
                     {

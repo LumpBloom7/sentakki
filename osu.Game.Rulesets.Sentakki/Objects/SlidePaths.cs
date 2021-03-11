@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
@@ -10,75 +11,50 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public static class SlidePaths
     {
-        public static readonly List<SentakkiSlidePath> VALIDPATHS = new List<SentakkiSlidePath>{
-            GenerateCirclePattern(2),
-            GenerateCirclePattern(3),
-            GenerateCirclePattern(4),
-            GenerateCirclePattern(5),
-            GenerateCirclePattern(6),
-            GenerateCirclePattern(7),
-            GenerateCirclePattern(8),
-            GenerateCirclePattern(0, RotationDirection.CounterClockwise),
-            GenerateCirclePattern(1, RotationDirection.CounterClockwise),
-            GenerateCirclePattern(2, RotationDirection.CounterClockwise),
-            GenerateCirclePattern(3, RotationDirection.CounterClockwise),
-            GenerateCirclePattern(4, RotationDirection.CounterClockwise),
-            GenerateCirclePattern(5, RotationDirection.CounterClockwise),
-            GenerateCirclePattern(6, RotationDirection.CounterClockwise),
-            GenerateLPattern(1),
-            GenerateLPattern(2),
-            GenerateLPattern(3),
-            GenerateLPattern(4),
-            GenerateLPattern(4, true),
-            GenerateLPattern(5, true),
-            GenerateLPattern(6, true),
-            GenerateLPattern(7, true),
-            GenerateStraightPattern(2),
-            GenerateStraightPattern(3),
-            GenerateStraightPattern(4),
-            GenerateStraightPattern(5),
-            GenerateStraightPattern(6),
-            GenerateThunderPattern(),
-            GenerateThunderPattern(true),
-            GenerateUPattern(0),
-            GenerateUPattern(1),
-            GenerateUPattern(2),
-            GenerateUPattern(3),
-            GenerateUPattern(4),
-            GenerateUPattern(5),
-            GenerateUPattern(6),
-            GenerateUPattern(7),
-            GenerateUPattern(0, true),
-            GenerateUPattern(1, true),
-            GenerateUPattern(2, true),
-            GenerateUPattern(3, true),
-            GenerateUPattern(4, true),
-            GenerateUPattern(5, true),
-            GenerateUPattern(6, true),
-            GenerateUPattern(7, true),
-            GenerateVPattern(1),
-            GenerateVPattern(2),
-            GenerateVPattern(3),
-            GenerateVPattern(5),
-            GenerateVPattern(6),
-            GenerateVPattern(7),
-            GenerateCupPattern(0),
-            GenerateCupPattern(1),
-            GenerateCupPattern(2),
-            GenerateCupPattern(3),
-            GenerateCupPattern(4),
-            GenerateCupPattern(5),
-            GenerateCupPattern(6),
-            GenerateCupPattern(7),
-            GenerateCupPattern(0, true),
-            GenerateCupPattern(1, true),
-            GenerateCupPattern(2, true),
-            GenerateCupPattern(3, true),
-            GenerateCupPattern(4, true),
-            GenerateCupPattern(5, true),
-            GenerateCupPattern(6, true),
-            GenerateCupPattern(7, true),
+        public static readonly List<(SentakkiSlidePath, SentakkiSlidePath)> VALIDPATHS = new List<(SentakkiSlidePath, SentakkiSlidePath)>{
+            (GenerateCirclePattern(2), GenerateCirclePattern(6, RotationDirection.CounterClockwise)),
+            (GenerateCirclePattern(3), GenerateCirclePattern(5, RotationDirection.CounterClockwise)),
+            (GenerateCirclePattern(4), GenerateCirclePattern(4, RotationDirection.CounterClockwise)),
+            (GenerateCirclePattern(5), GenerateCirclePattern(3, RotationDirection.CounterClockwise)),
+            (GenerateCirclePattern(6), GenerateCirclePattern(2, RotationDirection.CounterClockwise)),
+            (GenerateCirclePattern(7), GenerateCirclePattern(1, RotationDirection.CounterClockwise)),
+            (GenerateCirclePattern(8), GenerateCirclePattern(0, RotationDirection.CounterClockwise)),
+            (GenerateLPattern(1), GenerateLPattern(7, true)),
+            (GenerateLPattern(2), GenerateLPattern(6, true)),
+            (GenerateLPattern(3), GenerateLPattern(5, true)),
+            (GenerateLPattern(4), GenerateLPattern(4, true)),
+            (GenerateStraightPattern(2), GenerateStraightPattern(6)),
+            (GenerateStraightPattern(3), GenerateStraightPattern(5)),
+            (GenerateStraightPattern(4), null),
+            (GenerateThunderPattern(), GenerateThunderPattern(true)),
+            (GenerateUPattern(0), GenerateUPattern(0, true)),
+            (GenerateUPattern(1), GenerateUPattern(7, true)),
+            (GenerateUPattern(2), GenerateUPattern(6, true)),
+            (GenerateUPattern(3), GenerateUPattern(5, true)),
+            (GenerateUPattern(4), GenerateUPattern(4, true)),
+            (GenerateUPattern(5), GenerateUPattern(3, true)),
+            (GenerateUPattern(6), GenerateUPattern(2, true)),
+            (GenerateUPattern(7), GenerateUPattern(1, true)),
+            (GenerateVPattern(1), GenerateVPattern(7)),
+            (GenerateVPattern(2), GenerateVPattern(6)),
+            (GenerateVPattern(3), GenerateVPattern(5)),
+            (GenerateCupPattern(0),GenerateCupPattern(0, true)),
+            (GenerateCupPattern(1),GenerateCupPattern(7, true)),
+            (GenerateCupPattern(2),GenerateCupPattern(6, true)),
+            (GenerateCupPattern(3),GenerateCupPattern(5, true)),
+            (GenerateCupPattern(4),GenerateCupPattern(4, true)),
+            (GenerateCupPattern(5),GenerateCupPattern(3, true)),
+            (GenerateCupPattern(6),GenerateCupPattern(2, true)),
+            (GenerateCupPattern(7),GenerateCupPattern(1, true)),
         };
+
+        public static SentakkiSlidePath GetSlidePath(int ID, bool IsMirrored = false)
+        {
+            (var original, var mirrored) = VALIDPATHS[ID];
+            if (IsMirrored)
+                return mirrored ?? original;
+            return original;
+        }
 
         private static Vector2 getPositionInBetween(Vector2 first, Vector2 second, float ratio = .5f) => first + ((second - first) * ratio);
 
