@@ -23,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Scale = new Vector2(.11f);
+            Scale = new Vector2(.22f);
             Size = new Vector2(600);
             Alpha = 0;
         }
