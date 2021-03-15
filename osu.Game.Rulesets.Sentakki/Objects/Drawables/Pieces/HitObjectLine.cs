@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
     public class HitObjectLine : CompositeDrawable
     {
-        public HitObjectLine()
+        /* public HitObjectLine()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
@@ -53,6 +53,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                         break;
                 }
             }
-        }
+        } */
     }
 }
