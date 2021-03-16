@@ -22,7 +22,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private Container<DrawableHoldHead> headContainer;
 
         public HoldBody NoteBody;
-        public HitObjectLine HitObjectLine;
 
         public override double LifetimeStart
         {
@@ -56,7 +55,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             AddRangeInternal(new Drawable[]{
-                HitObjectLine = new HitObjectLine(),
                 NoteBody = new HoldBody(),
                 headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
             });
@@ -73,7 +71,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateInitialTransforms();
             double animTime = AdjustedAnimationDuration / 2;
-            HitObjectLine.FadeInFromZero(animTime);
             NoteBody.FadeInFromZero(animTime).ScaleTo(1, animTime);
 
             NoteBody.Note.FadeColour(AccentColour.Value);
@@ -95,8 +92,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 if (HoldStartTime == null && !Auto)
                     NoteBody.Note.Delay(animTime).FadeColour(Color4.Gray, 100);
-
-                HitObjectLine.ScaleTo(1, animTime);
             }
         }
 

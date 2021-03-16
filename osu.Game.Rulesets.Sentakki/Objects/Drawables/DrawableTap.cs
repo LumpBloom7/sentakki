@@ -35,7 +35,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         public Drawable TapVisual;
-        public HitObjectLine HitObjectLine;
 
         public DrawableTap() : this(null) { }
 
@@ -49,7 +48,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             AddRangeInternal(new Drawable[] {
-                HitObjectLine = new HitObjectLine(),
                 TapVisual = CreateTapRepresentation(),
             });
         }
@@ -59,12 +57,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.UpdateInitialTransforms();
             double animTime = AdjustedAnimationDuration / 2;
             TapVisual.FadeInFromZero(animTime).ScaleTo(1, animTime);
-            HitObjectLine.FadeInFromZero(animTime);
             using (BeginDelayedSequence(animTime, true))
             {
                 var excessDistance = (-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * HitObject.HitWindows.WindowFor(HitResult.Miss);
                 TapVisual.MoveToY((float)(-SentakkiPlayfield.INTERSECTDISTANCE + excessDistance), animTime + HitObject.HitWindows.WindowFor(HitResult.Miss));
-                HitObjectLine.ScaleTo(1, animTime);
             }
         }
 
