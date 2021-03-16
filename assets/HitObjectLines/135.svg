@@ -275,17 +275,6 @@
     </meshgradient>
     <clipPath
        clipPathUnits="userSpaceOnUse"
-       id="clipPath2521">
-      <circle
-         style="fill:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:264.567;paint-order:fill markers stroke"
-         id="circle2523"
-         cx="300"
-         cy="300"
-         r="300"
-         transform="rotate(67.5)" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
        id="clipPath2525">
       <circle
          style="fill:#ffffff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:264.567;paint-order:fill markers stroke"
@@ -303,9 +292,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.69999999"
-     inkscape:cx="838.36692"
-     inkscape:cy="416.69928"
+     inkscape:zoom="0.35"
+     inkscape:cx="337.39079"
+     inkscape:cy="590.59243"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -353,7 +342,7 @@
        sodipodi:arc-type="arc"
        d="M -162.35883,91.968903 A 300,300 0 0 1 114.80504,277.16388 300,300 0 0 1 49.773209,604.10094"
        sodipodi:open="true"
-       clip-path="url(#clipPath2521)" />
+       clip-path="none" />
   </g>
   <script
      id="mesh_polyfill"
