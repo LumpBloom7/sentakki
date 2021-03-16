@@ -41,6 +41,10 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private readonly BindableDouble animationDuration = new BindableDouble(1000);
 
+        [Resolved]
+        private DrawableSentakkiRuleset drawableRuleset { get; set; }
+
+
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager sentakkiConfigs)
         {
@@ -58,10 +62,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private void onEntryBecameAlive(LifetimeEntry entry)
         {
-            var line = linePool.Get(l =>
-            {
-                l.Entry = (LineLifetimeEntry)entry;
-            });
+            var line = linePool.Get(l => l.Apply((LineLifetimeEntry)entry));
 
             linesInUse[entry] = line;
             AddInternal(line);
@@ -112,7 +113,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         {
             if (!lineEntries.ContainsKey(hitObject.StartTime))
             {
-                var newEntry = new LineLifetimeEntry(animationDuration, hitObject.StartTime);
+                var newEntry = new LineLifetimeEntry(animationDuration, drawableRuleset, hitObject.StartTime);
                 lineEntries[hitObject.StartTime] = newEntry;
                 lifetimeManager.AddEntry(newEntry);
             }

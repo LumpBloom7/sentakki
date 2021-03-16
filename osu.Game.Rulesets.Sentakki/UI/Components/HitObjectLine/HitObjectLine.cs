@@ -14,6 +14,18 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {
     public class HitObjectLine : PoolableDrawable
     {
+        public override double LifetimeStart
+        {
+            get => base.LifetimeStart;
+            set => setLifetime(value, LifetimeEnd);
+        }
+        public override double LifetimeEnd
+        {
+            get => base.LifetimeEnd;
+            set => setLifetime(LifetimeStart, value);
+        }
+
+
         public override bool RemoveCompletedTransforms => false;
 
         public LineLifetimeEntry Entry;
@@ -47,6 +59,12 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             });
         }
 
+        public void Apply(LineLifetimeEntry entry)
+        {
+            Entry = entry;
+            setLifetime(Entry.LifetimeStart, Entry.LifetimeEnd);
+        }
+
         protected override void PrepareForUse()
         {
             base.PrepareForUse();
@@ -58,12 +76,29 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             resetAnimation();
         }
 
+        protected override void FreeAfterUse()
+        {
+            Entry = null;
+        }
+
         private void resetAnimation()
         {
+            if (!IsInUse) return;
             ApplyTransformsAt(double.MinValue);
             ClearTransforms();
 
-            this.FadeIn(animationDuration.Value / 2).Then().ScaleTo(1, animationDuration.Value / 2).Then().FadeOut();
+            this.FadeIn(Entry.AdjustedAnimationDuration / 2).Then().ScaleTo(1, Entry.AdjustedAnimationDuration / 2).Then().FadeOut().Expire();
+        }
+
+        private void setLifetime(double lifetimeStart, double lifetimeEnd)
+        {
+            base.LifetimeStart = lifetimeStart;
+            base.LifetimeEnd = lifetimeEnd;
+            if (Entry != null)
+            {
+                Entry.LifetimeStart = lifetimeStart;
+                Entry.LifetimeEnd = lifetimeEnd;
+            }
         }
     }
 }

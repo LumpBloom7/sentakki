@@ -39,13 +39,19 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             }
         }
 
-        private BindableDouble animationDuration = new BindableDouble(1000);
+        public BindableDouble AnimationDuration = new BindableDouble(1000);
+        public double AdjustedAnimationDuration => AnimationDuration.Value * GameplaySpeed;
 
-        public LineLifetimeEntry(BindableDouble AnimationDuration, double lifetimeEnd)
+        public double GameplaySpeed => drawableRuleset?.GameplaySpeed ?? 1;
+
+        private readonly DrawableSentakkiRuleset drawableRuleset;
+
+        public LineLifetimeEntry(BindableDouble AnimationDuration, DrawableSentakkiRuleset drawableSentakkiRuleset, double lifetimeEnd)
         {
             LifetimeEnd = lifetimeEnd;
-            animationDuration.BindTo(AnimationDuration);
-            animationDuration.BindValueChanged(refreshLifetime, true);
+            drawableRuleset = drawableSentakkiRuleset;
+            this.AnimationDuration.BindTo(AnimationDuration);
+            this.AnimationDuration.BindValueChanged(refreshLifetime, true);
         }
 
         public List<SentakkiLanedHitObject> HitObjects = new List<SentakkiLanedHitObject>();
@@ -81,7 +87,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private void refreshLifetime(ValueChangedEvent<double> valueChangedEvent)
         {
-            LifetimeStart = LifetimeEnd - animationDuration.Value;
+            LifetimeStart = LifetimeEnd - AdjustedAnimationDuration;
         }
     }
 }
