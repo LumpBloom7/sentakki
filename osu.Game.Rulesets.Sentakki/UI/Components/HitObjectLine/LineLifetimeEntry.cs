@@ -46,9 +46,11 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private readonly DrawableSentakkiRuleset drawableRuleset;
 
-        public LineLifetimeEntry(BindableDouble AnimationDuration, DrawableSentakkiRuleset drawableSentakkiRuleset, double lifetimeEnd)
+        public double StartTime { get; private set; }
+
+        public LineLifetimeEntry(BindableDouble AnimationDuration, DrawableSentakkiRuleset drawableSentakkiRuleset, double startTime)
         {
-            LifetimeEnd = lifetimeEnd;
+            StartTime = startTime;
             drawableRuleset = drawableSentakkiRuleset;
             this.AnimationDuration.BindTo(AnimationDuration);
             this.AnimationDuration.BindValueChanged(refreshLifetime, true);
@@ -87,7 +89,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private void refreshLifetime(ValueChangedEvent<double> valueChangedEvent)
         {
-            LifetimeStart = LifetimeEnd - AdjustedAnimationDuration;
+            LifetimeStart = StartTime - AdjustedAnimationDuration;
+            LifetimeEnd = StartTime;
         }
     }
 }

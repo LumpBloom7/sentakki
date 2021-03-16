@@ -86,8 +86,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             if (!IsInUse) return;
             ApplyTransformsAt(double.MinValue);
             ClearTransforms();
-
-            this.FadeIn(Entry.AdjustedAnimationDuration / 2).Then().ScaleTo(1, Entry.AdjustedAnimationDuration / 2).Then().FadeOut().Expire();
+            using (BeginAbsoluteSequence(Entry.StartTime - Entry.AdjustedAnimationDuration))
+                this.FadeIn(Entry.AdjustedAnimationDuration / 2).Then().ScaleTo(1, Entry.AdjustedAnimationDuration / 2).Then().FadeOut().Expire();
         }
 
         private void setLifetime(double lifetimeStart, double lifetimeEnd)
