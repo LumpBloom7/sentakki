@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Performance;
 using osu.Game.Rulesets.Objects;
@@ -19,6 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             Single,
             OneAway,
             TwoAway,
+            ThreeAway,
             FullCircle,
         }
 
@@ -31,6 +33,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 case LineType.OneAway:
                     return "Lines/135";
                 case LineType.TwoAway:
+                    return "Lines/180";
+                case LineType.ThreeAway:
                     return "Lines/225";
                 case LineType.FullCircle:
                     return "Lines/360";
@@ -85,12 +89,55 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 Colour = hitObject.Break ? Color4.OrangeRed : hitObject.DefaultNoteColour;
                 Rotation = hitObject.Lane.GetRotationForLane();
             }
+            else if (HitObjects.Count > 1)
+            {
+                int clockWiseDistance = HitObjects.Last().Lane - HitObjects.First().Lane;
+                int counterClockDistance = HitObjects.First().Lane + 8 - HitObjects[1].Lane;
+
+                RotationDirection direction;
+                int delta;
+                if (clockWiseDistance <= counterClockDistance)
+                {
+                    direction = RotationDirection.Clockwise;
+                    delta = clockWiseDistance;
+                }
+                else
+                {
+                    direction = RotationDirection.CounterClockwise;
+                    delta = counterClockDistance;
+                }
+
+                Type = getLineTypeForDistance(delta);
+                Colour = Color4.Gold;
+
+                if (direction == RotationDirection.Clockwise)
+                    Rotation = HitObjects.First().Lane.GetRotationForLane() + (delta * 22.5f);
+                else
+                    Rotation = HitObjects.First().Lane.GetRotationForLane() - (delta * 22.5f);
+            }
         }
 
         private void refreshLifetime(ValueChangedEvent<double> valueChangedEvent)
         {
             LifetimeStart = StartTime - AdjustedAnimationDuration;
             LifetimeEnd = StartTime;
+        }
+
+        private static LineType getLineTypeForDistance(int distance)
+        {
+            switch (distance)
+            {
+                case 0:
+                    return LineType.Single;
+                case 1:
+                    return LineType.OneAway;
+                case 2:
+                    return LineType.TwoAway;
+                case 3:
+                    return LineType.ThreeAway;
+                default:
+                    return LineType.FullCircle;
+            }
         }
     }
 }

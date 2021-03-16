@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private readonly BindableDouble animationDuration = new BindableDouble(1000);
 
-        [Resolved]
+        [Resolved(canBeNull: true)]
         private DrawableSentakkiRuleset drawableRuleset { get; set; }
 
 
