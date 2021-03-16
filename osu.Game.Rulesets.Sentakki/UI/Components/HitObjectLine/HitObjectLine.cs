@@ -1,14 +1,11 @@
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osuTK;
-using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {
@@ -18,7 +15,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         public LineLifetimeEntry Entry;
 
-        private Sprite sprite;
+        public LineType Type;
         public HitObjectLine()
         {
             Anchor = Anchor.Centre;
@@ -30,21 +27,19 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private readonly BindableDouble animationDuration = new BindableDouble(1000);
 
-        private TextureStore textures;
-
         [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfigs, TextureStore textureStore)
+        private void load(SentakkiRulesetConfigManager sentakkiConfigs, TextureStore textures)
         {
-            textures = textureStore;
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
             animationDuration.BindValueChanged(_ => resetAnimation());
 
-            AddInternal(sprite = new Sprite()
+            AddInternal(new Sprite()
             {
                 RelativeSizeAxes = Axes.Both,
                 FillMode = FillMode.Fit,
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
+                Texture = textures.Get(LineTexturePath())
             });
         }
 
@@ -59,8 +54,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
             Colour = Entry.Colour;
             Rotation = Entry.Rotation;
-            sprite.Texture = textures.Get(Entry.GetLineTexturePath());
-
             resetAnimation();
         }
 
@@ -76,6 +69,25 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             ClearTransforms();
             using (BeginAbsoluteSequence(Entry.StartTime - Entry.AdjustedAnimationDuration))
                 this.FadeIn(Entry.AdjustedAnimationDuration / 2).Then().ScaleTo(1, Entry.AdjustedAnimationDuration / 2).Then().FadeOut();
+        }
+
+        public string LineTexturePath()
+        {
+            switch (Type)
+            {
+                case LineType.Single:
+                    return "Lines/90";
+                case LineType.OneAway:
+                    return "Lines/135";
+                case LineType.TwoAway:
+                    return "Lines/180";
+                case LineType.ThreeAway:
+                    return "Lines/225";
+                case LineType.FullCircle:
+                    return "Lines/360";
+                default:
+                    return "";
+            }
         }
     }
 }

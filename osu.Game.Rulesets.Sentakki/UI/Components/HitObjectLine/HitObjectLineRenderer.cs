@@ -29,7 +29,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         private readonly Dictionary<LifetimeEntry, HitObjectLine> linesInUse = new Dictionary<LifetimeEntry, HitObjectLine>();
         private readonly LifetimeEntryManager lifetimeManager = new LifetimeEntryManager();
 
-        private DrawablePool<HitObjectLine> linePool;
+        private readonly Dictionary<LineType, DrawablePool<HitObjectLine>> linePools = new Dictionary<LineType, DrawablePool<HitObjectLine>>();
 
         public HitObjectLineRenderer()
         {
@@ -50,7 +50,10 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
 
-            AddInternal(linePool = new DrawablePool<HitObjectLine>(5));
+            foreach (var type in Enum.GetValues(typeof(LineType)).OfType<LineType>())
+                linePools.Add(type, new DrawableLinePool(type));
+
+            AddRangeInternal(linePools.Values);
         }
 
         protected override bool CheckChildrenLife()
@@ -62,7 +65,9 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private void onEntryBecameAlive(LifetimeEntry entry)
         {
-            var line = linePool.Get(l => l.Apply((LineLifetimeEntry)entry));
+            var laneLifetimeEntry = (LineLifetimeEntry)entry;
+            var line = linePools[laneLifetimeEntry.Type].Get();
+            line.Apply(laneLifetimeEntry);
 
             linesInUse[entry] = line;
             AddInternal(line);
@@ -118,6 +123,22 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 lifetimeManager.AddEntry(newEntry);
             }
             lineEntries[hitObject.StartTime].Add(hitObject);
+        }
+
+        public class DrawableLinePool : DrawablePool<HitObjectLine>
+        {
+            private readonly LineType type;
+
+            public DrawableLinePool(LineType type)
+                : base(5)
+            {
+                this.type = type;
+            }
+
+            protected override HitObjectLine CreateNewDrawable()
+            {
+                return new HitObjectLine { Type = type };
+            }
         }
     }
 }

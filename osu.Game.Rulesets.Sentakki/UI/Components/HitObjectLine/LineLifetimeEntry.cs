@@ -1,13 +1,10 @@
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Performance;
-using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK.Graphics;
 
@@ -15,34 +12,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {
     public class LineLifetimeEntry : LifetimeEntry
     {
-        public enum LineType
-        {
-            Single,
-            OneAway,
-            TwoAway,
-            ThreeAway,
-            FullCircle,
-        }
-
-        public string GetLineTexturePath()
-        {
-            switch (Type)
-            {
-                case LineType.Single:
-                    return "Lines/90";
-                case LineType.OneAway:
-                    return "Lines/135";
-                case LineType.TwoAway:
-                    return "Lines/180";
-                case LineType.ThreeAway:
-                    return "Lines/225";
-                case LineType.FullCircle:
-                    return "Lines/360";
-                default:
-                    return "";
-            }
-        }
-
         public BindableDouble AnimationDuration = new BindableDouble(1000);
         public double AdjustedAnimationDuration => AnimationDuration.Value * GameplaySpeed;
 
