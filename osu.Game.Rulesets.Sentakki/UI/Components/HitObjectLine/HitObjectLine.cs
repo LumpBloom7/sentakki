@@ -42,8 +42,9 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             AddInternal(sprite = new Sprite()
             {
                 RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
+                FillMode = FillMode.Fit,
+                Anchor = Anchor.TopCentre,
+                Origin = Anchor.TopCentre,
             });
         }
 
