@@ -67,7 +67,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         {
             var laneLifetimeEntry = (LineLifetimeEntry)entry;
             var line = linePools[laneLifetimeEntry.Type].Get();
-            line.Apply(laneLifetimeEntry);
+            line.Entry = laneLifetimeEntry;
 
             linesInUse[entry] = line;
             AddInternal(line);

@@ -43,11 +43,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             });
         }
 
-        public void Apply(LineLifetimeEntry entry)
-        {
-            Entry = entry;
-        }
-
         protected override void PrepareForUse()
         {
             base.PrepareForUse();
@@ -57,10 +52,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             resetAnimation();
         }
 
-        protected override void FreeAfterUse()
-        {
-            Entry = null;
-        }
 
         private void resetAnimation()
         {
