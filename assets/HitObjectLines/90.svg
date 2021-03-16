@@ -162,7 +162,7 @@
              id="stop10117" />
           <stop
              path="l -212.132,-212.132"
-             style="stop-color:#ffffff;stop-opacity:0"
+             style="stop-color:#ffffff;stop-opacity:0.25"
              id="stop10119" />
           <stop
              path="l 0,0"
@@ -250,7 +250,7 @@
              id="stop10167" />
           <stop
              path="l -212.132,212.132"
-             style="stop-color:#ffffff;stop-opacity:0"
+             style="stop-color:#ffffff;stop-opacity:0.25"
              id="stop10169" />
           <stop
              path="l 0,0"
@@ -303,9 +303,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.24748737"
-     inkscape:cx="282.82962"
-     inkscape:cy="1037.5386"
+     inkscape:zoom="0.35"
+     inkscape:cx="672.86096"
+     inkscape:cy="144.60512"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -340,7 +340,7 @@
        transform="rotate(-90)"
        clip-path="url(#clipPath1716)" />
     <path
-       style="fill:none;fill-opacity:1;stroke:url(#meshgradient10111);stroke-width:16;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:264.567;stroke-opacity:0.947791;paint-order:fill markers stroke"
+       style="fill:none;fill-opacity:1;stroke:url(#meshgradient10111);stroke-width:16;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:264.567;stroke-opacity:0.947791;paint-order:fill markers stroke;opacity:1"
        id="path10109"
        transform="rotate(-90)"
        sodipodi:type="arc"

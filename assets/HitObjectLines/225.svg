@@ -180,7 +180,7 @@
              id="stop10197" />
           <stop
              path="l -2.84217e-14,-300"
-             style="stop-color:#ffffff;stop-opacity:0"
+             style="stop-color:#ffffff;stop-opacity:0.25"
              id="stop10199" />
           <stop
              path="l 0,0"
@@ -222,7 +222,7 @@
              id="stop10221" />
           <stop
              path="l 212.132,212.132"
-             style="stop-color:#ffffff;stop-opacity:0"
+             style="stop-color:#ffffff;stop-opacity:0.25"
              id="stop10223" />
           <stop
              path="l 0,0"
