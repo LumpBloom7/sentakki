@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Bindables;
@@ -68,29 +69,14 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             }
             else if (HitObjects.Count > 1)
             {
-                int clockWiseDistance = HitObjects.Last().Lane - HitObjects.First().Lane;
-                int counterClockDistance = HitObjects.First().Lane + 8 - HitObjects[1].Lane;
+                var maxDelta = HitObjects.Max(h => getDelta(HitObjects[0], h));
+                var minDelta = HitObjects.Min(h => getDelta(HitObjects[0], h));
+                var anchor = HitObjects.First(h => getDelta(HitObjects[0], h) == minDelta);
+                var delta = maxDelta - minDelta;
 
-                RotationDirection direction;
-                int delta;
-                if (clockWiseDistance <= counterClockDistance)
-                {
-                    direction = RotationDirection.Clockwise;
-                    delta = clockWiseDistance;
-                }
-                else
-                {
-                    direction = RotationDirection.CounterClockwise;
-                    delta = counterClockDistance;
-                }
-
-                Type = getLineTypeForDistance(delta);
+                Type = getLineTypeForDistance(Math.Abs(delta));
                 Colour = Color4.Gold;
-
-                if (direction == RotationDirection.Clockwise)
-                    Rotation = HitObjects.First().Lane.GetRotationForLane() + (delta * 22.5f);
-                else
-                    Rotation = HitObjects.First().Lane.GetRotationForLane() - (delta * 22.5f);
+                Rotation = anchor.Lane.GetRotationForLane() + (delta * 22.5f);
             }
         }
 
@@ -115,6 +101,13 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 default:
                     return LineType.FullCircle;
             }
+        }
+
+        private int getDelta(SentakkiLanedHitObject a, SentakkiLanedHitObject b)
+        {
+            var delta = b.Lane - a.Lane;
+            if (delta > 4) delta -= 8;
+            return delta;
         }
     }
 }
