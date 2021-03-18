@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions;
-using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Performance;
 using osu.Game.Rulesets.Sentakki.Objects;

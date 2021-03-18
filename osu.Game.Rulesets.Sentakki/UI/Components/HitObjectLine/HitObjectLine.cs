@@ -52,7 +52,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             resetAnimation();
         }
 
-
         private void resetAnimation()
         {
             if (!IsInUse) return;

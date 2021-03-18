@@ -7,18 +7,9 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Performance;
 using osu.Framework.Graphics.Pooling;
-using osu.Framework.Graphics.Shapes;
-using osu.Game.Beatmaps;
-using osu.Game.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
-using osu.Game.Skinning;
-using osu.Game.Users;
-using osuTK;
-using osuTK.Graphics;
-
 namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {
     public class HitObjectLineRenderer : CompositeDrawable
@@ -43,7 +34,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         [Resolved(canBeNull: true)]
         private DrawableSentakkiRuleset drawableRuleset { get; set; }
-
 
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager sentakkiConfigs)

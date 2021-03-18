@@ -1,7 +1,6 @@
 using System;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine;
 using osuTK;
 using osuTK.Graphics;
 
