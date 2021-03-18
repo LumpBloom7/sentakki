@@ -23,10 +23,11 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             Replay = new SentakkiAutoGenerator(beatmap).Generate(),
         };
 
-        public override Type[] IncompatibleMods => new Type[5]
+        public override Type[] IncompatibleMods => new Type[6]
         {
             typeof(ModRelax),
             typeof(ModSuddenDeath),
+            typeof(ModPerfect),
             typeof(ModNoFail),
             typeof(SentakkiModAutoTouch),
             typeof(SentakkiModChallenge)
