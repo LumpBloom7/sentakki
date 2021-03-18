@@ -35,10 +35,11 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public bool RestartOnFail => false;
         public bool PerformFail() => true;
 
-        public override Type[] IncompatibleMods => new Type[4]
+        public override Type[] IncompatibleMods => new Type[5]
         {
             typeof(ModRelax),
             typeof(ModSuddenDeath),
+            typeof(ModPerfect),
             typeof(ModAutoplay),
             typeof(ModNoFail),
         };
