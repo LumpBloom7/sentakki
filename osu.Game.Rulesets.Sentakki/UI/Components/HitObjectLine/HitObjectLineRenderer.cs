@@ -94,7 +94,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         {
             if (lineEntries.TryGetValue(hitObject.StartTime, out var line))
             {
-                line.HitObjects.Add(hitObject);
+                line.Remove(hitObject);
 
                 if (!line.HitObjects.Any())
                 {
