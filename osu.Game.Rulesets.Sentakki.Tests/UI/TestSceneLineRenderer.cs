@@ -14,13 +14,13 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
     [TestFixture]
     public class TestSceneLineRenderer : OsuTestScene
     {
-        private HitObjectLineRenderer lineRenderer;
+        private LineRenderer lineRenderer;
 
         protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 
         public TestSceneLineRenderer()
         {
-            Add(lineRenderer = new HitObjectLineRenderer());
+            Add(lineRenderer = new LineRenderer());
             AddStep("Create HitObject", () => createHitObjects());
             AddStep("Create twins", () => createHitObjects(2));
             AddStep("Create triplets", () => createHitObjects(3));

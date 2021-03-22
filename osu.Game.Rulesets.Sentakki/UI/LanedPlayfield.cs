@@ -15,13 +15,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private readonly SortedDrawableProxyContainer slideBodyProxyContainer;
         private readonly SortedDrawableProxyContainer lanedNoteProxyContainer;
 
-        private readonly HitObjectLineRenderer hitObjectLineRenderer;
+        private readonly LineRenderer hitObjectLineRenderer;
 
         public LanedPlayfield()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            AddInternal(hitObjectLineRenderer = new HitObjectLineRenderer());
+            AddInternal(hitObjectLineRenderer = new LineRenderer());
 
             for (int i = 0; i < 8; ++i)
             {

@@ -9,14 +9,14 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {
-    public class HitObjectLine : PoolableDrawable
+    public class DrawableLine : PoolableDrawable
     {
         public override bool RemoveCompletedTransforms => false;
 
         public LineLifetimeEntry Entry;
 
         public LineType Type;
-        public HitObjectLine()
+        public DrawableLine()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;

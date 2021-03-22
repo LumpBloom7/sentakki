@@ -12,17 +12,17 @@ using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
 namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {
-    public class HitObjectLineRenderer : CompositeDrawable
+    public class LineRenderer : CompositeDrawable
     {
         private readonly Dictionary<double, LineLifetimeEntry> lineEntries = new Dictionary<double, LineLifetimeEntry>();
         private readonly Dictionary<HitObject, IBindable> startTimeMap = new Dictionary<HitObject, IBindable>();
 
-        private readonly Dictionary<LifetimeEntry, HitObjectLine> linesInUse = new Dictionary<LifetimeEntry, HitObjectLine>();
+        private readonly Dictionary<LifetimeEntry, DrawableLine> linesInUse = new Dictionary<LifetimeEntry, DrawableLine>();
         private readonly LifetimeEntryManager lifetimeManager = new LifetimeEntryManager();
 
-        private readonly Dictionary<LineType, DrawablePool<HitObjectLine>> linePools = new Dictionary<LineType, DrawablePool<HitObjectLine>>();
+        private readonly Dictionary<LineType, DrawablePool<DrawableLine>> linePools = new Dictionary<LineType, DrawablePool<DrawableLine>>();
 
-        public HitObjectLineRenderer()
+        public LineRenderer()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
@@ -115,7 +115,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             lineEntries[hitObject.StartTime].Add(hitObject);
         }
 
-        public class DrawableLinePool : DrawablePool<HitObjectLine>
+        public class DrawableLinePool : DrawablePool<DrawableLine>
         {
             private readonly LineType type;
 
@@ -125,9 +125,9 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 this.type = type;
             }
 
-            protected override HitObjectLine CreateNewDrawable()
+            protected override DrawableLine CreateNewDrawable()
             {
-                return new HitObjectLine { Type = type };
+                return new DrawableLine { Type = type };
             }
         }
     }
