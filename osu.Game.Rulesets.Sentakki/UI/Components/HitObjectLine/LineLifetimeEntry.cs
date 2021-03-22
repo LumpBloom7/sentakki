@@ -75,8 +75,10 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 var anchor = HitObjects.First(h => getDelta(HitObjects[0], h) == minDelta);
                 var delta = maxDelta - minDelta;
 
+                var allBreaks = HitObjects.All(h => h.Break);
+
                 Type = getLineTypeForDistance(Math.Abs(delta));
-                Colour = Color4.Gold;
+                Colour = allBreaks ? Color4.OrangeRed : Color4.Gold;
                 Rotation = anchor.Lane.GetRotationForLane() + (delta * 22.5f);
             }
 
