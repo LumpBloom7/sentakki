@@ -69,6 +69,18 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             linesInUse.Remove(entry);
         }
 
+        private void onEntryUpdated(LifetimeEntry entry)
+        {
+            // We only want to update the drawable when the entry is actually in use
+            // This ensures that the drawable gets swapped out with one that uses the correct texture
+            // This also resets the colour and rotation if needed
+            if (linesInUse.ContainsKey(entry))
+            {
+                onEntryBecameDead(entry);
+                onEntryBecameAlive(entry);
+            }
+        }
+
         public void AddHitObject(SentakkiLanedHitObject hitObject)
         {
             var startTimeBindable = hitObject.StartTimeBindable.GetBoundCopy();
@@ -111,6 +123,9 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 var newEntry = new LineLifetimeEntry(animationDuration, drawableRuleset, hitObject.StartTime);
                 lineEntries[hitObject.StartTime] = newEntry;
                 lifetimeManager.AddEntry(newEntry);
+
+                // We want to listen in on line changes in case we need to swap out colours/drawables
+                newEntry.OnLineUpdated += onEntryUpdated;
             }
             lineEntries[hitObject.StartTime].Add(hitObject);
         }

@@ -55,6 +55,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private void onBreakChanged(ValueChangedEvent<bool> obj) => UpdateLine();
 
+        public Action<LineLifetimeEntry> OnLineUpdated;
+
         public void UpdateLine()
         {
             if (HitObjects.Count == 1)
@@ -77,6 +79,9 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 Colour = Color4.Gold;
                 Rotation = anchor.Lane.GetRotationForLane() + (delta * 22.5f);
             }
+
+            // Notify the renderer that the line may be updated
+            OnLineUpdated?.Invoke(this);
         }
 
         private void refreshLifetime(ValueChangedEvent<double> valueChangedEvent)
