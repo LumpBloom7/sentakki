@@ -28,7 +28,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             private set => ColourBindable.Value = value;
         }
 
-        protected virtual Color4 DefaultNoteColour => Color4Extensions.FromHex("FF0064");
+        public virtual Color4 DefaultNoteColour => Color4Extensions.FromHex("FF0064");
 
         protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
 

@@ -7,7 +7,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Touch : SentakkiHitObject
     {
-        protected override Color4 DefaultNoteColour => Color4.Aqua;
+        public override Color4 DefaultNoteColour => Color4.Aqua;
 
         public Vector2 Position { get; set; }
 

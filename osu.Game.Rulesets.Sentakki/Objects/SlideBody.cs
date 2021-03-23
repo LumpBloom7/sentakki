@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class SlideBody : SentakkiLanedHitObject, IHasDuration
     {
-        protected override Color4 DefaultNoteColour => Color4.Aqua;
+        public override Color4 DefaultNoteColour => Color4.Aqua;
 
         public double EndTime
         {
