@@ -40,7 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             AddInternal(slideBodyProxyContainer = new SortedDrawableProxyContainer());
             AddInternal(lanedNoteProxyContainer = new SortedDrawableProxyContainer());
-            AddInternal(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(122));
+            AddInternal(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(100));
         }
 
         public override void Add(HitObject h)
