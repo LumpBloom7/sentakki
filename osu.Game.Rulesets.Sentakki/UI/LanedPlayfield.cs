@@ -6,6 +6,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine;
 using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Sentakki.UI
@@ -17,6 +18,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private readonly SortedDrawableProxyContainer slideBodyProxyContainer;
         private readonly SortedDrawableProxyContainer lanedNoteProxyContainer;
 
+        private readonly LineRenderer hitObjectLineRenderer;
+
         [Cached]
         private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
 
@@ -24,6 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
+            AddInternal(hitObjectLineRenderer = new LineRenderer());
 
             for (int i = 0; i < 8; ++i)
             {
@@ -48,6 +52,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             switch (h)
             {
                 case SentakkiLanedHitObject laned:
+                    hitObjectLineRenderer.AddHitObject(laned);
                     laned.LaneBindable.BindValueChanged(lane =>
                     {
                         if (lane.OldValue != lane.NewValue)
@@ -58,7 +63,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
             }
         }
 
-        public override bool Remove(HitObject hitObject) => Lanes[(hitObject as SentakkiLanedHitObject).Lane].Remove(hitObject);
+        public override bool Remove(HitObject hitObject)
+        {
+            hitObjectLineRenderer.RemoveHitObject((SentakkiLanedHitObject)hitObject);
+            return Lanes[(hitObject as SentakkiLanedHitObject).Lane].Remove(hitObject);
+        }
 
         private void onHitObjectLoaded(Drawable hitObject)
         {
