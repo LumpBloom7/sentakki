@@ -34,8 +34,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             get => path;
             set
             {
-                if (path == value)
-                    return;
                 path = value;
                 updateVisuals();
                 updateProgress();
@@ -43,7 +41,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         }
 
         private Container<SlideChevron> chevrons;
-        private DrawablePool<SlideChevron> chevronPool;
 
         private readonly BindableBool snakingIn = new BindableBool(true);
 
@@ -53,13 +50,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Origin = Anchor.Centre;
         }
 
+        [Resolved]
+        private DrawablePool<SlideChevron> chevronPool { get; set; }
+
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager sentakkiConfig)
         {
             sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
 
             AddRangeInternal(new Drawable[]{
-                chevronPool = new DrawablePool<SlideChevron>(62),
                 chevrons = new Container<SlideChevron>(),
             });
         }
@@ -151,7 +150,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             }
         }
 
-        private class SlideChevron : PoolableDrawable
+        public void Free()
+        {
+            chevrons.Clear(false);
+        }
+
+        public class SlideChevron : PoolableDrawable
         {
             public double Progress;
 
