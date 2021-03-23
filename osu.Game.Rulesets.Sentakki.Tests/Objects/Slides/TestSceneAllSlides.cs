@@ -1,8 +1,10 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Testing;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -23,8 +25,12 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         private readonly SlideVisual slide;
         private readonly Container nodes;
 
+        [Cached]
+        private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
+
         public TestSceneAllSlides()
         {
+            Add(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(62));
             Add(new SentakkiRing());
             Add(slide = new SlideVisual());
 
