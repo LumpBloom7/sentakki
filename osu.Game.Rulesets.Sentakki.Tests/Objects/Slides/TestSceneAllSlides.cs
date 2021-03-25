@@ -14,33 +14,30 @@ using osuTK.Graphics;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
     [TestFixture]
-    public abstract class TestSceneSlide : OsuTestScene
+    public class TestSceneAllSlides : OsuTestScene
     {
         protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 
-        protected int StartPath;
-        protected int EndPath;
-
+        private int id;
+        private bool mirrored;
         private readonly SlideVisual slide;
         private readonly Container nodes;
 
-        public TestSceneSlide()
+        public TestSceneAllSlides()
         {
             Add(new SentakkiRing());
             Add(slide = new SlideVisual());
 
-            AddSliderStep("Path offset", 0, 7, 0, p =>
+            AddSliderStep("Path ID", 0, SlidePaths.VALIDPATHS.Count - 1, 0, p =>
             {
-                slide.Rotation = 45 * p;
-            });
-            AddSliderStep("End Path", 0, 7, 4, p =>
-            {
-                EndPath = p;
+                id = p;
                 RefreshSlide();
             });
-            AddSliderStep("Progress", 0.0f, 1.0f, 0.0f, p =>
+
+            AddToggleStep("Mirrored", b =>
             {
-                slide.Progress = p;
+                mirrored = b;
+                RefreshSlide();
             });
 
             Add(nodes = new Container()
@@ -50,7 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             });
         }
 
-        protected abstract SentakkiSlidePath CreatePattern();
+        protected SentakkiSlidePath CreatePattern() => SlidePaths.GetSlidePath(id, mirrored);
 
         protected override void LoadComplete()
         {

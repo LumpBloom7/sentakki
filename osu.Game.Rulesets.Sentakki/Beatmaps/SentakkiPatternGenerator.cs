@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.EnumExtensions;
+using osu.Framework.Utils;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
@@ -68,7 +70,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)) && hold.Duration >= 350)
                     {
                         List<Slide> slides = new List<Slide>();
-                        if (Experiments.Value.HasFlag(ConversionExperiments.twinSlides))
+                        if (Experiments.Value.HasFlagFast(ConversionExperiments.twinSlides))
                         {
                             if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
                             {
@@ -98,7 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
                         yield break;
                     }
-                    if (Experiments.Value.HasFlag(ConversionExperiments.twinNotes))
+                    if (Experiments.Value.HasFlagFast(ConversionExperiments.twinNotes))
                     {
                         if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
                         {
@@ -119,13 +121,13 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
                 default:
                     breakNote = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
-                    if (!breakNote && Experiments.Value.HasFlag(ConversionExperiments.touch) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE))
+                    if (!breakNote && Experiments.Value.HasFlagFast(ConversionExperiments.touch) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE))
                     {
                         yield return createTouchNote(original);
                     }
                     else
                     {
-                        if (Experiments.Value.HasFlag(ConversionExperiments.twinNotes) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP))
+                        if (Experiments.Value.HasFlagFast(ConversionExperiments.twinNotes) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP))
                         {
                             yield return createTapNote(original, true, breakNote);
                         }
@@ -147,15 +149,17 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         {
             int noteLane = getNewLane(twin);
 
-            var validPaths = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.MinDuration && ((IHasDuration)original).Duration <= p.MaxDuration).ToList();
+            var validPaths = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.Item1.MinDuration && ((IHasDuration)original).Duration <= p.Item1.MaxDuration).ToList();
             if (!validPaths.Any()) return null;
             int selectedSlideID = SlidePaths.VALIDPATHS.IndexOf(validPaths[rng.Next(validPaths.Count)]);
+            bool mirrored = rng.NextDouble() < 0.5;
 
             return new Slide
             {
                 SlideInfoList = new List<SentakkiSlideInfo>{
                     new SentakkiSlideInfo{
                         ID = selectedSlideID,
+                        Mirrored = mirrored,
                         Duration = ((IHasDuration)original).Duration
                     }
                 },

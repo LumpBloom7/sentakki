@@ -15,15 +15,15 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
         {
             base.InitialiseDefaults();
 
-            Set(SentakkiRulesetSettings.KiaiEffects, true);
-            Set(SentakkiRulesetSettings.AnimationDuration, 1000, 100, 2000, 100.0);
-            Set(SentakkiRulesetSettings.TouchAnimationDuration, 500, 50, 1000, 50.0);
-            Set(SentakkiRulesetSettings.ShowNoteStartIndicators, false);
-            Set(SentakkiRulesetSettings.RingColor, ColorOption.Default);
-            Set(SentakkiRulesetSettings.RingOpacity, 1f, 0f, 1f, 0.01f);
-            Set(SentakkiRulesetSettings.LaneInputMode, LaneInputMode.Button);
-            Set(SentakkiRulesetSettings.SnakingSlideBody, true);
-            Set(SentakkiRulesetSettings.DetailedJudgements, false);
+            SetDefault(SentakkiRulesetSettings.KiaiEffects, true);
+            SetDefault(SentakkiRulesetSettings.AnimationDuration, 1000, 100, 2000, 100.0);
+            SetDefault(SentakkiRulesetSettings.TouchAnimationDuration, 500, 50, 1000, 50.0);
+            SetDefault(SentakkiRulesetSettings.ShowNoteStartIndicators, false);
+            SetDefault(SentakkiRulesetSettings.RingColor, ColorOption.Default);
+            SetDefault(SentakkiRulesetSettings.RingOpacity, 1f, 0f, 1f, 0.01f);
+            SetDefault(SentakkiRulesetSettings.LaneInputMode, LaneInputMode.Button);
+            SetDefault(SentakkiRulesetSettings.SnakingSlideBody, true);
+            SetDefault(SentakkiRulesetSettings.DetailedJudgements, false);
         }
     }
 

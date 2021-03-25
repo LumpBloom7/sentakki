@@ -46,6 +46,6 @@ namespace osu.Game.Rulesets.Sentakki.Difficulty
 
         protected override IEnumerable<DifficultyHitObject> CreateDifficultyHitObjects(IBeatmap beatmap, double clockRate) => Array.Empty<DifficultyHitObject>();
 
-        protected override Skill[] CreateSkills(IBeatmap beatmap) => Array.Empty<Skill>();
+        protected override Skill[] CreateSkills(IBeatmap beatmap, Mod[] mods) => Array.Empty<Skill>();
     }
 }

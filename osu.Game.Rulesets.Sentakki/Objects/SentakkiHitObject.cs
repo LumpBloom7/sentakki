@@ -40,7 +40,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
 
-
         // This special hitsample is used for Sentakki specific samples, with doesn't have bank specific variants
         public class SentakkiHitSampleInfo : HitSampleInfo, IEquatable<SentakkiHitSampleInfo>
         {

@@ -68,6 +68,7 @@ namespace osu.Game.Rulesets.Sentakki
                     {
                         new SentakkiModHardRock(),
                         new MultiMod(new SentakkiModSuddenDeath(), new SentakkiModPerfect()),
+                        new SentakkiModChallenge(),
                         new MultiMod(new SentakkiModDoubleTime(), new SentakkiModNightcore()),
                     };
 
@@ -76,6 +77,11 @@ namespace osu.Game.Rulesets.Sentakki
                     {
                         new SentakkiModAutoplay(),
                         new SentakkiModAutoTouch()
+                    };
+
+                case ModType.Conversion:
+                    return new Mod[]{
+                        new SentakkiModMirror(),
                     };
 
                 case ModType.Fun:
