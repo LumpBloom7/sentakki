@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Game.Audio;
-using osu.Game.Beatmaps;
-using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Scoring;
@@ -17,29 +16,29 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public abstract class SentakkiHitObject : HitObject
     {
-        public bool HasTwin { get; set; }
+        public SentakkiHitObject()
+        {
+            // We initialize the note colour to the default value first for test scenes
+            // The colours during gameplay will be set during beatmap post-process
+            ColourBindable.Value = DefaultNoteColour;
+        }
 
         public override Judgement CreateJudgement() => new SentakkiJudgement();
 
+        [JsonIgnore]
         public Bindable<Color4> ColourBindable = new Bindable<Color4>();
+
+        [JsonIgnore]
         public Color4 NoteColour
         {
             get => ColourBindable.Value;
-            private set => ColourBindable.Value = value;
+            set => ColourBindable.Value = value;
         }
 
+        [JsonIgnore]
         public virtual Color4 DefaultNoteColour => Color4Extensions.FromHex("FF0064");
 
         protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
-
-        protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, BeatmapDifficulty difficulty)
-        {
-            base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
-
-            bool isBreak = this is SentakkiLanedHitObject x && x.Break;
-
-            NoteColour = isBreak ? Color4.OrangeRed : (HasTwin ? Color4.Gold : DefaultNoteColour);
-        }
 
         // This special hitsample is used for Sentakki specific samples, with doesn't have bank specific variants
         public class SentakkiHitSampleInfo : HitSampleInfo, IEquatable<SentakkiHitSampleInfo>

@@ -50,7 +50,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void OnApply()
         {
             base.OnApply();
-            AccentColour.Value = HitObject.NoteColour;
+            AccentColour.BindTo(HitObject.ColourBindable);
+        }
+
+        protected override void OnFree()
+        {
+            base.OnFree();
+            AccentColour.UnbindFrom(HitObject.ColourBindable);
         }
 
         protected override void Update()
