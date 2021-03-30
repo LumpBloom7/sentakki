@@ -95,6 +95,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnFree();
             AccentColour.UnbindFrom(ParentHitObject.AccentColour);
+            Slidepath.Free();
         }
 
         // We want to ensure that the correct progress is visually shown on screen

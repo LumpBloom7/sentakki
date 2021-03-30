@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine;
 using osu.Game.Rulesets.UI;
 
@@ -16,6 +19,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private readonly SortedDrawableProxyContainer lanedNoteProxyContainer;
 
         private readonly LineRenderer hitObjectLineRenderer;
+
+        [Cached]
+        private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
 
         public LanedPlayfield()
         {
@@ -38,6 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             AddInternal(slideBodyProxyContainer = new SortedDrawableProxyContainer());
             AddInternal(lanedNoteProxyContainer = new SortedDrawableProxyContainer());
+            AddInternal(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(100));
         }
 
         public override void Add(HitObject h)

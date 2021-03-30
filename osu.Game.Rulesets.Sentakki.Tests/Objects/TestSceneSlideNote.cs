@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Pooling;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Tests.Visual;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
@@ -21,9 +24,14 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
         private int depthIndex;
 
+        [Cached]
+        private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
+
         public TestSceneSlideNote()
         {
             base.Content.Add(content = new SentakkiInputManager(new RulesetInfo { ID = 0 }));
+
+            Add(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(62));
 
             AddStep("Miss Single", () => testSingle(2000));
             AddStep("Hit Single", () => testSingle(2000, true));
