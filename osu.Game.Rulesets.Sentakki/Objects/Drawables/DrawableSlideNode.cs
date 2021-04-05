@@ -57,11 +57,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!userTriggered || Auto)
             {
                 if (timeOffset > 0 && Auto)
-                    ApplyResult(r => r.Type = r.Judgement.MaxResult);
+                    ApplyResult(Result.Judgement.MaxResult);
                 return;
             }
 
-            ApplyResult(r => r.Type = r.Judgement.MaxResult);
+            ApplyResult(Result.Judgement.MaxResult);
         }
 
         protected override void Update()

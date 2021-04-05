@@ -154,9 +154,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     // Miss the last node to ensure that all of them have results
                     SlideNodes.Last().ForcefullyMiss();
                     if (SlideNodes.Count(node => !node.Result.IsHit) <= 2 && SlideNodes.Count > 2)
-                        ApplyResult(r => r.Type = HitResult.Good);
+                        ApplyResult(HitResult.Good);
                     else
-                        ApplyResult(r => r.Type = r.Judgement.MinResult);
+                        ApplyResult(Result.Judgement.MinResult);
                 }
 
                 return;
@@ -166,7 +166,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (result == HitResult.None)
                 result = HitResult.Good;
 
-            ApplyResult(r => r.Type = result);
+            ApplyResult(result);
         }
 
         protected override void UpdateHitStateTransforms(ArmedState state)

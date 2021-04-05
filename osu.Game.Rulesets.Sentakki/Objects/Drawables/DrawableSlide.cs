@@ -45,7 +45,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             // We also make sure all transforms have finished to avoid jank
             if (NestedHitObjects.All(n => n.Result.HasResult && Time.Current >= n.LatestTransformEndTime))
-                ApplyResult(r => r.Type = r.Judgement.MaxResult);
+                ApplyResult(Result.Judgement.MaxResult);
         }
 
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)

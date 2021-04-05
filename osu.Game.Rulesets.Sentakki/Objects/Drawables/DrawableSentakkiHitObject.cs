@@ -4,6 +4,7 @@ using osu.Framework.Bindables;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.UI;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
@@ -51,6 +52,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnApply();
             AccentColour.BindTo(HitObject.ColourBindable);
+        }
+
+        protected void ApplyResult(HitResult result)
+        {
+            void resultApplication(JudgementResult r) => r.Type = result;
+            ApplyResult(resultApplication);
         }
 
         protected override void OnFree()
