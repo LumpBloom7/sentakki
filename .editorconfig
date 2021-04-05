@@ -192,3 +192,58 @@ dotnet_diagnostic.IDE0052.severity = silent
 dotnet_diagnostic.IDE0067.severity = none
 dotnet_diagnostic.IDE0068.severity = none
 dotnet_diagnostic.IDE0069.severity = none
+
+# Banned APIs
+dotnet_diagnostic.RS0030.severity = error
+
+# Roslyn analyzer rules
+dotnet_diagnostic.CA1001.severity = none
+dotnet_diagnostic.CA1016.severity = none
+dotnet_diagnostic.CA1028.severity = none
+dotnet_diagnostic.CA1031.severity = none
+dotnet_diagnostic.CA1032.severity = none
+dotnet_diagnostic.CA1034.severity = none
+dotnet_diagnostic.CA1036.severity = none
+dotnet_diagnostic.CA1040.severity = none
+dotnet_diagnostic.CA1044.severity = none
+dotnet_diagnostic.CA1051.severity = none
+dotnet_diagnostic.CA1054.severity = none
+dotnet_diagnostic.CA1056.severity = none
+dotnet_diagnostic.CA1062.severity = none
+dotnet_diagnostic.CA1063.severity = none
+dotnet_diagnostic.CA1067.severity = none
+dotnet_diagnostic.CA1303.severity = none
+dotnet_diagnostic.CA1304.severity = none
+dotnet_diagnostic.CA1305.severity = none
+dotnet_diagnostic.CA1307.severity = none
+dotnet_diagnostic.CA1308.severity = none
+dotnet_diagnostic.CA1309.severity = warning
+dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1710.severity = none
+dotnet_diagnostic.CA1714.severity = none
+dotnet_diagnostic.CA1716.severity = none
+dotnet_diagnostic.CA1717.severity = none
+dotnet_diagnostic.CA1720.severity = none
+dotnet_diagnostic.CA1721.severity = none
+dotnet_diagnostic.CA1724.severity = none
+dotnet_diagnostic.CA1801.severity = none
+dotnet_diagnostic.CA1806.severity = none
+dotnet_diagnostic.CA1812.severity = none
+dotnet_diagnostic.CA1814.severity = none
+dotnet_diagnostic.CA1815.severity = none
+dotnet_diagnostic.CA1816.severity = none
+dotnet_diagnostic.CA1819.severity = none
+dotnet_diagnostic.CA1822.severity = none
+dotnet_diagnostic.CA1823.severity = none
+dotnet_diagnostic.CA1826.severity = none
+dotnet_diagnostic.CA2000.severity = none
+dotnet_diagnostic.CA2007.severity = warning
+dotnet_diagnostic.CA2008.severity = none
+dotnet_diagnostic.CA2201.severity = warning
+dotnet_diagnostic.CA2213.severity = none
+dotnet_diagnostic.CA2214.severity = none
+dotnet_diagnostic.CA2227.severity = none
+dotnet_diagnostic.CA2235.severity = none
+
+#Disable operator overloads requiring alternate named methods
+dotnet_diagnostic.CA2225.severity = none
