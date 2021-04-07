@@ -1,4 +1,5 @@
 using System;
+using osu.Framework.Extensions;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
@@ -59,14 +60,29 @@ namespace osu.Game.Rulesets.Sentakki
         {
             switch (result)
             {
-                case HitResult.Perfect:
-                    return Color4.Orange;
                 case HitResult.Great:
-                    return Color4.DeepPink;
+                    return Color4.Orange;
                 case HitResult.Good:
+                    return Color4.DeepPink;
+                case HitResult.Ok:
                     return Color4.Green;
                 default:
                     return Color4.LightGray;
+            }
+        }
+
+        public static string GetDisplayNameForSentakkiResult(this HitResult result)
+        {
+            switch (result)
+            {
+                case HitResult.Great:
+                    return "Perfect";
+                case HitResult.Good:
+                    return "Great";
+                case HitResult.Ok:
+                    return "Good";
+                default:
+                    return result.GetDescription();
             }
         }
     }

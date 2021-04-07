@@ -104,11 +104,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 HitResult result;
 
                 if (totalHoldRatio >= .75 || Auto)
-                    result = HitResult.Perfect;
-                else if (totalHoldRatio >= .5)
                     result = HitResult.Great;
-                else if (totalHoldRatio >= .25)
+                else if (totalHoldRatio >= .5)
                     result = HitResult.Good;
+                else if (totalHoldRatio >= .25)
+                    result = HitResult.Ok;
                 else
                     result = HitResult.Miss;
 

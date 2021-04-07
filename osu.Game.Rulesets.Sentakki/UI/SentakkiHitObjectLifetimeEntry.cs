@@ -48,7 +48,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             switch (hitObject)
             {
                 case Touch _:
-                    return AdjustedAnimationDuration + HitObject.HitWindows.WindowFor(HitResult.Good);
+                    return AdjustedAnimationDuration + HitObject.HitWindows.WindowFor(HitResult.Ok);
                 default:
                     return AdjustedAnimationDuration;
             }

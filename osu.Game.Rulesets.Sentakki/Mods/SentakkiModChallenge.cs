@@ -91,10 +91,10 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
             switch (result.Type)
             {
-                case HitResult.Great:
+                case HitResult.Good:
                     newValue -= 1;
                     break;
-                case HitResult.Good:
+                case HitResult.Ok:
                     newValue -= 2;
                     break;
                 case HitResult.Miss:

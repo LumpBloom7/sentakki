@@ -26,7 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiJudgementPiece judgementPiece;
         private OsuSpriteText timingPiece;
 
-        private HitResult result = HitResult.Great;
+        private HitResult result = HitResult.Good;
 
         private readonly BindableBool detailedJudgements = new BindableBool();
 
@@ -60,7 +60,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public void Apply(JudgementResult result, DrawableHitObject hitObject)
         {
             this.result = result.Type;
-            judgementPiece.JudgementText.Text = result.Type.GetDescription().ToUpperInvariant();
+            judgementPiece.JudgementText.Text = result.Type.GetDisplayNameForSentakkiResult().ToUpperInvariant();
             judgementPiece.JudgementText.Colour = result.Type.GetColorForSentakkiResult();
 
             if (result.HitObject.HitWindows is HitWindows.EmptyHitWindows || result.Type == HitResult.Miss || !detailedJudgements.Value)

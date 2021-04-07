@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
@@ -161,11 +162,13 @@ namespace osu.Game.Rulesets.Sentakki
         {
             return new[]
             {
-                HitResult.Perfect,
                 HitResult.Great,
                 HitResult.Good,
+                HitResult.Ok,
             };
         }
+
+        public override string GetDisplayNameForHitResult(HitResult result) => result.GetDisplayNameForSentakkiResult();
 
         private class SentakkiIcon : Sprite
         {

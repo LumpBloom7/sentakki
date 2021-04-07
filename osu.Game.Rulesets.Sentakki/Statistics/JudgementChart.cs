@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -12,7 +13,6 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK;
 using osuTK.Graphics;
-using System;
 
 namespace osu.Game.Rulesets.Sentakki.Statistics
 {
@@ -90,13 +90,13 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 {
                     switch (e.Result)
                     {
-                        case HitResult.Perfect:
-                            ++PerfectCount;
-                            goto case HitResult.Great;
                         case HitResult.Great:
-                            ++GreatCount;
+                            ++PerfectCount;
                             goto case HitResult.Good;
                         case HitResult.Good:
+                            ++GreatCount;
+                            goto case HitResult.Ok;
+                        case HitResult.Ok:
                             ++GoodCount;
                             break;
                     }
@@ -173,13 +173,13 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 };
 
                 progressBox.AddRange(new Drawable[]{
-                    new ChartBar(HitResult.Good, GoodCount/HitEvents.Count){
+                    new ChartBar(HitResult.Ok, GoodCount/HitEvents.Count){
                         InitialLifetimeOffset = InitialLifetimeOffset
                     },
-                    new ChartBar(HitResult.Great, GreatCount/HitEvents.Count){
+                    new ChartBar(HitResult.Good, GreatCount/HitEvents.Count){
                         InitialLifetimeOffset = InitialLifetimeOffset
                     },
-                    new ChartBar(HitResult.Perfect, PerfectCount/HitEvents.Count){
+                    new ChartBar(HitResult.Great, PerfectCount/HitEvents.Count){
                         InitialLifetimeOffset = InitialLifetimeOffset
                     },
                 });

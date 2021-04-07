@@ -154,7 +154,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     // Miss the last node to ensure that all of them have results
                     SlideNodes.Last().ForcefullyMiss();
                     if (SlideNodes.Count(node => !node.Result.IsHit) <= 2 && SlideNodes.Count > 2)
-                        ApplyResult(r => r.Type = HitResult.Good);
+                        ApplyResult(r => r.Type = HitResult.Ok);
                     else
                         ApplyResult(r => r.Type = r.Judgement.MinResult);
                 }
@@ -164,7 +164,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             var result = HitObject.HitWindows.ResultFor(timeOffset);
             if (result == HitResult.None)
-                result = HitResult.Good;
+                result = HitResult.Ok;
 
             ApplyResult(r => r.Type = result);
         }
@@ -176,7 +176,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    using (BeginAbsoluteSequence(Math.Max(Result.TimeAbsolute, HitObject.GetEndTime() - HitObject.HitWindows.WindowFor(HitResult.Great))))
+                    using (BeginAbsoluteSequence(Math.Max(Result.TimeAbsolute, HitObject.GetEndTime() - HitObject.HitWindows.WindowFor(HitResult.Good))))
                     {
                         Slidepath.PerformExitAnimation(200);
                         SlideStar.FadeOut(200);
