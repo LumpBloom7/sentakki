@@ -29,7 +29,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
         public TestSceneSlideNote()
         {
-            base.Content.Add(content = new SentakkiInputManager(new RulesetInfo { ID = 0 }));
+            base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
 
             Add(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(62));
 

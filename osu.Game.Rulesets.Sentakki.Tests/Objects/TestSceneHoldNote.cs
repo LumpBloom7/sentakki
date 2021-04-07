@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
         public TestSceneHoldNote()
         {
-            base.Content.Add(content = new SentakkiInputManager(new RulesetInfo { ID = 0 }));
+            base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
 
             AddStep("Miss Insane Short", () => testSingle(100));
             AddStep("Hit Insane Short", () => testSingle(100, true));
