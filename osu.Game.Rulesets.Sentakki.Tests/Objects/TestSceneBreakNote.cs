@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
         public TestSceneBreakNote()
         {
-            base.Content.Add(content = new SentakkiInputManager(new RulesetInfo { ID = 0 }));
+            base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
 
             AddStep("Miss Single", () => testSingle());
             AddStep("Hit Single", () => testSingle(true));
