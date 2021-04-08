@@ -2,14 +2,12 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build tests (Debug)",
+            "label": "Build (Debug)",
             "type": "shell",
             "command": "dotnet",
             "args": [
                 "build",
-                "--no-restore",
                 "osu.Game.Rulesets.Sentakki.Tests",
-                "/p:GenerateFullPaths=true",
                 "/m",
                 "/verbosity:m"
             ],
@@ -17,15 +15,27 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "Build tests (Release)",
+            "label": "Build (Development)",
             "type": "shell",
             "command": "dotnet",
             "args": [
                 "build",
-                "--no-restore",
                 "osu.Game.Rulesets.Sentakki.Tests",
-                "/p:Configuration=Release",
-                "/p:GenerateFullPaths=true",
+                "-c Development",
+                "/m",
+                "/verbosity:m"
+            ],
+            "group": "build",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Build (Release)",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "build",
+                "osu.Game.Rulesets.Sentakki.Tests",
+                "-c Release",
                 "/m",
                 "/verbosity:m"
             ],
@@ -39,7 +49,18 @@
             "command": "dotnet",
             "args": [
                 "test",
-                "/p:Configuration=Debug",
+                "-c Debug",
+            ],
+            "group": "test",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Run tests (Development)",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "test",
+                "-c Development",
             ],
             "group": "test",
             "problemMatcher": "$msCompile"
@@ -50,7 +71,7 @@
             "command": "dotnet",
             "args": [
                 "test",
-                "/p:Configuration=Release",
+                "-c Release",
             ],
             "group": "test",
             "problemMatcher": "$msCompile"
