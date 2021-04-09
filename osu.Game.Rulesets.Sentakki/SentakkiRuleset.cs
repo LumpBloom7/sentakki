@@ -12,6 +12,7 @@ using osu.Framework.Platform;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Configuration;
@@ -174,7 +175,7 @@ namespace osu.Game.Rulesets.Sentakki
             };
         }
 
-        private class SentakkiIcon : CompositeDrawable
+        private class SentakkiIcon : DrawSizePreservingFillContainer
         {
             private readonly Ruleset ruleset;
             public SentakkiIcon(Ruleset ruleset)
@@ -213,12 +214,16 @@ namespace osu.Game.Rulesets.Sentakki
                             {
                                 RelativeSizeAxes = Axes.Both,
                             },
-                            new OsuSpriteText{
-                                Text = "DEV",
-                                Colour = Color4.Gray,
-                                Font = OsuFont.Torus.With(size: 8, weight: FontWeight.SemiBold),
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
+                            new DrawSizePreservingFillContainer{
+                                TargetDrawSize = new Vector2(16,9),
+                                Child = new OsuSpriteText
+                                {
+                                    Text = "DEV",
+                                    Colour = Color4.Gray,
+                                    Font = OsuFont.Torus.With(size: 8, weight: FontWeight.SemiBold),
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                }
                             }
                         }
                     });
