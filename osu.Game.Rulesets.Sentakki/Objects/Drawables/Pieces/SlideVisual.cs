@@ -129,7 +129,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             }
             else
             {
-                this.FadeOut().Delay(duration / 2).FadeIn(duration / 2).Finally(c => c.updateProgress());
+                updateProgress();
+                this.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
             }
         }
 
