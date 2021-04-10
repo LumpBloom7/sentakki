@@ -12,8 +12,6 @@ using osu.Framework.Platform;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
 using osu.Game.Graphics;
-using osu.Game.Graphics.Containers;
-using osu.Game.Graphics.Sprites;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
@@ -175,13 +173,17 @@ namespace osu.Game.Rulesets.Sentakki
             };
         }
 
-        private class SentakkiIcon : DrawSizePreservingFillContainer
+        public class SentakkiIcon : CompositeDrawable
         {
             private readonly Ruleset ruleset;
+
             public SentakkiIcon(Ruleset ruleset)
             {
+                Anchor = Origin = Anchor.Centre;
                 this.ruleset = ruleset;
-                RelativeSizeAxes = Axes.Both;
+                FillAspectRatio = 1;
+                FillMode = FillMode.Fit;
+                Size = new Vector2(100, 100);
             }
 
             [BackgroundDependencyLoader]
@@ -202,28 +204,30 @@ namespace osu.Game.Rulesets.Sentakki
                 {
                     AddInternal(new Container
                     {
-                        Masking = true,
-                        CornerExponent = 2.5f,
-                        CornerRadius = 2.5f,
                         Anchor = Anchor.BottomRight,
                         Origin = Anchor.BottomRight,
-                        RelativeSizeAxes = Axes.Both,
-                        Size = new Vector2(.6f, 0.35f),
+                        Size = new Vector2(60, 35),
                         Children = new Drawable[]{
-                            new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                            },
-                            new DrawSizePreservingFillContainer{
-                                TargetDrawSize = new Vector2(16,9),
-                                Child = new OsuSpriteText
+                            // Used to offset the fonts being misaligned
+                            new Container{
+                                Anchor = Anchor.BottomCentre,
+                                Origin = Anchor.BottomCentre,
+                                Size = new Vector2(60,32),
+                                CornerRadius = 8f,
+                                CornerExponent = 2.5f,
+                                Masking = true,
+                                Child = new Box
                                 {
-                                    Text = "DEV",
-                                    Colour = Color4.Gray,
-                                    Font = OsuFont.Torus.With(size: 8, weight: FontWeight.SemiBold),
-                                    Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre,
-                                }
+                                    RelativeSizeAxes = Axes.Both,
+                                },
+                            },
+                            new SpriteText
+                            {
+                                Text = "DEV",
+                                Colour = Color4.Gray,
+                                Font = OsuFont.Torus.With(size: 32,weight: FontWeight.Bold),
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
                             }
                         }
                     });
