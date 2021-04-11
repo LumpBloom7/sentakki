@@ -14,9 +14,12 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-    - name: Install dependencies
-      run: dotnet restore
     - name: Build with .NET
-      run: dotnet build --no-restore --configuration Release
+      run: dotnet build --configuration Development
     - name: Unit Tests
-      run: dotnet test --no-build --no-restore --configuration Release
+      run: dotnet test --no-build --no-restore --configuration Development
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: Sentakki (Dev build)
+        path: osu.Game.Rulesets.Sentakki/bin/Development/netstandard2.1/osu.Game.Rulesets.Sentakki-dev.dll

@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "sentakki for osu! (Tests, Debug)",
+            "name": "sentakki for osu! (Debug)",
             "type": "coreclr",
             "request": "launch",
             "program": "dotnet",
@@ -10,11 +10,23 @@
                 "${workspaceRoot}/osu.Game.Rulesets.Sentakki.Tests/bin/Debug/net5.0/osu.Game.Rulesets.Sentakki.Tests.dll"
             ],
             "cwd": "${workspaceRoot}",
-            "preLaunchTask": "Build tests (Debug)",
+            "preLaunchTask": "Build (Debug)",
             "console": "internalConsole"
         },
         {
-            "name": "sentakki for osu! (Tests, Release)",
+            "name": "sentakki for osu! (Development)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "dotnet",
+            "args": [
+                "${workspaceRoot}/osu.Game.Rulesets.Sentakki.Tests/bin/Development/net5.0/osu.Game.Rulesets.Sentakki.Tests.dll"
+            ],
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": "Build (Development)",
+            "console": "internalConsole"
+        },
+        {
+            "name": "sentakki for osu! (Release)",
             "type": "coreclr",
             "request": "launch",
             "program": "dotnet",
@@ -22,7 +34,7 @@
                 "${workspaceRoot}/osu.Game.Rulesets.Sentakki.Tests/bin/Release/net5.0/osu.Game.Rulesets.Sentakki.Tests.dll"
             ],
             "cwd": "${workspaceRoot}",
-            "preLaunchTask": "Build tests (Release)",
+            "preLaunchTask": "Build (Release)",
             "console": "internalConsole"
         },
     ]

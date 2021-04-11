@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Platform;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
+using osu.Game.Graphics;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
@@ -28,13 +31,18 @@ using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
 using osu.Game.Screens.Ranking.Statistics;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki
 {
     public class SentakkiRuleset : Ruleset
     {
-        public override string Description => "sentakki";
+        private static readonly Lazy<bool> is_development_build = new Lazy<bool>(() => typeof(SentakkiRuleset).Assembly.GetName().Name.EndsWith("-dev"));
+        public static bool IsDevelopmentBuild => is_development_build.Value;
+
+        public override string Description => IsDevelopmentBuild ? "sentakki (Dev build)" : "sentakki";
         public override string PlayingVerb => "Washing laundry";
+        public override string ShortName => IsDevelopmentBuild ? "Sentakki-dev" : "Sentakki";
 
         public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor();
 
@@ -96,8 +104,6 @@ namespace osu.Game.Rulesets.Sentakki
                     return Array.Empty<Mod>();
             }
         }
-
-        public override string ShortName => "Sentakki";
 
         public override RulesetSettingsSubsection CreateSettings() => new SentakkiSettingsSubsection(this);
 
@@ -167,12 +173,17 @@ namespace osu.Game.Rulesets.Sentakki
             };
         }
 
-        private class SentakkiIcon : Sprite
+        public class SentakkiIcon : CompositeDrawable
         {
             private readonly Ruleset ruleset;
+
             public SentakkiIcon(Ruleset ruleset)
             {
+                Anchor = Origin = Anchor.Centre;
                 this.ruleset = ruleset;
+                FillAspectRatio = 1;
+                FillMode = FillMode.Fit;
+                Size = new Vector2(100, 100);
             }
 
             [BackgroundDependencyLoader]
@@ -181,7 +192,46 @@ namespace osu.Game.Rulesets.Sentakki
                 if (!textures.GetAvailableResources().Contains("Textures/SentakkiIcon.png"))
                     textures.AddStore(host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
 
-                Texture = textures.Get("Textures/SentakkiIcon.png");
+                AddInternal(new Sprite
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    RelativeSizeAxes = Axes.Both,
+                    Texture = textures.Get("Textures/SentakkiIcon.png"),
+                });
+
+                if (IsDevelopmentBuild)
+                {
+                    AddInternal(new Container
+                    {
+                        Anchor = Anchor.BottomRight,
+                        Origin = Anchor.BottomRight,
+                        Size = new Vector2(60, 35),
+                        Children = new Drawable[]{
+                            // Used to offset the fonts being misaligned
+                            new Container{
+                                Anchor = Anchor.BottomCentre,
+                                Origin = Anchor.BottomCentre,
+                                Size = new Vector2(60,32),
+                                CornerRadius = 8f,
+                                CornerExponent = 2.5f,
+                                Masking = true,
+                                Child = new Box
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                },
+                            },
+                            new SpriteText
+                            {
+                                Text = "DEV",
+                                Colour = Color4.Gray,
+                                Font = OsuFont.Torus.With(size: 32,weight: FontWeight.Bold),
+                                Anchor = Anchor.Centre,
+                                Origin = Anchor.Centre,
+                            }
+                        }
+                    });
+                }
             }
         }
     }

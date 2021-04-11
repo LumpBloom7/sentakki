@@ -2,14 +2,13 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build tests (Debug)",
+            "label": "Build (Debug)",
             "type": "shell",
             "command": "dotnet",
             "args": [
                 "build",
-                "--no-restore",
                 "osu.Game.Rulesets.Sentakki.Tests",
-                "/p:GenerateFullPaths=true",
+                "/p:Configuration=Debug",
                 "/m",
                 "/verbosity:m"
             ],
@@ -17,15 +16,27 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "Build tests (Release)",
+            "label": "Build (Development)",
             "type": "shell",
             "command": "dotnet",
             "args": [
                 "build",
-                "--no-restore",
+                "osu.Game.Rulesets.Sentakki.Tests",
+                "/p:Configuration=Development",
+                "/m",
+                "/verbosity:m"
+            ],
+            "group": "build",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Build (Release)",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "build",
                 "osu.Game.Rulesets.Sentakki.Tests",
                 "/p:Configuration=Release",
-                "/p:GenerateFullPaths=true",
                 "/m",
                 "/verbosity:m"
             ],
@@ -45,12 +56,23 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "Run tests (Development)",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "test",
+                "/p:Configuration=Development",
+            ],
+            "group": "test",
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "Run tests (Release)",
             "type": "shell",
             "command": "dotnet",
             "args": [
                 "test",
-                "/p:Configuration=Release",
+                "/c Release",
             ],
             "group": "test",
             "problemMatcher": "$msCompile"
