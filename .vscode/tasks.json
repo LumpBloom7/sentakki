@@ -8,6 +8,7 @@
             "args": [
                 "build",
                 "osu.Game.Rulesets.Sentakki.Tests",
+                "/p:Configuration=Debug",
                 "/m",
                 "/verbosity:m"
             ],
@@ -21,7 +22,7 @@
             "args": [
                 "build",
                 "osu.Game.Rulesets.Sentakki.Tests",
-                "-c Development",
+                "/p:Configuration=Development",
                 "/m",
                 "/verbosity:m"
             ],
@@ -35,7 +36,7 @@
             "args": [
                 "build",
                 "osu.Game.Rulesets.Sentakki.Tests",
-                "-c Release",
+                "/p:Configuration=Release",
                 "/m",
                 "/verbosity:m"
             ],
@@ -49,7 +50,7 @@
             "command": "dotnet",
             "args": [
                 "test",
-                "-c Debug",
+                "/p:Configuration=Debug",
             ],
             "group": "test",
             "problemMatcher": "$msCompile"
@@ -60,7 +61,7 @@
             "command": "dotnet",
             "args": [
                 "test",
-                "-c Development",
+                "/p:Configuration=Development",
             ],
             "group": "test",
             "problemMatcher": "$msCompile"
@@ -71,7 +72,7 @@
             "command": "dotnet",
             "args": [
                 "test",
-                "-c Release",
+                "/c Release",
             ],
             "group": "test",
             "problemMatcher": "$msCompile"
