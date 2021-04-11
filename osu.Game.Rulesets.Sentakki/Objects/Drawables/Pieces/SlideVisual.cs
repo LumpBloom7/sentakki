@@ -129,7 +129,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             }
             else
             {
-                this.FadeOut().Delay(duration / 2).FadeIn(duration / 2).Finally(c => c.updateProgress());
+                this.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
             }
         }
 
@@ -174,6 +174,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     Origin = Anchor.Centre,
                     Texture = textures.Get("slide"),
                 });
+            }
+
+            protected override void FreeAfterUse()
+            {
+                base.FreeAfterUse();
+                ClearTransforms();
             }
 
             public void UpdateProgress(double progress)

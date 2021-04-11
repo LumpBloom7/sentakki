@@ -1,14 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Project">
+    <AssemblyTitle>sentakki for osu!lazer</AssemblyTitle>
+    <Description>TAP, HOLD and SLIDE to the beat.</Description>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyTitle>osu.Game.Rulesets.Sentakki</AssemblyTitle>
     <OutputType>Library</OutputType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <RootNamespace>osu.Game.Rulesets.Sentakki</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyName>osu.Game.Rulesets.Sentakki</AssemblyName>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Development' ">
+    <Optimize>true</Optimize>
   </PropertyGroup>
+  <Choose>
+    <When Condition=" '$(Configuration)' == 'Release' ">
+      <PropertyGroup>
+        <AssemblyName>osu.Game.Rulesets.Sentakki</AssemblyName>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <AssemblyName>osu.Game.Rulesets.Sentakki-dev</AssemblyName>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
   <ItemGroup>
     <PackageReference Include="ppy.osu.Game" Version="2021.407.1"/>
   </ItemGroup>

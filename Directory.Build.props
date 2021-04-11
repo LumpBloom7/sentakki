@@ -5,8 +5,20 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <Configurations>Debug;Release;Development</Configurations>
+
+    <Authors>Derrick Timmermans</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/LumpBloom7/sentakki</RepositoryUrl>
+    <Copyright>Copyright (c) 2021 Derrick Timmermans</Copyright>
   </PropertyGroup>
-  <ItemGroup Label="Resources">
-    <EmbeddedResource Include="Resources\**\*.*" />
+  <ItemGroup>
+    <!-- The automated version of this (<EmbeddedResource Include="xyz\**" />) would prepend the RootNamespace to name,
+         that will not work well with DllResourceStore as it can only determine the root namespace via AssemblyName,
+         and we change that based on the build configuration for separation purposes.
+         Therefore prepend the AssemblyName to embedded resources names instead. -->
+    <EmbeddedResource Include="Resources\**\*">
+      <LogicalName>$(AssemblyName).$([System.String]::Copy(%(Identity)).Replace($([System.IO.Path]::DirectorySeparatorChar.ToString()), '.'))</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
