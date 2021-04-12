@@ -8,9 +8,9 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
         {
             switch (result)
             {
-                case HitResult.Perfect:
                 case HitResult.Great:
                 case HitResult.Good:
+                case HitResult.Ok:
                 case HitResult.Miss:
                     return true;
                 default:
@@ -20,9 +20,9 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
 
         protected override DifficultyRange[] GetRanges() => new DifficultyRange[]{
             new DifficultyRange(HitResult.Miss, 144, 144, 72),
-            new DifficultyRange(HitResult.Good, 144, 144, 72),
-            new DifficultyRange(HitResult.Great, 96, 96, 48),
-            new DifficultyRange(HitResult.Perfect, 48, 48, 24),
+            new DifficultyRange(HitResult.Ok, 144, 144, 72),
+            new DifficultyRange(HitResult.Good, 96, 96, 48),
+            new DifficultyRange(HitResult.Great, 48, 48, 24),
         };
     }
 }

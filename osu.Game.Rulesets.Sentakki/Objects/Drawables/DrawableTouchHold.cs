@@ -114,11 +114,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             HitResult resultType;
 
             if (result >= .75)
-                resultType = HitResult.Perfect;
-            else if (result >= .5)
                 resultType = HitResult.Great;
-            else if (result >= .25)
+            else if (result >= .5)
                 resultType = HitResult.Good;
+            else if (result >= .25)
+                resultType = HitResult.Ok;
             else
                 resultType = HitResult.Miss;
 
