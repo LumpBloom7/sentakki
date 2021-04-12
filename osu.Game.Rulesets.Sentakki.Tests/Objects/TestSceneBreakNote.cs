@@ -35,6 +35,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             {
                 Break = true,
                 StartTime = Time.Current + 1000,
+
+                // No post-process is run
+                NoteColour = Color4.OrangeRed,
             };
 
             circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
