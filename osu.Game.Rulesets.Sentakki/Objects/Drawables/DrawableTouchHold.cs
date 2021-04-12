@@ -123,7 +123,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 resultType = HitResult.Miss;
 
             AccentColour.Value = colours.ForHitResult(resultType);
-            ApplyResult(r => r.Type = resultType);
+            ApplyResult(resultType);
         }
 
         protected override void UpdateHitStateTransforms(ArmedState state)

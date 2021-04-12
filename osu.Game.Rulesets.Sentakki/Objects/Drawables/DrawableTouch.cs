@@ -124,9 +124,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!userTriggered || Auto)
             {
                 if (Auto && timeOffset > 0)
-                    ApplyResult(r => r.Type = r.Judgement.MaxResult);
+                    ApplyResult(Result.Judgement.MaxResult);
                 else if (!HitObject.HitWindows.CanBeHit(timeOffset))
-                    ApplyResult(r => r.Type = r.Judgement.MinResult);
+                    ApplyResult(Result.Judgement.MinResult);
 
                 return;
             }
@@ -139,7 +139,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (timeOffset < 0)
                 result = Result.Judgement.MaxResult;
 
-            ApplyResult(r => r.Type = result);
+            ApplyResult(result);
         }
 
         protected override void UpdateHitStateTransforms(ArmedState state)
