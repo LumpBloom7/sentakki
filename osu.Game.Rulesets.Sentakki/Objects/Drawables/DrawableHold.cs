@@ -118,7 +118,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 if (!headContainer.First().Result.HasResult)
                     headContainer.First().MissForcefully();
 
-                ApplyResult(r => r.Type = result);
+                ApplyResult(result);
             }
         }
 
