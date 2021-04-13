@@ -1,4 +1,3 @@
-using System.Buffers;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
@@ -10,6 +9,9 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
+
+    // A special playfield specifically made for TouchNotes
+    // Contains extra functionality to better propogate touch input to Touch notes, and avoids some double hit weirdness
     public class TouchPlayfield : Playfield
     {
         private SentakkiInputManager sentakkiActionInputManager;
@@ -43,9 +45,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
             base.Update();
 
             // Handle mouse input
-            bool continueMouseEventPropogation = true;
             var mousePosition = SentakkiActionInputManager.CurrentState.Mouse.Position;
-            var actionPressed = false;
+            bool actionPressed = false;
             foreach (var action in SentakkiActionInputManager.PressedActions)
             {
                 if (action < SentakkiAction.Key1)
@@ -55,44 +56,33 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 }
             }
 
-            foreach (DrawableTouch touch in HitObjectContainer.AliveObjects)
-            {
-                if (actionPressed && touch.ReceivePositionalInputAt(mousePosition))
-                {
-                    if (!touch.IsPointOver[0])
-                    {
-                        touch.IsPointOver[0] = true;
-                        if (continueMouseEventPropogation)
-                            continueMouseEventPropogation = !touch.OnNewHeldPointDetected();
-                    }
-                }
-                else
-                {
-                    touch.IsPointOver[0] = false;
-                }
-            }
+            handlePointInput(0, actionPressed, mousePosition);
 
             // Handle touch
             for (int i = 0; i < 10; ++i)
             {
-                bool continueTouchEventPropogation = true;
-                Vector2? currentTouchPosition = SentakkiActionInputManager.CurrentState.Touch.GetTouchPosition((TouchSource)i);
+                var currentTouchPosition = SentakkiActionInputManager.CurrentState.Touch.GetTouchPosition((TouchSource)i);
+                handlePointInput(i + 1, currentTouchPosition.HasValue, currentTouchPosition);
+            }
+        }
 
-                foreach (DrawableTouch touch in HitObjectContainer.AliveObjects)
+        private void handlePointInput(int pointID, bool hasAction, Vector2? pointerPosition)
+        {
+            bool continueEventPropogation = true;
+            foreach (DrawableTouch touch in HitObjectContainer.AliveObjects)
+            {
+                if (hasAction && touch.ReceivePositionalInputAt(pointerPosition.Value))
                 {
-                    if (currentTouchPosition.HasValue && touch.ReceivePositionalInputAt(currentTouchPosition.Value))
+                    if (touch.PointInteractionState[pointID])
                     {
-                        if (!touch.IsPointOver[i + 1])
-                        {
-                            touch.IsPointOver[i + 1] = true;
-                            if (continueTouchEventPropogation)
-                                continueTouchEventPropogation = !touch.OnNewHeldPointDetected();
-                        }
+                        touch.PointInteractionState[pointID] = true;
+                        if (continueEventPropogation)
+                            continueEventPropogation = !touch.OnNewPointInteraction();
                     }
-                    else
-                    {
-                        touch.IsPointOver[i + 1] = false;
-                    }
+                }
+                else
+                {
+                    touch.PointInteractionState[pointID] = false;
                 }
             }
         }

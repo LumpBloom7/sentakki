@@ -24,7 +24,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // This HitObject uses a completely different offset
         protected override double InitialLifetimeOffset => base.InitialLifetimeOffset + HitObject.HitWindows.WindowFor(HitResult.Ok);
 
-        public bool[] IsPointOver = new bool[11];
+        // Similar to IsHovered for mouse, this tracks whether a pointer (touch or mouse) is interacting with this drawable
+        // Interaction == (IsHovered && ActionPressed) || (OnTouch && TouchPointerInBounds)
+        public bool[] PointInteractionState = new bool[11];
 
         private TouchFlashPiece flash;
         private ExplodePiece explode;
@@ -83,34 +85,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnFree();
             for (int i = 0; i < 11; ++i)
-                IsPointOver[i] = false;
+                PointInteractionState[i] = false;
         }
 
         private BindableInt trackedKeys = new BindableInt(0);
 
-        /* protected override void Update()
-        {
-            base.Update();
-            int count = 0;
-
-            if (!AllJudged)
-            {
-                var touchInput = SentakkiActionInputManager.CurrentState.Touch;
-                if (touchInput.ActiveSources.Any())
-                {
-                    foreach (var t in touchInput.ActiveSources)
-                        if (ReceivePositionalInputAt(touchInput.GetTouchPosition(t).Value)) ++count;
-                }
-                else if (IsHovered)
-                {
-                    foreach (var a in SentakkiActionInputManager.PressedActions)
-                        if (a < SentakkiAction.Key1) ++count;
-                }
-            }
-
-            trackedKeys.Value = count;
-        }
- */
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
@@ -183,6 +162,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        public bool OnNewHeldPointDetected() => UpdateResult(true);
+        public bool OnNewPointInteraction() => UpdateResult(true);
     }
 }
