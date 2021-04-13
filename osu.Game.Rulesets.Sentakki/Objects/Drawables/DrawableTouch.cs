@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -22,6 +23,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         // This HitObject uses a completely different offset
         protected override double InitialLifetimeOffset => base.InitialLifetimeOffset + HitObject.HitWindows.WindowFor(HitResult.Ok);
+
+        public bool[] IsPointOver = new bool[11];
 
         private TouchFlashPiece flash;
         private ExplodePiece explode;
@@ -76,9 +79,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Position = HitObject.Position;
         }
 
+        protected override void OnFree()
+        {
+            base.OnFree();
+            for (int i = 0; i < 11; ++i)
+                IsPointOver[i] = false;
+        }
+
         private BindableInt trackedKeys = new BindableInt(0);
 
-        protected override void Update()
+        /* protected override void Update()
         {
             base.Update();
             int count = 0;
@@ -100,7 +110,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             trackedKeys.Value = count;
         }
-
+ */
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
@@ -172,5 +182,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
             }
         }
+
+        public bool OnNewHeldPointDetected() => UpdateResult(true);
     }
 }

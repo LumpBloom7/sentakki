@@ -33,6 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         public static readonly float NOTESTARTDISTANCE = 66f;
 
         private readonly LanedPlayfield lanedPlayfield;
+        private readonly TouchPlayfield touchPlayfield;
 
         public static readonly float[] LANEANGLES =
         {
@@ -60,12 +61,14 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 Ring = new SentakkiRing(),
                 lanedPlayfield = new LanedPlayfield(),
                 HitObjectContainer, // This only contains Touch and TouchHolds, which should appear above others note types. Might consider separating to another playfield.
+                touchPlayfield = new TouchPlayfield(),
                 judgementLayer = new Container<DrawableSentakkiJudgement>
                 {
                     RelativeSizeAxes = Axes.Both,
                 }
             });
             AddNested(lanedPlayfield);
+            AddNested(touchPlayfield);
             NewResult += onNewResult;
         }
 
@@ -104,7 +107,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 case SentakkiLanedHitObject _:
                     lanedPlayfield.Add(h);
                     break;
-
+                case Objects.Touch _:
+                    touchPlayfield.Add(h);
+                    break;
                 default:
                     base.Add(h);
                     break;
