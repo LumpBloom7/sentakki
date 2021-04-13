@@ -73,7 +73,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             {
                 if (hasAction && touch.ReceivePositionalInputAt(pointerPosition.Value))
                 {
-                    if (touch.PointInteractionState[pointID])
+                    if (!touch.PointInteractionState[pointID])
                     {
                         touch.PointInteractionState[pointID] = true;
                         if (continueEventPropogation)
