@@ -9,15 +9,12 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-
     // A special playfield specifically made for TouchNotes
     // Contains extra functionality to better propogate touch input to Touch notes, and avoids some double hit weirdness
     public class TouchPlayfield : Playfield
     {
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
-
-        public override bool HandlePositionalInput => true;
 
         public TouchPlayfield()
         {
