@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -33,6 +35,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             {
                 StartTime = Time.Current + 1000,
                 Duration = 5000,
+                Samples = new List<HitSampleInfo>{
+                    new HitSampleInfo(HitSampleInfo.HIT_NORMAL)
+                },
             };
 
             circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
@@ -45,5 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 Auto = auto
             });
         }
+
+        protected override Ruleset CreateRuleset() => new SentakkiRuleset();
     }
 }
