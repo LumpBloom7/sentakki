@@ -82,7 +82,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             sentakkiRulesetConfig = sentakkiRulesetConfigManager;
 
             RegisterPool<TouchHold, DrawableTouchHold>(2);
-            RegisterPool<Objects.Touch, DrawableTouch>(8);
         }
 
         protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
