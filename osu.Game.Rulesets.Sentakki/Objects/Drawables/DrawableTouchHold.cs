@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using osu.Framework.Allocation;
+using osu.Framework.Audio;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Game.Audio;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -10,6 +12,7 @@ using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -25,6 +28,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => touchHoldBody.ReceivePositionalInputAt(screenSpacePos);
 
         private TouchHoldBody touchHoldBody;
+
+        private PausableSkinnableSound holdSample;
 
         public DrawableTouchHold() : this(null) { }
 
@@ -42,6 +47,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Alpha = 0;
             AddRangeInternal(new Drawable[] {
                 touchHoldBody = new TouchHoldBody(),
+                holdSample = new PausableSkinnableSound
+                {
+                    Volume = { Value = 0 },
+                    Looping = true,
+                    Frequency = { Value = 1 }
+                }
             });
 
             isHitting.BindValueChanged(b =>
@@ -51,6 +62,27 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
+        protected override void LoadSamples()
+        {
+            base.LoadSamples();
+
+            var firstSample = HitObject.Samples.FirstOrDefault();
+
+            if (firstSample != null)
+            {
+                var clone = HitObject.SampleControlPoint.ApplyTo(firstSample).With("spinnerspin");
+
+                holdSample.Samples = new ISampleInfo[] { clone };
+                holdSample.Frequency.Value = 1;
+            }
+        }
+
+        public override void StopAllSamples()
+        {
+            base.StopAllSamples();
+            holdSample?.Stop();
+        }
+
         [Resolved]
         private OsuColour colours { get; set; }
 
@@ -58,6 +90,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnFree();
 
+            holdSample.Samples = null;
             holdStartTime = null;
             totalHoldTime = 0;
         }
@@ -85,6 +118,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             holdStartTime = Math.Max(Time.Current, HitObject.StartTime);
             Colour = Color4.White;
+            if (!holdSample.IsPlaying)
+                holdSample.Play();
+            holdSample.VolumeTo(1, 300);
         }
 
         private void endHold()
@@ -94,6 +130,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             holdStartTime = null;
             Colour = Color4.SlateGray;
+            holdSample.VolumeTo(0, 150);
         }
 
         protected override void Update()
@@ -101,8 +138,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.Update();
 
             isHitting.Value = Time.Current >= HitObject.StartTime
-                            && Time.Current <= (HitObject as IHasDuration)?.EndTime
+                            && Time.Current <= HitObject.GetEndTime()
                             && (Auto || checkForTouchInput() || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
+
+            if (isHitting.Value)
+                holdSample.Frequency.Value = 0.5 + ((Time.Current - holdStartTime.Value + totalHoldTime) / ((IHasDuration)HitObject).Duration);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
