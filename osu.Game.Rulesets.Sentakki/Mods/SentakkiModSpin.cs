@@ -2,13 +2,12 @@
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {
-    public class SentakkiModSpin : Mod, IApplicableToDrawableRuleset<SentakkiHitObject>
+    public class SentakkiModSpin : Mod, IUpdatableByPlayfield
     {
         public override string Name => "Spin";
         public override string Description => "Replicate the true washing machine experience.";
@@ -30,9 +29,11 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             Value = 5
         };
 
-        public void ApplyToDrawableRuleset(DrawableRuleset<SentakkiHitObject> drawableRuleset)
+        public void Update(Playfield playfield)
         {
-            (drawableRuleset.Playfield as SentakkiPlayfield).RevolutionDuration.Value = RevolutionDuration.Value;
+            // We only rotate the main playfield
+            if (playfield is SentakkiPlayfield)
+                playfield.Rotation = (float)(playfield.Time.Current / (RevolutionDuration.Value * 1000)) * 360f;
         }
     }
 }

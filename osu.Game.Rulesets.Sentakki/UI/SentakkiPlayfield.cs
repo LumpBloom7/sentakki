@@ -1,5 +1,4 @@
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
@@ -23,7 +22,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private readonly DrawablePool<DrawableSentakkiJudgement> judgementPool;
 
         public readonly SentakkiRing Ring;
-        public BindableNumber<int> RevolutionDuration = new BindableNumber<int>(0);
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
 
@@ -83,17 +81,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
         }
 
         protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
-
-        protected override void Update()
-        {
-            // Using deltaTime instead of what I did with the hitObjects to avoid noticible jitter during rate changed.
-            if (RevolutionDuration.Value > 0)
-            {
-                double rotationAmount = Clock.ElapsedFrameTime / (RevolutionDuration.Value * 1000 * (drawableSentakkiRuleset?.GameplaySpeed ?? 1)) * 360;
-                Rotation += (float)rotationAmount;
-            }
-            base.Update();
-        }
 
         protected override GameplayCursorContainer CreateCursor() => new SentakkiCursorContainer();
 
