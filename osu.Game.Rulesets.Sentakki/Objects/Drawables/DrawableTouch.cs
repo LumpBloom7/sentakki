@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -22,6 +23,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         // This HitObject uses a completely different offset
         protected override double InitialLifetimeOffset => base.InitialLifetimeOffset + HitObject.HitWindows.WindowFor(HitResult.Ok);
+
+        // Similar to IsHovered for mouse, this tracks whether a pointer (touch or mouse) is interacting with this drawable
+        // Interaction == (IsHovered && ActionPressed) || (OnTouch && TouchPointerInBounds)
+        public bool[] PointInteractionState = new bool[11];
 
         private TouchFlashPiece flash;
         private ExplodePiece explode;
@@ -76,30 +81,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Position = HitObject.Position;
         }
 
-        private BindableInt trackedKeys = new BindableInt(0);
-
-        protected override void Update()
+        protected override void OnFree()
         {
-            base.Update();
-            int count = 0;
-
-            if (!AllJudged)
-            {
-                var touchInput = SentakkiActionInputManager.CurrentState.Touch;
-                if (touchInput.ActiveSources.Any())
-                {
-                    foreach (var t in touchInput.ActiveSources)
-                        if (ReceivePositionalInputAt(touchInput.GetTouchPosition(t).Value)) ++count;
-                }
-                else if (IsHovered)
-                {
-                    foreach (var a in SentakkiActionInputManager.PressedActions)
-                        if (a < SentakkiAction.Key1) ++count;
-                }
-            }
-
-            trackedKeys.Value = count;
+            base.OnFree();
+            for (int i = 0; i < 11; ++i)
+                PointInteractionState[i] = false;
         }
+
+        private BindableInt trackedKeys = new BindableInt(0);
 
         protected override void UpdateInitialTransforms()
         {
@@ -172,5 +161,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
             }
         }
+
+        public bool OnNewPointInteraction() => UpdateResult(true);
     }
 }
