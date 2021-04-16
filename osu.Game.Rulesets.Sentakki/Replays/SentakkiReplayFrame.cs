@@ -12,14 +12,13 @@ namespace osu.Game.Rulesets.Sentakki.Replays
     {
         public Vector2 Position;
         public List<SentakkiAction> Actions = new List<SentakkiAction>();
-
         public bool UsingSensorMode;
 
         public SentakkiReplayFrame()
         {
         }
 
-        public SentakkiReplayFrame(double time, Vector2 position, bool usingSensorMode, params SentakkiAction[] actions)
+        public SentakkiReplayFrame(double time, Vector2 position, bool usingSensorMode, IEnumerable<SentakkiAction> actions)
             : base(time)
         {
             Position = position;
