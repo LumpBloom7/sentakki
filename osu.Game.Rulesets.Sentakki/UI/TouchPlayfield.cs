@@ -1,11 +1,9 @@
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.UI;
@@ -41,11 +39,16 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
 
+        protected override HitObjectContainer CreateHitObjectContainer() => new TouchHitObjectContainer();
+
+        private TouchHitObjectContainer touchHitObjectContainer => (TouchHitObjectContainer)HitObjectContainer;
+        private IEnumerable<DrawableTouch> aliveTouchNotes => touchHitObjectContainer.AliveTouchNotes;
+
         protected override void Update()
         {
             base.Update();
 
-            var aliveObjects = HitObjectContainer.AliveObjects.ToList();
+            if (!aliveTouchNotes.Any()) return;
 
             // Handle mouse input
             var mousePosition = SentakkiActionInputManager.CurrentState.Mouse.Position;
@@ -59,20 +62,20 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 }
             }
 
-            handlePointInput(0, actionPressed, mousePosition, aliveObjects);
+            handlePointInput(0, actionPressed, mousePosition);
 
             // Handle touch
             for (int i = 0; i < 10; ++i)
             {
                 var currentTouchPosition = SentakkiActionInputManager.CurrentState.Touch.GetTouchPosition((TouchSource)i);
-                handlePointInput(i + 1, currentTouchPosition.HasValue, currentTouchPosition, aliveObjects);
+                handlePointInput(i + 1, currentTouchPosition.HasValue, currentTouchPosition);
             }
         }
 
-        private void handlePointInput(int pointID, bool hasAction, Vector2? pointerPosition, IEnumerable<DrawableHitObject> aliveObjects)
+        private void handlePointInput(int pointID, bool hasAction, Vector2? pointerPosition)
         {
             bool continueEventPropogation = true;
-            foreach (DrawableTouch touch in aliveObjects)
+            foreach (DrawableTouch touch in aliveTouchNotes)
             {
                 if (hasAction && touch.ReceivePositionalInputAt(pointerPosition.Value))
                 {
@@ -87,6 +90,26 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 {
                     touch.PointInteractionState[pointID] = false;
                 }
+            }
+        }
+
+        // This HOC is specially built accommodate the custom input required to handle touch (even though I think the beatmap conversion is at fault)
+        // This HOC provides a completely tangible list of objects updated every time hitobjects life changes, rather than a query to fetch all objects
+        private class TouchHitObjectContainer : HitObjectContainer
+        {
+            // This list is exposed to the playfield, so that it can get a list of all objects
+            // To prevent this query from being executed 11 times in a single input handling cycle
+            // This updates when notes become alive/dead, instead of letting the playfield touch handler from polling every frame
+            public List<DrawableTouch> AliveTouchNotes { get; private set; } = new List<DrawableTouch>();
+
+            protected override bool UpdateChildrenLife()
+            {
+                if (base.UpdateChildrenLife())
+                {
+                    AliveTouchNotes = AliveObjects.OfType<DrawableTouch>().ToList();
+                    return true;
+                }
+                return false;
             }
         }
     }
