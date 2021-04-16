@@ -27,9 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.Replays
                 if (frame == null)
                     return Vector2.Zero;
 
-                Debug.Assert(CurrentTime != null);
-
-                return NextFrame != null ? Interpolation.ValueAt(CurrentTime.Value, frame.Position, NextFrame.Position, frame.Time, NextFrame.Time) : frame.Position;
+                return NextFrame != null ? Interpolation.ValueAt(CurrentTime, frame.Position, NextFrame.Position, frame.Time, NextFrame.Time) : frame.Position;
             }
         }
 
