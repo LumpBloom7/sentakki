@@ -1,7 +1,11 @@
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.UI;
@@ -41,6 +45,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             base.Update();
 
+            var aliveObjects = HitObjectContainer.AliveObjects.ToList();
+
             // Handle mouse input
             var mousePosition = SentakkiActionInputManager.CurrentState.Mouse.Position;
             bool actionPressed = false;
@@ -53,20 +59,20 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 }
             }
 
-            handlePointInput(0, actionPressed, mousePosition);
+            handlePointInput(0, actionPressed, mousePosition, aliveObjects);
 
             // Handle touch
             for (int i = 0; i < 10; ++i)
             {
                 var currentTouchPosition = SentakkiActionInputManager.CurrentState.Touch.GetTouchPosition((TouchSource)i);
-                handlePointInput(i + 1, currentTouchPosition.HasValue, currentTouchPosition);
+                handlePointInput(i + 1, currentTouchPosition.HasValue, currentTouchPosition, aliveObjects);
             }
         }
 
-        private void handlePointInput(int pointID, bool hasAction, Vector2? pointerPosition)
+        private void handlePointInput(int pointID, bool hasAction, Vector2? pointerPosition, IEnumerable<DrawableHitObject> aliveObjects)
         {
             bool continueEventPropogation = true;
-            foreach (DrawableTouch touch in HitObjectContainer.AliveObjects)
+            foreach (DrawableTouch touch in aliveObjects)
             {
                 if (hasAction && touch.ReceivePositionalInputAt(pointerPosition.Value))
                 {
