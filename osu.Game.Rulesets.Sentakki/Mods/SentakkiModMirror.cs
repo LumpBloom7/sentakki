@@ -12,6 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
     public class SentakkiModMirror : Mod, IApplicableAfterBeatmapConversion
     {
         public override string Name => "Mirror";
+        public override string Description => "Flip the playfield horizontally, vertically, or both!";
         public override string Acronym => "MR";
         public override ModType Type => ModType.Conversion;
         public override double ScoreMultiplier => 1;
