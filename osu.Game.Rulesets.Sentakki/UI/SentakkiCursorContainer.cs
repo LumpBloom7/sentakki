@@ -2,12 +2,8 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Input;
 using osu.Framework.Input.Events;
-using osu.Framework.Input.StateChanges;
-using osu.Framework.Utils;
 using osu.Game.Rulesets.UI;
-using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -31,23 +27,18 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 cursorSprite.Texture = cursorTexture;
         }
 
-        private Vector2? lastPosition;
-        protected override bool OnMouseMove(MouseMoveEvent e)
+        protected override bool Handle(UIEvent e)
         {
-            if (!(lastPosition.HasValue && Precision.AlmostEquals(e.ScreenSpaceMousePosition, lastPosition.Value)))
+            switch (e)
             {
-                Show();
-                lastPosition = e.ScreenSpaceMousePosition;
+                case MouseEvent _:
+                    Show();
+                    break;
+                case TouchEvent _:
+                    Hide();
+                    break;
             }
-            ActiveCursor.RelativePositionAxes = Axes.None;
-            ActiveCursor.Position = e.MousePosition;
-            ActiveCursor.RelativePositionAxes = Axes.Both;
-            return false;
-        }
-        protected override void OnTouchMove(TouchMoveEvent e)
-        {
-            base.OnTouchMove(e);
-            Hide();
+            return base.Handle(e);
         }
     }
 }
