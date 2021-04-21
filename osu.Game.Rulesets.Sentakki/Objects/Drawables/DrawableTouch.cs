@@ -9,6 +9,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.UI.Components;
 using osuTK;
 using osuTK.Graphics;
 
@@ -28,8 +29,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // Interaction == (IsHovered && ActionPressed) || (OnTouch && TouchPointerInBounds)
         public bool[] PointInteractionState = new bool[11];
 
-        private TouchFlashPiece flash;
-        private ExplodePiece explode;
+        private HitExplosion explode;
         private TouchBody touchBody;
 
         private SentakkiInputManager sentakkiActionInputManager;
@@ -50,12 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Alpha = 0;
             AddRangeInternal(new Drawable[]{
                 touchBody = new TouchBody(),
-                flash = new TouchFlashPiece{
-                    RelativeSizeAxes = Axes.None,
-                    Size = new Vector2(105)
-                },
-                explode = new ExplodePiece{
-                    RelativeSizeAxes = Axes.None,
+                explode = new HitExplosion{
                     Size = new Vector2(105)
                 },
             });
@@ -70,7 +65,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             AccentColour.BindValueChanged(c =>
             {
-                flash.Colour = c.NewValue;
                 explode.Colour = c.NewValue;
             }, true);
         }
@@ -134,23 +128,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            const double time_fade_hit = 400, time_fade_miss = 400;
+            const double time_fade_miss = 400;
 
             switch (state)
             {
                 case ArmedState.Hit:
-                    const double flash_in = 40;
-                    const double flash_out = 100;
-
-                    flash.FadeTo(0.8f, flash_in)
-                         .Then()
-                         .FadeOut(flash_out);
-
-                    explode.FadeIn(flash_in);
+                    explode.Animate();
                     touchBody.FadeOut();
-                    this.ScaleTo(1.5f, 400, Easing.OutQuad);
-
-                    this.Delay(time_fade_hit).FadeOut().Expire();
+                    this.ScaleTo(1.5f, 400, Easing.OutQuad).FadeOut(800);
 
                     break;
 

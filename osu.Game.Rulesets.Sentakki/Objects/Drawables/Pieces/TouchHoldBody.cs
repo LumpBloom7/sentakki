@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.UI.Components;
 using osuTK;
 using osuTK.Graphics;
 
@@ -12,10 +13,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     public class TouchHoldBody : CircularContainer
     {
         public readonly TouchHoldProgressPiece ProgressPiece;
-        private readonly FlashPiece flash;
         private readonly TouchHoldCentrePiece centrePiece;
 
-        private readonly Drawable explode;
+        private readonly HitExplosion explode;
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => centrePiece.ReceivePositionalInputAt(screenSpacePos);
 
@@ -25,14 +25,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             InternalChildren = new Drawable[]{
-                flash = new FlashPiece{
-                    Rotation = 45,
-                    CornerExponent = 2.5f,
-                    CornerRadius = 27.5f,
-                },
                 ProgressPiece = new TouchHoldProgressPiece(),
                 centrePiece = new TouchHoldCentrePiece(),
-                explode = new ExplodePiece(),
+                explode = new HitExplosion(){
+                    Size = new Vector2(110)
+                },
             };
         }
 
@@ -57,23 +54,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 switch (state)
                 {
                     case ArmedState.Hit:
-                        const double flash_in = 40;
-                        const double flash_out = 100;
-                        flash.FadeTo(0.8f, flash_in)
-                            .Then()
-                            .FadeOut(flash_out);
+                        explode.Animate();
 
-                        explode.FadeIn(flash_in);
-                        this.ScaleTo(1.5f, 400, Easing.OutQuad);
+                        //after the flash, we can hide some elements that were behind it
+                        ProgressPiece.FadeOut();
+                        centrePiece.FadeOut();
 
-                        using (BeginDelayedSequence(flash_in, true))
-                        {
-                            //after the flash, we can hide some elements that were behind it
-                            ProgressPiece.FadeOut();
-                            centrePiece.FadeOut();
-
-                            this.FadeOut(800);
-                        }
+                        this.ScaleTo(1.5f, 400, Easing.OutQuad).FadeOut(800);
                         break;
                 }
             }
