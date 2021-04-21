@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Rulesets.Sentakki.UI.Components;
 using osuTK;
 using osuTK.Graphics;
 
@@ -15,8 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public override bool RemoveWhenNotAlive => false;
 
         private readonly CirclePiece circle;
-        private readonly FlashPiece flash;
-        private readonly ExplodePiece explode;
+        private readonly HitExplosion explode;
         private readonly ShadowPiece glow;
 
         public TapPiece()
@@ -32,11 +32,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             {
                 glow = new ShadowPiece(),
                 circle = new CirclePiece(),
-                flash = new FlashPiece(){
-                    CornerRadius = 40,
-                    CornerExponent = 2
-                },
-                explode = new ExplodePiece(),
+                explode = new HitExplosion(),
             };
         }
 
@@ -57,30 +53,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         private void updateState(DrawableHitObject drawableObject, ArmedState state)
         {
+            if (!(drawableObject is DrawableTap)) return;
             using (BeginAbsoluteSequence(drawableObject.HitStateUpdateTime, true))
             {
                 switch (state)
                 {
                     case ArmedState.Hit:
-                        const double flash_in = 40;
-                        const double flash_out = 100;
+                        explode.Animate();
 
-                        flash.FadeTo(0.8f, flash_in)
-                             .Then()
-                             .FadeOut(flash_out);
+                        //after the flash, we can hide some elements that were behind it
+                        circle.FadeOut();
+                        glow.FadeOut();
 
-                        explode.FadeIn(flash_in);
-                        this.ScaleTo(1.5f, 400, Easing.OutQuad);
-
-                        using (BeginDelayedSequence(flash_in, true))
-                        {
-                            //after the flash, we can hide some elements that were behind it
-                            circle.FadeOut();
-                            glow.FadeOut();
-
-                            this.FadeOut(800);
-                        }
-
+                        this.ScaleTo(1.5f, 400, Easing.OutQuad).FadeOut(800);
                         break;
                 }
             }

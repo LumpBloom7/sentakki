@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Rulesets.Sentakki.UI.Components;
 using osuTK;
 using osuTK.Graphics;
 
@@ -13,9 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     {
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
-
-        private readonly FlashPiece flash;
-        private readonly ExplodePiece explode;
+        private readonly HitExplosion explode;
         public readonly Container Note;
         private readonly ShadowPiece shadow;
 
@@ -51,11 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                         },
                     }
                 },
-                flash = new FlashPiece(){
-                    CornerRadius = 40,
-                    CornerExponent = 2
-                },
-                explode = new ExplodePiece()
+                explode = new HitExplosion()
             };
         }
 
@@ -83,22 +78,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 switch (state)
                 {
                     case ArmedState.Hit:
-                        const double flash_in = 40;
-                        const double flash_out = 100;
+                        explode.Animate();
+                        Note.FadeOut();
+                        this.ScaleTo(1.5f, 400, Easing.OutQuad).FadeOut(800);
 
-                        flash.FadeTo(0.8f, flash_in)
-                                 .Then()
-                                 .FadeOut(flash_out);
-
-                        explode.FadeIn(flash_in);
-                        this.ScaleTo(1.5f, 400, Easing.OutQuad);
-
-                        using (BeginDelayedSequence(flash_in, true))
-                        {
-                            shadow.FadeOut();
-                            Note.FadeOut();
-                            this.FadeOut(800);
-                        }
                         break;
                 }
             }

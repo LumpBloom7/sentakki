@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Rulesets.Sentakki.UI.Components;
 using osuTK;
 using osuTK.Graphics;
 
@@ -17,7 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public readonly Container Stars;
         public readonly StarPiece SecondStar;
 
-        private readonly ExplodePiece explode;
+        private readonly HitExplosion explode;
 
         public SlideTapPiece()
         {
@@ -39,7 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                         SecondStar = new StarPiece { Rotation = 36 }
                     }
                 },
-                explode = new ExplodePiece(),
+                explode = new HitExplosion(),
             };
         }
 
@@ -60,22 +61,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         private void updateState(DrawableHitObject drawableObject, ArmedState state)
         {
+            if (!(drawableObject is DrawableTap)) return;
             using (BeginAbsoluteSequence(drawableObject.HitStateUpdateTime, true))
             {
                 switch (state)
                 {
                     case ArmedState.Hit:
-                        const double flash_in = 40;
-
-                        explode.FadeIn(flash_in);
-                        this.ScaleTo(1.5f, 400, Easing.OutQuad);
-
-                        using (BeginDelayedSequence(flash_in, true))
-                        {
-                            Stars.FadeOut();
-                            this.FadeOut(800);
-                        }
-
+                        explode.Animate();
+                        Stars.FadeOut();
+                        this.ScaleTo(1.5f, 400, Easing.OutQuad).FadeOut(800);
                         break;
                 }
             }
