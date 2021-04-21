@@ -50,9 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Alpha = 0;
             AddRangeInternal(new Drawable[]{
                 touchBody = new TouchBody(),
-                explode = new HitExplosion{
-                    Size = new Vector2(105)
-                },
+                explode = new HitExplosion()
             });
 
             trackedKeys.BindValueChanged(x =>
