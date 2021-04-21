@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         public void Animate()
         {
             FinishTransforms(true);
-            this.FadeIn().TransformBindableTo(borderRatio, 1).ScaleTo(1).Then().TransformBindableTo(borderRatio, 0.1f, 100).FadeTo(0, 125).ScaleTo(1.5f, 100);
+            this.FadeIn().TransformBindableTo(borderRatio, 1).ScaleTo(1).Then().TransformBindableTo(borderRatio, 0f, 100).ScaleTo(1.5f, 100);
         }
     }
 }
