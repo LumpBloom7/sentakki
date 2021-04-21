@@ -14,9 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     {
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
-        private readonly HitExplosion explode;
         public readonly Container Note;
-        private readonly ShadowPiece shadow;
 
         public HoldBody()
         {
@@ -34,7 +32,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     RelativeSizeAxes=Axes.Both,
                     Children = new Drawable[]
                     {
-                        shadow = new ShadowPiece(),
+                        new ShadowPiece(),
                         new RingPiece(),
                         new DotPiece(squared: true)
                         {
@@ -50,7 +48,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                         },
                     }
                 },
-                explode = new HitExplosion()
             };
         }
 
@@ -62,29 +59,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             accentColour.BindTo(drawableObject.AccentColour);
             accentColour.BindValueChanged(colour =>
             {
-                explode.Colour = colour.NewValue;
                 Note.Colour = colour.NewValue;
             }, true);
-
-            drawableObject.ApplyCustomUpdateState += updateState;
-        }
-
-        private void updateState(DrawableHitObject drawableObject, ArmedState state)
-        {
-            if (!(drawableObject is DrawableHold)) return;
-
-            using (BeginAbsoluteSequence(drawableObject.HitStateUpdateTime, true))
-            {
-                switch (state)
-                {
-                    case ArmedState.Hit:
-                        explode.Animate();
-                        Note.FadeOut();
-                        this.ScaleTo(1.5f, 400, Easing.OutQuad).FadeOut(800);
-
-                        break;
-                }
-            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Microsoft.EntityFrameworkCore.Internal;
 using osu.Game.Audio;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
@@ -41,7 +42,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 Break = Break,
                 StartTime = StartTime,
                 Lane = Lane,
-                Samples = nodeSamples.Any() ? nodeSamples.First() : new List<HitSampleInfo>()
+                Samples = nodeSamples.Any() ? nodeSamples.First() : new List<HitSampleInfo>(),
+                ColourBindable = ColourBindable.GetBoundCopy(),
             });
         }
 
