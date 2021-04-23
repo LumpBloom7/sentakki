@@ -114,10 +114,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             if (judgedObject is DrawableSlideBody) return;
 
-            var explosion = explosionPool.Get();
-            explosion.Position = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, laned.HitObject.Lane);
-            explosion.Colour = laned.HitObject.NoteColour;
-            explosion.Animate();
+            var explosion = explosionPool.Get(e => e.Apply(laned.HitObject));
             explosionLayer.Add(explosion);
         }
     }

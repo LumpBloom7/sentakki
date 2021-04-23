@@ -125,18 +125,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            const double time_fade_hit = 400, time_fade_miss = 400;
+            const double time_fade_miss = 400;
 
             switch (state)
             {
                 case ArmedState.Hit:
-                    this.FadeOut().Expire();
+                    Expire();
                     break;
 
                 case ArmedState.Miss:
                     NoteBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                         .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
-                        .MoveToOffset(new Vector2(0, -100), time_fade_hit, Easing.OutCubic)
+                        .MoveToOffset(new Vector2(0, -100), time_fade_miss, Easing.OutCubic)
                         .FadeOut(time_fade_miss);
 
                     using (BeginDelayedSequence(time_fade_miss, true))

@@ -2,7 +2,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osuTK;
@@ -15,7 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public readonly TouchHoldProgressPiece ProgressPiece;
         private readonly TouchHoldCentrePiece centrePiece;
 
-        private readonly HitExplosion explode;
+        private readonly HitExplosion explosion;
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => centrePiece.ReceivePositionalInputAt(screenSpacePos);
 
@@ -27,7 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             InternalChildren = new Drawable[]{
                 ProgressPiece = new TouchHoldProgressPiece(),
                 centrePiece = new TouchHoldCentrePiece(),
-                explode = new HitExplosion(){
+                explosion = new HitExplosion(){
                     Size = new Vector2(110)
                 },
             };
@@ -41,7 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             accentColour.BindTo(drawableObject.AccentColour);
             accentColour.BindValueChanged(colour =>
             {
-                explode.Colour = colour.NewValue;
+                explosion.Colour = colour.NewValue;
             }, true);
 
             drawableObject.ApplyCustomUpdateState += updateState;
@@ -54,13 +53,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 switch (state)
                 {
                     case ArmedState.Hit:
-                        explode.Animate();
+                        explosion.Explode();
 
                         //after the flash, we can hide some elements that were behind it
                         ProgressPiece.FadeOut();
                         centrePiece.FadeOut();
-
-                        this.ScaleTo(1.5f, 400, Easing.OutQuad).FadeOut(800);
                         break;
                 }
             }

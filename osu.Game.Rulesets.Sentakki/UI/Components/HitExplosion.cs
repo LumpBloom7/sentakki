@@ -3,6 +3,8 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Transforms;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK;
 using osuTK.Graphics;
 
@@ -43,20 +45,36 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
         private readonly BindableFloat borderRatio = new BindableFloat(1);
 
+        public void Apply(SentakkiLanedHitObject lanedHitObject)
+        {
+            Position = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, lanedHitObject.Lane);
+            Colour = lanedHitObject.NoteColour;
+        }
+
         protected override void PrepareForUse()
         {
             base.PrepareForUse();
-            if (IsInPool)
-            {
-                Animate();
-                Expire();
-            }
+
+            // When used as a standalone piece in TOUCH and TOUCHHOLDs, we want to avoid the animation playing out immediately
+            if (!IsInPool)
+                return;
+
+            Explode().Expire();
         }
 
-        public void Animate()
+        public TransformSequence<HitExplosion> Explode()
         {
-            FinishTransforms(true);
-            this.FadeIn().TransformBindableTo(borderRatio, 1).ScaleTo(1).Then().TransformBindableTo(borderRatio, 0f, 100).ScaleTo(2f, 100).FadeOut(150);
+            const double explode_duration = 100;
+
+            var sequence = this.FadeIn()
+                               .TransformBindableTo(borderRatio, 1)
+                               .ScaleTo(1)
+                               .Then()
+                               .TransformBindableTo(borderRatio, 0f, explode_duration)
+                               .ScaleTo(2f, explode_duration)
+                               .FadeOut(explode_duration);
+
+            return sequence;
         }
     }
 }

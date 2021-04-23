@@ -1,10 +1,7 @@
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
@@ -29,7 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // Interaction == (IsHovered && ActionPressed) || (OnTouch && TouchPointerInBounds)
         public bool[] PointInteractionState = new bool[11];
 
-        private HitExplosion explode;
+        private HitExplosion explosion;
         private TouchBody touchBody;
 
         private SentakkiInputManager sentakkiActionInputManager;
@@ -50,7 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Alpha = 0;
             AddRangeInternal(new Drawable[]{
                 touchBody = new TouchBody(),
-                explode = new HitExplosion()
+                explosion = new HitExplosion()
             });
 
             trackedKeys.BindValueChanged(x =>
@@ -63,7 +60,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             AccentColour.BindValueChanged(c =>
             {
-                explode.Colour = c.NewValue;
+                explosion.Colour = c.NewValue;
             }, true);
         }
 
@@ -126,14 +123,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            const double time_fade_miss = 400;
+            const double time_fade_hit = 100, time_fade_miss = 400;
 
             switch (state)
             {
                 case ArmedState.Hit:
-                    explode.Animate();
+                    explosion.Explode();
                     touchBody.FadeOut();
-                    this.ScaleTo(1.5f, 400, Easing.OutQuad).FadeOut(800);
+                    this.Delay(time_fade_hit).Expire();
 
                     break;
 
