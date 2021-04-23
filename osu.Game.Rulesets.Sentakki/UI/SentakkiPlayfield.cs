@@ -58,8 +58,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 new PlayfieldVisualisation(),
                 Ring = new SentakkiRing(),
                 lanedPlayfield = new LanedPlayfield(),
-                HitObjectContainer, // This only contains Touch and TouchHolds, which should appear above others note types. Might consider separating to another playfield.
-                touchPlayfield = new TouchPlayfield(),
+                HitObjectContainer, // This only contains TouchHolds, which needs to be above others types
+                touchPlayfield = new TouchPlayfield(), // This only contains Touch, which needs a custom playfield to handle their input
                 judgementLayer = new Container<DrawableSentakkiJudgement>
                 {
                     RelativeSizeAxes = Axes.Both,

@@ -27,7 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [Cached]
         private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
 
-        private DrawablePool<HitExplosion> explosionPool;
+        private readonly DrawablePool<HitExplosion> explosionPool;
 
         private readonly Container<HitExplosion> explosionLayer;
 
@@ -35,10 +35,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            AddInternal(hitObjectLineRenderer = new LineRenderer());
-            AddInternal(explosionLayer = new Container<HitExplosion>() { RelativeSizeAxes = Axes.Both });
 
-
+            AddRangeInternal(new Drawable[]{
+                explosionPool = new DrawablePool<HitExplosion>(8),
+                chevronPool = new DrawablePool<SlideVisual.SlideChevron>(100),
+                slideBodyProxyContainer = new SortedDrawableProxyContainer(),
+                lanedNoteProxyContainer = new SortedDrawableProxyContainer(),
+                hitObjectLineRenderer = new LineRenderer(),
+                explosionLayer = new Container<HitExplosion>() { RelativeSizeAxes = Axes.Both }
+            });
 
             for (int i = 0; i < 8; ++i)
             {
@@ -53,17 +58,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 AddNested(lane);
             }
 
-            AddInternal(slideBodyProxyContainer = new SortedDrawableProxyContainer());
-            AddInternal(lanedNoteProxyContainer = new SortedDrawableProxyContainer());
-            AddInternal(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(100));
-
             NewResult += onNewResult;
-        }
-
-        [BackgroundDependencyLoader]
-        private void load()
-        {
-            AddInternal(explosionPool = new DrawablePool<HitExplosion>(8));
         }
 
         public override void Add(HitObject h)
