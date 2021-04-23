@@ -36,15 +36,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
 
-            AddRangeInternal(new Drawable[]{
-                explosionPool = new DrawablePool<HitExplosion>(8),
-                chevronPool = new DrawablePool<SlideVisual.SlideChevron>(100),
-                slideBodyProxyContainer = new SortedDrawableProxyContainer(),
-                lanedNoteProxyContainer = new SortedDrawableProxyContainer(),
-                hitObjectLineRenderer = new LineRenderer(),
-                explosionLayer = new Container<HitExplosion>() { RelativeSizeAxes = Axes.Both }
-            });
-
             for (int i = 0; i < 8; ++i)
             {
                 var lane = new Lane
@@ -57,6 +48,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 AddInternal(lane);
                 AddNested(lane);
             }
+
+            AddRangeInternal(new Drawable[]{
+                explosionPool = new DrawablePool<HitExplosion>(8),
+                chevronPool = new DrawablePool<SlideVisual.SlideChevron>(100),
+                hitObjectLineRenderer = new LineRenderer(),
+                explosionLayer = new Container<HitExplosion>() { RelativeSizeAxes = Axes.Both },
+                slideBodyProxyContainer = new SortedDrawableProxyContainer(),
+                lanedNoteProxyContainer = new SortedDrawableProxyContainer(),
+            });
 
             NewResult += onNewResult;
         }
@@ -87,9 +87,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             switch (hitObject)
             {
-                case DrawableSlide s:
-                    foreach (var x in s.SlideBodies)
-                        slideBodyProxyContainer.Add(x.CreateProxy(), s);
+                case DrawableSlideBody s:
+                    slideBodyProxyContainer.Add(s.CreateProxy(), s);
                     break;
                 case DrawableTap t:
                     lanedNoteProxyContainer.Add(t.TapVisual.CreateProxy(), t);
