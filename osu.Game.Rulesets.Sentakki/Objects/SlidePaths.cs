@@ -12,13 +12,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     public static class SlidePaths
     {
         public static readonly List<(SentakkiSlidePath, SentakkiSlidePath)> VALIDPATHS = new List<(SentakkiSlidePath, SentakkiSlidePath)>{
-            (GenerateCirclePattern(2), GenerateCirclePattern(6, RotationDirection.CounterClockwise)),
-            (GenerateCirclePattern(3), GenerateCirclePattern(5, RotationDirection.CounterClockwise)),
-            (GenerateCirclePattern(4), GenerateCirclePattern(4, RotationDirection.CounterClockwise)),
-            (GenerateCirclePattern(5), GenerateCirclePattern(3, RotationDirection.CounterClockwise)),
-            (GenerateCirclePattern(6), GenerateCirclePattern(2, RotationDirection.CounterClockwise)),
-            (GenerateCirclePattern(7), GenerateCirclePattern(1, RotationDirection.CounterClockwise)),
-            (GenerateCirclePattern(8), GenerateCirclePattern(0, RotationDirection.CounterClockwise)),
+            (GenerateCirclePattern(2), GenerateCirclePattern(6, RotationDirection.Counterclockwise)),
+            (GenerateCirclePattern(3), GenerateCirclePattern(5, RotationDirection.Counterclockwise)),
+            (GenerateCirclePattern(4), GenerateCirclePattern(4, RotationDirection.Counterclockwise)),
+            (GenerateCirclePattern(5), GenerateCirclePattern(3, RotationDirection.Counterclockwise)),
+            (GenerateCirclePattern(6), GenerateCirclePattern(2, RotationDirection.Counterclockwise)),
+            (GenerateCirclePattern(7), GenerateCirclePattern(1, RotationDirection.Counterclockwise)),
+            (GenerateCirclePattern(8), GenerateCirclePattern(0, RotationDirection.Counterclockwise)),
             (GenerateLPattern(1), GenerateLPattern(7, true)),
             (GenerateLPattern(2), GenerateLPattern(6, true)),
             (GenerateLPattern(3), GenerateLPattern(5, true)),
@@ -170,11 +170,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // DX Circle Pattern
         public static SentakkiSlidePath GenerateCirclePattern(int end, RotationDirection direction = RotationDirection.Clockwise)
         {
-            float centre = ((0.GetRotationForLane() + end.GetRotationForLane()) / 2) + (direction == RotationDirection.CounterClockwise ? 180 : 0);
+            float centre = ((0.GetRotationForLane() + end.GetRotationForLane()) / 2) + (direction == RotationDirection.Counterclockwise ? 180 : 0);
             Vector2 centreNode = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, centre == 0.GetRotationForLane() ? centre + 180 : centre);
 
             var path = new SliderPath(new PathControlPoint[]{
-                new PathControlPoint(SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, 0.GetRotationForLane() + (direction == RotationDirection.CounterClockwise ? -.5f : .5f)), PathType.PerfectCurve),
+                new PathControlPoint(SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, 0.GetRotationForLane() + (direction == RotationDirection.Counterclockwise ? -.5f : .5f)), PathType.PerfectCurve),
                 new PathControlPoint(centreNode),
                 new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end), PathType.PerfectCurve)
             });
