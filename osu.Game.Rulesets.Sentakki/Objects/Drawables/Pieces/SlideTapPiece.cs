@@ -17,8 +17,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public readonly Container Stars;
         public readonly StarPiece SecondStar;
 
-        private readonly ExplodePiece explode;
-
         public SlideTapPiece()
         {
             Size = new Vector2(75);
@@ -39,7 +37,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                         SecondStar = new StarPiece { Rotation = 36 }
                     }
                 },
-                explode = new ExplodePiece(),
             };
         }
 
@@ -51,34 +48,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             accentColour.BindTo(drawableObject.AccentColour);
             accentColour.BindValueChanged(colour =>
             {
-                explode.Colour = colour.NewValue;
                 Stars.Colour = colour.NewValue;
             }, true);
-
-            drawableObject.ApplyCustomUpdateState += updateState;
-        }
-
-        private void updateState(DrawableHitObject drawableObject, ArmedState state)
-        {
-            using (BeginAbsoluteSequence(drawableObject.HitStateUpdateTime, true))
-            {
-                switch (state)
-                {
-                    case ArmedState.Hit:
-                        const double flash_in = 40;
-
-                        explode.FadeIn(flash_in);
-                        this.ScaleTo(1.5f, 400, Easing.OutQuad);
-
-                        using (BeginDelayedSequence(flash_in, true))
-                        {
-                            Stars.FadeOut();
-                            this.FadeOut(800);
-                        }
-
-                        break;
-                }
-            }
         }
     }
 }

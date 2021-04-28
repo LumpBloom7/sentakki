@@ -13,6 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Padding = new MarginPadding(1);
+
             Child = new CircularContainer
             {
                 Alpha = .5f,

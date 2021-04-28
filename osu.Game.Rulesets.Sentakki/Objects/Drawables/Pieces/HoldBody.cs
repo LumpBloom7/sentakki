@@ -13,11 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     {
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
-
-        private readonly FlashPiece flash;
-        private readonly ExplodePiece explode;
         public readonly Container Note;
-        private readonly ShadowPiece shadow;
 
         public HoldBody()
         {
@@ -35,7 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     RelativeSizeAxes=Axes.Both,
                     Children = new Drawable[]
                     {
-                        shadow = new ShadowPiece(),
+                        new ShadowPiece(),
                         new RingPiece(),
                         new DotPiece(squared: true)
                         {
@@ -51,11 +47,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                         },
                     }
                 },
-                flash = new FlashPiece(){
-                    CornerRadius = 40,
-                    CornerExponent = 2
-                },
-                explode = new ExplodePiece()
             };
         }
 
@@ -67,41 +58,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             accentColour.BindTo(drawableObject.AccentColour);
             accentColour.BindValueChanged(colour =>
             {
-                explode.Colour = colour.NewValue;
                 Note.Colour = colour.NewValue;
             }, true);
-
-            drawableObject.ApplyCustomUpdateState += updateState;
-        }
-
-        private void updateState(DrawableHitObject drawableObject, ArmedState state)
-        {
-            if (!(drawableObject is DrawableHold)) return;
-
-            using (BeginAbsoluteSequence(drawableObject.HitStateUpdateTime, true))
-            {
-                switch (state)
-                {
-                    case ArmedState.Hit:
-                        const double flash_in = 40;
-                        const double flash_out = 100;
-
-                        flash.FadeTo(0.8f, flash_in)
-                                 .Then()
-                                 .FadeOut(flash_out);
-
-                        explode.FadeIn(flash_in);
-                        this.ScaleTo(1.5f, 400, Easing.OutQuad);
-
-                        using (BeginDelayedSequence(flash_in, true))
-                        {
-                            shadow.FadeOut();
-                            Note.FadeOut();
-                            this.FadeOut(800);
-                        }
-                        break;
-                }
-            }
         }
     }
 }
