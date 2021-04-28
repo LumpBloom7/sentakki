@@ -12,7 +12,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Size = new Vector2(1);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            AlwaysPresent = true;
             Children = new Drawable[]
             {
                 new RingPiece(),
