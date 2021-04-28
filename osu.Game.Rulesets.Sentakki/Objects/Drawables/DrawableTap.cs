@@ -44,7 +44,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         [BackgroundDependencyLoader]
         private void load()
         {
-            Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             AddRangeInternal(new Drawable[] {

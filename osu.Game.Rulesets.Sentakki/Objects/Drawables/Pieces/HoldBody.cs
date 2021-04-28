@@ -13,39 +13,25 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     {
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
-        public readonly Container Note;
 
         public HoldBody()
         {
             Scale = Vector2.Zero;
-            Position = new Vector2(0, -(SentakkiPlayfield.NOTESTARTDISTANCE - 37.5f));
+            Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE);
             Anchor = Anchor.Centre;
             Origin = Anchor.BottomCentre;
-            Size = new Vector2(75);
             InternalChildren = new Drawable[]
             {
-                Note = new Container
+                new NoteRingPiece(),
+                new DotPiece(squared: true)
                 {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    RelativeSizeAxes=Axes.Both,
-                    Children = new Drawable[]
-                    {
-                        new ShadowPiece(),
-                        new RingPiece(),
-                        new DotPiece(squared: true)
-                        {
-                            Rotation = 45,
-                            Position = new Vector2(0, -37.5f),
-                            Anchor = Anchor.BottomCentre,
-                        },
-                        new DotPiece(squared: true)
-                        {
-                            Rotation = 45,
-                            Position = new Vector2(0, 37.5f),
-                            Anchor = Anchor.TopCentre,
-                        },
-                    }
+                    Rotation = 45,
+                    Anchor = Anchor.BottomCentre,
+                },
+                new DotPiece(squared: true)
+                {
+                    Rotation = 45,
+                    Anchor = Anchor.TopCentre,
                 },
             };
         }
@@ -56,10 +42,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private void load(DrawableHitObject drawableObject)
         {
             accentColour.BindTo(drawableObject.AccentColour);
-            accentColour.BindValueChanged(colour =>
-            {
-                Note.Colour = colour.NewValue;
-            }, true);
+            accentColour.BindValueChanged(colour => Colour = colour.NewValue, true);
         }
     }
 }

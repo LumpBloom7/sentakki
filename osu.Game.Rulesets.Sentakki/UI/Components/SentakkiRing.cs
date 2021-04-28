@@ -3,14 +3,12 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
 using osu.Game.Online.API;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Skinning;
-using osu.Game.Users;
 using osuTK;
 using osuTK.Graphics;
 
@@ -30,7 +28,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
             InternalChildren = new Drawable[]
             {
-                new RingPiece(8),
+                new RingPiece(thickness: 8),
                 spawnIndicator = new Container
                 {
                     Name = "Spawn indicatiors",
@@ -48,7 +46,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                     Position = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
                 });
 
-                spawnIndicator.Add(new DotPiece(new Vector2(16, 8))
+                spawnIndicator.Add(new DotPiece(size: new Vector2(16, 8))
                 {
                     Rotation = pathAngle,
                     Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),

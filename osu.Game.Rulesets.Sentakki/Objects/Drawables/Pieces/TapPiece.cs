@@ -14,21 +14,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
 
-        private readonly CirclePiece circle;
-
         public TapPiece()
         {
-            Size = new Vector2(75);
-
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Scale = new Vector2(0f);
             Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE);
-
             InternalChildren = new Drawable[]
             {
-                new ShadowPiece(),
-                circle = new CirclePiece(),
+                new NoteRingPiece(),
+                new DotPiece(),
             };
         }
 
@@ -38,10 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private void load(DrawableHitObject drawableObject)
         {
             accentColour.BindTo(drawableObject.AccentColour);
-            accentColour.BindValueChanged(colour =>
-            {
-                circle.Colour = colour.NewValue;
-            }, true);
+            accentColour.BindValueChanged(colour => Colour = colour.NewValue, true);
         }
     }
 }

@@ -50,8 +50,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         [BackgroundDependencyLoader]
         private void load()
         {
-            Size = new Vector2(75);
-            Position = Vector2.Zero;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             AddRangeInternal(new Drawable[]{
@@ -73,7 +71,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             double animTime = AdjustedAnimationDuration / 2;
             NoteBody.FadeInFromZero(animTime).ScaleTo(1, animTime);
 
-            NoteBody.Note.FadeColour(AccentColour.Value);
+            NoteBody.FadeColour(AccentColour.Value);
 
             using (BeginDelayedSequence(animTime, true))
             {
@@ -84,14 +82,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 float stretchTime = (float)(stretchAmount / totalMovableDistance * animTime);
                 float excessDistance = (float)((-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime);
 
-                NoteBody.ResizeHeightTo(75 + stretchAmount, stretchTime)
+                NoteBody.ResizeHeightTo(stretchAmount, stretchTime)
                         .Delay((HitObject as IHasDuration).Duration)
-                        .MoveToY(-SentakkiPlayfield.INTERSECTDISTANCE + (Width / 2), animTime)
+                        .MoveToY(-SentakkiPlayfield.INTERSECTDISTANCE, animTime)
                         .Delay(animTime - stretchTime)
-                        .ResizeHeightTo(75, stretchTime);
+                        .ResizeHeightTo(0, stretchTime);
 
                 if (HoldStartTime == null && !Auto)
-                    NoteBody.Note.Delay(animTime).FadeColour(Color4.Gray, 100);
+                    NoteBody.Delay(animTime).FadeColour(Color4.Gray, 100);
             }
         }
 
@@ -211,7 +209,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (beginHoldAt(Time.Current - Head.HitObject.StartTime))
             {
                 Head.UpdateResult();
-                NoteBody.Note.FadeColour(AccentColour.Value, 50);
+                NoteBody.FadeColour(AccentColour.Value, 50);
             }
 
             return true;
@@ -228,7 +226,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             endHold();
 
             if (!AllJudged)
-                NoteBody.Note.FadeColour(Color4.Gray, 100);
+                NoteBody.FadeColour(Color4.Gray, 100);
         }
     }
 }

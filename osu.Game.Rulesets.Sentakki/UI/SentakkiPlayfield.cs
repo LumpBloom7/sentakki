@@ -25,10 +25,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
 
-        public static readonly float RINGSIZE = 600;
-        public static readonly float DOTSIZE = 20f;
-        public static readonly float INTERSECTDISTANCE = 296.5f;
-        public static readonly float NOTESTARTDISTANCE = 66f;
+        public const float RINGSIZE = 600;
+        public const float DOTSIZE = 20f;
+        public const float INTERSECTDISTANCE = 296.5f;
+        public const float NOTESTARTDISTANCE = 66f;
 
         private readonly LanedPlayfield lanedPlayfield;
         private readonly TouchPlayfield touchPlayfield;
