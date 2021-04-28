@@ -12,6 +12,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 {
     public class HitExplosion : PoolableDrawable
     {
+        public override bool RemoveWhenNotAlive => true;
+
         private readonly CircularContainer circle;
 
         public HitExplosion()
@@ -59,7 +61,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             if (!IsInPool)
                 return;
 
-            Explode().Expire();
+            Explode().Expire(true);
         }
 
         public TransformSequence<HitExplosion> Explode()
