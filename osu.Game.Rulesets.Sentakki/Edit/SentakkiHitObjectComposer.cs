@@ -15,6 +15,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
         protected override IReadOnlyList<HitObjectCompositionTool> CompositionTools => new HitObjectCompositionTool[]
         {
+            new TapCompositionTool()
         };
+
+        protected override ComposeBlueprintContainer CreateBlueprintContainer() => new SentakkiBlueprintContainer(this);
     }
 }
