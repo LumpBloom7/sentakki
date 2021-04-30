@@ -1,6 +1,5 @@
 using System;
 using osu.Framework.Graphics.Primitives;
-using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
