@@ -79,8 +79,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public override bool Remove(HitObject hitObject)
         {
-            hitObjectLineRenderer.RemoveHitObject((SentakkiLanedHitObject)hitObject);
-            return Lanes[(hitObject as SentakkiLanedHitObject).Lane].Remove(hitObject);
+            if (!(hitObject is SentakkiLanedHitObject lanedHitObject))
+                return false;
+
+            hitObjectLineRenderer.RemoveHitObject(lanedHitObject);
+            return Lanes[lanedHitObject.Lane].Remove(lanedHitObject);
         }
 
         private void onHitObjectLoaded(Drawable hitObject)
