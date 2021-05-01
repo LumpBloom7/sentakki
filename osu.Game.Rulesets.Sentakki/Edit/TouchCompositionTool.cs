@@ -1,4 +1,5 @@
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Sprites;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Edit.Tools;
@@ -14,7 +15,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         {
         }
 
-        public override Drawable CreateIcon() => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Circles);
+        public override Drawable CreateIcon() => new SpriteIcon
+        {
+            Icon = FontAwesome.Regular.HandPointRight,
+        };
 
         public override PlacementBlueprint CreatePlacementBlueprint() => new TouchPlacementBlueprint();
     }
