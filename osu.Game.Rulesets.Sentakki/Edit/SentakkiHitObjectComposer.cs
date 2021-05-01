@@ -18,6 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             new TapCompositionTool(),
             new HoldCompositionTool(),
             new TouchCompositionTool(),
+            new TouchHoldCompositionTool()
         };
 
         protected override ComposeBlueprintContainer CreateBlueprintContainer() => new SentakkiBlueprintContainer(this);
