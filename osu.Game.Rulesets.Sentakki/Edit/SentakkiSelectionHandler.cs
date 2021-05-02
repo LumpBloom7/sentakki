@@ -15,6 +15,14 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
             switch (moveEvent.Blueprint.Item)
             {
+                case SentakkiLanedHitObject laned:
+                {
+                    var CursorPosition = ToLocalSpace(moveEvent.Blueprint.ScreenSpaceSelectionPoint + moveEvent.ScreenSpaceDelta) - new Vector2(300, 300);
+                    var currentAngle = Vector2.Zero.GetDegreesFromPosition(CursorPosition);
+                    laned.Lane = currentAngle.GetNoteLaneFromDegrees();
+
+                    break;
+                }
                 case Touch t:
                     Vector2 HitObjectPosition = t.Position;
                     HitObjectPosition += this.ScreenSpaceDeltaToParentSpace(moveEvent.ScreenSpaceDelta);
