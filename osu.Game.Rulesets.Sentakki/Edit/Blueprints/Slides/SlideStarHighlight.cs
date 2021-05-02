@@ -15,7 +15,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         // This drawable is zero width
         // We should use the quad of the note container
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => Note.ReceivePositionalInputAt(screenSpacePos);
-        public override Quad ScreenSpaceDrawQuad => Note.ScreenSpaceDrawQuad.AABBFloat;
+        public override Quad ScreenSpaceDrawQuad => Note.ScreenSpaceDrawQuad;
 
 
         public SlideStarHighlight()

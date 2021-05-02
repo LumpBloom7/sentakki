@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
         // This drawable is zero width
         // We should use the quad of the note container
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => ring.ReceivePositionalInputAt(screenSpacePos);
-        public override Quad ScreenSpaceDrawQuad => ring.ScreenSpaceDrawQuad.AABBFloat;
+        public override Quad ScreenSpaceDrawQuad => ring.ScreenSpaceDrawQuad;
 
         private readonly RingPiece ring;
 
