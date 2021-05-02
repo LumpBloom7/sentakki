@@ -94,6 +94,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         {
             if (selection.Any(s => s.Item is SentakkiLanedHitObject))
                 yield return new TernaryStateMenuItem("Break") { State = { BindTarget = selectionBreakState } };
+
+            foreach (var item in base.GetContextMenuItemsForSelection(selection))
+                yield return item;
         }
     }
 }
