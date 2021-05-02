@@ -70,12 +70,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.Update();
 
-            // Using SkinChanged to achieve our goals of resetting the transforms,
-            // since that is the only publicly accessible function that calls the base Clear/Apply Transforms
-            // We also avoid doing this if the state is not idle, since there is little benefit in doing so
-            // And it avoids drawable pieces not having the correct state
-            // And it avoids samples repeatedly playing again and again, while sliding the slider
-            if (transformResetQueued && State.Value == ArmedState.Idle) SkinChanged(CurrentSkin, true);
+            if (transformResetQueued) RefreshStateTransforms();
         }
 
         // We need to make sure the current transform resets, perhaps due to animation duration being changed
