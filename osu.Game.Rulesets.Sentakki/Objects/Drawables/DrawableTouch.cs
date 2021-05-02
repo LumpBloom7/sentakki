@@ -32,6 +32,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
+        private readonly IBindable<Vector2> positionBindable = new Bindable<Vector2>();
+
         public DrawableTouch() : this(null) { }
         public DrawableTouch(Touch hitObject)
             : base(hitObject) { }
@@ -62,17 +64,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 explosion.Colour = c.NewValue;
             }, true);
+
+            positionBindable.BindValueChanged(p => Position = p.NewValue);
         }
 
         protected override void OnApply()
         {
             base.OnApply();
-            Position = HitObject.Position;
+            positionBindable.BindTo(HitObject.PositionBindable);
         }
 
         protected override void OnFree()
         {
             base.OnFree();
+            positionBindable.UnbindFrom(HitObject.PositionBindable);
             for (int i = 0; i < 11; ++i)
                 PointInteractionState[i] = false;
         }
