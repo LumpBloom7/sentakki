@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
+using osu.Framework.Extensions.ListExtensions;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Lists;
 using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Sentakki
@@ -34,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki
             }
         }
 
-        public IEnumerable<SentakkiAction> PressedActions => KeyBindingContainer.PressedActions;
+        public SlimReadOnlyListWrapper<SentakkiAction> PressedActions => ((List<SentakkiAction>)KeyBindingContainer.PressedActions).AsSlimReadOnly();
 
         // For makeshift virtual input handling
         public void TriggerPressed(SentakkiAction action) => KeyBindingContainer.TriggerPressed(action);
