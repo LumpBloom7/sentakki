@@ -20,7 +20,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             new TapCompositionTool(),
             new HoldCompositionTool(),
             new TouchCompositionTool(),
-            new TouchHoldCompositionTool()
+            new TouchHoldCompositionTool(),
+            // Incomplete
+            new SlideCompositionTool(),
         };
 
         protected override IEnumerable<TernaryButton> CreateTernaryButtons() => base.CreateTernaryButtons().Skip(1);
