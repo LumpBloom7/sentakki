@@ -54,7 +54,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             RelativeSizeAxes = Axes.Both;
-            FillMode = FillMode.Fill;
             Children = new Drawable[]{
                 counterText = new OsuSpriteText
                 {
@@ -128,7 +127,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             if (localCursorContainer == null)
             {
                 Add(localCursorContainer = new SentakkiCursorContainer());
-                localCursorContainer.MoveTo(GameplayCursor.ActiveCursor.Position);
             }
         }
 
@@ -137,7 +135,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             base.PopOut();
 
             if (localCursorContainer != null && GameplayCursor?.ActiveCursor != null)
-                GameplayCursor.ActiveCursor.Position = localCursorContainer.Position;
+                GameplayCursor.ActiveCursor.Position = localCursorContainer.ActiveCursor.Position;
 
             localCursorContainer?.Expire();
             localCursorContainer = null;
