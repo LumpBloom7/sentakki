@@ -10,7 +10,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
     {
         public new DrawableHold DrawableObject => (DrawableHold)base.DrawableObject;
 
-
         private readonly HoldHighlight highlight;
 
         public HoldSelectionBlueprint(DrawableHold drawableHold)

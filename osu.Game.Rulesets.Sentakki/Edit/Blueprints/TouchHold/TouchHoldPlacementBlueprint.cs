@@ -9,17 +9,14 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
 {
     public class TouchHoldPlacementBlueprint : PlacementBlueprint
     {
-        private readonly TouchHoldHighlight highlight;
-
         public new TouchHold HitObject => (TouchHold)base.HitObject;
 
         public TouchHoldPlacementBlueprint()
             : base(new TouchHold())
         {
             Anchor = Origin = Anchor.Centre;
-            InternalChild = highlight = new TouchHoldHighlight();
+            InternalChild = new TouchHoldHighlight();
         }
-
 
         protected override bool OnMouseDown(MouseDownEvent e)
         {
@@ -38,7 +35,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
 
             EndPlacement(true);
         }
-
 
         private double originalStartTime;
 

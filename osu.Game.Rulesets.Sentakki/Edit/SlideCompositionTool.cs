@@ -19,7 +19,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             Icon = FontAwesome.Regular.Star,
         };
 
-
         public override PlacementBlueprint CreatePlacementBlueprint() => new SlidePlacementBlueprint();
     }
 }

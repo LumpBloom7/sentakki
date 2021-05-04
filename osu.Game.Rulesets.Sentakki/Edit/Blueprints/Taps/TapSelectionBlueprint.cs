@@ -10,9 +10,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
     {
         public new DrawableTap DrawableObject => (DrawableTap)base.DrawableObject;
 
-
         private readonly TapHighlight highlight;
-
 
         public TapSelectionBlueprint(DrawableTap drawableTap)
             : base(drawableTap)

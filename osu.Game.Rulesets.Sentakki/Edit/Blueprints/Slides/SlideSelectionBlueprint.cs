@@ -16,7 +16,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         private readonly SlideStarHighlight starHighlight;
         private readonly SlideBodyHighlight bodyHighlight;
 
-
         public SlideSelectionBlueprint(DrawableSlide drawableSlide)
             : base(drawableSlide)
         {
@@ -33,7 +32,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             var SlideTap = DrawableObject.SlideTaps.Child;
 
             var FirstSlideBody = DrawableObject.SlideBodies.FirstOrDefault();
-
 
             if (DrawableObject.Time.Current < DrawableObject.HitObject.StartTime)
             {

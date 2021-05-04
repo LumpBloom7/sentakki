@@ -17,7 +17,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => Note.ReceivePositionalInputAt(screenSpacePos);
         public override Quad ScreenSpaceDrawQuad => Note.ScreenSpaceDrawQuad;
 
-
         public SlideStarHighlight()
         {
             Anchor = Origin = Anchor.Centre;
