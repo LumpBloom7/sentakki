@@ -91,7 +91,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.OnFree();
 
             holdSample.Samples = null;
-            holdStartTime = null;
+            isHitting.Value = false;
             totalHoldTime = 0;
         }
 
@@ -141,7 +141,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                             && Time.Current <= HitObject.GetEndTime()
                             && (Auto || checkForTouchInput() || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
 
-            if (isHitting.Value)
+            if (holdSample != null && isHitting.Value)
                 holdSample.Frequency.Value = 0.5 + ((Time.Current - holdStartTime.Value + totalHoldTime) / ((IHasDuration)HitObject).Duration);
         }
 
