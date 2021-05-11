@@ -118,7 +118,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                     createPatternGroup("L shape");
                 else if (i == 11)
                     createPatternGroup("Straight");
-                else if (i == 13)
+                else if (i == 14)
                     createPatternGroup("Thunder");
                 else if (i == 15)
                     createPatternGroup("U shape");
