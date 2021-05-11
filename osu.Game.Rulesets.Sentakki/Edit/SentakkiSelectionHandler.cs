@@ -189,7 +189,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             const float boundary_radius = 250;
 
             float dragDistance(Vector2 origin, Vector2 destination)
-                => MathF.Min((destination - origin).Length, circleIntersectionDistance(origin, destination));
+                => MathF.Min((destination - origin).Length, circleIntersectionDistance(origin, destination - origin));
 
             float circleIntersectionDistance(Vector2 centre, Vector2 direction)
             {
@@ -202,6 +202,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             var touches = SelectedBlueprints.Select(bp => bp.Item as Touch).ToList();
             var centre = touches.Aggregate(Vector2.Zero, (a, b) => a + b.Position) / touches.Count;
             var cappedDragDelta = touches.Min(t => dragDistance(t.Position - centre, t.Position + dragDelta));
+
+            if (!(cappedDragDelta >= 0)) return; // No movement or invalid movement occurred
 
             foreach (var touch in touches)
                 touch.Position = touch.Position - centre + (cappedDragDelta * (dragDelta + centre).Normalized());
