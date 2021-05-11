@@ -17,6 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
     public class SentakkiSelectionHandler : EditorSelectionHandler
     {
         private readonly Bindable<TernaryState> selectionBreakState = new Bindable<TernaryState>();
+        private readonly Bindable<TernaryState> selectionSlideMirroredState = new Bindable<TernaryState>();
 
         public SentakkiSelectionHandler()
         {
@@ -25,11 +26,19 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                 switch (s.NewValue)
                 {
                     case TernaryState.False:
-                        setBreakState(false);
-                        break;
-
                     case TernaryState.True:
-                        setBreakState(true);
+                        setBreakState(s.NewValue == TernaryState.True);
+                        break;
+                }
+            };
+
+            selectionSlideMirroredState.ValueChanged += s =>
+            {
+                switch (s.NewValue)
+                {
+                    case TernaryState.False:
+                    case TernaryState.True:
+                        setMirroredState(s.NewValue == TernaryState.True);
                         break;
                 }
             };
@@ -82,12 +91,30 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
             EditorBeatmap.EndChange();
         }
+        private void setMirroredState(bool state)
+        {
+            var lhos = EditorBeatmap.SelectedHitObjects.OfType<Slide>();
+
+            EditorBeatmap.BeginChange();
+
+            foreach (var lho in lhos)
+            {
+                if (lho.SlideInfoList.First().Mirrored == state)
+                    continue;
+
+                lho.SlideInfoList.First().Mirrored = state;
+                EditorBeatmap.Update(lho);
+            }
+
+            EditorBeatmap.EndChange();
+        }
 
         protected override void UpdateTernaryStates()
         {
             base.UpdateTernaryStates();
 
             selectionBreakState.Value = GetStateFromSelection(EditorBeatmap.SelectedHitObjects.OfType<SentakkiLanedHitObject>(), h => h.Break);
+            selectionSlideMirroredState.Value = GetStateFromSelection(EditorBeatmap.SelectedHitObjects.OfType<Slide>(), h => h.SlideInfoList.First().Mirrored);
         }
 
         protected override IEnumerable<MenuItem> GetContextMenuItemsForSelection(IEnumerable<SelectionBlueprint<HitObject>> selection)
@@ -96,7 +123,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                 yield return new TernaryStateMenuItem("Break") { State = { BindTarget = selectionBreakState } };
 
             if (selection.All(s => s.Item is Slide))
+            {
+                yield return new TernaryStateMenuItem("Mirrored") { State = { BindTarget = selectionSlideMirroredState } };
                 yield return new OsuMenuItem("Patterns") { Items = getContextMenuItemsForSlide() };
+            }
 
             foreach (var item in base.GetContextMenuItemsForSelection(selection))
                 yield return item;
@@ -137,13 +167,13 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         {
             void commit()
             {
-                ChangeHandler.BeginChange();
+                EditorBeatmap.BeginChange();
                 foreach (var bp in SelectedBlueprints)
                 {
                     (bp.Item as Slide).SlideInfoList.First().ID = ID;
                     EditorBeatmap.Update(bp.Item);
                 }
-                ChangeHandler.EndChange();
+                EditorBeatmap.EndChange();
             };
 
             return new OsuMenuItem(SlidePaths.VALIDPATHS[ID].Item1.EndLane.ToString(), MenuItemType.Standard, commit);
