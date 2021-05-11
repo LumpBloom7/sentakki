@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.UserInterface;
 using osu.Game.Extensions;
@@ -43,21 +41,39 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                 }
             };
         }
+
+        private Framework.Input.InputManager inputManager;
+        internal Framework.Input.InputManager InputManager => inputManager ??= GetContainingInputManager();
+
+        private Vector2 currentMousePosition => InputManager.CurrentState.Mouse.Position;
+
         public override bool HandleMovement(MoveSelectionEvent<HitObject> moveEvent)
         {
+            // The lanes are arranged in a circular fashion
+            // Blindly deriving new angle by adding the vector to each selection point will yield unintuitive results, such as all notes moving towards the drag direction
+            //
+            // Instead, we should derive an angle delta by comparing the current mouse position and the drag origin
+            // This allows a more intuitive "steering wheel" like lane adjustments
+            if (SelectedBlueprints.All(bp => bp.Item is SentakkiLanedHitObject))
+            {
+                var mouseDownPosition = currentMousePosition - moveEvent.ScreenSpaceDelta;
+                var playfieldCentre = ToScreenSpace(new Vector2(300));
+                var angleDelta = playfieldCentre.GetDegreesFromPosition(currentMousePosition) - playfieldCentre.GetDegreesFromPosition(mouseDownPosition);
+
+                foreach (var bp in SelectedBlueprints.ToList())
+                {
+                    var laned = bp.Item as SentakkiLanedHitObject;
+                    var currentAngle = laned.Lane.GetRotationForLane() + angleDelta;
+                    laned.Lane = currentAngle.GetNoteLaneFromDegrees();
+                }
+                return true;
+            }
+
             if (SelectedBlueprints.Count > 1)
                 return false;
 
             switch (moveEvent.Blueprint.Item)
             {
-                case SentakkiLanedHitObject laned:
-                {
-                    var CursorPosition = ToLocalSpace(moveEvent.Blueprint.ScreenSpaceSelectionPoint + moveEvent.ScreenSpaceDelta) - new Vector2(300, 300);
-                    var currentAngle = Vector2.Zero.GetDegreesFromPosition(CursorPosition);
-                    laned.Lane = currentAngle.GetNoteLaneFromDegrees();
-
-                    break;
-                }
                 case Touch t:
                     Vector2 HitObjectPosition = t.Position;
                     HitObjectPosition += this.ScreenSpaceDeltaToParentSpace(moveEvent.ScreenSpaceDelta);
@@ -91,6 +107,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
             EditorBeatmap.EndChange();
         }
+
         private void setMirroredState(bool state)
         {
             var lhos = EditorBeatmap.SelectedHitObjects.OfType<Slide>();
@@ -174,7 +191,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                     EditorBeatmap.Update(bp.Item);
                 }
                 EditorBeatmap.EndChange();
-            };
+            }
 
             return new OsuMenuItem(SlidePaths.VALIDPATHS[ID].Item1.EndLane.ToString(), MenuItemType.Standard, commit);
         }
