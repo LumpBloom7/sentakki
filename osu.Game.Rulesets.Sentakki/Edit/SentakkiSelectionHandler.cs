@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Bindables;
@@ -68,26 +69,13 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                 }
                 return true;
             }
-
-            if (SelectedBlueprints.Count > 1)
-                return false;
-
-            switch (moveEvent.Blueprint.Item)
+            else if (SelectedBlueprints.All(bp => bp.Item is Touch))
             {
-                case Touch t:
-                    Vector2 HitObjectPosition = t.Position;
-                    HitObjectPosition += this.ScreenSpaceDeltaToParentSpace(moveEvent.ScreenSpaceDelta);
-
-                    if (Vector2.Distance(Vector2.Zero, HitObjectPosition) > 250)
-                    {
-                        var currentAngle = Vector2.Zero.GetDegreesFromPosition(HitObjectPosition);
-                        HitObjectPosition = SentakkiExtensions.GetCircularPosition(250, currentAngle);
-                    }
-
-                    t.Position = HitObjectPosition;
-                    break;
+                // Special movement handling to ensure that all touch notes are within 250 units from the playfield centre
+                moveTouchNotes(this.ScreenSpaceDeltaToParentSpace(moveEvent.ScreenSpaceDelta));
+                return true;
             }
-            return true;
+            return false;
         }
 
         private void setBreakState(bool state)
@@ -194,6 +182,29 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             }
 
             return new OsuMenuItem(SlidePaths.VALIDPATHS[ID].Item1.EndLane.ToString(), MenuItemType.Standard, commit);
+        }
+
+        private void moveTouchNotes(Vector2 dragDelta)
+        {
+            const float boundary_radius = 250;
+
+            float dragDistance(Vector2 origin, Vector2 destination)
+                => MathF.Min((destination - origin).Length, circleIntersectionDistance(origin, destination));
+
+            float circleIntersectionDistance(Vector2 centre, Vector2 direction)
+            {
+                direction.Normalize();
+                var b = (direction.X * centre.X) + (direction.Y * centre.Y);
+                var c = centre.LengthSquared - (boundary_radius * boundary_radius);
+                return MathF.Sqrt((b * b) - c) - b;
+            }
+
+            var touches = SelectedBlueprints.Select(bp => bp.Item as Touch).ToList();
+            var centre = touches.Aggregate(Vector2.Zero, (a, b) => a + b.Position) / touches.Count;
+            var cappedDragDelta = touches.Min(t => dragDistance(t.Position - centre, t.Position + dragDelta));
+
+            foreach (var touch in touches)
+                touch.Position = touch.Position - centre + (cappedDragDelta * (dragDelta + centre).Normalized());
         }
     }
 }
