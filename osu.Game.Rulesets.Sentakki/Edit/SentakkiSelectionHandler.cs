@@ -95,8 +95,58 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             if (selection.Any(s => s.Item is SentakkiLanedHitObject))
                 yield return new TernaryStateMenuItem("Break") { State = { BindTarget = selectionBreakState } };
 
+            if (selection.All(s => s.Item is Slide))
+                yield return new OsuMenuItem("Patterns") { Items = getContextMenuItemsForSlide() };
+
             foreach (var item in base.GetContextMenuItemsForSelection(selection))
                 yield return item;
+        }
+
+        private List<MenuItem> getContextMenuItemsForSlide()
+        {
+            var patterns = new List<MenuItem>();
+
+            var SectionItems = new List<OsuMenuItem>();
+            void createPatternGroup(string patternName)
+                => patterns.Add(new OsuMenuItem(patternName) { Items = SectionItems = new List<OsuMenuItem>() });
+
+            for (int i = 0; i < SlidePaths.VALIDPATHS.Count; ++i)
+            {
+                if (i == 0)
+                    createPatternGroup("Circular");
+                else if (i == 7)
+                    createPatternGroup("L shape");
+                else if (i == 11)
+                    createPatternGroup("Straight");
+                else if (i == 13)
+                    createPatternGroup("Thunder");
+                else if (i == 15)
+                    createPatternGroup("U shape");
+                else if (i == 23)
+                    createPatternGroup("V shape");
+                else if (i == 26)
+                    createPatternGroup("Cup shape");
+
+                int j = i;
+                SectionItems.Add(createMenuEntryForPattern(j));
+            }
+            return patterns;
+        }
+
+        private OsuMenuItem createMenuEntryForPattern(int ID)
+        {
+            void commit()
+            {
+                ChangeHandler.BeginChange();
+                foreach (var bp in SelectedBlueprints)
+                {
+                    (bp.Item as Slide).SlideInfoList.First().ID = ID;
+                    EditorBeatmap.Update(bp.Item);
+                }
+                ChangeHandler.EndChange();
+            };
+
+            return new OsuMenuItem(SlidePaths.VALIDPATHS[ID].Item1.EndLane.ToString(), MenuItemType.Standard, commit);
         }
     }
 }
