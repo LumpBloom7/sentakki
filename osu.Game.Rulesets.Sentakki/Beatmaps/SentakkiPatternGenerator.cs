@@ -11,6 +11,8 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.UI;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
@@ -235,13 +237,27 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             };
         }
 
+        public static readonly Vector2[] VALID_TOUCH_POSITIONS;
+        static SentakkiPatternGenerator()
+        {
+            var tmp = new List<Vector2>(){
+                Vector2.Zero
+            };
+            foreach (var angle in SentakkiPlayfield.LANEANGLES)
+            {
+                tmp.Add(SentakkiExtensions.GetCircularPosition(190, angle - 22.5f));
+                tmp.Add(SentakkiExtensions.GetCircularPosition(130, angle));
+            }
+            VALID_TOUCH_POSITIONS = tmp.ToArray();
+        }
+
         private SentakkiHitObject createTouchNote(HitObject original)
         {
             return new Touch
             {
                 Samples = original.Samples,
                 StartTime = original.StartTime,
-                Position = SentakkiExtensions.GetCircularPosition(rng.Next(200), rng.Next(360))
+                Position = VALID_TOUCH_POSITIONS[rng.Next(0, VALID_TOUCH_POSITIONS.Length)]
             };
         }
     }
