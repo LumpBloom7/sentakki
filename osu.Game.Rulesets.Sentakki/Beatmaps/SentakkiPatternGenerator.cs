@@ -237,7 +237,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             };
         }
 
-        public static readonly Vector2[] VALID_TOUCH_POSITIONS;
+        public static readonly List<Vector2> VALID_TOUCH_POSITIONS;
         static SentakkiPatternGenerator()
         {
             var tmp = new List<Vector2>(){
@@ -248,16 +248,34 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 tmp.Add(SentakkiExtensions.GetCircularPosition(190, angle - 22.5f));
                 tmp.Add(SentakkiExtensions.GetCircularPosition(130, angle));
             }
-            VALID_TOUCH_POSITIONS = tmp.ToArray();
+            VALID_TOUCH_POSITIONS = tmp;
         }
+
+        private readonly Dictionary<Vector2, double> endTimes = new Dictionary<Vector2, double>();
 
         private SentakkiHitObject createTouchNote(HitObject original)
         {
+            var availableTouchPositions = VALID_TOUCH_POSITIONS.Where(v =>
+            {
+                if (endTimes.TryGetValue(v, out double endTime))
+                    return original.StartTime >= endTime;
+                return true;
+            });
+
+            // Choosing a position
+            Vector2 position;
+            if (availableTouchPositions.Any())
+                position = availableTouchPositions.ElementAt(rng.Next(0, availableTouchPositions.Count()));
+            else
+                position = endTimes.OrderBy(x => x.Value).First().Key;
+
+            endTimes[position] = original.StartTime + 500;
+
             return new Touch
             {
                 Samples = original.Samples,
                 StartTime = original.StartTime,
-                Position = VALID_TOUCH_POSITIONS[rng.Next(0, VALID_TOUCH_POSITIONS.Length)]
+                Position = position
             };
         }
     }
