@@ -2,7 +2,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
-using osu.Framework.Input;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -16,7 +15,7 @@ using osuTK;
 namespace osu.Game.Rulesets.Sentakki.UI
 {
     [Cached]
-    public class SentakkiPlayfield : Playfield, IRequireHighFrequencyMousePosition
+    public class SentakkiPlayfield : Playfield
     {
         private readonly Container<DrawableSentakkiJudgement> judgementLayer;
         private readonly DrawablePool<DrawableSentakkiJudgement> judgementPool;
