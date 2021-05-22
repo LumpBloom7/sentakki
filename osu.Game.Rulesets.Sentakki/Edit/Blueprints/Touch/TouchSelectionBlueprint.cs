@@ -1,19 +1,18 @@
-using System;
 using osu.Framework.Graphics.Primitives;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches
 {
-    public class TouchSelectionBlueprint : SentakkiSelectionBlueprint
+    public class TouchSelectionBlueprint : SentakkiSelectionBlueprint<Touch>
     {
         public new DrawableTouch DrawableObject => (DrawableTouch)base.DrawableObject;
 
         private readonly TouchHighlight highlight;
 
-        public TouchSelectionBlueprint(DrawableTouch drawableTouch)
-            : base(drawableTouch)
+        public TouchSelectionBlueprint(Touch hitObject)
+            : base(hitObject)
         {
             InternalChild = highlight = new TouchHighlight();
         }

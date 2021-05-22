@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Primitives;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -9,15 +10,15 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 {
-    public class SlideSelectionBlueprint : SentakkiSelectionBlueprint
+    public class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide>
     {
         public new DrawableSlide DrawableObject => (DrawableSlide)base.DrawableObject;
 
         private readonly SlideStarHighlight starHighlight;
         private readonly SlideBodyHighlight bodyHighlight;
 
-        public SlideSelectionBlueprint(DrawableSlide drawableSlide)
-            : base(drawableSlide)
+        public SlideSelectionBlueprint(Slide hitObject)
+            : base(hitObject)
         {
             InternalChildren = new Drawable[]{
                 bodyHighlight = new SlideBodyHighlight(),

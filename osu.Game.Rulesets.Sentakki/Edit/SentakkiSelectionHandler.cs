@@ -125,11 +125,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         protected override IEnumerable<MenuItem> GetContextMenuItemsForSelection(IEnumerable<SelectionBlueprint<HitObject>> selection)
         {
             if (selection.Any(s => s.Item is SentakkiLanedHitObject))
-                yield return new TernaryStateMenuItem("Break") { State = { BindTarget = selectionBreakState } };
+                yield return new TernaryStateToggleMenuItem("Break") { State = { BindTarget = selectionBreakState } };
 
             if (selection.All(s => s.Item is Slide))
             {
-                yield return new TernaryStateMenuItem("Mirrored") { State = { BindTarget = selectionSlideMirroredState } };
+                yield return new TernaryStateToggleMenuItem("Mirrored") { State = { BindTarget = selectionSlideMirroredState } };
                 yield return new OsuMenuItem("Patterns") { Items = getContextMenuItemsForSlide() };
             }
 
