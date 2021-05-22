@@ -123,7 +123,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
                 default:
                     breakNote = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
-                    if (!breakNote && Experiments.Value.HasFlagFast(ConversionExperiments.touch) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE))
+                    if (!breakNote && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE))
                     {
                         yield return createTouchNote(original);
                     }
