@@ -3,7 +3,6 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -15,7 +14,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class Lane : Playfield
+    public class Lane : Playfield, IKeyBindingHandler<SentakkiAction>
     {
         public int LaneNumber { get; set; }
 
@@ -26,10 +25,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.None;
-            AddRangeInternal(new Drawable[]{
-                HitObjectContainer,
-                new LaneReceptor()
-            });
+            AddInternal(HitObjectContainer);
+
+            currentKeys.ValueChanged += handleKeyPress;
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            updateInputState();
         }
 
         private DrawableSentakkiRuleset drawableSentakkiRuleset;
@@ -58,86 +62,79 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
 
-        public class LaneReceptor : CompositeDrawable, IKeyBindingHandler<SentakkiAction>
+        #region Input Handling
+        private const float receptor_angle_range = 45 * 1.4f;
+
+        private SentakkiInputManager sentakkiActionInputManager;
+        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
+
+        public override bool HandlePositionalInput => true;
+
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
         {
-            private SentakkiInputManager sentakkiActionInputManager;
-            internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
+            var localPos = ToLocalSpace(screenSpacePos);
 
-            public override bool HandlePositionalInput => true;
+            var angleDelta = SentakkiExtensions.GetDeltaAngle(0, Vector2.Zero.GetDegreesFromPosition(localPos));
+            if (Math.Abs(angleDelta) > receptor_angle_range / 2) return false;
 
-            private readonly BindableInt currentKeys = new BindableInt(0);
+            var distance = Vector2.DistanceSquared(Vector2.Zero, localPos);
+            if (distance < 200 * 200 || distance > 400 * 400) return false;
 
-            public LaneReceptor()
-            {
-                Position = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, 0);
-                Size = new Vector2(300);
-
-                Anchor = Anchor.Centre;
-                Origin = Anchor.Centre;
-
-                CornerRadius = 150;
-                CornerExponent = 2;
-                currentKeys.BindValueChanged(handleKeyPress);
-            }
-
-            private DrawableSentakkiRuleset drawableSentakkiRuleset;
-            private bool usingSensor => drawableSentakkiRuleset.UseSensorMode;
-
-            [BackgroundDependencyLoader(true)]
-            private void load(DrawableSentakkiRuleset drawableRuleset)
-            {
-                drawableSentakkiRuleset = drawableRuleset;
-            }
-
-            private bool isBeingClicked;
-
-            protected override void Update()
-            {
-                base.Update();
-                int count = isBeingClicked ? 1 : 0;
-                var touchInput = SentakkiActionInputManager.CurrentState.Touch;
-
-                if (touchInput.ActiveSources.Any())
-                {
-                    foreach (var t in touchInput.ActiveSources)
-                        if (ReceivePositionalInputAt(touchInput.GetTouchPosition(t).Value)) ++count;
-                }
-                else if (IsHovered && usingSensor)
-                {
-                    foreach (var a in SentakkiActionInputManager.PressedActions)
-                        if (a < SentakkiAction.Key1) ++count;
-                }
-
-                currentKeys.Value = count;
-            }
-
-            private void handleKeyPress(ValueChangedEvent<int> keys)
-            {
-                if (keys.NewValue > keys.OldValue || keys.NewValue == 0)
-                    SentakkiActionInputManager.TriggerReleased(SentakkiAction.Key1 + ((Lane)Parent).LaneNumber);
-
-                if (keys.NewValue > keys.OldValue)
-                    SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + ((Lane)Parent).LaneNumber);
-            }
-
-            public bool OnPressed(SentakkiAction action)
-            {
-                if (usingSensor) return false;
-
-                if (action >= SentakkiAction.Key1 || !IsHovered) return false;
-
-                isBeingClicked = true;
-                return false;
-            }
-
-            public void OnReleased(SentakkiAction action)
-            {
-                if (usingSensor) return;
-
-                if (action >= SentakkiAction.Key1) return;
-
-                isBeingClicked = false;
-            }
+            return true;
         }
+
+        private readonly BindableInt currentKeys = new BindableInt(0);
+
+        private bool usingSensor => drawableSentakkiRuleset.UseSensorMode;
+
+        private bool isBeingClicked;
+
+        private void updateInputState()
+        {
+            int count = isBeingClicked ? 1 : 0;
+            var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+
+            if (touchInput.ActiveSources.Any())
+            {
+                foreach (var t in touchInput.ActiveSources)
+                    if (ReceivePositionalInputAt(touchInput.GetTouchPosition(t).Value)) ++count;
+            }
+            else if (IsHovered && usingSensor)
+            {
+                foreach (var a in SentakkiActionInputManager.PressedActions)
+                    if (a < SentakkiAction.Key1) ++count;
+            }
+
+            currentKeys.Value = count;
+        }
+
+        private void handleKeyPress(ValueChangedEvent<int> keys)
+        {
+            if (keys.NewValue > keys.OldValue || keys.NewValue == 0)
+                SentakkiActionInputManager.TriggerReleased(SentakkiAction.Key1 + LaneNumber);
+
+            if (keys.NewValue > keys.OldValue)
+                SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + LaneNumber);
+        }
+
+        public bool OnPressed(SentakkiAction action)
+        {
+            if (usingSensor) return false;
+
+            if (action >= SentakkiAction.Key1 || !IsHovered) return false;
+
+            isBeingClicked = true;
+            return false;
+        }
+
+        public void OnReleased(SentakkiAction action)
+        {
+            if (usingSensor) return;
+
+            if (action >= SentakkiAction.Key1) return;
+
+            isBeingClicked = false;
+        }
+        #endregion
     }
 }
