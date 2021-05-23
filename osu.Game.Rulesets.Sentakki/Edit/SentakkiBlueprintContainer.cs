@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
@@ -7,6 +9,7 @@ using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Screens.Edit.Compose.Components;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit
 {
@@ -35,5 +38,13 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             }
             return base.CreateHitObjectBlueprintFor(hitObject);
         }
+
+        private Framework.Input.InputManager inputManager;
+        internal Framework.Input.InputManager InputManager => inputManager ??= GetContainingInputManager();
+
+        private Vector2 currentMousePosition => InputManager.CurrentState.Mouse.Position;
+
+        protected override IEnumerable<SelectionBlueprint<HitObject>> SortForMovement(IReadOnlyList<SelectionBlueprint<HitObject>> blueprints)
+            => blueprints.OrderBy(b => Vector2.DistanceSquared(b.ScreenSpaceSelectionPoint, currentMousePosition));
     }
 }
