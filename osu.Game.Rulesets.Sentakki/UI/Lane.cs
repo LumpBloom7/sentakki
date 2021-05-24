@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -87,11 +88,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private bool usingSensor => drawableSentakkiRuleset.UseSensorMode;
 
-        private bool isBeingClicked;
+        private readonly Dictionary<SentakkiAction, bool> buttonTriggerState = new Dictionary<SentakkiAction, bool>();
 
         private void updateInputState()
         {
-            int count = isBeingClicked ? 1 : 0;
+            int count = 0;
+
+            foreach (var buttonState in buttonTriggerState)
+                if (buttonState.Value) ++count;
+
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
 
             if (touchInput.ActiveSources.Any())
@@ -123,7 +128,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             if (action >= SentakkiAction.Key1 || !IsHovered) return false;
 
-            isBeingClicked = true;
+            buttonTriggerState[action] = true;
             return false;
         }
 
@@ -133,8 +138,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             if (action >= SentakkiAction.Key1) return;
 
-            isBeingClicked = false;
+            buttonTriggerState[action] = false;
         }
         #endregion
+
+        [Flags]
+        private enum ButtonTriggers
+        {
+            Key1,
+            Key2,
+        }
     }
 }
