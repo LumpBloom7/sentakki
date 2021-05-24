@@ -141,12 +141,5 @@ namespace osu.Game.Rulesets.Sentakki.UI
             buttonTriggerState[action] = false;
         }
         #endregion
-
-        [Flags]
-        private enum ButtonTriggers
-        {
-            Key1,
-            Key2,
-        }
     }
 }
