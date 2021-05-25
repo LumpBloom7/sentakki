@@ -35,13 +35,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             Value = false
         };
 
-        [SettingSource("Touch notes", "Allow TOUCHs to appear")]
-        public BindableBool EnableTouch { get; } = new BindableBool
-        {
-            Default = false,
-            Value = false
-        };
-
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
             if (EnableTwinNotes.Value)
@@ -49,9 +42,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
             if (EnableTwinSlides.Value)
                 (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.twinSlides;
-
-            if (EnableTouch.Value)
-                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.touch;
         }
     }
 }
