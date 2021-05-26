@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
@@ -17,10 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             : base(new Slide()
             {
                 SlideInfoList = new List<SentakkiSlideInfo>{
-                    new SentakkiSlideInfo{
-                        ID = 13,
-                        Duration = 1000,
-                    }
+                    new SentakkiSlideInfo{ ID = 13 }
                 }
             })
         {
@@ -36,20 +34,42 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         protected override bool OnMouseDown(MouseDownEvent e)
         {
-            if (e.Button == MouseButton.Left)
-            {
-                EndPlacement(true);
-                return true;
-            }
+            if (e.Button != MouseButton.Left)
+                return false;
+
+            BeginPlacement(true);
 
             return base.OnMouseDown(e);
         }
+
+        protected override void OnMouseUp(MouseUpEvent e)
+        {
+            if (e.Button != MouseButton.Left)
+                return;
+
+            EndPlacement(true);
+        }
+
+        private double originalStartTime;
 
         public override void UpdateTimeAndPosition(SnapResult result)
         {
             base.UpdateTimeAndPosition(result);
 
-            HitObject.Lane = OriginPosition.GetDegreesFromPosition(ToLocalSpace(result.ScreenSpacePosition)).GetNoteLaneFromDegrees();
+            if (PlacementActive == PlacementState.Active)
+            {
+                if (result.Time is double endTime)
+                {
+                    HitObject.StartTime = endTime < originalStartTime ? endTime : originalStartTime;
+                    HitObject.Duration = Math.Abs(endTime - originalStartTime);
+                }
+            }
+            else
+            {
+                HitObject.Lane = OriginPosition.GetDegreesFromPosition(ToLocalSpace(result.ScreenSpacePosition)).GetNoteLaneFromDegrees();
+                if (result.Time is double startTime)
+                    originalStartTime = HitObject.StartTime = startTime;
+            }
         }
     }
 }
