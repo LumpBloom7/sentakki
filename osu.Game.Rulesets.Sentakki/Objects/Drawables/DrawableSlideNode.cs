@@ -10,6 +10,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         public new SlideBody.SlideNode HitObject => (SlideBody.SlideNode)base.HitObject;
 
+        // We need this to be alive as soon as the parent slide note is alive
+        // This is to ensure reverts are still possible during edge case situation (eg. 0 duration slide)
+        protected override bool ShouldBeAlive => Time.Current < LifetimeEnd;
+
         public override bool HandlePositionalInput => true;
         public override bool DisplayResult => false;
 
@@ -46,9 +50,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // Nodes are applied before being added to the parent playfield, so this node isn't in SlideNodes yet
             // Since we know that the node isn't in the container yet, and that the count is always one higher than the topmost element, we can use that as the predicted index
             ThisIndex = parentSlide.SlideNodes.Count;
-
-            // To ensure it exists as soon as it should
-            LifetimeStart = parentSlide.HitObject.StartTime;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
