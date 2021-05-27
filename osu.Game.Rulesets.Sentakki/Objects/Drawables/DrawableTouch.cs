@@ -43,7 +43,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
 
-            Size = new Vector2(130);
+            Size = new Vector2(105);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Alpha = 0;

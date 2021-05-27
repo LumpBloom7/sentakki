@@ -10,6 +10,7 @@ using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
+
 namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {
     public class LineRenderer : CompositeDrawable
@@ -84,50 +85,53 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         public void AddHitObject(SentakkiLanedHitObject hitObject)
         {
             var startTimeBindable = hitObject.StartTimeBindable.GetBoundCopy();
-            startTimeBindable.ValueChanged += _ => onStartTimeChanged(hitObject);
+            startTimeBindable.ValueChanged += v => onStartTimeChanged(v, hitObject);
             startTimeMap[hitObject] = startTimeBindable;
 
-            addEntry(hitObject);
+            addHitObjectToEntry(hitObject.StartTime, hitObject);
         }
 
         public void RemoveHitObject(SentakkiLanedHitObject hitObject)
         {
             startTimeMap.Remove(hitObject);
-            removeEntry(hitObject);
+            removeHitObjectFromEntry(hitObject.StartTime, hitObject);
         }
 
-        private void onStartTimeChanged(SentakkiLanedHitObject hitObject)
+        private void onStartTimeChanged(ValueChangedEvent<double> valueChangedEvent, SentakkiLanedHitObject hitObject)
         {
-            removeEntry(hitObject);
-            addEntry(hitObject);
+            removeHitObjectFromEntry(valueChangedEvent.OldValue, hitObject);
+            addHitObjectToEntry(valueChangedEvent.NewValue, hitObject);
         }
 
-        private void removeEntry(SentakkiLanedHitObject hitObject)
+        private void removeHitObjectFromEntry(double entryTime, SentakkiLanedHitObject hitObject)
         {
-            if (lineEntries.TryGetValue(hitObject.StartTime, out var line))
+            // Safety check to ensure the a line entry actually exists
+            if (lineEntries.TryGetValue(entryTime, out var line))
             {
                 line.Remove(hitObject);
 
+                // Remove this entry completely if there aren't any hitObjects using it
                 if (!line.HitObjects.Any())
                 {
-                    lifetimeManager.RemoveEntry(lineEntries[hitObject.StartTime]);
-                    lineEntries.Remove(hitObject.StartTime);
+                    lifetimeManager.RemoveEntry(lineEntries[entryTime]);
+                    lineEntries.Remove(entryTime);
                 }
             }
         }
 
-        private void addEntry(SentakkiLanedHitObject hitObject)
+        private void addHitObjectToEntry(double entryTime, SentakkiLanedHitObject hitObject)
         {
-            if (!lineEntries.ContainsKey(hitObject.StartTime))
+            // Create new line entry for this entryTime if none exists
+            if (!lineEntries.ContainsKey(entryTime))
             {
-                var newEntry = new LineLifetimeEntry(animationDuration, drawableRuleset, hitObject.StartTime);
-                lineEntries[hitObject.StartTime] = newEntry;
+                var newEntry = new LineLifetimeEntry(animationDuration, drawableRuleset, entryTime);
+                lineEntries[entryTime] = newEntry;
                 lifetimeManager.AddEntry(newEntry);
 
                 // We want to listen in on line changes in case we need to swap out colours/drawables
                 newEntry.OnLineUpdated += onEntryUpdated;
             }
-            lineEntries[hitObject.StartTime].Add(hitObject);
+            lineEntries[entryTime].Add(hitObject);
         }
 
         public class DrawableLinePool : DrawablePool<DrawableLine>
@@ -141,9 +145,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             }
 
             protected override DrawableLine CreateNewDrawable()
-            {
-                return new DrawableLine { Type = type };
-            }
+                => new DrawableLine { Type = type };
         }
     }
 }

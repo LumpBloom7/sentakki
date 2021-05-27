@@ -11,6 +11,8 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.UI;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
@@ -121,7 +123,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
                 default:
                     breakNote = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
-                    if (!breakNote && Experiments.Value.HasFlagFast(ConversionExperiments.touch) && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE))
+                    if (!breakNote && original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE))
                     {
                         yield return createTouchNote(original);
                     }
@@ -235,13 +237,45 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             };
         }
 
+        public static readonly List<Vector2> VALID_TOUCH_POSITIONS;
+        static SentakkiPatternGenerator()
+        {
+            var tmp = new List<Vector2>(){
+                Vector2.Zero
+            };
+            foreach (var angle in SentakkiPlayfield.LANEANGLES)
+            {
+                tmp.Add(SentakkiExtensions.GetCircularPosition(190, angle - 22.5f));
+                tmp.Add(SentakkiExtensions.GetCircularPosition(130, angle));
+            }
+            VALID_TOUCH_POSITIONS = tmp;
+        }
+
+        private readonly Dictionary<Vector2, double> endTimes = new Dictionary<Vector2, double>();
+
         private SentakkiHitObject createTouchNote(HitObject original)
         {
+            var availableTouchPositions = VALID_TOUCH_POSITIONS.Where(v =>
+            {
+                if (endTimes.TryGetValue(v, out double endTime))
+                    return original.StartTime >= endTime;
+                return true;
+            });
+
+            // Choosing a position
+            Vector2 position;
+            if (availableTouchPositions.Any())
+                position = availableTouchPositions.ElementAt(rng.Next(0, availableTouchPositions.Count()));
+            else
+                position = endTimes.OrderBy(x => x.Value).First().Key;
+
+            endTimes[position] = original.StartTime + 500;
+
             return new Touch
             {
                 Samples = original.Samples,
                 StartTime = original.StartTime,
-                Position = SentakkiExtensions.GetCircularPosition(rng.Next(200), rng.Next(360))
+                Position = position
             };
         }
     }
