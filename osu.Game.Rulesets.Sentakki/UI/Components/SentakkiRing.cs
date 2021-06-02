@@ -5,7 +5,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
-using osu.Game.Online.API;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Skinning;
@@ -58,11 +57,15 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         public readonly Bindable<bool> NoteStartIndicators = new Bindable<bool>(false);
         private readonly Bindable<ColorOption> colorOption = new Bindable<ColorOption>(ColorOption.Default);
         private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
+        private IBindable<StarDifficulty?> beatmapDifficulty;
 
         private Bindable<Skin> skin;
         [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager settings, OsuColour colours, DrawableSentakkiRuleset ruleset, IAPIProvider api, SkinManager skinManager)
+        private void load(SentakkiRulesetConfigManager settings, OsuColour colours, SkinManager skinManager, IBeatmap beatmap, BeatmapDifficultyCache difficultyCache)
         {
+            if (beatmap != null)
+                beatmapDifficulty = difficultyCache.GetBindableDifficulty(beatmap.BeatmapInfo);
+
             settings?.BindWith(SentakkiRulesetSettings.RingOpacity, RingOpacity);
             RingOpacity.BindValueChanged(opacity => Alpha = opacity.NewValue);
 
@@ -78,7 +81,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 if (option.NewValue == ColorOption.Default)
                     this.FadeColour(Color4.White, 200);
                 else if (option.NewValue == ColorOption.Difficulty)
-                    this.FadeColour(colours.ForDifficultyRating(ruleset?.Beatmap.BeatmapInfo.DifficultyRating ?? DifficultyRating.Normal, true), 200);
+                    this.FadeColour(colours.ForDifficultyRating(beatmapDifficulty?.Value.Value.DifficultyRating ?? DifficultyRating.Normal, true), 200);
                 else if (option.NewValue == ColorOption.Skin)
                     this.FadeColour(skin.Value.GetConfig<GlobalSkinColours, Color4>(GlobalSkinColours.MenuGlow)?.Value ?? Color4.White, 200);
             });
