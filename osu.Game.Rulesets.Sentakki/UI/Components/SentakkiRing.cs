@@ -63,7 +63,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager settings, OsuColour colours, SkinManager skinManager, IBeatmap beatmap, BeatmapDifficultyCache difficultyCache)
         {
-            beatmapDifficulty = difficultyCache.GetBindableDifficulty(beatmap.BeatmapInfo);
+            if (beatmap != null)
+                beatmapDifficulty = difficultyCache.GetBindableDifficulty(beatmap.BeatmapInfo);
 
             settings?.BindWith(SentakkiRulesetSettings.RingOpacity, RingOpacity);
             RingOpacity.BindValueChanged(opacity => Alpha = opacity.NewValue);
