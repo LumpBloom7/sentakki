@@ -14,7 +14,6 @@ using osu.Framework.Utils;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Sentakki.Configuration;
-using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -61,13 +60,12 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
         private int indexOffset;
 
-        public Color4 AccentColour { get; set; }
+        public Color4 AccentColour { get; set; } = Color4.White.Opacity(0.2f);
 
         private readonly float[] frequencyAmplitudes = new float[256];
 
         private IShader shader;
         private readonly Texture texture;
-        private Bindable<Skin> skin;
 
         public PlayfieldVisualisation()
         {
@@ -81,17 +79,13 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             Blending = BlendingParameters.Additive;
         }
 
-        private readonly Bindable<ColorOption> colorOption = new Bindable<ColorOption>(ColorOption.Default);
-
         private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
+
         [BackgroundDependencyLoader(true)]
-        private void load(ShaderManager shaders, IBindable<WorkingBeatmap> beatmap, SkinManager skinManager, SentakkiRulesetConfigManager settings, OsuColour colours, DrawableSentakkiRuleset ruleset)
+        private void load(ShaderManager shaders, IBindable<WorkingBeatmap> beatmap, SentakkiRulesetConfigManager settings)
         {
             this.beatmap.BindTo(beatmap);
             shader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, FragmentShaderDescriptor.TEXTURE_ROUNDED);
-
-            skin = skinManager.CurrentSkin.GetBoundCopy();
-            skin.BindValueChanged(_ => colorOption.TriggerChange());
 
             settings?.BindWith(SentakkiRulesetSettings.KiaiEffects, kiaiEffect);
             kiaiEffect.BindValueChanged(k =>
@@ -101,24 +95,10 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 else
                     this.FadeOut(500);
             });
-
-            settings?.BindWith(SentakkiRulesetSettings.RingColor, colorOption);
-            colorOption.BindValueChanged(c =>
-            {
-                AccentColour = Color4.White.Opacity(0.2f);
-
-                if (c.NewValue == ColorOption.Default)
-                    this.FadeColour(Color4.White, 200);
-                else if (c.NewValue == ColorOption.Difficulty)
-                    this.FadeColour(colours.ForDifficultyRating(ruleset?.Beatmap.BeatmapInfo.DifficultyRating ?? DifficultyRating.Normal, true), 200);
-                else if (c.NewValue == ColorOption.Skin)
-                    this.FadeColour(skin.Value.GetConfig<GlobalSkinColours, Color4>(GlobalSkinColours.MenuGlow)?.Value ?? Color4.White, 200);
-            });
         }
 
         protected override void LoadComplete()
         {
-            colorOption.TriggerChange();
             kiaiEffect.TriggerChange();
         }
 

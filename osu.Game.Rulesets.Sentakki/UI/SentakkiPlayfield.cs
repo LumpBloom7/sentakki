@@ -1,7 +1,10 @@
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
+using osu.Game.Beatmaps;
+using osu.Game.Graphics;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -10,7 +13,9 @@ using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.UI;
+using osu.Game.Skinning;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -20,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private readonly Container<DrawableSentakkiJudgement> judgementLayer;
         private readonly DrawablePool<DrawableSentakkiJudgement> judgementPool;
 
-        public readonly SentakkiRing Ring;
+        private readonly SentakkiRing ring;
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
 
@@ -31,6 +36,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private readonly LanedPlayfield lanedPlayfield;
         private readonly TouchPlayfield touchPlayfield;
+
+        internal readonly Container AccentContainer;
 
         public static readonly float[] LANEANGLES =
         {
@@ -54,8 +61,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
             AddRangeInternal(new Drawable[]
             {
                 judgementPool = new DrawablePool<DrawableSentakkiJudgement>(8),
-                new PlayfieldVisualisation(),
-                Ring = new SentakkiRing(),
+                AccentContainer = new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Children = new Drawable[]
+                    {
+                        new PlayfieldVisualisation(),
+                        ring = new SentakkiRing(),
+                    }
+                },
                 lanedPlayfield = new LanedPlayfield(),
                 HitObjectContainer, // This only contains TouchHolds, which needs to be above others types
                 touchPlayfield = new TouchPlayfield(), // This only contains Touch, which needs a custom playfield to handle their input
@@ -69,16 +83,35 @@ namespace osu.Game.Rulesets.Sentakki.UI
             NewResult += onNewResult;
         }
 
-        private DrawableSentakkiRuleset drawableSentakkiRuleset;
-        private SentakkiRulesetConfigManager sentakkiRulesetConfig;
+        [Resolved]
+        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; }
+
+        [Resolved]
+        private SentakkiRulesetConfigManager sentakkiRulesetConfig { get; set; }
+
+        private IBindable<Skin> skin;
+        private IBindable<ColorOption> ringColor;
+
+        private IBindable<StarDifficulty?> beatmapDifficulty;
 
         [BackgroundDependencyLoader(true)]
-        private void load(DrawableSentakkiRuleset drawableRuleset, SentakkiRulesetConfigManager sentakkiRulesetConfigManager)
+        private void load(SkinManager skinManager, IBeatmap beatmap, BeatmapDifficultyCache difficultyCache)
         {
-            drawableSentakkiRuleset = drawableRuleset;
-            sentakkiRulesetConfig = sentakkiRulesetConfigManager;
-
             RegisterPool<TouchHold, DrawableTouchHold>(2);
+
+            // handle colouring of playfield elements
+            beatmapDifficulty = difficultyCache.GetBindableDifficulty(beatmap.BeatmapInfo);
+
+            skin = skinManager.CurrentSkin.GetBoundCopy();
+            ringColor = sentakkiRulesetConfig?.GetBindable<ColorOption>(SentakkiRulesetSettings.RingColor);
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            skin.BindValueChanged(_ => changePlayfieldAccent(), true);
+            ringColor.BindValueChanged(_ => changePlayfieldAccent(), true);
         }
 
         protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
@@ -109,7 +142,26 @@ namespace osu.Game.Rulesets.Sentakki.UI
             judgementLayer.Add(judgementPool.Get(j => j.Apply(result, judgedObject)));
 
             if (result.IsHit && judgedObject.HitObject.Kiai)
-                Ring.KiaiBeat();
+                ring.KiaiBeat();
+        }
+
+        [Resolved]
+        private OsuColour colours { get; set; }
+
+        private void changePlayfieldAccent()
+        {
+            switch (ringColor.Value)
+            {
+                case ColorOption.Difficulty:
+                    AccentContainer.FadeColour(colours.ForDifficultyRating(beatmapDifficulty?.Value.Value.DifficultyRating ?? DifficultyRating.Normal, true), 200);
+                    break;
+                case ColorOption.Skin:
+                    AccentContainer.FadeColour(skin.Value.GetConfig<GlobalSkinColours, Color4>(GlobalSkinColours.MenuGlow)?.Value ?? Color4.White, 200);
+                    break;
+                default:
+                    AccentContainer.FadeColour(Color4.White, 200);
+                    break;
+            }
         }
     }
 }
