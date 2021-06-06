@@ -86,11 +86,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [Resolved]
         private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; }
 
-        [Resolved]
+        [Resolved(canBeNull: true)]
         private SentakkiRulesetConfigManager sentakkiRulesetConfig { get; set; }
 
         private IBindable<Skin> skin;
-        private IBindable<ColorOption> ringColor;
+        private Bindable<ColorOption> ringColor = new Bindable<ColorOption>();
 
         private IBindable<StarDifficulty?> beatmapDifficulty;
 
@@ -103,7 +103,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             beatmapDifficulty = difficultyCache.GetBindableDifficulty(beatmap.BeatmapInfo);
 
             skin = skinManager.CurrentSkin.GetBoundCopy();
-            ringColor = sentakkiRulesetConfig?.GetBindable<ColorOption>(SentakkiRulesetSettings.RingColor);
+            sentakkiRulesetConfig?.BindWith(SentakkiRulesetSettings.RingColor, ringColor);
         }
 
         protected override void LoadComplete()
