@@ -53,7 +53,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         public readonly Bindable<bool> NoteStartIndicators = new Bindable<bool>(false);
         private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
 
-
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager settings)
         {
