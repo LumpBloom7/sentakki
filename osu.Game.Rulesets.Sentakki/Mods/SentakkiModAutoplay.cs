@@ -13,7 +13,7 @@ using osu.Game.Users;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {
-    public class SentakkiModAutoplay : ModAutoplay<SentakkiHitObject>, IApplicableToDrawableHitObjects
+    public class SentakkiModAutoplay : ModAutoplay, IApplicableToDrawableHitObjects
     {
         private string getRandomCharacter() => RNG.NextBool() ? "Mai-chan" : "Sen-kun";
 
