@@ -16,7 +16,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override string Acronym => "MR";
         public override ModType Type => ModType.Conversion;
         public override double ScoreMultiplier => 1;
-        public override bool Ranked => true;
 
         public override bool RequiresConfiguration => true;
 
