@@ -16,8 +16,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override IconUsage? Icon => FontAwesome.Solid.RedoAlt;
         public override ModType Type => ModType.Fun;
 
-        public override bool Ranked => false;
-
         public override double ScoreMultiplier => 1.00;
 
         [SettingSource("Revolution Duration", "The duration in seconds to complete a revolution")]

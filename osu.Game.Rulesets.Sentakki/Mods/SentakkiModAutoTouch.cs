@@ -17,7 +17,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override ModType Type => ModType.Automation;
         public override string Description => @"Focus on the laned notes. Touch screen notes will be completed automatically.";
         public override double ScoreMultiplier => .5f;
-        public override bool Ranked => false;
         public override Type[] IncompatibleMods => base.IncompatibleMods.Append(typeof(ModAutoplay)).ToArray();
 
         public void ApplyToDrawableHitObjects(IEnumerable<DrawableHitObject> drawables)
