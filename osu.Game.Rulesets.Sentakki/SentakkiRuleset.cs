@@ -142,7 +142,7 @@ namespace osu.Game.Rulesets.Sentakki
             {
                 Columns = new[]
                 {
-                    new StatisticItem("Judgement Distribution", new JudgementChart(score.HitEvents.Where(e=>e.HitObject is SentakkiHitObject).ToList())
+                    new StatisticItem("Judgement Distribution", new JudgementChart(score.HitEvents)
                     {
                         RelativeSizeAxes = Axes.X,
                         Size = new Vector2(1, 250)
