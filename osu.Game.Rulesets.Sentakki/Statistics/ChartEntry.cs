@@ -177,8 +177,8 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 TextureRelativeSizeAxes = Axes.None;
                 TextureRectangle = new Framework.Graphics.Primitives.RectangleF(0, 0, 50, 50);
 
-                TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "DiagonalPattern");
-                RoundedTextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "DiagonalPatternRounded");
+                TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "DiagonalLinePattern");
+                RoundedTextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "DiagonalLinePatternRounded");
             }
 
             private class RatioBoxDrawNode : SpriteDrawNode
