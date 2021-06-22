@@ -5,6 +5,7 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.OpenGL.Textures;
+using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
@@ -14,8 +15,6 @@ using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Scoring;
 using osuTK;
 using osuTK.Graphics;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace osu.Game.Rulesets.Sentakki.Statistics
 {
@@ -101,7 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                                     ratioBoxes = new Container
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Scale = new Vector2(0,1),
+                                        Size = new Vector2(0,1),
                                     }
                                 }
                             },
@@ -127,7 +126,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
         public void AnimateEntry(double entryDuration)
         {
             this.ScaleTo(1, entryDuration, Easing.OutBack).TransformBindableTo(noteCounter.Current, hitEvents.Count);
-            ratioBoxes.ScaleTo(1, bar_fill_duration, Easing.OutPow10);
+            ratioBoxes.ResizeWidthTo(1, bar_fill_duration, Easing.OutPow10);
         }
 
 
@@ -140,8 +139,10 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
 
             ratioBoxes.Add(new RatioBox
             {
+                RelativeSizeAxes = Axes.Both,
                 Width = (float)resultCount / hitEvents.Count,
                 Colour = result.GetColorForSentakkiResult(),
+                Alpha = 0.8f
             });
         }
 
@@ -161,36 +162,29 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
             };
         }
 
-        private class RatioBox : Sprite
+        private class RatioBox : Sprite, ITexturedShaderDrawable
         {
-            // Replace this shit with a shader ASAP
+            public new IShader TextureShader { get; private set; }
+
+            public new IShader RoundedTextureShader { get; private set; }
+
+            protected override DrawNode CreateDrawNode() => new RatioBoxDrawNode(this);
+
             [BackgroundDependencyLoader]
-            private void load(TextureStore textures)
+            private void load(ShaderManager shaders)
             {
-                // Using a publically accessible texture
-                Texture = textures.Get("Icons/BeatmapDetails/accuracy", WrapMode.Repeat, WrapMode.Repeat);
-                Texture.SetData(generateTexture());
-                RelativeSizeAxes = Axes.Both;
+                Texture = Texture.WhitePixel.Crop(new Framework.Graphics.Primitives.RectangleF(0, 0, 1f, 1f), Axes.None, WrapMode.Repeat, WrapMode.Repeat);
                 TextureRelativeSizeAxes = Axes.None;
                 TextureRectangle = new Framework.Graphics.Primitives.RectangleF(0, 0, 50, 50);
+
+                TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "DiagonalPattern");
+                RoundedTextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "DiagonalPatternRounded");
             }
 
-            private TextureUpload generateTexture()
+            private class RatioBoxDrawNode : SpriteDrawNode
             {
-                const int line_thickness = 4;
-                const int line_spacing = 6;
-                const int line_distance = line_thickness + line_spacing;
-                Image<Rgba32> image = new Image<Rgba32>(50, 50);
-                for (int y = 0; y < 50; ++y)
-                {
-                    var span = image.GetPixelRowSpan(y);
-                    for (int x = 0; x < 50; ++x)
-                    {
-                        bool pixelLit = ((x + y) % line_distance) <= line_thickness;
-                        span[x] = new Rgba32(1f, 1f, 1f, pixelLit ? 1f : 0f);
-                    }
-                }
-                return new TextureUpload(image);
+                public RatioBoxDrawNode(Sprite source) : base(source) { }
+                protected override bool CanDrawOpaqueInterior => false;
             }
         }
     }
