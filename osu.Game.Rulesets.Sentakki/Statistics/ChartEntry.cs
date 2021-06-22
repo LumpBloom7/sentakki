@@ -142,7 +142,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 RelativeSizeAxes = Axes.Both,
                 Width = (float)resultCount / hitEvents.Count,
                 Colour = result.GetColorForSentakkiResult(),
-                Alpha = 0.8f
+                Alpha = 0.6f
             });
         }
 
