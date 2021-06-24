@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override IconUsage? Icon => FontAwesome.Solid.Flask;
         public override ModType Type => ModType.Fun;
 
-        public override bool Ranked => false;
+        public override bool UserPlayable => false;
         public override bool RequiresConfiguration => true;
 
         public override double ScoreMultiplier => 1.00;

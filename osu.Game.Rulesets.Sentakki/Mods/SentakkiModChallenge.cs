@@ -26,8 +26,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override IconUsage? Icon => FontAwesome.Solid.HeartBroken;
         public override ModType Type => ModType.DifficultyIncrease;
 
-        public override bool Ranked => false;
-
         public override bool RequiresConfiguration => true;
 
         public override double ScoreMultiplier => 1.00;
@@ -74,7 +72,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 MaxValue = maxLives,
             };
 
-            (drawableRuleset.Playfield as SentakkiPlayfield).Ring.Add(new LiveCounter(LivesLeft));
+            (drawableRuleset.Playfield as SentakkiPlayfield).AccentContainer.Add(new LiveCounter(LivesLeft));
         }
 
         public void ApplyToHealthProcessor(HealthProcessor healthProcessor)

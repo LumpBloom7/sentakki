@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -193,18 +192,21 @@ namespace osu.Game.Rulesets.Sentakki
                 Size = new Vector2(100, 100);
             }
 
+            // We don't want to generate a new texture store everytime this used, so we create a single texture store for all usages of this icon.
+            private static LargeTextureStore textureStore;
+
             [BackgroundDependencyLoader]
-            private void load(TextureStore textures, GameHost host)
+            private void load(GameHost host)
             {
-                if (!textures.GetAvailableResources().Contains("Textures/SentakkiIcon.png"))
-                    textures.AddStore(host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
+                if (textureStore is null)
+                    textureStore = new LargeTextureStore(host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
 
                 AddInternal(new Sprite
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both,
-                    Texture = textures.Get("Textures/SentakkiIcon.png"),
+                    Texture = textureStore.Get("Textures/SentakkiIcon.png"),
                 });
 
                 if (IsDevelopmentBuild)
