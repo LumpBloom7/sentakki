@@ -12,6 +12,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Hold : SentakkiLanedHitObject, IHasDuration
     {
+        protected override bool NeedBreakSample => false;
+
         private List<IList<HitSampleInfo>> nodeSamples = new List<IList<HitSampleInfo>>();
 
         public List<IList<HitSampleInfo>> NodeSamples
@@ -50,8 +52,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public class HoldHead : SentakkiLanedHitObject
         {
-            protected override bool NeedBreakSample => false;
-
             public override Judgement CreateJudgement() => new SentakkiJudgement();
             protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
         }
