@@ -1,5 +1,6 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Localisation;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Sentakki.Configuration;
@@ -86,7 +87,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
                 return speed.ToString();
             }
-            public override string TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
+            public override LocalisableString TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
         }
         private class TouchTimeSlider : OsuSliderBar<double>
         {
@@ -99,7 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
                 return speed.ToString();
             }
-            public override string TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
+            public override LocalisableString TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
         }
     }
 }
