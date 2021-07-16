@@ -16,7 +16,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public abstract class SentakkiHitObject : HitObject, IHasPosition
+    public abstract class SentakkiHitObject : HitObject, IHasPosition, IHasDisplayColour
     {
         // TODO:
         // No-op IHasPosition properties are added to allow work on editor. Remove ASAP
@@ -30,12 +30,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             // We initialize the note colour to the default value first for test scenes
             // The colours during gameplay will be set during beatmap post-process
             ColourBindable.Value = DefaultNoteColour;
+
+            DisplayColour = new Bindable<Color4>(DefaultNoteColour);
         }
 
         public override Judgement CreateJudgement() => new SentakkiJudgement();
 
         [JsonIgnore]
         public Bindable<Color4> ColourBindable = new Bindable<Color4>();
+
+        // This colour is used to differentiate notes in the editor timeline, and is initialized to the base colour
+        [JsonIgnore]
+        public Bindable<Color4> DisplayColour { get; private set; }
 
         [JsonIgnore]
         public Color4 NoteColour
