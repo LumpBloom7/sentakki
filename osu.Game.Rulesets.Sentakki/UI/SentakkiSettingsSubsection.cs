@@ -9,7 +9,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 {
     public class SentakkiSettingsSubsection : RulesetSettingsSubsection
     {
-        protected override string Header => SentakkiRuleset.IsDevelopmentBuild ? "sentakki (Dev build)" : "sentakki";
+        protected override LocalisableString Header => SentakkiRuleset.IsDevelopmentBuild ? "sentakki (Dev build)" : "sentakki";
 
         public SentakkiSettingsSubsection(Ruleset ruleset)
             : base(ruleset)
