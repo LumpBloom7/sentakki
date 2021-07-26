@@ -23,6 +23,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <PackageReference Include="ppy.osu.Game" Version="2021.720.0"/>
+    <PackageReference Include="ppy.osu.Game" Version="2021.724.1"/>
   </ItemGroup>
 </Project>
