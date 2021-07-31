@@ -9,7 +9,6 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Utils;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
-using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Screens.Play;
@@ -38,15 +37,17 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private static int currentSupporterIndex;
 
+        // We don't want the default message
         protected override string Message => "";
 
-        private TimingControlPoint currentTimingPoint => beatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(beatmap.Value.Track.CurrentTime);
+        private OsuSpriteText messageText;
 
-        private int maxTicks => (int)currentTimingPoint.TimeSignature;
-        private double beatlength => currentTimingPoint.BeatLength;
+        private double beatlength;
 
-        private double timePassed = 3500;
-        private Bindable<int> tickCount = new Bindable<int>(4);
+        private double remainingTime = 3500;
+
+        private Bindable<int> beatsLeft = new Bindable<int>(4);
+
         private OsuSpriteText supporterText;
 
         private SkinnableSound countSound;
@@ -61,7 +62,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             RelativeSizeAxes = Axes.Both;
-            Children = new Drawable[]{
+            Children = new Drawable[]
+            {
                 messageText = new OsuSpriteText
                 {
                     Font = OsuFont.Torus.With(size: 50, weight: FontWeight.SemiBold),
@@ -69,13 +71,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                 },
-                new FillFlowContainer{
+                new FillFlowContainer
+                {
                     Direction = FillDirection.Horizontal,
                     RelativePositionAxes = Axes.Both,
                     Y = -0.4f,
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
-                    Children = new Drawable[]{
+                    Children = new Drawable[]
+                    {
                         new OsuSpriteText
                         {
                             Text = "Sentakki is made with the support of ",
@@ -100,27 +104,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 },
                 countSound = new SkinnableSound(new SampleInfo("Gameplay/Taka"))
             };
-            tickCount.BindValueChanged(
-                ticks =>
-                {
-                    if (ticks.NewValue < ticks.OldValue)
-                    {
-                        messageText.Text = ticks.NewValue.ToString();
-                        countSound?.Play();
-                        messageText.FinishTransforms();
-                        messageText.ScaleTo(1.1f, 100).Then().ScaleTo(1, 50);
-                    }
 
-                    if (ticks.NewValue <= 0) Resume();
-                }
-            );
-        }
-
-        private OsuSpriteText messageText;
-
-        protected override void LoadComplete()
-        {
-            base.LoadComplete();
+            beatsLeft.ValueChanged += onCountUpdated;
         }
 
         protected override void Update()
@@ -128,25 +113,28 @@ namespace osu.Game.Rulesets.Sentakki.UI
             base.Update();
             if (State.Value == Visibility.Hidden) return;
 
-            timePassed -= Clock.ElapsedFrameTime;
-            tickCount.Value = (int)Math.Ceiling(timePassed / beatlength);
+            remainingTime -= Clock.ElapsedFrameTime;
+            beatsLeft.Value = (int)Math.Ceiling(remainingTime / beatlength);
         }
 
         protected override void PopIn()
         {
             base.PopIn();
+
             supporterText.Text = getRandomSupporter();
             messageText.Text = "Get ready!";
 
+            var currentTimingPoint = beatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(beatmap.Value.Track.CurrentTime);
+            int maxTicks = (int)currentTimingPoint.TimeSignature;
+            beatlength = currentTimingPoint.BeatLength;
+
             // Reset the countdown
-            timePassed = maxTicks * beatlength;
+            remainingTime = maxTicks * beatlength;
 
             GameplayCursor.ActiveCursor.Hide();
 
             if (localCursorContainer == null)
-            {
                 Add(localCursorContainer = new SentakkiCursorContainer());
-            }
         }
 
         protected override void PopOut()
@@ -168,6 +156,21 @@ namespace osu.Game.Rulesets.Sentakki.UI
             if (currentSupporterIndex >= supporter_list.Length) currentSupporterIndex = 0;
 
             return tmp;
+        }
+
+        private void onCountUpdated(ValueChangedEvent<int> beatsLeft)
+        {
+            if (beatsLeft.NewValue < beatsLeft.OldValue)
+            {
+                countSound?.Play();
+
+                messageText.Text = beatsLeft.NewValue.ToString();
+                messageText.FinishTransforms();
+                messageText.ScaleTo(1.1f, 100).Then().ScaleTo(1, 50);
+            }
+
+            if (beatsLeft.NewValue <= 0)
+                Resume();
         }
     }
 }
