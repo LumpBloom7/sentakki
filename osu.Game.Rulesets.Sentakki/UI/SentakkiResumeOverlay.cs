@@ -1,5 +1,7 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
@@ -7,16 +9,23 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Utils;
 using osu.Game.Audio;
+using osu.Game.Beatmaps;
+using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Screens.Play;
 using osu.Game.Skinning;
+using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
     public class SentakkiResumeOverlay : ResumeOverlay
     {
+        [Resolved]
+        private IBindable<WorkingBeatmap> beatmap { get; set; }
+
         private readonly string[] supporter_list = new string[]{
             "Ayato_K ♥",
             "Bosch ♥",
@@ -34,35 +43,36 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private static int currentSupporterIndex;
 
-        protected override string Message => "Get ready!";
+        protected override string Message => "";
+
+        private TimingControlPoint currentTimingPoint => beatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(beatmap.Value.Track.CurrentTime);
+
+        private int maxTicks => (int)currentTimingPoint.TimeSignature;
+        private double beatlength => currentTimingPoint.BeatLength;
 
         private double timePassed = 3500;
         private Bindable<int> tickCount = new Bindable<int>(4);
-
-        private OsuSpriteText counterText;
         private OsuSpriteText supporterText;
 
-        private readonly SkinnableSound countSound;
+        private SkinnableSound countSound;
 
         private SentakkiCursorContainer localCursorContainer;
 
         public override CursorContainer LocalCursor => State.Value == Visibility.Visible ? localCursorContainer : null;
 
-        public SentakkiResumeOverlay()
+        [BackgroundDependencyLoader]
+        private void load(OsuColour colours)
         {
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             RelativeSizeAxes = Axes.Both;
             Children = new Drawable[]{
-                counterText = new OsuSpriteText
+                messageText = new OsuSpriteText
                 {
+                    Font = OsuFont.Torus.With(size: 50, weight: FontWeight.SemiBold),
+                    Colour = colours.Yellow,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Text = "",
-                    Font = OsuFont.Torus.With(size: 50),
-                    Colour = Color4.White,
-                    Shadow = true,
-                    ShadowColour = new Color4(0f, 0f, 0f, 0.25f)
                 },
                 new FillFlowContainer{
                     Direction = FillDirection.Horizontal,
@@ -74,7 +84,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                         new OsuSpriteText
                         {
                             Text = "Sentakki is made with the support of ",
-                            Font = OsuFont.Torus.With(size: 20),
+                            Font = OsuFont.Torus.With(size: 15),
                             Colour = Color4.White,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
@@ -84,7 +94,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                         supporterText = new OsuSpriteText
                         {
                             Text = "Marisa Kirisame",
-                            Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold),
+                            Font = OsuFont.Torus.With(size: 18, weight: FontWeight.SemiBold),
                             Colour = Color4Extensions.FromHex("ff0064"),
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
@@ -98,28 +108,43 @@ namespace osu.Game.Rulesets.Sentakki.UI
             tickCount.BindValueChanged(
                 ticks =>
                 {
-                    counterText.Text = (ticks.NewValue == 4) ? "" : ticks.NewValue.ToString();
-                    if (ticks.NewValue % 4 != 0)
+                    if (ticks.NewValue < ticks.OldValue)
+                    {
+                        messageText.Text = ticks.NewValue.ToString();
                         countSound?.Play();
+                        messageText.FinishTransforms();
+                        messageText.ScaleTo(1.1f, 100).Then().ScaleTo(1, 50);
+                    }
+
                     if (ticks.NewValue <= 0) Resume();
                 }
             );
         }
 
+        private OsuSpriteText messageText;
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+        }
+
         protected override void Update()
         {
             base.Update();
+            if (State.Value == Visibility.Hidden) return;
+
             timePassed -= Clock.ElapsedFrameTime;
-            tickCount.Value = (int)Math.Ceiling(timePassed / 1000);
+            tickCount.Value = (int)Math.Ceiling(timePassed / beatlength);
         }
 
         protected override void PopIn()
         {
             base.PopIn();
             supporterText.Text = getRandomSupporter();
+            messageText.Text = "Get ready!";
 
             // Reset the countdown
-            timePassed = 3500;
+            timePassed = maxTicks * beatlength;
 
             GameplayCursor.ActiveCursor.Hide();
 
@@ -132,6 +157,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override void PopOut()
         {
             base.PopOut();
+            messageText.Text = "Let's go!";
 
             if (localCursorContainer != null && GameplayCursor?.ActiveCursor != null)
                 GameplayCursor.ActiveCursor.Position = localCursorContainer.ActiveCursor.Position;
