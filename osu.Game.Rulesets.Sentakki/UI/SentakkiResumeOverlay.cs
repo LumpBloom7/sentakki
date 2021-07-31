@@ -47,6 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private double remainingTime = 3500;
 
         private Bindable<int> beatsLeft = new Bindable<int>(4);
+        private int barLength;
 
         private OsuSpriteText supporterText;
 
@@ -126,11 +127,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
             messageText.Text = "Get ready!";
 
             var currentTimingPoint = beatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(beatmap.Value.Track.CurrentTime);
-            int maxTicks = (int)currentTimingPoint.TimeSignature;
+            barLength = (int)currentTimingPoint.TimeSignature;
             beatlength = currentTimingPoint.BeatLength;
 
-            // Reset the countdown
-            remainingTime = maxTicks * beatlength;
+            // Reset the countdown, plus a second for preparation
+            remainingTime = (barLength * beatlength) + 1000;
 
             GameplayCursor.ActiveCursor.Hide();
 
@@ -161,7 +162,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private void onCountUpdated(ValueChangedEvent<int> beatsLeft)
         {
-            if (beatsLeft.NewValue < beatsLeft.OldValue)
+            if (beatsLeft.NewValue < barLength && beatsLeft.NewValue < beatsLeft.OldValue)
             {
                 countSound?.Play();
 
