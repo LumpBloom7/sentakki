@@ -6,6 +6,7 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Localisation;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
@@ -204,7 +205,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
 
                 protected override Easing RollingEasing => Easing.OutPow10;
 
-                protected override string FormatCount(long count) => count.ToString("N0");
+                protected override LocalisableString FormatCount(long count) => count.ToString("N0");
 
                 protected override OsuSpriteText CreateSpriteText()
                 {
