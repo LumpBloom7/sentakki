@@ -70,6 +70,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     Colour = colours.Yellow,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
+                    ShadowColour = new Color4(0f, 0f, 0f, 0.25f)
                 },
                 new FillFlowContainer
                 {
