@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -12,11 +11,9 @@ using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Graphics;
-using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Screens.Play;
 using osu.Game.Skinning;
-using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI
@@ -27,18 +24,16 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private IBindable<WorkingBeatmap> beatmap { get; set; }
 
         private readonly string[] supporter_list = new string[]{
-            "Ayato_K ♥",
-            "Bosch ♥",
-            "Dubita ♥",
-            "Ezz ♥ (iOS helper)",
-            "Mae ♥♥",
-            "Nutchapol ♥",
-            "Shiuannie (Artist)",
-            "Smoogipoo ♥♥♥",
+            "Ayato_K",
+            "Bosch",
+            "Dubita",
+            "Ezz",
+            "Mae",
+            "Nutchapol",
+            "Shiuannie",
+            "Smoogipoo",
             "Flutterish",
-            "Slipsy (Discord moderator)",
-            "Nooraldeen (Discord moderator, feedback machine)",
-            "lazer developers"
+            "Nooraldeen",
         }.OrderBy(t => RNG.Next()).ToArray();
 
         private static int currentSupporterIndex;
@@ -84,7 +79,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                         new OsuSpriteText
                         {
                             Text = "Sentakki is made with the support of ",
-                            Font = OsuFont.Torus.With(size: 15),
+                            Font = OsuFont.Torus.With(size: 20),
                             Colour = Color4.White,
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
@@ -94,7 +89,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                         supporterText = new OsuSpriteText
                         {
                             Text = "Marisa Kirisame",
-                            Font = OsuFont.Torus.With(size: 18, weight: FontWeight.SemiBold),
+                            Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold),
                             Colour = Color4Extensions.FromHex("ff0064"),
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
