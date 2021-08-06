@@ -25,6 +25,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             {
                 CoverageRadius = 0.4f
             });
+
+            lanedPlayfield.HitObjectLineRenderer.Hide();
         }
 
         protected override void ApplyIncreasedVisibilityState(DrawableHitObject hitObject, ArmedState state)

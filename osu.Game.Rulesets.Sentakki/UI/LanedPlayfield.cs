@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private readonly SortedDrawableProxyContainer slideBodyProxyContainer;
         private readonly SortedDrawableProxyContainer lanedNoteProxyContainer;
 
-        private readonly LineRenderer hitObjectLineRenderer;
+        public readonly LineRenderer HitObjectLineRenderer;
 
         [Cached]
         private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
@@ -54,7 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             AddRangeInternal(new Drawable[]{
                 explosionPool = new DrawablePool<HitExplosion>(8),
                 chevronPool = new DrawablePool<SlideVisual.SlideChevron>(100),
-                hitObjectLineRenderer = new LineRenderer(),
+                HitObjectLineRenderer = new LineRenderer(),
                 explosionLayer = new Container<HitExplosion>() { RelativeSizeAxes = Axes.Both },
                 slideBodyProxyContainer = new SortedDrawableProxyContainer(),
                 LanedHitObjectArea = new Container
@@ -72,7 +72,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             switch (h)
             {
                 case SentakkiLanedHitObject laned:
-                    hitObjectLineRenderer.AddHitObject(laned);
+                    HitObjectLineRenderer.AddHitObject(laned);
                     laned.LaneBindable.BindValueChanged(lane =>
                     {
                         if (lane.OldValue != lane.NewValue)
@@ -88,7 +88,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             if (!(hitObject is SentakkiLanedHitObject lanedHitObject))
                 return false;
 
-            hitObjectLineRenderer.RemoveHitObject(lanedHitObject);
+            HitObjectLineRenderer.RemoveHitObject(lanedHitObject);
             return Lanes[lanedHitObject.Lane].Remove(lanedHitObject);
         }
 
