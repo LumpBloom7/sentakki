@@ -31,6 +31,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private readonly Container<HitExplosion> explosionLayer;
 
+        public readonly Container LanedHitObjectArea;
+
         public LanedPlayfield()
         {
             Anchor = Anchor.Centre;
@@ -55,7 +57,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 hitObjectLineRenderer = new LineRenderer(),
                 explosionLayer = new Container<HitExplosion>() { RelativeSizeAxes = Axes.Both },
                 slideBodyProxyContainer = new SortedDrawableProxyContainer(),
-                lanedNoteProxyContainer = new SortedDrawableProxyContainer(),
+                LanedHitObjectArea = new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Child = lanedNoteProxyContainer = new SortedDrawableProxyContainer(),
+                }
             });
 
             NewResult += onNewResult;
