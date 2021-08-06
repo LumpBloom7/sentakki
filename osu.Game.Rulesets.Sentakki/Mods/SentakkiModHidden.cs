@@ -192,7 +192,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                         shader = Source.shader;
                         screenSpaceDrawQuad = Source.ScreenSpaceDrawQuad;
                         maskPosition = Vector2Extensions.Transform(Source.MaskPosition, DrawInfo.Matrix);
-                        maskRadius = Source.MaskRadius * DrawInfo.Matrix.ExtractScale().Xy; ;
+                        maskRadius = Source.MaskRadius * DrawInfo.Matrix.ExtractScale().Xy;
                     }
 
                     public override void Draw(Action<TexturedVertex2D> vertexAction)
