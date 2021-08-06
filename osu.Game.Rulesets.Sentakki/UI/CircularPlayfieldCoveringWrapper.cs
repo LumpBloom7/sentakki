@@ -35,7 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 {
                     new Container
                     {
-                        Size = new Vector2(SentakkiPlayfield.RINGSIZE),
+                        RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         Child = content

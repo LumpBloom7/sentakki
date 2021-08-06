@@ -57,7 +57,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.None;
             Rotation = 0;
-            Size = new Vector2(600);
+            Size = new Vector2(RINGSIZE);
             AddRangeInternal(new Drawable[]
             {
                 judgementPool = new DrawablePool<DrawableSentakkiJudgement>(8),

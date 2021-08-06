@@ -35,8 +35,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public LanedPlayfield()
         {
-            Anchor = Anchor.Centre;
-            Origin = Anchor.Centre;
+            RelativeSizeAxes = Axes.Both;
+            Anchor = Origin = Anchor.Centre;
 
             for (int i = 0; i < 8; ++i)
             {

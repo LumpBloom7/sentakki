@@ -25,8 +25,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         public LineRenderer()
         {
-            Anchor = Anchor.Centre;
-            Origin = Anchor.Centre;
+            RelativeSizeAxes = Axes.Both;
+            Anchor = Origin = Anchor.Centre;
             lifetimeManager.EntryBecameAlive += onEntryBecameAlive;
             lifetimeManager.EntryBecameDead += onEntryBecameDead;
         }
