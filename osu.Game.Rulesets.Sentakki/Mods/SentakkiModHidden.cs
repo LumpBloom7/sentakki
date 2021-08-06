@@ -72,7 +72,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             }
         }
 
-        private class PlayfieldMaskingContainer : CompositeDrawable
+        private class PlayfieldMaskingContainer : CircularContainer
         {
             private readonly PlayfieldMask cover;
 
@@ -81,7 +81,10 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 RelativeSizeAxes = Axes.Both;
                 Anchor = Origin = Anchor.Centre;
 
-                InternalChild = new BufferedContainer
+                // We still enable masking to avoid BufferedContainer visual jank when it rotates
+                Masking = true;
+
+                Child = new BufferedContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
@@ -128,7 +131,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                     // We set the buffered container's size to be around the same width of the visible area
                     // This is so that we don't have a buffer bigger than what is needed
                     // If we plan to change the coverage radius often, this will instead be an anti-optimization
-                    Size = new Vector2(0.6f);
+                    Size = new Vector2(value);
                 }
             }
 
@@ -160,7 +163,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                     }
                 }
 
-                public Vector2 MaskPosition => ToParentSpace(OriginPosition);
+                public Vector2 MaskPosition => OriginPosition;
 
                 private class PlayfieldMaskDrawNode : DrawNode
                 {
