@@ -79,6 +79,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             public PlayfieldMaskingContainer(Drawable content)
             {
                 RelativeSizeAxes = Axes.Both;
+                Anchor = Origin = Anchor.Centre;
 
                 InternalChild = new BufferedContainer
                 {
@@ -120,7 +121,15 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             /// </summary>
             public float CoverageRadius
             {
-                set => cover.MaskRadius = new Vector2(0, SentakkiPlayfield.RINGSIZE * value / 4);
+                set
+                {
+                    cover.MaskRadius = new Vector2(0, SentakkiPlayfield.RINGSIZE * value / 4);
+
+                    // We set the buffered container's size to be around the same width of the visible area
+                    // This is so that we don't have a buffer bigger than what is needed
+                    // If we plan to change the coverage radius often, this will instead be an anti-optimization
+                    Size = new Vector2(0.6f);
+                }
             }
 
             private class PlayfieldMask : Drawable
@@ -183,7 +192,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                         shader = Source.shader;
                         screenSpaceDrawQuad = Source.ScreenSpaceDrawQuad;
                         maskPosition = Vector2Extensions.Transform(Source.MaskPosition, DrawInfo.Matrix);
-                        maskRadius = Source.MaskRadius * DrawInfo.Matrix.ExtractScale().Xy;
+                        maskRadius = Source.MaskRadius * DrawInfo.Matrix.ExtractScale().Xy; ;
                     }
 
                     public override void Draw(Action<TexturedVertex2D> vertexAction)
