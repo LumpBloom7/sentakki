@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             lanedHitObjectArea.Remove(lanedNoteProxyContainer);
             lanedHitObjectArea.Add(new PlayfieldMaskingContainer(lanedNoteProxyContainer)
             {
-                CoverageRadius = 0.4f
+                CoverageRadius = 0.6f
             });
 
             lanedPlayfield.HitObjectLineRenderer.Hide();
@@ -116,12 +116,11 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             }
 
             /// <summary>
-            /// The relative area that should be completely covered if it is FadingIn, or the visible area if it is Hidden.
-            /// Doesn't include fade
+            /// The relative visible area of the playfield, half of the distance is used as a fade out.
             /// </summary>
             public float CoverageRadius
             {
-                set => cover.ApertureSize = new Vector2(0, SentakkiPlayfield.RINGSIZE / 2 * value);
+                set => cover.MaskRadius = new Vector2(0, SentakkiPlayfield.RINGSIZE * value / 4);
             }
 
             private class PlayfieldMask : Drawable
@@ -138,21 +137,21 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                     shader = shaderManager.Load("PositionAndColour", "PlayfieldMask");
                 }
 
-                private Vector2 apertureSize;
+                private Vector2 maskRadius;
 
-                public Vector2 ApertureSize
+                public Vector2 MaskRadius
                 {
-                    get => apertureSize;
+                    get => maskRadius;
                     set
                     {
-                        if (apertureSize == value) return;
+                        if (maskRadius == value) return;
 
-                        apertureSize = value;
+                        maskRadius = value;
                         Invalidate(Invalidation.DrawNode);
                     }
                 }
 
-                public Vector2 AperturePosition => ToParentSpace(OriginPosition);
+                public Vector2 MaskPosition => ToParentSpace(OriginPosition);
 
                 private class PlayfieldMaskDrawNode : DrawNode
                 {
@@ -161,8 +160,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                     private IShader shader;
                     private Quad screenSpaceDrawQuad;
 
-                    private Vector2 aperturePosition;
-                    private Vector2 apertureSize;
+                    private Vector2 maskPosition;
+                    private Vector2 maskRadius;
 
                     private readonly VertexBatch<PositionAndColourVertex> quadBatch = new QuadBatch<PositionAndColourVertex>(1, 1);
                     private readonly Action<TexturedVertex2D> addAction;
@@ -183,8 +182,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
                         shader = Source.shader;
                         screenSpaceDrawQuad = Source.ScreenSpaceDrawQuad;
-                        aperturePosition = Vector2Extensions.Transform(Source.AperturePosition, DrawInfo.Matrix);
-                        apertureSize = Source.ApertureSize * DrawInfo.Matrix.ExtractScale().Xy;
+                        maskPosition = Vector2Extensions.Transform(Source.MaskPosition, DrawInfo.Matrix);
+                        maskRadius = Source.MaskRadius * DrawInfo.Matrix.ExtractScale().Xy;
                     }
 
                     public override void Draw(Action<TexturedVertex2D> vertexAction)
@@ -193,8 +192,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
                         shader.Bind();
 
-                        shader.GetUniform<Vector2>("aperturePos").UpdateValue(ref aperturePosition);
-                        shader.GetUniform<Vector2>("apertureSize").UpdateValue(ref apertureSize);
+                        shader.GetUniform<Vector2>("maskPosition").UpdateValue(ref maskPosition);
+                        shader.GetUniform<Vector2>("maskRadius").UpdateValue(ref maskRadius);
 
                         DrawQuad(Texture.WhitePixel, screenSpaceDrawQuad, DrawColourInfo.Colour, vertexAction: addAction);
 
