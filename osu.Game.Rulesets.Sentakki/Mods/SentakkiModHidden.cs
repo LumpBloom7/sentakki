@@ -1,6 +1,9 @@
+using osu.Framework.Graphics;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
 
@@ -29,12 +32,26 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             lanedPlayfield.HitObjectLineRenderer.Hide();
         }
 
-        protected override void ApplyIncreasedVisibilityState(DrawableHitObject hitObject, ArmedState state)
-        {
-        }
+        protected override void ApplyIncreasedVisibilityState(DrawableHitObject hitObject, ArmedState state) => ApplyNormalVisibilityState(hitObject, state);
 
         protected override void ApplyNormalVisibilityState(DrawableHitObject hitObject, ArmedState state)
         {
+            double preemptTime;
+            double fadeOutTime;
+            switch (hitObject)
+            {
+                case DrawableTouch t:
+                    preemptTime = t.HitObject.HitWindows.WindowFor(HitResult.Ok);
+                    fadeOutTime = preemptTime * 0.3f;
+                    using (t.BeginAbsoluteSequence(t.HitObject.StartTime - preemptTime, true))
+                        t.TouchBody.FadeOut(fadeOutTime);
+                    break;
+
+                case DrawableTouchHold th:
+                    th.TouchHoldBody.ProgressPiece.FadeOut();
+                    break;
+
+            }
         }
     }
 }
