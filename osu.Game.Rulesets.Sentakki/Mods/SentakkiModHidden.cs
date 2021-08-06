@@ -43,14 +43,22 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 case DrawableTouch t:
                     preemptTime = t.HitObject.HitWindows.WindowFor(HitResult.Ok);
                     fadeOutTime = preemptTime * 0.3f;
-                    using (t.BeginAbsoluteSequence(t.HitObject.StartTime - preemptTime, true))
+                    using (t.BeginAbsoluteSequence(t.HitObject.StartTime - preemptTime))
                         t.TouchBody.FadeOut(fadeOutTime);
                     break;
 
                 case DrawableTouchHold th:
-                    th.TouchHoldBody.ProgressPiece.FadeOut();
+                    th.TouchHoldBody.ProgressPiece.Hide();
                     break;
 
+                case DrawableSlideBody sb:
+                    sb.SlideStar.Hide();
+
+                    preemptTime = sb.HitObject.StartTime - sb.LifetimeStart;
+                    fadeOutTime = sb.HitObject.Duration + preemptTime;
+                    using (sb.BeginAbsoluteSequence(sb.HitObject.StartTime - preemptTime))
+                        sb.Slidepath.FadeOut(fadeOutTime);
+                    break;
             }
         }
     }
