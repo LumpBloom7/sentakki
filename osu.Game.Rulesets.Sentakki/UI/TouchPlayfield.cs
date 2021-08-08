@@ -44,7 +44,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override HitObjectContainer CreateHitObjectContainer() => new TouchHitObjectContainer();
 
         private TouchHitObjectContainer touchHitObjectContainer => (TouchHitObjectContainer)HitObjectContainer;
-        private SlimReadOnlyListWrapper<DrawableTouch> aliveTouchNotes => touchHitObjectContainer.AliveTouchNotes;
+
+        private List<DrawableTouch> aliveTouchNotes => touchHitObjectContainer.AliveTouchNotes;
 
         protected override void Update()
         {
@@ -103,13 +104,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
             // This list is exposed to the playfield, so that it can get a list of all objects
             // To prevent this query from being executed 11 times in a single input handling cycle
             // This updates when notes become alive/dead, instead of letting the playfield touch handler from polling every frame
-            public SlimReadOnlyListWrapper<DrawableTouch> AliveTouchNotes { get; private set; } = new List<DrawableTouch>().AsSlimReadOnly();
+            public List<DrawableTouch> AliveTouchNotes = new List<DrawableTouch>();
 
             protected override bool UpdateChildrenLife()
             {
                 if (base.UpdateChildrenLife())
                 {
-                    AliveTouchNotes = AliveObjects.OfType<DrawableTouch>().ToList().AsSlimReadOnly();
+                    AliveTouchNotes = AliveObjects.OfType<DrawableTouch>().ToList();
                     return true;
                 }
                 return false;
