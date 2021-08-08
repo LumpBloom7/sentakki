@@ -4,6 +4,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Input;
 using osu.Game.Audio;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Objects;
@@ -188,9 +189,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
 
             // Avoiding Linq to minimize allocations, since this would be called every update of this node
-            foreach (var t in touchInput.ActiveSources)
+            for (TouchSource t = TouchSource.Touch1; t <= TouchSource.Touch10; ++t)
+            {
                 if (ReceivePositionalInputAt(touchInput.GetTouchPosition(t).Value))
                     return true;
+            }
 
             return false;
         }
