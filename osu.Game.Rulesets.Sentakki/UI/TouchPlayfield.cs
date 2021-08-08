@@ -44,7 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override HitObjectContainer CreateHitObjectContainer() => new TouchHitObjectContainer();
 
         private TouchHitObjectContainer touchHitObjectContainer => (TouchHitObjectContainer)HitObjectContainer;
-        private IEnumerable<DrawableTouch> aliveTouchNotes => touchHitObjectContainer.AliveTouchNotes;
+        private SlimReadOnlyListWrapper<DrawableTouch> aliveTouchNotes => touchHitObjectContainer.AliveTouchNotes;
 
         protected override void Update()
         {
@@ -77,6 +77,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private void handlePointInput(int pointID, bool hasAction, Vector2? pointerPosition)
         {
             bool continueEventPropogation = true;
+
             foreach (DrawableTouch touch in aliveTouchNotes)
             {
                 if (hasAction && touch.ReceivePositionalInputAt(pointerPosition.Value))

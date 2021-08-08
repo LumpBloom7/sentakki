@@ -101,7 +101,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
 
             for (TouchSource t = TouchSource.Touch1; t <= TouchSource.Touch10; ++t)
-                if (ReceivePositionalInputAt(touchInput.GetTouchPosition(t).Value)) ++count;
+                if (touchInput.GetTouchPosition(t) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition)) ++count;
 
             // We don't attempt to check mouse input if touch input is used
             if (count == 0 && IsHovered && usingSensor)

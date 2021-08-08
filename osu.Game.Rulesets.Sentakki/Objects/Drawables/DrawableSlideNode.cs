@@ -96,7 +96,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // Avoiding Linq to minimize allocations, since this would be called every update of this node
             for (TouchSource t = TouchSource.Touch1; t <= TouchSource.Touch10; ++t)
             {
-                if (ReceivePositionalInputAt(touchInput.GetTouchPosition(t).Value))
+                if (touchInput.GetTouchPosition(t) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
                     return true;
             }
 
