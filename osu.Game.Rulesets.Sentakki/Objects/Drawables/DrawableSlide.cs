@@ -43,8 +43,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
+            bool hasResultAndFinishedTransforms(DrawableHitObject d) => d.Result.HasResult && Time.Current >= d.LatestTransformEndTime;
+
             // We also make sure all transforms have finished to avoid jank
-            if (NestedHitObjects.All(n => n.Result.HasResult && Time.Current >= n.LatestTransformEndTime))
+            if (NestedHitObjects.All(hasResultAndFinishedTransforms))
                 ApplyResult(Result.Judgement.MaxResult);
         }
 
