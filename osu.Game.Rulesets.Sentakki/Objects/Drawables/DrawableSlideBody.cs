@@ -119,11 +119,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // Used to hide and show segments accurately
         private void updatePathProgress()
         {
-            var target = SlideNodes.LastOrDefault(x => x.Result.IsHit);
-            if (target == null)
-                Slidepath.Progress = 0;
-            else
-                Slidepath.Progress = target.HitObject.Progress;
+            float progress = 0;
+
+            for (int i = 0; i < SlideNodes.Count; ++i)
+            {
+                if (!SlideNodes[i].Result.IsHit)
+                    break;
+
+                progress = SlideNodes[i].HitObject.Progress;
+            }
+
+            Slidepath.Progress = progress;
 
             pendingProgressUpdate = false;
         }
