@@ -84,11 +84,12 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 // We still enable masking to avoid BufferedContainer visual jank when it rotates
                 Masking = true;
 
-                Child = new BufferedContainer
+                Child = new FixedSizeBufferedContainer
                 {
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
+
                     Children = new Drawable[]
                     {
                         new Container
@@ -132,6 +133,23 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                     // This is so that we don't have a buffer bigger than what is needed
                     // If we plan to change the coverage radius often, this will instead be an anti-optimization
                     Size = new Vector2(value);
+                }
+            }
+
+            // This buffered container maintains a SSDQ unaffected by rotation, so that the backing texture isn't being reallocated due to resizes
+            private class FixedSizeBufferedContainer : BufferedContainer
+            {
+                [Resolved]
+                private SentakkiPlayfield sentakkiPlayfield { get; set; }
+
+                protected override Quad ComputeScreenSpaceDrawQuad()
+                {
+                    var SSDQDrawinfo = DrawInfo;
+
+                    // We apply a counter rotation so that the SSDQ retains the non-rotated Quad
+                    SSDQDrawinfo.ApplyTransform(AnchorPosition, Vector2.One, -sentakkiPlayfield.Rotation, Vector2.Zero, OriginPosition);
+
+                    return Quad.FromRectangle(DrawRectangle) * SSDQDrawinfo.Matrix;
                 }
             }
 
