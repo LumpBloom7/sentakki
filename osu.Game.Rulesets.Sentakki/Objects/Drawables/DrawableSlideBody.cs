@@ -144,8 +144,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Debug.Assert(HitObject.HitWindows != null);
 
             // Player completed all nodes, we consider this user triggered
-            if (SlideNodes.All(node => node.Result.HasResult))
-                userTriggered = true;
+            userTriggered = true;
+            for (int i = 0; i < SlideNodes.Count; ++i)
+            {
+                if (!SlideNodes[i].Result.HasResult)
+                {
+                    userTriggered = false;
+                    break;
+                }
+            }
 
             if (!userTriggered)
             {
