@@ -1,10 +1,8 @@
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
@@ -22,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             : base(hitObject) { }
 
         [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfig)
+        private void load()
         {
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
@@ -43,9 +41,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
+            bool hasResultAndFinishedTransforms(DrawableHitObject d) => d.Result.HasResult && Time.Current >= d.LatestTransformEndTime;
+
             // We also make sure all transforms have finished to avoid jank
-            if (NestedHitObjects.All(n => n.Result.HasResult && Time.Current >= n.LatestTransformEndTime))
-                ApplyResult(Result.Judgement.MaxResult);
+            for (int i = 0; i < NestedHitObjects.Count; i++)
+                if (!hasResultAndFinishedTransforms(NestedHitObjects[i]))
+                    return;
+
+            ApplyResult(Result.Judgement.MaxResult);
         }
 
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)

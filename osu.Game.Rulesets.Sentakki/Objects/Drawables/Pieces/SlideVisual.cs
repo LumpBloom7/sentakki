@@ -123,7 +123,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 for (int j = chevrons.Count - 1; j >= 0; j--)
                 {
                     var chevron = chevrons[j];
-                    chevron.FadeOut().Delay(currentOffset).FadeIn(fadeDuration * 2).Finally(c => c.UpdateProgress(progress));
+                    chevron.FadeOut().Delay(currentOffset).FadeIn(fadeDuration * 2).Finally(finalSteps);
                     currentOffset += fadeDuration / 2;
                 }
             }
@@ -131,6 +131,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             {
                 this.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
             }
+
+            void finalSteps(SlideChevron chevron) => chevron.UpdateProgress(progress);
         }
 
         public void PerformExitAnimation(double duration)

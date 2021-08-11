@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.EnumExtensions;
-using osu.Framework.Utils;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
