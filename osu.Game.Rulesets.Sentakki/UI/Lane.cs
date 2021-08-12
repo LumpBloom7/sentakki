@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -99,16 +99,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
 
-            if (touchInput.ActiveSources.Any())
-            {
-                foreach (var t in touchInput.ActiveSources)
-                    if (ReceivePositionalInputAt(touchInput.GetTouchPosition(t).Value)) ++count;
-            }
-            else if (IsHovered && usingSensor)
-            {
+            for (TouchSource t = TouchSource.Touch1; t <= TouchSource.Touch10; ++t)
+                if (touchInput.GetTouchPosition(t) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition)) ++count;
+
+            // We don't attempt to check mouse input if touch input is used
+            if (count == 0 && IsHovered && usingSensor)
                 foreach (var a in SentakkiActionInputManager.PressedActions)
                     if (a < SentakkiAction.Key1) ++count;
-            }
 
             currentKeys.Value = count;
         }
