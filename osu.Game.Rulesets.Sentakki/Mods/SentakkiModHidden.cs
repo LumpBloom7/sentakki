@@ -67,7 +67,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                     preemptTime = sb.HitObject.StartTime - sb.LifetimeStart;
                     fadeOutTime = sb.HitObject.Duration + preemptTime;
                     using (sb.BeginAbsoluteSequence(sb.HitObject.StartTime - preemptTime))
-                        sb.Slidepath.FadeOut(fadeOutTime);
+                        sb.Slidepath.FadeOutFromOne(fadeOutTime);
                     break;
             }
         }

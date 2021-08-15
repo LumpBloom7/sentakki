@@ -129,7 +129,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             }
             else
             {
-                this.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
+                chevrons.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
             }
 
             void finalSteps(SlideChevron chevron) => chevron.UpdateProgress(progress);
