@@ -27,7 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public bool[] PointInteractionState = new bool[11];
 
         private HitExplosion explosion;
-        private TouchBody touchBody;
+        public TouchBody TouchBody;
 
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
@@ -44,9 +44,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Size = new Vector2(105);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
-            Alpha = 0;
             AddRangeInternal(new Drawable[]{
-                touchBody = new TouchBody(),
+                TouchBody = new TouchBody(),
                 explosion = new HitExplosion()
             });
 
@@ -85,12 +84,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             double FadeIn = AdjustedAnimationDuration / 2;
             double moveTo = HitObject.HitWindows.WindowFor(HitResult.Ok);
 
-            this.FadeInFromZero(FadeIn);
+            TouchBody.FadeIn(FadeIn);
 
             using (BeginDelayedSequence(AdjustedAnimationDuration, true))
             {
-                touchBody.ResizeTo(90, moveTo, Easing.InCirc);
-                touchBody.BorderContainer.Delay(moveTo).FadeIn();
+                TouchBody.ResizeTo(90, moveTo, Easing.InCirc);
+                TouchBody.BorderContainer.Delay(moveTo).FadeIn();
             }
         }
 
@@ -129,7 +128,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 case ArmedState.Hit:
                     explosion.Explode();
-                    touchBody.FadeOut();
+                    TouchBody.FadeOut();
                     this.Delay(time_fade_hit).Expire();
 
                     break;

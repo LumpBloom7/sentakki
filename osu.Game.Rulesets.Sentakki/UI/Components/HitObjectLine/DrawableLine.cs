@@ -18,10 +18,9 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         public LineType Type;
         public DrawableLine()
         {
-            Anchor = Anchor.Centre;
-            Origin = Anchor.Centre;
+            RelativeSizeAxes = Axes.Both;
+            Anchor = Origin = Anchor.Centre;
             Scale = new Vector2(.22f);
-            Size = new Vector2(600);
             Alpha = 0;
         }
 

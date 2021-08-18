@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         public const float INTERSECTDISTANCE = 296.5f;
         public const float NOTESTARTDISTANCE = 66f;
 
-        private readonly LanedPlayfield lanedPlayfield;
+        public readonly LanedPlayfield LanedPlayfield;
         private readonly TouchPlayfield touchPlayfield;
 
         internal readonly Container AccentContainer;
@@ -57,7 +57,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.None;
             Rotation = 0;
-            Size = new Vector2(600);
+            Size = new Vector2(RINGSIZE);
             AddRangeInternal(new Drawable[]
             {
                 judgementPool = new DrawablePool<DrawableSentakkiJudgement>(8),
@@ -70,7 +70,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                         ring = new SentakkiRing(),
                     }
                 },
-                lanedPlayfield = new LanedPlayfield(),
+                LanedPlayfield = new LanedPlayfield(),
                 HitObjectContainer, // This only contains TouchHolds, which needs to be above others types
                 touchPlayfield = new TouchPlayfield(), // This only contains Touch, which needs a custom playfield to handle their input
                 judgementLayer = new Container<DrawableSentakkiJudgement>
@@ -78,7 +78,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     RelativeSizeAxes = Axes.Both,
                 }
             });
-            AddNested(lanedPlayfield);
+            AddNested(LanedPlayfield);
             AddNested(touchPlayfield);
             NewResult += onNewResult;
         }
@@ -123,7 +123,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             switch (h)
             {
                 case SentakkiLanedHitObject _:
-                    lanedPlayfield.Add(h);
+                    LanedPlayfield.Add(h);
                     break;
                 case Objects.Touch _:
                     touchPlayfield.Add(h);
