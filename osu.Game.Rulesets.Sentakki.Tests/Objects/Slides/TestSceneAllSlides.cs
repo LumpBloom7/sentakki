@@ -9,8 +9,10 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Testing;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
+using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
@@ -31,7 +33,11 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         public TestSceneAllSlides()
         {
             Add(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(62));
-            Add(new SentakkiRing());
+            Add(new SentakkiRing()
+            {
+                RelativeSizeAxes = Axes.None,
+                Size = new Vector2(SentakkiPlayfield.RINGSIZE)
+            });
             Add(slide = new SlideVisual());
 
             AddSliderStep("Path ID", 0, SlidePaths.VALIDPATHS.Count - 1, 0, p =>
