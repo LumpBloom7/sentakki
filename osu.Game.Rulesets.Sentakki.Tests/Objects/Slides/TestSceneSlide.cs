@@ -76,7 +76,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                     Size = new osuTK.Vector2(10),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Position = node.Position.Value,
+                    Position = node.Position,
                     Masking = true,
                     Child = new Box
                     {
