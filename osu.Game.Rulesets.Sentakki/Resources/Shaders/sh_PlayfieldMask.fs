@@ -17,5 +17,5 @@ lowp vec4 getColourAt(highp vec2 diff, highp vec2 size, lowp vec4 originalColour
 
 void main(void)
 {
-    gl_FragColor = mix(getColourAt(maskPosition - v_Position, maskRadius, v_Colour), vec4(0, 0.0, 0, 1.0), 0);
+    gl_FragColor = mix(getColourAt(maskPosition - v_Position, maskRadius, v_Colour), vec4(0.0, 0.0, 0.0, 1.0), 0.0);
 }
