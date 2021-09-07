@@ -4,7 +4,7 @@ varying lowp vec4 v_Colour;
 uniform highp vec2 maskPosition;
 uniform highp vec2 maskRadius;
 
-const mediump float smoothness = 2;
+const mediump float smoothness = 2.0;
 
 // highp precision is necessary for vertex positions to prevent catastrophic failure on GL_ES platforms
 lowp vec4 getColourAt(highp vec2 diff, highp vec2 size, lowp vec4 originalColour)
