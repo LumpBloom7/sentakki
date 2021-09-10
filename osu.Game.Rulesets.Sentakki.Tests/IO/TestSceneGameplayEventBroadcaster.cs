@@ -23,13 +23,14 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
 
             AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
             AddStep("Send message", () => broadcaster.Broadcast(new TransimssionData(TransimssionData.InfoType.MetaStartPlay, 3)));
-            AddStep("CreateClient", () => client = new TestBroadcastClient(text));
+            AddStep("Create Client", () => client = new TestBroadcastClient(text));
+            AddUntilStep("Client connected", () => client.IsClientConnected);
             AddStep("Send message 1", () => broadcaster.Broadcast(new TransimssionData(TransimssionData.InfoType.HitPerfect, 3)));
-            AddUntilStep("Client received message 1", () => text.Text == new TransimssionData(TransimssionData.InfoType.HitPerfect, 3).ToString());
+            AddAssert("Client received message 1", () => text.Text == new TransimssionData(TransimssionData.InfoType.HitPerfect, 3).ToString());
             AddStep("Send message 2", () => broadcaster.Broadcast(new TransimssionData(TransimssionData.InfoType.MetaEndPlay, 3)));
-            AddUntilStep("Client received message 2", () => text.Text == new TransimssionData(TransimssionData.InfoType.MetaEndPlay, 3).ToString());
+            AddAssert("Client received message 2", () => text.Text == new TransimssionData(TransimssionData.InfoType.MetaEndPlay, 3).ToString());
             AddStep("Send message 3", () => broadcaster.Broadcast(new TransimssionData(TransimssionData.InfoType.Miss, 3)));
-            AddUntilStep("Client received message 3", () => text.Text == new TransimssionData(TransimssionData.InfoType.Miss, 3).ToString());
+            AddAssert("Client received message 3", () => text.Text == new TransimssionData(TransimssionData.InfoType.Miss, 3).ToString());
             AddStep("Kill client", () => { client?.Dispose(); client = null; });
             AddStep("Kill broadcaster", () => broadcaster?.Dispose());
         }
@@ -48,6 +49,8 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             private SpriteText text;
 
             private bool running = true;
+
+            public bool IsClientConnected => pipeServer.IsConnected;
 
             private Thread readThread;
 
