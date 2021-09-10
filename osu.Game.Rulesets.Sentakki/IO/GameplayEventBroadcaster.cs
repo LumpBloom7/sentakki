@@ -41,14 +41,11 @@ namespace osu.Game.Rulesets.Sentakki.IO
             }
         }
 
-        public void Broadcast(string message)
+        public void Broadcast(TransimssionData packet)
         {
             if (!connectionValid()) return;
 
-            var buffer = Encoding.UTF8.GetBytes(message);
-            var len = (byte)buffer.Length;
-            pipeServer.WriteByte(len);
-            pipeServer.Write(buffer, 0, len);
+            pipeServer.WriteByte(packet.RawData);
         }
 
         private bool connectionValid()

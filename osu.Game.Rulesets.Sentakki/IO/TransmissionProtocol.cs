@@ -4,6 +4,7 @@ namespace osu.Game.Rulesets.Sentakki.IO
     {
         public enum InfoType : byte
         {
+            None,
             MetaStartPlay,
             MetaEndPlay,
 
@@ -40,5 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.IO
         public InfoType Type;
 
         public int Value;
+
+        public override string ToString() => Type.ToString() + " " + Value;
     }
 }

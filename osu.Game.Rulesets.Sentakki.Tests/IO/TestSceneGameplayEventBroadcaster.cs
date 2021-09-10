@@ -1,7 +1,6 @@
 using System;
 using System.IO.Pipes;
 using System.Security.Principal;
-using System.Text;
 using System.Threading;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Rulesets.Sentakki.IO;
@@ -23,14 +22,14 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             });
 
             AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
-            AddStep("Send message", () => broadcaster.Broadcast("Testing1"));
+            AddStep("Send message", () => broadcaster.Broadcast(new TransimssionData(TransimssionData.InfoType.MetaStartPlay, 3)));
             AddStep("CreateClient", () => client = new TestBroadcastClient(text));
-            AddStep("Send message 1", () => broadcaster.Broadcast("Testing1"));
-            AddAssert("Client received message 1", () => text.Text == "Testing1");
-            AddStep("Send message 2", () => broadcaster.Broadcast("Testing2"));
-            AddAssert("Client received message 2", () => text.Text == "Testing2");
-            AddStep("Send message 3", () => broadcaster.Broadcast("Testing3"));
-            AddAssert("Client received message 3", () => text.Text == "Testing3");
+            AddStep("Send message 1", () => broadcaster.Broadcast(new TransimssionData(TransimssionData.InfoType.HitPerfect, 3)));
+            AddUntilStep("Client received message 1", () => text.Text == new TransimssionData(TransimssionData.InfoType.HitPerfect, 3).ToString());
+            AddStep("Send message 2", () => broadcaster.Broadcast(new TransimssionData(TransimssionData.InfoType.MetaEndPlay, 3)));
+            AddUntilStep("Client received message 2", () => text.Text == new TransimssionData(TransimssionData.InfoType.MetaEndPlay, 3).ToString());
+            AddStep("Send message 3", () => broadcaster.Broadcast(new TransimssionData(TransimssionData.InfoType.Miss, 3)));
+            AddUntilStep("Client received message 3", () => text.Text == new TransimssionData(TransimssionData.InfoType.Miss, 3).ToString());
             AddStep("Kill client", () => { client?.Dispose(); client = null; });
             AddStep("Kill broadcaster", () => broadcaster?.Dispose());
         }
@@ -71,13 +70,10 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
                         pipeServer.Connect();
                     try
                     {
-                        var len = pipeServer.ReadByte();
-                        if (len > 0)
+                        byte packet = (byte)pipeServer.ReadByte();
+                        if (packet > 0)
                         {
-                            var buffer = new byte[len];
-
-                            pipeServer.Read(buffer, 0, len);
-                            text.Text = Encoding.UTF8.GetString(buffer);
+                            text.Text = new TransimssionData(packet).ToString();
                         }
                     }
                     catch
