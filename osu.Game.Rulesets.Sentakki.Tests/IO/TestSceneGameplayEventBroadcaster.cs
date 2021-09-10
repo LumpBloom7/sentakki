@@ -7,7 +7,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Game.Rulesets.Sentakki.IO;
 using osu.Game.Tests.Visual;
 
-namespace osu.Game.Rulesets.Sentakki.Tests
+namespace osu.Game.Rulesets.Sentakki.Tests.IO
 {
     public class TestSceneGameplayEventBroadcaster : OsuTestScene
     {
