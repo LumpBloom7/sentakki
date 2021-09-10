@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.IO
             }
         }
 
-        public void Broadcast(TransimssionData packet)
+        public void Broadcast(TransmissionData packet)
         {
             if (!connectionValid()) return;
 

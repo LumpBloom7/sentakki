@@ -1,6 +1,6 @@
 namespace osu.Game.Rulesets.Sentakki.IO
 {
-    public struct TransimssionData
+    public struct TransmissionData
     {
         public enum InfoType : byte
         {
@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.IO
             Miss,
         }
 
-        public TransimssionData(byte input)
+        public TransmissionData(byte input)
         {
             RawData = input;
 
@@ -28,7 +28,7 @@ namespace osu.Game.Rulesets.Sentakki.IO
             Type = (InfoType)input;
         }
 
-        public TransimssionData(InfoType type, int value)
+        public TransmissionData(InfoType type, int value)
         {
             RawData = (byte)((int)type << 3);
             RawData += (byte)(value);

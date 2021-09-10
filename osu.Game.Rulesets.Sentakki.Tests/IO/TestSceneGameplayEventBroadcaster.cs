@@ -22,15 +22,15 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             });
 
             AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
-            AddStep("Send message", () => broadcaster.Broadcast(new TransimssionData(TransimssionData.InfoType.MetaStartPlay, 3)));
+            AddStep("Send message", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.MetaStartPlay, 3)));
             AddStep("Create Client", () => client = new TestBroadcastClient(text));
             AddUntilStep("Client connected", () => client.IsClientConnected);
-            AddStep("Send message 1", () => broadcaster.Broadcast(new TransimssionData(TransimssionData.InfoType.HitPerfect, 3)));
-            AddAssert("Client received message 1", () => text.Text == new TransimssionData(TransimssionData.InfoType.HitPerfect, 3).ToString());
-            AddStep("Send message 2", () => broadcaster.Broadcast(new TransimssionData(TransimssionData.InfoType.MetaEndPlay, 3)));
-            AddAssert("Client received message 2", () => text.Text == new TransimssionData(TransimssionData.InfoType.MetaEndPlay, 3).ToString());
-            AddStep("Send message 3", () => broadcaster.Broadcast(new TransimssionData(TransimssionData.InfoType.Miss, 3)));
-            AddAssert("Client received message 3", () => text.Text == new TransimssionData(TransimssionData.InfoType.Miss, 3).ToString());
+            AddStep("Send message 1", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.HitPerfect, 3)));
+            AddAssert("Client received message 1", () => text.Text == new TransmissionData(TransmissionData.InfoType.HitPerfect, 3).ToString());
+            AddStep("Send message 2", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.MetaEndPlay, 3)));
+            AddAssert("Client received message 2", () => text.Text == new TransmissionData(TransmissionData.InfoType.MetaEndPlay, 3).ToString());
+            AddStep("Send message 3", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.Miss, 3)));
+            AddAssert("Client received message 3", () => text.Text == new TransmissionData(TransmissionData.InfoType.Miss, 3).ToString());
             AddStep("Kill client", () => { client?.Dispose(); client = null; });
             AddStep("Kill broadcaster", () => broadcaster?.Dispose());
         }
@@ -76,7 +76,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
                         byte packet = (byte)pipeServer.ReadByte();
                         if (packet > 0)
                         {
-                            text.Text = new TransimssionData(packet).ToString();
+                            text.Text = new TransmissionData(packet).ToString();
                         }
                     }
                     catch
