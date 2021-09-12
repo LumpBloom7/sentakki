@@ -8,6 +8,10 @@ namespace osu.Game.Rulesets.Sentakki.IO
     {
         private NamedPipeServerStream pipeServer;
 
+        // This is used to store the message that needs to be sent
+        // In the event that a broadcast fails, we can resend this message once a new connection is established.
+        private TransmissionData queuedData;
+
         public GameplayEventBroadcaster()
         {
             pipeServer = new NamedPipeServerStream("senPipe", PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
@@ -30,6 +34,9 @@ namespace osu.Game.Rulesets.Sentakki.IO
             {
                 pipeServer.EndWaitForConnection(result);
                 isWaitingForClient = false;
+
+                if (queuedData != TransmissionData.Empty)
+                    Broadcast(queuedData);
             }
             catch
             {
@@ -43,9 +50,11 @@ namespace osu.Game.Rulesets.Sentakki.IO
 
         public void Broadcast(TransmissionData packet)
         {
+            queuedData = packet;
             if (!connectionValid()) return;
 
             pipeServer.WriteByte(packet.RawData);
+            queuedData = TransmissionData.Empty;
         }
 
         private bool connectionValid()
