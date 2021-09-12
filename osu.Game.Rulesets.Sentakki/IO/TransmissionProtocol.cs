@@ -1,7 +1,11 @@
+using System;
+
 namespace osu.Game.Rulesets.Sentakki.IO
 {
-    public struct TransmissionData
+    public struct TransmissionData : IEquatable<TransmissionData>
     {
+        public static TransmissionData Empty => new TransmissionData(0);
+
         public enum InfoType : byte
         {
             None,
@@ -43,5 +47,15 @@ namespace osu.Game.Rulesets.Sentakki.IO
         public int Value;
 
         public override string ToString() => Type.ToString() + " " + Value;
+
+
+        public override bool Equals(object obj) => obj is TransmissionData other && Equals(other);
+
+        public bool Equals(TransmissionData other) => Type == other.Type && Value == other.Value;
+
+        public override int GetHashCode() => (Type, Value).GetHashCode();
+
+        public static bool operator ==(TransmissionData a, TransmissionData b) => a.Equals(b);
+        public static bool operator !=(TransmissionData a, TransmissionData b) => !a.Equals(b);
     }
 }
