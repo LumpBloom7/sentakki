@@ -31,15 +31,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             AddAssert("Client received message 2", () => text.Text == new TransmissionData(TransmissionData.InfoType.MetaEndPlay, 3).ToString());
             AddStep("Send message 3", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.Miss, 3)));
             AddAssert("Client received message 3", () => text.Text == new TransmissionData(TransmissionData.InfoType.Miss, 3).ToString());
-            AddStep("Kill client", () => { client?.Dispose(); client = null; });
-            AddStep("Kill broadcaster", () => broadcaster?.Dispose());
-        }
-
-        protected override void Dispose(bool isDisposing)
-        {
-            base.Dispose(isDisposing);
-            client?.Dispose();
-            broadcaster?.Dispose();
         }
 
         private class TestBroadcastClient : IDisposable

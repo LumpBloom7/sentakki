@@ -4,7 +4,7 @@ using System.Text;
 
 namespace osu.Game.Rulesets.Sentakki.IO
 {
-    public class GameplayEventBroadcaster : IDisposable
+    public class GameplayEventBroadcaster
     {
         private NamedPipeServerStream pipeServer;
 
@@ -72,14 +72,6 @@ namespace osu.Game.Rulesets.Sentakki.IO
 
             // We assume that connection is valid at this point
             return true;
-        }
-
-        public void Dispose()
-        {
-            pipeServer.Disconnect();
-            pipeServer.Dispose();
-
-            isWaitingForClient = true;
         }
     }
 }
