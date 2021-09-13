@@ -8,6 +8,7 @@ using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.IO;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.UI;
@@ -17,6 +18,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
 {
     public class Lane : Playfield, IKeyBindingHandler<SentakkiAction>
     {
+        [Resolved]
+        private GameplayEventBroadcaster eventBroadcaster { get; set; }
+
         public int LaneNumber { get; set; }
 
         public Action<Drawable> OnLoaded;
@@ -116,7 +120,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 SentakkiActionInputManager.TriggerReleased(SentakkiAction.Key1 + LaneNumber);
 
             if (keys.NewValue > keys.OldValue)
+            {
                 SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + LaneNumber);
+                eventBroadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.LanePressed, LaneNumber));
+            }
         }
 
         public bool OnPressed(SentakkiAction action)

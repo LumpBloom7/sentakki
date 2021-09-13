@@ -16,6 +16,8 @@ namespace osu.Game.Rulesets.Sentakki.IO
             HitGreat,
             HitGood,
             Miss,
+
+            LanePressed,
         }
 
         public TransmissionData(byte input)

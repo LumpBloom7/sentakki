@@ -9,6 +9,7 @@ using osu.Game.Replays;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.IO;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.UI;
@@ -30,6 +31,17 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override void LoadComplete()
         {
             (Config as SentakkiRulesetConfigManager)?.BindWith(SentakkiRulesetSettings.LaneInputMode, laneInputMode);
+        }
+
+        private GameplayEventBroadcaster eventBroadcaster;
+
+        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
+        {
+            var dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+
+            dependencies.CacheAs(eventBroadcaster = new GameplayEventBroadcaster());
+
+            return dependencies;
         }
 
         // Input specifics (sensor/button) for replay and gameplay
@@ -60,5 +72,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override ResumeOverlay CreateResumeOverlay() => new SentakkiResumeOverlay();
 
         protected override Framework.Input.PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset?.RulesetInfo);
+
+        protected override void Dispose(bool isDisposing)
+        {
+            eventBroadcaster.Dispose();
+            base.Dispose(isDisposing);
+        }
     }
 }
