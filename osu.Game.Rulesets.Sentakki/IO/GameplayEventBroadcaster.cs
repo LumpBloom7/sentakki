@@ -1,12 +1,11 @@
 using System;
 using System.IO.Pipes;
-using System.Text;
 
 namespace osu.Game.Rulesets.Sentakki.IO
 {
     public class GameplayEventBroadcaster : IDisposable
     {
-        private NamedPipeServerStream pipeServer;
+        private readonly NamedPipeServerStream pipeServer;
 
         // This is used to store the message that needs to be sent
         // In the event that a broadcast fails, we can resend this message once a new connection is established.

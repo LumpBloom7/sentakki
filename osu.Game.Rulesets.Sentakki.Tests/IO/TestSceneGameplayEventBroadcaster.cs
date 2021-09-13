@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
     {
         private GameplayEventBroadcaster broadcaster;
         private TestBroadcastClient client;
-        private SpriteText text;
+        private readonly SpriteText text;
 
         public TestSceneGameplayEventBroadcaster()
         {
@@ -82,7 +82,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             public void Dispose()
             {
                 running = false;
-                pipeServer.Close();
                 pipeServer.Dispose();
             }
         }
