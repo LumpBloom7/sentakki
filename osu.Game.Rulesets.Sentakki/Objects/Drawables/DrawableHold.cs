@@ -4,6 +4,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
@@ -198,12 +199,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             HoldStartTime = null;
         }
 
-        public virtual bool OnPressed(SentakkiAction action)
+        public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)
         {
             if (AllJudged)
                 return false;
 
-            if (action != SentakkiAction.Key1 + HitObject.Lane)
+            if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
                 return false;
 
             if (beginHoldAt(Time.Current - Head.HitObject.StartTime))
@@ -215,12 +216,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             return true;
         }
 
-        public void OnReleased(SentakkiAction action)
+        public void OnReleased(KeyBindingReleaseEvent<SentakkiAction> e)
         {
             if (AllJudged) return;
             if (HoldStartTime is null) return;
 
-            if (action != SentakkiAction.Key1 + HitObject.Lane)
+            if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
                 return;
 
             endHold();
