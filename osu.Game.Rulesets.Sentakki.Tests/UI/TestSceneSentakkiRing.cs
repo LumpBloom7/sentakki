@@ -1,7 +1,10 @@
 ﻿using NUnit.Framework;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
+using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.UI
 {
@@ -21,7 +24,12 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
                 });
             });
 
-            AddStep("Create Ring", () => Add(ring = new SentakkiRing()));
+            AddStep("Create Ring", () => Add(ring = new SentakkiRing()
+            {
+                RelativeSizeAxes = Axes.None,
+                Size = new Vector2(SentakkiPlayfield.RINGSIZE)
+            }));
+
             AddUntilStep("Ring loaded", () => ring.IsLoaded && ring.Alpha == 1);
             AddToggleStep("Toggle notestart Indicators", b => ring.NoteStartIndicators.Value = b);
             AddRepeatStep("Trigger Kiai Beat", () => ring.KiaiBeat(), 5);

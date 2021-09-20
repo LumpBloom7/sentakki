@@ -5,6 +5,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
@@ -126,23 +127,23 @@ namespace osu.Game.Rulesets.Sentakki.UI
             }
         }
 
-        public bool OnPressed(SentakkiAction action)
+        public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)
         {
             if (usingSensor) return false;
 
-            if (action >= SentakkiAction.Key1 || !IsHovered) return false;
+            if (e.Action >= SentakkiAction.Key1 || !IsHovered) return false;
 
-            buttonTriggerState[action] = true;
+            buttonTriggerState[e.Action] = true;
             return false;
         }
 
-        public void OnReleased(SentakkiAction action)
+        public void OnReleased(KeyBindingReleaseEvent<SentakkiAction> e)
         {
             if (usingSensor) return;
 
-            if (action >= SentakkiAction.Key1) return;
+            if (e.Action >= SentakkiAction.Key1) return;
 
-            buttonTriggerState[action] = false;
+            buttonTriggerState[e.Action] = false;
         }
         #endregion
     }
