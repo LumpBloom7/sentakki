@@ -122,8 +122,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             if (keys.NewValue > keys.OldValue)
             {
-                SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + LaneNumber);
                 eventBroadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.LanePressed, LaneNumber));
+                SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + LaneNumber);
             }
         }
 
