@@ -43,20 +43,20 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
 
         private class TestBroadcastClient : IDisposable
         {
-            private readonly NamedPipeClientStream pipeServer;
+            private readonly NamedPipeClientStream pipeClient;
 
             private readonly SpriteText text;
 
             private bool running = true;
 
-            public bool IsClientConnected => pipeServer.IsConnected;
+            public bool IsClientConnected => pipeClient.IsConnected;
 
             private readonly Thread readThread;
 
             public TestBroadcastClient(SpriteText outputText)
             {
                 text = outputText;
-                pipeServer = new NamedPipeClientStream(".", "senPipe",
+                pipeClient = new NamedPipeClientStream(".", "senPipe",
                         PipeDirection.In, PipeOptions.Asynchronous,
                         TokenImpersonationLevel.Impersonation);
 
@@ -71,11 +71,11 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             {
                 while (running)
                 {
-                    if (!pipeServer.IsConnected)
+                    if (!pipeClient.IsConnected)
                     {
                         try
                         {
-                            pipeServer.ConnectAsync().Wait(cancellationToken);
+                            pipeClient.ConnectAsync().Wait(cancellationToken);
                         }
                         catch (OperationCanceledException)
                         {
@@ -83,7 +83,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
                         }
                     }
 
-                    TransmissionData packet = new TransmissionData((byte)pipeServer.ReadByte());
+                    TransmissionData packet = new TransmissionData((byte)pipeClient.ReadByte());
 
                     // Server has shut down
                     if (packet == TransmissionData.Kill)
@@ -98,7 +98,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             {
                 running = false;
                 cancellationTokenSource.Cancel();
-                pipeServer.Dispose();
+                pipeClient.Dispose();
             }
         }
     }
