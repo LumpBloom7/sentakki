@@ -18,6 +18,10 @@ namespace osu.Game.Rulesets.Sentakki.IO
             Miss,
 
             LanePressed,
+
+            // an 0xFF byte is sent when broadcaster is killed
+            // After shifting the bits right 3 times, we get 31
+            Kill = 31,
         }
 
         public TransmissionData(byte input)
@@ -53,7 +57,7 @@ namespace osu.Game.Rulesets.Sentakki.IO
 
         public override bool Equals(object obj) => obj is TransmissionData other && Equals(other);
 
-        public bool Equals(TransmissionData other) => Type == other.Type && Value == other.Value;
+        public bool Equals(TransmissionData other) => (Type == InfoType.Kill && other.Type == InfoType.Kill) || (Type == other.Type && Value == other.Value);
 
         public override int GetHashCode() => (Type, Value).GetHashCode();
 

@@ -25,5 +25,14 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             Assert.AreEqual(testtype, encoded.Type);
             Assert.AreEqual(testvalue, encoded.Value);
         }
+
+        [Test]
+        public void TestKillEquality()
+        {
+            var packet1 = new TransmissionData(TransmissionData.InfoType.Kill, 7); // Baseline
+            var packet2 = new TransmissionData(TransmissionData.InfoType.Kill, 0); // Lightly altered, but should still be considered the same, because of the kill flag
+
+            Assert.AreEqual(packet1, packet2);
+        }
     }
 }
