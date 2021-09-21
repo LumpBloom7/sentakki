@@ -6,6 +6,8 @@ namespace osu.Game.Rulesets.Sentakki.IO
     {
         public static TransmissionData Empty => new TransmissionData(0);
 
+        public static TransmissionData Kill => new TransmissionData(InfoType.Kill, 7);
+
         public enum InfoType : byte
         {
             None,
