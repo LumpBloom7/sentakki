@@ -34,6 +34,12 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             AddStep("Dispose broadcaster", () => broadcaster.Dispose());
         }
 
+        protected override void Dispose(bool isDisposing)
+        {
+            base.Dispose(isDisposing);
+            client?.Dispose();
+        }
+
         private class TestBroadcastClient : IDisposable
         {
             private NamedPipeClientStream pipeServer;
@@ -57,31 +63,40 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
                 readThread.Start();
             }
 
+            private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            private CancellationToken cancellationToken => cancellationTokenSource.Token;
+
             private void clientLoop()
             {
                 while (running)
                 {
                     if (!pipeServer.IsConnected)
-                        pipeServer.Connect();
+                    {
+                        try
+                        {
+                            pipeServer.ConnectAsync().Wait(cancellationToken);
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            break;
+                        }
+                    }
 
-                    try
-                    {
-                        TransmissionData packet = new TransmissionData((byte)pipeServer.ReadByte());
-                        if (packet != TransmissionData.Empty)
-                            text.Text = packet.ToString();
-                    }
-                    catch
-                    {
-                        pipeServer.Close();
-                    }
+                    TransmissionData packet = new TransmissionData((byte)pipeServer.ReadByte());
+
+                    // Server has shut down
+                    if (packet == TransmissionData.Kill)
+                        continue;
+
+                    if (packet != TransmissionData.Empty)
+                        text.Text = packet.ToString();
                 }
-                pipeServer.Close();
-                pipeServer.Dispose();
             }
 
             public void Dispose()
             {
                 running = false;
+                cancellationTokenSource.Cancel();
                 pipeServer.Dispose();
             }
         }
