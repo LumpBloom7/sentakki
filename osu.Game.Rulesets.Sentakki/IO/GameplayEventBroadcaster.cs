@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.IO.Pipes;
 
 namespace osu.Game.Rulesets.Sentakki.IO
@@ -35,18 +36,16 @@ namespace osu.Game.Rulesets.Sentakki.IO
             {
                 pipeServer.EndWaitForConnection(result);
                 isWaitingForClient = false;
-
-                if (queuedData != TransmissionData.Empty)
-                    Broadcast(queuedData);
             }
-            catch
+            catch (IOException)
             {
-                // If the pipe is closed before a client ever connects,
-                // EndWaitForConnection() will throw an exception.
-
-                // If we are in here that is probably the case so just return.
+                // The server has been disposed, abort wait
                 return;
             }
+
+            if (queuedData != TransmissionData.Empty)
+                Broadcast(queuedData);
+
         }
 
         public void Broadcast(TransmissionData packet)
@@ -66,8 +65,9 @@ namespace osu.Game.Rulesets.Sentakki.IO
             if (isWaitingForClient) return false;
 
             try { pipeServer.WriteByte(0); }
-            catch
+            catch (IOException)
             {
+                // The client has suddenly disconnected, we must disconnect on our end, and wait for a new connection.
                 pipeServer.Disconnect();
                 onClientDisconnected();
 

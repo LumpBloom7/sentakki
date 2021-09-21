@@ -32,6 +32,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             AddStep("Send message 3", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.Miss, 3)));
             AddAssert("Client received message 3", () => text.Text == new TransmissionData(TransmissionData.InfoType.Miss, 3).ToString());
             AddStep("Dispose broadcaster", () => broadcaster.Dispose());
+            AddStep("Dispose client", () => client?.Dispose());
         }
 
         protected override void Dispose(bool isDisposing)
@@ -42,15 +43,15 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
 
         private class TestBroadcastClient : IDisposable
         {
-            private NamedPipeClientStream pipeServer;
+            private readonly NamedPipeClientStream pipeServer;
 
-            private SpriteText text;
+            private readonly SpriteText text;
 
             private bool running = true;
 
             public bool IsClientConnected => pipeServer.IsConnected;
 
-            private Thread readThread;
+            private readonly Thread readThread;
 
             public TestBroadcastClient(SpriteText outputText)
             {
@@ -63,7 +64,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
                 readThread.Start();
             }
 
-            private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             private CancellationToken cancellationToken => cancellationTokenSource.Token;
 
             private void clientLoop()
