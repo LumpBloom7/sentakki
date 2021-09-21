@@ -63,13 +63,12 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
                 {
                     if (!pipeServer.IsConnected)
                         pipeServer.Connect();
+
                     try
                     {
-                        byte packet = (byte)pipeServer.ReadByte();
-                        if (packet > 0)
-                        {
-                            text.Text = new TransmissionData(packet).ToString();
-                        }
+                        TransmissionData packet = new TransmissionData((byte)pipeServer.ReadByte());
+                        if (packet != TransmissionData.Empty)
+                            text.Text = packet.ToString();
                     }
                     catch
                     {
