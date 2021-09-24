@@ -37,7 +37,7 @@ namespace osu.Game.Rulesets.Sentakki.IO
                 pipeServer.EndWaitForConnection(result);
                 isWaitingForClient = false;
             }
-            catch (IOException)
+            catch
             {
                 // The server has been disposed, abort wait
                 return;

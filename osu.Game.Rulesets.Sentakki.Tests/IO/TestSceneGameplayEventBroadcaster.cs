@@ -26,11 +26,11 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             AddStep("Create Client", () => client = new TestBroadcastClient(text));
             AddUntilStep("Client connected", () => client.IsClientConnected);
             AddStep("Send message 1", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.HitPerfect, 3)));
-            AddAssert("Client received message 1", () => text.Text == new TransmissionData(TransmissionData.InfoType.HitPerfect, 3).ToString());
+            AddUntilStep("Client received message 1", () => text.Text == new TransmissionData(TransmissionData.InfoType.HitPerfect, 3).ToString());
             AddStep("Send message 2", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.MetaEndPlay, 3)));
-            AddAssert("Client received message 2", () => text.Text == new TransmissionData(TransmissionData.InfoType.MetaEndPlay, 3).ToString());
+            AddUntilStep("Client received message 2", () => text.Text == new TransmissionData(TransmissionData.InfoType.MetaEndPlay, 3).ToString());
             AddStep("Send message 3", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.Miss, 3)));
-            AddAssert("Client received message 3", () => text.Text == new TransmissionData(TransmissionData.InfoType.Miss, 3).ToString());
+            AddUntilStep("Client received message 3", () => text.Text == new TransmissionData(TransmissionData.InfoType.Miss, 3).ToString());
             AddStep("Dispose broadcaster", () => broadcaster.Dispose());
             AddStep("Dispose client", () => client?.Dispose());
         }
@@ -71,26 +71,24 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             {
                 while (running)
                 {
-                    if (!pipeClient.IsConnected)
+                    try
                     {
-                        try
-                        {
+                        if (!pipeClient.IsConnected)
                             pipeClient.ConnectAsync().Wait(cancellationToken);
-                        }
-                        catch (OperationCanceledException)
-                        {
-                            break;
-                        }
+
+                        TransmissionData packet = new TransmissionData((byte)pipeClient.ReadByte());
+
+                        // Server has shut down
+                        if (packet == TransmissionData.Kill)
+                            continue;
+
+                        if (packet != TransmissionData.Empty)
+                            text.Text = packet.ToString();
                     }
-
-                    TransmissionData packet = new TransmissionData((byte)pipeClient.ReadByte());
-
-                    // Server has shut down
-                    if (packet == TransmissionData.Kill)
-                        continue;
-
-                    if (packet != TransmissionData.Empty)
-                        text.Text = packet.ToString();
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
                 }
             }
 
