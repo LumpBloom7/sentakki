@@ -2,6 +2,7 @@ using System;
 using System.IO.Pipes;
 using System.Security.Principal;
 using System.Threading;
+using NUnit.Framework;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Rulesets.Sentakki.IO;
 using osu.Game.Tests.Visual;
@@ -20,9 +21,20 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             {
                 Text = "Nothing here yet"
             });
+        }
 
+        [SetUp]
+        public void SetUpClient()
+        {
+            // Dispose existing broadcaster and client
+            client?.Dispose();
+            broadcaster?.Dispose();
+        }
+
+        [Test]
+        public void TestNormalOperation()
+        {
             AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
-            AddStep("Send message", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.MetaStartPlay, 3)));
             AddStep("Create Client", () => client = new TestBroadcastClient(text));
             AddUntilStep("Client connected", () => client.IsClientConnected);
             AddStep("Send message 1", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.HitPerfect, 3)));
@@ -31,8 +43,43 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             AddUntilStep("Client received message 2", () => text.Text == new TransmissionData(TransmissionData.InfoType.MetaEndPlay, 3).ToString());
             AddStep("Send message 3", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.Miss, 3)));
             AddUntilStep("Client received message 3", () => text.Text == new TransmissionData(TransmissionData.InfoType.Miss, 3).ToString());
+            AddStep("Client disconnect", () => client?.Dispose());
             AddStep("Dispose broadcaster", () => broadcaster.Dispose());
-            AddStep("Dispose client", () => client?.Dispose());
+        }
+
+        [Test]
+        public void TestOperationWithoutClient()
+        {
+            AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
+            AddStep("Send message 1", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.HitPerfect, 3)));
+            AddStep("Dispose broadcaster", () => broadcaster.Dispose());
+        }
+
+        [Test]
+        public void TestOperationWithClientDisconnect()
+        {
+            AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
+            AddStep("Create Client", () => client = new TestBroadcastClient(text));
+            AddUntilStep("Client connected", () => client.IsClientConnected);
+            AddStep("Client disconnect", () => client?.Dispose());
+            AddStep("Send message 1", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.HitPerfect, 3)));
+            AddStep("Dispose broadcaster", () => broadcaster.Dispose());
+        }
+
+        // This is just to ensure my sample client implementation holds up
+        // So others can be confident they aren't getting a sample that doesn't work
+        [Test]
+        public void TestClientOperationWithServerReconnect()
+        {
+            AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
+            AddStep("Create Client", () => client = new TestBroadcastClient(text));
+            AddUntilStep("Client connected", () => client.IsClientConnected);
+            AddStep("Dispose broadcaster", () => broadcaster.Dispose());
+            AddStep("Start new broadcaster", () => broadcaster = new GameplayEventBroadcaster());
+            AddUntilStep("Client connected", () => client.IsClientConnected);
+            AddStep("Send message 1", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.HitPerfect, 3)));
+            AddUntilStep("Client received message 1", () => text.Text == new TransmissionData(TransmissionData.InfoType.HitPerfect, 3).ToString());
+            AddStep("Dispose broadcaster", () => broadcaster.Dispose());
         }
 
         protected override void Dispose(bool isDisposing)
