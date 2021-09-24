@@ -91,7 +91,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
 
         private class TestBroadcastClient : IDisposable
         {
-            private readonly NamedPipeClientStream pipeClient;
+            private NamedPipeClientStream pipeClient;
 
             private readonly SpriteText text;
 
@@ -128,7 +128,14 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
 
                         // Server has shut down
                         if (packet == TransmissionData.Kill)
-                            continue;
+                        {
+                            // On non-Windows platforms, the client doesn't automatically reconnect
+                            // So we must recreate the client to ensure safety;
+                            pipeClient.Dispose();
+                            pipeClient = new NamedPipeClientStream(".", "senPipe",
+                                    PipeDirection.In, PipeOptions.Asynchronous,
+                                    TokenImpersonationLevel.Impersonation);
+                        }
 
                         if (packet != TransmissionData.Empty)
                             text.Text = packet.ToString();
