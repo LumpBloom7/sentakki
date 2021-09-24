@@ -86,6 +86,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
         {
             base.Dispose(isDisposing);
             client?.Dispose();
+            broadcaster?.Dispose();
         }
 
         private class TestBroadcastClient : IDisposable
