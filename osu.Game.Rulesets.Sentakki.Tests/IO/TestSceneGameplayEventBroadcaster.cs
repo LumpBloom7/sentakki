@@ -21,17 +21,15 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             {
                 Text = "Nothing here yet"
             });
+
+            // Ideally these methods should be the tests themselves
+            // But they do not play well during headless tests, likely due to simultaneous execution
+            TestNormalOperation();
+            TestOperationWithoutClient();
+            TestOperationWithClientDisconnect();
+            TestClientOperationWithServerReconnect();
         }
 
-        [SetUp]
-        public void SetUpClient()
-        {
-            // Dispose existing broadcaster and client
-            client?.Dispose();
-            broadcaster?.Dispose();
-        }
-
-        [Test]
         public void TestNormalOperation()
         {
             AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
@@ -47,7 +45,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             AddStep("Dispose broadcaster", () => broadcaster.Dispose());
         }
 
-        [Test]
         public void TestOperationWithoutClient()
         {
             AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
@@ -55,7 +52,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             AddStep("Dispose broadcaster", () => broadcaster.Dispose());
         }
 
-        [Test]
         public void TestOperationWithClientDisconnect()
         {
             AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
@@ -68,7 +64,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
 
         // This is just to ensure my sample client implementation holds up
         // So others can be confident they aren't getting a sample that doesn't work
-        [Test]
         public void TestClientOperationWithServerReconnect()
         {
             AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
