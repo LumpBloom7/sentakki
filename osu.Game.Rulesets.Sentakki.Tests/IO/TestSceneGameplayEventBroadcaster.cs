@@ -135,7 +135,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
                         if (packet != TransmissionData.Empty)
                             text.Text = packet.ToString();
                     }
-                    catch (OperationCanceledException)
+                    catch
                     {
                         break;
                     }
