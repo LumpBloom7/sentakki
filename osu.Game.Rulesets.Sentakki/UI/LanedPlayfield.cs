@@ -19,7 +19,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 {
     public class LanedPlayfield : Playfield
     {
-
         [Resolved]
         private GameplayEventBroadcaster eventBroadcaster { get; set; }
 

@@ -45,7 +45,6 @@ namespace osu.Game.Rulesets.Sentakki.IO
 
             if (queuedData != TransmissionData.Empty)
                 Broadcast(queuedData);
-
         }
 
         public void Broadcast(TransmissionData packet)

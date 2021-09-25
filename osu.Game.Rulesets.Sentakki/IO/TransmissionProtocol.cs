@@ -56,7 +56,6 @@ namespace osu.Game.Rulesets.Sentakki.IO
 
         public override string ToString() => Type.ToString() + " " + Value;
 
-
         public override bool Equals(object obj) => obj is TransmissionData other && Equals(other);
 
         public bool Equals(TransmissionData other) => (Type == InfoType.Kill && other.Type == InfoType.Kill) || (Type == other.Type && Value == other.Value);
