@@ -2,6 +2,7 @@ using System;
 using System.IO.Pipes;
 using System.Security.Principal;
 using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Rulesets.Sentakki.IO;
@@ -163,9 +164,13 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
                                     TokenImpersonationLevel.Impersonation);
                         }
                     }
-                    catch
+                    catch (Exception e)
                     {
-                        break;
+                        // The operation was canceled. Gracefully shutdown;
+                        if (e is TaskCanceledException || e is OperationCanceledException)
+                            return;
+
+                        throw;
                     }
                 }
             }

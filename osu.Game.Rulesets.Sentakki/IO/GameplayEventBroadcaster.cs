@@ -40,6 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.IO
                 // The operation was canceled. Gracefully shutdown;
                 if (e is TaskCanceledException || (e is SocketException se && se.SocketErrorCode == SocketError.OperationAborted))
                     return;
+
                 throw;
             }
 
