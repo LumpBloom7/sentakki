@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,7 +35,13 @@ namespace osu.Game.Rulesets.Sentakki.IO
             isWaitingForClient = true;
 
             try { await pipeServer.WaitForConnectionAsync(cancellationToken).ConfigureAwait(false); }
-            catch (TaskCanceledException) { return; }
+            catch (Exception e)
+            {
+                // The operation was canceled. Gracefully shutdown;
+                if (e is TaskCanceledException || (e is SocketException se && se.SocketErrorCode == SocketError.OperationAborted))
+                    return;
+                throw;
+            }
 
             isWaitingForClient = false;
 
