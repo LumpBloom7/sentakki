@@ -15,8 +15,6 @@ namespace osu.Game.Rulesets.Sentakki.IO
         // In the event that a broadcast fails, we can resend this message once a new connection is established.
         private TransmissionData queuedData;
 
-        private bool isDisposed;
-
         public GameplayEventBroadcaster()
         {
             pipeServer = new NamedPipeServerStream("senPipe", PipeDirection.Out, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
@@ -56,9 +54,6 @@ namespace osu.Game.Rulesets.Sentakki.IO
         {
             buffer[0] = packet.RawData;
 
-            if (isDisposed)
-                throw new ObjectDisposedException(nameof(GameplayEventBroadcaster));
-
             queuedData = packet;
 
             if (isWaitingForClient) return;
@@ -81,7 +76,6 @@ namespace osu.Game.Rulesets.Sentakki.IO
 
         public void Dispose()
         {
-            isDisposed = true;
             cancellationTokenSource.Cancel();
             pipeServer.Dispose();
         }
