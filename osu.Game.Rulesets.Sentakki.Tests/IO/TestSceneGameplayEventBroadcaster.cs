@@ -148,19 +148,19 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
                         {
                             TransmissionData packet = new TransmissionData(buffer[0]);
 
-                            // Server has shut down
-                            if (packet == TransmissionData.Kill)
-                            {
-                                // On non-Windows platforms, the client doesn't automatically reconnect
-                                // So we must recreate the client to ensure safety;
-                                pipeClient.Dispose();
-                                pipeClient = new NamedPipeClientStream(".", "senPipe",
-                                        PipeDirection.In, PipeOptions.Asynchronous,
-                                        TokenImpersonationLevel.Impersonation);
-                            }
-
                             if (packet != TransmissionData.Empty)
                                 text.Text = packet.ToString();
+                        }
+                        else if (result == 0) // End of stream reached, meaning that the server disconnected
+                        {
+                            text.Text = TransmissionData.Kill.ToString();
+
+                            // On non-Windows platforms, the client doesn't automatically reconnect
+                            // So we must recreate the client to ensure safety;
+                            pipeClient.Dispose();
+                            pipeClient = new NamedPipeClientStream(".", "senPipe",
+                                    PipeDirection.In, PipeOptions.Asynchronous,
+                                    TokenImpersonationLevel.Impersonation);
                         }
                     }
                     catch
