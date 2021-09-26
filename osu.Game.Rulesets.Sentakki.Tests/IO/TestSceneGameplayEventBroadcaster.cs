@@ -2,7 +2,6 @@ using System;
 using System.IO.Pipes;
 using System.Security.Principal;
 using System.Threading;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Rulesets.Sentakki.IO;
@@ -27,8 +26,8 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
         [Test]
         public void TestNormalOperation()
         {
-            AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
-            AddStep("Create Client", () => client = new TestBroadcastClient(text));
+            AddStep("Start broadcaster", () => createBroadcaster());
+            AddStep("Create Client", () => createTestClient());
             AddUntilStep("Client connected", () => client.IsClientConnected);
             AddStep("Send message 1", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.HitPerfect, 3)));
             AddUntilStep("Client received message 1", () => text.Text == new TransmissionData(TransmissionData.InfoType.HitPerfect, 3).ToString());
@@ -36,14 +35,14 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             AddUntilStep("Client received message 2", () => text.Text == new TransmissionData(TransmissionData.InfoType.MetaEndPlay, 3).ToString());
             AddStep("Send message 3", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.Miss, 3)));
             AddUntilStep("Client received message 3", () => text.Text == new TransmissionData(TransmissionData.InfoType.Miss, 3).ToString());
-            AddStep("Client disconnect", () => client?.Dispose());
+            AddStep("Dispose client", () => client?.Dispose());
             AddStep("Dispose broadcaster", () => broadcaster.Dispose());
         }
 
         [Test]
         public void TestOperationWithoutClient()
         {
-            AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
+            AddStep("Start broadcaster", () => createBroadcaster());
             AddStep("Send message 1", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.HitPerfect, 3)));
             AddStep("Dispose broadcaster", () => broadcaster.Dispose());
         }
@@ -51,12 +50,24 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
         [Test]
         public void TestOperationWithClientDisconnect()
         {
-            AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
-            AddStep("Create Client", () => client = new TestBroadcastClient(text));
+            AddStep("Start broadcaster", () => createBroadcaster());
+            AddStep("Create Client", () => createTestClient());
             AddUntilStep("Client connected", () => client.IsClientConnected);
             AddStep("Client disconnect", () => client?.Dispose());
             AddStep("Send message 1", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.HitPerfect, 3)));
             AddStep("Dispose broadcaster", () => broadcaster.Dispose());
+        }
+
+        [Test]
+        public void TestRetryBroadcastOnClientReconnect()
+        {
+            AddStep("Start broadcaster", () => createBroadcaster());
+            AddStep("Send message 1", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.HitPerfect, 3)));
+            AddStep("Create Client", () => createTestClient());
+            AddUntilStep("Client connected", () => client.IsClientConnected);
+            AddUntilStep("Client received message 1", () => text.Text == new TransmissionData(TransmissionData.InfoType.HitPerfect, 3).ToString());
+            AddStep("Dispose broadcaster", () => broadcaster.Dispose());
+            AddStep("Dispose client", () => client?.Dispose());
         }
 
         // This is just to ensure my sample client implementation holds up
@@ -64,8 +75,8 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
         [Test]
         public void TestClientOperationWithServerReconnect()
         {
-            AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
-            AddStep("Create Client", () => client = new TestBroadcastClient(text));
+            AddStep("Start broadcaster", () => createBroadcaster());
+            AddStep("Create Client", () => createTestClient());
             AddUntilStep("Client connected", () => client.IsClientConnected);
             AddStep("Dispose broadcaster", () => broadcaster.Dispose());
             AddStep("Start new broadcaster", () => broadcaster = new GameplayEventBroadcaster());
@@ -73,7 +84,19 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             AddStep("Send message 1", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.HitPerfect, 3)));
             AddUntilStep("Client received message 1", () => text.Text == new TransmissionData(TransmissionData.InfoType.HitPerfect, 3).ToString());
             AddStep("Dispose broadcaster", () => broadcaster.Dispose());
-            AddStep("Client disconnect", () => client?.Dispose());
+            AddStep("Dispose client", () => client?.Dispose());
+        }
+
+        private void createBroadcaster()
+        {
+            broadcaster?.Dispose();
+            broadcaster = new GameplayEventBroadcaster();
+        }
+
+        private void createTestClient()
+        {
+            client?.Dispose();
+            client = new TestBroadcastClient(text);
         }
 
         protected override void Dispose(bool isDisposing)
