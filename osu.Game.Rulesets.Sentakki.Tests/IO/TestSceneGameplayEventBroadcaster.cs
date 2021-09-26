@@ -2,6 +2,7 @@ using System;
 using System.IO.Pipes;
 using System.Security.Principal;
 using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Rulesets.Sentakki.IO;
@@ -21,15 +22,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             {
                 Text = "Nothing here yet"
             });
-
-            // Ideally these methods should be the tests themselves
-            // But they do not play well during headless tests, likely due to simultaneous execution
-            TestNormalOperation();
-            TestOperationWithoutClient();
-            TestOperationWithClientDisconnect();
-            TestClientOperationWithServerReconnect();
         }
 
+        [Test]
         public void TestNormalOperation()
         {
             AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
@@ -45,6 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             AddStep("Dispose broadcaster", () => broadcaster.Dispose());
         }
 
+        [Test]
         public void TestOperationWithoutClient()
         {
             AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
@@ -52,6 +48,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             AddStep("Dispose broadcaster", () => broadcaster.Dispose());
         }
 
+        [Test]
         public void TestOperationWithClientDisconnect()
         {
             AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
@@ -64,6 +61,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
 
         // This is just to ensure my sample client implementation holds up
         // So others can be confident they aren't getting a sample that doesn't work
+        [Test]
         public void TestClientOperationWithServerReconnect()
         {
             AddStep("Start broadcaster", () => broadcaster = new GameplayEventBroadcaster());
@@ -75,6 +73,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             AddStep("Send message 1", () => broadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.HitPerfect, 3)));
             AddUntilStep("Client received message 1", () => text.Text == new TransmissionData(TransmissionData.InfoType.HitPerfect, 3).ToString());
             AddStep("Dispose broadcaster", () => broadcaster.Dispose());
+            AddStep("Client disconnect", () => client?.Dispose());
         }
 
         protected override void Dispose(bool isDisposing)
@@ -110,30 +109,36 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             private CancellationToken cancellationToken => cancellationTokenSource.Token;
 
-            private void clientLoop()
+            private async void clientLoop()
             {
+                byte[] buffer = new byte[1];
                 while (running)
                 {
                     try
                     {
                         if (!pipeClient.IsConnected)
-                            pipeClient.ConnectAsync().Wait(cancellationToken);
+                            await pipeClient.ConnectAsync(cancellationToken).ConfigureAwait(false);
 
-                        TransmissionData packet = new TransmissionData((byte)pipeClient.ReadByte());
+                        int result = await pipeClient.ReadAsync(new Memory<byte>(buffer), cancellationToken).ConfigureAwait(false);
 
-                        // Server has shut down
-                        if (packet == TransmissionData.Kill)
+                        if (result > 0)
                         {
-                            // On non-Windows platforms, the client doesn't automatically reconnect
-                            // So we must recreate the client to ensure safety;
-                            pipeClient.Dispose();
-                            pipeClient = new NamedPipeClientStream(".", "senPipe",
-                                    PipeDirection.In, PipeOptions.Asynchronous,
-                                    TokenImpersonationLevel.Impersonation);
-                        }
+                            TransmissionData packet = new TransmissionData(buffer[0]);
 
-                        if (packet != TransmissionData.Empty)
-                            text.Text = packet.ToString();
+                            // Server has shut down
+                            if (packet == TransmissionData.Kill)
+                            {
+                                // On non-Windows platforms, the client doesn't automatically reconnect
+                                // So we must recreate the client to ensure safety;
+                                pipeClient.Dispose();
+                                pipeClient = new NamedPipeClientStream(".", "senPipe",
+                                        PipeDirection.In, PipeOptions.Asynchronous,
+                                        TokenImpersonationLevel.Impersonation);
+                            }
+
+                            if (packet != TransmissionData.Empty)
+                                text.Text = packet.ToString();
+                        }
                     }
                     catch
                     {
@@ -146,6 +151,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             {
                 running = false;
                 cancellationTokenSource.Cancel();
+                readThread.Join();
                 pipeClient.Dispose();
             }
         }

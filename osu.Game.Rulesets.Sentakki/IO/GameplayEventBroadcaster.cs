@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace osu.Game.Rulesets.Sentakki.IO
 {
@@ -16,70 +18,63 @@ namespace osu.Game.Rulesets.Sentakki.IO
 
         public GameplayEventBroadcaster()
         {
-            pipeServer = new NamedPipeServerStream("senPipe", PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
-            onClientDisconnected();
+            pipeServer = new NamedPipeServerStream("senPipe", PipeDirection.Out, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+            attemptConnection();
         }
 
         private bool isWaitingForClient;
 
-        private void onClientDisconnected()
+        private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        private CancellationToken cancellationToken => cancellationTokenSource.Token;
+
+        private async void attemptConnection()
         {
             if (isWaitingForClient) return;
 
             isWaitingForClient = true;
-            pipeServer.BeginWaitForConnection(new AsyncCallback(waitForConnectionCallBack), this);
-        }
 
-        private void waitForConnectionCallBack(IAsyncResult result)
-        {
-            try
-            {
-                pipeServer.EndWaitForConnection(result);
-                isWaitingForClient = false;
-            }
-            catch
-            {
-                // The server has been disposed, abort wait
-                return;
-            }
+            try { await pipeServer.WaitForConnectionAsync(cancellationToken).ConfigureAwait(false); }
+            catch (TaskCanceledException) { return; }
+
+            isWaitingForClient = false;
 
             if (queuedData != TransmissionData.Empty)
                 Broadcast(queuedData);
         }
 
-        public void Broadcast(TransmissionData packet)
+        private readonly byte[] buffer = new byte[1];
+
+        public async void Broadcast(TransmissionData packet)
         {
+            buffer[0] = packet.RawData;
+
             if (isDisposed)
                 throw new ObjectDisposedException(nameof(GameplayEventBroadcaster));
 
             queuedData = packet;
-            if (!connectionValid()) return;
 
-            pipeServer.WriteByte(packet.RawData);
-            queuedData = TransmissionData.Empty;
-        }
+            if (isWaitingForClient) return;
 
-        private bool connectionValid()
-        {
-            if (isWaitingForClient) return false;
-
-            try { pipeServer.WriteByte(0); }
+            try
+            {
+                await pipeServer.WriteAsync(new Memory<byte>(buffer), cancellationToken).ConfigureAwait(false);
+            }
             catch (IOException)
             {
                 // The client has suddenly disconnected, we must disconnect on our end, and wait for a new connection.
                 pipeServer.Disconnect();
-                onClientDisconnected();
+                attemptConnection();
 
-                return false;
+                return;
             }
 
-            // We assume that connection is valid at this point
-            return true;
+            queuedData = TransmissionData.Empty;
         }
 
         public void Dispose()
         {
             isDisposed = true;
+            cancellationTokenSource.Cancel();
             pipeServer.Dispose();
         }
     }
