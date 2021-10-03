@@ -14,18 +14,6 @@
             "console": "internalConsole"
         },
         {
-            "name": "sentakki for osu! (Development)",
-            "type": "coreclr",
-            "request": "launch",
-            "program": "dotnet",
-            "args": [
-                "${workspaceRoot}/osu.Game.Rulesets.Sentakki.Tests/bin/Development/net5.0/osu.Game.Rulesets.Sentakki.Tests.dll"
-            ],
-            "cwd": "${workspaceRoot}",
-            "preLaunchTask": "Build (Development)",
-            "console": "internalConsole"
-        },
-        {
             "name": "sentakki for osu! (Release)",
             "type": "coreclr",
             "request": "launch",

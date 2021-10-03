@@ -5,7 +5,6 @@
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
-        <Configurations>Debug;Release</Configurations>
 
         <Authors>Derrick Timmermans</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
