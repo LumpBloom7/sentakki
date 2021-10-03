@@ -11,4 +11,9 @@
     <ItemGroup>
         <PackageReference Include="ppy.osu.Game" Version="2021.916.0"/>
     </ItemGroup>
+
+    <!--Since we aren't changing the assembly name, we use the assembly title to indicate whether it is a dev build-->
+    <PropertyGroup Condition="!('$(Configuration)' == 'Release')">
+        <AssemblyTitle>sentakki for osu!lazer (dev build)</AssemblyTitle>
+    </PropertyGroup>
 </Project>
