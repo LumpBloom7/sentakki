@@ -15,7 +15,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
     - name: Build with .NET
-      run: dotnet build --configuration Development
+      run: dotnet build
     - name: Unit Tests
       run: dotnet test --no-build --no-restore
     - name: Upload Artifact
