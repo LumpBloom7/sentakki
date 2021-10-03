@@ -22,4 +22,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Sentakki (Dev build)
-        path: osu.Game.Rulesets.Sentakki/bin/Debug/netstandard2.1/osu.Game.Rulesets.Sentakki-dev.dll
+        path: osu.Game.Rulesets.Sentakki/bin/Debug/netstandard2.1/osu.Game.Rulesets.Sentakki.dll
