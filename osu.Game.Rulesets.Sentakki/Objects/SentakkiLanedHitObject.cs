@@ -49,7 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     AddNested(new ScorePaddingObject() { StartTime = this.GetEndTime() });
         }
 
-        protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, BeatmapDifficulty difficulty)
+        protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, IBeatmapDifficultyInfo difficulty)
         {
             base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
 
