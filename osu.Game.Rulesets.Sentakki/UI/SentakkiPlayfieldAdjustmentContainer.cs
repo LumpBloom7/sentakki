@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             protected override void Update()
             {
                 base.Update();
-                Scale = new Vector2(Parent.ChildSize.X / 600);
+                Scale = new Vector2(Parent.ChildSize.X / SentakkiPlayfield.RINGSIZE);
                 Size = Vector2.Divide(Vector2.One, Scale);
             }
         }

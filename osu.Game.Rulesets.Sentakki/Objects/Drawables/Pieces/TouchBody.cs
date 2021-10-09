@@ -20,6 +20,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Size = new Vector2(130);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
+            Alpha = 0;
+
             InternalChildren = new Drawable[]{
                 BorderContainer = new Container{
                     Anchor = Anchor.Centre,

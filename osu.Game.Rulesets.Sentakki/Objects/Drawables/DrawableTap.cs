@@ -2,6 +2,7 @@ using System.Diagnostics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
@@ -107,14 +108,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        public virtual bool OnPressed(SentakkiAction action)
+        public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)
         {
-            if (action != SentakkiAction.Key1 + HitObject.Lane)
+            if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
                 return false;
 
             return UpdateResult(true);
         }
 
-        public void OnReleased(SentakkiAction action) { }
+        public void OnReleased(KeyBindingReleaseEvent<SentakkiAction> e) { }
     }
 }

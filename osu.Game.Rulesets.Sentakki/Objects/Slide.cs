@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -15,8 +16,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public double Duration
         {
-            get => SlideInfoList.Any() ? SlideInfoList.Max(s => s.Duration) : 0;
-            // The editor only allows the modification of the first slide body
+            get
+            {
+                double max = 0;
+                for (int i = 0; i < SlideInfoList.Count; ++i)
+                    max = Math.Max(max, SlideInfoList[i].Duration);
+
+                return max;
+            }
             set => SlideInfoList.First().Duration = value;
         }
 

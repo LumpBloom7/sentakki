@@ -46,7 +46,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Size = new Vector2(105);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
-            Alpha = 0;
             AddRangeInternal(new Drawable[]{
                 TouchBody = new TouchBody(),
                 explosion = new HitExplosion()
@@ -90,7 +89,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             double FadeIn = AdjustedAnimationDuration / 2;
             double moveTo = HitObject.HitWindows.WindowFor(HitResult.Ok);
 
-            this.FadeInFromZero(FadeIn);
+            TouchBody.FadeIn(FadeIn);
 
             using (BeginDelayedSequence(AdjustedAnimationDuration, true))
             {
