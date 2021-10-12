@@ -18,26 +18,24 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build osu.Game.Rulesets.Sentakki --configuration Release -p:version=${{env.CURRENT_TAG}} --no-restore
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@latest
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      run: dotnet build osu.Game.Rulesets.Sentakki --configuration Release -p:version=${{ env.CURRENT_TAG }} --no-restore
+    - name: Create release
+      uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ github.ref }}
-        release_name: ${{ github.ref }}
-    - name: Upload Release Asset
-      id: upload-release-asset
-      uses: actions/upload-release-asset@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./osu.Game.Rulesets.Sentakki/bin/Release/netstandard2.1/osu.Game.Rulesets.Sentakki.dll
-        asset_name: osu.Game.Rulesets.Sentakki.dll
-        asset_content_type: application/vnd.microsoft.portable-executable
-    - name: Generate changelog
-      run: |
-        sudo npm install github-release-notes -g
-        gren release -T ${{secrets.RELEASE_TOKEN}} --tags=${{env.CURRENT_TAG}} --override
+        token: ${{ secrets.RELEASE_TOKEN }}
+        files: |
+          osu.Game.Rulesets.Sentakki/bin/Release/**/osu.Game.Rulesets.Sentakki.dll
+        draft: true
+        body: |
+          Thank you for showing interest in this ruleset. This is a tagged release (${{ env.CURRENT_TAG }}).
+          If you like this ruleset, do consider [supporting me](https://lumpbloom7.github.io/sponsor).
+
+          **This release resolves a minor incompatibility that could occur on the `${{ env.CURRENT_TAG }}` release of osu!lazer**
+
+          ## Feedback
+          Complaints? Suggestion? Or just want to discuss stuff?
+
+          Feel free to join the [sentakki discord](https://discord.gg/CQPNADu) for a direct communication line to devs, and exclusive access to insider test builds.
+
+          ## Installation
+          [Refer to this wiki page](https://github.com/LumpBloom7/sentakki/wiki/Ruleset-installation-guide)
