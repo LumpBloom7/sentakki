@@ -7,6 +7,7 @@ using osu.Framework.Extensions.EnumExtensions;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
+using osu.Game.Beatmaps.Legacy;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -196,11 +197,12 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             var difficulty = beatmap.BeatmapInfo.BaseDifficulty;
 
-            var controlPointInfo = beatmap.ControlPointInfo;
-            TimingControlPoint timingPoint = controlPointInfo.TimingPointAt(original.StartTime);
-            DifficultyControlPoint difficultyPoint = controlPointInfo.DifficultyPointAt(original.StartTime);
+            var controlPointInfo = (LegacyControlPointInfo)beatmap.ControlPointInfo;
 
-            double scoringDistance = 100 * difficulty.SliderMultiplier * difficultyPoint.SpeedMultiplier;
+            TimingControlPoint timingPoint = controlPointInfo.TimingPointAt(original.StartTime);
+            DifficultyControlPoint difficultyPoint = original.DifficultyControlPoint;
+
+            double scoringDistance = 100 * difficulty.SliderMultiplier * difficultyPoint.SliderVelocity;
 
             var velocity = scoringDistance / timingPoint.BeatLength;
             var tickDistance = scoringDistance / difficulty.SliderTickRate;
