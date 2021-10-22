@@ -7,8 +7,11 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.UI;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
@@ -57,14 +60,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
 
             AddRangeInternal(new Drawable[]{
-                chevrons = new Container<SlideFanChevron>(),
+                chevrons = new Container<SlideFanChevron>(){
+                    Alpha = 0.75f
+                },
             });
         }
 
         private const int chevrons_per_eith = 8;
         private const double ring_radius = 297;
         private const double chevrons_per_distance = (chevrons_per_eith * 8) / (2 * Math.PI * ring_radius);
-        private const double endpoint_distance = 30; // margin for each end
+        private const double endpoint_distance = 70; // margin for each end
+        private const float spacing = 41;
 
         private static int chevronsInContinuousPath(SliderPath path)
         {
@@ -73,34 +79,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         private void updateVisuals()
         {
-            chevrons.Clear(false);
-
-            double runningDistance = 0;
-            foreach (var path in path.SlideSegments)
+            //float currentY = -300;
+            for (int i = 0; i < 18; ++i)
             {
-                var chevronCount = chevronsInContinuousPath(path);
-                var totalDistance = path.Distance;
-                var safeDistance = totalDistance - (endpoint_distance * 2);
-
-                var previousPosition = path.PositionAt(0);
-                for (int i = 0; i < chevronCount; i++)
+                float progress = (i + 1) / (float)18;
+                float scale = (float)Interpolation.ApplyEasing(Easing.InQuad, progress);
+                if (scale < 0.03)
+                    continue;
+                chevrons.Add(new SlideFanChevron
                 {
-                    var progress = (double)i / (chevronCount - 1); // from 0 to 1, both inclusive
-                    var distance = (progress * safeDistance) + endpoint_distance;
-                    progress = distance / totalDistance;
-                    var position = path.PositionAt(progress);
-                    var angle = previousPosition.GetDegreesFromPosition(position);
+                    Y = (SentakkiPlayfield.RINGSIZE - (float)endpoint_distance) * scale - 300,
+                    Scale = new Vector2(scale),
+                    Progress = 1,
+                });
 
-                    var chevron = new SlideFanChevron();
-                    chevron.Position = position;
-                    chevron.Progress = (runningDistance + distance) / this.path.TotalDistance;
-                    chevron.Rotation = angle;
-                    chevron.Depth = chevrons.Count;
-                    chevrons.Add(chevron);
-
-                    previousPosition = position;
-                }
-                runningDistance += totalDistance;
             }
         }
 
@@ -163,6 +155,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             {
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
+                Rotation = 180;
             }
 
             [BackgroundDependencyLoader]

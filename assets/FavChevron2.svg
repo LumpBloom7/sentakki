@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="351.01758mm"
+   height="89.063271mm"
+   viewBox="0 0 351.01757 89.06327"
+   version="1.1"
+   id="svg869"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   sodipodi:docname="FavChevron2.svg"
+   inkscape:export-filename="C:\Users\Derrick Timmermans\source\repos\sentakki\assets\chevron.png"
+   inkscape:export-xdpi="96.000053"
+   inkscape:export-ydpi="96.000053">
+  <defs
+     id="defs863" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.25"
+     inkscape:cx="1923.0017"
+     inkscape:cy="404.95584"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     units="px" />
+  <metadata
+     id="metadata866">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(191.39757,-84.507731)">
+    <path
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#808080;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal;image-rendering:crisp-edges"
+       d="m -190.3976,159.80361 175.124,-74.295888 173.89364,74.198608 -5.02675,12.8647 -168.86689,-70.52673 -169.80802,70.52673 z"
+       id="path1450"
+       sodipodi:nodetypes="ccccccc"
+       inkscape:export-filename="C:\Users\Derrick Timmermans\source\repos\sentakki\osu.Game.Rulesets.Sentakki\Resources\Textures\FanSlide.png"
+       inkscape:export-xdpi="57.831329"
+       inkscape:export-ydpi="57.831329" />
+  </g>
+</svg>

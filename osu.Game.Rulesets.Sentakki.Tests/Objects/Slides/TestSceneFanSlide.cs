@@ -32,6 +32,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 
             Add(slide = new SlideFanVisual()
             {
+                Rotation = 22.5f
             });
 
             AddSliderStep("Progress", 0.0f, 1.0f, 0.0f, p =>
