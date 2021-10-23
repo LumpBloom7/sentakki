@@ -90,9 +90,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 {
                     Y = (SentakkiPlayfield.RINGSIZE - (float)endpoint_distance) * scale - 300,
                     Scale = new Vector2(scale),
-                    Progress = 1,
+                    Progress = (chevrons.Count + 1) / (float)18,
                 });
-
             }
         }
 
