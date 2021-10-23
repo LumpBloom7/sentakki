@@ -23,7 +23,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 
         public TestSceneFanSlide()
         {
-
             Add(new SentakkiRing()
             {
                 RelativeSizeAxes = Axes.None,

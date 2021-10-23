@@ -1,17 +1,14 @@
-using System;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Pooling;
-using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Textures;
-using osu.Framework.Utils;
-using osu.Game.Rulesets.Objects;
+using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
@@ -51,8 +48,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
+            AutoSizeAxes = Axes.Both;
         }
-
 
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager sentakkiConfig)
@@ -61,36 +58,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
             AddRangeInternal(new Drawable[]{
                 chevrons = new Container<SlideFanChevron>(){
+                    AutoSizeAxes = Axes.Both,
                     Alpha = 0.75f
                 },
             });
         }
 
-        private const int chevrons_per_eith = 8;
-        private const double ring_radius = 297;
-        private const double chevrons_per_distance = (chevrons_per_eith * 8) / (2 * Math.PI * ring_radius);
-        private const double endpoint_distance = 70; // margin for each end
-        private const float spacing = 41;
-
-        private static int chevronsInContinuousPath(SliderPath path)
-        {
-            return (int)Math.Ceiling((path.Distance - (2 * endpoint_distance)) * chevrons_per_distance);
-        }
+        private const double endpoint_distance = 80; // margin for each end
 
         private void updateVisuals()
         {
-            //float currentY = -300;
-            for (int i = 0; i < 18; ++i)
+            for (int i = 1; i < 12; ++i)
             {
-                float progress = (i + 1) / (float)18;
-                float scale = (float)Interpolation.ApplyEasing(Easing.InQuad, progress);
-                if (scale < 0.03)
-                    continue;
-                chevrons.Add(new SlideFanChevron
+                float progress = (i + 1) / (float)12;
+                float scale = progress;
+                chevrons.Add(new SlideFanChevron(scale, scale)
                 {
-                    Y = (SentakkiPlayfield.RINGSIZE - (float)endpoint_distance) * scale - 300,
-                    Scale = new Vector2(scale),
-                    Progress = (chevrons.Count + 1) / (float)18,
+                    Y = ((SentakkiPlayfield.RINGSIZE + 50 - (float)endpoint_distance) * scale) - 350,
+                    Progress = i / (float)11,
                 });
             }
         }
@@ -146,26 +131,108 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             chevrons.Clear(false);
         }
 
-        public class SlideFanChevron : CompositeDrawable
+        public class SlideFanChevron : BufferedContainer
         {
             public double Progress;
 
-            public SlideFanChevron()
+            public SlideFanChevron(float lengthScale, float HeightScale)
             {
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
-                Rotation = 180;
-            }
+                AutoSizeAxes = Axes.Both;
+                CacheDrawnFrameBuffer = true;
 
-            [BackgroundDependencyLoader]
-            private void load(TextureStore textures)
-            {
-                AddInternal(new Sprite
+                float chevHeight = 6 + 10 + (10 * HeightScale);
+                float chevWidth = 6 + (210 * lengthScale);
+
+                AddInternal(new Container
                 {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Texture = textures.Get("FanSlide"),
-                });
+                    Anchor = Anchor.BottomCentre,
+                    Origin = Anchor.BottomCentre,
+                    AutoSizeAxes = Axes.Both,
+                    Children = new Drawable[]{
+                        // Outlines
+                        new Container
+                        {
+                            X = 2.5f,
+                            Masking = true,
+                            CornerRadius = chevHeight/4,
+                            CornerExponent = 2.5f,
+                            Anchor = Anchor.BottomCentre,
+                            Origin = Anchor.BottomRight,
+                            Rotation = 22.5f,
+                            Width = chevWidth,
+                            Height = chevHeight,
+                            Child = new Box{
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = Color4.Gray
+                            },
+                        },
+                        new Container
+                        {
+                            X = -2.5f,
+                            Masking = true,
+                            CornerRadius = chevHeight/4,
+                            CornerExponent = 2.5f,
+                            Anchor = Anchor.BottomCentre,
+                            Origin = Anchor.BottomLeft,
+                            Rotation = -22.5f,
+                            Width = chevWidth,
+                            Height = chevHeight,
+                            Child = new Box{
+                                RelativeSizeAxes = Axes.Both,
+                                Colour = Color4.Gray
+                            },
+                        },
+                        // Inners
+                        new Container{
+                            X = 2.5f,
+                            Anchor = Anchor.BottomCentre,
+                            Origin = Anchor.BottomRight,
+                            Size = new Vector2(chevWidth, chevHeight),
+                            Rotation = 22.5f,
+                            Padding = new MarginPadding(2),
+                            Child = new Container{
+                                RelativeSizeAxes = Axes.Both,
+                                Masking = true,
+
+                                CornerRadius = (chevHeight-4)/4,
+                                CornerExponent = 2.5f,
+                                Colour = Color4.White,
+                                Child = new Box{
+                                    RelativeSizeAxes = Axes.Both,
+                                    Colour = Color4.White
+                                }
+                            },
+                        },
+                        new Container{
+                            X = -2.5f,
+                            Anchor = Anchor.BottomCentre,
+                            Origin = Anchor.BottomLeft,
+                            Size = new Vector2(chevWidth, chevHeight),
+                            Rotation = -22.5f,
+                            Padding = new MarginPadding(2),
+                            Child = new Container
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                                Masking = true,
+                                CornerRadius = (chevHeight-4)/4,
+                                CornerExponent = 2.5f,
+                                Child = new Box{
+                                    RelativeSizeAxes = Axes.Both,
+                                    Colour = Color4.White
+                                }
+                            },
+                        },
+                    }
+                }.WithEffect(new GlowEffect
+                {
+                    Colour = Color4.Black,
+                    CacheDrawnEffect = true,
+                    BlurSigma = new Vector2(15),
+                    Strength = 1f,
+                    PadExtent = true
+                }));
             }
 
             public void UpdateProgress(double progress)
