@@ -19,7 +19,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         protected int EndPath;
 
         private readonly SlideFanVisual slide;
-        private readonly Container nodes;
 
         public TestSceneFanSlide()
         {
@@ -39,17 +38,8 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 slide.Progress = p;
             });
 
-            Add(nodes = new Container()
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-            });
-        }
-
-        protected override void LoadComplete()
-        {
-            base.LoadComplete();
-            slide.Path = SlidePaths.GenerateStraightPattern(4);
+            AddStep("Perform entry animation", () => slide.PerformEntryAnimation(1000));
+            AddWaitStep("Wait for transforms", 5);
         }
     }
 }

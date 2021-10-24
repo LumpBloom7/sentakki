@@ -56,6 +56,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 slide.Progress = p;
             });
 
+            AddStep("Perform entry animation", () => slide.PerformEntryAnimation(1000));
+            AddWaitStep("Wait for transforms", 5);
+
             Add(nodes = new Container()
             {
                 Anchor = Anchor.Centre,

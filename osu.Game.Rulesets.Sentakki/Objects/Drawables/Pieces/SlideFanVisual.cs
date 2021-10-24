@@ -27,18 +27,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 updateProgress();
             }
         }
-        private SentakkiSlidePath path;
-
-        public SentakkiSlidePath Path
-        {
-            get => path;
-            set
-            {
-                path = value;
-                updateVisuals();
-                updateProgress();
-            }
-        }
 
         private Container<SlideFanChevron> chevrons;
 
@@ -58,16 +46,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
             AddRangeInternal(new Drawable[]{
                 chevrons = new Container<SlideFanChevron>(){
-                    AutoSizeAxes = Axes.Both,
                     Alpha = 0.75f
                 },
             });
-        }
 
-        private const double endpoint_distance = 80; // margin for each end
+            const double endpoint_distance = 80; // margin for each end
 
-        private void updateVisuals()
-        {
             for (int i = 1; i < 12; ++i)
             {
                 float progress = (i + 1) / (float)12;
@@ -79,6 +63,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 });
             }
         }
+
 
         private void updateProgress()
         {
@@ -94,7 +79,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             {
                 double fadeDuration = duration / chevrons.Count;
                 double currentOffset = duration / 2;
-                for (int j = chevrons.Count - 1; j >= 0; j--)
+                for (int j = 0; j < chevrons.Count; ++j)
                 {
                     var chevron = chevrons[j];
                     chevron.FadeOut().Delay(currentOffset).FadeIn(fadeDuration * 2).Finally(finalSteps);
@@ -124,11 +109,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 chevron.Delay(currentOffset).FadeOut(fadeDuration * 2);
                 currentOffset += fadeDuration / 2;
             }
-        }
-
-        public void Free()
-        {
-            chevrons.Clear(false);
         }
 
         public class SlideFanChevron : BufferedContainer
