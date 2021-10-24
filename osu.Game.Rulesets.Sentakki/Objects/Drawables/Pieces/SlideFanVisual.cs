@@ -79,9 +79,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             {
                 double fadeDuration = duration / chevrons.Count;
                 double currentOffset = duration / 2;
-                for (int j = 0; j < chevrons.Count; ++j)
+
+                foreach (var chevron in chevrons)
                 {
-                    var chevron = chevrons[j];
                     chevron.FadeOut().Delay(currentOffset).FadeIn(fadeDuration * 2).Finally(finalSteps);
                     currentOffset += fadeDuration / 2;
                 }
@@ -99,13 +99,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             int chevronsLeft = chevrons.Count(c => c.Alpha != 0);
             double fadeDuration = duration / chevronsLeft;
             double currentOffset = 0;
-            for (int j = chevrons.Count - 1; j >= 0; j--)
+
+            foreach (var chevron in chevrons)
             {
-                var chevron = chevrons[j];
                 if (chevron.Alpha == 0)
-                {
                     continue;
-                }
+
                 chevron.Delay(currentOffset).FadeOut(fadeDuration * 2);
                 currentOffset += fadeDuration / 2;
             }
