@@ -11,7 +11,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     {
         public StarPiece()
         {
-            RelativeSizeAxes = Axes.Both;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
         }
