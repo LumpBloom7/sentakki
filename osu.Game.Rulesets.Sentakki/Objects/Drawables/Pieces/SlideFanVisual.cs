@@ -204,14 +204,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                             },
                         },
                     }
-                }.WithEffect(new GlowEffect
-                {
-                    Colour = Color4.Black,
-                    CacheDrawnEffect = true,
-                    BlurSigma = new Vector2(15),
-                    Strength = 1f,
-                    PadExtent = true
-                }));
+                });
             }
 
             public void UpdateProgress(double progress)
