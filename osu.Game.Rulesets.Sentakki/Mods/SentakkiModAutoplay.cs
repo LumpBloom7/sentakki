@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using osu.Framework.Utils;
 using osu.Game.Beatmaps;
+using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
@@ -17,7 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public override Score CreateReplayScore(IBeatmap beatmap, IReadOnlyList<Mod> mods) => new Score
         {
-            ScoreInfo = new ScoreInfo { User = new User { Username = getRandomCharacter() } },
+            ScoreInfo = new ScoreInfo { User = new APIUser { Username = getRandomCharacter() } },
             Replay = new SentakkiAutoGenerator(beatmap).Generate(),
         };
 
