@@ -58,7 +58,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         [JsonIgnore]
         public double ShootDelay { get; private set; }
 
-        protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, BeatmapDifficulty difficulty)
+        protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, IBeatmapDifficultyInfo difficulty)
         {
             base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
 

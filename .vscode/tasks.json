@@ -16,20 +16,6 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "Build (Development)",
-            "type": "shell",
-            "command": "dotnet",
-            "args": [
-                "build",
-                "osu.Game.Rulesets.Sentakki.Tests",
-                "/p:Configuration=Development",
-                "/m",
-                "/verbosity:m"
-            ],
-            "group": "build",
-            "problemMatcher": "$msCompile"
-        },
-        {
             "label": "Build (Release)",
             "type": "shell",
             "command": "dotnet",
@@ -51,17 +37,6 @@
             "args": [
                 "test",
                 "/p:Configuration=Debug",
-            ],
-            "group": "test",
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "Run tests (Development)",
-            "type": "shell",
-            "command": "dotnet",
-            "args": [
-                "test",
-                "/p:Configuration=Development",
             ],
             "group": "test",
             "problemMatcher": "$msCompile"
