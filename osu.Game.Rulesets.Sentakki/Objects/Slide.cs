@@ -27,7 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set => SlideInfoList.First().Duration = value;
         }
 
-        public List<IList<HitSampleInfo>> NodeSamples = new List<IList<HitSampleInfo>>();
+        public IList<IList<HitSampleInfo>> NodeSamples = new List<IList<HitSampleInfo>>();
 
         public double EndTime => StartTime + Duration;
 

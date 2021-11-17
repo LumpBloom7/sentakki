@@ -1,28 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup Label="Project">
-    <AssemblyTitle>sentakki for osu!lazer</AssemblyTitle>
-    <Description>TAP, HOLD and SLIDE to the beat.</Description>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <OutputType>Library</OutputType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <RootNamespace>osu.Game.Rulesets.Sentakki</RootNamespace>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Development' ">
-    <Optimize>true</Optimize>
-  </PropertyGroup>
-  <Choose>
-    <When Condition=" '$(Configuration)' == 'Release' ">
-      <PropertyGroup>
+    <PropertyGroup Label="Project">
+        <AssemblyTitle>sentakki for osu!lazer</AssemblyTitle>
+        <Description>TAP, HOLD and SLIDE to the beat.</Description>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <OutputType>Library</OutputType>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <RootNamespace>osu.Game.Rulesets.Sentakki</RootNamespace>
         <AssemblyName>osu.Game.Rulesets.Sentakki</AssemblyName>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <AssemblyName>osu.Game.Rulesets.Sentakki-dev</AssemblyName>
-      </PropertyGroup>
-    </Otherwise>
-  </Choose>
-  <ItemGroup>
-    <PackageReference Include="ppy.osu.Game" Version="2021.1006.1"/>
-  </ItemGroup>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="ppy.osu.Game" Version="2021.1113.0"/>
+    </ItemGroup>
+
+    <!--Since we aren't changing the assembly name, we use the assembly title to indicate whether it is a dev build-->
+    <PropertyGroup Condition="!('$(Configuration)' == 'Release')">
+        <AssemblyTitle>sentakki for osu!lazer (dev build)</AssemblyTitle>
+    </PropertyGroup>
 </Project>

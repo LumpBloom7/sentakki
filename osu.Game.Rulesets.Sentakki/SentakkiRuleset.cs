@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -39,12 +40,13 @@ namespace osu.Game.Rulesets.Sentakki
 {
     public class SentakkiRuleset : Ruleset
     {
-        private static readonly Lazy<bool> is_development_build = new Lazy<bool>(() => typeof(SentakkiRuleset).Assembly.GetName().Name.EndsWith("-dev"));
+        private static readonly Lazy<bool> is_development_build
+            = new Lazy<bool>(() => typeof(SentakkiRuleset).Assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled));
         public static bool IsDevelopmentBuild => is_development_build.Value;
 
         public override string Description => IsDevelopmentBuild ? "sentakki (Dev build)" : "sentakki";
         public override string PlayingVerb => "Washing laundry";
-        public override string ShortName => IsDevelopmentBuild ? "Sentakki-dev" : "Sentakki";
+        public override string ShortName => "Sentakki";
 
         public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor();
 
