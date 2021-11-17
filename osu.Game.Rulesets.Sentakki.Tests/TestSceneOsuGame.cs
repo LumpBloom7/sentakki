@@ -3,6 +3,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Online.API;
+using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Tests.Visual;
 using osu.Game.Users;
 using osuTK.Graphics;
@@ -30,7 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests
             public OsuGameSupporter()
             {
                 API = new DummyAPIAccess();
-                Bindable<User> testUser = new Bindable<User>(new User
+                Bindable<APIUser> testUser = new Bindable<APIUser>(new APIUser
                 {
                     IsSupporter = true,
                     Username = "Mai-Chan",
