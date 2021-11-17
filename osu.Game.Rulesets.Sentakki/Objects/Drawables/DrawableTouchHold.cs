@@ -4,6 +4,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Input;
 using osu.Game.Audio;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Objects;
@@ -25,9 +26,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
-        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => touchHoldBody.ReceivePositionalInputAt(screenSpacePos);
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => TouchHoldBody.ReceivePositionalInputAt(screenSpacePos);
 
-        private TouchHoldBody touchHoldBody;
+        public TouchHoldBody TouchHoldBody;
 
         private PausableSkinnableSound holdSample;
 
@@ -46,7 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Scale = new Vector2(0f);
             Alpha = 0;
             AddRangeInternal(new Drawable[] {
-                touchHoldBody = new TouchHoldBody(),
+                TouchHoldBody = new TouchHoldBody(),
                 holdSample = new PausableSkinnableSound
                 {
                     Volume = { Value = 0 },
@@ -102,7 +103,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             this.FadeInFromZero(fadeIn).ScaleTo(1, fadeIn);
             using (BeginDelayedSequence(fadeIn, true))
             {
-                touchHoldBody.ProgressPiece.TransformBindableTo(touchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
+                TouchHoldBody.ProgressPiece.TransformBindableTo(TouchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
             }
         }
 
@@ -188,9 +189,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
 
             // Avoiding Linq to minimize allocations, since this would be called every update of this node
-            foreach (var t in touchInput.ActiveSources)
-                if (ReceivePositionalInputAt(touchInput.GetTouchPosition(t).Value))
+            for (TouchSource t = TouchSource.Touch1; t <= TouchSource.Touch10; ++t)
+            {
+                if (touchInput.GetTouchPosition(t) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
                     return true;
+            }
 
             return false;
         }

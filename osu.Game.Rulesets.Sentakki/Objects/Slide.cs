@@ -16,11 +16,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public double Duration
         {
-            get => SlideInfoList.Any() ? SlideInfoList.Max(s => s.Duration) : 0;
+            get
+            {
+                double max = 0;
+                for (int i = 0; i < SlideInfoList.Count; ++i)
+                    max = Math.Max(max, SlideInfoList[i].Duration);
+
+                return max;
+            }
             set => throw new NotSupportedException();
         }
 
-        public List<IList<HitSampleInfo>> NodeSamples = new List<IList<HitSampleInfo>>();
+        public IList<IList<HitSampleInfo>> NodeSamples = new List<IList<HitSampleInfo>>();
 
         public double EndTime => StartTime + Duration;
 

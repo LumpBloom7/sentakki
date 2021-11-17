@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Localisation;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
@@ -152,7 +153,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
 
             protected override Easing RollingEasing => Easing.OutPow10;
 
-            protected override string FormatCount(int count) => count.ToString("N0");
+            protected override LocalisableString FormatCount(int count) => count.ToString("N0");
 
             protected override OsuSpriteText CreateSpriteText() => new OsuSpriteText
             {

@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
@@ -10,7 +9,6 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osuTK;
 using osuTK.Graphics;
@@ -119,11 +117,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // Used to hide and show segments accurately
         private void updatePathProgress()
         {
-            var target = SlideNodes.LastOrDefault(x => x.Result.IsHit);
-            if (target == null)
-                Slidepath.Progress = 0;
-            else
-                Slidepath.Progress = target.HitObject.Progress;
+            float progress = 0;
+
+            for (int i = 0; i < SlideNodes.Count; ++i)
+            {
+                if (!SlideNodes[i].Result.IsHit)
+                    break;
+
+                progress = SlideNodes[i].HitObject.Progress;
+            }
+
+            Slidepath.Progress = progress;
 
             pendingProgressUpdate = false;
         }
@@ -144,8 +148,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Debug.Assert(HitObject.HitWindows != null);
 
             // Player completed all nodes, we consider this user triggered
-            if (SlideNodes.All(node => node.Result.HasResult))
-                userTriggered = true;
+            userTriggered = true;
+            for (int i = 0; i < SlideNodes.Count; ++i)
+            {
+                if (!SlideNodes[i].Result.HasResult)
+                {
+                    userTriggered = false;
+                    break;
+                }
+            }
 
             if (!userTriggered)
             {

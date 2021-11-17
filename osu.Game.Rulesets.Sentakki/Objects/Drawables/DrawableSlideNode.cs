@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using osu.Framework.Graphics;
+using osu.Framework.Input;
 using osu.Game.Rulesets.Judgements;
 using osuTK;
 
@@ -93,9 +94,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
 
             // Avoiding Linq to minimize allocations, since this would be called every update of this node
-            foreach (var t in touchInput.ActiveSources)
-                if (ReceivePositionalInputAt(touchInput.GetTouchPosition(t).Value))
+            for (TouchSource t = TouchSource.Touch1; t <= TouchSource.Touch10; ++t)
+            {
+                if (touchInput.GetTouchPosition(t) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
                     return true;
+            }
 
             return false;
         }

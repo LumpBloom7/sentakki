@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading;
 using Newtonsoft.Json;
 using osu.Game.Beatmaps;
@@ -8,7 +7,6 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using osuTK.Graphics;
 
@@ -60,7 +58,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         [JsonIgnore]
         public double ShootDelay { get; private set; }
 
-        protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, BeatmapDifficulty difficulty)
+        protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, IBeatmapDifficultyInfo difficulty)
         {
             base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
 

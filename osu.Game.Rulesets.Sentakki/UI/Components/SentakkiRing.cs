@@ -15,7 +15,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
         public SentakkiRing()
         {
-            Size = new Vector2(SentakkiPlayfield.RINGSIZE);
+            RelativeSizeAxes = Axes.Both;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Scale = Vector2.Zero;

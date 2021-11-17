@@ -2,8 +2,8 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Platform;
 using osu.Game.Online.API;
+using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Tests.Visual;
 using osu.Game.Users;
 using osuTK.Graphics;
@@ -13,10 +13,8 @@ namespace osu.Game.Rulesets.Sentakki.Tests
     public class TestSceneOsuGame : OsuTestScene
     {
         [BackgroundDependencyLoader]
-        private void load(GameHost host, OsuGameBase gameBase)
+        private void load()
         {
-            OsuGameSupporter game = new OsuGameSupporter();
-            game.SetHost(host);
             Children = new Drawable[]
             {
                 new Box
@@ -24,15 +22,16 @@ namespace osu.Game.Rulesets.Sentakki.Tests
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.Black,
                 },
-                game
             };
+            AddGame(new OsuGameSupporter());
         }
+
         internal class OsuGameSupporter : OsuGame
         {
             public OsuGameSupporter()
             {
                 API = new DummyAPIAccess();
-                Bindable<User> testUser = new Bindable<User>(new User
+                Bindable<APIUser> testUser = new Bindable<APIUser>(new APIUser
                 {
                     IsSupporter = true,
                     Username = "Mai-Chan",
