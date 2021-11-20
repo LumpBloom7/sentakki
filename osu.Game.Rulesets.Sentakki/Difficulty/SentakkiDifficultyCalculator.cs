@@ -11,7 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Difficulty
 {
     public class SentakkiDifficultyCalculator : DifficultyCalculator
     {
-        public SentakkiDifficultyCalculator(Ruleset ruleset, WorkingBeatmap beatmap) : base(ruleset, beatmap) { }
+        public SentakkiDifficultyCalculator(IRulesetInfo ruleset, IWorkingBeatmap beatmap) : base(ruleset, beatmap) { }
 
         protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills, double clockRate)
         {
