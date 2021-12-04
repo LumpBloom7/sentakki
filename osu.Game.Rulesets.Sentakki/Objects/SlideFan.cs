@@ -8,6 +8,8 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Scoring;
+using osu.Game.Rulesets.Sentakki.UI;
+using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
@@ -45,6 +47,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             });
 
             // Add body nodes (should be two major sets)
+            Vector2 originpoint = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE);
+            for (int i = 1; i < 3; ++i)
+            {
+                float progress = 0.5f * i;
+                SlideCheckpoint checkpoint = new SlideCheckpoint()
+                {
+                    Progress = progress,
+                    StartTime = StartTime + ShootDelayAbsolute + ((Duration - ShootDelayAbsolute) * progress),
+                    NodesToPass = 3
+                };
+
+                for (int j = 3; j < 6; ++j)
+                {
+                    Vector2 dest = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, j.GetRotationForLane() - 22.5f);
+                    checkpoint.NodePositions.Add(Vector2.Lerp(originpoint, dest, progress));
+                }
+                AddNested(checkpoint);
+            }
         }
 
         protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, IBeatmapDifficultyInfo difficulty)

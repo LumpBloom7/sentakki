@@ -16,7 +16,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideFan : DrawableSentakkiLanedHitObject
+    public class DrawableSlideFan : DrawableSentakkiLanedHitObject, IDrawableSlideBody
     {
         public new SlideFan HitObject => (SlideFan)base.HitObject;
 
@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override double InitialLifetimeOffset => base.InitialLifetimeOffset;
 
-        public Container<DrawableSlideCheckpoint> SlideCheckpoints;
+        public Container<DrawableSlideCheckpoint> SlideCheckpoints { get; private set; }
         public Container<DrawableSlideTap> SlideTaps;
 
         public SlideFanVisual Slidepath;

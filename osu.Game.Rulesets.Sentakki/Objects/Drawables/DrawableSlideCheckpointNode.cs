@@ -1,9 +1,11 @@
 using System;
 using Microsoft.EntityFrameworkCore.Internal;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Judgements;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -34,6 +36,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             CornerExponent = 2f;
             CornerRadius = 100;
             Masking = true;
+            BorderColour = Color4.White;
+            BorderThickness = 2;
+            AddInternal(new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+                AlwaysPresent = true,
+                Alpha = 0,
+            });
         }
 
         protected override void OnApply()

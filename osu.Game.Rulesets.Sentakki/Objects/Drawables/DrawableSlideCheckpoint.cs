@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public override bool DisplayResult => false;
 
-        private DrawableSlideBody parentSlide => (DrawableSlideBody)ParentHitObject;
+        private IDrawableSlideBody parentSlide => (IDrawableSlideBody)ParentHitObject;
 
         // Used to determine the node order
         public int ThisIndex;
@@ -27,7 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // Hits are only possible if this the second node before this one is hit
         // If the second node before this one doesn't exist, it is allowed as this is one of the first nodes
         // All hits can only be done after the parent StartTime
-        public bool IsHittable => Time.Current > parentSlide.HitObject.StartTime && (ThisIndex < 2 || parentSlide.SlideCheckpoints[ThisIndex - 2].IsHit);
+        public bool IsHittable => Time.Current > ParentHitObject.HitObject.StartTime && (ThisIndex < 2 || parentSlide.SlideCheckpoints[ThisIndex - 2].IsHit);
 
         private Container<DrawableSlideCheckpointNode> nodes;
 

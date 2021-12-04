@@ -15,7 +15,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideBody : DrawableSentakkiLanedHitObject
+    public class DrawableSlideBody : DrawableSentakkiLanedHitObject, IDrawableSlideBody
     {
         public new SlideBody HitObject => (SlideBody)base.HitObject;
 
@@ -23,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override double InitialLifetimeOffset => base.InitialLifetimeOffset;
 
-        public Container<DrawableSlideCheckpoint> SlideCheckpoints;
+        public Container<DrawableSlideCheckpoint> SlideCheckpoints { get; private set; }
 
         public SlideVisual Slidepath;
         public StarPiece SlideStar;
