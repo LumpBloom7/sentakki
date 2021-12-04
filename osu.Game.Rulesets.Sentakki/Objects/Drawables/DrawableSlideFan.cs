@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override double InitialLifetimeOffset => base.InitialLifetimeOffset;
 
-        public Container<DrawableSlideNode> SlideNodes;
+        public Container<DrawableSlideCheckPoint> SlideNodes;
         public Container<DrawableSlideTap> SlideTaps;
 
         public SlideFanVisual Slidepath;
@@ -51,7 +51,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Origin = Anchor.Centre,
                 },
                 // Probably needs a specialized node
-                SlideNodes = new Container<DrawableSlideNode>
+                SlideNodes = new Container<DrawableSlideCheckPoint>
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -209,8 +209,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     {
                         AutoBindable = { BindTarget = AutoBindable },
                     };
-                case SlideBody.SlideNode node:
-                    return new DrawableSlideNode(node)
+                case SlideCheckpoint node:
+                    return new DrawableSlideCheckPoint(node)
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
@@ -228,7 +228,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 case DrawableSlideTap tap:
                     SlideTaps.Child = tap;
                     break;
-                case DrawableSlideNode node:
+                case DrawableSlideCheckPoint node:
                     SlideNodes.Add(node);
                     break;
             }

@@ -114,12 +114,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         {
             public double Progress;
 
-            public SlideFanChevron(float lengthScale, float HeightScale)
+            public SlideFanChevron(float lengthScale, float HeightScale) : base(cachedFrameBuffer: true)
             {
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
                 AutoSizeAxes = Axes.Both;
-                CacheDrawnFrameBuffer = true;
 
                 float chevHeight = 6 + 10 + (10 * HeightScale);
                 float chevWidth = 6 + (210 * lengthScale);

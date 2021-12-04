@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json;
 using osu.Game.Beatmaps;
@@ -8,6 +9,7 @@ using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
 using osu.Game.Rulesets.Sentakki.Scoring;
+using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
@@ -40,18 +42,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             for (int i = 0; i < nodeCount; i++)
             {
                 var progress = (double)(i + 1) / nodeCount;
-                SlideNode node;
-                AddNested(node = new SlideNode
+                SlideCheckpoint checkpoint = new SlideCheckpoint()
                 {
+                    Progress = (float)progress,
                     StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
-                    Progress = (float)progress
-                });
+                    NodePositions = new List<Vector2> { SlideInfo.SlidePath.PositionAt(progress) },
+                };
 
                 if (!isSampleAdded)
                 {
                     isSampleAdded = true;
-                    node.Samples.Add(new SentakkiHitSampleInfo("slide"));
+                    checkpoint.Samples.Add(new SentakkiHitSampleInfo("slide"));
                 }
+                AddNested(checkpoint);
             }
         }
 

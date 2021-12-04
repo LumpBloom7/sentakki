@@ -74,7 +74,8 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             });
 
             foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects)
-                nested.Auto = auto;
+                foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects)
+                    nested2.Auto = auto;
         }
     }
 }
