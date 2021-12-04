@@ -71,7 +71,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     breakNote = hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH));
                     if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)) && hold.Duration >= 350)
                     {
-                        if (rng.Next(10) == 1 && hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
+                        if (rng.Next(10) == 1 && hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)) && Experiments.Value.HasFlagFast(ConversionExperiments.fanSlides))
                         {
                             yield return createSlideFan(original, breakNote);
                             yield break;
