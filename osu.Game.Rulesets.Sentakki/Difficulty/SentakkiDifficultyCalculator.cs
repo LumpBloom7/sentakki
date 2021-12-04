@@ -11,7 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Difficulty
 {
     public class SentakkiDifficultyCalculator : DifficultyCalculator
     {
-        public SentakkiDifficultyCalculator(Ruleset ruleset, WorkingBeatmap beatmap) : base(ruleset, beatmap) { }
+        public SentakkiDifficultyCalculator(IRulesetInfo ruleset, IWorkingBeatmap beatmap) : base(ruleset, beatmap) { }
 
         protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills, double clockRate)
         {
@@ -39,7 +39,6 @@ namespace osu.Game.Rulesets.Sentakki.Difficulty
             {
                 StarRating = beatmap.BeatmapInfo.StarRating * 1.25f, // Inflate SR of converts, to encourage players to try lower diffs, without hurting their fragile ego.
                 Mods = mods,
-                Skills = skills,
                 MaxCombo = maxCombo
             };
         }
