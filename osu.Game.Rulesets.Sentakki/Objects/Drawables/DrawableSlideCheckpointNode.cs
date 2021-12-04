@@ -36,14 +36,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             CornerExponent = 2f;
             CornerRadius = 100;
             Masking = true;
-            BorderColour = Color4.White;
-            BorderThickness = 2;
-            AddInternal(new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-                AlwaysPresent = true,
-                Alpha = 0,
-            });
         }
 
         protected override void OnApply()
