@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override double InitialLifetimeOffset => base.InitialLifetimeOffset;
 
-        public Container<DrawableSlideCheckPoint> SlideNodes;
+        public Container<DrawableSlideCheckpoint> SlideCheckpoints;
         public Container<DrawableSlideTap> SlideTaps;
 
         public SlideFanVisual Slidepath;
@@ -51,7 +51,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Origin = Anchor.Centre,
                 },
                 // Probably needs a specialized node
-                SlideNodes = new Container<DrawableSlideCheckPoint>
+                SlideCheckpoints = new Container<DrawableSlideCheckpoint>
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -107,12 +107,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             float progress = 0;
 
-            for (int i = 0; i < SlideNodes.Count; ++i)
+            for (int i = 0; i < SlideCheckpoints.Count; ++i)
             {
-                if (!SlideNodes[i].Result.IsHit)
+                if (!SlideCheckpoints[i].Result.IsHit)
                     break;
 
-                progress = SlideNodes[i].HitObject.Progress;
+                progress = SlideCheckpoints[i].HitObject.Progress;
             }
 
             Slidepath.Progress = progress;
@@ -144,9 +144,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             // Player completed all nodes, we consider this user triggered
             userTriggered = false;
-            for (int i = 0; i < SlideNodes.Count; ++i)
+            for (int i = 0; i < SlideCheckpoints.Count; ++i)
             {
-                if (!SlideNodes[i].Result.HasResult)
+                if (!SlideCheckpoints[i].Result.HasResult)
                 {
                     userTriggered = false;
                     break;
@@ -159,7 +159,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 {
                     // Miss the last node to ensure that all of them have results
                     //SlideNodes.Last().ForcefullyMiss();
-                    if (SlideNodes.Count(node => !node.Result.IsHit) <= 2 && SlideNodes.Count > 2)
+                    if (SlideCheckpoints.Count(node => !node.Result.IsHit) <= 2 && SlideCheckpoints.Count > 2)
                         ApplyResult(HitResult.Ok);
                     else
                         ApplyResult(Result.Judgement.MinResult);
@@ -210,7 +210,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         AutoBindable = { BindTarget = AutoBindable },
                     };
                 case SlideCheckpoint node:
-                    return new DrawableSlideCheckPoint(node)
+                    return new DrawableSlideCheckpoint(node)
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
@@ -228,8 +228,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 case DrawableSlideTap tap:
                     SlideTaps.Child = tap;
                     break;
-                case DrawableSlideCheckPoint node:
-                    SlideNodes.Add(node);
+                case DrawableSlideCheckpoint node:
+                    SlideCheckpoints.Add(node);
                     break;
             }
             base.AddNestedHitObject(hitObject);
@@ -238,7 +238,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void ClearNestedHitObjects()
         {
             base.ClearNestedHitObjects();
-            SlideNodes.Clear(false);
+            SlideCheckpoints.Clear(false);
             SlideTaps.Clear(false);
         }
     }

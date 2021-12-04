@@ -23,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override double InitialLifetimeOffset => base.InitialLifetimeOffset;
 
-        public Container<DrawableSlideCheckPoint> SlideCheckpoints;
+        public Container<DrawableSlideCheckpoint> SlideCheckpoints;
 
         public SlideVisual Slidepath;
         public StarPiece SlideStar;
@@ -67,7 +67,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         RelativeSizeAxes  = Axes.None,
                     }
                 },
-                SlideCheckpoints = new Container<DrawableSlideCheckPoint>
+                SlideCheckpoints = new Container<DrawableSlideCheckpoint>
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -207,7 +207,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (hitObject)
             {
                 case SlideCheckpoint checkpoint:
-                    return new DrawableSlideCheckPoint(checkpoint)
+                    return new DrawableSlideCheckpoint(checkpoint)
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
@@ -223,7 +223,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.AddNestedHitObject(hitObject);
             switch (hitObject)
             {
-                case DrawableSlideCheckPoint node:
+                case DrawableSlideCheckpoint node:
                     SlideCheckpoints.Add(node);
                     break;
             }

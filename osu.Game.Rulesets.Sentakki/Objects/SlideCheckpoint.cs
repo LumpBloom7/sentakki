@@ -19,15 +19,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
             foreach (var nodePosition in NodePositions)
-                AddNested(new SlideNode2(nodePosition) { StartTime = StartTime });
+                AddNested(new CheckpointNode(nodePosition) { StartTime = StartTime });
         }
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
         public override Judgement CreateJudgement() => new IgnoreJudgement();
 
-        public class SlideNode2 : SentakkiHitObject
+        public class CheckpointNode : SentakkiHitObject
         {
-            public SlideNode2(Vector2 position)
+            public CheckpointNode(Vector2 position)
             {
                 Position = position;
             }

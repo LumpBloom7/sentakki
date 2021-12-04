@@ -9,7 +9,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideCheckPoint : DrawableSentakkiHitObject
+    public class DrawableSlideCheckpoint : DrawableSentakkiHitObject
     {
         public new SlideCheckpoint HitObject => (SlideCheckpoint)base.HitObject;
 
@@ -29,10 +29,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // All hits can only be done after the parent StartTime
         public bool IsHittable => Time.Current > parentSlide.HitObject.StartTime && (ThisIndex < 2 || parentSlide.SlideCheckpoints[ThisIndex - 2].IsHit);
 
-        private Container<DrawableSlideNode2> nodes;
+        private Container<DrawableSlideCheckpointNode> nodes;
 
-        public DrawableSlideCheckPoint() : this(null) { }
-        public DrawableSlideCheckPoint(SlideCheckpoint checkpoint)
+        public DrawableSlideCheckpoint() : this(null) { }
+        public DrawableSlideCheckpoint(SlideCheckpoint checkpoint)
             : base(checkpoint) { }
 
         [BackgroundDependencyLoader]
@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.Both;
-            AddInternal(nodes = new Container<DrawableSlideNode2>()
+            AddInternal(nodes = new Container<DrawableSlideCheckpointNode>()
             {
                 RelativeSizeAxes = Axes.Both
             });
@@ -83,8 +83,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             switch (hitObject)
             {
-                case SlideCheckpoint.SlideNode2 node:
-                    return new DrawableSlideNode2(node)
+                case SlideCheckpoint.CheckpointNode node:
+                    return new DrawableSlideCheckpointNode(node)
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
@@ -100,7 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.AddNestedHitObject(hitObject);
             switch (hitObject)
             {
-                case DrawableSlideNode2 node:
+                case DrawableSlideCheckpointNode node:
                     nodes.Add(node);
                     break;
             }

@@ -7,11 +7,11 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideNode2 : DrawableSentakkiHitObject
+    public class DrawableSlideCheckpointNode : DrawableSentakkiHitObject
     {
-        public new SlideCheckpoint.SlideNode2 HitObject => (SlideCheckpoint.SlideNode2)base.HitObject;
+        public new SlideCheckpoint.CheckpointNode HitObject => (SlideCheckpoint.CheckpointNode)base.HitObject;
 
-        private DrawableSlideCheckPoint checkpoint => (DrawableSlideCheckPoint)ParentHitObject;
+        private DrawableSlideCheckpoint checkpoint => (DrawableSlideCheckpoint)ParentHitObject;
 
         // We need this to be alive as soon as the parent slide note is alive
         // This is to ensure reverts are still possible during edge case situation (eg. 0 duration slide)
@@ -23,8 +23,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
 
-        public DrawableSlideNode2() : this(null) { }
-        public DrawableSlideNode2(SlideCheckpoint.SlideNode2 node)
+        public DrawableSlideCheckpointNode() : this(null) { }
+        public DrawableSlideCheckpointNode(SlideCheckpoint.CheckpointNode node)
             : base(node)
         {
             Anchor = Anchor.Centre;
