@@ -35,6 +35,13 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             Value = false
         };
 
+        [SettingSource("Fan slides", "Allow fan slides to occasionally appear")]
+        public BindableBool EnableSlideFans { get; } = new BindableBool
+        {
+            Default = false,
+            Value = false
+        };
+
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
             if (EnableTwinNotes.Value)
@@ -42,6 +49,9 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
             if (EnableTwinSlides.Value)
                 (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.twinSlides;
+
+            if (EnableSlideFans.Value)
+                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.fanSlides;
         }
     }
 }

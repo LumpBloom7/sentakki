@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set => Duration = value - StartTime;
         }
 
-        public List<IList<HitSampleInfo>> NodeSamples = new List<IList<HitSampleInfo>>();
+        public IList<IList<HitSampleInfo>> NodeSamples = new List<IList<HitSampleInfo>>();
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {

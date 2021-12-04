@@ -143,7 +143,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Debug.Assert(HitObject.HitWindows != null);
 
             // Player completed all nodes, we consider this user triggered
-            userTriggered = false;
+            userTriggered = true;
             for (int i = 0; i < SlideCheckpoints.Count; ++i)
             {
                 if (!SlideCheckpoints[i].Result.HasResult)
@@ -172,7 +172,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (result == HitResult.None)
                 result = HitResult.Ok;
 
-            //ApplyResult(result);
+            ApplyResult(result);
         }
 
         protected override void UpdateHitStateTransforms(ArmedState state)

@@ -113,9 +113,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
             if (!judgedObject.DisplayResult || !DisplayJudgements.Value || !(judgedObject is DrawableSentakkiLanedHitObject laned))
                 return;
 
-            if (!result.IsHit) return;
+            if (judgedObject is DrawableSlideBody || judgedObject is DrawableSlideFan) return;
 
-            if (judgedObject is DrawableSlideBody) return;
+            if (!result.IsHit) return;
 
             var explosion = explosionPool.Get(e => e.Apply(laned.HitObject));
             explosionLayer.Add(explosion);

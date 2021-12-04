@@ -16,6 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         none = 0,
         twinNotes = 1,
         twinSlides = 2,
+        fanSlides = 4
     }
 
     public class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObject>

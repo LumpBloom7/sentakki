@@ -89,8 +89,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (hitObject)
             {
                 case DrawableSentakkiLanedHitObject laned:
-                    Position = SentakkiExtensions.GetPositionAlongLane(240, laned.HitObject.Lane);
-                    Rotation = laned.HitObject.Lane.GetRotationForLane();
+                    int lane = laned.HitObject.Lane;
+
+                    if (laned is DrawableSlideFan)
+                        lane += 4;
+
+                    Position = SentakkiExtensions.GetPositionAlongLane(240, lane);
+                    Rotation = lane.GetRotationForLane();
                     break;
                 default:
                     Position = hitObject.Position;
