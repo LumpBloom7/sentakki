@@ -69,6 +69,14 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                     using (sb.BeginAbsoluteSequence(sb.HitObject.StartTime - preemptTime))
                         sb.Slidepath.FadeOutFromOne(fadeOutTime);
                     break;
+                case DrawableSlideFan sf:
+                    sf.SlideStars.Hide();
+
+                    preemptTime = sf.HitObject.StartTime - sf.LifetimeStart;
+                    fadeOutTime = sf.HitObject.Duration + preemptTime;
+                    using (sf.BeginAbsoluteSequence(sf.HitObject.StartTime - preemptTime))
+                        sf.Slidepath.FadeOutFromOne(fadeOutTime);
+                    break;
             }
         }
 
