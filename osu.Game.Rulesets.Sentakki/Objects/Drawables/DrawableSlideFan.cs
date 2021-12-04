@@ -31,6 +31,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public Container<StarPiece> SlideStars;
 
+        public Container ProxiedVisuals;
+
         public DrawableSlideFan() : this(null) { }
         public DrawableSlideFan(SlideFan hitObject)
             : base(hitObject) { }
@@ -43,12 +45,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Anchor = Anchor.Centre;
             AddRangeInternal(new Drawable[]
             {
-                Slidepath = new SlideFanVisual(), // This needs to be updated
-                // We need three stars instead of 1
-                SlideStars = new Container<StarPiece>
-                {
+                ProxiedVisuals = new ProxiedContainer{
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
+                    Children = new Drawable[]{
+                        Slidepath = new SlideFanVisual(), // This needs to be updated
+                        // We need three stars instead of 1
+                        SlideStars = new Container<StarPiece>
+                        {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                        },
+                    }
                 },
                 // Probably needs a specialized node
                 SlideCheckpoints = new Container<DrawableSlideCheckpoint>
@@ -240,6 +248,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.ClearNestedHitObjects();
             SlideCheckpoints.Clear(false);
             SlideTaps.Clear(false);
+        }
+        private class ProxiedContainer : Container
+        {
+            public override bool RemoveWhenNotAlive => false;
         }
     }
 }
