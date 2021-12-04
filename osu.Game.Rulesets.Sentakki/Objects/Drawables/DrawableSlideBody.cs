@@ -15,7 +15,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideBody : DrawableSentakkiLanedHitObject, IDrawableSlideBody
+    public class DrawableSlideBody : DrawableSentakkiLanedHitObject
     {
         public new SlideBody HitObject => (SlideBody)base.HitObject;
 
@@ -25,24 +25,47 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public Container<DrawableSlideCheckpoint> SlideCheckpoints { get; private set; }
 
-        public SlideVisual Slidepath;
-        public StarPiece SlideStar;
+        public ISlideVisual Slidepath;
+        public Container<StarPiece> SlideStars;
 
-        private float starProg;
-        public float StarProgress
+        protected float StarProg;
+        public virtual float StarProgress
         {
-            get => starProg;
+            get => StarProg;
             set
             {
-                starProg = value;
-                SlideStar.Position = Slidepath.Path.PositionAt(value);
-                SlideStar.Rotation = Slidepath.Path.PositionAt(value - .01f).GetDegreesFromPosition(Slidepath.Path.PositionAt(value + .01f));
+                StarProg = value;
+                foreach (var slideStar in SlideStars)
+                {
+                    slideStar.Position = ((SlideVisual)Slidepath).Path.PositionAt(value);
+                    slideStar.Rotation = ((SlideVisual)Slidepath).Path.PositionAt(value - .01f).GetDegreesFromPosition(((SlideVisual)Slidepath).Path.PositionAt(value + .01f));
+                }
             }
         }
 
         public DrawableSlideBody() : this(null) { }
         public DrawableSlideBody(SlideBody hitObject)
             : base(hitObject) { }
+
+        protected virtual ISlideVisual CreateSlideVisuals() => new SlideVisual();
+
+        protected virtual void CreateSlideStars()
+        {
+            SlideStars.Add(new StarPiece
+            {
+                Alpha = 0,
+                Scale = Vector2.Zero,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Position = SentakkiExtensions.GetCircularPosition(296.5f, 22.5f),
+                RelativeSizeAxes = Axes.None,
+            });
+        }
+
+        protected virtual void UpdateSlidePath()
+        {
+            ((SlideVisual)Slidepath).Path = HitObject.SlideInfo.SlidePath;
+        }
 
         [BackgroundDependencyLoader(true)]
         private void load()
@@ -51,21 +74,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Rotation = -22.5f;
+            Slidepath = CreateSlideVisuals();
             AddRangeInternal(new Drawable[]
             {
-                Slidepath = new SlideVisual(),
-                new Container{
+                (Drawable)Slidepath,
+                SlideStars = new Container<StarPiece>{
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Child = SlideStar = new StarPiece
-                    {
-                        Alpha = 0,
-                        Scale = Vector2.Zero,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Position = SentakkiExtensions.GetCircularPosition(296.5f,22.5f),
-                        RelativeSizeAxes  = Axes.None,
-                    }
                 },
                 SlideCheckpoints = new Container<DrawableSlideCheckpoint>
                 {
@@ -73,6 +88,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Origin = Anchor.Centre,
                 },
             });
+
+            CreateSlideStars();
 
             AccentColour.BindValueChanged(c => Colour = c.NewValue);
             OnNewResult += queueProgressUpdate;
@@ -82,7 +99,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void OnApply()
         {
             base.OnApply();
-            Slidepath.Path = HitObject.SlideInfo.SlidePath;
+            UpdateSlidePath();
             updatePathProgress();
             StarProgress = 0;
 
@@ -138,7 +155,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Slidepath.PerformEntryAnimation(AdjustedAnimationDuration);
             using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
             {
-                SlideStar.FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
+                foreach (var slideStar in SlideStars)
+                    slideStar.FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
+
                 this.Delay(50 + HitObject.ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
             }
         }
@@ -190,7 +209,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     using (BeginAbsoluteSequence(Math.Max(Result.TimeAbsolute, HitObject.GetEndTime() - HitObject.HitWindows.WindowFor(HitResult.Good))))
                     {
                         Slidepath.PerformExitAnimation(200);
-                        SlideStar.FadeOut(200);
+
+                        foreach (var star in SlideStars)
+                            star.FadeOut(200);
+
                         this.FadeOut(200).Expire();
                     }
 

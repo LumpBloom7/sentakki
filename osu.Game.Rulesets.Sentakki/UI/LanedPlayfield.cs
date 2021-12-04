@@ -96,9 +96,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             switch (hitObject)
             {
-                case DrawableSlideFan sf:
-                    slideBodyProxyContainer.Add(sf.ProxiedVisuals.CreateProxy(), sf);
-                    break;
                 case DrawableSlideBody s:
                     slideBodyProxyContainer.Add(s.CreateProxy(), s);
                     break;

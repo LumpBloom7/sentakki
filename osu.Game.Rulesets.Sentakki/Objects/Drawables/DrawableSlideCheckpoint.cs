@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public override bool DisplayResult => false;
 
-        private IDrawableSlideBody parentSlide => (IDrawableSlideBody)ParentHitObject;
+        private DrawableSlideBody parentSlide => (DrawableSlideBody)ParentHitObject;
 
         // Used to determine the node order
         public int ThisIndex;

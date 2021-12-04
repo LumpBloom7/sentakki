@@ -24,9 +24,14 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
         private int depthIndex;
 
+        [Cached]
+        private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
+
         public TestSceneSlideFan()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
+
+            Add(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(62));
 
             AddStep("Miss Single", () => testSingle(2000));
             AddStep("Hit Single", () => testSingle(2000, true));
@@ -35,17 +40,24 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
         private void testSingle(double duration, bool auto = false)
         {
-            var slide = new SlideFan
+            var slide = new Slide
             {
+                //Break = true,
+                SlideInfoList = new List<SentakkiSlideInfo>
+                {
+                    new SentakkiSlideInfo {
+                        ID = SlidePaths.FANID,
+                        Duration = 1000,
+                    },
+                },
                 StartTime = Time.Current + 1000,
-                Duration = 1000
             };
 
             slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
 
-            DrawableSlideFan dSlide;
+            DrawableSlide dSlide;
 
-            Add(dSlide = new DrawableSlideFan(slide)
+            Add(dSlide = new DrawableSlide(slide)
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

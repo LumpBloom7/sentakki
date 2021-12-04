@@ -3,7 +3,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -12,7 +11,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class SlideFanVisual : CompositeDrawable
+    public class SlideFanVisual : CompositeDrawable, ISlideVisual
     {
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
@@ -37,8 +36,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             AutoSizeAxes = Axes.Both;
+            Rotation = 22.5f;
         }
-
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager sentakkiConfig)
         {
@@ -63,7 +62,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 });
             }
         }
-
 
         private void updateProgress()
         {
@@ -109,6 +107,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 currentOffset += fadeDuration / 2;
             }
         }
+
+        public void Free() { }
 
         public class SlideFanChevron : BufferedContainer
         {

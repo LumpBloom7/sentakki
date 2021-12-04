@@ -71,23 +71,24 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     breakNote = hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH));
                     if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE)) && hold.Duration >= 350)
                     {
-                        if (rng.Next(10) == 1 && hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)) && Experiments.Value.HasFlagFast(ConversionExperiments.fanSlides))
+                        List<Slide> slides = new List<Slide>
                         {
-                            yield return createSlideFan(original, breakNote);
-                            yield break;
-                        }
-                        List<Slide> slides = new List<Slide>();
-                        if (Experiments.Value.HasFlagFast(ConversionExperiments.twinSlides))
+                            (Slide)createSlideNote(original, isBreak: breakNote, withFan: Experiments.Value.HasFlagFast(ConversionExperiments.fanSlides))
+                        };
+
+                        if (slides.First().SlideInfoList.First().ID != SlidePaths.FANID)
                         {
-                            if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
+                            if (Experiments.Value.HasFlagFast(ConversionExperiments.twinSlides))
                             {
-                                slides.Add((Slide)createSlideNote(original, true, breakNote));
+                                if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
+                                {
+                                    slides.Add((Slide)createSlideNote(original, true, breakNote));
+                                }
+                                else
+                                    foreach (var note in createTapsFromTicks(original).ToList())
+                                        yield return note;
                             }
-                            else
-                                foreach (var note in createTapsFromTicks(original).ToList())
-                                    yield return note;
                         }
-                        slides.Add((Slide)createSlideNote(original, isBreak: breakNote));
 
                         // Clean up potential duplicates
                         if (slides.Count >= 2)
@@ -102,6 +103,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                                 slides.Remove(slides.Last());
                             }
                         }
+
                         foreach (var note in slides)
                             yield return note;
 
@@ -153,11 +155,16 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             Samples = original.Samples,
         };
 
-        private SentakkiHitObject createSlideNote(HitObject original, bool twin = false, bool isBreak = false)
+        private SentakkiHitObject createSlideNote(HitObject original, bool twin = false, bool isBreak = false, bool withFan = false)
         {
             int noteLane = getNewLane(twin);
 
-            var validPaths = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.Item1.MinDuration && ((IHasDuration)original).Duration <= p.Item1.MaxDuration).ToList();
+            var validPathsEnumerable = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.Item1.MinDuration && ((IHasDuration)original).Duration <= p.Item1.MaxDuration);
+
+            if (!withFan)
+                validPathsEnumerable = validPathsEnumerable.Where(p => p != SlidePaths.VALIDPATHS.Last());
+
+            var validPaths = validPathsEnumerable.ToList();
             if (!validPaths.Any()) return null;
             int selectedSlideID = SlidePaths.VALIDPATHS.IndexOf(validPaths[rng.Next(validPaths.Count)]);
             bool mirrored = rng.NextDouble() < 0.5;
@@ -174,20 +181,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 Lane = noteLane,
                 StartTime = original.StartTime,
                 NodeSamples = (original as IHasPathWithRepeats).NodeSamples,
-                Break = isBreak
-            };
-        }
-        private SentakkiHitObject createSlideFan(HitObject original, bool twin = false, bool isBreak = false)
-        {
-            int noteLane = getNewLane(twin);
-
-            return new SlideFan
-            {
-                Lane = noteLane,
-                StartTime = original.StartTime,
-                Duration = ((IHasDuration)original).Duration,
-                NodeSamples = (original as IHasPathWithRepeats).NodeSamples,
-                Samples = (original as IHasPathWithRepeats).NodeSamples.Last(),
                 Break = isBreak
             };
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Newtonsoft.Json;
 using osu.Game.Beatmaps;
@@ -36,7 +37,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             base.CreateNestedHitObjects(cancellationToken);
 
-            bool isSampleAdded = false;
+            CreateSlideCheckpoints();
+            if (NestedHitObjects.Any())
+                NestedHitObjects.First().Samples.Add(new SentakkiHitSampleInfo("slide"));
+        }
+
+        protected virtual void CreateSlideCheckpoints()
+        {
             var distance = SlideInfo.SlidePath.TotalDistance;
             var nodeCount = (int)Math.Floor(distance / 100);
             for (int i = 0; i < nodeCount; i++)
@@ -48,12 +55,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
                     NodePositions = new List<Vector2> { SlideInfo.SlidePath.PositionAt(progress) },
                 };
-
-                if (!isSampleAdded)
-                {
-                    isSampleAdded = true;
-                    checkpoint.Samples.Add(new SentakkiHitSampleInfo("slide"));
-                }
                 AddNested(checkpoint);
             }
         }
