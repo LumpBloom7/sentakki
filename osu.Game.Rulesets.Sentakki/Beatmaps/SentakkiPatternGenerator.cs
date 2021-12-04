@@ -187,6 +187,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 StartTime = original.StartTime,
                 Duration = ((IHasDuration)original).Duration,
                 NodeSamples = (original as IHasPathWithRepeats).NodeSamples,
+                Samples = (original as IHasPathWithRepeats).NodeSamples.Last(),
                 Break = isBreak
             };
         }
