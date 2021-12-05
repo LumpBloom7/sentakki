@@ -12,11 +12,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             for (int i = 1; i < 3; ++i)
             {
                 float progress = 0.5f * i;
-                SlideCheckpoint checkpoint = new SlideCheckpoint()
+                SlideCheckpoint checkpoint = new SlideCheckpoint(true)
                 {
                     Progress = progress,
                     StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
-                    NodesToPass = 3
+                    NodesToPass = 3,
                 };
 
                 for (int j = 3; j < 6; ++j)

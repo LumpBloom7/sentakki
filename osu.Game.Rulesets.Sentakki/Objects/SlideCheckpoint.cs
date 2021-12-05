@@ -8,6 +8,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class SlideCheckpoint : SentakkiHitObject
     {
+        public SlideCheckpoint(bool strictMode = false)
+        {
+            StrictCompletionOrder = strictMode;
+        }
+
         // Used to update slides visuals
         public float Progress { get; set; }
 
@@ -15,6 +20,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public List<Vector2> NodePositions { get; set; } = new List<Vector2>();
 
         public int NodesToPass { get; set; } = 1;
+
+        // If this is true, then all previous checkpoints must be completed to hit this one
+        // This is in contrast to non-strict, where you can hit it if the n-2 checkpoint is hit
+        public bool StrictCompletionOrder { get; }
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
