@@ -42,8 +42,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Y = -SentakkiPlayfield.INTERSECTDISTANCE,
                     Alpha = 0,
                     Scale = Vector2.Zero,
-                    // Each node is 22.5 degrees apart, when measured from a node's perspective.
-                    Rotation = 157.5f + (22.5f * i),
+                    Rotation = SentakkiExtensions.GetDegreesFromPosition(star_origin_pos, star_dest_pos[i]),
                 });
         }
 
