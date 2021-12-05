@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 {
                     Progress = progress,
                     StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
-                    NodesToPass = 3,
+                    NodesToPass = 2,
                 };
 
                 for (int j = 3; j < 6; ++j)
