@@ -1,4 +1,3 @@
-using osu.Framework.Allocation;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;

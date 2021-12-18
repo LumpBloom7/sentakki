@@ -45,7 +45,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
             AddRangeInternal(new Drawable[]{
                 chevrons = new Container<SlideFanChevron>(){
-                    Alpha = 0.75f
+                    Alpha = 0.9f
                 },
             });
 
