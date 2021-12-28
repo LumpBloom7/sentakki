@@ -76,38 +76,42 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                             (Slide)createSlideNote(original, isBreak: breakNote, withFan: Experiments.Value.HasFlagFast(ConversionExperiments.fanSlides))
                         };
 
-                        if (slides.First().SlideInfoList.First().ID != SlidePaths.FANID)
+                        // If the slide is null, we fallback to hold notes
+                        if (slides.First() != null)
                         {
-                            if (Experiments.Value.HasFlagFast(ConversionExperiments.twinSlides))
+                            if (slides.First().SlideInfoList.First().ID != SlidePaths.FANID)
                             {
-                                if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
+                                if (Experiments.Value.HasFlagFast(ConversionExperiments.twinSlides))
                                 {
-                                    slides.Add((Slide)createSlideNote(original, true, breakNote));
+                                    if (hold.NodeSamples.Any(samples => samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP)))
+                                    {
+                                        slides.Add((Slide)createSlideNote(original, true, breakNote));
+                                    }
+                                    else
+                                        foreach (var note in createTapsFromTicks(original).ToList())
+                                            yield return note;
                                 }
-                                else
-                                    foreach (var note in createTapsFromTicks(original).ToList())
-                                        yield return note;
                             }
-                        }
 
-                        // Clean up potential duplicates
-                        if (slides.Count >= 2)
-                        {
-                            // Merge if lanes are identical
-                            if (slides.First().Lane == slides.Last().Lane)
+                            // Clean up potential duplicates
+                            if (slides.Count >= 2)
                             {
-                                // Make sure that both slides patterns are unique
-                                if (!slides.First().SlideInfoList.Exists(x => x.ID == slides.Last().SlideInfoList.First().ID))
-                                    slides.First().SlideInfoList.AddRange(slides.Last().SlideInfoList);
+                                // Merge if lanes are identical
+                                if (slides.First().Lane == slides.Last().Lane)
+                                {
+                                    // Make sure that both slides patterns are unique
+                                    if (!slides.First().SlideInfoList.Exists(x => x.ID == slides.Last().SlideInfoList.First().ID))
+                                        slides.First().SlideInfoList.AddRange(slides.Last().SlideInfoList);
 
-                                slides.Remove(slides.Last());
+                                    slides.Remove(slides.Last());
+                                }
                             }
+
+                            foreach (var note in slides)
+                                yield return note;
+
+                            yield break;
                         }
-
-                        foreach (var note in slides)
-                            yield return note;
-
-                        yield break;
                     }
 
                     if (Experiments.Value.HasFlagFast(ConversionExperiments.twinNotes))
@@ -165,7 +169,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 validPathsEnumerable = validPathsEnumerable.Where(p => p != SlidePaths.VALIDPATHS.Last());
 
             var validPaths = validPathsEnumerable.ToList();
+
             if (!validPaths.Any()) return null;
+
             int selectedSlideID = SlidePaths.VALIDPATHS.IndexOf(validPaths[rng.Next(validPaths.Count)]);
             bool mirrored = rng.NextDouble() < 0.5;
 
