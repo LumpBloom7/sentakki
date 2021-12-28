@@ -1,61 +1,29 @@
-using System.Linq;
-using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
-    public class SlideFanVisual : CompositeDrawable, ISlideVisual
+    public class SlideFanVisual : SlideVisualBase<SlideFanVisual.SlideFanChevron>
     {
-        // This will be proxied, so a must.
-        public override bool RemoveWhenNotAlive => false;
-
-        private double progress;
-        public double Progress
+        public SlideFanVisual() : base()
         {
-            get => progress;
-            set
-            {
-                progress = value;
-                updateProgress();
-            }
-        }
-
-        private Container<SlideFanChevron> chevrons;
-
-        private readonly BindableBool snakingIn = new BindableBool(true);
-
-        public SlideFanVisual()
-        {
-            Anchor = Anchor.Centre;
-            Origin = Anchor.Centre;
             AutoSizeAxes = Axes.Both;
             Rotation = 22.5f;
         }
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfig)
+
+        protected override void LoadChevrons()
         {
-            sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
-
-            AddRangeInternal(new Drawable[]{
-                chevrons = new Container<SlideFanChevron>(){
-                    Alpha = 0.9f
-                },
-            });
-
             const double endpoint_distance = 80; // margin for each end
 
-            for (int i = 1; i < 12; ++i)
+            for (int i = 11; i > 0; --i)
             {
                 float progress = (i + 1) / (float)12;
                 float scale = progress;
-                chevrons.Add(new SlideFanChevron(scale, scale)
+                Chevrons.Add(new SlideFanChevron(scale, scale)
                 {
                     Y = ((SentakkiPlayfield.RINGSIZE + 50 - (float)endpoint_distance) * scale) - 350,
                     Progress = i / (float)11,
@@ -63,56 +31,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             }
         }
 
-        private void updateProgress()
+        public class SlideFanChevron : BufferedContainer, ISlideChevron
         {
-            for (int i = 0; i < chevrons.Count; i++)
-            {
-                chevrons[i].UpdateProgress(progress);
-            }
-        }
-
-        public void PerformEntryAnimation(double duration)
-        {
-            if (snakingIn.Value)
-            {
-                double fadeDuration = duration / chevrons.Count;
-                double currentOffset = duration / 2;
-
-                foreach (var chevron in chevrons)
-                {
-                    chevron.FadeOut().Delay(currentOffset).FadeIn(fadeDuration * 2).Finally(finalSteps);
-                    currentOffset += fadeDuration / 2;
-                }
-            }
-            else
-            {
-                chevrons.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
-            }
-
-            void finalSteps(SlideFanChevron chevron) => chevron.UpdateProgress(progress);
-        }
-
-        public void PerformExitAnimation(double duration)
-        {
-            int chevronsLeft = chevrons.Count(c => c.Alpha != 0);
-            double fadeDuration = duration / chevronsLeft;
-            double currentOffset = 0;
-
-            foreach (var chevron in chevrons)
-            {
-                if (chevron.Alpha == 0)
-                    continue;
-
-                chevron.Delay(currentOffset).FadeOut(fadeDuration * 2);
-                currentOffset += fadeDuration / 2;
-            }
-        }
-
-        public void Free() { }
-
-        public class SlideFanChevron : BufferedContainer
-        {
-            public double Progress;
+            public double Progress { get; set; }
 
             public SlideFanChevron(float lengthScale, float HeightScale) : base(cachedFrameBuffer: true)
             {
@@ -204,11 +125,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                         },
                     }
                 });
-            }
-
-            public void UpdateProgress(double progress)
-            {
-                Alpha = progress >= Progress ? 0 : 1;
             }
         }
     }
