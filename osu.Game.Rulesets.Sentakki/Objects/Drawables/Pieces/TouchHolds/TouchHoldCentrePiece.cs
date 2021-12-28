@@ -6,7 +6,7 @@ using osu.Game.Graphics;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
+namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
 {
     public class TouchHoldCentrePiece : CompositeDrawable
     {

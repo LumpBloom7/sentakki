@@ -7,7 +7,7 @@ using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
+namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
     public class SlideTapPiece : CompositeDrawable
     {

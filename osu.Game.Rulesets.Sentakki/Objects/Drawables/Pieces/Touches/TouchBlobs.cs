@@ -1,5 +1,4 @@
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
@@ -8,7 +7,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
+namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
 {
     public class TouchBlob : CircularContainer
     {

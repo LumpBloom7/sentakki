@@ -8,7 +8,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine;
 using osu.Game.Rulesets.UI;

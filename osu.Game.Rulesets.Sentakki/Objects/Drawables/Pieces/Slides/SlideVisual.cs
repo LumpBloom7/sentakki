@@ -10,7 +10,7 @@ using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Configuration;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
+namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
     public class SlideVisual : CompositeDrawable, ISlideVisual
     {

@@ -1,4 +1,4 @@
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
+namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
     public interface ISlideVisual
     {

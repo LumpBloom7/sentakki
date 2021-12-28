@@ -1,4 +1,4 @@
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
