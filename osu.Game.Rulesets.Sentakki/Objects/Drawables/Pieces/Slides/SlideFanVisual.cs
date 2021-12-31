@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 Origin = Anchor.Centre;
                 AutoSizeAxes = Axes.Both;
 
-                float chevHeight = 6 + 10 + (10 * HeightScale);
+                float chevHeight = 16 + (10 * HeightScale);
                 float chevWidth = 6 + (210 * lengthScale);
 
                 AddInternal(new Container

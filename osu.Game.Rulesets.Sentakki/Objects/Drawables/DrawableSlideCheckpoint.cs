@@ -66,8 +66,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            // Don't allow for user input if auto is enabled for touch based objects (AutoTouch mod)
-            if (nodes.Count(n => n.IsHit) >= HitObject.NodesToPass)
+            // Counting  hit notes manually to avoid LINQ alloc overhead
+            int hitNotes = 0;
+            foreach (var node in nodes)
+                if (node.IsHit)
+                    ++hitNotes;
+
+
+            if (hitNotes >= HitObject.NodesToPass)
                 ApplyResult(Result.Judgement.MaxResult);
         }
 
@@ -85,7 +91,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         // Forcefully miss this node, used when players fail to complete the slide on time.
-        public void ForcefullyMiss() => ApplyResult(r => r.Type = r.Judgement.MinResult);
+        public void ForcefullyMiss() => ApplyResult(Result.Judgement.MinResult);
 
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
         {
