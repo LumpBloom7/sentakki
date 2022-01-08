@@ -67,6 +67,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         private IShader shader;
         private readonly Texture texture;
 
+
         public PlayfieldVisualisation()
         {
             FillAspectRatio = 1;
@@ -102,13 +103,14 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             kiaiEffect.TriggerChange();
         }
 
-        private void updateAmplitudes()
+        // Returns true if amplitude have been updated
+        private bool updateAmplitudes()
         {
             var track = beatmap.Value.TrackLoaded ? beatmap.Value.Track : null;
             var effect = beatmap.Value.BeatmapLoaded ? beatmap.Value.Beatmap?.ControlPointInfo.EffectPointAt(track?.CurrentTime ?? Time.Current) : null;
 
             if (!effect?.KiaiMode ?? false)
-                return;
+                return false;
 
             ReadOnlySpan<float> temporalAmplitudes = (track?.CurrentAmplitudes ?? ChannelAmplitudes.Empty).FrequencyAmplitudes.Span;
 
@@ -120,9 +122,14 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             }
 
             indexOffset = (indexOffset + index_change) % bars_per_visualiser;
+
+            return true;
         }
 
         private double timeDelta;
+
+        public bool ShouldDraw { get; private set; }
+
         protected override void Update()
         {
             base.Update();
@@ -130,11 +137,13 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             timeDelta += Math.Abs(Time.Elapsed);
             if (timeDelta >= time_between_updates)
             {
-                updateAmplitudes();
+                if (!updateAmplitudes() && !ShouldDraw)
+                    return;
                 timeDelta %= time_between_updates;
             }
 
             float decayFactor = Math.Abs((float)Time.Elapsed) * decay_per_milisecond;
+            ShouldDraw = false;
 
             for (int i = 0; i < bars_per_visualiser; i++)
             {
@@ -142,9 +151,16 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 frequencyAmplitudes[i] -= decayFactor * (frequencyAmplitudes[i] + 0.03f);
                 if (frequencyAmplitudes[i] < 0)
                     frequencyAmplitudes[i] = 0;
+
+                if (frequencyAmplitudes[i] != 0)
+                    ShouldDraw = true;
             }
 
+            if (!ShouldDraw)
+                return;
+
             Invalidate(Invalidation.DrawNode);
+            Console.WriteLine("Vis node fully invalidated");
         }
 
         protected override DrawNode CreateDrawNode() => new VisualisationDrawNode(this);
@@ -182,6 +198,9 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
             public override void Draw(Action<TexturedVertex2D> vertexAction)
             {
+                if (!Source.ShouldDraw)
+                    return;
+
                 base.Draw(vertexAction);
 
                 shader.Bind();
@@ -232,6 +251,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 }
 
                 shader.Unbind();
+                Console.WriteLine("Vis draw occured");
             }
 
             protected override void Dispose(bool isDisposing)
