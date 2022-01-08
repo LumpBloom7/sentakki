@@ -67,7 +67,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         private IShader shader;
         private readonly Texture texture;
 
-
         public PlayfieldVisualisation()
         {
             FillAspectRatio = 1;
@@ -104,13 +103,13 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         }
 
         // Returns true if amplitude have been updated
-        private bool updateAmplitudes()
+        private void updateAmplitudes()
         {
             var track = beatmap.Value.TrackLoaded ? beatmap.Value.Track : null;
             var effect = beatmap.Value.BeatmapLoaded ? beatmap.Value.Beatmap?.ControlPointInfo.EffectPointAt(track?.CurrentTime ?? Time.Current) : null;
 
             if (!effect?.KiaiMode ?? false)
-                return false;
+                return;
 
             ReadOnlySpan<float> temporalAmplitudes = (track?.CurrentAmplitudes ?? ChannelAmplitudes.Empty).FrequencyAmplitudes.Span;
 
@@ -123,7 +122,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
             indexOffset = (indexOffset + index_change) % bars_per_visualiser;
 
-            return true;
+            // It's kiai time, turn on the visualisation
+            ShouldDraw = true;
         }
 
         private double timeDelta;
@@ -138,10 +138,12 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             if (timeDelta >= time_between_updates)
             {
                 timeDelta %= time_between_updates;
-
-                if (!updateAmplitudes() && !ShouldDraw)
-                    return;
+                updateAmplitudes();
             }
+
+            // We don't have to update further if we don't need to draw
+            if (!ShouldDraw)
+                return;
 
             float decayFactor = Math.Abs((float)Time.Elapsed) * decay_per_milisecond;
             ShouldDraw = false;
@@ -157,6 +159,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                     ShouldDraw = true;
             }
 
+            // Don't invalidate the draw node if we don't plan to draw
             if (!ShouldDraw)
                 return;
 
