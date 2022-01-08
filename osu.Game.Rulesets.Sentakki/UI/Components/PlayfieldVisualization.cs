@@ -161,7 +161,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 return;
 
             Invalidate(Invalidation.DrawNode);
-            Console.WriteLine("Vis node fully invalidated");
         }
 
         protected override DrawNode CreateDrawNode() => new VisualisationDrawNode(this);
@@ -252,7 +251,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 }
 
                 shader.Unbind();
-                Console.WriteLine("Vis draw occured");
             }
 
             protected override void Dispose(bool isDisposing)
