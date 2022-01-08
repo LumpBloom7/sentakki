@@ -137,9 +137,10 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             timeDelta += Math.Abs(Time.Elapsed);
             if (timeDelta >= time_between_updates)
             {
+                timeDelta %= time_between_updates;
+
                 if (!updateAmplitudes() && !ShouldDraw)
                     return;
-                timeDelta %= time_between_updates;
             }
 
             float decayFactor = Math.Abs((float)Time.Elapsed) * decay_per_milisecond;
