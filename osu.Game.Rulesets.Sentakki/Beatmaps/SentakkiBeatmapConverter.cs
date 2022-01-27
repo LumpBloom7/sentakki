@@ -44,7 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             // But we initialize to defaults so HR can adjust HitWindows in a controlled manner
             // We clone beforehand to avoid altering the original (it really should be readonly :P)
             convertedBeatmap.BeatmapInfo = convertedBeatmap.BeatmapInfo.Clone();
-            convertedBeatmap.BeatmapInfo.BaseDifficulty = new BeatmapDifficulty();
+            convertedBeatmap.BeatmapInfo.Difficulty = new BeatmapDifficulty();
 
             return convertedBeatmap;
         }
