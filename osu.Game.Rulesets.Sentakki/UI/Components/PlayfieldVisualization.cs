@@ -102,6 +102,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             kiaiEffect.TriggerChange();
         }
 
+        // Returns true if amplitude have been updated
         private void updateAmplitudes()
         {
             var track = beatmap.Value.TrackLoaded ? beatmap.Value.Track : null;
@@ -120,9 +121,15 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             }
 
             indexOffset = (indexOffset + index_change) % bars_per_visualiser;
+
+            // It's kiai time, turn on the visualisation
+            ShouldDraw = true;
         }
 
         private double timeDelta;
+
+        public bool ShouldDraw { get; private set; }
+
         protected override void Update()
         {
             base.Update();
@@ -130,11 +137,16 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             timeDelta += Math.Abs(Time.Elapsed);
             if (timeDelta >= time_between_updates)
             {
-                updateAmplitudes();
                 timeDelta %= time_between_updates;
+                updateAmplitudes();
             }
 
+            // We don't have to update further if we don't need to draw
+            if (!ShouldDraw)
+                return;
+
             float decayFactor = Math.Abs((float)Time.Elapsed) * decay_per_milisecond;
+            ShouldDraw = false;
 
             for (int i = 0; i < bars_per_visualiser; i++)
             {
@@ -142,7 +154,14 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 frequencyAmplitudes[i] -= decayFactor * (frequencyAmplitudes[i] + 0.03f);
                 if (frequencyAmplitudes[i] < 0)
                     frequencyAmplitudes[i] = 0;
+
+                if (frequencyAmplitudes[i] != 0)
+                    ShouldDraw = true;
             }
+
+            // Don't invalidate the draw node if we don't plan to draw
+            if (!ShouldDraw)
+                return;
 
             Invalidate(Invalidation.DrawNode);
         }
@@ -182,6 +201,9 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
             public override void Draw(Action<TexturedVertex2D> vertexAction)
             {
+                if (!Source.ShouldDraw)
+                    return;
+
                 base.Draw(vertexAction);
 
                 shader.Bind();
