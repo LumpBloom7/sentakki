@@ -31,17 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override void LoadComplete()
         {
             (Config as SentakkiRulesetConfigManager)?.BindWith(SentakkiRulesetSettings.LaneInputMode, laneInputMode);
-        }
-
-        private GameplayEventBroadcaster eventBroadcaster;
-
-        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
-        {
-            var dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
-
-            dependencies.CacheAs(eventBroadcaster = new GameplayEventBroadcaster());
-
-            return dependencies;
+            TryBroadcastGameplayEvent(new TransmissionData(TransmissionData.InfoType.MetaStartPlay, 0));
         }
 
         // Input specifics (sensor/button) for replay and gameplay
@@ -57,6 +47,20 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private readonly Track speedAdjustmentTrack = new TrackVirtual(0);
 
         public double GameplaySpeed => speedAdjustmentTrack.Rate;
+
+        /// Network broadcasting stuff
+        private readonly GameplayEventBroadcaster eventBroadcaster = new GameplayEventBroadcaster();
+
+
+        /// <summary>
+        /// Tries broadcasting an gameplay event.
+        /// This depends on user settings, so may not guarantee successful transmission
+        /// </summary>
+        /// <param name="packet">The packet to be transmitted</param>
+        public void TryBroadcastGameplayEvent(TransmissionData packet)
+        {
+            eventBroadcaster.Broadcast(packet);
+        }
 
         // Default stuff
         protected override Playfield CreatePlayfield() => new SentakkiPlayfield();

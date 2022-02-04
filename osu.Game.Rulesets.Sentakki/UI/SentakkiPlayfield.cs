@@ -23,9 +23,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
     [Cached]
     public class SentakkiPlayfield : Playfield
     {
-        [Resolved]
-        private GameplayEventBroadcaster gameplayEventBroadcaster { get; set; }
-
         private readonly Container<DrawableSentakkiJudgement> judgementLayer;
         private readonly DrawablePool<DrawableSentakkiJudgement> judgementPool;
 
@@ -116,7 +113,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             skin.BindValueChanged(_ => changePlayfieldAccent(), true);
             ringColor.BindValueChanged(_ => changePlayfieldAccent(), true);
-            gameplayEventBroadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.MetaStartPlay, 0));
         }
 
         protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);

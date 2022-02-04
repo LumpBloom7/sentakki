@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
     public class LanedPlayfield : Playfield
     {
         [Resolved]
-        private GameplayEventBroadcaster eventBroadcaster { get; set; }
+        private DrawableSentakkiRuleset sentakkiRuleset { get; set; }
 
         public readonly List<Lane> Lanes = new List<Lane>();
 
@@ -139,7 +139,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     break;
             }
 
-            eventBroadcaster.Broadcast(new TransmissionData(resultType, laned.HitObject.Lane));
+            sentakkiRuleset.TryBroadcastGameplayEvent(new TransmissionData(resultType, laned.HitObject.Lane));
 
             var explosion = explosionPool.Get(e => e.Apply(laned.HitObject));
             explosionLayer.Add(explosion);

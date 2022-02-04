@@ -19,9 +19,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 {
     public class Lane : Playfield, IKeyBindingHandler<SentakkiAction>
     {
-        [Resolved]
-        private GameplayEventBroadcaster eventBroadcaster { get; set; }
-
         public int LaneNumber { get; set; }
 
         public Action<Drawable> OnLoaded;
@@ -42,15 +39,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
             updateInputState();
         }
 
-        private DrawableSentakkiRuleset drawableSentakkiRuleset;
-        private SentakkiRulesetConfigManager sentakkiRulesetConfig;
+        [Resolved]
+        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; }
+
+        [Resolved]
+        private SentakkiRulesetConfigManager sentakkiRulesetConfig { get; set; }
 
         [BackgroundDependencyLoader(true)]
-        private void load(DrawableSentakkiRuleset drawableRuleset, SentakkiRulesetConfigManager sentakkiRulesetConfigManager)
+        private void load()
         {
-            drawableSentakkiRuleset = drawableRuleset;
-            sentakkiRulesetConfig = sentakkiRulesetConfigManager;
-
             RegisterPool<Tap, DrawableTap>(8);
 
             RegisterPool<Hold, DrawableHold>(8);
@@ -122,7 +119,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             if (keys.NewValue > keys.OldValue)
             {
-                eventBroadcaster.Broadcast(new TransmissionData(TransmissionData.InfoType.LanePressed, LaneNumber));
+                drawableSentakkiRuleset.TryBroadcastGameplayEvent(new TransmissionData(TransmissionData.InfoType.LanePressed, LaneNumber));
                 SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + LaneNumber);
             }
         }
