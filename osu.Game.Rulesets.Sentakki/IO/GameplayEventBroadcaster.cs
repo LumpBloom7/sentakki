@@ -61,7 +61,6 @@ namespace osu.Game.Rulesets.Sentakki.IO
             try
             {
                 await pipeServer.WriteAsync(new Memory<byte>(buffer), cancellationToken).ConfigureAwait(false);
-                Console.WriteLine(packet.ToString());
             }
             catch (IOException)
             {

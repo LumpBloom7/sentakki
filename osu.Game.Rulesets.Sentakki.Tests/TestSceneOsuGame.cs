@@ -14,12 +14,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests
 {
     public class TestSceneOsuGame : OsuTestScene
     {
-        private SpriteText text = new SpriteText();
-        private TestSceneGameplayEventBroadcaster.TestBroadcastClient testClient;
         [BackgroundDependencyLoader]
         private void load()
         {
-            testClient = new TestSceneGameplayEventBroadcaster.TestBroadcastClient(text);
             Children = new Drawable[]
             {
                 new Box
