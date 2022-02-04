@@ -107,7 +107,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.IO
             broadcaster?.Dispose();
         }
 
-        private class TestBroadcastClient : IDisposable
+        public class TestBroadcastClient : IDisposable
         {
             private NamedPipeClientStream pipeClient;
 

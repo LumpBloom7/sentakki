@@ -76,6 +76,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     LabelText = "Lane input mode (Doesn't apply to touch)",
                     Current = config.GetBindable<LaneInputMode>(SentakkiRulesetSettings.LaneInputMode)
                 },
+                new SettingsCheckbox{
+                    LabelText = "Broadcast gameplay events",
+                    TooltipText = "Allows third party programs to receive events. (RGB lights or whatnot)",
+                    Current = config.GetBindable<bool>(SentakkiRulesetSettings.GameplayIPC)
+                },
             };
         }
 

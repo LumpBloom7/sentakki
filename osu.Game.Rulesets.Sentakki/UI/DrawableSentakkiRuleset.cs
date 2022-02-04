@@ -31,6 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override void LoadComplete()
         {
             (Config as SentakkiRulesetConfigManager)?.BindWith(SentakkiRulesetSettings.LaneInputMode, laneInputMode);
+            (Config as SentakkiRulesetConfigManager)?.BindWith(SentakkiRulesetSettings.GameplayIPC, ipcEnabled);
             TryBroadcastGameplayEvent(new TransmissionData(TransmissionData.InfoType.MetaStartPlay, 0));
         }
 
@@ -51,6 +52,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
         /// Network broadcasting stuff
         private readonly GameplayEventBroadcaster eventBroadcaster = new GameplayEventBroadcaster();
 
+        private readonly Bindable<bool> ipcEnabled = new Bindable<bool>();
+
 
         /// <summary>
         /// Tries broadcasting an gameplay event.
@@ -59,7 +62,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
         /// <param name="packet">The packet to be transmitted</param>
         public void TryBroadcastGameplayEvent(TransmissionData packet)
         {
-            eventBroadcaster.Broadcast(packet);
+            if (ipcEnabled.Value)
+                eventBroadcaster.Broadcast(packet);
         }
 
         // Default stuff
