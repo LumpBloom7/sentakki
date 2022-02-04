@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         public SentakkiPatternGenerator(IBeatmap beatmap)
         {
             this.beatmap = beatmap;
-            var difficulty = beatmap.BeatmapInfo.BaseDifficulty;
+            var difficulty = beatmap.BeatmapInfo.Difficulty;
             int seed = ((int)MathF.Round(difficulty.DrainRate + difficulty.CircleSize) * 20) + (int)(difficulty.OverallDifficulty * 41.2) + (int)MathF.Round(difficulty.ApproachRate);
             rng = new Random(seed);
         }
@@ -195,7 +195,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             if (isRepeatSpam)
                 yield break;
 
-            var difficulty = beatmap.BeatmapInfo.BaseDifficulty;
+            var difficulty = beatmap.BeatmapInfo.Difficulty;
 
             var controlPointInfo = (LegacyControlPointInfo)beatmap.ControlPointInfo;
 

@@ -57,8 +57,8 @@ namespace osu.Game.Rulesets.Sentakki
         public override IBeatmapProcessor CreateBeatmapProcessor(IBeatmap beatmap) =>
             new SentakkiBeatmapProcessor(beatmap);
 
-        public override DifficultyCalculator CreateDifficultyCalculator(WorkingBeatmap beatmap) =>
-            new SentakkiDifficultyCalculator(this, beatmap);
+        public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) =>
+            new SentakkiDifficultyCalculator(RulesetInfo, beatmap);
 
         public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new SentakkiReplayFrame();
 

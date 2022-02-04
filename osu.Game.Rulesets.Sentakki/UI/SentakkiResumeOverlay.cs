@@ -127,7 +127,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             messageText.Text = "Get ready!";
 
             var currentTimingPoint = beatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(beatmap.Value.Track.CurrentTime);
-            barLength = (int)currentTimingPoint.TimeSignature;
+            barLength = currentTimingPoint.TimeSignature.Numerator;
             beatlength = currentTimingPoint.BeatLength;
 
             // Reset the countdown, plus a second for preparation
