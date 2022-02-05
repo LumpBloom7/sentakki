@@ -149,7 +149,7 @@ namespace osu.Game.Rulesets.Sentakki
                     {
                         RelativeSizeAxes = Axes.X,
                         Size = new Vector2(1, 250)
-                    },false),
+                    },true),
                 }
             },
             new StatisticRow
