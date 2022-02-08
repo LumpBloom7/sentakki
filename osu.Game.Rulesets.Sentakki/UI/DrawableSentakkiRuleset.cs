@@ -28,7 +28,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 mod.ApplyToTrack(speedAdjustmentTrack);
         }
 
-        protected override void LoadComplete()
+        [BackgroundDependencyLoader]
+        private void load()
         {
             (Config as SentakkiRulesetConfigManager)?.BindWith(SentakkiRulesetSettings.LaneInputMode, laneInputMode);
             (Config as SentakkiRulesetConfigManager)?.BindWith(SentakkiRulesetSettings.GameplayIPC, ipcEnabled);
@@ -53,7 +54,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private readonly GameplayEventBroadcaster eventBroadcaster = new GameplayEventBroadcaster();
 
         private readonly Bindable<bool> ipcEnabled = new Bindable<bool>();
-
 
         /// <summary>
         /// Tries broadcasting an gameplay event.
