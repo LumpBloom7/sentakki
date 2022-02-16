@@ -1,11 +1,9 @@
 using System;
-using Microsoft.EntityFrameworkCore.Internal;
+using System.Linq;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Judgements;
 using osuTK;
-using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
