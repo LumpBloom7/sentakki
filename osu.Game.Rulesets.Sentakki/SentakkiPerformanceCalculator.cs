@@ -10,6 +10,7 @@ namespace osu.Game.Rulesets.Sentakki
         {
         }
 
+        // TODO: Create an actual performance calculator
         public override PerformanceAttributes Calculate() => new PerformanceAttributes { Total = 0 };
     }
 }
