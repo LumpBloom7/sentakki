@@ -62,6 +62,9 @@ namespace osu.Game.Rulesets.Sentakki
 
         public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new SentakkiReplayFrame();
 
+        public override PerformanceCalculator CreatePerformanceCalculator(DifficultyAttributes attributes, ScoreInfo score) =>
+            new SentakkiPerformanceCalculator(this, attributes, score);
+
         public override IEnumerable<Mod> GetModsFor(ModType type)
         {
             switch (type)
@@ -134,32 +137,32 @@ namespace osu.Game.Rulesets.Sentakki
             {
                 Columns = new[]
                 {
-                    new StatisticItem("Timing Distribution", new HitEventTimingDistributionGraph(score.HitEvents)
+                    new StatisticItem("Timing Distribution", () => new HitEventTimingDistributionGraph(score.HitEvents)
                     {
                         RelativeSizeAxes = Axes.X,
                         Height = 250
-                    })
+                    }, true)
                 }
             },
             new StatisticRow
             {
                 Columns = new[]
                 {
-                    new StatisticItem("Judgement Distribution", new JudgementChart(score.HitEvents.Where(e=>e.HitObject is SentakkiHitObject).ToList())
+                    new StatisticItem("Judgement Distribution", ()=>new JudgementChart(score.HitEvents.Where(e=>e.HitObject is SentakkiHitObject).ToList())
                     {
                         RelativeSizeAxes = Axes.X,
                         Size = new Vector2(1, 250)
-                    }),
+                    },true),
                 }
             },
             new StatisticRow
             {
                 Columns = new[]
                 {
-                    new StatisticItem(string.Empty, new SimpleStatisticTable(3, new SimpleStatisticItem[]
+                    new StatisticItem(string.Empty, ()=>new SimpleStatisticTable(3, new SimpleStatisticItem[]
                     {
                         new UnstableRate(score.HitEvents)
-                    }))
+                    }), true)
                 }
             }
         };
