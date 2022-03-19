@@ -46,7 +46,7 @@ namespace osu.Game.Rulesets.Sentakki
         public override string PlayingVerb => "Washing laundry";
         public override string ShortName => "Sentakki";
 
-        public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor();
+        public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor(this);
 
         public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod> mods) =>
             new DrawableSentakkiRuleset(this, beatmap, mods);
@@ -62,8 +62,7 @@ namespace osu.Game.Rulesets.Sentakki
 
         public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new SentakkiReplayFrame();
 
-        public override PerformanceCalculator CreatePerformanceCalculator(DifficultyAttributes attributes, ScoreInfo score) =>
-            new SentakkiPerformanceCalculator(this, attributes, score);
+        public override PerformanceCalculator CreatePerformanceCalculator() => new SentakkiPerformanceCalculator(this);
 
         public override IEnumerable<Mod> GetModsFor(ModType type)
         {
