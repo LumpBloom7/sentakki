@@ -5,12 +5,12 @@ namespace osu.Game.Rulesets.Sentakki
 {
     public class SentakkiPerformanceCalculator : PerformanceCalculator
     {
-        public SentakkiPerformanceCalculator(SentakkiRuleset ruleset, DifficultyAttributes attributes, ScoreInfo score)
-            : base(ruleset, attributes, score)
+        public SentakkiPerformanceCalculator(SentakkiRuleset ruleset)
+            : base(ruleset)
         {
         }
 
         // TODO: Create an actual performance calculator
-        public override PerformanceAttributes Calculate() => new PerformanceAttributes { Total = 0 };
+        protected override PerformanceAttributes CreatePerformanceAttributes(ScoreInfo score, DifficultyAttributes attributes) => new PerformanceAttributes { Total = 0 };
     }
 }

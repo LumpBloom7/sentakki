@@ -4,6 +4,8 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
 {
     public class SentakkiScoreProcessor : ScoreProcessor
     {
+        public SentakkiScoreProcessor(SentakkiRuleset ruleset) : base(ruleset) { }
+
         protected override double DefaultAccuracyPortion => 0.9;
         protected override double DefaultComboPortion => 0.1;
     }
