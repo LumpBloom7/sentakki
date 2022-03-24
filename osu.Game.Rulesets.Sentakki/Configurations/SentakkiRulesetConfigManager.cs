@@ -24,6 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
             SetDefault(SentakkiRulesetSettings.LaneInputMode, LaneInputMode.Button);
             SetDefault(SentakkiRulesetSettings.SnakingSlideBody, true);
             SetDefault(SentakkiRulesetSettings.DetailedJudgements, false);
+            SetDefault(SentakkiRulesetSettings.GameplayIPC, false);
         }
     }
 
@@ -51,6 +52,7 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
         TouchAnimationDuration,
         LaneInputMode,
         SnakingSlideBody,
-        DetailedJudgements
+        DetailedJudgements,
+        GameplayIPC,
     }
 }

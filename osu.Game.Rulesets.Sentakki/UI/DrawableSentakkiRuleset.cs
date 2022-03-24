@@ -9,6 +9,7 @@ using osu.Game.Replays;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.IO;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.UI;
@@ -27,9 +28,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 mod.ApplyToTrack(speedAdjustmentTrack);
         }
 
-        protected override void LoadComplete()
+        [BackgroundDependencyLoader]
+        private void load()
         {
             (Config as SentakkiRulesetConfigManager)?.BindWith(SentakkiRulesetSettings.LaneInputMode, laneInputMode);
+            (Config as SentakkiRulesetConfigManager)?.BindWith(SentakkiRulesetSettings.GameplayIPC, ipcEnabled);
+            TryBroadcastGameplayEvent(new TransmissionData(TransmissionData.InfoType.MetaStartPlay, 0));
         }
 
         // Input specifics (sensor/button) for replay and gameplay
@@ -46,6 +50,22 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public double GameplaySpeed => speedAdjustmentTrack.Rate;
 
+        /// Network broadcasting stuff
+        private readonly GameplayEventBroadcaster eventBroadcaster = new GameplayEventBroadcaster();
+
+        private readonly Bindable<bool> ipcEnabled = new Bindable<bool>();
+
+        /// <summary>
+        /// Tries broadcasting an gameplay event.
+        /// This depends on user settings, so may not guarantee successful transmission
+        /// </summary>
+        /// <param name="packet">The packet to be transmitted</param>
+        public void TryBroadcastGameplayEvent(TransmissionData packet)
+        {
+            if (ipcEnabled.Value)
+                eventBroadcaster.Broadcast(packet);
+        }
+
         // Default stuff
         protected override Playfield CreatePlayfield() => new SentakkiPlayfield();
 
@@ -60,5 +80,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override ResumeOverlay CreateResumeOverlay() => new SentakkiResumeOverlay();
 
         protected override Framework.Input.PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset?.RulesetInfo);
+
+        protected override void Dispose(bool isDisposing)
+        {
+            eventBroadcaster.Dispose();
+            base.Dispose(isDisposing);
+        }
     }
 }

@@ -9,6 +9,7 @@ using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.IO;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.UI;
@@ -38,15 +39,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
             updateInputState();
         }
 
-        private DrawableSentakkiRuleset drawableSentakkiRuleset;
-        private SentakkiRulesetConfigManager sentakkiRulesetConfig;
+        [Resolved]
+        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; }
+
+        [Resolved]
+        private SentakkiRulesetConfigManager sentakkiRulesetConfig { get; set; }
 
         [BackgroundDependencyLoader(true)]
-        private void load(DrawableSentakkiRuleset drawableRuleset, SentakkiRulesetConfigManager sentakkiRulesetConfigManager)
+        private void load()
         {
-            drawableSentakkiRuleset = drawableRuleset;
-            sentakkiRulesetConfig = sentakkiRulesetConfigManager;
-
             RegisterPool<Tap, DrawableTap>(8);
 
             RegisterPool<Hold, DrawableHold>(8);
@@ -117,7 +118,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 SentakkiActionInputManager.TriggerReleased(SentakkiAction.Key1 + LaneNumber);
 
             if (keys.NewValue > keys.OldValue)
+            {
+                drawableSentakkiRuleset.TryBroadcastGameplayEvent(new TransmissionData(TransmissionData.InfoType.LanePressed, LaneNumber));
                 SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + LaneNumber);
+            }
         }
 
         public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)

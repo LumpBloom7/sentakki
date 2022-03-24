@@ -6,6 +6,8 @@ using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.IO;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
@@ -17,6 +19,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
 {
     public class LanedPlayfield : Playfield
     {
+        [Resolved]
+        private DrawableSentakkiRuleset sentakkiRuleset { get; set; }
+
         public readonly List<Lane> Lanes = new List<Lane>();
 
         private readonly SortedDrawableProxyContainer slideBodyProxyContainer;
@@ -116,6 +121,25 @@ namespace osu.Game.Rulesets.Sentakki.UI
             if (!result.IsHit) return;
 
             if (judgedObject is DrawableSlideBody) return;
+
+            TransmissionData.InfoType resultType = TransmissionData.InfoType.None;
+            switch (result.Type)
+            {
+                case HitResult.Great:
+                    resultType = TransmissionData.InfoType.HitPerfect;
+                    break;
+                case HitResult.Good:
+                    resultType = TransmissionData.InfoType.HitGreat;
+                    break;
+                case HitResult.Meh:
+                    resultType = TransmissionData.InfoType.HitGood;
+                    break;
+                case HitResult.Miss:
+                    resultType = TransmissionData.InfoType.Miss;
+                    break;
+            }
+
+            sentakkiRuleset.TryBroadcastGameplayEvent(new TransmissionData(resultType, laned.HitObject.Lane));
 
             var explosion = explosionPool.Get(e => e.Apply(laned.HitObject));
             explosionLayer.Add(explosion);
