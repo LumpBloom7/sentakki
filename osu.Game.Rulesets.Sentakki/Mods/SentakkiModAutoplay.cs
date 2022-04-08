@@ -16,7 +16,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override ModReplayData CreateReplayData(IBeatmap beatmap, IReadOnlyList<Mod> mods)
             => new ModReplayData(new SentakkiAutoGenerator(beatmap).Generate(), new ModCreatedUser { Username = getRandomCharacter() });
 
-
         public override Type[] IncompatibleMods => new Type[6]
         {
             typeof(ModRelax),
