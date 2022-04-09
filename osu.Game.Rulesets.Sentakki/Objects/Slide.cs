@@ -57,7 +57,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 else
                     AddNested(body = new SlideBody());
 
-
                 body.Lane = SlideInfo.SlidePath.EndLane + Lane;
                 body.StartTime = StartTime;
                 body.SlideInfo = SlideInfo;

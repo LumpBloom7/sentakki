@@ -72,7 +72,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 if (node.IsHit)
                     ++hitNotes;
 
-
             if (hitNotes >= HitObject.NodesToPass)
                 ApplyResult(Result.Judgement.MaxResult);
         }
