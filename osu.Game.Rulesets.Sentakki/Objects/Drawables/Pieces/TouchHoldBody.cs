@@ -3,7 +3,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.UI.Components;
 using osuTK;
 using osuTK.Graphics;
 
@@ -13,8 +12,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     {
         public readonly TouchHoldProgressPiece ProgressPiece;
         private readonly TouchHoldCentrePiece centrePiece;
-
-        private readonly HitExplosion explosion;
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => centrePiece.ReceivePositionalInputAt(screenSpacePos);
 
@@ -26,9 +23,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             InternalChildren = new Drawable[]{
                 ProgressPiece = new TouchHoldProgressPiece(),
                 centrePiece = new TouchHoldCentrePiece(),
-                explosion = new HitExplosion(){
-                    Size = new Vector2(110)
-                },
             };
         }
 
@@ -37,12 +31,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         [BackgroundDependencyLoader]
         private void load(DrawableHitObject drawableObject)
         {
-            accentColour.BindTo(drawableObject.AccentColour);
-            accentColour.BindValueChanged(colour =>
-            {
-                explosion.Colour = colour.NewValue;
-            }, true);
-
             drawableObject.ApplyCustomUpdateState += updateState;
         }
 
@@ -53,9 +41,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 switch (state)
                 {
                     case ArmedState.Hit:
-                        explosion.Explode();
-
-                        //after the flash, we can hide some elements that were behind it
                         ProgressPiece.FadeOut();
                         centrePiece.FadeOut();
                         break;

@@ -23,7 +23,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
     public class SentakkiPlayfield : Playfield
     {
         private readonly Container<DrawableSentakkiJudgement> judgementLayer;
+
+        private readonly Container<HitExplosion> explosionLayer;
+
         private readonly DrawablePool<DrawableSentakkiJudgement> judgementPool;
+        private readonly DrawablePool<HitExplosion> explosionPool;
 
         private readonly SentakkiRing ring;
 
@@ -60,6 +64,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             Size = new Vector2(RINGSIZE);
             AddRangeInternal(new Drawable[]
             {
+                explosionPool = new DrawablePool<HitExplosion>(8),
                 judgementPool = new DrawablePool<DrawableSentakkiJudgement>(8),
                 AccentContainer = new Container
                 {
@@ -73,6 +78,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 LanedPlayfield = new LanedPlayfield(),
                 HitObjectContainer, // This only contains TouchHolds, which needs to be above others types
                 touchPlayfield = new TouchPlayfield(), // This only contains Touch, which needs a custom playfield to handle their input
+                explosionLayer = new Container<HitExplosion>() { RelativeSizeAxes = Axes.Both },
                 judgementLayer = new Container<DrawableSentakkiJudgement>
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -136,13 +142,20 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private void onNewResult(DrawableHitObject judgedObject, JudgementResult result)
         {
-            if (!judgedObject.DisplayResult || !DisplayJudgements.Value || !(judgedObject is DrawableSentakkiHitObject))
+            if (!judgedObject.DisplayResult || !DisplayJudgements.Value || !(judgedObject is DrawableSentakkiHitObject sentakkiHitObject))
                 return;
 
             judgementLayer.Add(judgementPool.Get(j => j.Apply(result, judgedObject)));
 
-            if (result.IsHit && judgedObject.HitObject.Kiai)
+            if (!result.IsHit) return;
+
+            if (judgedObject is DrawableSlideBody) return;
+
+            if (judgedObject.HitObject.Kiai)
                 ring.KiaiBeat();
+
+            var explosion = explosionPool.Get(e => e.Apply(sentakkiHitObject));
+            explosionLayer.Add(explosion);
         }
 
         [Resolved]
