@@ -22,6 +22,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [Resolved]
         private IBindable<WorkingBeatmap> beatmap { get; set; }
 
+        [Resolved]
+        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; }
+
         private readonly string[] supporter_list = new string[]{
             "Ayato_K",
             "Bosch",
@@ -128,7 +131,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             var currentTimingPoint = beatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(beatmap.Value.Track.CurrentTime);
             barLength = currentTimingPoint.TimeSignature.Numerator;
-            beatlength = currentTimingPoint.BeatLength;
+            beatlength = currentTimingPoint.BeatLength / drawableSentakkiRuleset.GameplaySpeed;
 
             // Reset the countdown, plus a second for preparation
             remainingTime = (barLength * beatlength) + 1000;
