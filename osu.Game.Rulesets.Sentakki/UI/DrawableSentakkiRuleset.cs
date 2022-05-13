@@ -10,6 +10,7 @@ using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
@@ -20,16 +21,27 @@ namespace osu.Game.Rulesets.Sentakki.UI
     [Cached]
     public class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject>
     {
+
+        [Cached]
+        private SlideFanChevrons slideFanChevronsTextures;
+
         public DrawableSentakkiRuleset(SentakkiRuleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
             : base(ruleset, beatmap, mods)
         {
             foreach (var mod in Mods.OfType<IApplicableToTrack>())
                 mod.ApplyToTrack(speedAdjustmentTrack);
+
+            // Pre-generate textures to be used by SlideFans
+            slideFanChevronsTextures = new SlideFanChevrons();
         }
 
-        protected override void LoadComplete()
+
+        [BackgroundDependencyLoader]
+        private void load()
         {
             (Config as SentakkiRulesetConfigManager)?.BindWith(SentakkiRulesetSettings.LaneInputMode, laneInputMode);
+
+            FrameStableComponents.Add(slideFanChevronsTextures);
         }
 
         // Input specifics (sensor/button) for replay and gameplay

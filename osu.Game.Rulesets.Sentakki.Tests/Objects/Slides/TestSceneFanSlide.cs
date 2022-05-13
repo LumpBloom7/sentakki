@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -20,8 +21,13 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 
         private readonly SlideFanVisual slide;
 
+        [Cached]
+        private readonly SlideFanChevrons fanChevrons;
+
         public TestSceneFanSlide()
         {
+            Add(fanChevrons = new SlideFanChevrons());
+
             Add(ring = new SentakkiRing()
             {
                 RelativeSizeAxes = Axes.None,

@@ -41,11 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             AddRangeInternal(new Drawable[]{
                 Chevrons = new Container<T>(),
             });
-
-            LoadChevrons();
         }
-
-        protected virtual void LoadChevrons() { }
 
         protected void UpdateProgress()
         {

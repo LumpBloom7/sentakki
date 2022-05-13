@@ -25,13 +25,13 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         private int depthIndex;
 
         [Cached]
-        private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
+        private readonly SlideFanChevrons fanChevrons;
 
         public TestSceneSlideFan()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
 
-            Add(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(62));
+            Add(fanChevrons = new SlideFanChevrons());
 
             AddStep("Miss Single", () => testSingle(2000));
             AddStep("Hit Single", () => testSingle(2000, true));

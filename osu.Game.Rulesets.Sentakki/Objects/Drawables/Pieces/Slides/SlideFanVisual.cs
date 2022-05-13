@@ -1,130 +1,53 @@
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
-using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
     public class SlideFanVisual : SlideVisualBase<SlideFanVisual.SlideFanChevron>
     {
-        public SlideFanVisual() : base()
+        public SlideFanVisual()
         {
-            AutoSizeAxes = Axes.Both;
             Rotation = 22.5f;
+            AutoSizeAxes = Axes.Both;
         }
 
-        protected override void LoadChevrons()
+        [BackgroundDependencyLoader]
+        private void load(SlideFanChevrons chevronTextures)
         {
             const double endpoint_distance = 80; // margin for each end
 
-            for (int i = 11; i > 0; --i)
+            for (int i = 10; i >= 0; --i)
             {
-                float progress = (i + 1) / (float)12;
+                float progress = (i + 2) / (float)12;
                 float scale = progress;
-                Chevrons.Add(new SlideFanChevron(scale, scale)
+                Chevrons.Add(new SlideFanChevron(chevronTextures.Get(i))
                 {
                     Y = ((SentakkiPlayfield.RINGSIZE + 50 - (float)endpoint_distance) * scale) - 350,
-                    Progress = i / (float)11,
+                    Progress = (i + 1) / (float)11,
                 });
             }
         }
 
-        public class SlideFanChevron : BufferedContainer, ISlideChevron
+        public class SlideFanChevron : CompositeDrawable, ISlideChevron
         {
             public double Progress { get; set; }
+            private readonly IBindable<Vector2> textureSize = new Bindable<Vector2>();
 
-            public SlideFanChevron(float lengthScale, float HeightScale) : base(cachedFrameBuffer: true)
+            public SlideFanChevron(SlideFanChevrons.ChevronBackingTexture texture)
             {
-                Anchor = Anchor.Centre;
-                Origin = Anchor.Centre;
-                AutoSizeAxes = Axes.Both;
+                Anchor = Origin = Anchor.Centre;
 
-                float chevHeight = 16 + (10 * HeightScale);
-                float chevWidth = 6 + (210 * lengthScale);
+                textureSize.BindValueChanged(v => Size = v.NewValue);
+                textureSize.BindTo(texture.SizeBindable);
 
-                AddInternal(new Container
+                AddInternal(texture.CreateView().With(d =>
                 {
-                    Anchor = Anchor.BottomCentre,
-                    Origin = Anchor.BottomCentre,
-                    AutoSizeAxes = Axes.Both,
-                    Children = new Drawable[]{
-                        // Outlines
-                        new Container
-                        {
-                            X = 2.5f,
-                            Masking = true,
-                            CornerRadius = chevHeight/4,
-                            CornerExponent = 2.5f,
-                            Anchor = Anchor.BottomCentre,
-                            Origin = Anchor.BottomRight,
-                            Rotation = 22.5f,
-                            Width = chevWidth,
-                            Height = chevHeight,
-                            Child = new Box{
-                                RelativeSizeAxes = Axes.Both,
-                                Colour = Color4.Gray
-                            },
-                        },
-                        new Container
-                        {
-                            X = -2.5f,
-                            Masking = true,
-                            CornerRadius = chevHeight/4,
-                            CornerExponent = 2.5f,
-                            Anchor = Anchor.BottomCentre,
-                            Origin = Anchor.BottomLeft,
-                            Rotation = -22.5f,
-                            Width = chevWidth,
-                            Height = chevHeight,
-                            Child = new Box{
-                                RelativeSizeAxes = Axes.Both,
-                                Colour = Color4.Gray
-                            },
-                        },
-                        // Inners
-                        new Container{
-                            X = 2.5f,
-                            Anchor = Anchor.BottomCentre,
-                            Origin = Anchor.BottomRight,
-                            Size = new Vector2(chevWidth, chevHeight),
-                            Rotation = 22.5f,
-                            Padding = new MarginPadding(2),
-                            Child = new Container{
-                                RelativeSizeAxes = Axes.Both,
-                                Masking = true,
-
-                                CornerRadius = (chevHeight-4)/4,
-                                CornerExponent = 2.5f,
-                                Colour = Color4.White,
-                                Child = new Box{
-                                    RelativeSizeAxes = Axes.Both,
-                                    Colour = Color4.White
-                                }
-                            },
-                        },
-                        new Container{
-                            X = -2.5f,
-                            Anchor = Anchor.BottomCentre,
-                            Origin = Anchor.BottomLeft,
-                            Size = new Vector2(chevWidth, chevHeight),
-                            Rotation = -22.5f,
-                            Padding = new MarginPadding(2),
-                            Child = new Container
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Masking = true,
-                                CornerRadius = (chevHeight-4)/4,
-                                CornerExponent = 2.5f,
-                                Child = new Box{
-                                    RelativeSizeAxes = Axes.Both,
-                                    Colour = Color4.White
-                                }
-                            },
-                        },
-                    }
-                });
+                    d.RelativeSizeAxes = Axes.Both;
+                }));
             }
         }
     }
