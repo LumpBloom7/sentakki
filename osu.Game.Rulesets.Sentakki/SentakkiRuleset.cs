@@ -100,9 +100,10 @@ namespace osu.Game.Rulesets.Sentakki
                 case ModType.Fun:
                     return new Mod[]
                     {
+                        new SentakkiModExperimental(),
                         new MultiMod(new ModWindUp(), new ModWindDown()),
                         new SentakkiModSpin(),
-                        new SentakkiModExperimental(),
+                        new SentakkiModMuted(),
                     };
 
                 default:
