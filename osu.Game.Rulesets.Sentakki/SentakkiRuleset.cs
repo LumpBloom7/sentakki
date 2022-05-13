@@ -104,6 +104,7 @@ namespace osu.Game.Rulesets.Sentakki
                         new MultiMod(new ModWindUp(), new ModWindDown()),
                         new SentakkiModSpin(),
                         new SentakkiModMuted(),
+                        new ModAdaptiveSpeed(),
                     };
 
                 default:
