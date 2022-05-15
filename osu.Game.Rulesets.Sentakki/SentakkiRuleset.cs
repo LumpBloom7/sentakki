@@ -95,6 +95,7 @@ namespace osu.Game.Rulesets.Sentakki
                 case ModType.Conversion:
                     return new Mod[]{
                         new SentakkiModExperimental(),
+                        new SentakkiModClassic(),
                         new SentakkiModMirror(),
                     };
 
