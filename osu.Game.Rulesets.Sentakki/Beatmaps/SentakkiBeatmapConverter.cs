@@ -26,6 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
     {
         // Conversion flags
         public ConversionExperiments EnabledExperiments;
+        public bool ClassicMode;
 
         public static readonly List<Vector2> VALID_TOUCH_POSITIONS;
         static SentakkiBeatmapConverter()
@@ -93,7 +94,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             bool special = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
             bool twin = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP);
 
-            if (!breakNote && special)
+            if (!breakNote && !ClassicMode && special)
                 yield return createTouchNote(original);
             else
             {
@@ -109,7 +110,11 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             IHasDuration spinner = (IHasDuration)original;
             if (spinner.Duration >= 100)
             {
-                yield return createTouchHold(original);
+                if (!ClassicMode)
+                    yield return createTouchHold(original);
+                else
+                    foreach (var ho in convertSlider(original))
+                        yield return ho;
             }
             else
             {
