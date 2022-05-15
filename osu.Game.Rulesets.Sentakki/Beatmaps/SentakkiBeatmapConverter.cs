@@ -157,7 +157,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     if (twin)
                         slides.Add((Slide)createSlideNote(original, nodeSamples, true, breakNote));
                     else
-                        foreach (var note in createTapsFromTicks(original))
+                        foreach (var note in createTapsFromTicks(original, nodeSamples))
                             yield return note;
                 }
 
@@ -183,7 +183,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 if (twin)
                     yield return createHoldNote(original, nodeSamples, true, breakNote);
                 else
-                    foreach (var note in createTapsFromTicks(original))
+                    foreach (var note in createTapsFromTicks(original, nodeSamples))
                         yield return note;
 
             yield return createHoldNote(original, nodeSamples, false, breakNote);
@@ -270,7 +270,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             };
         }
 
-        private IEnumerable<SentakkiHitObject> createTapsFromTicks(HitObject original)
+        private IEnumerable<SentakkiHitObject> createTapsFromTicks(HitObject original, IList<IList<HitSampleInfo>> nodeSamples)
         {
             if (!(original is IHasPathWithRepeats))
                 yield break;
@@ -298,16 +298,17 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             double legacyLastTickOffset = (original as IHasLegacyLastTickOffset)?.LegacyLastTickOffset ?? 0;
 
+            int nodeSampleIndex = 1;
+
             foreach (var e in SliderEventGenerator.Generate(original.StartTime, spanDuration, velocity, tickDistance, curve.Path.Distance, curve.RepeatCount + 1, legacyLastTickOffset, CancellationToken.None))
             {
                 switch (e.Type)
                 {
-                    case SliderEventType.Tick:
                     case SliderEventType.Repeat:
                         yield return new Tap
                         {
                             Lane = noteLane,
-                            Samples = original.Samples.Select(s => new HitSampleInfo(@"slidertick", s.Bank, s.Suffix, s.Volume)).ToList(),
+                            Samples = nodeSamples[nodeSampleIndex++],
                             StartTime = e.Time
                         };
                         break;
