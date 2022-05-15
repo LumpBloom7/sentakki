@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
         private void testAllPositions(bool auto = false)
         {
-            foreach (var position in SentakkiPatternGenerator.VALID_TOUCH_POSITIONS)
+            foreach (var position in SentakkiBeatmapConverter.VALID_TOUCH_POSITIONS)
             {
                 var circle = new Touch
                 {
