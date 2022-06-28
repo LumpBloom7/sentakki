@@ -94,6 +94,8 @@ namespace osu.Game.Rulesets.Sentakki
 
                 case ModType.Conversion:
                     return new Mod[]{
+                        new SentakkiModExperimental(),
+                        new SentakkiModClassic(),
                         new SentakkiModMirror(),
                     };
 
@@ -102,7 +104,8 @@ namespace osu.Game.Rulesets.Sentakki
                     {
                         new MultiMod(new ModWindUp(), new ModWindDown()),
                         new SentakkiModSpin(),
-                        new SentakkiModExperimental(),
+                        new SentakkiModMuted(),
+                        new ModAdaptiveSpeed(),
                     };
 
                 default:
