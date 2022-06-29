@@ -25,7 +25,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
 
             highlight.Position = DrawableObject.Position;
             highlight.Scale = DrawableObject.Scale;
-            highlight.Alpha = DrawableObject.Alpha;
             highlight.ProgressPiece.ProgressBindable.Value = DrawableObject.TouchHoldBody.ProgressPiece.ProgressBindable.Value;
         }
 
