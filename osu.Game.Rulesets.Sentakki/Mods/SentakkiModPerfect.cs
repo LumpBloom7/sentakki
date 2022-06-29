@@ -11,12 +11,13 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             => !(result.Judgement is IgnoreJudgement)
                && result.Type < result.Judgement.MaxResult;
 
-        public override Type[] IncompatibleMods => new Type[4]
+        public override Type[] IncompatibleMods => new Type[5]
         {
                 typeof(ModNoFail),
                 typeof(ModRelax),
                 typeof(ModAutoplay),
-                typeof(SentakkiModChallenge)
+                typeof(SentakkiModChallenge),
+                typeof(ModSuddenDeath)
         };
     }
 }

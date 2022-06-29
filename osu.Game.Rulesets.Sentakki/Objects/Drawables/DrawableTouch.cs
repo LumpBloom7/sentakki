@@ -6,7 +6,6 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
-using osu.Game.Rulesets.Sentakki.UI.Components;
 using osuTK;
 using osuTK.Graphics;
 
@@ -25,8 +24,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // Similar to IsHovered for mouse, this tracks whether a pointer (touch or mouse) is interacting with this drawable
         // Interaction == (IsHovered && ActionPressed) || (OnTouch && TouchPointerInBounds)
         public bool[] PointInteractionState = new bool[11];
-
-        private HitExplosion explosion;
         public TouchBody TouchBody;
 
         private SentakkiInputManager sentakkiActionInputManager;
@@ -48,7 +45,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Anchor = Anchor.Centre;
             AddRangeInternal(new Drawable[]{
                 TouchBody = new TouchBody(),
-                explosion = new HitExplosion()
             });
 
             trackedKeys.BindValueChanged(x =>
@@ -58,11 +54,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 UpdateResult(true);
             });
-
-            AccentColour.BindValueChanged(c =>
-            {
-                explosion.Colour = c.NewValue;
-            }, true);
 
             positionBindable.BindValueChanged(p => Position = p.NewValue);
         }
@@ -132,7 +123,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    explosion.Explode();
                     TouchBody.FadeOut();
                     this.Delay(time_fade_hit).Expire();
 

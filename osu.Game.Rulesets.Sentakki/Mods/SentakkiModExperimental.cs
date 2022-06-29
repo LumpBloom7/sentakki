@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override string Acronym => "Ex";
 
         public override IconUsage? Icon => FontAwesome.Solid.Flask;
-        public override ModType Type => ModType.Fun;
+        public override ModType Type => ModType.Conversion;
 
         public override bool UserPlayable => false;
         public override bool RequiresConfiguration => true;
@@ -38,10 +38,10 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
             if (EnableTwinNotes.Value)
-                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.twinNotes;
+                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.twinNotes;
 
             if (EnableTwinSlides.Value)
-                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments.Value |= ConversionExperiments.twinSlides;
+                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.twinSlides;
         }
     }
 }
