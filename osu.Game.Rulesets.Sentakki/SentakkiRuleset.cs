@@ -46,7 +46,7 @@ namespace osu.Game.Rulesets.Sentakki
         public override string PlayingVerb => "Washing laundry";
         public override string ShortName => "Sentakki";
 
-        public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor();
+        public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor(this);
 
         public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod> mods) =>
             new DrawableSentakkiRuleset(this, beatmap, mods);
@@ -61,6 +61,8 @@ namespace osu.Game.Rulesets.Sentakki
             new SentakkiDifficultyCalculator(RulesetInfo, beatmap);
 
         public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new SentakkiReplayFrame();
+
+        public override PerformanceCalculator CreatePerformanceCalculator() => new SentakkiPerformanceCalculator(this);
 
         public override IEnumerable<Mod> GetModsFor(ModType type)
         {
@@ -92,6 +94,8 @@ namespace osu.Game.Rulesets.Sentakki
 
                 case ModType.Conversion:
                     return new Mod[]{
+                        new SentakkiModExperimental(),
+                        new SentakkiModClassic(),
                         new SentakkiModMirror(),
                     };
 
@@ -100,7 +104,8 @@ namespace osu.Game.Rulesets.Sentakki
                     {
                         new MultiMod(new ModWindUp(), new ModWindDown()),
                         new SentakkiModSpin(),
-                        new SentakkiModExperimental(),
+                        new SentakkiModMuted(),
+                        new ModAdaptiveSpeed(),
                     };
 
                 default:
@@ -134,32 +139,32 @@ namespace osu.Game.Rulesets.Sentakki
             {
                 Columns = new[]
                 {
-                    new StatisticItem("Timing Distribution", new HitEventTimingDistributionGraph(score.HitEvents)
+                    new StatisticItem("Timing Distribution", () => new HitEventTimingDistributionGraph(score.HitEvents)
                     {
                         RelativeSizeAxes = Axes.X,
                         Height = 250
-                    })
+                    }, true)
                 }
             },
             new StatisticRow
             {
                 Columns = new[]
                 {
-                    new StatisticItem("Judgement Distribution", new JudgementChart(score.HitEvents)
+                    new StatisticItem("Judgement Distribution", () => new JudgementChart(score.HitEvents.Where(e=>e.HitObject is SentakkiHitObject).ToList())
                     {
                         RelativeSizeAxes = Axes.X,
                         Size = new Vector2(1, 250)
-                    }),
+                    },true),
                 }
             },
             new StatisticRow
             {
                 Columns = new[]
                 {
-                    new StatisticItem(string.Empty, new SimpleStatisticTable(3, new SimpleStatisticItem[]
+                    new StatisticItem(string.Empty, () => new SimpleStatisticTable(3, new SimpleStatisticItem[]
                     {
                         new UnstableRate(score.HitEvents)
-                    }))
+                    }), true)
                 }
             }
         };

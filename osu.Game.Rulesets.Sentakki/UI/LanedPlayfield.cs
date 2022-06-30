@@ -3,13 +3,10 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
-using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
-using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine;
 using osu.Game.Rulesets.UI;
 
@@ -26,10 +23,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         [Cached]
         private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
-
-        private readonly DrawablePool<HitExplosion> explosionPool;
-
-        private readonly Container<HitExplosion> explosionLayer;
 
         public readonly Container LanedHitObjectArea;
 
@@ -52,10 +45,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
             }
 
             AddRangeInternal(new Drawable[]{
-                explosionPool = new DrawablePool<HitExplosion>(8),
                 chevronPool = new DrawablePool<SlideVisual.SlideChevron>(100),
                 HitObjectLineRenderer = new LineRenderer(),
-                explosionLayer = new Container<HitExplosion>() { RelativeSizeAxes = Axes.Both },
                 slideBodyProxyContainer = new SortedDrawableProxyContainer(),
                 LanedHitObjectArea = new Container
                 {
@@ -63,8 +54,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     Child = lanedNoteProxyContainer = new SortedDrawableProxyContainer(),
                 }
             });
-
-            NewResult += onNewResult;
         }
 
         public override void Add(HitObject h)
@@ -106,19 +95,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     lanedNoteProxyContainer.Add(h.NoteBody.CreateProxy(), h);
                     break;
             }
-        }
-
-        private void onNewResult(DrawableHitObject judgedObject, JudgementResult result)
-        {
-            if (!judgedObject.DisplayResult || !DisplayJudgements.Value || !(judgedObject is DrawableSentakkiLanedHitObject laned))
-                return;
-
-            if (!result.IsHit) return;
-
-            if (judgedObject is DrawableSlideBody) return;
-
-            var explosion = explosionPool.Get(e => e.Apply(laned.HitObject));
-            explosionLayer.Add(explosion);
         }
     }
 }
