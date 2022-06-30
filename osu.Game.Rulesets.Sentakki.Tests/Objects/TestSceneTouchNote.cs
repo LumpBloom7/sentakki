@@ -7,6 +7,7 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
 using osuTK;
@@ -24,7 +25,11 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         public TestSceneTouchNote()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
-            base.Content.Add(new SentakkiRing());
+            base.Content.Add(new SentakkiRing()
+            {
+                RelativeSizeAxes = Axes.None,
+                Size = new Vector2(SentakkiPlayfield.RINGSIZE)
+            });
 
             AddStep("Miss Single", () => testAllPositions());
             AddStep("Hit Single", () => testAllPositions(true));
