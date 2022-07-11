@@ -1,5 +1,4 @@
 ﻿using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Localisation;
 using osu.Game.Graphics.UserInterface;
@@ -28,9 +27,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             // for an odd reason, Config seems to be passed as null when creating it. doesnt even get called...
             if (config == null)
                 return;
-
-            Bindable<double> breakVolume;
-            Bindable<bool> breakOverrideToggle;
 
             Children = new Drawable[]
             {
@@ -81,21 +77,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     Current = config.GetBindable<LaneInputMode>(SentakkiRulesetSettings.LaneInputMode)
                 },
 
-                new SettingsCheckbox
-                {
-                    LabelText = "Break sample volume override",
-                    Current = breakOverrideToggle = config.GetBindable<bool>(SentakkiRulesetSettings.BreakOverrideVolumeToggle),
-                    TooltipText = "Use a constant volume level as the Break sample volume instead of the underlying HitObject sample volume."
-                },
-                new SettingsSlider<double, BreakVolumeSlider>{
+                new SettingsSlider<double, OsuSliderBar<double>>{
                     LabelText = "Break sample volume",
-                    Current = breakVolume = config.GetBindable<double>(SentakkiRulesetSettings.BreakOverrideVolumeValue),
+                    Current = config.GetBindable<double>(SentakkiRulesetSettings.BreakSampleVolume),
                     KeyboardStep = 0.01f,
                     DisplayAsPercentage = true,
                 }
             };
-
-            breakOverrideToggle.BindValueChanged(v => breakVolume.Disabled = !v.NewValue, true);
         }
 
         private class NoteTimeSlider : OsuSliderBar<double>
@@ -123,11 +111,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 return speed.ToString();
             }
             public override LocalisableString TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
-        }
-
-        private class BreakVolumeSlider : OsuSliderBar<double>
-        {
-            public override LocalisableString TooltipText => Current.Disabled ? "Enable Break sample volume override to set Break volume." : base.TooltipText;
         }
     }
 }
