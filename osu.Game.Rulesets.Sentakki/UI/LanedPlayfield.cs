@@ -74,7 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public override bool Remove(HitObject hitObject)
         {
-            if (!(hitObject is SentakkiLanedHitObject lanedHitObject))
+            if (hitObject is not SentakkiLanedHitObject lanedHitObject)
                 return false;
 
             HitObjectLineRenderer.RemoveHitObject(lanedHitObject);

@@ -2,7 +2,6 @@
     <PropertyGroup Label="C#">
         <LangVersion>9.0</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
 
@@ -13,5 +12,9 @@
     </PropertyGroup>
     <ItemGroup>
         <EmbeddedResource Include="Resources\**\*"/>
+    </ItemGroup>
+    <ItemGroup>
+        <EditorConfgFiles Include=".editorconfig" />
+        <EditorConfgFiles Include=".globalconfig" />
     </ItemGroup>
 </Project>

@@ -131,7 +131,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 case SentakkiLanedHitObject _:
                     LanedPlayfield.Add(h);
                     break;
-                case Objects.Touch _:
+                case Touch _:
                     touchPlayfield.Add(h);
                     break;
                 default:
@@ -142,7 +142,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private void onNewResult(DrawableHitObject judgedObject, JudgementResult result)
         {
-            if (!judgedObject.DisplayResult || !DisplayJudgements.Value || !(judgedObject is DrawableSentakkiHitObject sentakkiHitObject))
+            if (!judgedObject.DisplayResult || !DisplayJudgements.Value || judgedObject is not DrawableSentakkiHitObject sentakkiHitObject)
                 return;
 
             judgementLayer.Add(judgementPool.Get(j => j.Apply(result, judgedObject)));

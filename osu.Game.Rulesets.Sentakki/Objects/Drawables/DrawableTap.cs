@@ -59,7 +59,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             TapVisual.FadeInFromZero(animTime).ScaleTo(1, animTime);
             using (BeginDelayedSequence(animTime, true))
             {
-                var excessDistance = (-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * HitObject.HitWindows.WindowFor(HitResult.Miss);
+                double excessDistance = (-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * HitObject.HitWindows.WindowFor(HitResult.Miss);
                 TapVisual.MoveToY((float)(-SentakkiPlayfield.INTERSECTDISTANCE + excessDistance), animTime + HitObject.HitWindows.WindowFor(HitResult.Miss));
             }
         }

@@ -163,7 +163,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
                 {
                     // Miss the last node to ensure that all of them have results
-                    SlideNodes.Last().ForcefullyMiss();
+                    SlideNodes[^1].ForcefullyMiss();
                     if (SlideNodes.Count(node => !node.Result.IsHit) <= 2 && SlideNodes.Count > 2)
                         ApplyResult(HitResult.Ok);
                     else

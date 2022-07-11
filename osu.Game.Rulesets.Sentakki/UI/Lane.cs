@@ -76,10 +76,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             var localPos = ToLocalSpace(screenSpacePos);
 
-            var angleDelta = SentakkiExtensions.GetDeltaAngle(0, Vector2.Zero.GetDegreesFromPosition(localPos));
+            float angleDelta = SentakkiExtensions.GetDeltaAngle(0, Vector2.Zero.GetDegreesFromPosition(localPos));
             if (Math.Abs(angleDelta) > receptor_angle_range / 2) return false;
 
-            var distance = Vector2.DistanceSquared(Vector2.Zero, localPos);
+            float distance = Vector2.DistanceSquared(Vector2.Zero, localPos);
             if (distance < 200 * 200 || distance > 400 * 400) return false;
 
             return true;

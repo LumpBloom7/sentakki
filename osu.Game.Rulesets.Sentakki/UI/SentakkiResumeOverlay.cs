@@ -157,7 +157,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private string getRandomSupporter()
         {
-            var tmp = supporter_list[currentSupporterIndex++];
+            string tmp = supporter_list[currentSupporterIndex++];
             if (currentSupporterIndex >= supporter_list.Length) currentSupporterIndex = 0;
 
             return tmp;

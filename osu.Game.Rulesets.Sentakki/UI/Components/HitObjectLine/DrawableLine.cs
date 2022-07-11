@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 FillMode = FillMode.Fit,
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
-                Texture = textures.Get(LineTexturePath())
+                Texture = textures.Get(LineTexturePath)
             });
         }
 
@@ -60,22 +60,25 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 this.FadeIn(Entry.AdjustedAnimationDuration / 2).Then().ScaleTo(1, Entry.AdjustedAnimationDuration / 2).Then().FadeOut();
         }
 
-        public string LineTexturePath()
+        public string LineTexturePath
         {
-            switch (Type)
+            get
             {
-                case LineType.Single:
-                    return "Lines/90";
-                case LineType.OneAway:
-                    return "Lines/135";
-                case LineType.TwoAway:
-                    return "Lines/180";
-                case LineType.ThreeAway:
-                    return "Lines/225";
-                case LineType.FullCircle:
-                    return "Lines/360";
-                default:
-                    return "";
+                switch (Type)
+                {
+                    case LineType.Single:
+                        return "Lines/90";
+                    case LineType.OneAway:
+                        return "Lines/135";
+                    case LineType.TwoAway:
+                        return "Lines/180";
+                    case LineType.ThreeAway:
+                        return "Lines/225";
+                    case LineType.FullCircle:
+                        return "Lines/360";
+                    default:
+                        return "";
+                }
             }
         }
     }

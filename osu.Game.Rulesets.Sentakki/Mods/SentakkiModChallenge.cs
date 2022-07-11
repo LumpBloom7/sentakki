@@ -2,8 +2,6 @@ using System;
 using System.ComponentModel;
 using Newtonsoft.Json;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions;
-using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Judgements;
@@ -29,9 +27,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override bool RequiresConfiguration => true;
 
         public override double ScoreMultiplier => 1.00;
-
-        public bool RestartOnFail => false;
-        public bool PerformFail() => true;
 
         public override Type[] IncompatibleMods => new Type[5]
         {
@@ -82,7 +77,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         protected bool FailCondition(HealthProcessor healthProcessor, JudgementResult result)
         {
-            if (!(result.Judgement is SentakkiJudgement) || result.HitObject is ScorePaddingObject)
+            if (result.Judgement is not SentakkiJudgement || result.HitObject is ScorePaddingObject)
                 return false;
 
             int newValue = LivesLeft.Value;
