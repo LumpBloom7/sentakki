@@ -26,7 +26,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set => LaneBindable.Value = value;
         }
 
-
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
             base.CreateNestedHitObjects(cancellationToken);
