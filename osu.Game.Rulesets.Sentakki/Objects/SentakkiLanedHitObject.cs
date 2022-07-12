@@ -42,8 +42,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             if (!NeedBreakSample || !Break)
                 return Array.Empty<HitSampleInfo>();
 
-            Console.WriteLine(SampleControlPoint.SampleVolume);
-
             return new[]
             {
                 new SentakkiHitSampleInfo("Break", SampleControlPoint.SampleVolume)
