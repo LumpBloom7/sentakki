@@ -1,4 +1,3 @@
-using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -20,12 +19,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             Alpha = 0;
             AlwaysPresent = true;
 
-            loadChevrons();
+            // we are doing this in ctor to guarantee that this object is properly initialized before BDL
+            loadChevronsTextures();
         }
 
         public ChevronBackingTexture Get(int index) => chevrons[index];
 
-        private void loadChevrons()
+        private void loadChevronsTextures()
         {
             AddInternal(chevrons = new Container<ChevronBackingTexture>());
 

@@ -35,7 +35,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             slideFanChevronsTextures = new SlideFanChevrons();
         }
 
-
         [BackgroundDependencyLoader]
         private void load()
         {
