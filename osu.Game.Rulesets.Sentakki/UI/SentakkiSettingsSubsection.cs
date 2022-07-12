@@ -24,10 +24,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             var config = (SentakkiRulesetConfigManager)Config;
 
-            // for an odd reason, Config seems to be passed as null when creating it. doesnt even get called...
-            if (config == null)
-                return;
-
             Children = new Drawable[]
             {
                 new SettingsCheckbox
@@ -76,8 +72,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     LabelText = "Lane input mode (Doesn't apply to touch)",
                     Current = config.GetBindable<LaneInputMode>(SentakkiRulesetSettings.LaneInputMode)
                 },
-
-                new SettingsSlider<double, OsuSliderBar<double>>{
+                new SettingsSlider<double, OsuSliderBar<double>>
+                {
                     LabelText = "Break sample volume",
                     Current = config.GetBindable<double>(SentakkiRulesetSettings.BreakSampleVolume),
                     KeyboardStep = 0.01f,
@@ -99,6 +95,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             }
             public override LocalisableString TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
         }
+
         private class TouchTimeSlider : OsuSliderBar<double>
         {
             private string speedRating()
