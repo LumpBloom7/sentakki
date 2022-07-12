@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
                 Clear();
                 Add(new Box
                 {
-                    RelativeSizeAxes = Framework.Graphics.Axes.Both
+                    RelativeSizeAxes = Axes.Both
                 });
             });
 

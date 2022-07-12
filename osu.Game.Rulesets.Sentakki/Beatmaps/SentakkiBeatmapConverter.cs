@@ -35,7 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             var tmp = new List<Vector2>(){
                 Vector2.Zero
             };
-            foreach (var angle in SentakkiPlayfield.LANEANGLES)
+            foreach (float angle in SentakkiPlayfield.LANEANGLES)
             {
                 tmp.Add(SentakkiExtensions.GetCircularPosition(190, angle - 22.5f));
                 tmp.Add(SentakkiExtensions.GetCircularPosition(130, angle));
@@ -287,7 +287,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         private IEnumerable<SentakkiHitObject> createTapsFromTicks(HitObject original, IList<IList<HitSampleInfo>> nodeSamples)
         {
-            if (!(original is IHasPathWithRepeats))
+            if (original is not IHasPathWithRepeats)
                 yield break;
 
             int noteLane = patternGenerator.GetNextLane(true);
@@ -308,8 +308,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             double scoringDistance = 100 * difficulty.SliderMultiplier * difficultyPoint.SliderVelocity;
 
-            var velocity = scoringDistance / timingPoint.BeatLength;
-            var tickDistance = scoringDistance / difficulty.SliderTickRate;
+            double velocity = scoringDistance / timingPoint.BeatLength;
+            double tickDistance = scoringDistance / difficulty.SliderTickRate;
 
             double legacyLastTickOffset = (original as IHasLegacyLastTickOffset)?.LegacyLastTickOffset ?? 0;
 

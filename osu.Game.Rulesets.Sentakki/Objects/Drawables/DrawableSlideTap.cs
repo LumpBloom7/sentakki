@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using osu.Framework.Graphics;
-using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables

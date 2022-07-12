@@ -73,7 +73,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             {
                 nodes.Add(new CircularContainer
                 {
-                    Size = new osuTK.Vector2(10),
+                    Size = new Vector2(10),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Position = node.Position,

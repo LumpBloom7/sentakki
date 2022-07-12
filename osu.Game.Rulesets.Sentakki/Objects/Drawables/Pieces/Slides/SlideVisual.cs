@@ -43,18 +43,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             double runningDistance = 0;
             foreach (var path in path.SlideSegments)
             {
-                var chevronCount = chevronsInContinuousPath(path);
-                var totalDistance = path.Distance;
-                var safeDistance = totalDistance - (endpoint_distance * 2);
+                int chevronCount = chevronsInContinuousPath(path);
+                double totalDistance = path.Distance;
+                double safeDistance = totalDistance - (endpoint_distance * 2);
 
                 var previousPosition = path.PositionAt(0);
                 for (int i = 0; i < chevronCount; i++)
                 {
-                    var progress = (double)i / (chevronCount - 1); // from 0 to 1, both inclusive
-                    var distance = (progress * safeDistance) + endpoint_distance;
+                    double progress = (double)i / (chevronCount - 1); // from 0 to 1, both inclusive
+                    double distance = (progress * safeDistance) + endpoint_distance;
                     progress = distance / totalDistance;
                     var position = path.PositionAt(progress);
-                    var angle = previousPosition.GetDegreesFromPosition(position);
+                    float angle = previousPosition.GetDegreesFromPosition(position);
 
                     var chevron = chevronPool.Get();
                     chevron.Position = position;

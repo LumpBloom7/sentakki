@@ -3,7 +3,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Utils;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine;
 using osu.Game.Tests.Visual;
 using osuTK;
@@ -31,7 +30,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
         {
             for (int i = 0; i < amount; ++i)
             {
-                var lane = RNG.Next(0, 8);
+                int lane = RNG.Next(0, 8);
                 var ho = new Tap
                 {
                     StartTime = Time.Current + 1000,

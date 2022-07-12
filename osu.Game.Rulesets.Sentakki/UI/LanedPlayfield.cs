@@ -6,9 +6,7 @@ using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
-using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine;
 using osu.Game.Rulesets.UI;
 
@@ -76,7 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public override bool Remove(HitObject hitObject)
         {
-            if (!(hitObject is SentakkiLanedHitObject lanedHitObject))
+            if (hitObject is not SentakkiLanedHitObject lanedHitObject)
                 return false;
 
             HitObjectLineRenderer.RemoveHitObject(lanedHitObject);

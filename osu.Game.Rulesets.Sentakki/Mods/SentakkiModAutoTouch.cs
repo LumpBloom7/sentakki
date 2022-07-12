@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public void ApplyToDrawableHitObject(DrawableHitObject drawableHitObject)
         {
-            if (!(drawableHitObject is DrawableSentakkiHitObject drawableSentakkiHitObject)) return;
+            if (drawableHitObject is not DrawableSentakkiHitObject drawableSentakkiHitObject) return;
 
             switch (drawableSentakkiHitObject)
             {

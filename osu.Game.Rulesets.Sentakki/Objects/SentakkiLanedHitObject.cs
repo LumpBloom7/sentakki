@@ -1,10 +1,8 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using osu.Framework.Bindables;
 using osu.Game.Audio;
-using osu.Game.Beatmaps;
-using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
@@ -12,18 +10,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     public abstract class SentakkiLanedHitObject : SentakkiHitObject
     {
         protected virtual bool NeedBreakSample => true;
-
-        private List<HitSampleInfo> originalSamples { get; set; } = new List<HitSampleInfo>();
-
-        public new IList<HitSampleInfo> Samples
-        {
-            get => originalSamples;
-            set
-            {
-                originalSamples.Clear();
-                originalSamples.AddRange(value);
-            }
-        }
 
         public readonly BindableBool BreakBindable = new BindableBool();
 
@@ -49,14 +35,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     AddNested(new ScorePaddingObject() { StartTime = this.GetEndTime() });
         }
 
-        protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, IBeatmapDifficultyInfo difficulty)
-        {
-            base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
+        public override IList<HitSampleInfo> AuxiliarySamples => CreateBreakSample();
 
-            // Add break sample
-            var sampleList = originalSamples.ToList();
-            if (Break && NeedBreakSample) sampleList.Add(new SentakkiHitSampleInfo("Break"));
-            base.Samples = sampleList;
+        public HitSampleInfo[] CreateBreakSample()
+        {
+            if (!NeedBreakSample || !Break)
+                return Array.Empty<HitSampleInfo>();
+
+            return new[]
+            {
+                new SentakkiHitSampleInfo("Break", SampleControlPoint.SampleVolume)
+            };
         }
     }
 }
