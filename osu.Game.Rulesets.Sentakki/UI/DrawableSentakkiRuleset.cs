@@ -21,8 +21,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
     [Cached]
     public class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject>
     {
-
-        [Cached]
         private SlideFanChevrons slideFanChevronsTextures;
 
         public DrawableSentakkiRuleset(SentakkiRuleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
@@ -30,9 +28,18 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             foreach (var mod in Mods.OfType<IApplicableToTrack>())
                 mod.ApplyToTrack(speedAdjustmentTrack);
+        }
 
-            // Pre-generate textures to be used by SlideFans
-            slideFanChevronsTextures = new SlideFanChevrons();
+        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
+        {
+            var dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+
+            // We create and render the FanChevron outside of the playfield
+            // This is to ensure that the fan chevrons doesn't get affected by Playfield transforms (avoiding excessive buffer allocs/deallocs)
+            // FanSlides will use BufferedContainerView to show the chevrons
+            dependencies.CacheAs(slideFanChevronsTextures = new SlideFanChevrons());
+
+            return dependencies;
         }
 
         [BackgroundDependencyLoader]
