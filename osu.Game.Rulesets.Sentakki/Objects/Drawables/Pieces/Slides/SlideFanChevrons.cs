@@ -1,15 +1,19 @@
-using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Layout;
 using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
-    [Cached]
+    /// <summary>
+    /// This drawable holds a set of all chevron buffered drawables, and is used to preload all/draw of them outside of playfield. (To avoid Playfield transforms re-rendering the chevrons)
+    /// <br/>
+    /// A view of each chevron, along with their size, would be used by SlideFanVisual.
+    /// </summary>
     public class SlideFanChevrons : CompositeDrawable
     {
         private Container<ChevronBackingTexture> chevrons;
@@ -23,7 +27,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             loadChevronsTextures();
         }
 
-        public ChevronBackingTexture Get(int index) => chevrons[index];
+        public (BufferedContainerView<Drawable>, IBindable<Vector2>) Get(int index)
+        {
+            var chevron = chevrons[index];
+
+            var view = chevron.CreateView();
+            view.RelativeSizeAxes = Axes.Both;
+
+            return (view, chevron.SizeBindable);
+        }
 
         private void loadChevronsTextures()
         {
@@ -38,9 +50,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             }
         }
 
-        public class ChevronBackingTexture : BufferedContainer
+        private class ChevronBackingTexture : BufferedContainer
         {
-            public Bindable<Vector2> SizeBindable = new Bindable<Vector2>();
+            public Bindable<Vector2> SizeBindable { get; } = new Bindable<Vector2>();
 
             // This is to ensure that drawables using this texture is sized correctly (since autosize only happens during the first update)
             protected override bool OnInvalidate(Invalidation invalidation, InvalidationSource source)
@@ -100,7 +112,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                             },
                         },
                         // Inners
-                        new Container{
+                        new Container
+                        {
                             X = 2.5f,
                             Anchor = Anchor.BottomCentre,
                             Origin = Anchor.BottomRight,
@@ -120,7 +133,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                                 }
                             },
                         },
-                        new Container{
+                        new Container
+                        {
                             X = -2.5f,
                             Anchor = Anchor.BottomCentre,
                             Origin = Anchor.BottomLeft,
