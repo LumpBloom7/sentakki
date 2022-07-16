@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using osu.Framework.Extensions.ListExtensions;
+using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Input.States;
 using osu.Framework.Lists;
 using osu.Game.Rulesets.UI;
 
@@ -34,6 +36,25 @@ namespace osu.Game.Rulesets.Sentakki
 
                 return base.Handle(e);
             }
+
+            // We want the press behavior of SimultaneousBindingMode.All, but we want the release behavior of SimultaneousBindingMode.Unique
+            // As long as there are more than one input source triggering the action, we manually remove the action from the list once, without propogating the release
+            // When the final source is released, we let the original handling take over, which would also propogate the release event
+            // This is so that multiple sources (virtual input/key) can trigger a press, but not release until the last key is released
+            protected override void PropagateReleased(IEnumerable<Drawable> drawables, InputState state, SentakkiAction released)
+            {
+                int actionCount = 0;
+                var pressed = (List<SentakkiAction>)PressedActions;
+
+                for (int i = 0; i < pressed.Count; ++i)
+                    if (pressed[i] == released && ++actionCount > 1)
+                        break;
+
+                if (actionCount > 1)
+                    pressed.Remove(released);
+                else
+                    base.PropagateReleased(drawables, state, released);
+            }
         }
 
         public SlimReadOnlyListWrapper<SentakkiAction> PressedActions => ((List<SentakkiAction>)KeyBindingContainer.PressedActions).AsSlimReadOnly();
@@ -43,7 +64,7 @@ namespace osu.Game.Rulesets.Sentakki
         public void TriggerReleased(SentakkiAction action) => KeyBindingContainer.TriggerReleased(action);
 
         public SentakkiInputManager(RulesetInfo ruleset)
-            : base(ruleset, 0, SimultaneousBindingMode.Unique)
+            : base(ruleset, 0, SimultaneousBindingMode.All)
         {
         }
     }

@@ -2,7 +2,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Input.Events;
 using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Sentakki.UI
@@ -25,20 +24,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             if (cursorSprite != null)
                 cursorSprite.Texture = cursorTexture;
-        }
-
-        protected override bool Handle(UIEvent e)
-        {
-            switch (e)
-            {
-                case MouseEvent _:
-                    Show();
-                    break;
-                case TouchEvent _:
-                    Hide();
-                    break;
-            }
-            return base.Handle(e);
         }
     }
 }

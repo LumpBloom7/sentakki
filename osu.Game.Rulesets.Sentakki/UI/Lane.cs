@@ -115,7 +115,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private void handleKeyPress(ValueChangedEvent<int> keys)
         {
-            if (keys.NewValue > keys.OldValue || keys.NewValue == 0)
+            if (keys.NewValue < keys.OldValue)
                 SentakkiActionInputManager.TriggerReleased(SentakkiAction.Key1 + LaneNumber);
 
             if (keys.NewValue > keys.OldValue)
