@@ -10,6 +10,7 @@ using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
@@ -20,6 +21,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
     [Cached]
     public class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject>
     {
+        private SlideFanChevrons slideFanChevronsTextures;
+
         public DrawableSentakkiRuleset(SentakkiRuleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
             : base(ruleset, beatmap, mods)
         {
@@ -27,9 +30,24 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 mod.ApplyToTrack(speedAdjustmentTrack);
         }
 
-        protected override void LoadComplete()
+        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
+        {
+            var dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
+
+            // We create and render the FanChevron outside of the playfield
+            // This is to ensure that the fan chevrons doesn't get affected by Playfield transforms (avoiding excessive buffer allocs/deallocs)
+            // FanSlides will use BufferedContainerView to show the chevrons
+            dependencies.CacheAs(slideFanChevronsTextures = new SlideFanChevrons());
+
+            return dependencies;
+        }
+
+        [BackgroundDependencyLoader]
+        private void load()
         {
             (Config as SentakkiRulesetConfigManager)?.BindWith(SentakkiRulesetSettings.LaneInputMode, laneInputMode);
+
+            FrameStableComponents.Add(slideFanChevronsTextures);
         }
 
         // Input specifics (sensor/button) for replay and gameplay

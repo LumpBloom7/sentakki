@@ -55,7 +55,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
             RegisterPool<Slide, DrawableSlide>(2);
             RegisterPool<SlideTap, DrawableSlideTap>(2);
             RegisterPool<SlideBody, DrawableSlideBody>(2);
-            RegisterPool<SlideBody.SlideNode, DrawableSlideNode>(18);
+            RegisterPool<SlideFan, DrawableSlideFan>(2);
+            RegisterPool<SlideCheckpoint, DrawableSlideCheckpoint>(18);
+            RegisterPool<SlideCheckpoint.CheckpointNode, DrawableSlideCheckpointNode>(18);
 
             RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(20);
         }

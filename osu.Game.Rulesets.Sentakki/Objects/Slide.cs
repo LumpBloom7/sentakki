@@ -51,13 +51,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             foreach (var SlideInfo in SlideInfoList)
             {
-                AddNested(new SlideBody
-                {
-                    Lane = SlideInfo.SlidePath.EndLane + Lane,
-                    StartTime = StartTime,
-                    SlideInfo = SlideInfo,
-                    Samples = NodeSamples.Any() ? NodeSamples.Last() : new List<HitSampleInfo>(),
-                });
+                SlideBody body;
+                if (SlideInfo.ID == SlidePaths.FANID)
+                    AddNested(body = new SlideFan());
+                else
+                    AddNested(body = new SlideBody());
+
+                body.Lane = SlideInfo.SlidePath.EndLane + Lane;
+                body.StartTime = StartTime;
+                body.SlideInfo = SlideInfo;
+                body.Samples = NodeSamples.Any() ? NodeSamples.Last() : new List<HitSampleInfo>();
             }
         }
 

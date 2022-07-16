@@ -60,6 +60,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     {
                         AutoBindable = { BindTarget = AutoBindable },
                     };
+                case SlideFan slideFan:
+                    return new DrawableSlideFan(slideFan)
+                    {
+                        AutoBindable = { BindTarget = AutoBindable },
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                    };
                 case SlideBody slideBody:
                     return new DrawableSlideBody(slideBody)
                     {
@@ -76,8 +83,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             switch (hitObject)
             {
-                case DrawableSlideBody node:
-                    SlideBodies.Add(node);
+                case DrawableSlideBody body:
+                    SlideBodies.Add(body);
                     break;
                 case DrawableSlideTap tap:
                     SlideTaps.Child = tap;

@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
@@ -53,6 +53,12 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             {
                 slide.Progress = p;
             });
+
+            AddStep("Perform entry animation", () => slide.PerformEntryAnimation(1000));
+            AddWaitStep("Wait for transforms", 5);
+
+            AddStep("Perform exit animation", () => slide.PerformExitAnimation(1000));
+            AddWaitStep("Wait for transforms", 5);
 
             Add(nodes = new Container()
             {
