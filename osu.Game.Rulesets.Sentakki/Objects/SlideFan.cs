@@ -9,10 +9,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             // Add body nodes (should be two major sets)
             Vector2 originpoint = new Vector2(0, -SentakkiPlayfield.INTERSECTDISTANCE);
-            for (int i = 1; i < 3; ++i)
+            for (int i = 1; i < 5; ++i)
             {
-                float progress = 0.5f * i;
-                SlideCheckpoint checkpoint = new SlideCheckpoint(true)
+                float progress = 0.25f * i;
+                SlideCheckpoint checkpoint = new SlideCheckpoint()
                 {
                     Progress = progress,
                     StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
