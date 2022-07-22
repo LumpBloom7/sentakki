@@ -1,7 +1,6 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using osu.Framework.Graphics;
+using System.Linq;
 using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
@@ -36,8 +35,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                 }
             }
 
-            AddRangeInternal(starHighlights);
             AddRangeInternal(bodyHighlights);
+            AddRangeInternal(starHighlights);
+
         }
 
         protected override void Update()
@@ -45,8 +45,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             base.Update();
 
             var SlideTap = DrawableObject.SlideTaps.Child;
-
-            var FirstSlideBody = DrawableObject.SlideBodies.Any() ? DrawableObject.SlideBodies[0] : null;
 
             if (DrawableObject.Time.Current < DrawableObject.HitObject.StartTime)
             {
@@ -77,7 +75,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             for (int i = 0; i < DrawableObject.SlideBodies.Count; ++i)
             {
                 bodyHighlights[i].Rotation = SlideTap.HitObject.Lane.GetRotationForLane() - 22.5f;
-                bodyHighlights[i].Path.Vertices = DrawableObject.SlideBodies[i].HitObject.SlideInfo.SlidePath.Vertices;
+                bodyHighlights[i].Path = DrawableObject.SlideBodies[i].HitObject.SlideInfo.SlidePath;
             }
         }
 

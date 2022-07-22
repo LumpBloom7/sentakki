@@ -5,6 +5,7 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.Objects;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
@@ -82,6 +83,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             {
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
+
+                // This is to ensure a sensible SSDQ of the chevron
+                Size = new Vector2(x: 50, 34.5f);
             }
 
             [BackgroundDependencyLoader]

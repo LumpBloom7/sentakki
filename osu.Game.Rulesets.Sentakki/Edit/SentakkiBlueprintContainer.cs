@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using osu.Framework.Allocation;
+using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
@@ -8,6 +10,7 @@ using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Screens.Edit.Compose.Components;
 using osuTK;
 
@@ -18,7 +21,12 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         public SentakkiBlueprintContainer(HitObjectComposer composer)
             : base(composer)
         {
+            AddInternal(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(100));
         }
+
+        [Cached]
+        private DrawablePool<SlideVisual.SlideChevron> chevronPool;
+
         protected override SelectionHandler<HitObject> CreateSelectionHandler() => new SentakkiSelectionHandler();
 
         public override HitObjectSelectionBlueprint CreateHitObjectBlueprintFor(HitObject hitObject)
