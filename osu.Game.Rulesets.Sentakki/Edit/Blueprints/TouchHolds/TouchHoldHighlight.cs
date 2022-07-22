@@ -1,6 +1,6 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Primitives;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds

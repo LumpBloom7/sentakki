@@ -35,7 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests
                 {
                     IsSupporter = true,
                     Username = "Mai-Chan",
-                    Country = new Country { FlagName = @"BE" }
+                    CountryCode = CountryCode.BE
                 });
                 API.LocalUser.BindTo(testUser);
             }

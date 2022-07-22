@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using osu.Framework.Bindables;
-using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
 

@@ -20,6 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         none = 0,
         twinNotes = 1,
         twinSlides = 2,
+        fanSlides = 4
     }
 
     public class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObject>
@@ -34,7 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             var tmp = new List<Vector2>(){
                 Vector2.Zero
             };
-            foreach (var angle in SentakkiPlayfield.LANEANGLES)
+            foreach (float angle in SentakkiPlayfield.LANEANGLES)
             {
                 tmp.Add(SentakkiExtensions.GetCircularPosition(190, angle - 22.5f));
                 tmp.Add(SentakkiExtensions.GetCircularPosition(130, angle));
@@ -253,8 +254,17 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private SentakkiHitObject createSlideNote(HitObject original, IList<IList<HitSampleInfo>> samples, bool twin = false, bool isBreak = false)
         {
             int noteLane = patternGenerator.GetNextLane(twin);
+            List<(SentakkiSlidePath, SentakkiSlidePath)> validPaths;
 
-            var validPaths = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.Item1.MinDuration && ((IHasDuration)original).Duration <= p.Item1.MaxDuration).ToList();
+            {
+                IEnumerable<(SentakkiSlidePath, SentakkiSlidePath)> pathEnumerable = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.Item1.MinDuration && ((IHasDuration)original).Duration <= p.Item1.MaxDuration);
+
+                if (!EnabledExperiments.HasFlag(ConversionExperiments.fanSlides))
+                    pathEnumerable = pathEnumerable.Where(s => s != SlidePaths.VALIDPATHS.Last());
+
+                validPaths = pathEnumerable.ToList();
+            }
+
             if (!validPaths.Any()) return null;
             int selectedSlideID = SlidePaths.VALIDPATHS.IndexOf(validPaths[patternGenerator.RNG.Next(validPaths.Count)]);
             bool mirrored = patternGenerator.RNG.NextDouble() < 0.5;
@@ -277,7 +287,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         private IEnumerable<SentakkiHitObject> createTapsFromTicks(HitObject original, IList<IList<HitSampleInfo>> nodeSamples)
         {
-            if (!(original is IHasPathWithRepeats))
+            if (original is not IHasPathWithRepeats)
                 yield break;
 
             int noteLane = patternGenerator.GetNextLane(true);
@@ -298,8 +308,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             double scoringDistance = 100 * difficulty.SliderMultiplier * difficultyPoint.SliderVelocity;
 
-            var velocity = scoringDistance / timingPoint.BeatLength;
-            var tickDistance = scoringDistance / difficulty.SliderTickRate;
+            double velocity = scoringDistance / timingPoint.BeatLength;
+            double tickDistance = scoringDistance / difficulty.SliderTickRate;
 
             double legacyLastTickOffset = (original as IHasLegacyLastTickOffset)?.LegacyLastTickOffset ?? 0;
 

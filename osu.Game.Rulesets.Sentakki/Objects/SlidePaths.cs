@@ -10,6 +10,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public static class SlidePaths
     {
+        public static int FANID => VALIDPATHS.Count - 1;
         public static readonly List<(SentakkiSlidePath, SentakkiSlidePath)> VALIDPATHS = new List<(SentakkiSlidePath, SentakkiSlidePath)>{
             (GenerateCirclePattern(2), GenerateCirclePattern(6, RotationDirection.Counterclockwise)),
             (GenerateCirclePattern(3), GenerateCirclePattern(5, RotationDirection.Counterclockwise)),
@@ -45,6 +46,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             (GenerateCupPattern(5),GenerateCupPattern(3, true)),
             (GenerateCupPattern(6),GenerateCupPattern(2, true)),
             (GenerateCupPattern(7),GenerateCupPattern(1, true)),
+
+            (GenerateStraightPattern(4), null),//An extra entry for the Fan Slide
         };
 
         public static SentakkiSlidePath GetSlidePath(int ID, bool IsMirrored = false)

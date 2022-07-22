@@ -4,7 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
             var SlideTap = DrawableObject.SlideTaps.Child;
 
-            var FirstSlideBody = DrawableObject.SlideBodies.FirstOrDefault();
+            var FirstSlideBody = DrawableObject.SlideBodies.Any() ? DrawableObject.SlideBodies[0] : null;
 
             if (DrawableObject.Time.Current < DrawableObject.HitObject.StartTime)
             {
@@ -47,16 +47,16 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                     return;
 
                 starHighlight.Rotation = SlideTap.HitObject.Lane.GetRotationForLane() - 22.5f;
-                starHighlight.Note.Position = FirstSlideBody.SlideStar.Position;
-                starHighlight.Note.Scale = FirstSlideBody.SlideStar.Scale;
-                starHighlight.Note.Rotation = FirstSlideBody.SlideStar.Rotation;
+                starHighlight.Note.Position = FirstSlideBody.SlideStars[0].Position;
+                starHighlight.Note.Scale = FirstSlideBody.SlideStars[0].Scale;
+                starHighlight.Note.Rotation = FirstSlideBody.SlideStars[0].Rotation;
             }
 
             if (FirstSlideBody is null)
                 return;
 
             bodyHighlight.Rotation = SlideTap.HitObject.Lane.GetRotationForLane() - 22.5f;
-            bodyHighlight.Path.Vertices = DrawableObject.SlideBodies.First().HitObject.SlideInfo.SlidePath.Vertices;
+            bodyHighlight.Path.Vertices = DrawableObject.SlideBodies[0].HitObject.SlideInfo.SlidePath.Vertices;
         }
 
         public override Vector2 ScreenSpaceSelectionPoint => starHighlight.ScreenSpaceDrawQuad.Centre;

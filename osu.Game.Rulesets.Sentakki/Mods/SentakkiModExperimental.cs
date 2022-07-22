@@ -21,15 +21,22 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public override double ScoreMultiplier => 1.00;
 
-        [SettingSource("Twin notes", "Allow more than one note to share the same times")]
+        [SettingSource("Twin notes", "Allow more than one note to share the same times (Requires multitouch)")]
         public BindableBool EnableTwinNotes { get; } = new BindableBool
         {
             Default = false,
             Value = false
         };
 
-        [SettingSource("Twin slides", "Allow more than one note to share the same times")]
+        [SettingSource("Twin slides", "Allow more than one slidebody to share the same time and origin (Requires multitouch)")]
         public BindableBool EnableTwinSlides { get; } = new BindableBool
+        {
+            Default = false,
+            Value = false
+        };
+
+        [SettingSource("Fan slides", "Allow fan slides to occasionally appear (Requires multitouch)")]
+        public BindableBool EnableSlideFans { get; } = new BindableBool
         {
             Default = false,
             Value = false
@@ -42,6 +49,9 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
             if (EnableTwinSlides.Value)
                 (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.twinSlides;
+
+            if (EnableSlideFans.Value)
+                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.fanSlides;
         }
     }
 }

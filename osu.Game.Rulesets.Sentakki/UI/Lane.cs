@@ -55,7 +55,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
             RegisterPool<Slide, DrawableSlide>(2);
             RegisterPool<SlideTap, DrawableSlideTap>(2);
             RegisterPool<SlideBody, DrawableSlideBody>(2);
-            RegisterPool<SlideBody.SlideNode, DrawableSlideNode>(18);
+            RegisterPool<SlideFan, DrawableSlideFan>(2);
+            RegisterPool<SlideCheckpoint, DrawableSlideCheckpoint>(18);
+            RegisterPool<SlideCheckpoint.CheckpointNode, DrawableSlideCheckpointNode>(18);
 
             RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(20);
         }
@@ -76,10 +78,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             var localPos = ToLocalSpace(screenSpacePos);
 
-            var angleDelta = SentakkiExtensions.GetDeltaAngle(0, Vector2.Zero.GetDegreesFromPosition(localPos));
+            float angleDelta = SentakkiExtensions.GetDeltaAngle(0, Vector2.Zero.GetDegreesFromPosition(localPos));
             if (Math.Abs(angleDelta) > receptor_angle_range / 2) return false;
 
-            var distance = Vector2.DistanceSquared(Vector2.Zero, localPos);
+            float distance = Vector2.DistanceSquared(Vector2.Zero, localPos);
             if (distance < 200 * 200 || distance > 400 * 400) return false;
 
             return true;
@@ -113,7 +115,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private void handleKeyPress(ValueChangedEvent<int> keys)
         {
-            if (keys.NewValue > keys.OldValue || keys.NewValue == 0)
+            if (keys.NewValue < keys.OldValue)
                 SentakkiActionInputManager.TriggerReleased(SentakkiAction.Key1 + LaneNumber);
 
             if (keys.NewValue > keys.OldValue)

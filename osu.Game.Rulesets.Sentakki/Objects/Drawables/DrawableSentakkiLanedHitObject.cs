@@ -7,6 +7,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Skinning;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -16,19 +17,38 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override float SamplePlaybackPosition => (SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, HitObject.Lane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
 
-        private readonly Container<DrawableScorePaddingObject> scorePaddingObjects;
+        private PausableSkinnableSound breakSample;
+
+        private Container<DrawableScorePaddingObject> scorePaddingObjects;
+
         public DrawableSentakkiLanedHitObject(SentakkiLanedHitObject hitObject)
-                    : base(hitObject)
-        {
-            AddRangeInternal(new Drawable[]{
-                scorePaddingObjects = new Container<DrawableScorePaddingObject>()
-            });
-        }
+                    : base(hitObject) { }
 
         [BackgroundDependencyLoader(true)]
         private void load(SentakkiRulesetConfigManager sentakkiConfig)
         {
+            AddRangeInternal(new Drawable[]{
+                scorePaddingObjects = new Container<DrawableScorePaddingObject>(),
+                breakSample = new PausableSkinnableSound(),
+            });
+
             sentakkiConfig?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDuration);
+            sentakkiConfig?.BindWith(SentakkiRulesetSettings.BreakSampleVolume, breakSample.Volume);
+        }
+
+        protected override void LoadSamples()
+        {
+            base.LoadSamples();
+
+            breakSample.Samples = HitObject.CreateBreakSample();
+        }
+
+        public override void PlaySamples()
+        {
+            base.PlaySamples();
+
+            breakSample.Balance.Value = CalculateSamplePlaybackBalance(SamplePlaybackPosition);
+            breakSample.Play();
         }
 
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
@@ -50,6 +70,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.ClearNestedHitObjects();
             scorePaddingObjects.Clear(false);
+        }
+
+        protected override void OnFree()
+        {
+            base.OnFree();
+            breakSample.Samples = null;
         }
 
         protected override void ApplyResult(Action<JudgementResult> application)

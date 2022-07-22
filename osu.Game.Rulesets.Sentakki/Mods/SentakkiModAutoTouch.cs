@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public void ApplyToDrawableHitObject(DrawableHitObject drawableHitObject)
         {
-            if (!(drawableHitObject is DrawableSentakkiHitObject drawableSentakkiHitObject)) return;
+            if (drawableHitObject is not DrawableSentakkiHitObject drawableSentakkiHitObject) return;
 
             switch (drawableSentakkiHitObject)
             {
@@ -28,7 +28,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 case DrawableTouch _:
                 case DrawableTouchHold _:
                 // Slide nodes needs to be handled as well because the pool creates the object outside the DHO context
-                case DrawableSlideNode _:
+                case DrawableSlideCheckpointNode _:
                     drawableSentakkiHitObject.Auto = true;
                     break;
             }

@@ -1,4 +1,3 @@
-using System;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
@@ -45,7 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches
 
             if (Vector2.Distance(Vector2.Zero, newPosition) > 250)
             {
-                var angle = Vector2.Zero.GetDegreesFromPosition(newPosition);
+                float angle = Vector2.Zero.GetDegreesFromPosition(newPosition);
                 newPosition = SentakkiExtensions.GetCircularPosition(250, angle);
             }
             HitObject.Position = newPosition;

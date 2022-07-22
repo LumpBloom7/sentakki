@@ -4,7 +4,6 @@ using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Pooling;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -15,7 +14,7 @@ using osu.Game.Tests.Visual;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
     [TestFixture]
-    public class TestSceneSlideNote : OsuTestScene
+    public class TestSceneSlideFan : OsuTestScene
     {
         private readonly Container content;
         protected override Container<Drawable> Content => content;
@@ -25,13 +24,13 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         private int depthIndex;
 
         [Cached]
-        private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
+        private readonly SlideFanChevrons fanChevrons;
 
-        public TestSceneSlideNote()
+        public TestSceneSlideFan()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
 
-            Add(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(62));
+            Add(fanChevrons = new SlideFanChevrons());
 
             AddStep("Miss Single", () => testSingle(2000));
             AddStep("Hit Single", () => testSingle(2000, true));
@@ -46,17 +45,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 SlideInfoList = new List<SentakkiSlideInfo>
                 {
                     new SentakkiSlideInfo {
-                        ID = 25,
+                        ID = SlidePaths.FANID,
                         Duration = 1000,
                     },
-                    new SentakkiSlideInfo {
-                        ID = 27,
-                        Duration = 1500,
-                    },
-                    new SentakkiSlideInfo {
-                        ID = 0,
-                        Duration = 2000,
-                    }
                 },
                 StartTime = Time.Current + 1000,
             };
