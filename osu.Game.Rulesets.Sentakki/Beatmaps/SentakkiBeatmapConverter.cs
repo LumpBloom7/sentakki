@@ -155,36 +155,20 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         twin = true;
                 }
 
+            // See if we can convert to a slide object
             if (special && slider.Duration >= 350)
             {
-                List<Slide> slides = new List<Slide>();
-                if (EnabledExperiments.HasFlag(ConversionExperiments.twinSlides))
+                var result = tryConvertSliderToSlide(original, nodeSamples, twin, breakNote);
+                if (result.Any())
                 {
-                    if (twin)
-                        slides.Add((Slide)createSlideNote(original, nodeSamples, true, breakNote));
-                    else
-                        foreach (var note in createTapsFromTicks(original, nodeSamples))
-                            yield return note;
+                    foreach (var ho in result)
+                        yield return ho;
+
+                    yield break;
                 }
-
-                slides.Add((Slide)createSlideNote(original, nodeSamples, false, breakNote));
-
-                // Make sure duplicates are cleared
-                if (slides.Count == 2 && slides.First().Lane == slides.Last().Lane)
-                {
-                    // Make sure that both slides patterns are unique
-                    if (!slides.First().SlideInfoList.Exists(x => x.ID == slides.Last().SlideInfoList.First().ID))
-                        slides.First().SlideInfoList.AddRange(slides.Last().SlideInfoList);
-
-                    slides.Remove(slides.Last());
-                }
-
-                foreach (var slide in slides)
-                    yield return slide;
-
-                yield break;
             }
 
+            // Fallback to hold notes
             if (EnabledExperiments.HasFlag(ConversionExperiments.twinNotes))
                 if (twin)
                     yield return createHoldNote(original, nodeSamples, true, breakNote);
@@ -193,6 +177,52 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         yield return note;
 
             yield return createHoldNote(original, nodeSamples, false, breakNote);
+        }
+
+        private IEnumerable<SentakkiHitObject> tryConvertSliderToSlide(HitObject original, IList<IList<HitSampleInfo>> nodeSamples, bool twin = false, bool isBreak = false)
+        {
+            List<Slide> slides = new List<Slide>();
+            List<Tap> taps = new List<Tap>();
+            if (EnabledExperiments.HasFlag(ConversionExperiments.twinSlides))
+            {
+                if (twin)
+                    slides.Add((Slide)createSlideNote(original, nodeSamples, true, isBreak));
+                else
+                    taps.AddRange(createTapsFromTicks(original, nodeSamples));
+            }
+
+            slides.Add((Slide)createSlideNote(original, nodeSamples, false, isBreak));
+
+            // Perform sanitization pass
+            if (slides.Count == 2)
+            {
+                // If there is a SlideFan, we always prioritize that, and ignore the rest
+                foreach (var slide in slides)
+                    if (slide.SlideInfoList[0].ID == SlidePaths.FANID)
+                    {
+                        yield return slide;
+                        yield break;
+                    }
+
+                // If both slides have the same start lane, we attempt to merge them
+                if (slides[0].Lane == slides[1].Lane)
+                {
+                    // Make sure that both slides patterns are unique
+                    if (slides[0].SlideInfoList[0].ID != slides[1].SlideInfoList[0].ID)
+                        slides[0].SlideInfoList.AddRange(slides[1].SlideInfoList);
+
+                    slides.RemoveAt(1);
+                }
+            }
+
+            if (slides.Count > 0)
+            {
+                foreach (var slide in slides)
+                    yield return slide;
+
+                foreach (var tap in taps)
+                    yield return tap;
+            }
         }
 
         #endregion
@@ -260,7 +290,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 IEnumerable<(SentakkiSlidePath, SentakkiSlidePath)> pathEnumerable = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.Item1.MinDuration && ((IHasDuration)original).Duration <= p.Item1.MaxDuration);
 
                 if (!EnabledExperiments.HasFlag(ConversionExperiments.fanSlides))
-                    pathEnumerable = pathEnumerable.Where(s => s != SlidePaths.VALIDPATHS.Last());
+                    pathEnumerable = pathEnumerable.Where(s => s != SlidePaths.VALIDPATHS[^1]);
 
                 validPaths = pathEnumerable.ToList();
             }
@@ -285,7 +315,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             };
         }
 
-        private IEnumerable<SentakkiHitObject> createTapsFromTicks(HitObject original, IList<IList<HitSampleInfo>> nodeSamples)
+        private IEnumerable<Tap> createTapsFromTicks(HitObject original, IList<IList<HitSampleInfo>> nodeSamples)
         {
             if (original is not IHasPathWithRepeats)
                 yield break;
