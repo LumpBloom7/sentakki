@@ -44,11 +44,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected virtual void CreateSlideCheckpoints()
         {
-            var distance = SlideInfo.SlidePath.TotalDistance;
-            var nodeCount = (int)Math.Floor(distance / 100);
+            double distance = SlideInfo.SlidePath.TotalDistance;
+            int nodeCount = (int)Math.Floor(distance / 100);
             for (int i = 0; i < nodeCount; i++)
             {
-                var progress = (double)(i + 1) / nodeCount;
+                double progress = (double)(i + 1) / nodeCount;
                 SlideCheckpoint checkpoint = new SlideCheckpoint()
                 {
                     Progress = (float)progress,

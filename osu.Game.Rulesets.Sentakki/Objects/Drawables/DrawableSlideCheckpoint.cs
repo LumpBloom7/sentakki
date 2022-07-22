@@ -28,13 +28,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // All hits can only be done after the parent StartTime
         public bool IsHittable => Time.Current > ParentHitObject.HitObject.StartTime && isPreviousNodeHit();
 
-        private bool isPreviousNodeHit()
-        {
-            if (HitObject.StrictCompletionOrder)
-                return ThisIndex < 1 || parentSlide.SlideCheckpoints[ThisIndex - 1].IsHit;
-
-            return ThisIndex < 2 || parentSlide.SlideCheckpoints[ThisIndex - 2].IsHit;
-        }
+        private bool isPreviousNodeHit() => ThisIndex < 2 || parentSlide.SlideCheckpoints[ThisIndex - 2].IsHit;
 
         private Container<DrawableSlideCheckpointNode> nodes;
 
