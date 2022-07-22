@@ -207,8 +207,11 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 // If both slides have the same start lane, we attempt to merge them
                 if (slides[0].Lane == slides[1].Lane)
                 {
-                    // Make sure that both slides patterns are unique
-                    if (slides[0].SlideInfoList[0].ID != slides[1].SlideInfoList[0].ID)
+                    bool isSamePattern = slides[0].SlideInfoList[0].ID == slides[1].SlideInfoList[0].ID;
+                    bool isSameOrientation = slides[0].SlideInfoList[0].Mirrored == slides[1].SlideInfoList[0].Mirrored;
+
+                    // We merge both slides only if they both have the same pattern AND orientation
+                    if (!isSamePattern || !isSameOrientation)
                         slides[0].SlideInfoList.AddRange(slides[1].SlideInfoList);
 
                     slides.RemoveAt(1);
