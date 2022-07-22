@@ -158,6 +158,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                     createPatternGroup("V shape");
                 else if (i == 26)
                     createPatternGroup("Cup shape");
+                else if (i == SlidePaths.FANID)
+                    createPatternGroup("Fan shape");
 
                 int j = i;
                 SectionItems.Add(createMenuEntryForPattern(j));
