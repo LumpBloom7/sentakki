@@ -158,7 +158,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             // See if we can convert to a slide object
             if (special && slider.Duration >= 350)
             {
-                var result = tryConvertSliderToSlide(original, nodeSamples, twin, breakNote);
+                var result = tryConvertSliderToSlide(original, nodeSamples, twin, breakNote).ToList();
                 if (result.Any())
                 {
                     foreach (var ho in result)
@@ -193,29 +193,25 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             slides.Add((Slide)createSlideNote(original, nodeSamples, false, isBreak));
 
-            // Perform sanitization pass
-            if (slides.Count == 2)
-            {
-                // If there is a SlideFan, we always prioritize that, and ignore the rest
-                foreach (var slide in slides)
-                    if (slide.SlideInfoList[0].ID == SlidePaths.FANID)
-                    {
-                        yield return slide;
-                        yield break;
-                    }
-
-                // If both slides have the same start lane, we attempt to merge them
-                if (slides[0].Lane == slides[1].Lane)
+            // If there is a SlideFan, we always prioritize that, and ignore the rest
+            foreach (var slide in slides)
+                if (slide.SlideInfoList[0].ID == SlidePaths.FANID)
                 {
-                    bool isSamePattern = slides[0].SlideInfoList[0].ID == slides[1].SlideInfoList[0].ID;
-                    bool isSameOrientation = slides[0].SlideInfoList[0].Mirrored == slides[1].SlideInfoList[0].Mirrored;
-
-                    // We merge both slides only if they both have the same pattern AND orientation
-                    if (!isSamePattern || !isSameOrientation)
-                        slides[0].SlideInfoList.AddRange(slides[1].SlideInfoList);
-
-                    slides.RemoveAt(1);
+                    yield return slide;
+                    yield break;
                 }
+
+            // If both slides have the same start lane, we attempt to merge them
+            if (slides.Count == 2 && slides[0].Lane == slides[1].Lane)
+            {
+                bool isSamePattern = slides[0].SlideInfoList[0].ID == slides[1].SlideInfoList[0].ID;
+                bool isSameOrientation = slides[0].SlideInfoList[0].Mirrored == slides[1].SlideInfoList[0].Mirrored;
+
+                // We merge both slides only if they both have the same pattern AND orientation
+                if (!isSamePattern || !isSameOrientation)
+                    slides[0].SlideInfoList.AddRange(slides[1].SlideInfoList);
+
+                slides.RemoveAt(1);
             }
 
             if (slides.Count > 0)
