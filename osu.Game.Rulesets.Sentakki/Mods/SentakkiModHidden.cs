@@ -1,10 +1,10 @@
 using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Batches;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.OpenGL.Vertices;
 using osu.Framework.Graphics.Primitives;
+using osu.Framework.Graphics.Rendering;
+using osu.Framework.Graphics.Rendering.Vertices;
 using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Graphics.OpenGL.Vertices;
@@ -193,8 +193,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                     private Vector2 maskPosition;
                     private Vector2 maskRadius;
 
-                    private readonly VertexBatch<PositionAndColourVertex> quadBatch = new QuadBatch<PositionAndColourVertex>(1, 1);
-                    private readonly Action<TexturedVertex2D> addAction;
+                    private IVertexBatch<PositionAndColourVertex> quadBatch;
+                    private Action<TexturedVertex2D> addAction;
 
                     public PlayfieldMaskDrawNode(PlayfieldMask source)
                         : base(source)
@@ -216,16 +216,26 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                         maskRadius = Source.MaskRadius * DrawInfo.Matrix.ExtractScale().Xy;
                     }
 
-                    public override void Draw(Action<TexturedVertex2D> vertexAction)
+                    public override void Draw(IRenderer renderer)
                     {
-                        base.Draw(vertexAction);
+                        base.Draw(renderer);
+
+                        if (quadBatch == null)
+                        {
+                            quadBatch = renderer.CreateQuadBatch<PositionAndColourVertex>(1, 1);
+                            addAction = v => quadBatch.Add(new PositionAndColourVertex
+                            {
+                                Position = v.Position,
+                                Colour = v.Colour
+                            });
+                        }
 
                         shader.Bind();
 
                         shader.GetUniform<Vector2>("maskPosition").UpdateValue(ref maskPosition);
                         shader.GetUniform<Vector2>("maskRadius").UpdateValue(ref maskRadius);
 
-                        DrawQuad(Texture.WhitePixel, screenSpaceDrawQuad, DrawColourInfo.Colour, vertexAction: addAction);
+                        renderer.DrawQuad(renderer.WhitePixel, screenSpaceDrawQuad, DrawColourInfo.Colour, vertexAction: addAction);
 
                         shader.Unbind();
                     }
