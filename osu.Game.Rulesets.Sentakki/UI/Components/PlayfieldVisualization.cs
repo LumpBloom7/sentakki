@@ -262,7 +262,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             {
                 base.Dispose(isDisposing);
 
-                vertexBatch.Dispose();
+                vertexBatch?.Dispose();
             }
         }
     }
