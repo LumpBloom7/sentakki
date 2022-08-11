@@ -7,54 +7,24 @@ namespace osu.Game.Rulesets.Sentakki.Localisation
         private const string prefix = @"osu.Game.Rulesets.Sentakki.Resources.Localisation.SentakkiActionStrings";
 
         /// <summary>
-        /// "Button 1"
+        /// "Button #"
         /// </summary>
-        public static LocalisableString Button1 => new TranslatableString(getKey(@"button_1"), @"Button 1");
+        private static LocalisableString button(int number) => new TranslatableString(getKey(@"button_#"), @"Button {0}", number);
+        public static LocalisableString Button1 => button(1);
+        public static LocalisableString Button2 => button(2);
 
         /// <summary>
-        /// "Button 2"
+        /// "Key #"
         /// </summary>
-        public static LocalisableString Button2 => new TranslatableString(getKey(@"button_2"), @"Button 2");
-
-        /// <summary>
-        /// "Key 1"
-        /// </summary>
-        public static LocalisableString Key1 => new TranslatableString(getKey(@"key_1"), @"Key 1");
-
-        /// <summary>
-        /// "Key 2"
-        /// </summary>
-        public static LocalisableString Key2 => new TranslatableString(getKey(@"key_2"), @"Key 2");
-
-        /// <summary>
-        /// "Key 3"
-        /// </summary>
-        public static LocalisableString Key3 => new TranslatableString(getKey(@"key_3"), @"Key 3");
-
-        /// <summary>
-        /// "Key 4"
-        /// </summary>
-        public static LocalisableString Key4 => new TranslatableString(getKey(@"key_4"), @"Key 4");
-
-        /// <summary>
-        /// "Key 5"
-        /// </summary>
-        public static LocalisableString Key5 => new TranslatableString(getKey(@"key_5"), @"Key 5");
-
-        /// <summary>
-        /// "Key 6"
-        /// </summary>
-        public static LocalisableString Key6 => new TranslatableString(getKey(@"key_6"), @"Key 6");
-
-        /// <summary>
-        /// "Key 7"
-        /// </summary>
-        public static LocalisableString Key7 => new TranslatableString(getKey(@"key_7"), @"Key 7");
-
-        /// <summary>
-        /// "Key 8"
-        /// </summary>
-        public static LocalisableString Key8 => new TranslatableString(getKey(@"key_8"), @"Key 8");
+        private static LocalisableString key(int number) => new TranslatableString(getKey(@"key_#"), @"Key {0}", number);
+        public static LocalisableString Key1 => key(1);
+        public static LocalisableString Key2 => key(2);
+        public static LocalisableString Key3 => key(3);
+        public static LocalisableString Key4 => key(4);
+        public static LocalisableString Key5 => key(5);
+        public static LocalisableString Key6 => key(6);
+        public static LocalisableString Key7 => key(7);
+        public static LocalisableString Key8 => key(8);
 
         private static string getKey(string key) => $"{prefix}:{key}";
     }
