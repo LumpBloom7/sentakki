@@ -97,4 +97,10 @@
     <data name="break_sample_volume" xml:space="preserve">
         <value>Break sample volume</value>
     </data>
+    <data name="note_entry_speed" xml:space="preserve">
+        <value>Note entry speed</value>
+    </data>
+    <data name="touch_note_fade_in_speed" xml:space="preserve">
+        <value>Touch note fade-in speed</value>
+    </data>
 </root>
