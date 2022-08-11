@@ -1,0 +1,42 @@
+preserve_hierarchy: true
+files:
+  - source: /osu.Game.Rulesets.Sentakki/Localisation/*.resx
+    translation: /osu.Game.Rulesets.Sentakki/Localisation/%file_name%.%locale%.%file_extension%
+    ignore:
+      # note that this should probably be using %locale% rather than a simple wildcard
+      # but it doesn't seem to respect our mapping below.
+      - /osu.Game.Rulesets.Sentakki/Localisation/%file_name%.*.%file_extension%
+    update_option: update_as_unapproved
+    languages_mapping:
+      locale:
+        ar: ar
+        be: be
+        bg: bg
+        cs: cs
+        da: da
+        de: de
+        el: el
+        es-ES: es
+        fi-FI: fi
+        fi: fi
+        fr: fr
+        hu: hu
+        id: id
+        it: it
+        ja: ja
+        ko: ko
+        nl: nl
+        'no': 'no'
+        pl: pl
+        pt-BR: pt-BR
+        pt-PT: pt
+        ro: ro
+        ru: ru
+        sk: sk
+        sv-SE: sv
+        th: th
+        tr: tr
+        uk: uk
+        vi: vi
+        zh-CN: zh
+        zh-TW: zh-Hant
