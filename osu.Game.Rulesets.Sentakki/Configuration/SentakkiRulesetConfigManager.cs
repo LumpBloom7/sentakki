@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using osu.Game.Configuration;
+﻿using osu.Game.Configuration;
 using osu.Game.Rulesets.Configuration;
 
 namespace osu.Game.Rulesets.Sentakki.Configuration
@@ -26,20 +25,6 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
             SetDefault(SentakkiRulesetSettings.DetailedJudgements, false);
             SetDefault(SentakkiRulesetSettings.BreakSampleVolume, 1d, 0d, 1d, 0.01f);
         }
-    }
-
-    public enum ColorOption
-    {
-        Default,
-        [Description("Difficulty-based color")]
-        Difficulty,
-        Skin,
-    }
-
-    public enum LaneInputMode
-    {
-        Button,
-        Sensor,
     }
 
     public enum SentakkiRulesetSettings
