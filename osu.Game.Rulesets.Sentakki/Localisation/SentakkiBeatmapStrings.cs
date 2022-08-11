@@ -24,7 +24,6 @@ namespace osu.Game.Rulesets.Sentakki.Localisation
         /// <summary>
         /// "Touch count"
         /// </summary>
-
         public static LocalisableString TouchCount => new TranslatableString(getKey(@"touch_count"), @"Touch count");
 
         /// <summary>
