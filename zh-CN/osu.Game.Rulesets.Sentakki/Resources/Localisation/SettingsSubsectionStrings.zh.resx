@@ -58,43 +58,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="show_kiai_effects" xml:space="preserve">
-        <value>Show Kiai effects</value>
-    </data>
-  <data name="show_note_start_indicators" xml:space="preserve">
-        <value>Show note start indicators</value>
-    </data>
-  <data name="snaking_in_slides" xml:space="preserve">
-        <value>Snaking in Slides</value>
-    </data>
-  <data name="show_detailed_judgements" xml:space="preserve">
-        <value>Show detailed judgements</value>
-    </data>
-  <data name="ring_color" xml:space="preserve">
-        <value>Ring colour</value>
-    </data>
-  <data name="ring_color_default" xml:space="preserve">
-        <value>Default</value>
-    </data>
-  <data name="ring_color_difficulty" xml:space="preserve">
-        <value>Difficulty-based colour</value>
-    </data>
-  <data name="ring_color_skin" xml:space="preserve">
-        <value>Skin</value>
-    </data>
-  <data name="ring_opacity" xml:space="preserve">
-        <value>Ring Opacity</value>
-    </data>
-  <data name="lane_input_mode" xml:space="preserve">
-        <value>Lane input mode (Doesn't apply to touch)</value>
-    </data>
-  <data name="lane_input_mode_button" xml:space="preserve">
-        <value>Button</value>
-    </data>
-  <data name="lane_input_mode_sensor" xml:space="preserve">
-        <value>Sensor</value>
-    </data>
-  <data name="break_sample_volume" xml:space="preserve">
-        <value>Break sample volume</value>
-    </data>
 </root>
