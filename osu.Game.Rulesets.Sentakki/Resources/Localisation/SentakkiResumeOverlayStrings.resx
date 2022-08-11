@@ -65,6 +65,6 @@
         <value>Let's go!</value>
     </data>
     <data name="sentakki_supported_by" xml:space="preserve">
-        <value>Sentakki is made with {0} the support of</value>
+        <value>Sentakki is made with the support of {0}.</value>
     </data>
 </root>
