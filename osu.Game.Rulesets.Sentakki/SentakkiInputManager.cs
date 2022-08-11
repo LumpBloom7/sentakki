@@ -1,11 +1,12 @@
 using System.Collections.Generic;
-using System.ComponentModel;
 using osu.Framework.Extensions.ListExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Input.States;
 using osu.Framework.Lists;
+using osu.Framework.Localisation;
+using osu.Game.Rulesets.Sentakki.Localisation;
 using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Sentakki
@@ -71,34 +72,34 @@ namespace osu.Game.Rulesets.Sentakki
 
     public enum SentakkiAction
     {
-        [Description("Button 1")]
+        [LocalisableDescription(typeof(SentakkiActionStrings), nameof(SentakkiActionStrings.Button1))]
         Button1,
 
-        [Description("Button 2")]
+        [LocalisableDescription(typeof(SentakkiActionStrings), nameof(SentakkiActionStrings.Button2))]
         Button2,
 
-        [Description("Key 1")]
+        [LocalisableDescription(typeof(SentakkiActionStrings), nameof(SentakkiActionStrings.Key1))]
         Key1,
 
-        [Description("Key 2")]
+        [LocalisableDescription(typeof(SentakkiActionStrings), nameof(SentakkiActionStrings.Key2))]
         Key2,
 
-        [Description("Key 3")]
+        [LocalisableDescription(typeof(SentakkiActionStrings), nameof(SentakkiActionStrings.Key3))]
         Key3,
 
-        [Description("Key 4")]
+        [LocalisableDescription(typeof(SentakkiActionStrings), nameof(SentakkiActionStrings.Key4))]
         Key4,
 
-        [Description("Key 5")]
+        [LocalisableDescription(typeof(SentakkiActionStrings), nameof(SentakkiActionStrings.Key5))]
         Key5,
 
-        [Description("Key 6")]
+        [LocalisableDescription(typeof(SentakkiActionStrings), nameof(SentakkiActionStrings.Key6))]
         Key6,
 
-        [Description("Key 7")]
+        [LocalisableDescription(typeof(SentakkiActionStrings), nameof(SentakkiActionStrings.Key7))]
         Key7,
 
-        [Description("Key 8")]
+        [LocalisableDescription(typeof(SentakkiActionStrings), nameof(SentakkiActionStrings.Key8))]
         Key8,
     }
 }
