@@ -3,8 +3,6 @@ files:
   - source: /osu.Game.Rulesets.Sentakki/Resources/Localisation/*.resx
     translation: /osu.Game.Rulesets.Sentakki/Resources/Localisation/%file_name%.%locale%.%file_extension%
     ignore:
-      # note that this should probably be using %locale% rather than a simple wildcard
-      # but it doesn't seem to respect our mapping below.
       - /osu.Game.Rulesets.Sentakki/Resources/Localisation/%file_name%.*.%file_extension%
     update_option: update_as_unapproved
     languages_mapping:
