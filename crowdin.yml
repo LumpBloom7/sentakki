@@ -1,9 +1,9 @@
 preserve_hierarchy: true
 files:
-  - source: /osu.Game.Rulesets.Sentakki/Resources/Localisation/*.resx
-    translation: /osu.Game.Rulesets.Sentakki/Resources/Localisation/%file_name%.%locale%.%file_extension%
+  - source: /osu.Game.Rulesets.Sentakki/Resources/Localisation/**/*.resx
+    translation: /osu.Game.Rulesets.Sentakki/Resources/Localisation/**/%file_name%.%locale%.%file_extension%
     ignore:
-      - /osu.Game.Rulesets.Sentakki/Resources/Localisation/%file_name%.*.%file_extension%
+      - /osu.Game.Rulesets.Sentakki/Resources/Localisation/**/%file_name%.*.%file_extension%
     update_option: update_as_unapproved
     languages_mapping:
       locale:

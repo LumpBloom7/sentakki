@@ -60,17 +60,22 @@
     </resheader>
     <data name="tap_count" xml:space="preserve">
         <value>Tap count</value>
+        <comment>Tap is a proper noun.</comment>
     </data>
     <data name="hold_count" xml:space="preserve">
         <value>Hold count</value>
+        <comment>Hold is a proper noun.</comment>
     </data>
     <data name="touchhold_count" xml:space="preserve">
         <value>TouchHold count</value>
+        <comment>TouchHold is a proper noun.</comment>
     </data>
     <data name="touch_count" xml:space="preserve">
         <value>Touch count</value>
+        <comment>Touch is a proper noun.</comment>
     </data>
     <data name="slide_count" xml:space="preserve">
         <value>Slide count</value>
+        <comment>Slide is a proper noun.</comment>
     </data>
 </root>
