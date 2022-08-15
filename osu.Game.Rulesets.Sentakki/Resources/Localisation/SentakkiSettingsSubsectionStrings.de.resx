@@ -58,4 +58,52 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="show_kiai_effects" xml:space="preserve">
+        <value>Kiai Effekte anzeigen</value>
+    </data>
+  <data name="show_note_start_indicators" xml:space="preserve">
+        <value>Noten Start Indikatoren anzeigen</value>
+    </data>
+  <data name="snaking_in_slides" xml:space="preserve">
+        <value>Schlangen in Slides</value>
+        <comment>"Snaking in" refers to the animation of the Slide extending out telescopically from the origin piece by piece.</comment>
+    </data>
+  <data name="show_detailed_judgements" xml:space="preserve">
+        <value>Detaillierte Urteile anzeigen</value>
+    </data>
+  <data name="ring_color" xml:space="preserve">
+        <value>Ring Farbe</value>
+    </data>
+  <data name="ring_color_default" xml:space="preserve">
+        <value>Default</value>
+    </data>
+  <data name="ring_color_difficulty" xml:space="preserve">
+        <value>Schwierigkeit basierte Farbe</value>
+    </data>
+  <data name="ring_color_skin" xml:space="preserve">
+        <value>Skin</value>
+    </data>
+  <data name="ring_opacity" xml:space="preserve">
+        <value>Ring Transparenz</value>
+    </data>
+  <data name="lane_input_mode" xml:space="preserve">
+        <value>Spur Eingabe Modus (touch wird nicht berücksichtigt)</value>
+        <comment>"Touch"as in the verb, as in "touchscreen"</comment>
+    </data>
+  <data name="lane_input_mode_button" xml:space="preserve">
+        <value>Taste</value>
+    </data>
+  <data name="lane_input_mode_sensor" xml:space="preserve">
+        <value>Sensor</value>
+    </data>
+  <data name="break_sample_volume" xml:space="preserve">
+        <value>Break Beispiel Lautstärke</value>
+        <comment>Break is a proper noun, referring to a property on laned notes.</comment>
+    </data>
+  <data name="note_entry_speed" xml:space="preserve">
+        <value>Noten Eingangs Geschwindigkeit</value>
+    </data>
+  <data name="touch_note_fade_in_speed" xml:space="preserve">
+        <value>Touch Note einblende Geschwindigkeit</value>
+    </data>
 </root>
