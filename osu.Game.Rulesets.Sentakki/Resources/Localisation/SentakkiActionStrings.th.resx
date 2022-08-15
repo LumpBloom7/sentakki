@@ -58,4 +58,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="button_#" xml:space="preserve">
+        <value>ปุ่ม {0}</value>
+    </data>
+  <data name="key_#" xml:space="preserve">
+        <value>คีย์ {0}</value>
+    </data>
 </root>
