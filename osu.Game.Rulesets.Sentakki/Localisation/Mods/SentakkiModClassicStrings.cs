@@ -2,7 +2,7 @@ using osu.Framework.Localisation;
 
 namespace osu.Game.Rulesets.Sentakki.Localisation.Mods
 {
-    public static class SentakkiModAutoTouch
+    public static class SentakkiModClassicStrings
     {
         private const string prefix = @"osu.Game.Rulesets.Sentakki.Resources.Localisation.Mods.SentakkiModClassicStrings";
 
