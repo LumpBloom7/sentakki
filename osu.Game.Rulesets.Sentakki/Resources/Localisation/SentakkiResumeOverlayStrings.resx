@@ -66,5 +66,6 @@
     </data>
     <data name="sentakki_supported_by" xml:space="preserve">
         <value>Sentakki is made with the support of {0}.</value>
+        <comment>The placeholder is for the name of a sentakki supporter.</comment>
     </data>
 </root>

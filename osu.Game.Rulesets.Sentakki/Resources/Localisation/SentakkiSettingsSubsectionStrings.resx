@@ -66,6 +66,7 @@
     </data>
     <data name="snaking_in_slides" xml:space="preserve">
         <value>Snaking in Slides</value>
+        <comment>"Snaking in" refers to the animation of the Slide extending out telescopically from the origin piece by piece.</comment>
     </data>
     <data name="show_detailed_judgements" xml:space="preserve">
         <value>Show detailed judgements</value>
@@ -87,6 +88,7 @@
     </data>
     <data name="lane_input_mode" xml:space="preserve">
         <value>Lane input mode (Doesn't apply to touch)</value>
+        <comment>"Touch"as in the verb, as in "touchscreen"</comment>
     </data>
     <data name="lane_input_mode_button" xml:space="preserve">
         <value>Button</value>
@@ -96,6 +98,7 @@
     </data>
     <data name="break_sample_volume" xml:space="preserve">
         <value>Break sample volume</value>
+        <comment>Break is a proper noun, referring to a property on laned notes.</comment>
     </data>
     <data name="note_entry_speed" xml:space="preserve">
         <value>Note entry speed</value>
