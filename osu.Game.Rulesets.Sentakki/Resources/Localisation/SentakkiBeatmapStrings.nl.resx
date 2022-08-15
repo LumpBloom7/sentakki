@@ -59,6 +59,23 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="tap_count" xml:space="preserve">
-        <value>Aantal tikken</value>
+        <value>Aantal Tap</value>
+        <comment>Tap is a proper noun.</comment>
+    </data>
+  <data name="hold_count" xml:space="preserve">
+        <value>Aantal Hold</value>
+        <comment>Hold is a proper noun.</comment>
+    </data>
+  <data name="touchhold_count" xml:space="preserve">
+        <value>Aantal TouchHold</value>
+        <comment>TouchHold is a proper noun.</comment>
+    </data>
+  <data name="touch_count" xml:space="preserve">
+        <value>Aantal Touch</value>
+        <comment>Touch is a proper noun.</comment>
+    </data>
+  <data name="slide_count" xml:space="preserve">
+        <value>Aantal Slide</value>
+        <comment>Slide is a proper noun.</comment>
     </data>
 </root>
