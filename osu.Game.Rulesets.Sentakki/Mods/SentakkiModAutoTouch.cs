@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override string Acronym => "AT";
         public override IconUsage? Icon => OsuIcon.PlayStyleTouch;
         public override ModType Type => ModType.Automation;
-        public override string Description => @"Focus on the laned notes. Touch screen notes will be completed automatically.";
+        public override string Description => @"Focus on the laned notes. Touch notes and Slide bodies will be automatically completed.";
         public override double ScoreMultiplier => .5f;
         public override Type[] IncompatibleMods => base.IncompatibleMods.Append(typeof(ModAutoplay)).ToArray();
 
