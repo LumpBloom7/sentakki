@@ -58,4 +58,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="mod_description" xml:space="preserve">
+        <value>اقلب الملعب أفقيا أو رأسيا أو كليهما!</value>
+    </data>
+  <data name="mirror_vertically" xml:space="preserve">
+        <value>⇅اعكس عاموديا</value>
+    </data>
+  <data name="mirror_vertically_description" xml:space="preserve">
+        <value>اعكس الملعب بأكمله حول محور س</value>
+    </data>
+  <data name="mirror_horizontally" xml:space="preserve">
+        <value>⇆ اعكس افقيا</value>
+    </data>
+  <data name="mirror_horizontally_description" xml:space="preserve">
+        <value>اعكس الملعب بأكمله حول محور ص</value>
+    </data>
 </root>
