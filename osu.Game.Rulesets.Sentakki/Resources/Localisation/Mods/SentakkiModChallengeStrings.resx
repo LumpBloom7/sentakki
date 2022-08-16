@@ -64,4 +64,7 @@
     <data name="mod_description" xml:space="preserve">
         <value>You only get a small margin for errors.</value>
     </data>
+    <data name="number_of_lives_description" xml:space="preserve">
+        <value>The number of lives you start with.</value>
+    </data>
 </root>
