@@ -58,4 +58,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="mod_description" xml:space="preserve">
+        <value>Некоторые экспериментальные функции, которые будут добавлены в будущие билды sentakki. Рекомендовано играть с модами Autoplay/No-Fail. Записи игр не поддерживаются.</value>
+    </data>
+  <data name="twin_notes" xml:space="preserve">
+        <value>Двойные ноты</value>
+        <comment>Twin is an adjective.</comment>
+    </data>
+  <data name="twin_notes_description" xml:space="preserve">
+        <value>Позволяет одной и той же ноте появиться дважды одновременно (Нужен мультитач)</value>
+    </data>
+  <data name="twin_slides" xml:space="preserve">
+        <value>Двойные ноты Slide</value>
+        <comment>Twin is an adjective.</comment>
+    </data>
+  <data name="twin_slides_description" xml:space="preserve">
+        <value>Позволяет одной и той же ноте Slide появиться дважды одновременно (Нужен мультитач)</value>
+    </data>
+  <data name="fan_slides" xml:space="preserve">
+        <value>Веер-ноты Slide</value>
+        <comment>Fan is a adjective, referring to the shape of the Slide.</comment>
+    </data>
 </root>
