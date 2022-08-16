@@ -58,4 +58,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="mod_description" xml:space="preserve">
+        <value>Отразить игровое поле горизонтально, вертикально, или по обеим осям!</value>
+    </data>
+  <data name="mirror_vertically" xml:space="preserve">
+        <value>⇅ Отразить вертикально</value>
+    </data>
+  <data name="mirror_vertically_description" xml:space="preserve">
+        <value>Отразить всё игровое поле относительно оси x</value>
+    </data>
+  <data name="mirror_horizontally" xml:space="preserve">
+        <value>⇆ Отразить горизонтально</value>
+    </data>
+  <data name="mirror_horizontally_description" xml:space="preserve">
+        <value>Отразить всё игровое поле относительно оси y</value>
+    </data>
 </root>
