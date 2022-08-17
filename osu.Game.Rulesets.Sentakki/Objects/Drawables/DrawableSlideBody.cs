@@ -102,14 +102,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             UpdateSlidePath();
             updatePathProgress();
             StarProgress = 0;
-
-            AccentColour.BindTo(ParentHitObject.AccentColour);
         }
 
         protected override void OnFree()
         {
             base.OnFree();
-            AccentColour.UnbindFrom(ParentHitObject.AccentColour);
             Slidepath.Free();
         }
 

@@ -12,18 +12,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableSlideTap(SlideTap hitObject)
             : base(hitObject) { }
 
-        protected override void OnApply()
-        {
-            base.OnApply();
-            AccentColour.BindTo(ParentHitObject.AccentColour);
-        }
-
-        protected override void OnFree()
-        {
-            base.OnFree();
-            AccentColour.UnbindFrom(ParentHitObject.AccentColour);
-        }
-
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
