@@ -240,7 +240,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private SentakkiHitObject createHoldNote(HitObject original, IList<IList<HitSampleInfo>> samples, bool twin = false, bool isBreak = false)
             => new Hold
             {
-                Break = isBreak,
+                Break = !ClassicMode && isBreak,
                 Lane = patternGenerator.GetNextLane(twin),
                 NodeSamples = samples,
                 StartTime = original.StartTime,
