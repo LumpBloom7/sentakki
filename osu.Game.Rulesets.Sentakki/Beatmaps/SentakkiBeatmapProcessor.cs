@@ -33,21 +33,14 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
                     // SlideTaps follow the typical coloring rules, while SlideBodies follow a different set of rules
                     if (hitObject is Slide slide)
+                    {
                         slide.SlideTap.NoteColour = noteColor;
+                        if (group.Any(h => h is Slide && h != slide))
+                            foreach (var sBody in slide.SlideBodies)
+                                sBody.NoteColour = Color4.Gold;
+                    }
                     else
                         hitObject.NoteColour = noteColor;
-                }
-
-                // Slide bodies can't be break coloured, but can use the twin colour
-                // However, the twin colour is only used if there exists another SlideBody with the same start and end time
-                var slideBodies = group.OfType<Slide>().SelectMany(s => s.SlideBodies).GroupBy(sb => sb.EndTime).ToList();
-
-                foreach (var slideBodyGroup in slideBodies)
-                {
-                    bool isTwinSlide = slideBodyGroup.Count() > 1;
-
-                    foreach (var slideBody in slideBodyGroup)
-                        slideBody.NoteColour = isTwinSlide ? Color4.Gold : slideBody.DefaultNoteColour;
                 }
             }
         }
