@@ -58,4 +58,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="mod_description" xml:space="preserve">
+        <value>ركز على الملاحظات المتخلفة. سيتم إكمال الملاحظات التي تعمل باللمس وأجسام الشرائح تلقائيا.</value>
+    </data>
 </root>
