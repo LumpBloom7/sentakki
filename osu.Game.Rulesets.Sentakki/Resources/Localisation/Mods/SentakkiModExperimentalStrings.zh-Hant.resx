@@ -58,4 +58,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="mod_description" xml:space="preserve">
+        <value>一些實驗性功能將添加到未來的 sentakki 版本。推薦使用 Autoplay/No-Fail。不支持重播</value>
+    </data>
+  <data name="twin_notes" xml:space="preserve">
+        <value>雙音符</value>
+        <comment>Twin is an adjective.</comment>
+    </data>
+  <data name="twin_notes_description" xml:space="preserve">
+        <value>允許多過一個音符共享開始時間。 （需要多點觸控）</value>
+    </data>
+  <data name="twin_slides" xml:space="preserve">
+        <value>雙 Slide</value>
+        <comment>Twin is an adjective.</comment>
+    </data>
+  <data name="twin_slides_description" xml:space="preserve">
+        <value>允許多過一個 Slide 身體共享開始時間和起源。 （需要多點觸控）</value>
+    </data>
+  <data name="fan_slides" xml:space="preserve">
+        <value>扇子 Slide</value>
+        <comment>Fan is a adjective, referring to the shape of the Slide.</comment>
+    </data>
+  <data name="fan_slides_description" xml:space="preserve">
+        <value>允許扇子 Slide 偶爾出現 （需要多點觸控）</value>
+    </data>
 </root>
