@@ -58,4 +58,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="mod_description" xml:space="preserve">
+        <value>水平、垂直或同時反映遊戲場地！</value>
+    </data>
+  <data name="mirror_vertically" xml:space="preserve">
+        <value>⇅ 垂直反映</value>
+    </data>
+  <data name="mirror_vertically_description" xml:space="preserve">
+        <value>沿 x 軸反映整個遊戲場地</value>
+    </data>
+  <data name="mirror_horizontally" xml:space="preserve">
+        <value>⇆ 水平反映</value>
+    </data>
+  <data name="mirror_horizontally_description" xml:space="preserve">
+        <value>沿 y 軸反映整個遊戲場地</value>
+    </data>
 </root>
