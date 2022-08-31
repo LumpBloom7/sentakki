@@ -58,4 +58,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="number_of_lives" xml:space="preserve">
+        <value>Liczba żyć</value>
+    </data>
+  <data name="mod_description" xml:space="preserve">
+        <value>Dostaniesz tylko mały margines na błędy.</value>
+    </data>
+  <data name="number_of_lives_description" xml:space="preserve">
+        <value>Liczba żyć, z którymi zaczynasz.</value>
+    </data>
 </root>
