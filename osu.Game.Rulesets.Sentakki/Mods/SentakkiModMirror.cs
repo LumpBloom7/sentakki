@@ -1,9 +1,11 @@
 using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
+using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK;
 
@@ -12,21 +14,21 @@ namespace osu.Game.Rulesets.Sentakki.Mods
     public class SentakkiModMirror : Mod, IApplicableAfterBeatmapConversion
     {
         public override string Name => "Mirror";
-        public override string Description => "Flip the playfield horizontally, vertically, or both!";
+        public override LocalisableString Description => SentakkiModMirrorStrings.ModDescription;
         public override string Acronym => "MR";
         public override ModType Type => ModType.Conversion;
         public override double ScoreMultiplier => 1;
 
         public override bool RequiresConfiguration => true;
 
-        [SettingSource("⇅ Mirror vertically", "Mirror entire playfield across the x-axis")]
+        [SettingSource(typeof(SentakkiModMirrorStrings), nameof(SentakkiModMirrorStrings.MirrorVertically), nameof(SentakkiModMirrorStrings.MirrorVerticallyDescription))]
         public BindableBool VerticalMirrored { get; } = new BindableBool
         {
             Default = false,
             Value = false
         };
 
-        [SettingSource("⇆ Mirror horizontally", "Mirror entire playfield across the y-axis")]
+        [SettingSource(typeof(SentakkiModMirrorStrings), nameof(SentakkiModMirrorStrings.MirrorHorizontally), nameof(SentakkiModMirrorStrings.MirrorHorizontallyDescription))]
         public BindableBool HorizontalMirrored { get; } = new BindableBool
         {
             Default = false,

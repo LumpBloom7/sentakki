@@ -6,11 +6,12 @@ using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Rendering.Vertices;
 using osu.Framework.Graphics.Shaders;
-using osu.Framework.Graphics.Textures;
+using osu.Framework.Localisation;
 using osu.Game.Graphics.OpenGL.Vertices;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -21,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 {
     public class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset<SentakkiHitObject>
     {
-        public override string Description => "Notes fade out just before you hit them.";
+        public override LocalisableString Description => SentakkiModHiddenStrings.ModDescription;
 
         public override double ScoreMultiplier => 1.06;
 

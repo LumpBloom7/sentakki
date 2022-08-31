@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Mods;
@@ -18,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
     public class SentakkiModChallenge : Mod, IApplicableToDrawableRuleset<SentakkiHitObject>, IApplicableToHealthProcessor
     {
         public override string Name => "Challenge";
-        public override string Description => "You only get a small margin for errors.";
+        public override LocalisableString Description => "You only get a small margin for errors.";
         public override string Acronym => "C";
 
         public override IconUsage? Icon => FontAwesome.Solid.HeartBroken;

@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Bindings;
+using osu.Framework.Localisation;
 using osu.Framework.Platform;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
@@ -181,7 +182,7 @@ namespace osu.Game.Rulesets.Sentakki
             };
         }
 
-        public override string GetDisplayNameForHitResult(HitResult result) => result.GetDisplayNameForSentakkiResult();
+        public override LocalisableString GetDisplayNameForHitResult(HitResult result) => result.GetDisplayNameForSentakkiResult();
 
         public class SentakkiIcon : CompositeDrawable
         {
