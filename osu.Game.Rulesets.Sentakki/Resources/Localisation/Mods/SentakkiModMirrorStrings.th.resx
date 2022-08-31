@@ -58,4 +58,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="mod_description" xml:space="preserve">
+        <value>กลับด้านทุกอย่าง แนวตั้ง แนวนอน หรือทั้งคู่เลยก็ได้</value>
+    </data>
+  <data name="mirror_vertically" xml:space="preserve">
+        <value>⇅ กลับด้านแนวตั้ง</value>
+    </data>
+  <data name="mirror_vertically_description" xml:space="preserve">
+        <value>กลับด้านทุกอย่างตามแกน x</value>
+    </data>
+  <data name="mirror_horizontally" xml:space="preserve">
+        <value>⇆ กลับด้านแนวนอน</value>
+    </data>
+  <data name="mirror_horizontally_description" xml:space="preserve">
+        <value>กลับด้านทุกอย่างตามแกน y</value>
+    </data>
 </root>
