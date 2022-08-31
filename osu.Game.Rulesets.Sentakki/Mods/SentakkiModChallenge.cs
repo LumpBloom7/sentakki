@@ -9,6 +9,7 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
+using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
@@ -19,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
     public class SentakkiModChallenge : Mod, IApplicableToDrawableRuleset<SentakkiHitObject>, IApplicableToHealthProcessor
     {
         public override string Name => "Challenge";
-        public override LocalisableString Description => "You only get a small margin for errors.";
+        public override LocalisableString Description => SentakkiModChallengeStrings.ModDescription;
         public override string Acronym => "C";
 
         public override IconUsage? Icon => FontAwesome.Solid.HeartBroken;
@@ -49,7 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             [Description("300")] ThreeHundred = 300,
         }
 
-        [SettingSource("Number of Lives", "The number of lives you start with.")]
+        [SettingSource(typeof(SentakkiModChallengeStrings), nameof(SentakkiModChallengeStrings.NumberOfLives), nameof(SentakkiModChallengeStrings.NumberOfLivesDescription))]
         public Bindable<Lives> LiveSetting { get; } = new Bindable<Lives>
         {
             Default = Lives.Fifty,
