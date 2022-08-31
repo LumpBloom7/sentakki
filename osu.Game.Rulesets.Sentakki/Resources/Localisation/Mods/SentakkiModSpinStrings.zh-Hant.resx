@@ -58,4 +58,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="mod_description" xml:space="preserve">
+        <value>複製真實的洗衣機體驗。</value>
+    </data>
+  <data name="revolution_duration" xml:space="preserve">
+        <value>轉數時間</value>
+    </data>
+  <data name="revolution_duration_description" xml:space="preserve">
+        <value>完成一圈的持續時間（以秒為單位）。</value>
+    </data>
 </root>
