@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="show_kiai_effects" xml:space="preserve">
+        <value>Pokaż Efekty Kiai</value>
+    </data>
+  <data name="show_note_start_indicators" xml:space="preserve">
+        <value>Pokaż wskazówki początku nut</value>
+    </data>
+  <data name="snaking_in_slides" xml:space="preserve">
+        <value>Rozwijane Slajdy</value>
+        <comment>"Snaking in" refers to the animation of the Slide extending out telescopically from the origin piece by piece.</comment>
+    </data>
+  <data name="show_detailed_judgements" xml:space="preserve">
+        <value>Pokaż szczegółowe wyniki</value>
+    </data>
+  <data name="ring_color" xml:space="preserve">
+        <value>Kolor pola gry</value>
+    </data>
+  <data name="ring_color_default" xml:space="preserve">
+        <value>Domyślny</value>
+    </data>
+  <data name="ring_color_difficulty" xml:space="preserve">
+        <value>Na podstawie poziomu trudności</value>
+    </data>
+  <data name="ring_color_skin" xml:space="preserve">
+        <value>Ze skórki</value>
+    </data>
+  <data name="ring_opacity" xml:space="preserve">
+        <value>Nieprzezroczystość Pola Gry</value>
+    </data>
+  <data name="lane_input_mode" xml:space="preserve">
+        <value>Tryb sterowania (Nie dotyczy dotyku)</value>
+        <comment>"Touch"as in the verb, as in "touchscreen"</comment>
+    </data>
+  <data name="lane_input_mode_button" xml:space="preserve">
+        <value>Przyciski</value>
+    </data>
+  <data name="lane_input_mode_sensor" xml:space="preserve">
+        <value>Sensor</value>
+    </data>
+  <data name="break_sample_volume" xml:space="preserve">
+        <value>Głośność efektu dźwiękowego Breaków</value>
+        <comment>Break is a proper noun, referring to a property on laned notes.</comment>
+    </data>
+  <data name="note_entry_speed" xml:space="preserve">
+        <value>Szybkość nut</value>
+    </data>
+  <data name="touch_note_fade_in_speed" xml:space="preserve">
+        <value>Szybkość pojawiania się Touchów</value>
+    </data>
+</root>

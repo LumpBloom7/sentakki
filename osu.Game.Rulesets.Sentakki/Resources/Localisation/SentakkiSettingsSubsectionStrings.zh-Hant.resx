@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="show_kiai_effects" xml:space="preserve">
+        <value>顯示 Kiai 效果</value>
+    </data>
+  <data name="show_note_start_indicators" xml:space="preserve">
+        <value>顯示音符起源指標</value>
+    </data>
+  <data name="snaking_in_slides" xml:space="preserve">
+        <value>蜿蜒進入 Slide</value>
+        <comment>"Snaking in" refers to the animation of the Slide extending out telescopically from the origin piece by piece.</comment>
+    </data>
+  <data name="show_detailed_judgements" xml:space="preserve">
+        <value>顯示詳細判斷</value>
+    </data>
+  <data name="ring_color" xml:space="preserve">
+        <value>環顏色</value>
+    </data>
+  <data name="ring_color_default" xml:space="preserve">
+        <value>默認</value>
+    </data>
+  <data name="ring_color_difficulty" xml:space="preserve">
+        <value>基於難度的顏色</value>
+    </data>
+  <data name="ring_color_skin" xml:space="preserve">
+        <value>皮膚</value>
+    </data>
+  <data name="ring_opacity" xml:space="preserve">
+        <value>環能見度</value>
+    </data>
+  <data name="lane_input_mode" xml:space="preserve">
+        <value>行輸入模式 (觸摸不會被影響)</value>
+        <comment>"Touch"as in the verb, as in "touchscreen"</comment>
+    </data>
+  <data name="lane_input_mode_button" xml:space="preserve">
+        <value>按鈕</value>
+    </data>
+  <data name="lane_input_mode_sensor" xml:space="preserve">
+        <value>傳感器</value>
+    </data>
+  <data name="break_sample_volume" xml:space="preserve">
+        <value>Break 聲音量</value>
+        <comment>Break is a proper noun, referring to a property on laned notes.</comment>
+    </data>
+  <data name="note_entry_speed" xml:space="preserve">
+        <value>音符輸入速度</value>
+    </data>
+  <data name="touch_note_fade_in_speed" xml:space="preserve">
+        <value>Touch 音符淡入速度</value>
+    </data>
+</root>
