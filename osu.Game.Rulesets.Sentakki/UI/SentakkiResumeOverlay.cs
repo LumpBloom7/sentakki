@@ -5,6 +5,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Localisation;
 using osu.Framework.Utils;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
@@ -41,7 +42,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private static int currentSupporterIndex;
 
         // We don't want the default message
-        protected override string Message => "";
+        protected override LocalisableString Message => "";
 
         private OsuSpriteText messageText;
 

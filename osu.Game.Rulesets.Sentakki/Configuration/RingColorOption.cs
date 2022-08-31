@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using osu.Framework.Localisation;
 using osu.Game.Rulesets.Sentakki.Localisation;
 

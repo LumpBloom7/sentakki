@@ -1,9 +1,11 @@
 using System;
 using System.Linq;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
@@ -14,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override string Acronym => "AT";
         public override IconUsage? Icon => OsuIcon.PlayStyleTouch;
         public override ModType Type => ModType.Automation;
-        public override string Description => @"Focus on the laned notes. Touch notes and Slide bodies will be automatically completed.";
+        public override LocalisableString Description => SentakkiModAutoTouchStrings.ModDescription;
         public override double ScoreMultiplier => .5f;
         public override Type[] IncompatibleMods => base.IncompatibleMods.Append(typeof(ModAutoplay)).ToArray();
 
