@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             // Lane difference determined by offset2, but will make sure offset2 is never 0.
             (twin)=>{
                 offset2 = offset2 == 0 ? 1 : offset2;
-                offset+=offset2;
+                offset+=offset2 * (twin ? 2: 1);
                 offset2= -offset2;
 
                 return offset;
