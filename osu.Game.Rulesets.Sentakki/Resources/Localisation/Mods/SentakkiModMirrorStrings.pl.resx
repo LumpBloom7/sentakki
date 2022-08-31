@@ -58,4 +58,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="mod_description" xml:space="preserve">
+        <value>Odbij pole gry w poziomie, pionie, lub oba na raz!</value>
+    </data>
+  <data name="mirror_vertically" xml:space="preserve">
+        <value>⇅ Odbij pionowo</value>
+    </data>
+  <data name="mirror_vertically_description" xml:space="preserve">
+        <value>Odbij całe pole gry względem osi X</value>
+    </data>
+  <data name="mirror_horizontally" xml:space="preserve">
+        <value>⇆ Odbij poziomo</value>
+    </data>
+  <data name="mirror_horizontally_description" xml:space="preserve">
+        <value>Odbij całe pole gry względem osi Y</value>
+    </data>
 </root>
