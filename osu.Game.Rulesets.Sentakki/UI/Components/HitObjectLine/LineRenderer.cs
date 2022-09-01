@@ -66,7 +66,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private void onEntryBecameDead(LifetimeEntry entry)
         {
-            RemoveInternal(linesInUse[entry]);
+            RemoveInternal(linesInUse[entry], false);
             linesInUse.Remove(entry);
         }
 
