@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             var lanedHitObjectArea = lanedPlayfield.LanedHitObjectArea;
             var lanedNoteProxyContainer = lanedHitObjectArea.Child;
 
-            lanedHitObjectArea.Remove(lanedNoteProxyContainer);
+            lanedHitObjectArea.Remove(lanedNoteProxyContainer, false);
             lanedHitObjectArea.Add(new PlayfieldMaskingContainer(lanedNoteProxyContainer)
             {
                 CoverageRadius = 0.6f

@@ -39,6 +39,8 @@ namespace osu.Game.Rulesets.Sentakki
 {
     public class SentakkiRuleset : Ruleset
     {
+        public override string RulesetAPIVersionSupported => CURRENT_RULESET_API_VERSION;
+
         private static readonly Lazy<bool> is_development_build
             = new Lazy<bool>(() => typeof(SentakkiRuleset).Assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled));
         public static bool IsDevelopmentBuild => is_development_build.Value;
