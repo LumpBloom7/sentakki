@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.Localisation
         public static LocalisableString GetReady => new TranslatableString(getKey(@"get_ready"), @"Get ready!");
 
         /// <summary>
-        /// "Get's go!"
+        /// "Let's go!"
         /// </summary>
         public static LocalisableString LetsGo => new TranslatableString(getKey(@"lets_go"), @"Let's go!");
 
