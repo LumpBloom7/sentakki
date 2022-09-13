@@ -2,6 +2,7 @@
 using System.Linq;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Sentakki.Localisation;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK;
 
@@ -21,25 +22,25 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 new BeatmapStatistic
                 {
-                    Name = "Tap Count",
+                    Name = SentakkiBeatmapStrings.TapCount,
                     Content = taps.ToString(),
                     CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Circles),
                 },
                 new BeatmapStatistic
                 {
-                    Name = "Hold Count",
+                    Name = SentakkiBeatmapStrings.HoldCount,
                     Content = holds.ToString(),
                     CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Sliders),
                 },
                 new BeatmapStatistic
                 {
-                    Name = "TouchHold Count",
+                    Name = SentakkiBeatmapStrings.TouchHoldCount,
                     Content = touchHolds.ToString(),
                     CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Spinners),
                 },
                 new BeatmapStatistic
                 {
-                    Name = "Touch Count",
+                    Name = SentakkiBeatmapStrings.TouchCount,
                     Content = touchs.ToString(),
                     CreateIcon = () => new SpriteIcon
                     {
@@ -49,7 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 },
                 new BeatmapStatistic
                 {
-                    Name = "Slide Count",
+                    Name = SentakkiBeatmapStrings.SlideCount,
                     Content = slides.ToString(),
                     CreateIcon = () => new SpriteIcon
                     {

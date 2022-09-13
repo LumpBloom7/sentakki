@@ -35,9 +35,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public List<SentakkiSlideInfo> SlideInfoList = new List<SentakkiSlideInfo>();
 
+        public SlideTap SlideTap { get; private set; }
+
+        public IList<SlideBody> SlideBodies { get; private set; }
+
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            AddNested(new SlideTap
+            AddNested(SlideTap = new SlideTap
             {
                 LaneBindable = { BindTarget = LaneBindable },
                 StartTime = StartTime,
@@ -49,15 +53,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         private void createSlideBodies()
         {
+            SlideBodies = new List<SlideBody>();
+
             foreach (var SlideInfo in SlideInfoList)
             {
-                AddNested(new SlideBody
-                {
-                    Lane = SlideInfo.SlidePath.EndLane + Lane,
-                    StartTime = StartTime,
-                    SlideInfo = SlideInfo,
-                    Samples = NodeSamples.Any() ? NodeSamples.Last() : new List<HitSampleInfo>(),
-                });
+                SlideBody body;
+                if (SlideInfo.ID == SlidePaths.FANID)
+                    AddNested(body = new SlideFan());
+                else
+                    AddNested(body = new SlideBody());
+
+                SlideBodies.Add(body);
+
+                body.Lane = SlideInfo.SlidePath.EndLane + Lane;
+                body.StartTime = StartTime;
+                body.SlideInfo = SlideInfo;
+                body.Samples = NodeSamples.Any() ? NodeSamples.Last() : new List<HitSampleInfo>();
             }
         }
 

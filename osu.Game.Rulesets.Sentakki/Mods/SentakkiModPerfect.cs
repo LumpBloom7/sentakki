@@ -8,8 +8,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
     public class SentakkiModPerfect : ModPerfect
     {
         protected override bool FailCondition(HealthProcessor healthProcessor, JudgementResult result)
-            => !(result.Judgement is IgnoreJudgement)
-               && result.Type < result.Judgement.MaxResult;
+            => result.Judgement is not IgnoreJudgement && result.Type < result.Judgement.MaxResult;
 
         public override Type[] IncompatibleMods => new Type[5]
         {

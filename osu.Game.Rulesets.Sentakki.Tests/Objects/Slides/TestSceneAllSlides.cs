@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Allocation;
@@ -6,9 +5,8 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Testing;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
@@ -75,7 +73,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             {
                 nodes.Add(new CircularContainer
                 {
-                    Size = new osuTK.Vector2(10),
+                    Size = new Vector2(10),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Position = node.Position,

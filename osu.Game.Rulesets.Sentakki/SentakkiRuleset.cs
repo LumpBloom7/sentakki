@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Bindings;
+using osu.Framework.Localisation;
 using osu.Framework.Platform;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
@@ -22,6 +23,7 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Difficulty;
+using osu.Game.Rulesets.Sentakki.Localisation;
 using osu.Game.Rulesets.Sentakki.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Replays;
@@ -38,6 +40,8 @@ namespace osu.Game.Rulesets.Sentakki
 {
     public class SentakkiRuleset : Ruleset
     {
+        public override string RulesetAPIVersionSupported => CURRENT_RULESET_API_VERSION;
+
         private static readonly Lazy<bool> is_development_build
             = new Lazy<bool>(() => typeof(SentakkiRuleset).Assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled));
         public static bool IsDevelopmentBuild => is_development_build.Value;
@@ -139,7 +143,7 @@ namespace osu.Game.Rulesets.Sentakki
             {
                 Columns = new[]
                 {
-                    new StatisticItem("Timing Distribution", () => new HitEventTimingDistributionGraph(score.HitEvents)
+                    new StatisticItem(SentakkiStatisticsStrings.TimingDistribution, () => new HitEventTimingDistributionGraph(score.HitEvents)
                     {
                         RelativeSizeAxes = Axes.X,
                         Height = 250
@@ -150,7 +154,7 @@ namespace osu.Game.Rulesets.Sentakki
             {
                 Columns = new[]
                 {
-                    new StatisticItem("Judgement Distribution", () => new JudgementChart(score.HitEvents.Where(e=>e.HitObject is SentakkiHitObject).ToList())
+                    new StatisticItem(SentakkiStatisticsStrings.JudgementChart, () => new JudgementChart(score.HitEvents.Where(e=>e.HitObject is SentakkiHitObject).ToList())
                     {
                         RelativeSizeAxes = Axes.X,
                         Size = new Vector2(1, 250)
@@ -181,7 +185,7 @@ namespace osu.Game.Rulesets.Sentakki
             };
         }
 
-        public override string GetDisplayNameForHitResult(HitResult result) => result.GetDisplayNameForSentakkiResult();
+        public override LocalisableString GetDisplayNameForHitResult(HitResult result) => result.GetDisplayNameForSentakkiResult();
 
         public class SentakkiIcon : CompositeDrawable
         {
@@ -203,7 +207,7 @@ namespace osu.Game.Rulesets.Sentakki
             private void load(GameHost host)
             {
                 if (textureStore is null)
-                    textureStore = new LargeTextureStore(host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
+                    textureStore = new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
 
                 AddInternal(new Sprite
                 {

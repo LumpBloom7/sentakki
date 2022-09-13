@@ -20,6 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         none = 0,
         twinNotes = 1,
         twinSlides = 2,
+        fanSlides = 4
     }
 
     public class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObject>
@@ -34,7 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             var tmp = new List<Vector2>(){
                 Vector2.Zero
             };
-            foreach (var angle in SentakkiPlayfield.LANEANGLES)
+            foreach (float angle in SentakkiPlayfield.LANEANGLES)
             {
                 tmp.Add(SentakkiExtensions.GetCircularPosition(190, angle - 22.5f));
                 tmp.Add(SentakkiExtensions.GetCircularPosition(130, angle));
@@ -154,44 +155,75 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         twin = true;
                 }
 
+            // See if we can convert to a slide object
             if (special && slider.Duration >= 350)
             {
-                List<Slide> slides = new List<Slide>();
-                if (EnabledExperiments.HasFlag(ConversionExperiments.twinSlides))
+                var result = tryConvertSliderToSlide(original, nodeSamples, twin, breakNote).ToList();
+                if (result.Any())
                 {
-                    if (twin)
-                        slides.Add((Slide)createSlideNote(original, nodeSamples, true, breakNote));
-                    else
-                        foreach (var note in createTapsFromTicks(original, nodeSamples))
-                            yield return note;
+                    foreach (var ho in result)
+                        yield return ho;
+
+                    yield break;
                 }
-
-                slides.Add((Slide)createSlideNote(original, nodeSamples, false, breakNote));
-
-                // Make sure duplicates are cleared
-                if (slides.Count == 2 && slides.First().Lane == slides.Last().Lane)
-                {
-                    // Make sure that both slides patterns are unique
-                    if (!slides.First().SlideInfoList.Exists(x => x.ID == slides.Last().SlideInfoList.First().ID))
-                        slides.First().SlideInfoList.AddRange(slides.Last().SlideInfoList);
-
-                    slides.Remove(slides.Last());
-                }
-
-                foreach (var slide in slides)
-                    yield return slide;
-
-                yield break;
             }
 
+            // Fallback to hold notes
             if (EnabledExperiments.HasFlag(ConversionExperiments.twinNotes))
                 if (twin)
                     yield return createHoldNote(original, nodeSamples, true, breakNote);
                 else
-                    foreach (var note in createTapsFromTicks(original, nodeSamples))
+                    foreach (var note in createTapsFromNodes(original, nodeSamples, breakNote))
                         yield return note;
 
             yield return createHoldNote(original, nodeSamples, false, breakNote);
+        }
+
+        private IEnumerable<SentakkiHitObject> tryConvertSliderToSlide(HitObject original, IList<IList<HitSampleInfo>> nodeSamples, bool twin = false, bool isBreak = false)
+        {
+            List<Slide> slides = new List<Slide>();
+            List<Tap> taps = new List<Tap>();
+            if (EnabledExperiments.HasFlag(ConversionExperiments.twinSlides))
+            {
+                if (twin)
+                    slides.Add((Slide)createSlideNote(original, nodeSamples, true, isBreak));
+                else
+                    taps.AddRange(createTapsFromNodes(original, nodeSamples, isBreak));
+            }
+
+            slides.Add((Slide)createSlideNote(original, nodeSamples, false, isBreak));
+
+            slides.RemoveAll(x => x == null);
+
+            // If there is a SlideFan, we always prioritize that, and ignore the rest
+            foreach (var slide in slides)
+                if (slide.SlideInfoList[0].ID == SlidePaths.FANID)
+                {
+                    yield return slide;
+                    yield break;
+                }
+
+            // If both slides have the same start lane, we attempt to merge them
+            if (slides.Count == 2 && slides[0].Lane == slides[1].Lane)
+            {
+                bool isSamePattern = slides[0].SlideInfoList[0].ID == slides[1].SlideInfoList[0].ID;
+                bool isSameOrientation = slides[0].SlideInfoList[0].Mirrored == slides[1].SlideInfoList[0].Mirrored;
+
+                // We merge both slides only if they both have the same pattern AND orientation
+                if (!isSamePattern || !isSameOrientation)
+                    slides[0].SlideInfoList.AddRange(slides[1].SlideInfoList);
+
+                slides.RemoveAt(1);
+            }
+
+            if (slides.Count > 0)
+            {
+                foreach (var slide in slides)
+                    yield return slide;
+
+                foreach (var tap in taps)
+                    yield return tap;
+            }
         }
 
         #endregion
@@ -210,7 +242,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private SentakkiHitObject createHoldNote(HitObject original, IList<IList<HitSampleInfo>> samples, bool twin = false, bool isBreak = false)
             => new Hold
             {
-                Break = isBreak,
+                Break = !ClassicMode && isBreak,
                 Lane = patternGenerator.GetNextLane(twin),
                 NodeSamples = samples,
                 StartTime = original.StartTime,
@@ -253,8 +285,17 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private SentakkiHitObject createSlideNote(HitObject original, IList<IList<HitSampleInfo>> samples, bool twin = false, bool isBreak = false)
         {
             int noteLane = patternGenerator.GetNextLane(twin);
+            List<(SentakkiSlidePath, SentakkiSlidePath)> validPaths;
 
-            var validPaths = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.Item1.MinDuration && ((IHasDuration)original).Duration <= p.Item1.MaxDuration).ToList();
+            {
+                IEnumerable<(SentakkiSlidePath, SentakkiSlidePath)> pathEnumerable = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.Item1.MinDuration && ((IHasDuration)original).Duration <= p.Item1.MaxDuration);
+
+                if (!EnabledExperiments.HasFlag(ConversionExperiments.fanSlides))
+                    pathEnumerable = pathEnumerable.Where(s => s != SlidePaths.VALIDPATHS[^1]);
+
+                validPaths = pathEnumerable.ToList();
+            }
+
             if (!validPaths.Any()) return null;
             int selectedSlideID = SlidePaths.VALIDPATHS.IndexOf(validPaths[patternGenerator.RNG.Next(validPaths.Count)]);
             bool mirrored = patternGenerator.RNG.NextDouble() < 0.5;
@@ -275,12 +316,10 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             };
         }
 
-        private IEnumerable<SentakkiHitObject> createTapsFromTicks(HitObject original, IList<IList<HitSampleInfo>> nodeSamples)
+        private IEnumerable<Tap> createTapsFromNodes(HitObject original, IList<IList<HitSampleInfo>> nodeSamples, bool isBreak = false)
         {
-            if (!(original is IHasPathWithRepeats))
+            if (original is not IHasPathWithRepeats)
                 yield break;
-
-            int noteLane = patternGenerator.GetNextLane(true);
 
             var curve = original as IHasPathWithRepeats;
             double spanDuration = curve.Duration / (curve.RepeatCount + 1);
@@ -288,6 +327,17 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             if (isRepeatSpam)
                 yield break;
+
+            // There's a chance no taps will be generated from nodes
+            if (patternGenerator.RNG.NextDouble() < 0.5)
+                yield break;
+
+            // There's a chance no taps will be generated from head nodes
+            bool shouldConsiderStartTick = patternGenerator.RNG.NextDouble() < 0.5;
+
+            // There's a chance no taps will be generated from head nodes
+            // If the head node isn't considered, then neither will the tail
+            bool shouldConsiderTailTick = shouldConsiderStartTick && patternGenerator.RNG.NextDouble() < 0.5;
 
             var difficulty = Beatmap.BeatmapInfo.Difficulty;
 
@@ -298,24 +348,41 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             double scoringDistance = 100 * difficulty.SliderMultiplier * difficultyPoint.SliderVelocity;
 
-            var velocity = scoringDistance / timingPoint.BeatLength;
-            var tickDistance = scoringDistance / difficulty.SliderTickRate;
+            double velocity = scoringDistance / timingPoint.BeatLength;
+            double tickDistance = scoringDistance / difficulty.SliderTickRate;
 
             double legacyLastTickOffset = (original as IHasLegacyLastTickOffset)?.LegacyLastTickOffset ?? 0;
 
-            int nodeSampleIndex = 1;
+            int nodeSampleIndex = 0;
 
             foreach (var e in SliderEventGenerator.Generate(original.StartTime, spanDuration, velocity, tickDistance, curve.Path.Distance, curve.RepeatCount + 1, legacyLastTickOffset, CancellationToken.None))
             {
                 switch (e.Type)
                 {
+                    case SliderEventType.Head:
+                        if (shouldConsiderStartTick)
+                            goto case SliderEventType.Repeat;
+
+                        ++nodeSampleIndex;
+                        break;
+
+                    case SliderEventType.Tail:
+                        if (shouldConsiderTailTick)
+                            goto case SliderEventType.Repeat;
+
+                        ++nodeSampleIndex;
+                        break;
+
                     case SliderEventType.Repeat:
                         yield return new Tap
                         {
-                            Lane = noteLane,
-                            Samples = nodeSamples[nodeSampleIndex++],
-                            StartTime = e.Time
+                            Lane = patternGenerator.GetNextLane(true),
+                            Samples = nodeSamples[nodeSampleIndex],
+                            StartTime = e.Time,
+                            Break = e.Type is SliderEventType.Head && isBreak
                         };
+
+                        ++nodeSampleIndex;
                         break;
                 }
             }

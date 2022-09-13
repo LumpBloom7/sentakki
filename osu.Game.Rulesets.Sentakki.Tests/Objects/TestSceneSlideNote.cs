@@ -9,7 +9,7 @@ using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Tests.Visual;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
@@ -74,7 +74,8 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             });
 
             foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects)
-                nested.Auto = auto;
+                foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects)
+                    nested2.Auto = auto;
         }
     }
 }

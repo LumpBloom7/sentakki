@@ -5,6 +5,7 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.OpenGL.Textures;
+using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
@@ -172,9 +173,9 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
             protected override DrawNode CreateDrawNode() => new RatioBoxDrawNode(this);
 
             [BackgroundDependencyLoader]
-            private void load(ShaderManager shaders)
+            private void load(ShaderManager shaders, IRenderer renderer)
             {
-                Texture = Texture.WhitePixel.Crop(new Framework.Graphics.Primitives.RectangleF(0, 0, 1f, 1f), Axes.None, WrapMode.Repeat, WrapMode.Repeat);
+                Texture = renderer.WhitePixel.Crop(new Framework.Graphics.Primitives.RectangleF(0, 0, 1f, 1f), Axes.None, WrapMode.Repeat, WrapMode.Repeat).\;
                 TextureRelativeSizeAxes = Axes.None;
                 TextureRectangle = new Framework.Graphics.Primitives.RectangleF(0, 0, 50, 50);
 

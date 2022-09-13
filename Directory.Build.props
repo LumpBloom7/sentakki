@@ -2,7 +2,6 @@
     <PropertyGroup Label="C#">
         <LangVersion>9.0</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
 
@@ -10,8 +9,13 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/LumpBloom7/sentakki</RepositoryUrl>
         <Copyright>Copyright (c) 2022 Derrick Timmermans</Copyright>
+        <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     </PropertyGroup>
     <ItemGroup>
         <EmbeddedResource Include="Resources\**\*"/>
+    </ItemGroup>
+    <ItemGroup>
+        <EditorConfgFiles Include=".editorconfig" />
+        <EditorConfgFiles Include=".globalconfig" />
     </ItemGroup>
 </Project>

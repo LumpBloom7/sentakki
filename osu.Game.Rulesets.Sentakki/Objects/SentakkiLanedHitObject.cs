@@ -1,5 +1,8 @@
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using osu.Framework.Bindables;
+using osu.Game.Audio;
 using osu.Game.Rulesets.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
@@ -28,17 +31,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             base.CreateNestedHitObjects(cancellationToken);
 
             if (Break)
-            {
                 for (int i = 0; i < 4; ++i)
-                {
-                    var nestedObject = new ScorePaddingObject() { StartTime = this.GetEndTime() };
+                    AddNested(new ScorePaddingObject() { StartTime = this.GetEndTime() });
+        }
 
-                    if (i == 0 && NeedBreakSample)
-                        nestedObject.Samples.Add(new SentakkiHitSampleInfo("Break"));
+        public override IList<HitSampleInfo> AuxiliarySamples => CreateBreakSample();
 
-                    AddNested(nestedObject);
-                }
-            }
+        public HitSampleInfo[] CreateBreakSample()
+        {
+            if (!NeedBreakSample || !Break)
+                return Array.Empty<HitSampleInfo>();
+
+            return new[]
+            {
+                new SentakkiHitSampleInfo("Break", SampleControlPoint.SampleVolume)
+            };
         }
     }
 }

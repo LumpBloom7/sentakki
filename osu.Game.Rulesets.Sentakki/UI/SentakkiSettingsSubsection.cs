@@ -4,6 +4,7 @@ using osu.Framework.Localisation;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Localisation;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -24,58 +25,61 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             var config = (SentakkiRulesetConfigManager)Config;
 
-            // for an odd reason, Config seems to be passed as null when creating it. doesnt even get called...
-            if (config == null)
-                return;
-
             Children = new Drawable[]
             {
                 new SettingsCheckbox
                 {
-                    LabelText = "Show Kiai effects",
+                    LabelText = SentakkiSettingsSubsectionStrings.ShowKiaiEffects,
                     Current = config.GetBindable<bool>(SentakkiRulesetSettings.KiaiEffects)
                 },
                 new SettingsCheckbox
                 {
-                    LabelText = "Show note start indicators",
+                    LabelText = SentakkiSettingsSubsectionStrings.ShowNoteStartIndicators,
                     Current = config.GetBindable<bool>(SentakkiRulesetSettings.ShowNoteStartIndicators)
                 },
                 new SettingsCheckbox
                 {
-                    LabelText = "Snaking in Slides",
+                    LabelText = SentakkiSettingsSubsectionStrings.SnakingInSlides,
                     Current = config.GetBindable<bool>(SentakkiRulesetSettings.SnakingSlideBody)
                 },
                 new SettingsCheckbox{
-                    LabelText = "Show detailed judgements",
+                    LabelText = SentakkiSettingsSubsectionStrings.ShowDetailedJudgements,
                     Current = config.GetBindable<bool>(SentakkiRulesetSettings.DetailedJudgements)
                 },
                 new SettingsEnumDropdown<ColorOption>
                 {
-                    LabelText = "Ring Colour",
+                    LabelText = SentakkiSettingsSubsectionStrings.RingColor,
                     Current = config.GetBindable<ColorOption>(SentakkiRulesetSettings.RingColor)
                 },
                 new SettingsSlider<double, NoteTimeSlider>
                 {
-                    LabelText = "Note entry speed",
+                    LabelText = SentakkiSettingsSubsectionStrings.NoteEntrySpeed,
                     Current = config.GetBindable<double>(SentakkiRulesetSettings.AnimationDuration),
                 },
                 new SettingsSlider<double, TouchTimeSlider>
                 {
-                    LabelText = "Touch note fade-in speed",
+                    LabelText = SentakkiSettingsSubsectionStrings.TouchNoteFadeInSpeed,
                     Current = config.GetBindable<double>(SentakkiRulesetSettings.TouchAnimationDuration),
                 },
                 new SettingsSlider<float>
                 {
-                    LabelText = "Ring Opacity",
+                    LabelText = SentakkiSettingsSubsectionStrings.RingOpacity,
                     Current = config.GetBindable<float>(SentakkiRulesetSettings.RingOpacity),
                     KeyboardStep = 0.01f,
                     DisplayAsPercentage = true
                 },
                 new SettingsEnumDropdown<LaneInputMode>
                 {
-                    LabelText = "Lane input mode (Doesn't apply to touch)",
+                    LabelText = SentakkiSettingsSubsectionStrings.LaneInputMode,
                     Current = config.GetBindable<LaneInputMode>(SentakkiRulesetSettings.LaneInputMode)
                 },
+                new SettingsSlider<double, OsuSliderBar<double>>
+                {
+                    LabelText = SentakkiSettingsSubsectionStrings.BreakSampleVolume,
+                    Current = config.GetBindable<double>(SentakkiRulesetSettings.BreakSampleVolume),
+                    KeyboardStep = 0.01f,
+                    DisplayAsPercentage = true,
+                }
             };
         }
 
@@ -92,6 +96,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             }
             public override LocalisableString TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
         }
+
         private class TouchTimeSlider : OsuSliderBar<double>
         {
             private string speedRating()

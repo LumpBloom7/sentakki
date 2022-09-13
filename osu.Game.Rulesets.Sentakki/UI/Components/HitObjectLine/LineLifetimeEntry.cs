@@ -70,15 +70,15 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             }
             else if (HitObjects.Count > 1)
             {
-                var maxDelta = HitObjects.Max(h => getDelta(HitObjects[0], h));
-                var minDelta = HitObjects.Min(h => getDelta(HitObjects[0], h));
+                int maxDelta = HitObjects.Max(h => getDelta(HitObjects[0], h));
+                int minDelta = HitObjects.Min(h => getDelta(HitObjects[0], h));
                 var anchor = HitObjects.First(h => getDelta(HitObjects[0], h) == minDelta);
-                var delta = maxDelta - minDelta;
+                int delta = maxDelta - minDelta;
 
-                var allBreaks = HitObjects.All(h => h.Break);
+                bool allBreaks = HitObjects.All(h => h.Break);
 
                 Type = getLineTypeForDistance(Math.Abs(delta));
-                Colour = allBreaks ? Color4.OrangeRed : Color4.Gold;
+                Colour = Color4.Gold;
                 Rotation = anchor.Lane.GetRotationForLane() + (delta * 22.5f);
             }
 
@@ -109,9 +109,9 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             }
         }
 
-        private int getDelta(SentakkiLanedHitObject a, SentakkiLanedHitObject b)
+        private static int getDelta(SentakkiLanedHitObject a, SentakkiLanedHitObject b)
         {
-            var delta = b.Lane - a.Lane;
+            int delta = b.Lane - a.Lane;
             if (delta > 4) delta -= 8;
             return delta;
         }

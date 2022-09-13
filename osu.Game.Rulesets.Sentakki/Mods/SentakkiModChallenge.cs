@@ -2,14 +2,14 @@ using System;
 using System.ComponentModel;
 using Newtonsoft.Json;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions;
-using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
+using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
     public class SentakkiModChallenge : Mod, IApplicableToDrawableRuleset<SentakkiHitObject>, IApplicableToHealthProcessor
     {
         public override string Name => "Challenge";
-        public override string Description => "You only get a small margin for errors.";
+        public override LocalisableString Description => SentakkiModChallengeStrings.ModDescription;
         public override string Acronym => "C";
 
         public override IconUsage? Icon => FontAwesome.Solid.HeartBroken;
@@ -29,9 +29,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override bool RequiresConfiguration => true;
 
         public override double ScoreMultiplier => 1.00;
-
-        public bool RestartOnFail => false;
-        public bool PerformFail() => true;
 
         public override Type[] IncompatibleMods => new Type[5]
         {
@@ -53,7 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             [Description("300")] ThreeHundred = 300,
         }
 
-        [SettingSource("Number of Lives", "The number of lives you start with.")]
+        [SettingSource(typeof(SentakkiModChallengeStrings), nameof(SentakkiModChallengeStrings.NumberOfLives), nameof(SentakkiModChallengeStrings.NumberOfLivesDescription))]
         public Bindable<Lives> LiveSetting { get; } = new Bindable<Lives>
         {
             Default = Lives.Fifty,
@@ -82,7 +79,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         protected bool FailCondition(HealthProcessor healthProcessor, JudgementResult result)
         {
-            if (!(result.Judgement is SentakkiJudgement) || result.HitObject is ScorePaddingObject)
+            if (result.Judgement is not SentakkiJudgement || result.HitObject is ScorePaddingObject)
                 return false;
 
             int newValue = LivesLeft.Value;

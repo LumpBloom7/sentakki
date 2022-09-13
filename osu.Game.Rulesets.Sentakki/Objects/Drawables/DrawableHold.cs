@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -114,8 +113,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 // Hold is over, but head windows are still active.
                 // Only happens on super short holds
                 // Force a miss on the head in this case
-                if (!headContainer.First().Result.HasResult)
-                    headContainer.First().MissForcefully();
+                if (!headContainer[0].Result.HasResult)
+                    headContainer[0].MissForcefully();
 
                 ApplyResult(result);
             }
