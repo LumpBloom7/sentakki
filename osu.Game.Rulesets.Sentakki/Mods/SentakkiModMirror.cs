@@ -35,6 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             Value = false
         };
 
+
         public void ApplyToBeatmap(IBeatmap beatmap)
         {
             // Mirroring in both directions at the same time is equivalent to an 180deg rotation
@@ -44,10 +45,9 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
             beatmap.HitObjects.OfType<SentakkiLanedHitObject>().ForEach(laned =>
             {
+
                 if (HorizontalMirrored.Value)
-                {
                     laned.Lane = 7 - laned.Lane;
-                }
 
                 if (VerticalMirrored.Value)
                 {
@@ -56,15 +56,15 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 }
 
                 if (mirrored && laned is Slide slide)
-                {
                     foreach (var slideInfo in slide.SlideInfoList)
                     {
                         foreach (var param in slideInfo.PathParameters)
                         {
+                            param.EndOffset = (param.EndOffset * -1).NormalizePath();
                             param.Mirrored ^= mirrored;
                         }
+                        slideInfo.UpdatePaths();
                     }
-                }
             });
 
             beatmap.HitObjects.OfType<Touch>().ForEach(touch =>

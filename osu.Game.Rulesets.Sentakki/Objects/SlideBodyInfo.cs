@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set
             {
                 pathParameters = value;
-                updatePaths();
+                UpdatePaths();
             }
         }
 
@@ -24,9 +24,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // Delay before the star on the slide starts moving to the end
         public int ShootDelay = 1;
 
-        private void updatePaths()
-        {
-            SlidePath = SlidePaths.CreateSlidePath(pathParameters);
-        }
+        public void UpdatePaths() => SlidePath = SlidePaths.CreateSlidePath(pathParameters);
     }
 }

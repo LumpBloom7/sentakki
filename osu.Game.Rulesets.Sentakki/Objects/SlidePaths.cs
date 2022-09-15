@@ -40,7 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // Checks if a slide is valid given parameters
         public static bool CheckSlideValidity(PathParameters param)
         {
-            int normalizedEnd = param.EndOffset;
+            int normalizedEnd = param.EndOffset.NormalizePath();
             bool mirrored = param.Mirrored;
 
             switch (param.Shape)
@@ -49,20 +49,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     return normalizedEnd > 1 && normalizedEnd < 7;
 
                 case PathShapes.Circle:
-                    return mirrored ? normalizedEnd != 0 : normalizedEnd != 7;
+                    return mirrored ? normalizedEnd != 7 : normalizedEnd != 1;
 
                 case PathShapes.V:
-                    return normalizedEnd != 4;
+                    return normalizedEnd != 0;
 
                 case PathShapes.L:
-                    return mirrored ? normalizedEnd < 5 : normalizedEnd > 3;
+                    return normalizedEnd != 0 && (mirrored ? normalizedEnd > 3 : normalizedEnd < 5);
 
                 case PathShapes.U:
                 case PathShapes.Cup:
-                case PathShapes.Thunder:
                     return true;
 
                 case PathShapes.Fan:
+                case PathShapes.Thunder:
                     return normalizedEnd == 4;
             }
 
@@ -92,7 +92,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                         break;
 
                     case PathShapes.L:
-                        slideSegments.AddRange(generateLPattern(startOffset, path.EndOffset));
+                        slideSegments.AddRange(generateLPattern(startOffset, path.EndOffset, path.Mirrored));
                         break;
 
                     case PathShapes.U:
