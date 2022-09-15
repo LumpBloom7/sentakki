@@ -21,7 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 
         private int id;
-        private bool mirrored;
+
         private readonly SlideVisual slide;
         private readonly Container nodes;
 
@@ -44,12 +44,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 RefreshSlide();
             });
 
-            AddToggleStep("Mirrored", b =>
-            {
-                mirrored = b;
-                RefreshSlide();
-            });
-
             Add(nodes = new Container()
             {
                 Anchor = Anchor.Centre,
@@ -57,11 +51,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             });
         }
 
-        protected SentakkiSlidePath CreatePattern()
-        {
-            var param = SlidePaths.VALIDPATHS[id];
-            SlidePaths.CreateSlidePath(param.)
-        };
+        protected SentakkiSlidePath CreatePattern() => SlidePaths.CreateSlidePath(SlidePaths.VALIDPATHS[id].parameters);
 
         protected override void LoadComplete()
         {
