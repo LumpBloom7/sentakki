@@ -32,13 +32,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     for (int k = 0; k < 2; ++k)
                     {
                         var tmp = new PathParameters(i, j, k == 1);
-                        if (CheckSlideValidity(tmp))
+                        if (CheckSlideValidity(tmp, true))
+                        {
                             VALIDPATHS.Add((tmp, CreateSlidePath(tmp).MinDuration));
+                        }
                     }
         }
 
         // Checks if a slide is valid given parameters
-        public static bool CheckSlideValidity(PathParameters param)
+        //
+        // Discarding redundant mirrors should be used making a list of all the shapes, as to not get identical shapes
+        // Not discarding them allows leniency in the check, so that a identical path can still be placed, without needing the mapper to explicitly turn of mirroring for a part.
+        public static bool CheckSlideValidity(PathParameters param, bool discardRedundantMirrors = false)
         {
             int normalizedEnd = param.EndOffset.NormalizePath();
             bool mirrored = param.Mirrored;
@@ -46,13 +51,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             switch (param.Shape)
             {
                 case PathShapes.Straight:
-                    return normalizedEnd > 1 && normalizedEnd < 7;
+                    return (!mirrored || !discardRedundantMirrors) && normalizedEnd > 1 && normalizedEnd < 7;
 
                 case PathShapes.Circle:
                     return mirrored ? normalizedEnd != 7 : normalizedEnd != 1;
 
                 case PathShapes.V:
-                    return normalizedEnd != 0;
+                    return (!mirrored || !discardRedundantMirrors) && normalizedEnd != 0;
 
                 case PathShapes.L:
                     return normalizedEnd != 0 && (mirrored ? normalizedEnd > 3 : normalizedEnd < 5);
@@ -62,6 +67,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     return true;
 
                 case PathShapes.Fan:
+                    return (!mirrored || !discardRedundantMirrors) && normalizedEnd == 4;
+
                 case PathShapes.Thunder:
                     return normalizedEnd == 4;
             }
