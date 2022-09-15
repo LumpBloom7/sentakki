@@ -43,9 +43,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             var slide = new Slide
             {
                 //Break = true,
-                SlideInfoList = new List<SentakkiSlideInfo>
+                SlideInfoList = new List<SlideBodyInfo>
                 {
-                    new SentakkiSlideInfo {
+                    new SlideBodyInfo {
                         PathParameters = new[] {new PathParameters(SlidePaths.PathShapes.Fan, 4, false)},
                         Duration = 1000,
                     },

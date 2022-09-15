@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public override Color4 DefaultNoteColour => Color4.Aqua;
 
-        public List<SentakkiSlideInfo> SlideInfoList = new List<SentakkiSlideInfo>();
+        public List<SlideBodyInfo> SlideInfoList = new List<SlideBodyInfo>();
 
         public SlideTap SlideTap { get; private set; }
 

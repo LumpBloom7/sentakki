@@ -31,7 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set => SlideInfo.Duration = value;
         }
 
-        public SentakkiSlideInfo SlideInfo { get; set; }
+        public SlideBodyInfo SlideInfo { get; set; }
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {

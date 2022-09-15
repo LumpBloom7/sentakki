@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // While it is completely playable even beyond this value, it would look awkward for shorter slides
         public double MaxDuration => MinDuration * 10;
 
-        public double TotalDistance;
+        public double TotalDistance { get; private set; }
 
         public readonly SliderPath[] SlideSegments;
 

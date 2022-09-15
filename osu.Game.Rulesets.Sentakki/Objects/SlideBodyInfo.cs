@@ -1,9 +1,8 @@
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
-using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public class SentakkiSlideInfo
+    public class SlideBodyInfo
     {
         private PathParameters[] pathParameters;
 
@@ -24,8 +23,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         // Delay before the star on the slide starts moving to the end
         public int ShootDelay = 1;
-
-        public (Vector2 position, Vector2 rotation) ChevronPositions { get; private set; }
 
         private void updatePaths()
         {

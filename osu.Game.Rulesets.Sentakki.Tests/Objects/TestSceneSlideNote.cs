@@ -48,17 +48,17 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             var slide = new Slide
             {
                 //Break = true,
-                SlideInfoList = new List<SentakkiSlideInfo>
+                SlideInfoList = new List<SlideBodyInfo>
                 {
-                    new SentakkiSlideInfo {
+                    new SlideBodyInfo {
                         PathParameters = new []{new PathParameters(SlidePaths.PathShapes.Circle, 0, false)},
                         Duration = 1000,
                     },
-                    new SentakkiSlideInfo {
+                    new SlideBodyInfo {
                         PathParameters = new []{new PathParameters(SlidePaths.PathShapes.Straight, 4, false)},
                         Duration = 1500,
                     },
-                    new SentakkiSlideInfo {
+                    new SlideBodyInfo {
                         PathParameters = new []{new PathParameters(SlidePaths.PathShapes.Cup, 2, false)},
                         Duration = 2000,
                     }
@@ -88,9 +88,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             var slide = new Slide
             {
                 //Break = true,
-                SlideInfoList = new List<SentakkiSlideInfo>
+                SlideInfoList = new List<SlideBodyInfo>
                 {
-                    new SentakkiSlideInfo {
+                    new SlideBodyInfo {
                         PathParameters = new []{
                             new PathParameters(SlidePaths.PathShapes.Cup, 2, false),
                             new PathParameters(SlidePaths.PathShapes.Cup, 2, false),

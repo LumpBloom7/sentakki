@@ -299,8 +299,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             var selectedPath = validPaths[patternGenerator.RNG.Next(validPaths.Count)];
             return new Slide
             {
-                SlideInfoList = new List<SentakkiSlideInfo>{
-                    new SentakkiSlideInfo{
+                SlideInfoList = new List<SlideBodyInfo>{
+                    new SlideBodyInfo{
                         PathParameters = new PathParameters[]{selectedPath},
                         Duration = ((IHasDuration)original).Duration
                     }
