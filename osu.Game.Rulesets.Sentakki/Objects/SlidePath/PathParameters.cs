@@ -25,7 +25,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.SlidePath
 
         public bool Equals(PathParameters other) => Shape == other.Shape && EndOffset == EndOffset;
 
-
         public override int GetHashCode() => HashCode.Combine(Shape, EndOffset, Mirrored);
     }
 }
