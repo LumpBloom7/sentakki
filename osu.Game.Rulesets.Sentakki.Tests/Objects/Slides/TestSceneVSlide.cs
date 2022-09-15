@@ -4,6 +4,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
     public class TestSceneVSlide : TestSceneSlide
     {
-        protected override SentakkiSlidePath CreatePattern() => SlidePaths.GenerateVPattern(StartPath, EndPath);
+        protected override SlidePaths.PathShapes PathShape => SlidePaths.PathShapes.V;
     }
 }

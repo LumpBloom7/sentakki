@@ -10,6 +10,7 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Tests.Visual;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
@@ -36,6 +37,10 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             AddStep("Miss Single", () => testSingle(2000));
             AddStep("Hit Single", () => testSingle(2000, true));
             AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject) && (h as DrawableSentakkiHitObject).AllJudged == false));
+
+            AddStep("Miss chain", () => testChain(5000));
+            AddStep("Hit chain", () => testChain(5000, true));
+            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject) && (h as DrawableSentakkiHitObject).AllJudged == false));
         }
 
         private void testSingle(double duration, bool auto = false)
@@ -46,17 +51,54 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 SlideInfoList = new List<SentakkiSlideInfo>
                 {
                     new SentakkiSlideInfo {
-                        ID = 25,
+                        PathParameters = new []{new PathParameters(SlidePaths.PathShapes.Circle, 0, false)},
                         Duration = 1000,
                     },
                     new SentakkiSlideInfo {
-                        ID = 27,
+                        PathParameters = new []{new PathParameters(SlidePaths.PathShapes.Straight, 4, false)},
                         Duration = 1500,
                     },
                     new SentakkiSlideInfo {
-                        ID = 0,
+                        PathParameters = new []{new PathParameters(SlidePaths.PathShapes.Cup, 2, false)},
                         Duration = 2000,
                     }
+                },
+                StartTime = Time.Current + 1000,
+            };
+
+            slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
+
+            DrawableSlide dSlide;
+
+            Add(dSlide = new DrawableSlide(slide)
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Depth = depthIndex++,
+                Auto = auto
+            });
+
+            foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects)
+                foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects)
+                    nested2.Auto = auto;
+        }
+
+        private void testChain(double duration, bool auto = false)
+        {
+            var slide = new Slide
+            {
+                //Break = true,
+                SlideInfoList = new List<SentakkiSlideInfo>
+                {
+                    new SentakkiSlideInfo {
+                        PathParameters = new []{
+                            new PathParameters(SlidePaths.PathShapes.Cup, 2, false),
+                            new PathParameters(SlidePaths.PathShapes.Cup, 2, false),
+                            new PathParameters(SlidePaths.PathShapes.Cup, 2, false),
+                            new PathParameters(SlidePaths.PathShapes.Cup, 2, false),
+                        },
+                        Duration = duration,
+                    },
                 },
                 StartTime = Time.Current + 1000,
             };

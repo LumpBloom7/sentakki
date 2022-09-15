@@ -41,6 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             // Because of that, we wouldn't need to swap slide paths with their mirrored counterpart
             bool mirrored = VerticalMirrored.Value ^ HorizontalMirrored.Value;
 
+
             beatmap.HitObjects.OfType<SentakkiLanedHitObject>().ForEach(laned =>
             {
                 if (HorizontalMirrored.Value)
@@ -55,7 +56,15 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 }
 
                 if (mirrored && laned is Slide slide)
-                    slide.SlideInfoList.ForEach(slideInfo => slideInfo.Mirrored ^= mirrored);
+                {
+                    foreach (var slideInfo in slide.SlideInfoList)
+                    {
+                        foreach (var param in slideInfo.PathParameters)
+                        {
+                            param.Mirrored ^= mirrored;
+                        }
+                    }
+                }
             });
 
             beatmap.HitObjects.OfType<Touch>().ForEach(touch =>

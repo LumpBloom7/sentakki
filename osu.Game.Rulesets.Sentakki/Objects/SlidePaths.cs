@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
@@ -10,65 +11,120 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public static class SlidePaths
     {
-        public static int FANID => VALIDPATHS.Count - 1;
-        public static readonly List<(SentakkiSlidePath, SentakkiSlidePath)> VALIDPATHS = new List<(SentakkiSlidePath, SentakkiSlidePath)>{
-            (GenerateCirclePattern(0, 2), GenerateCirclePattern(0, 6, RotationDirection.Counterclockwise)),
-            (GenerateCirclePattern(0, 3), GenerateCirclePattern(0, 5, RotationDirection.Counterclockwise)),
-            (GenerateCirclePattern(0, 4), GenerateCirclePattern(0, 4, RotationDirection.Counterclockwise)),
-            (GenerateCirclePattern(0, 5), GenerateCirclePattern(0, 3, RotationDirection.Counterclockwise)),
-            (GenerateCirclePattern(0, 6), GenerateCirclePattern(0, 2, RotationDirection.Counterclockwise)),
-            (GenerateCirclePattern(0, 7), GenerateCirclePattern(0, 1, RotationDirection.Counterclockwise)),
-            (GenerateCirclePattern(0, 8), GenerateCirclePattern(0, 0, RotationDirection.Counterclockwise)),
-            (GenerateLPattern(0, 1), GenerateLPattern(0, 7, true)),
-            (GenerateLPattern(0, 2), GenerateLPattern(0, 6, true)),
-            (GenerateLPattern(0, 3), GenerateLPattern(0, 5, true)),
-            (GenerateLPattern(0, 4), GenerateLPattern(0, 4, true)),
-            (GenerateStraightPattern(0,2), GenerateStraightPattern(0,2)),
-            (GenerateStraightPattern(0,3), GenerateStraightPattern(0,5)),
-            (GenerateStraightPattern(0,4), null),
-            (GenerateThunderPattern(0), GenerateThunderPattern(0,true)),
-            (GenerateUPattern(0, 0), GenerateUPattern(0, 0, true)),
-            (GenerateUPattern(0, 1), GenerateUPattern(0, 7, true)),
-            (GenerateUPattern(0, 2), GenerateUPattern(0, 6, true)),
-            (GenerateUPattern(0, 3), GenerateUPattern(0, 5, true)),
-            (GenerateUPattern(0, 4), GenerateUPattern(0, 4, true)),
-            (GenerateUPattern(0, 5), GenerateUPattern(0, 3, true)),
-            (GenerateUPattern(0, 6), GenerateUPattern(0, 2, true)),
-            (GenerateUPattern(0, 7), GenerateUPattern(0, 1, true)),
-            (GenerateVPattern(0,1), GenerateVPattern(0,7)),
-            (GenerateVPattern(0,2), GenerateVPattern(0,6)),
-            (GenerateVPattern(0,3), GenerateVPattern(0,5)),
-            (GenerateCupPattern(0, 0),GenerateCupPattern(0, 0, true)),
-            (GenerateCupPattern(0, 1),GenerateCupPattern(0, 7, true)),
-            (GenerateCupPattern(0, 2),GenerateCupPattern(0, 6, true)),
-            (GenerateCupPattern(0, 3),GenerateCupPattern(0, 5, true)),
-            (GenerateCupPattern(0, 4),GenerateCupPattern(0, 4, true)),
-            (GenerateCupPattern(0, 5),GenerateCupPattern(0, 3, true)),
-            (GenerateCupPattern(0, 6),GenerateCupPattern(0, 2, true)),
-            (GenerateCupPattern(0, 7),GenerateCupPattern(0, 1, true)),
-
-            (GenerateStraightPattern(0,4), null),//An extra entry for the Fan Slide
-        };
-
-        public static SentakkiSlidePath GetSlidePath(int ID, bool IsMirrored = false)
+        public enum PathShapes
         {
-            (var original, var mirrored) = VALIDPATHS[ID];
-            if (IsMirrored)
-                return mirrored ?? original;
-            return original;
+            Straight,
+            Circle,
+            V,
+            L,
+
+            U,
+            Cup,
+            Thunder,
+            Fan,
+        }
+
+        // Checks if a slide is valid given parameters
+        public static bool CheckSlideValidity(PathParameters param)
+        {
+            int normalizedEnd = param.EndOffset;
+            bool mirrored = param.Mirrored;
+
+            switch (param.Shape)
+            {
+                case PathShapes.Straight:
+                    return normalizedEnd > 1 && normalizedEnd < 7;
+
+                case PathShapes.Circle:
+                    return mirrored ? normalizedEnd != 0 : normalizedEnd != 7;
+
+                case PathShapes.V:
+                    return normalizedEnd != 4;
+
+                case PathShapes.L:
+                    return mirrored ? normalizedEnd < 5 : normalizedEnd > 3;
+
+                case PathShapes.U:
+                case PathShapes.Cup:
+                case PathShapes.Thunder:
+                    return true;
+
+                case PathShapes.Fan:
+                    return normalizedEnd == 4;
+            }
+
+            return false;
+        }
+
+        public static SentakkiSlidePath CreateSlidePath(params PathParameters[] pathParameters) => CreateSlidePath(0, pathParameters);
+        public static SentakkiSlidePath CreateSlidePath(int startOffset, params PathParameters[] pathParameters)
+        {
+            List<SliderPath> slideSegments = new List<SliderPath>();
+
+            foreach (var path in pathParameters)
+            {
+                switch (path.Shape)
+                {
+                    case PathShapes.Straight:
+                    case PathShapes.Fan:
+                        slideSegments.Add(GenerateStraightPattern(startOffset, path.EndOffset));
+                        break;
+
+                    case PathShapes.Circle:
+                        slideSegments.Add(GenerateCirclePattern(startOffset, path.EndOffset, path.Mirrored ? RotationDirection.Counterclockwise : RotationDirection.Clockwise));
+                        break;
+
+                    case PathShapes.V:
+                        slideSegments.AddRange(GenerateVPattern(startOffset, path.EndOffset));
+                        break;
+
+                    case PathShapes.L:
+                        slideSegments.AddRange(GenerateLPattern(startOffset, path.EndOffset));
+                        break;
+
+                    case PathShapes.U:
+                        slideSegments.Add(GenerateUPattern(startOffset, path.EndOffset, path.Mirrored));
+                        break;
+
+                    case PathShapes.Cup:
+                        slideSegments.Add(GenerateCupPattern(startOffset, path.EndOffset, path.Mirrored));
+                        break;
+                    case PathShapes.Thunder:
+                        slideSegments.AddRange(GenerateThunderPattern(startOffset, path.Mirrored));
+                        break;
+                }
+
+                startOffset += path.EndOffset;
+            }
+
+            return new SentakkiSlidePath(slideSegments.ToArray(), startOffset);
+        }
+
+        public static int FANID => VALIDPATHS.Count - 1;
+        public static readonly List<(PathParameters parameters, double MinDuration)> VALIDPATHS;
+
+        static SlidePaths()
+        {
+            VALIDPATHS = new List<(PathParameters, double)>();
+            for (PathShapes i = PathShapes.Straight; i <= PathShapes.Fan; ++i)
+                for (int j = 0; j < 8; ++j)
+                    for (int k = 0; k < 2; ++k)
+                    {
+                        var tmp = new PathParameters(i, j, k == 1);
+                        if (CheckSlideValidity(tmp))
+                            VALIDPATHS.Add((tmp, CreateSlidePath(tmp).MinDuration));
+                    }
         }
 
         private static Vector2 getPositionInBetween(Vector2 first, Vector2 second, float ratio = .5f) => first + ((second - first) * ratio);
 
         // Covers DX Straight 3-7
-        public static SentakkiSlidePath GenerateStraightPattern(int offset, int end)
+        public static SliderPath GenerateStraightPattern(int offset, int end)
         {
-            var path = new SliderPath(new PathControlPoint[] {
+            return new SliderPath(new PathControlPoint[] {
                 new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, offset), PathType.Linear),
                 new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end), PathType.Linear),
             });
-
-            return new SentakkiSlidePath(path, end + offset);
         }
 
         private static Vector2 getIntesectPoint(Vector2 A1, Vector2 A2, Vector2 B1, Vector2 B2)
@@ -83,7 +139,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         }
 
         // Thunder pattern
-        public static SentakkiSlidePath GenerateThunderPattern(int offset, bool mirrored = false)
+        public static IEnumerable<SliderPath> GenerateThunderPattern(int offset, bool mirrored = false)
         {
             int lane1 = (mirrored ? 3 : 5) + offset;
             int lane2 = (mirrored ? 2 : 6) + offset;
@@ -97,7 +153,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Vector2 Node2Pos = getIntesectPoint(lanestart(lane2), lanestart(lane3), lanestart(lane4), lanestart(4 + offset));
             Vector2 Node3Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 4 + offset);
 
-            SliderPath[] segments = new SliderPath[]{
+            return new SliderPath[]{
                 new SliderPath(new PathControlPoint[]{
                     new PathControlPoint(Node0Pos, PathType.Linear),
                     new PathControlPoint(Node1Pos, PathType.Linear),
@@ -111,82 +167,69 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     new PathControlPoint(Node3Pos, PathType.Linear),
                 })
             };
-
-            return new SentakkiSlidePath(segments, offset + 4);
         }
 
         // Covers DX V pattern 1-8
-        public static SentakkiSlidePath GenerateVPattern(int offset, int end)
+        public static IEnumerable<SliderPath> GenerateVPattern(int offset, int end)
         {
             Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, offset);
             Vector2 Node1Pos = Vector2.Zero;
             Vector2 Node2Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end + offset);
 
-
-
             if (end >= 3 && end <= 5)
             {
-                var path = new SliderPath(new PathControlPoint[]{
+                yield return new SliderPath(new PathControlPoint[]{
                     new PathControlPoint(Node0Pos, PathType.Linear),
                     new PathControlPoint(Node1Pos, PathType.Linear),
                     new PathControlPoint(Node2Pos, PathType.Linear)
                 });
-                return new SentakkiSlidePath(path, end);
             }
             else
             {
-                SliderPath[] segments = new SliderPath[]{
-                    new SliderPath(new PathControlPoint[]{
-                        new PathControlPoint(Node0Pos, PathType.Linear),
-                        new PathControlPoint(Node1Pos, PathType.Linear),
-                    }),
-                    new SliderPath(new PathControlPoint[]{
-                        new PathControlPoint(Node1Pos, PathType.Linear),
-                        new PathControlPoint(Node2Pos, PathType.Linear),
-                    })
-                };
+                yield return new SliderPath(new PathControlPoint[]{
+                    new PathControlPoint(Node0Pos, PathType.Linear),
+                    new PathControlPoint(Node1Pos, PathType.Linear),
+                });
 
-                return new SentakkiSlidePath(segments, end + offset);
-            }
+                yield return new SliderPath(new PathControlPoint[]{
+                    new PathControlPoint(Node1Pos, PathType.Linear),
+                    new PathControlPoint(Node2Pos, PathType.Linear),
+                });
+            };
         }
 
         // Covers DX L pattern 2-5
-        public static SentakkiSlidePath GenerateLPattern(int offset, int end, bool mirrored = false)
+        public static IEnumerable<SliderPath> GenerateLPattern(int offset, int end, bool mirrored = false)
         {
             Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, offset);
             Vector2 Node1Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, (mirrored ? 2 : 6) + offset);
             Vector2 Node2Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end + offset);
 
-            var segments = new SliderPath[]{
-                new SliderPath(new PathControlPoint[]{
-                    new PathControlPoint(Node0Pos, PathType.Linear),
-                    new PathControlPoint(Node1Pos, PathType.Linear),
-                }),
-                new SliderPath(new PathControlPoint[]{
-                    new PathControlPoint(Node1Pos, PathType.Linear),
-                    new PathControlPoint(Node2Pos, PathType.Linear),
-                }),
-            };
+            yield return new SliderPath(new PathControlPoint[]{
+                new PathControlPoint(Node0Pos, PathType.Linear),
+                new PathControlPoint(Node1Pos, PathType.Linear),
+            });
 
-            return new SentakkiSlidePath(segments, end + offset);
+            yield return new SliderPath(new PathControlPoint[]{
+                new PathControlPoint(Node1Pos, PathType.Linear),
+                new PathControlPoint(Node2Pos, PathType.Linear),
+            });
         }
 
         // DX Circle Pattern
-        public static SentakkiSlidePath GenerateCirclePattern(int offset, int end, RotationDirection direction = RotationDirection.Clockwise)
+        public static SliderPath GenerateCirclePattern(int offset, int end, RotationDirection direction = RotationDirection.Clockwise)
         {
             float centre = ((offset.GetRotationForLane() + (end + offset).GetRotationForLane()) / 2) + (direction == RotationDirection.Counterclockwise ? 180 : 0);
             Vector2 centreNode = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, centre == offset.GetRotationForLane() ? centre + 180 : centre);
 
-            var path = new SliderPath(new PathControlPoint[]{
+            return new SliderPath(new PathControlPoint[]{
                 new PathControlPoint(SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, offset.GetRotationForLane() + (direction == RotationDirection.Counterclockwise ? -.5f : .5f)), PathType.PerfectCurve),
                 new PathControlPoint(centreNode),
                 new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end+offset), PathType.PerfectCurve)
             });
-
-            return new SentakkiSlidePath(path, end + offset);
         }
 
-        public static SentakkiSlidePath GenerateUPattern(int offset, int end, bool reversed = false)
+        public static SliderPath GenerateUPattern(int offset, int end, bool reversed = false)
         {
             Vector2 Node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, offset);
             Vector2 Node1Pos = getPositionInBetween(Node0Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, (reversed ? 3 : 5) + offset), .51f);
@@ -197,17 +240,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Vector2 Node4Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end + offset);
             Vector2 Node3Pos = getPositionInBetween(Node4Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end + (reversed ? -3 : 3) + offset), .51f);
 
-            var path = new SliderPath(new PathControlPoint[]{
+            return new SliderPath(new PathControlPoint[]{
                 new PathControlPoint(Node0Pos,PathType.Linear),
                 new PathControlPoint(Node1Pos, PathType.PerfectCurve),
                 new PathControlPoint(Node2Pos),
                 new PathControlPoint(Node3Pos, PathType.PerfectCurve),
                 new PathControlPoint(Node4Pos,PathType.Linear)
             });
-            return new SentakkiSlidePath(path, end + offset);
         }
 
-        public static SentakkiSlidePath GenerateCupPattern(int offset, int end, bool mirrored = false)
+        public static SliderPath GenerateCupPattern(int offset, int end, bool mirrored = false)
         {
             float r = 270 / 2f;
 
@@ -249,7 +291,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Vector2 Node5Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, loopEndAngle + offsetAdjustment);
             Vector2 Node6Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end + offset);
 
-            var path = new SliderPath(new PathControlPoint[]{
+            return new SliderPath(new PathControlPoint[]{
                 new PathControlPoint(Node0Pos, PathType.Linear),
                 new PathControlPoint(Node1Pos, PathType.PerfectCurve),
                 new PathControlPoint(Node2Pos),
@@ -258,8 +300,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 new PathControlPoint(Node5Pos,PathType.PerfectCurve),
                 new PathControlPoint(Node6Pos, PathType.Linear)
             });
-
-            return new SentakkiSlidePath(path, end);
         }
     }
 }
