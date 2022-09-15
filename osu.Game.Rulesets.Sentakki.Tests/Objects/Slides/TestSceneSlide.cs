@@ -40,11 +40,12 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             });
             Add(slide = new SlideVisual());
 
-            AddSliderStep("Path offset", 0, 7, 0, p =>
+            AddSliderStep("Start lane", 0, 7, 0, p =>
             {
-                slide.Rotation = 45 * p;
+                StartPath = p;
+                RefreshSlide();
             });
-            AddSliderStep("End Path", 0, 7, 4, p =>
+            AddSliderStep("End lane", 0, 7, 4, p =>
             {
                 EndPath = p;
                 RefreshSlide();
