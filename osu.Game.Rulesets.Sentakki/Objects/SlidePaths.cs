@@ -194,7 +194,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     new PathControlPoint(Node1Pos, PathType.Linear),
                     new PathControlPoint(Node2Pos, PathType.Linear),
                 });
-            };
+            }
         }
 
         // Covers DX L pattern 2-5

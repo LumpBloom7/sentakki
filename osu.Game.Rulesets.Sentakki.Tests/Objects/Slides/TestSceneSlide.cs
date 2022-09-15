@@ -66,7 +66,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 RefreshSlide();
             });
 
-
             AddStep("Perform entry animation", () => slide.PerformEntryAnimation(1000));
             AddWaitStep("Wait for transforms", 5);
 
