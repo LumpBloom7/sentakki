@@ -55,7 +55,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     Progress = (float)progress,
                     StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress)
                 };
-                if (progress * distance > SlideInfo.SlidePath.FanStartDistance)
+                if (progress > SlideInfo.SlidePath.FanStartProgress)
                 {
                     checkpoint.NodesToPass = 2;
 

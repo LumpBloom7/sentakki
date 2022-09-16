@@ -29,7 +29,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         private int depthIndex;
 
         [Cached]
-        private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
+        private readonly DrawablePool<SlideChevron> chevronPool;
 
         [Cached]
         private readonly SlideFanChevrons fanChevrons;
@@ -44,7 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 Rotation = -22.5f
             });
 
-            Add(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(62));
+            Add(chevronPool = new DrawablePool<SlideChevron>(62));
             Add(fanChevrons = new SlideFanChevrons());
 
             AddStep("Miss Single", () => testSingle(2000));

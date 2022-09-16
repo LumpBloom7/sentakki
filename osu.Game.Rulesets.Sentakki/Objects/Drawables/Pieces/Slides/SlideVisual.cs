@@ -1,20 +1,32 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
-using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Sentakki.UI;
-using osuTK;
+using osu.Game.Rulesets.Sentakki.Configuration;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
-    public class SlideVisual : SlideVisualBase<CompositeDrawable>
+    public class SlideVisual : CompositeDrawable
     {
+        // This will be proxied, so a must.
+        public override bool RemoveWhenNotAlive => false;
+
+        private double progress;
+        public double Progress
+        {
+            get => progress;
+            set
+            {
+                progress = value;
+                updateProgress();
+            }
+        }
+
         private SentakkiSlidePath path;
 
         public SentakkiSlidePath Path
@@ -24,14 +36,55 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             {
                 path = value;
                 updateVisuals();
-                UpdateProgress();
+                updateProgress();
             }
         }
 
-        [Resolved]
+        private void updateProgress()
+        {
+            for (int i = 0; i < chevrons.Count; i++)
+                ISlideChevron.UpdateProgress((ISlideChevron)chevrons[i], progress);
+        }
+
+        public SlideVisual()
+        {
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
+        }
+
+        [Resolved(canBeNull: true)]
         private DrawablePool<SlideChevron> chevronPool { get; set; }
 
+        private Container chevrons;
+
+        private readonly BindableBool snakingIn = new BindableBool(true);
+
         private List<SlideFanChevron> fanChevrons = new List<SlideFanChevron>();
+
+        [BackgroundDependencyLoader(true)]
+        private void load(SentakkiRulesetConfigManager sentakkiConfig, SlideFanChevrons fanChevrons)
+        {
+            sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
+
+            AddRangeInternal(new Drawable[]{
+                chevrons = new Container()
+            });
+
+            if (fanChevrons != null)
+                for (int i = 0; i < 11; ++i)
+                    this.fanChevrons.Add(new SlideFanChevron(fanChevrons.Get(i)));
+        }
+
+        private void updateVisuals()
+        {
+            chevrons.Clear(false);
+
+            // Create regular slide chevrons if needed
+            tryCreateRegularChevrons();
+
+            // Create fan slide chevrons if needed
+            tryCreateFanChevrons();
+        }
 
         private const int chevrons_per_eith = 8;
         private const double ring_radius = 297;
@@ -43,17 +96,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             return (int)Math.Ceiling((path.Distance - (2 * endpoint_distance)) * chevrons_per_distance);
         }
 
-        [BackgroundDependencyLoader]
-        private void load(SlideFanChevrons fanChevrons)
+        private void tryCreateRegularChevrons()
         {
-            for (int i = 0; i < 11; ++i)
-                this.fanChevrons.Add(new SlideFanChevron(fanChevrons.Get(i)));
-        }
-
-        private void updateVisuals()
-        {
-            Chevrons.Clear(false);
-
             double runningDistance = 0;
             foreach (var path in path.SlideSegments)
             {
@@ -74,97 +118,80 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                     chevron.Position = position;
                     chevron.Progress = (runningDistance + distance) / this.path.TotalDistance;
                     chevron.Rotation = angle;
-                    chevron.Depth = Chevrons.Count;
-                    Chevrons.Add(chevron);
+                    chevron.Depth = chevrons.Count;
+                    chevrons.Add(chevron);
 
                     previousPosition = position;
                 }
                 runningDistance += totalDistance;
             }
+        }
 
+        private void tryCreateFanChevrons()
+        {
+            if (path.EndsWithSlideFan)
+                return;
 
-            if (path.HasFanSlide)
+            var delta = path.PositionAt(1) - path.fanOrigin;
+
+            for (int i = 0; i < 11; ++i)
             {
-                var origin = (path.SlideSegments.Length > 0) ? path.SlideSegments[^1].PositionAt(1) : path.PositionAt(0);
-                var delta = path.PositionAt(1) - origin;
-                float length = delta.Length;
-                var direction = delta.Normalized();
+                float progress = (i + 1) / (float)12;
+                float scale = progress;
+                SlideFanChevron fanChev = fanChevrons[i];
 
-                double fanDistDelta = path.TotalDistance - path.FanStartDistance;
-                double fanDistDeltaRatio = fanDistDelta / path.TotalDistance;
-                double fanDistStartRatio = path.FanStartDistance / path.TotalDistance;
+                float safeSpaceRatio = 570 / 600f;
 
-                for (int i = 0; i < 11; ++i)
+                float Y = safeSpaceRatio * scale;
+
+                fanChev.Position = path.fanOrigin + (delta * Y);
+                fanChev.Rotation = fanChev.Position.GetDegreesFromPosition(path.fanOrigin);
+
+                fanChev.Progress = path.FanStartProgress + ((i + 1) / 11f * (1 - path.FanStartProgress));
+                fanChev.Depth = chevrons.Count;
+
+                chevrons.Add(fanChev);
+            };
+        }
+
+        public void PerformEntryAnimation(double duration)
+        {
+            if (snakingIn.Value)
+            {
+                double fadeDuration = duration / chevrons.Count;
+                double currentOffset = duration / 2;
+                for (int j = chevrons.Count - 1; j >= 0; j--)
                 {
-                    float progress = (i + 1) / (float)12;
-                    float scale = progress;
-                    SlideFanChevron fanChev = fanChevrons[i];
-
-                    var safeSpaceRatio = 570 / 600f;
-                    var endPointRatio = 0 / 600f;
-
-                    var Y = safeSpaceRatio * scale + endPointRatio;
-
-
-                    fanChev.Position = origin + (delta * Y);
-                    fanChev.Rotation = fanChev.Position.GetDegreesFromPosition(origin);
-
-                    fanChev.Progress = fanDistStartRatio + ((i + 1) / (float)11) * fanDistDeltaRatio;
-                    fanChev.Depth = Chevrons.Count;
-
-                    Chevrons.Add(fanChev);
-                };
+                    var chevron = chevrons[j];
+                    chevron.FadeOut().Delay(currentOffset).FadeIn(fadeDuration * 2).Finally(finalSteps);
+                    currentOffset += fadeDuration / 2;
+                }
             }
-        }
-
-
-        public override void Free()
-        {
-            Chevrons.Clear(false);
-        }
-
-        public class SlideChevron : PoolableDrawable, ISlideChevron
-        {
-            public double Progress { get; set; }
-
-            public SlideChevron()
+            else
             {
-                Anchor = Anchor.Centre;
-                Origin = Anchor.Centre;
+                chevrons.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
             }
 
-            [BackgroundDependencyLoader]
-            private void load(TextureStore textures)
+            void finalSteps(Drawable chevron) => ISlideChevron.UpdateProgress((ISlideChevron)chevron, progress);
+        }
+
+        public void PerformExitAnimation(double duration)
+        {
+            int chevronsLeft = chevrons.Children.Count(c => c.Alpha != 0);
+            double fadeDuration = duration / chevronsLeft;
+            double currentOffset = 0;
+            for (int j = chevrons.Count - 1; j >= 0; j--)
             {
-                AddInternal(new Sprite
+                var chevron = chevrons[j];
+                if (chevron.Alpha == 0)
                 {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Texture = textures.Get("slide"),
-                });
-            }
-
-            protected override void FreeAfterUse()
-            {
-                base.FreeAfterUse();
-                ClearTransforms();
+                    continue;
+                }
+                chevron.Delay(currentOffset).FadeOut(fadeDuration * 2);
+                currentOffset += fadeDuration / 2;
             }
         }
 
-        public class SlideFanChevron : CompositeDrawable, ISlideChevron
-        {
-            public double Progress { get; set; }
-            private readonly IBindable<Vector2> textureSize = new Bindable<Vector2>();
-
-            public SlideFanChevron((BufferedContainerView<Drawable> view, IBindable<Vector2> sizeBindable) chevron)
-            {
-                Anchor = Origin = Anchor.Centre;
-
-                textureSize.BindValueChanged(v => Size = v.NewValue);
-                textureSize.BindTo(chevron.sizeBindable);
-
-                AddInternal(chevron.view);
-            }
-        }
+        public void Free() => chevrons.Clear(false);
     }
 }

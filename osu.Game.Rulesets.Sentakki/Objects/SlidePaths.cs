@@ -33,9 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     {
                         var tmp = new PathParameters(i, j, k == 1);
                         if (CheckSlideValidity(tmp, true))
-                        {
                             VALIDPATHS.Add((tmp, CreateSlidePath(tmp).MinDuration));
-                        }
                     }
         }
 

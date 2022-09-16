@@ -32,11 +32,16 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         private readonly Container nodes;
 
         [Cached]
-        private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
+        private readonly DrawablePool<SlideChevron> chevronPool;
+
+        [Cached]
+        private readonly SlideFanChevrons fanChevrons;
 
         public TestSceneSlide()
         {
-            Add(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(62));
+            Add(chevronPool = new DrawablePool<SlideChevron>(62));
+            Add(fanChevrons = new SlideFanChevrons());
+
 
             Add(new SentakkiRing()
             {
