@@ -50,10 +50,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                             continue;
                     }
 
-                    SlideStars[i].Position = Slidepath.Path.PositionAt(value);
+                    SlideStars[i].Position = Slidepath.Path.PositionAt(value, i - 1);
                     SlideStars[i].Rotation = Slidepath.Path.PositionAt(value - .01f, i - 1).GetDegreesFromPosition(Slidepath.Path.PositionAt(value + .01f, i - 1));
                 }
-
             }
         }
 
