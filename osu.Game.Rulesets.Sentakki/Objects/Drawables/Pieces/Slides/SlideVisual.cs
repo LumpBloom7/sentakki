@@ -129,7 +129,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 
         private void tryCreateFanChevrons()
         {
-            if (path.EndsWithSlideFan)
+            if (!path.EndsWithSlideFan)
                 return;
 
             var delta = path.PositionAt(1) - path.fanOrigin;
