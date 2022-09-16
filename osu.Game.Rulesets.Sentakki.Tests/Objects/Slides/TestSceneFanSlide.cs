@@ -36,11 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 Size = new Vector2(SentakkiPlayfield.RINGSIZE)
             });
 
-            Add(slide = new SlideVisual()
-            {
-                Rotation = 22.5f,
-
-            });
+            Add(slide = new SlideVisual());
 
             AddSliderStep("Progress", 0.0f, 1.0f, 0.0f, p =>
             {
@@ -50,7 +46,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             AddSliderStep("Rotation", 0.0f, 360f, 22.5f, p =>
             {
                 slide.Rotation = p;
-                ring.Rotation = p - 22.5f;
             });
 
             AddStep("Perform entry animation", () => slide.PerformEntryAnimation(1000));
