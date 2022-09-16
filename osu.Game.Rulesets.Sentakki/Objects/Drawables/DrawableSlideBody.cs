@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             get => starProgress;
             set
             {
-                if (Precision.AlmostEquals(starProgress, value))
+                if (starProgress == value)
                     return;
 
                 starProgress = value;
