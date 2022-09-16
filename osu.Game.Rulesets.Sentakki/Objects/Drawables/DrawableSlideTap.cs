@@ -28,11 +28,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 else
                     note.SecondStar.Alpha = 0;
             }
-            else if (ParentHitObject is DrawableSlideFan fanSlide)
-            {
-                spinDuration = fanSlide.HitObject.Duration;
-                note.SecondStar.Alpha = 0;
-            }
 
             note.Stars.Spin(spinDuration, RotationDirection.Counterclockwise, 0).Loop();
         }

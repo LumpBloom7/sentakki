@@ -117,7 +117,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 startOffset += path.EndOffset;
             }
 
-            return new SentakkiSlidePath(slideSegments.ToArray(), startOffset);
+            return new SentakkiSlidePath(slideSegments.ToArray(), startOffset, pathParameters[^1].Shape == PathShapes.Fan);
         }
 
         #region Generation methods

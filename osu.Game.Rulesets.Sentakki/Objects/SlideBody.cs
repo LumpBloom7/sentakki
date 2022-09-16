@@ -49,12 +49,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             for (int i = 0; i < nodeCount; i++)
             {
                 double progress = (double)(i + 1) / nodeCount;
+
                 SlideCheckpoint checkpoint = new SlideCheckpoint()
                 {
                     Progress = (float)progress,
-                    StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
-                    NodePositions = new List<Vector2> { SlideInfo.SlidePath.PositionAt(progress) },
+                    StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress)
                 };
+                if (progress * distance > SlideInfo.SlidePath.FanStartDistance)
+                {
+                    checkpoint.NodesToPass = 2;
+
+                    for (int j = -1; j < 2; ++j)
+                        checkpoint.NodePositions.Add(SlideInfo.SlidePath.PositionAt(progress, j));
+                }
+                else
+                    checkpoint.NodePositions = new List<Vector2> { SlideInfo.SlidePath.PositionAt(progress) };
+
                 AddNested(checkpoint);
             }
         }

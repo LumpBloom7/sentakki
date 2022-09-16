@@ -60,13 +60,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     {
                         AutoBindable = { BindTarget = AutoBindable },
                     };
-                case SlideFan slideFan:
-                    return new DrawableSlideFan(slideFan)
-                    {
-                        AutoBindable = { BindTarget = AutoBindable },
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                    };
                 case SlideBody slideBody:
                     return new DrawableSlideBody(slideBody)
                     {

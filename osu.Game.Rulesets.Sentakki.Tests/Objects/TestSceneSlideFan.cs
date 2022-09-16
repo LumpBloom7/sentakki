@@ -4,13 +4,17 @@ using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Pooling;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
+using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
@@ -25,12 +29,22 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         private int depthIndex;
 
         [Cached]
+        private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
+
+        [Cached]
         private readonly SlideFanChevrons fanChevrons;
 
         public TestSceneSlideFan()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
+            Add(new SentakkiRing()
+            {
+                RelativeSizeAxes = Axes.None,
+                Size = new Vector2(SentakkiPlayfield.RINGSIZE),
+                Rotation = -22.5f
+            });
 
+            Add(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(62));
             Add(fanChevrons = new SlideFanChevrons());
 
             AddStep("Miss Single", () => testSingle(2000));

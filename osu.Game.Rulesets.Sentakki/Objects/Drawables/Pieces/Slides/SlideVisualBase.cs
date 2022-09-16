@@ -7,7 +7,7 @@ using osu.Game.Rulesets.Sentakki.Configuration;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
-    public abstract class SlideVisualBase<T> : CompositeDrawable, ISlideVisual where T : Drawable, ISlideChevron
+    public abstract class SlideVisualBase<T> : CompositeDrawable, ISlideVisual where T : Drawable
     {
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
@@ -47,7 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         {
             for (int i = 0; i < Chevrons.Count; i++)
             {
-                ISlideChevron.UpdateProgress(Chevrons[i], progress);
+                ISlideChevron.UpdateProgress((ISlideChevron)Chevrons[i], progress);
             }
         }
 
@@ -69,7 +69,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 Chevrons.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
             }
 
-            void finalSteps(T chevron) => ISlideChevron.UpdateProgress(chevron, progress);
+            void finalSteps(T chevron) => ISlideChevron.UpdateProgress((ISlideChevron)chevron, progress);
         }
 
         public void PerformExitAnimation(double duration)
