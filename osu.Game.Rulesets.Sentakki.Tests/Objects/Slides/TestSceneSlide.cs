@@ -42,12 +42,12 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             Add(chevronPool = new DrawablePool<SlideChevron>(62));
             Add(fanChevrons = new SlideFanChevrons());
 
-
             Add(new SentakkiRing()
             {
                 RelativeSizeAxes = Axes.None,
                 Size = new Vector2(SentakkiPlayfield.RINGSIZE)
             });
+
             Add(slide = new SlideVisual());
 
             AddSliderStep("Start lane", 0, 7, 0, p =>

@@ -151,7 +151,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 fanChev.Depth = chevrons.Count;
 
                 chevrons.Add(fanChev);
-            };
+            }
         }
 
         public void PerformEntryAnimation(double duration)
