@@ -40,11 +40,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 for (int i = 0; i < 3; ++i)
                 {
-                    if (i != 1 && value < Slidepath.Path.FanStartProgress)
+                    if (i != 2 && value < Slidepath.Path.FanStartProgress)
                         continue;
 
-                    SlideStars[i].Position = Slidepath.Path.PositionAt(value, i - 1);
-                    SlideStars[i].Rotation = Slidepath.Path.PositionAt(value - .01f, i - 1).GetDegreesFromPosition(Slidepath.Path.PositionAt(value + .01f, i - 1));
+                    int laneOffset = ((i * 2) - 1) % 3;
+
+                    SlideStars[i].Position = Slidepath.Path.PositionAt(value, laneOffset);
+                    SlideStars[i].Rotation = Slidepath.Path.PositionAt(value - .01f, laneOffset).GetDegreesFromPosition(Slidepath.Path.PositionAt(value + .01f, laneOffset));
                 }
             }
         }
@@ -147,14 +149,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Slidepath.PerformEntryAnimation(AdjustedAnimationDuration);
             using (BeginAbsoluteSequence(HitObject.StartTime - 50))
             {
-                SlideStars[1].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
+                SlideStars[2].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
                 SlideStars[0].FadeOut().ScaleTo(1.25f, HitObject.ShootDelay);
-                SlideStars[2].FadeOut().ScaleTo(1.25f, HitObject.ShootDelay);
+                SlideStars[1].FadeOut().ScaleTo(1.25f, HitObject.ShootDelay);
 
                 if (Slidepath.Path.StartsWithSlideFan)
                 {
                     SlideStars[0].FadeInFromZero(HitObject.ShootDelay);
-                    SlideStars[2].FadeInFromZero(HitObject.ShootDelay);
+                    SlideStars[1].FadeInFromZero(HitObject.ShootDelay);
                 }
 
                 using (BeginDelayedSequence(50 + HitObject.ShootDelay))
@@ -163,7 +165,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         using (BeginDelayedSequence((HitObject.Duration - HitObject.ShootDelay) * Slidepath.Path.FanStartProgress))
                         {
                             SlideStars[0].FadeIn();
-                            SlideStars[2].FadeIn();
+                            SlideStars[1].FadeIn();
                         }
 
                     this.TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
