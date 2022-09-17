@@ -25,6 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public readonly float FanStartProgress = 1;
 
         public bool EndsWithSlideFan { get; private set; }
+        public bool StartsWithSlideFan { get; private set; }
 
         public readonly Vector2 pathOrigin;
         public readonly Vector2 fanOrigin;
@@ -38,6 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             TotalDistance = segments.Sum(p => p.Distance);
             EndLane = endLane;
             EndsWithSlideFan = lastSegmentIsFan;
+            StartsWithSlideFan = lastSegmentIsFan && segments.Length == 1;
 
             if (lastSegmentIsFan)
             {

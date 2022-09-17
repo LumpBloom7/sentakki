@@ -36,19 +36,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             get => starProgress;
             set
             {
-                if (starProgress == value)
-                    return;
-
                 starProgress = value;
 
                 for (int i = 0; i < 3; ++i)
                 {
-                    if (i != 1)
-                    {
-                        SlideStars[i].Alpha = value < Slidepath.Path.FanStartProgress ? 0 : 1;
-                        if (value < Slidepath.Path.FanStartProgress)
-                            continue;
-                    }
+                    if (i != 1 && value < Slidepath.Path.FanStartProgress)
+                        continue;
 
                     SlideStars[i].Position = Slidepath.Path.PositionAt(value, i - 1);
                     SlideStars[i].Rotation = Slidepath.Path.PositionAt(value - .01f, i - 1).GetDegreesFromPosition(Slidepath.Path.PositionAt(value + .01f, i - 1));
@@ -60,20 +53,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableSlideBody(SlideBody hitObject)
             : base(hitObject) { }
 
-        protected virtual void CreateSlideStars()
-        {
-            for (int i = 0; i < 3; ++i)
-                SlideStars.Add(new StarPiece
-                {
-                    Alpha = 0,
-                    Scale = i == 1 ? Vector2.Zero : new Vector2(1.25f),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Position = SentakkiExtensions.GetCircularPosition(296.5f, 22.5f),
-                    RelativeSizeAxes = Axes.None,
-                });
-        }
-
         [BackgroundDependencyLoader(true)]
         private void load()
         {
@@ -81,6 +60,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Rotation = -22.5f;
+
             AddRangeInternal(new Drawable[]
             {
                 Slidepath = new SlideVisual(),
@@ -95,7 +75,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 },
             });
 
-            CreateSlideStars();
+            for (int i = 0; i < 3; ++i)
+                SlideStars.Add(new StarPiece
+                {
+                    Alpha = 0,
+                    Scale = Vector2.Zero,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Position = SentakkiExtensions.GetCircularPosition(296.5f, 22.5f),
+                    RelativeSizeAxes = Axes.None,
+                });
 
             AccentColour.BindValueChanged(c => Colour = c.NewValue);
             OnNewResult += queueProgressUpdate;
@@ -156,11 +145,29 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateInitialTransforms();
             Slidepath.PerformEntryAnimation(AdjustedAnimationDuration);
-            using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
+            using (BeginAbsoluteSequence(HitObject.StartTime - 50))
             {
                 SlideStars[1].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
+                SlideStars[0].FadeOut().ScaleTo(1.25f, HitObject.ShootDelay);
+                SlideStars[2].FadeOut().ScaleTo(1.25f, HitObject.ShootDelay);
 
-                this.Delay(50 + HitObject.ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
+                if (Slidepath.Path.StartsWithSlideFan)
+                {
+                    SlideStars[0].FadeInFromZero(HitObject.ShootDelay);
+                    SlideStars[2].FadeInFromZero(HitObject.ShootDelay);
+                }
+
+                using (BeginDelayedSequence(50 + HitObject.ShootDelay))
+                {
+                    if (!Slidepath.Path.StartsWithSlideFan && Slidepath.Path.EndsWithSlideFan)
+                        using (BeginDelayedSequence((HitObject.Duration - HitObject.ShootDelay) * Slidepath.Path.FanStartProgress))
+                        {
+                            SlideStars[0].FadeIn();
+                            SlideStars[2].FadeIn();
+                        }
+
+                    this.TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
+                }
             }
         }
 
