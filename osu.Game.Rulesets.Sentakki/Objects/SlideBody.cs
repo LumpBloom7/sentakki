@@ -49,7 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             foreach (var segment in SlideInfo.SlidePath.SlideSegments)
             {
                 double distance = segment.Distance;
-                int nodeCount = (int)Math.Floor(distance / 100);
+                int nodeCount = (int)Math.Floor(distance / 130);
 
                 double nodeDelta = distance / nodeCount;
 
