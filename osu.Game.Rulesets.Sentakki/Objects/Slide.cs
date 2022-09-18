@@ -58,10 +58,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             foreach (var SlideInfo in SlideInfoList)
             {
                 SlideBody body;
-                if (SlideInfo.PathParameters[0].Shape == SlidePaths.PathShapes.Fan)
-                    AddNested(body = new SlideFan());
-                else
-                    AddNested(body = new SlideBody());
+                AddNested(body = new SlideBody());
 
                 SlideBodies.Add(body);
 
