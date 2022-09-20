@@ -84,8 +84,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 switch (path.Shape)
                 {
                     case PathShapes.Straight:
-                    case PathShapes.Fan:
                         slideSegments.Add(generateStraightPattern(startOffset, path.EndOffset));
+                        break;
+
+                    case PathShapes.Fan:
+                        slideSegments.Add(generateStraightPattern(startOffset, 4));
                         break;
 
                     case PathShapes.Circle:
@@ -127,7 +130,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             return new SliderPath(new PathControlPoint[] {
                 new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, offset), PathType.Linear),
-                new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end), PathType.Linear),
+                new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end + offset), PathType.Linear),
             });
         }
 
