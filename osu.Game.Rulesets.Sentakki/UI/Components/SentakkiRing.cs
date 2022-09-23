@@ -4,7 +4,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Sentakki.Configuration;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components

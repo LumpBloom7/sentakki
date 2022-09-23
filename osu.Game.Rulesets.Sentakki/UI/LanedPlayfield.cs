@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.Slides;
 using osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine;
 using osu.Game.Rulesets.UI;
 

@@ -8,7 +8,7 @@ using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.Slides;
 using osu.Game.Tests.Visual;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects

@@ -12,7 +12,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.TouchHolds;
 using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;

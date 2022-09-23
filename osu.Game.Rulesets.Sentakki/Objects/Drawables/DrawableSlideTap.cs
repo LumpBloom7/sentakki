@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using osu.Framework.Graphics;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.Slides;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {

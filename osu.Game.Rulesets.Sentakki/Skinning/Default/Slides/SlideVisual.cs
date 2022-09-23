@@ -5,8 +5,9 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Sentakki.Objects;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
 {
     public class SlideVisual : SlideVisualBase<SlideVisual.SlideChevron>
     {

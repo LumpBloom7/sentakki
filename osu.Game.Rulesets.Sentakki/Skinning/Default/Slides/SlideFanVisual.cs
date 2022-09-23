@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
 {
     public class SlideFanVisual : SlideVisualBase<SlideFanVisual.SlideFanChevron>
     {

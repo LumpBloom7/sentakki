@@ -7,7 +7,7 @@ using osu.Framework.Layout;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
 {
     /// <summary>
     /// This drawable holds a set of all chevron buffered drawables, and is used to preload all/draw of them outside of playfield. (To avoid Playfield transforms re-rendering the chevrons)

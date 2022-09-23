@@ -5,7 +5,7 @@ using osu.Framework.Graphics;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.Touches;
 using osuTK;
 using osuTK.Graphics;
 

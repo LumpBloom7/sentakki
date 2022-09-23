@@ -7,7 +7,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Touches
 {
     public class TouchBody : Container
     {

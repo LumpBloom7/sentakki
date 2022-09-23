@@ -5,7 +5,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Sentakki.Configuration;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
 {
     public abstract class SlideVisualBase<T> : CompositeDrawable, ISlideVisual where T : Drawable, ISlideChevron
     {
