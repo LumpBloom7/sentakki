@@ -5,7 +5,9 @@ using osu.Framework.Graphics;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Skinning;
 using osu.Game.Rulesets.Sentakki.Skinning.Default.Touches;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -24,7 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // Similar to IsHovered for mouse, this tracks whether a pointer (touch or mouse) is interacting with this drawable
         // Interaction == (IsHovered && ActionPressed) || (OnTouch && TouchPointerInBounds)
         public bool[] PointInteractionState = new bool[11];
-        public TouchBody TouchBody;
+        public SkinnableDrawable TouchBody;
 
         private SentakkiInputManager sentakkiActionInputManager;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
@@ -42,7 +44,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             AddRangeInternal(new Drawable[]{
-                TouchBody = new TouchBody(),
+                TouchBody = new SkinnableDrawable(new SentakkiSkinComponent(SentakkiSkinComponents.Touch), _ => new TouchBody())
+                {
+                    Size = new Vector2(130),
+                    Alpha = 0,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    RelativeSizeAxes = Axes.None,
+                },
             });
 
             trackedKeys.BindValueChanged(x =>
@@ -80,7 +89,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             using (BeginDelayedSequence(AdjustedAnimationDuration, true))
             {
                 TouchBody.ResizeTo(90, moveTo, Easing.InCirc);
-                TouchBody.BorderContainer.Delay(moveTo).FadeIn();
+                ((TouchBody)TouchBody.Drawable).BorderContainer.Delay(moveTo).FadeIn();
             }
         }
 
@@ -124,9 +133,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
 
                 case ArmedState.Miss:
-                    this.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                    TouchBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
                        .FadeOut(time_fade_miss);
+
+                    this.Delay(time_fade_miss).Expire();
                     break;
             }
         }

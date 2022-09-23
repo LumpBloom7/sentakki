@@ -6,6 +6,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Skinning;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
 {
@@ -88,12 +89,12 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
             [BackgroundDependencyLoader]
             private void load(TextureStore textures)
             {
-                AddInternal(new Sprite
+                AddInternal(new SkinnableDrawable(new SentakkiSkinComponent(SentakkiSkinComponents.SlideChevron), _ => new Sprite
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Texture = textures.Get("slide"),
-                });
+                }));
             }
 
             protected override void FreeAfterUse()

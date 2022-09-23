@@ -15,10 +15,9 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Touches
         public Container PieceContainer;
         public TouchBody()
         {
-            Size = new Vector2(130);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Alpha = 0;
+            RelativeSizeAxes = Axes.Both;
 
             InternalChildren = new Drawable[]{
                 BorderContainer = new Container{

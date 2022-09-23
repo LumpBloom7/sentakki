@@ -1,5 +1,7 @@
+using osu.Game.Rulesets.Sentakki.Skinning;
 using osu.Game.Rulesets.Sentakki.Skinning.Default.Slides;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Skinning;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
@@ -36,7 +38,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void CreateSlideStars()
         {
             for (int i = 0; i < 3; ++i)
-                SlideStars.Add(new StarPiece
+                SlideStars.Add(new SkinnableDrawable(new SentakkiSkinComponent(SentakkiSkinComponents.SlideStar), _ => new StarPiece())
                 {
                     Y = -SentakkiPlayfield.INTERSECTDISTANCE,
                     Alpha = 0,

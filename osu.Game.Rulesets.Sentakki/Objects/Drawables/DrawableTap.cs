@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -5,8 +6,10 @@ using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Skinning;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -14,7 +17,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHandler<SentakkiAction>
     {
-        protected virtual Drawable CreateTapRepresentation() => new TapPiece();
+        protected virtual SentakkiSkinComponents TapPieceComponent => SentakkiSkinComponents.Tap;
+        protected virtual Type fallbackPieceType => typeof(TapPiece);
 
         public override double LifetimeStart
         {
@@ -35,7 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        public Drawable TapVisual;
+        public SkinnableDrawable TapVisual;
 
         public DrawableTap() : this(null) { }
 
@@ -48,7 +52,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             AddRangeInternal(new Drawable[] {
-                TapVisual = CreateTapRepresentation(),
+                TapVisual = new ProxyableSkinnableDrawable(new SentakkiSkinComponent(TapPieceComponent), _ => (Drawable)Activator.CreateInstance(fallbackPieceType))
+                {
+                    Scale = new Vector2(0f),
+                    Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                }
             });
         }
 

@@ -9,9 +9,6 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
 {
     public abstract class SlideVisualBase<T> : CompositeDrawable, ISlideVisual where T : Drawable, ISlideChevron
     {
-        // This will be proxied, so a must.
-        public override bool RemoveWhenNotAlive => false;
-
         private double progress;
         public double Progress
         {

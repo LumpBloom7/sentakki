@@ -3,7 +3,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -11,11 +11,8 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
 {
     public class SlideTapPiece : CompositeDrawable
     {
-        // This will be proxied, so a must.
-        public override bool RemoveWhenNotAlive => false;
-
         public readonly Container Stars;
-        public readonly StarPiece SecondStar;
+        public readonly SkinnableDrawable SecondStar;
 
         public SlideTapPiece()
         {
@@ -23,8 +20,6 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
 
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Scale = new Vector2(0f);
-            Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE);
 
             InternalChildren = new Drawable[]
             {
@@ -33,8 +28,19 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Children = new Drawable[]{
-                        new StarPiece(),
-                        SecondStar = new StarPiece { Rotation = 36 }
+                        new SkinnableDrawable(new SentakkiSkinComponent(SentakkiSkinComponents.SlideStar), _ => new StarPiece())
+                        {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            RelativeSizeAxes = Axes.None,
+                        },
+                        SecondStar = new SkinnableDrawable(new SentakkiSkinComponent(SentakkiSkinComponents.SlideStar), _ => new StarPiece())
+                        {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            RelativeSizeAxes = Axes.None,
+                            Rotation = 36
+                        }
                     }
                 },
             };

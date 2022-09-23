@@ -9,7 +9,9 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Skinning;
 using osu.Game.Rulesets.Sentakki.Skinning.Default.Slides;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -26,7 +28,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public Container<DrawableSlideCheckpoint> SlideCheckpoints { get; private set; }
 
         public ISlideVisual Slidepath;
-        public Container<StarPiece> SlideStars;
+        public Container<SkinnableDrawable> SlideStars;
 
         protected float StarProg;
         public virtual float StarProgress
@@ -51,7 +53,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected virtual void CreateSlideStars()
         {
-            SlideStars.Add(new StarPiece
+            SlideStars.Add(new ProxyableSkinnableDrawable(new SentakkiSkinComponent(SentakkiSkinComponents.SlideStar), _ => new StarPiece())
             {
                 Alpha = 0,
                 Scale = Vector2.Zero,
@@ -78,7 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AddRangeInternal(new Drawable[]
             {
                 (Drawable)Slidepath,
-                SlideStars = new Container<StarPiece>{
+                SlideStars = new Container<SkinnableDrawable>{
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                 },
@@ -212,7 +214,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         foreach (var star in SlideStars)
                             star.FadeOut(200);
 
-                        this.FadeOut(200).Expire();
+                        this.Delay(200).Expire();
                     }
 
                     break;

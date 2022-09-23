@@ -12,6 +12,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Skinning;
 using osu.Game.Rulesets.Sentakki.Skinning.Default.TouchHolds;
 using osu.Game.Skinning;
 using osuTK;
@@ -28,7 +29,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => TouchHoldBody.ReceivePositionalInputAt(screenSpacePos);
 
-        public TouchHoldBody TouchHoldBody;
+        public SkinnableDrawable TouchHoldBody;
 
         private PausableSkinnableSound holdSample;
 
@@ -44,10 +45,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Colour = Color4.SlateGray;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Scale = new Vector2(0f);
-            Alpha = 0;
+
             AddRangeInternal(new Drawable[] {
-                TouchHoldBody = new TouchHoldBody(),
+                TouchHoldBody = new SkinnableDrawable(new SentakkiSkinComponent(SentakkiSkinComponents.TouchHold), _=> new TouchHoldBody())
+                {
+                    Size = new Vector2(110),
+                    Scale = new Vector2(0f),
+                    Alpha = 0,
+                },
                 holdSample = new PausableSkinnableSound
                 {
                     Volume = { Value = 0 },
@@ -100,10 +105,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateInitialTransforms();
             double fadeIn = AdjustedAnimationDuration;
-            this.FadeInFromZero(fadeIn).ScaleTo(1, fadeIn);
+            TouchHoldBody.FadeInFromZero(fadeIn).ScaleTo(1, fadeIn);
             using (BeginDelayedSequence(fadeIn, true))
             {
-                TouchHoldBody.ProgressPiece.TransformBindableTo(TouchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
+                ((TouchHoldBody)TouchHoldBody.Drawable).ProgressPiece.TransformBindableTo(((TouchHoldBody)TouchHoldBody.Drawable).ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
             }
         }
 
@@ -170,16 +175,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            const double time_fade_hit = 100, time_fade_miss = 400;
+            const double time_fade_miss = 400;
 
             switch (state)
             {
                 case ArmedState.Hit:
-                    this.Delay(time_fade_hit).Expire();
+                    Expire();
                     break;
 
                 case ArmedState.Miss:
-                    this.ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss).Expire();
+                    TouchHoldBody.ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss).Expire();
+                    this.Delay(time_fade_miss).Expire();
                     break;
             }
         }

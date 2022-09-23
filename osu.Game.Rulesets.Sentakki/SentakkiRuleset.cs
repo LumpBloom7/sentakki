@@ -48,7 +48,10 @@ namespace osu.Game.Rulesets.Sentakki
 
         public override string Description => IsDevelopmentBuild ? "sentakki (Dev build)" : "sentakki";
         public override string PlayingVerb => "Washing laundry";
-        public override string ShortName => "Sentakki";
+
+        public const string SHORT_NAME = "Sentakki";
+
+        public override string ShortName => SHORT_NAME;
 
         public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor(this);
 

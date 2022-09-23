@@ -1,12 +1,15 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using osu.Framework.Graphics;
+using osu.Game.Rulesets.Sentakki.Skinning;
 using osu.Game.Rulesets.Sentakki.Skinning.Default.Slides;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideTap : DrawableTap
     {
-        protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
+        protected override SentakkiSkinComponents TapPieceComponent => SentakkiSkinComponents.SlideStar;
+        protected override Type fallbackPieceType => typeof(SlideTapPiece);
 
         public DrawableSlideTap() : this(null) { }
         public DrawableSlideTap(SlideTap hitObject)
@@ -16,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateInitialTransforms();
 
-            var note = TapVisual as SlideTapPiece;
+            var note = TapVisual.Drawable as SlideTapPiece;
 
             double spinDuration = 0;
 

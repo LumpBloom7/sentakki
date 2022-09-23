@@ -17,7 +17,6 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Default.TouchHolds
 
         public TouchHoldBody()
         {
-            Size = new Vector2(110);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             InternalChildren = new Drawable[]{
