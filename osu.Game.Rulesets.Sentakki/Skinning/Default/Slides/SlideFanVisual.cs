@@ -8,7 +8,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
 {
-    public class SlideFanVisual : SlideVisualBase<SlideFanVisual.SlideFanChevron>
+    public class SlideFanVisual : SlideVisualBase<SlideFanVisual.SlideFanChevronView>
     {
         public SlideFanVisual()
         {
@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
             {
                 float progress = (i + 2) / (float)12;
                 float scale = progress;
-                Chevrons.Add(new SlideFanChevron(fanChevrons.Get(i))
+                Chevrons.Add(new SlideFanChevronView(fanChevrons.Get(i))
                 {
                     Y = ((SentakkiPlayfield.RINGSIZE + 50 - (float)endpoint_distance) * scale) - 350,
                     Progress = (i + 1) / (float)11,
@@ -33,12 +33,12 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
             }
         }
 
-        public class SlideFanChevron : CompositeDrawable, ISlideChevron
+        public class SlideFanChevronView : CompositeDrawable, ISlideChevron
         {
             public double Progress { get; set; }
             private readonly IBindable<Vector2> textureSize = new Bindable<Vector2>();
 
-            public SlideFanChevron((BufferedContainerView<Drawable> view, IBindable<Vector2> sizeBindable) chevron)
+            public SlideFanChevronView((BufferedContainerView<Drawable> view, IBindable<Vector2> sizeBindable) chevron)
             {
                 Anchor = Origin = Anchor.Centre;
 
