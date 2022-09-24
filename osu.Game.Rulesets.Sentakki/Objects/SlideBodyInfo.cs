@@ -1,12 +1,10 @@
-using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
-
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class SlideBodyInfo
     {
-        private PathParameters[] pathParameters;
+        private SlideBodyPart[] pathParameters;
 
-        public PathParameters[] PathParameters
+        public SlideBodyPart[] PathParameters
         {
             get => pathParameters;
             set

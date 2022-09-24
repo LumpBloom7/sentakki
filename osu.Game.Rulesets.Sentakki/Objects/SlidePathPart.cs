@@ -1,14 +1,14 @@
 using System;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.SlidePath
+namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public class PathParameters : IEquatable<PathParameters>
+    public class SlideBodyPart : IEquatable<SlideBodyPart>
     {
         public SlidePaths.PathShapes Shape { get; private set; }
         public int EndOffset { get; set; }
         public bool Mirrored { get; set; }
 
-        public PathParameters(SlidePaths.PathShapes shape, int endOffset, bool mirrored)
+        public SlideBodyPart(SlidePaths.PathShapes shape, int endOffset, bool mirrored)
         {
             Shape = shape;
             EndOffset = endOffset;
@@ -17,13 +17,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.SlidePath
 
         public override bool Equals(object obj)
         {
-            if (obj is not PathParameters otherPath)
+            if (obj is not SlideBodyPart otherPart)
                 return false;
 
-            return Equals(otherPath);
+            return Equals(otherPart);
         }
 
-        public bool Equals(PathParameters other) => Shape == other.Shape && EndOffset == EndOffset;
+        public bool Equals(SlideBodyPart other) => Shape == other.Shape && EndOffset == EndOffset;
 
         public override int GetHashCode() => HashCode.Combine(Shape, EndOffset, Mirrored);
     }

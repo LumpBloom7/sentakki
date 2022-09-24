@@ -7,7 +7,6 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
-using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
@@ -84,7 +83,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             });
         }
 
-        protected SentakkiSlidePath CreatePattern() => SlidePaths.CreateSlidePath(startPath, new PathParameters(PathShape, endPath, mirrored));
+        protected SentakkiSlidePath CreatePattern() => SlidePaths.CreateSlidePath(startPath, new SlideBodyPart(PathShape, endPath, mirrored));
 
         protected override void LoadComplete()
         {

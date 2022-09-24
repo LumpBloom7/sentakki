@@ -3,7 +3,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
-using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
@@ -58,7 +57,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         protected override void LoadComplete()
         {
             base.LoadComplete();
-            slide.Path = SlidePaths.CreateSlidePath(new PathParameters(SlidePaths.PathShapes.Fan, 4, false));
+            slide.Path = SlidePaths.CreateSlidePath(new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false));
         }
     }
 }

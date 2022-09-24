@@ -9,7 +9,6 @@ using osu.Game.Beatmaps.Legacy;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
@@ -283,7 +282,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private SentakkiHitObject createSlideNote(HitObject original, IList<IList<HitSampleInfo>> samples, bool twin = false, bool isBreak = false)
         {
             int noteLane = patternGenerator.GetNextLane(twin);
-            List<PathParameters> validPaths;
+            List<SlideBodyPart> validPaths;
 
             {
                 var pathEnumerable = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.MinDuration && ((IHasDuration)original).Duration <= p.MinDuration * 10)
@@ -301,7 +300,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 SlideInfoList = new List<SlideBodyInfo>{
                     new SlideBodyInfo{
-                        PathParameters = new PathParameters[]{selectedPath},
+                        PathParameters = new SlideBodyPart[]{selectedPath},
                         Duration = ((IHasDuration)original).Duration
                     }
                 },

@@ -9,7 +9,6 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
-using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
@@ -55,7 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 SlideInfoList = new List<SlideBodyInfo>
                 {
                     new SlideBodyInfo {
-                        PathParameters = new[] {new PathParameters(SlidePaths.PathShapes.Fan, 4, false)},
+                        PathParameters = new[] {new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false)},
                         Duration = 1000,
                     },
                 },

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
-using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
+
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
@@ -23,15 +23,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Fan,
         }
 
-        public static readonly List<(PathParameters parameters, double MinDuration)> VALIDPATHS;
+        public static readonly List<(SlideBodyPart parameters, double MinDuration)> VALIDPATHS;
         static SlidePaths()
         {
-            VALIDPATHS = new List<(PathParameters, double)>();
+            VALIDPATHS = new List<(SlideBodyPart, double)>();
             for (PathShapes i = PathShapes.Straight; i <= PathShapes.Fan; ++i)
                 for (int j = 0; j < 8; ++j)
                     for (int k = 0; k < 2; ++k)
                     {
-                        var tmp = new PathParameters(i, j, k == 1);
+                        var tmp = new SlideBodyPart(i, j, k == 1);
                         if (CheckSlideValidity(tmp, true))
                             VALIDPATHS.Add((tmp, CreateSlidePath(tmp).MinDuration));
                     }
@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         //
         // Discarding redundant mirrors should be used making a list of all the shapes, as to not get identical shapes
         // Not discarding them allows leniency in the check, so that a identical path can still be placed, without needing the mapper to explicitly turn of mirroring for a part.
-        public static bool CheckSlideValidity(PathParameters param, bool discardRedundantMirrors = false)
+        public static bool CheckSlideValidity(SlideBodyPart param, bool discardRedundantMirrors = false)
         {
             int normalizedEnd = param.EndOffset.NormalizePath();
             bool mirrored = param.Mirrored;
@@ -74,8 +74,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             return false;
         }
 
-        public static SentakkiSlidePath CreateSlidePath(params PathParameters[] pathParameters) => CreateSlidePath(0, pathParameters);
-        public static SentakkiSlidePath CreateSlidePath(int startOffset, params PathParameters[] pathParameters)
+        public static SentakkiSlidePath CreateSlidePath(params SlideBodyPart[] pathParameters) => CreateSlidePath(0, pathParameters);
+        public static SentakkiSlidePath CreateSlidePath(int startOffset, params SlideBodyPart[] pathParameters)
         {
             List<SliderPath> slideSegments = new List<SliderPath>();
 

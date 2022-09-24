@@ -10,7 +10,6 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
-using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
@@ -68,15 +67,15 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 SlideInfoList = new List<SlideBodyInfo>
                 {
                     new SlideBodyInfo {
-                        PathParameters = new []{new PathParameters(SlidePaths.PathShapes.Circle, 0, false)},
+                        PathParameters = new []{new SlideBodyPart(SlidePaths.PathShapes.Circle, 0, false)},
                         Duration = 1000,
                     },
                     new SlideBodyInfo {
-                        PathParameters = new []{new PathParameters(SlidePaths.PathShapes.Straight, 4, false)},
+                        PathParameters = new []{new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false)},
                         Duration = 1500,
                     },
                     new SlideBodyInfo {
-                        PathParameters = new []{new PathParameters(SlidePaths.PathShapes.Cup, 2, false)},
+                        PathParameters = new []{new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false)},
                         Duration = 2000,
                     }
                 },
@@ -109,10 +108,10 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 {
                     new SlideBodyInfo {
                         PathParameters = new []{
-                            new PathParameters(SlidePaths.PathShapes.Cup, 2, false),
-                            new PathParameters(SlidePaths.PathShapes.Cup, 2, false),
-                            new PathParameters(SlidePaths.PathShapes.Cup, 2, false),
-                            new PathParameters(SlidePaths.PathShapes.Cup, 2, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
                         },
                         Duration = duration,
                     },
@@ -145,11 +144,11 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 {
                     new SlideBodyInfo {
                         PathParameters = new []{
-                            new PathParameters(SlidePaths.PathShapes.Cup, 2, false),
-                            new PathParameters(SlidePaths.PathShapes.Cup, 2, false),
-                            new PathParameters(SlidePaths.PathShapes.Cup, 2, false),
-                            new PathParameters(SlidePaths.PathShapes.Cup, 2, false),
-                            new PathParameters(SlidePaths.PathShapes.Fan, 4, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false),
                         },
                         Duration = duration,
                     },
