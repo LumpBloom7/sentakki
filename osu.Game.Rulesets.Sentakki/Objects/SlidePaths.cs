@@ -40,7 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // Checks if a slide is valid given parameters
         //
         // Discarding redundant mirrors should be used making a list of all the shapes, as to not get identical shapes
-        // Not discarding them allows leniency in the check, so that a identical path can still be placed, without needing the mapper to explicitly turn of mirroring for a part.
+        // Not discarding them allows leniency in the check, so that a identical path can still be placed, without needing the mapper to explicitly turn off mirroring for a part.
         public static bool CheckSlideValidity(SlideBodyPart param, bool discardRedundantMirrors = false)
         {
             int normalizedEnd = param.EndOffset.NormalizePath();

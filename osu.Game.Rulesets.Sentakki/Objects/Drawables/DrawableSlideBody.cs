@@ -4,7 +4,6 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Utils;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -38,15 +37,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 starProgress = value;
 
-                for (int i = 0; i < 3; ++i)
+                for (int i = 2; i >= 0; --i)
                 {
-                    if (i != 2 && value < Slidepath.Path.FanStartProgress)
-                        continue;
-
                     int laneOffset = ((i * 2) - 1) % 3;
 
                     SlideStars[i].Position = Slidepath.Path.PositionAt(value, laneOffset);
                     SlideStars[i].Rotation = Slidepath.Path.PositionAt(value - .01f, laneOffset).GetDegreesFromPosition(Slidepath.Path.PositionAt(value + .01f, laneOffset));
+
+                    if (i != 2 && value < Slidepath.Path.FanStartProgress)
+                        break;
                 }
             }
         }
