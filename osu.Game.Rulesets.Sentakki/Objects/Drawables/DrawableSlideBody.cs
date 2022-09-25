@@ -25,20 +25,27 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public Container<DrawableSlideCheckpoint> SlideCheckpoints { get; private set; }
 
-        public ISlideVisual Slidepath;
+        public SlideVisual Slidepath;
+
         public Container<StarPiece> SlideStars;
 
-        protected float StarProg;
+        private float starProgress;
         public virtual float StarProgress
         {
-            get => StarProg;
+            get => starProgress;
             set
             {
-                StarProg = value;
-                foreach (var slideStar in SlideStars)
+                starProgress = value;
+
+                for (int i = 2; i >= 0; --i)
                 {
-                    slideStar.Position = ((SlideVisual)Slidepath).Path.PositionAt(value);
-                    slideStar.Rotation = ((SlideVisual)Slidepath).Path.PositionAt(value - .01f).GetDegreesFromPosition(((SlideVisual)Slidepath).Path.PositionAt(value + .01f));
+                    int laneOffset = ((i * 2) - 1) % 3;
+
+                    SlideStars[i].Position = Slidepath.Path.PositionAt(value, laneOffset);
+                    SlideStars[i].Rotation = Slidepath.Path.PositionAt(value - .01f, laneOffset).GetDegreesFromPosition(Slidepath.Path.PositionAt(value + .01f, laneOffset));
+
+                    if (i != 2 && value < Slidepath.Path.FanStartProgress)
+                        break;
                 }
             }
         }
@@ -47,26 +54,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableSlideBody(SlideBody hitObject)
             : base(hitObject) { }
 
-        protected virtual ISlideVisual CreateSlideVisuals() => new SlideVisual();
-
-        protected virtual void CreateSlideStars()
-        {
-            SlideStars.Add(new StarPiece
-            {
-                Alpha = 0,
-                Scale = Vector2.Zero,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Position = SentakkiExtensions.GetCircularPosition(296.5f, 22.5f),
-                RelativeSizeAxes = Axes.None,
-            });
-        }
-
-        protected virtual void UpdateSlidePath()
-        {
-            ((SlideVisual)Slidepath).Path = HitObject.SlideInfo.SlidePath;
-        }
-
         [BackgroundDependencyLoader(true)]
         private void load()
         {
@@ -74,10 +61,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Rotation = -22.5f;
-            Slidepath = CreateSlideVisuals();
+
             AddRangeInternal(new Drawable[]
             {
-                (Drawable)Slidepath,
+                Slidepath = new SlideVisual(),
                 SlideStars = new Container<StarPiece>{
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -89,7 +76,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 },
             });
 
-            CreateSlideStars();
+            for (int i = 0; i < 3; ++i)
+                SlideStars.Add(new StarPiece
+                {
+                    Alpha = 0,
+                    Scale = Vector2.Zero,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Position = SentakkiExtensions.GetCircularPosition(296.5f, 22.5f),
+                    RelativeSizeAxes = Axes.None,
+                });
 
             AccentColour.BindValueChanged(c => Colour = c.NewValue);
             OnNewResult += queueProgressUpdate;
@@ -99,7 +95,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void OnApply()
         {
             base.OnApply();
-            UpdateSlidePath();
+            Slidepath.Path = HitObject.SlideInfo.SlidePath;
             updatePathProgress();
             StarProgress = 0;
         }
@@ -150,12 +146,29 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateInitialTransforms();
             Slidepath.PerformEntryAnimation(AdjustedAnimationDuration);
-            using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
+            using (BeginAbsoluteSequence(HitObject.StartTime - 50))
             {
-                foreach (var slideStar in SlideStars)
-                    slideStar.FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
+                SlideStars[2].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
+                SlideStars[0].FadeOut().ScaleTo(1.25f, HitObject.ShootDelay);
+                SlideStars[1].FadeOut().ScaleTo(1.25f, HitObject.ShootDelay);
 
-                this.Delay(50 + HitObject.ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
+                if (Slidepath.Path.StartsWithSlideFan)
+                {
+                    SlideStars[0].FadeInFromZero(HitObject.ShootDelay);
+                    SlideStars[1].FadeInFromZero(HitObject.ShootDelay);
+                }
+
+                using (BeginDelayedSequence(50 + HitObject.ShootDelay))
+                {
+                    if (!Slidepath.Path.StartsWithSlideFan && Slidepath.Path.EndsWithSlideFan)
+                        using (BeginDelayedSequence((HitObject.Duration - HitObject.ShootDelay) * Slidepath.Path.FanStartProgress))
+                        {
+                            SlideStars[0].FadeIn();
+                            SlideStars[1].FadeIn();
+                        }
+
+                    this.TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
+                }
             }
         }
 

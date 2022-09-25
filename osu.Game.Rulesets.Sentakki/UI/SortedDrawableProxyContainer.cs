@@ -17,7 +17,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public void Add(Drawable proxy, DrawableHitObject hitObject)
         {
-
             var startTimeBindable = hitObject.StartTimeBindable.GetBoundCopy();
             startTimeBindable.BindValueChanged(s =>
             {

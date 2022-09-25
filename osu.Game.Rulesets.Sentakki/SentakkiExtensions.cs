@@ -1,7 +1,6 @@
 using System;
 using osu.Framework.Extensions;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
 
@@ -35,12 +34,8 @@ namespace osu.Game.Rulesets.Sentakki
             return x;
         }
 
-        public static float GetRotationForLane(this int lane)
-        {
-            while (lane < 0) lane += 8;
-            lane %= 8;
-            return SentakkiPlayfield.LANEANGLES[lane];
-        }
+        public static float GetRotationForLane(this int lane) => 22.5f + (lane * 45);
+
         public static Vector2 GetPositionAlongLane(float distance, int lane) => GetCircularPosition(distance, lane.GetRotationForLane());
 
         public static Vector2 GetCircularPosition(float distance, float angle)
