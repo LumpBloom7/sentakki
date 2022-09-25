@@ -55,10 +55,10 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 if (mirrored && laned is Slide slide)
                     foreach (var slideInfo in slide.SlideInfoList)
                     {
-                        foreach (var param in slideInfo.PathParameters)
+                        foreach (var part in slideInfo.SlidePathParts)
                         {
-                            param.EndOffset = (param.EndOffset * -1).NormalizePath();
-                            param.Mirrored ^= mirrored;
+                            part.EndOffset = (part.EndOffset * -1).NormalizePath();
+                            part.Mirrored ^= mirrored;
                         }
                         slideInfo.UpdatePaths();
                     }

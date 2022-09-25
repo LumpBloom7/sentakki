@@ -197,7 +197,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             // If there is a SlideFan, we always prioritize that, and ignore the rest
             foreach (var slide in slides)
-                if (slide.SlideInfoList[0].PathParameters[0].Shape == SlidePaths.PathShapes.Fan)
+                if (slide.SlideInfoList[0].SlidePathParts[0].Shape == SlidePaths.PathShapes.Fan)
                 {
                     yield return slide;
                     yield break;
@@ -300,7 +300,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 SlideInfoList = new List<SlideBodyInfo>{
                     new SlideBodyInfo{
-                        PathParameters = new SlideBodyPart[]{selectedPath},
+                        SlidePathParts = new SlideBodyPart[]{selectedPath},
                         Duration = ((IHasDuration)original).Duration
                     }
                 },

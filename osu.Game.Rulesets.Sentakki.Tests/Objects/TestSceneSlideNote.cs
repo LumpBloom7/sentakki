@@ -67,15 +67,15 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 SlideInfoList = new List<SlideBodyInfo>
                 {
                     new SlideBodyInfo {
-                        PathParameters = new []{new SlideBodyPart(SlidePaths.PathShapes.Circle, 0, false)},
+                        SlidePathParts = new []{new SlideBodyPart(SlidePaths.PathShapes.Circle, 0, false)},
                         Duration = 1000,
                     },
                     new SlideBodyInfo {
-                        PathParameters = new []{new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false)},
+                        SlidePathParts = new []{new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false)},
                         Duration = 1500,
                     },
                     new SlideBodyInfo {
-                        PathParameters = new []{new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false)},
+                        SlidePathParts = new []{new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false)},
                         Duration = 2000,
                     }
                 },
@@ -107,7 +107,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 SlideInfoList = new List<SlideBodyInfo>
                 {
                     new SlideBodyInfo {
-                        PathParameters = new []{
+                        SlidePathParts = new []{
                             new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
                             new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
                             new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
@@ -143,7 +143,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 SlideInfoList = new List<SlideBodyInfo>
                 {
                     new SlideBodyInfo {
-                        PathParameters = new []{
+                        SlidePathParts = new []{
                             new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
                             new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
                             new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),

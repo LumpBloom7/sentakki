@@ -54,7 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 SlideInfoList = new List<SlideBodyInfo>
                 {
                     new SlideBodyInfo {
-                        PathParameters = new[] {new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false)},
+                        SlidePathParts = new[] {new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false)},
                         Duration = 1000,
                     },
                 },
