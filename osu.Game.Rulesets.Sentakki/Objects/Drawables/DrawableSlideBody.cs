@@ -23,11 +23,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override double InitialLifetimeOffset => base.InitialLifetimeOffset;
 
-        public Container<DrawableSlideCheckpoint> SlideCheckpoints { get; private set; }
+        public Container<DrawableSlideCheckpoint> SlideCheckpoints { get; private set; } = null!;
 
-        public SlideVisual Slidepath;
+        public SlideVisual Slidepath { get; private set; } = null!;
 
-        public Container<StarPiece> SlideStars;
+        public Container<StarPiece> SlideStars { get; private set; } = null!;
 
         private float starProgress;
         public virtual float StarProgress
@@ -51,10 +51,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         public DrawableSlideBody() : this(null) { }
-        public DrawableSlideBody(SlideBody hitObject)
+        public DrawableSlideBody(SlideBody? hitObject)
             : base(hitObject) { }
 
-        [BackgroundDependencyLoader(true)]
+        [BackgroundDependencyLoader]
         private void load()
         {
             Size = Vector2.Zero;

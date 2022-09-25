@@ -53,8 +53,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         public readonly Bindable<bool> NoteStartIndicators = new Bindable<bool>(false);
         private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
 
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager settings)
+        [BackgroundDependencyLoader]
+        private void load(SentakkiRulesetConfigManager? settings)
         {
             settings?.BindWith(SentakkiRulesetSettings.RingOpacity, RingOpacity);
             RingOpacity.BindValueChanged(opacity => Alpha = opacity.NewValue);

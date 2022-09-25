@@ -74,7 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap, CancellationToken cancellationToken)
         {
-            if ((original as IHasCombo).NewCombo)
+            if ((original as IHasCombo)?.NewCombo ?? false)
                 patternGenerator.StartNextPattern();
 
             switch (original)
@@ -249,7 +249,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private static SentakkiHitObject createTouchHold(HitObject original) => new TouchHold
         {
             StartTime = original.StartTime,
-            EndTime = (original as IHasDuration).EndTime,
+            EndTime = ((IHasDuration)original).EndTime,
             Samples = original.Samples,
         };
 
@@ -294,8 +294,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 validPaths = pathEnumerable.ToList();
             }
 
-            if (!validPaths.Any()) return null;
+            if (!validPaths.Any()) return null!;
             var selectedPath = validPaths[patternGenerator.RNG.Next(validPaths.Count)];
+
             return new Slide
             {
                 SlideInfoList = new List<SlideBodyInfo>{
@@ -313,10 +314,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         private IEnumerable<Tap> createTapsFromNodes(HitObject original, IList<IList<HitSampleInfo>> nodeSamples, bool isBreak = false)
         {
-            if (original is not IHasPathWithRepeats)
+            if (original is not IHasPathWithRepeats curve)
                 yield break;
 
-            var curve = original as IHasPathWithRepeats;
             double spanDuration = curve.Duration / (curve.RepeatCount + 1);
             bool isRepeatSpam = spanDuration < 75 && curve.RepeatCount > 0;
 

@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new NoteEntry
                 {
                     ObjectName = "Hold",
-                    HitEvents = hitEvents.Where(e => (e.HitObject is Hold x || e.HitObject is Hold.HoldHead) && !(e.HitObject as SentakkiLanedHitObject).Break).ToList(),
+                    HitEvents = hitEvents.Where(e => (e.HitObject is Hold or Hold.HoldHead) && !((SentakkiLanedHitObject)e.HitObject).Break).ToList(),
                     Position = new Vector2(0, .16f),
                     InitialLifetimeOffset = entry_animation_duration * 1
                 },
@@ -73,11 +73,11 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
         public class NoteEntry : Container
         {
             public double InitialLifetimeOffset;
-            private Container progressBox;
-            private RollingCounter<long> noteCounter;
+            private Container progressBox = null!;
+            private RollingCounter<long> noteCounter = null!;
 
             public string ObjectName = "Object";
-            public List<HitEvent> HitEvents;
+            public List<HitEvent> HitEvents = null!;
 
             [BackgroundDependencyLoader]
             private void load(OsuColour colours)

@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
     /// </summary>
     public class SlideFanChevrons : CompositeDrawable
     {
-        private Container<ChevronBackingTexture> chevrons;
+        private Container<ChevronBackingTexture> chevrons = null!;
 
         public SlideFanChevrons()
         {

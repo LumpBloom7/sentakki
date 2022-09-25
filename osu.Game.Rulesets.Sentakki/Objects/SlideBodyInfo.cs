@@ -5,7 +5,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class SlideBodyInfo : IEquatable<SlideBodyInfo>
     {
-        private SlideBodyPart[] slidePathParts;
+        private SlideBodyPart[] slidePathParts = null!;
 
         public SlideBodyPart[] SlidePathParts
         {
@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             }
         }
 
-        public SentakkiSlidePath SlidePath { get; private set; }
+        public SentakkiSlidePath SlidePath { get; private set; } = null!;
 
         // Duration of the slide
         public double Duration;

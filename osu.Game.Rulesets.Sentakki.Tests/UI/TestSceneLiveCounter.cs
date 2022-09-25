@@ -8,7 +8,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
     [TestFixture]
     public class TestSceneLiveCounter : OsuTestScene
     {
-        private LiveCounter counter;
+        private LiveCounter counter = null!;
         private BindableInt lives = new BindableInt
         {
             MaxValue = 500,

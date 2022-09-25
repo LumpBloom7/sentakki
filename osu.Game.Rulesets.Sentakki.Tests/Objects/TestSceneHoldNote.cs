@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             AddStep("Hit Long", () => testSingle(1000, true));
             AddStep("Miss Very Long", () => testSingle(3000));
             AddStep("Hit Very Long", () => testSingle(3000, true));
-            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject) && (h as DrawableSentakkiHitObject).AllJudged == false));
+            AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
         }
 
         private void testSingle(double duration, bool auto = false)

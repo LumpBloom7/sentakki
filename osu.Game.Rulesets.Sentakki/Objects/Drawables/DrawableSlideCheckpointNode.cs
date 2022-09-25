@@ -20,11 +20,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public override bool HandlePositionalInput => true;
         public override bool DisplayResult => false;
 
-        private SentakkiInputManager sentakkiActionInputManager;
-        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
+        private SentakkiInputManager sentakkiActionInputManager = null!;
+        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= ((SentakkiInputManager)GetContainingInputManager());
 
         public DrawableSlideCheckpointNode() : this(null) { }
-        public DrawableSlideCheckpointNode(SlideCheckpoint.CheckpointNode node)
+        public DrawableSlideCheckpointNode(SlideCheckpoint.CheckpointNode? node)
             : base(node)
         {
             Anchor = Anchor.Centre;

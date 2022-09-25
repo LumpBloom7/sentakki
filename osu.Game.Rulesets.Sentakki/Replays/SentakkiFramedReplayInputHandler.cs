@@ -15,7 +15,7 @@ namespace osu.Game.Rulesets.Sentakki.Replays
         }
 
         protected override bool IsImportant(SentakkiReplayFrame frame) => true;
-        public bool UsingSensorMode => CurrentFrame.UsingSensorMode;
+        public bool UsingSensorMode => CurrentFrame?.UsingSensorMode ?? false;
 
         protected Vector2 Position
         {

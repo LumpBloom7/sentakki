@@ -26,7 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.Replays
             UsingSensorMode = usingSensorMode;
         }
 
-        public void FromLegacy(LegacyReplayFrame currentFrame, IBeatmap beatmap, ReplayFrame lastFrame = null)
+        public void FromLegacy(LegacyReplayFrame currentFrame, IBeatmap beatmap, ReplayFrame? lastFrame = null)
         {
             Position = currentFrame.Position;
 

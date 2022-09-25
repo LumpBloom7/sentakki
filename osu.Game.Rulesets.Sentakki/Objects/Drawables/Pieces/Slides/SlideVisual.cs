@@ -27,7 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             }
         }
 
-        private SentakkiSlidePath path;
+        private SentakkiSlidePath path = null!;
 
         public SentakkiSlidePath Path
         {
@@ -52,17 +52,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             Origin = Anchor.Centre;
         }
 
-        [Resolved(canBeNull: true)]
-        private DrawablePool<SlideChevron> chevronPool { get; set; }
+        [Resolved]
+        private DrawablePool<SlideChevron>? chevronPool { get; set; } = null!;
 
-        private Container chevrons;
+        private Container chevrons = null!;
 
         private readonly BindableBool snakingIn = new BindableBool(true);
 
         private List<SlideFanChevron> fanChevrons = new List<SlideFanChevron>();
 
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfig, SlideFanChevrons fanChevrons)
+        [BackgroundDependencyLoader]
+        private void load(SentakkiRulesetConfigManager? sentakkiConfig, SlideFanChevrons? fanChevrons)
         {
             sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
 
@@ -98,6 +98,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 
         private void tryCreateRegularChevrons()
         {
+            if (chevronPool is null)
+                return;
+
             double runningDistance = 0;
             foreach (var path in path.SlideSegments)
             {

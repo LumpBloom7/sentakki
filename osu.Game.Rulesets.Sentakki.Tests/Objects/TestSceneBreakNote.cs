@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
             AddStep("Miss Single", () => testSingle());
             AddStep("Hit Single", () => testSingle(true));
-            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject) && (h as DrawableSentakkiHitObject).AllJudged == false));
+            AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
         }
 
         private void testSingle(bool auto = false)

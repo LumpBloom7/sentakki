@@ -21,13 +21,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
         public TouchHoldProgressPiece()
         {
             OsuColour colours = new OsuColour();
-            ProgressBindable.BindValueChanged(p =>
-            {
-                redProgress.Current.Value = Math.Min(p.NewValue, .25);
-                yellowProgress.Current.Value = Math.Min(p.NewValue, .50);
-                greenProgress.Current.Value = Math.Min(p.NewValue, .75);
-                blueProgress.Current.Value = p.NewValue;
-            });
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Masking = true;
@@ -84,6 +77,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                     }
                 }
             };
+
+            ProgressBindable.BindValueChanged(p =>
+            {
+                redProgress.Current.Value = Math.Min(p.NewValue, .25);
+                yellowProgress.Current.Value = Math.Min(p.NewValue, .50);
+                greenProgress.Current.Value = Math.Min(p.NewValue, .75);
+                blueProgress.Current.Value = p.NewValue;
+            });
         }
     }
 }

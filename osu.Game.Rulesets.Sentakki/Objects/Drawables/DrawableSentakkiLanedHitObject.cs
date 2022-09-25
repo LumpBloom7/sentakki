@@ -17,15 +17,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override float SamplePlaybackPosition => (SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, HitObject.Lane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
 
-        private PausableSkinnableSound breakSample;
+        private PausableSkinnableSound breakSample = null!;
 
-        private Container<DrawableScorePaddingObject> scorePaddingObjects;
+        private Container<DrawableScorePaddingObject> scorePaddingObjects = null!;
 
-        public DrawableSentakkiLanedHitObject(SentakkiLanedHitObject hitObject)
+        public DrawableSentakkiLanedHitObject(SentakkiLanedHitObject? hitObject)
                     : base(hitObject) { }
 
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfig)
+        [BackgroundDependencyLoader]
+        private void load(SentakkiRulesetConfigManager? sentakkiConfig)
         {
             AddRangeInternal(new Drawable[]{
                 scorePaddingObjects = new Container<DrawableScorePaddingObject>(),
