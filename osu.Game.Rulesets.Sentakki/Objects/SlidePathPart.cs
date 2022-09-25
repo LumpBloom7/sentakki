@@ -15,15 +15,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Mirrored = mirrored;
         }
 
-        public override bool Equals(object obj)
-        {
-            if (obj is not SlideBodyPart otherPart)
-                return false;
+        public override bool Equals(object obj) => obj is SlideBodyPart otherPart && Equals(otherPart);
 
-            return Equals(otherPart);
-        }
-
-        public bool Equals(SlideBodyPart other) => Shape == other.Shape && EndOffset == EndOffset;
+        public bool Equals(SlideBodyPart other) => ReferenceEquals(this, other) || (Shape == other.Shape && EndOffset == EndOffset);
 
         public override int GetHashCode() => HashCode.Combine(Shape, EndOffset, Mirrored);
     }

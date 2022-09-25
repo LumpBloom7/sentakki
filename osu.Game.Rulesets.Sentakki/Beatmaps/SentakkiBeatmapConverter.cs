@@ -207,7 +207,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             if (slides.Count == 2 && slides[0].Lane == slides[1].Lane)
             {
                 // We merge both slides only if they both have the same pattern AND orientation
-                if (slides[0] == slides[1])
+                if (slides[0].SlideInfoList[0].Equals(slides[1].SlideInfoList[0]))
                     slides[0].SlideInfoList.AddRange(slides[1].SlideInfoList);
 
                 slides.RemoveAt(1);
