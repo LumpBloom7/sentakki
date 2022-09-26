@@ -26,20 +26,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public DrawableSentakkiHitObject() : this(null) { }
 
-        public DrawableSentakkiHitObject(SentakkiHitObject hitObject = null)
-            : base(hitObject) { }
+        public DrawableSentakkiHitObject(SentakkiHitObject? hitObject = null)
+            : base(hitObject!) { }
 
-        private DrawableSentakkiRuleset drawableSentakkiRuleset;
+        [Resolved]
+        private DrawableSentakkiRuleset? drawableSentakkiRuleset { get; set; }
 
         public double GameplaySpeed => drawableSentakkiRuleset?.GameplaySpeed ?? 1;
 
         protected double AdjustedAnimationDuration => AnimationDuration.Value * GameplaySpeed;
-
-        [BackgroundDependencyLoader(true)]
-        private void load(DrawableSentakkiRuleset drawableRuleset)
-        {
-            drawableSentakkiRuleset = drawableRuleset;
-        }
 
         protected override void LoadAsyncComplete()
         {

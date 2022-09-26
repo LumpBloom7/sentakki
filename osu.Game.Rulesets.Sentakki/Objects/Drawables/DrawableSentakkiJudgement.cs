@@ -20,16 +20,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         public override bool RemoveCompletedTransforms => false;
 
-        private Container judgementBody;
-        private SentakkiJudgementPiece judgementPiece;
-        private OsuSpriteText timingPiece;
+        private Container judgementBody = null!;
+        private SentakkiJudgementPiece judgementPiece = null!;
+        private OsuSpriteText timingPiece = null!;
 
         private HitResult result = HitResult.Good;
 
         private readonly BindableBool detailedJudgements = new BindableBool();
 
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
+        [BackgroundDependencyLoader]
+        private void load(SentakkiRulesetConfigManager? sentakkiConfigs)
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.DetailedJudgements, detailedJudgements);
 

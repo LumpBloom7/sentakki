@@ -15,8 +15,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
     // Contains extra functionality to better propogate touch input to Touch notes, and avoids some double hit weirdness
     public class TouchPlayfield : Playfield
     {
-        private SentakkiInputManager sentakkiActionInputManager;
-        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
+        private SentakkiInputManager sentakkiActionInputManager = null!;
+        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
 
         public TouchPlayfield()
         {
@@ -25,15 +25,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
             RelativeSizeAxes = Axes.Both;
         }
 
-        private DrawableSentakkiRuleset drawableSentakkiRuleset;
-        private SentakkiRulesetConfigManager sentakkiRulesetConfig;
+        [Resolved]
+        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; } = null!;
 
-        [BackgroundDependencyLoader(true)]
-        private void load(DrawableSentakkiRuleset drawableRuleset, SentakkiRulesetConfigManager sentakkiRulesetConfigManager)
+        [Resolved]
+        private SentakkiRulesetConfigManager? sentakkiRulesetConfig { get; set; }
+
+        [BackgroundDependencyLoader]
+        private void load()
         {
-            drawableSentakkiRuleset = drawableRuleset;
-            sentakkiRulesetConfig = sentakkiRulesetConfigManager;
-
             RegisterPool<Objects.Touch, DrawableTouch>(8);
         }
 
@@ -79,7 +79,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             foreach (DrawableTouch touch in aliveTouchNotes)
             {
-                if (hasAction && touch.ReceivePositionalInputAt(pointerPosition.Value))
+                if (hasAction && touch.ReceivePositionalInputAt(pointerPosition!.Value))
                 {
                     if (!touch.PointInteractionState[pointID])
                     {

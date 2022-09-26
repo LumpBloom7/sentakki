@@ -52,7 +52,7 @@ namespace osu.Game.Rulesets.Sentakki
 
         public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor(this);
 
-        public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod> mods) =>
+        public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod>? mods) =>
             new DrawableSentakkiRuleset(this, beatmap, mods);
 
         public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) =>
@@ -119,7 +119,7 @@ namespace osu.Game.Rulesets.Sentakki
 
         public override RulesetSettingsSubsection CreateSettings() => new SentakkiSettingsSubsection(this);
 
-        public override IRulesetConfigManager CreateConfig(SettingsStore settings) => new SentakkiRulesetConfigManager(settings, RulesetInfo);
+        public override IRulesetConfigManager CreateConfig(SettingsStore? settings) => new SentakkiRulesetConfigManager(settings, RulesetInfo);
 
         public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) => new[]
         {
@@ -201,7 +201,7 @@ namespace osu.Game.Rulesets.Sentakki
             }
 
             // We don't want to generate a new texture store everytime this used, so we create a single texture store for all usages of this icon.
-            private static LargeTextureStore textureStore;
+            private static LargeTextureStore textureStore = null!;
 
             [BackgroundDependencyLoader]
             private void load(GameHost host)

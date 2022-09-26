@@ -90,17 +90,17 @@ namespace osu.Game.Rulesets.Sentakki.UI
         }
 
         [Resolved]
-        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; }
+        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; } = null!;
 
-        [Resolved(canBeNull: true)]
-        private SentakkiRulesetConfigManager sentakkiRulesetConfig { get; set; }
+        [Resolved]
+        private SentakkiRulesetConfigManager? sentakkiRulesetConfig { get; set; }
 
-        private IBindable<Skin> skin;
-        private Bindable<ColorOption> ringColor = new Bindable<ColorOption>();
+        private IBindable<Skin> skin = null!;
+        private readonly Bindable<ColorOption> ringColor = new Bindable<ColorOption>();
 
-        private IBindable<StarDifficulty?> beatmapDifficulty;
+        private IBindable<StarDifficulty?>? beatmapDifficulty;
 
-        [BackgroundDependencyLoader(true)]
+        [BackgroundDependencyLoader]
         private void load(SkinManager skinManager, IBeatmap beatmap, BeatmapDifficultyCache difficultyCache)
         {
             RegisterPool<TouchHold, DrawableTouchHold>(2);
@@ -159,14 +159,14 @@ namespace osu.Game.Rulesets.Sentakki.UI
         }
 
         [Resolved]
-        private OsuColour colours { get; set; }
+        private OsuColour colours { get; set; } = null!;
 
         private void changePlayfieldAccent()
         {
             switch (ringColor.Value)
             {
                 case ColorOption.Difficulty:
-                    AccentContainer.FadeColour(colours.ForDifficultyRating(beatmapDifficulty?.Value.Value.DifficultyRating ?? DifficultyRating.Normal, true), 200);
+                    AccentContainer.FadeColour(colours.ForDifficultyRating(beatmapDifficulty?.Value?.DifficultyRating ?? DifficultyRating.Normal, true), 200);
                     break;
                 case ColorOption.Skin:
                     AccentContainer.FadeColour(skin.Value.GetConfig<GlobalSkinColours, Color4>(GlobalSkinColours.MenuGlow)?.Value ?? Color4.White, 200);

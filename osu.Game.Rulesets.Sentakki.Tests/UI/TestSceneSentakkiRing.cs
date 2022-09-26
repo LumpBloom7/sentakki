@@ -11,7 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
     [TestFixture]
     public class TestSceneSentakkiRing : OsuTestScene
     {
-        private SentakkiRing ring;
+        private SentakkiRing ring = null!;
 
         public TestSceneSentakkiRing()
         {

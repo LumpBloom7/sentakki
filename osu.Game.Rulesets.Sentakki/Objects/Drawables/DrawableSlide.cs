@@ -11,15 +11,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         public override bool DisplayResult => false;
 
-        public Container<DrawableSlideBody> SlideBodies;
-        public Container<DrawableSlideTap> SlideTaps;
+        public Container<DrawableSlideBody> SlideBodies = null!;
+        public Container<DrawableSlideTap> SlideTaps = null!;
 
         public DrawableSlide() : this(null) { }
 
-        public DrawableSlide(SentakkiHitObject hitObject = null)
+        public DrawableSlide(SentakkiHitObject? hitObject = null)
             : base(hitObject) { }
 
-        [BackgroundDependencyLoader(true)]
+        [BackgroundDependencyLoader]
         private void load()
         {
             Size = Vector2.Zero;

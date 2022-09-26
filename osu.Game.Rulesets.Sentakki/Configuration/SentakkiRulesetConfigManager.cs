@@ -5,7 +5,7 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
 {
     public class SentakkiRulesetConfigManager : RulesetConfigManager<SentakkiRulesetSettings>
     {
-        public SentakkiRulesetConfigManager(SettingsStore settings, RulesetInfo ruleset, int? variant = null)
+        public SentakkiRulesetConfigManager(SettingsStore? settings, RulesetInfo ruleset, int? variant = null)
             : base(settings, ruleset, variant)
         {
         }

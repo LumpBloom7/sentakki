@@ -35,9 +35,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public List<SlideBodyInfo> SlideInfoList = new List<SlideBodyInfo>();
 
-        public SlideTap SlideTap { get; private set; }
+        public SlideTap SlideTap { get; private set; } = null!;
 
-        public IList<SlideBody> SlideBodies { get; private set; }
+        public IList<SlideBody> SlideBodies { get; private set; } = null!;
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {

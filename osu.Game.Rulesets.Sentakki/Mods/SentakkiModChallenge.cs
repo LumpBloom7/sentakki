@@ -58,7 +58,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         };
 
         [JsonIgnore]
-        public BindableInt LivesLeft;
+        public BindableInt LivesLeft = null!;
 
         public void ApplyToDrawableRuleset(DrawableRuleset<SentakkiHitObject> drawableRuleset)
         {
@@ -69,7 +69,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 MaxValue = maxLives,
             };
 
-            (drawableRuleset.Playfield as SentakkiPlayfield).AccentContainer.Add(new LiveCounter(LivesLeft));
+            ((SentakkiPlayfield)drawableRuleset.Playfield).AccentContainer.Add(new LiveCounter(LivesLeft));
         }
 
         public void ApplyToHealthProcessor(HealthProcessor healthProcessor)
