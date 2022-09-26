@@ -96,7 +96,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnApply();
             Slidepath.Path = HitObject.SlideInfo.SlidePath;
-            updatePathProgress();
             StarProgress = 0;
         }
 
@@ -120,12 +119,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void Update()
         {
             base.Update();
-            if (pendingProgressUpdate)
-                updatePathProgress();
+
+            if ((pendingProgressUpdate || Clock.ElapsedFrameTime == 0) && State.Value == ArmedState.Idle)
+                updatePathProgress(Time.Current >= HitObject.StartTime);
         }
 
         // Used to hide and show segments accurately
-        private void updatePathProgress()
+        private void updatePathProgress(bool shouldUpdateVisuals)
         {
             float progress = 0;
 
@@ -140,6 +140,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Slidepath.Progress = progress;
 
             pendingProgressUpdate = false;
+
+            if (shouldUpdateVisuals)
+                Slidepath.UpdateProgress();
         }
 
         protected override void UpdateInitialTransforms()
