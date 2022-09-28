@@ -80,11 +80,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void ApplyResult(Action<JudgementResult> application)
         {
-            base.ApplyResult(application);
-
             // Also give Break note score padding a judgement
-            foreach (var breakObj in scorePaddingObjects)
-                breakObj.ApplyResult(application);
+            for (int i = 0; i < scorePaddingObjects.Count; ++i)
+                scorePaddingObjects[^(i + 1)].ApplyResult(application);
+
+            base.ApplyResult(application);
         }
     }
 }
