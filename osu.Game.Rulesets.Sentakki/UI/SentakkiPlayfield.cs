@@ -145,7 +145,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             if (!judgedObject.DisplayResult || !DisplayJudgements.Value || judgedObject is not DrawableSentakkiHitObject sentakkiHitObject)
                 return;
 
-            judgementLayer.Add(judgementPool.Get(j => j.Apply(result, judgedObject)));
+            judgementLayer.Add(judgementPool.Get().Apply(result, judgedObject));
 
             if (!result.IsHit) return;
 
@@ -154,7 +154,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             if (judgedObject.HitObject.Kiai)
                 ring.KiaiBeat();
 
-            var explosion = explosionPool.Get(e => e.Apply(sentakkiHitObject));
+            var explosion = explosionPool.Get().Apply(sentakkiHitObject);
             explosionLayer.Add(explosion);
         }
 

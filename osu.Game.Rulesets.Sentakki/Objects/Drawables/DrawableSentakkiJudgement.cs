@@ -55,7 +55,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             );
         }
 
-        public void Apply(JudgementResult result, DrawableHitObject hitObject)
+        public DrawableSentakkiJudgement Apply(JudgementResult result, DrawableHitObject hitObject)
         {
             this.result = result.Type;
             judgementPiece.JudgementText.Text = result.Type.GetDisplayNameForSentakkiResult().ToUpperInvariant();
@@ -97,6 +97,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Rotation = 0;
                     break;
             }
+
+            return this;
         }
 
         protected override void PrepareForUse()
