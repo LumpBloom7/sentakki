@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -31,7 +30,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             }
         }
 
-        public void UpdateProgress()
+        public void updateChevronVisibility()
         {
             for (int i = 0; i < chevrons.Count; i++)
                 ISlideChevron.UpdateProgress((ISlideChevron)chevrons[i], Progress);
@@ -178,7 +177,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             {
                 var chevron = chevrons[i];
 
-                if (((ISlideChevron)chevron).Progress < Progress)
+                if (((ISlideChevron)chevron).Progress <= Progress)
                 {
                     chevron.FadeOut();
                     continue;

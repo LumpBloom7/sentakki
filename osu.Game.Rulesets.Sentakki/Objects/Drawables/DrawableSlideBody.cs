@@ -88,8 +88,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 });
 
             AccentColour.BindValueChanged(c => Colour = c.NewValue);
-            OnNewResult += queueProgressUpdate;
-            OnRevertResult += queueProgressUpdate;
+            OnNewResult += updateSlideCompletion;
+            OnRevertResult += updateSlideCompletion;
         }
 
         protected override void OnApply()
@@ -105,27 +105,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Slidepath.Free();
         }
 
-        // We want to ensure that the correct progress is visually shown on screen
-        // I don't think that OnRevert of HitObjects is ordered properly
-        // So just to make sure, when multiple OnReverts are called, we just queue for a forced update on the visuals
-        // This makes sure that we always have the right visuals shown.
-        private bool pendingProgressUpdate;
-
-        private void queueProgressUpdate(DrawableHitObject hitObject, JudgementResult result)
+        // Updates the path to have correct information of completion progress, then updates the visuals
+        private void updateSlideCompletion(DrawableHitObject hitObject, JudgementResult result)
         {
-            pendingProgressUpdate = true;
+            updateCompletionProgress();
+            Slidepath.updateChevronVisibility();
         }
 
         protected override void Update()
         {
             base.Update();
 
-            if ((pendingProgressUpdate || Clock.ElapsedFrameTime == 0) && State.Value == ArmedState.Idle)
-                updatePathProgress(Time.Current >= HitObject.StartTime);
+            // This is purely here to ensure the the visuals are more or less correct during rewind
+            if (Clock.Rate <= 0 && Time.Current >= HitObject.StartTime)
+                Slidepath.updateChevronVisibility();
         }
 
         // Used to hide and show segments accurately
-        private void updatePathProgress(bool shouldUpdateVisuals)
+        private void updateCompletionProgress()
         {
             float progress = 0;
 
@@ -138,11 +135,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
 
             Slidepath.Progress = progress;
-
-            pendingProgressUpdate = false;
-
-            if (shouldUpdateVisuals)
-                Slidepath.UpdateProgress();
         }
 
         protected override void UpdateInitialTransforms()
