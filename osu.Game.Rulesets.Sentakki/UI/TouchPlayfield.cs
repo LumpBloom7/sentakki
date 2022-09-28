@@ -95,16 +95,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
         }
 
         // This HOC is specially built accommodate the custom input required to handle touch (even though I think the beatmap conversion is at fault)
-        // This HOC provides a completely tangible list of objects updated every time hitobjects life changes, rather than a query to fetch all objects
         private class TouchHitObjectContainer : HitObjectContainer
         {
-            // This is exposed to allow TouchPlayfield to
+            // This is exposed to allow TouchPlayfield to iterate through touch objects without LINQ/ToList related allocations.
+            // We pool DrawableTouch objects, and no other object shares this container, so it should be safe
             public SortedList<Drawable> AliveTouchNotes => (SortedList<Drawable>)AliveInternalChildren;
-
-            protected override bool UpdateChildrenLife()
-            {
-                return base.UpdateChildrenLife();
-            }
         }
     }
 }
