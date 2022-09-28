@@ -117,7 +117,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.Update();
 
             // This is purely here to ensure the the visuals are more or less correct during rewind
-            if (Clock.Rate <= 0 && Time.Current >= HitObject.StartTime)
+            if (Clock.Rate <= 0 && Time.Current >= HitObject.StartTime && State.Value == ArmedState.Idle)
                 Slidepath.updateChevronVisibility();
         }
 
