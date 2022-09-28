@@ -1,8 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
+using osu.Framework.Lists;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
@@ -43,13 +42,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private TouchHitObjectContainer touchHitObjectContainer => (TouchHitObjectContainer)HitObjectContainer;
 
-        private List<DrawableTouch> aliveTouchNotes => touchHitObjectContainer.AliveTouchNotes;
+        private SortedList<Drawable> aliveTouchNotes => touchHitObjectContainer.AliveTouchNotes;
 
         protected override void Update()
         {
             base.Update();
 
-            if (!aliveTouchNotes.Any()) return;
+            if (aliveTouchNotes.Count <= 0) return;
 
             // Handle mouse input
             var mousePosition = SentakkiActionInputManager.CurrentState.Mouse.Position;
@@ -99,19 +98,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
         // This HOC provides a completely tangible list of objects updated every time hitobjects life changes, rather than a query to fetch all objects
         private class TouchHitObjectContainer : HitObjectContainer
         {
-            // This list is exposed to the playfield, so that it can get a list of all objects
-            // To prevent this query from being executed 11 times in a single input handling cycle
-            // This updates when notes become alive/dead, instead of letting the playfield touch handler from polling every frame
-            public List<DrawableTouch> AliveTouchNotes = new List<DrawableTouch>();
+            // This is exposed to allow TouchPlayfield to
+            public SortedList<Drawable> AliveTouchNotes => (SortedList<Drawable>)AliveInternalChildren;
 
             protected override bool UpdateChildrenLife()
             {
-                if (base.UpdateChildrenLife())
-                {
-                    AliveTouchNotes = AliveObjects.OfType<DrawableTouch>().ToList();
-                    return true;
-                }
-                return false;
+                return base.UpdateChildrenLife();
             }
         }
     }
