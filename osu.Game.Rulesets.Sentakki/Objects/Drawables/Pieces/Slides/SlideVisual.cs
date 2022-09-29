@@ -27,6 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 path = value;
                 Progress = 0;
                 updateVisuals();
+                updateChevronVisibility();
             }
         }
 
@@ -151,14 +152,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         {
             if (snakingIn.Value)
             {
-                double fadeDuration = duration / 2 / chevrons.Count;
+                double fadeDuration = duration / chevrons.Count;
                 double currentOffset = duration / 2;
+                double offsetIncrement = (duration - currentOffset - fadeDuration) / (chevrons.Count - 1);
+
                 for (int j = chevrons.Count - 1; j >= 0; j--)
                 {
                     var chevron = chevrons[j];
                     chevron.FadeOut().Delay(currentOffset).FadeIn(fadeDuration);
 
-                    currentOffset += fadeDuration / 2;
+                    currentOffset += offsetIncrement;
                 }
             }
             else
