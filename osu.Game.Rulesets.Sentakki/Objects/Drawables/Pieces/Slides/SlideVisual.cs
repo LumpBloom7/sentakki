@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -16,16 +15,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
 
-        private double progress;
-        public double Progress
-        {
-            get => progress;
-            set
-            {
-                progress = value;
-                updateProgress();
-            }
-        }
+        public double Progress { get; set; }
 
         private SentakkiSlidePath path = null!;
 
@@ -35,15 +25,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             set
             {
                 path = value;
+                Progress = 0;
                 updateVisuals();
-                updateProgress();
             }
         }
 
-        private void updateProgress()
+        public void updateChevronVisibility()
         {
             for (int i = 0; i < chevrons.Count; i++)
-                ISlideChevron.UpdateProgress((ISlideChevron)chevrons[i], progress);
+                ISlideChevron.UpdateProgress((ISlideChevron)chevrons[i], Progress);
         }
 
         public SlideVisual()
@@ -161,12 +151,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         {
             if (snakingIn.Value)
             {
-                double fadeDuration = duration / chevrons.Count;
+                double fadeDuration = duration / 2 / chevrons.Count;
                 double currentOffset = duration / 2;
                 for (int j = chevrons.Count - 1; j >= 0; j--)
                 {
                     var chevron = chevrons[j];
-                    chevron.FadeOut().Delay(currentOffset).FadeIn(fadeDuration * 2).Finally(finalSteps);
+                    chevron.FadeOut().Delay(currentOffset).FadeIn(fadeDuration);
+
                     currentOffset += fadeDuration / 2;
                 }
             }
@@ -174,24 +165,33 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             {
                 chevrons.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
             }
-
-            void finalSteps(Drawable chevron) => ISlideChevron.UpdateProgress((ISlideChevron)chevron, progress);
         }
 
         public void PerformExitAnimation(double duration)
         {
-            int chevronsLeft = chevrons.Children.Count(c => c.Alpha != 0);
-            double fadeDuration = duration / chevronsLeft;
+            bool found = false;
+            double fadeDuration = 0;
             double currentOffset = 0;
-            for (int j = chevrons.Count - 1; j >= 0; j--)
+
+            for (int i = 0; i < chevrons.Count; ++i)
             {
-                var chevron = chevrons[j];
-                if (chevron.Alpha == 0)
+                var chevron = chevrons[i];
+
+                if (((ISlideChevron)chevron).Progress <= Progress)
                 {
+                    chevron.FadeOut();
                     continue;
                 }
-                chevron.Delay(currentOffset).FadeOut(fadeDuration * 2);
-                currentOffset += fadeDuration / 2;
+
+                if (!found)
+                {
+                    found = true;
+                    fadeDuration = duration / (chevrons.Count - i);
+                    currentOffset = (fadeDuration / 2) * (chevrons.Count - i);
+                }
+
+                chevron.FadeIn().Delay(currentOffset).FadeOut(fadeDuration);
+                currentOffset -= fadeDuration / 2;
             }
         }
 
