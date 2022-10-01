@@ -7,7 +7,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         public DrawableHoldHead() : this(null) { }
 
-        public DrawableHoldHead(Hold.HoldHead hitObject)
+        public DrawableHoldHead(Hold.HoldHead? hitObject)
             : base(hitObject)
         {
         }

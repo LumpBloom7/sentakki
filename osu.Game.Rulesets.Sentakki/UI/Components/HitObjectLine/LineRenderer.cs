@@ -33,11 +33,11 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private readonly BindableDouble animationDuration = new BindableDouble(1000);
 
-        [Resolved(canBeNull: true)]
-        private DrawableSentakkiRuleset drawableRuleset { get; set; }
+        [Resolved]
+        private DrawableSentakkiRuleset? drawableRuleset { get; set; }
 
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
+        [BackgroundDependencyLoader]
+        private void load(SentakkiRulesetConfigManager? sentakkiConfigs)
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
 

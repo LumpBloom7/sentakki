@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
     {
         public int LaneNumber { get; set; }
 
-        public Action<Drawable> OnLoaded;
+        public Action<Drawable> OnLoaded = null!;
 
         public Lane()
         {
@@ -38,15 +38,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
             updateInputState();
         }
 
-        private DrawableSentakkiRuleset drawableSentakkiRuleset;
-        private SentakkiRulesetConfigManager sentakkiRulesetConfig;
+        [Resolved]
+        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; } = null!;
 
-        [BackgroundDependencyLoader(true)]
-        private void load(DrawableSentakkiRuleset drawableRuleset, SentakkiRulesetConfigManager sentakkiRulesetConfigManager)
+        [Resolved]
+        private SentakkiRulesetConfigManager? sentakkiRulesetConfig { get; set; }
+
+        [BackgroundDependencyLoader]
+        private void load()
         {
-            drawableSentakkiRuleset = drawableRuleset;
-            sentakkiRulesetConfig = sentakkiRulesetConfigManager;
-
             RegisterPool<Tap, DrawableTap>(8);
 
             RegisterPool<Hold, DrawableHold>(8);
@@ -55,7 +55,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             RegisterPool<Slide, DrawableSlide>(2);
             RegisterPool<SlideTap, DrawableSlideTap>(2);
             RegisterPool<SlideBody, DrawableSlideBody>(2);
-            RegisterPool<SlideFan, DrawableSlideFan>(2);
             RegisterPool<SlideCheckpoint, DrawableSlideCheckpoint>(18);
             RegisterPool<SlideCheckpoint.CheckpointNode, DrawableSlideCheckpointNode>(18);
 
@@ -69,8 +68,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
         #region Input Handling
         private const float receptor_angle_range = 45 * 1.4f;
 
-        private SentakkiInputManager sentakkiActionInputManager;
-        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
+        private SentakkiInputManager sentakkiActionInputManager = null!;
+        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
 
         public override bool HandlePositionalInput => true;
 

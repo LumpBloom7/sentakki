@@ -21,9 +21,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
     [Cached]
     public class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject>
     {
-        private SlideFanChevrons slideFanChevronsTextures;
+        private SlideFanChevrons slideFanChevronsTextures = null!;
 
-        public DrawableSentakkiRuleset(SentakkiRuleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
+        public DrawableSentakkiRuleset(SentakkiRuleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod>? mods)
             : base(ruleset, beatmap, mods)
         {
             foreach (var mod in Mods.OfType<IApplicableToTrack>())
@@ -73,10 +73,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public override PlayfieldAdjustmentContainer CreatePlayfieldAdjustmentContainer() => new SentakkiPlayfieldAdjustmentContainer();
 
-        public override DrawableHitObject<SentakkiHitObject> CreateDrawableRepresentation(SentakkiHitObject h) => null;
+        public override DrawableHitObject<SentakkiHitObject> CreateDrawableRepresentation(SentakkiHitObject h) => null!;
 
         protected override ResumeOverlay CreateResumeOverlay() => new SentakkiResumeOverlay();
 
-        protected override Framework.Input.PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset?.RulesetInfo);
+        protected override Framework.Input.PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset.RulesetInfo);
     }
 }

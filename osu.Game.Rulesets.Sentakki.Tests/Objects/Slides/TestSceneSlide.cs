@@ -20,38 +20,54 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
     {
         protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 
-        protected int StartPath;
-        protected int EndPath;
+        private int startPath;
+        private int endPath;
+
+        private bool mirrored;
+
+        protected abstract SlidePaths.PathShapes PathShape { get; }
 
         private readonly SlideVisual slide;
         private readonly Container nodes;
 
         [Cached]
-        private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
+        private readonly DrawablePool<SlideChevron> chevronPool;
+
+        [Cached]
+        private readonly SlideFanChevrons fanChevrons;
 
         public TestSceneSlide()
         {
-            Add(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(62));
+            Add(chevronPool = new DrawablePool<SlideChevron>(62));
+            Add(fanChevrons = new SlideFanChevrons());
 
             Add(new SentakkiRing()
             {
                 RelativeSizeAxes = Axes.None,
                 Size = new Vector2(SentakkiPlayfield.RINGSIZE)
             });
+
             Add(slide = new SlideVisual());
 
-            AddSliderStep("Path offset", 0, 7, 0, p =>
+            AddSliderStep("Start lane", 0, 7, 0, p =>
             {
-                slide.Rotation = 45 * p;
+                startPath = p;
+                RefreshSlide();
             });
-            AddSliderStep("End Path", 0, 7, 4, p =>
+            AddSliderStep("End lane", 0, 7, 4, p =>
             {
-                EndPath = p;
+                endPath = p;
                 RefreshSlide();
             });
             AddSliderStep("Progress", 0.0f, 1.0f, 0.0f, p =>
             {
                 slide.Progress = p;
+            });
+
+            AddToggleStep("Mirrored", b =>
+            {
+                mirrored = b;
+                RefreshSlide();
             });
 
             AddStep("Perform entry animation", () => slide.PerformEntryAnimation(1000));
@@ -67,7 +83,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             });
         }
 
-        protected abstract SentakkiSlidePath CreatePattern();
+        protected SentakkiSlidePath CreatePattern() => SlidePaths.CreateSlidePath(startPath, new SlideBodyPart(PathShape, endPath, mirrored));
 
         protected override void LoadComplete()
         {

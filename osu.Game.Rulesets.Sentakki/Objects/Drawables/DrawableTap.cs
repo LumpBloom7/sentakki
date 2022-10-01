@@ -39,11 +39,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        public SkinnableDrawable TapVisual;
+        public SkinnableDrawable TapVisual = null!;
 
         public DrawableTap() : this(null) { }
 
-        public DrawableTap(Tap hitObject = null)
+        public DrawableTap(Tap? hitObject = null)
             : base(hitObject) { }
 
         [BackgroundDependencyLoader]

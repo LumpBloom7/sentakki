@@ -26,17 +26,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // Similar to IsHovered for mouse, this tracks whether a pointer (touch or mouse) is interacting with this drawable
         // Interaction == (IsHovered && ActionPressed) || (OnTouch && TouchPointerInBounds)
         public bool[] PointInteractionState = new bool[11];
-        public SkinnableDrawable TouchBody;
+        public SkinnableDrawable TouchBody = null!;
 
-        private SentakkiInputManager sentakkiActionInputManager;
-        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
+        private SentakkiInputManager sentakkiActionInputManager = null!;
+        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
 
         public DrawableTouch() : this(null) { }
-        public DrawableTouch(Touch hitObject)
+        public DrawableTouch(Touch? hitObject)
             : base(hitObject) { }
 
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
+        [BackgroundDependencyLoader]
+        private void load(SentakkiRulesetConfigManager? sentakkiConfigs)
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
 

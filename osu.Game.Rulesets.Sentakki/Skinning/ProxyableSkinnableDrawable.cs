@@ -8,7 +8,7 @@ namespace osu.Game.Rulesets.Sentakki.Skinning
     {
         public override bool RemoveWhenNotAlive => false;
 
-        public ProxyableSkinnableDrawable(ISkinComponent component, Func<ISkinComponent, Drawable> defaultImplementation = null, ConfineMode confineMode = ConfineMode.NoScaling)
+        public ProxyableSkinnableDrawable(ISkinComponent component, Func<ISkinComponent, Drawable> defaultImplementation = null!, ConfineMode confineMode = ConfineMode.NoScaling)
             : base(component, defaultImplementation, confineMode)
         {
         }

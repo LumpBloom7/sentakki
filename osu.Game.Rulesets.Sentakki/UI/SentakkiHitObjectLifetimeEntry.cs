@@ -18,9 +18,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         protected double AdjustedAnimationDuration => AnimationDurationBindable.Value * GameplaySpeed;
 
-        private SentakkiRulesetConfigManager sentakkiConfigs;
+        private SentakkiRulesetConfigManager? sentakkiConfigs;
 
-        public SentakkiHitObjectLifetimeEntry(HitObject hitObject, SentakkiRulesetConfigManager configManager, DrawableSentakkiRuleset senRuleset) : base(hitObject)
+        public SentakkiHitObjectLifetimeEntry(HitObject hitObject, SentakkiRulesetConfigManager? configManager, DrawableSentakkiRuleset senRuleset) : base(hitObject)
         {
             sentakkiConfigs = configManager;
             drawableRuleset = senRuleset;

@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
     {
         public override bool RemoveCompletedTransforms => false;
 
-        public LineLifetimeEntry Entry;
+        public LineLifetimeEntry Entry = null!;
 
         public LineType Type;
         public DrawableLine()
@@ -26,8 +26,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private readonly BindableDouble animationDuration = new BindableDouble(1000);
 
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfigs, TextureStore textures)
+        [BackgroundDependencyLoader]
+        private void load(SentakkiRulesetConfigManager? sentakkiConfigs, TextureStore textures)
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
             animationDuration.BindValueChanged(_ => resetAnimation());

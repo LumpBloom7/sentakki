@@ -9,7 +9,7 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Touches
 {
     public class TouchPiece : CompositeDrawable
     {
-        private Texture touchTexture;
+        private Texture touchTexture = null!;
         public TouchPiece()
         {
             Size = new Vector2(75);

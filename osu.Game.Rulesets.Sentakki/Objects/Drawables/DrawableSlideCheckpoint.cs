@@ -30,10 +30,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private bool isPreviousNodeHit() => ThisIndex < 1 || parentSlide.SlideCheckpoints[ThisIndex - 1].IsHit;
 
-        private Container<DrawableSlideCheckpointNode> nodes;
+        private Container<DrawableSlideCheckpointNode> nodes = null!;
 
         public DrawableSlideCheckpoint() : this(null) { }
-        public DrawableSlideCheckpoint(SlideCheckpoint checkpoint)
+        public DrawableSlideCheckpoint(SlideCheckpoint? checkpoint)
             : base(checkpoint) { }
 
         [BackgroundDependencyLoader]

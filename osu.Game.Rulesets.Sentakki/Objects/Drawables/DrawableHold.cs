@@ -19,11 +19,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingHandler<SentakkiAction>
     {
+        public new Hold HitObject => (Hold)base.HitObject;
         public DrawableHoldHead Head => headContainer.Child;
 
-        private Container<DrawableHoldHead> headContainer;
+        private Container<DrawableHoldHead> headContainer = null!;
 
-        public SkinnableDrawable NoteBody;
+        public SkinnableDrawable NoteBody = null!;
 
         public override double LifetimeStart
         {
@@ -46,7 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public DrawableHold() : this(null) { }
 
-        public DrawableHold(Hold hitObject = null)
+        public DrawableHold(Hold? hitObject = null)
             : base(hitObject) { }
 
         [BackgroundDependencyLoader]

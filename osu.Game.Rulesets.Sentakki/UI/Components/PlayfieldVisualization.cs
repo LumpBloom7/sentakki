@@ -64,8 +64,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
         private readonly float[] frequencyAmplitudes = new float[256];
 
-        private IShader shader;
-        private Texture texture;
+        private IShader shader = null!;
+        private Texture texture = null!;
 
         public PlayfieldVisualisation()
         {
@@ -80,7 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
         private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
 
-        [BackgroundDependencyLoader(true)]
+        [BackgroundDependencyLoader]
         private void load(IRenderer renderer, ShaderManager shaders, IBindable<WorkingBeatmap> beatmap, SentakkiRulesetConfigManager settings)
         {
             this.beatmap.BindTo(beatmap);
@@ -172,16 +172,16 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         {
             protected new PlayfieldVisualisation Source => (PlayfieldVisualisation)base.Source;
 
-            private IShader shader;
-            private Texture texture;
+            private IShader shader = null!;
+            private Texture texture = null!;
 
             // Assuming the logo is a circle, we don't need a second dimension.
             private float size;
 
             private Color4 colour;
-            private float[] audioData;
+            private float[] audioData = null!;
 
-            private IVertexBatch<TexturedVertex2D> vertexBatch;
+            private IVertexBatch<TexturedVertex2D> vertexBatch = null!;
 
             public VisualisationDrawNode(PlayfieldVisualisation source)
                 : base(source)

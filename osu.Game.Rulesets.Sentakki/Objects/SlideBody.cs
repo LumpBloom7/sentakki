@@ -31,7 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set => SlideInfo.Duration = value;
         }
 
-        public SentakkiSlideInfo SlideInfo { get; set; }
+        public SlideBodyInfo SlideInfo { get; set; } = null!;
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
@@ -42,19 +42,58 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 NestedHitObjects.First().Samples.Add(new SentakkiHitSampleInfo("slide"));
         }
 
-        protected virtual void CreateSlideCheckpoints()
+        protected void CreateSlideCheckpoints()
         {
-            double distance = SlideInfo.SlidePath.TotalDistance;
-            int nodeCount = (int)Math.Floor(distance / 100);
-            for (int i = 0; i < nodeCount; i++)
+            double totalDistance = SlideInfo.SlidePath.TotalDistance;
+            double runningDistance = 0;
+            foreach (var segment in SlideInfo.SlidePath.SlideSegments)
             {
-                double progress = (double)(i + 1) / nodeCount;
+                double distance = segment.Distance;
+                int nodeCount = (int)Math.Floor(distance / 130);
+
+                double nodeDelta = distance / nodeCount;
+
+                for (int i = 0; i < nodeCount; i++)
+                {
+                    runningDistance += nodeDelta;
+                    double progress = runningDistance / totalDistance;
+
+                    SlideCheckpoint checkpoint = new SlideCheckpoint()
+                    {
+                        Progress = (float)progress,
+                        StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
+                        NodePositions = new List<Vector2> { SlideInfo.SlidePath.PositionAt(progress) }
+                    };
+
+                    AddNested(checkpoint);
+                }
+            }
+
+            CreateSlideFanCheckpoints();
+        }
+
+        protected void CreateSlideFanCheckpoints()
+        {
+            if (!SlideInfo.SlidePath.EndsWithSlideFan)
+                return;
+
+            // Add body nodes (should be two major sets)
+            Vector2 originpoint = SlideInfo.SlidePath.fanOrigin;
+            for (int i = 1; i < 5; ++i)
+            {
+                float progress = SlideInfo.SlidePath.FanStartProgress + (0.25f * i * (1 - SlideInfo.SlidePath.FanStartProgress));
                 SlideCheckpoint checkpoint = new SlideCheckpoint()
                 {
-                    Progress = (float)progress,
+                    Progress = progress,
                     StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
-                    NodePositions = new List<Vector2> { SlideInfo.SlidePath.PositionAt(progress) },
+                    NodesToPass = 2,
                 };
+
+                for (int j = -1; j < 2; ++j)
+                {
+                    Vector2 dest = SlideInfo.SlidePath.PositionAt(1, j);
+                    checkpoint.NodePositions.Add(Vector2.Lerp(originpoint, dest, 0.25f * i));
+                }
                 AddNested(checkpoint);
             }
         }
@@ -73,13 +112,5 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override HitWindows CreateHitWindows() => new SentakkiSlideHitWindows();
         public override Judgement CreateJudgement() => new SentakkiJudgement();
-
-        public class SlideNode : SentakkiHitObject
-        {
-            public virtual float Progress { get; set; }
-
-            protected override HitWindows CreateHitWindows() => HitWindows.Empty;
-            public override Judgement CreateJudgement() => new IgnoreJudgement();
-        }
     }
 }

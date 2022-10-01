@@ -74,7 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap, CancellationToken cancellationToken)
         {
-            if ((original as IHasCombo).NewCombo)
+            if ((original as IHasCombo)?.NewCombo ?? false)
                 patternGenerator.StartNextPattern();
 
             switch (original)
@@ -197,7 +197,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             // If there is a SlideFan, we always prioritize that, and ignore the rest
             foreach (var slide in slides)
-                if (slide.SlideInfoList[0].ID == SlidePaths.FANID)
+                if (slide.SlideInfoList[0].SlidePathParts[0].Shape == SlidePaths.PathShapes.Fan)
                 {
                     yield return slide;
                     yield break;
@@ -206,11 +206,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             // If both slides have the same start lane, we attempt to merge them
             if (slides.Count == 2 && slides[0].Lane == slides[1].Lane)
             {
-                bool isSamePattern = slides[0].SlideInfoList[0].ID == slides[1].SlideInfoList[0].ID;
-                bool isSameOrientation = slides[0].SlideInfoList[0].Mirrored == slides[1].SlideInfoList[0].Mirrored;
-
                 // We merge both slides only if they both have the same pattern AND orientation
-                if (!isSamePattern || !isSameOrientation)
+                if (slides[0].SlideInfoList[0].Equals(slides[1].SlideInfoList[0]))
                     slides[0].SlideInfoList.AddRange(slides[1].SlideInfoList);
 
                 slides.RemoveAt(1);
@@ -252,7 +249,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private static SentakkiHitObject createTouchHold(HitObject original) => new TouchHold
         {
             StartTime = original.StartTime,
-            EndTime = (original as IHasDuration).EndTime,
+            EndTime = ((IHasDuration)original).EndTime,
             Samples = original.Samples,
         };
 
@@ -285,27 +282,26 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private SentakkiHitObject createSlideNote(HitObject original, IList<IList<HitSampleInfo>> samples, bool twin = false, bool isBreak = false)
         {
             int noteLane = patternGenerator.GetNextLane(twin);
-            List<(SentakkiSlidePath, SentakkiSlidePath)> validPaths;
+            List<SlideBodyPart> validPaths;
 
             {
-                IEnumerable<(SentakkiSlidePath, SentakkiSlidePath)> pathEnumerable = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.Item1.MinDuration && ((IHasDuration)original).Duration <= p.Item1.MaxDuration);
+                var pathEnumerable = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.MinDuration && ((IHasDuration)original).Duration <= p.MinDuration * 10)
+                                                                                      .Select(t => t.parameters);
 
                 if (!EnabledExperiments.HasFlag(ConversionExperiments.fanSlides))
-                    pathEnumerable = pathEnumerable.Where(s => s != SlidePaths.VALIDPATHS[^1]);
+                    pathEnumerable = pathEnumerable.Where(s => s.Shape != SlidePaths.PathShapes.Fan);
 
                 validPaths = pathEnumerable.ToList();
             }
 
-            if (!validPaths.Any()) return null;
-            int selectedSlideID = SlidePaths.VALIDPATHS.IndexOf(validPaths[patternGenerator.RNG.Next(validPaths.Count)]);
-            bool mirrored = patternGenerator.RNG.NextDouble() < 0.5;
+            if (!validPaths.Any()) return null!;
+            var selectedPath = validPaths[patternGenerator.RNG.Next(validPaths.Count)];
 
             return new Slide
             {
-                SlideInfoList = new List<SentakkiSlideInfo>{
-                    new SentakkiSlideInfo{
-                        ID = selectedSlideID,
-                        Mirrored = mirrored,
+                SlideInfoList = new List<SlideBodyInfo>{
+                    new SlideBodyInfo{
+                        SlidePathParts = new SlideBodyPart[]{selectedPath},
                         Duration = ((IHasDuration)original).Duration
                     }
                 },
@@ -318,10 +314,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         private IEnumerable<Tap> createTapsFromNodes(HitObject original, IList<IList<HitSampleInfo>> nodeSamples, bool isBreak = false)
         {
-            if (original is not IHasPathWithRepeats)
+            if (original is not IHasPathWithRepeats curve)
                 yield break;
 
-            var curve = original as IHasPathWithRepeats;
             double spanDuration = curve.Duration / (curve.RepeatCount + 1);
             bool isRepeatSpam = spanDuration < 75 && curve.RepeatCount > 0;
 

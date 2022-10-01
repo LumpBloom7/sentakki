@@ -11,15 +11,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         public override bool DisplayResult => false;
 
-        public Container<DrawableSlideBody> SlideBodies;
-        public Container<DrawableSlideTap> SlideTaps;
+        public Container<DrawableSlideBody> SlideBodies = null!;
+        public Container<DrawableSlideTap> SlideTaps = null!;
 
         public DrawableSlide() : this(null) { }
 
-        public DrawableSlide(SentakkiHitObject hitObject = null)
+        public DrawableSlide(SentakkiHitObject? hitObject = null)
             : base(hitObject) { }
 
-        [BackgroundDependencyLoader(true)]
+        [BackgroundDependencyLoader]
         private void load()
         {
             Size = Vector2.Zero;
@@ -59,13 +59,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     return new DrawableSlideTap(x)
                     {
                         AutoBindable = { BindTarget = AutoBindable },
-                    };
-                case SlideFan slideFan:
-                    return new DrawableSlideFan(slideFan)
-                    {
-                        AutoBindable = { BindTarget = AutoBindable },
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
                     };
                 case SlideBody slideBody:
                     return new DrawableSlideBody(slideBody)

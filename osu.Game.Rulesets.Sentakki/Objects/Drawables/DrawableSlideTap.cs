@@ -12,14 +12,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override Type fallbackPieceType => typeof(SlideTapPiece);
 
         public DrawableSlideTap() : this(null) { }
-        public DrawableSlideTap(SlideTap hitObject)
+        public DrawableSlideTap(SlideTap? hitObject)
             : base(hitObject) { }
 
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
 
-            var note = TapVisual.Drawable as SlideTapPiece;
+            var note = (SlideTapPiece)TapVisual.Drawable;
 
             double spinDuration = 0;
 
@@ -30,11 +30,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     note.SecondStar.Alpha = 1;
                 else
                     note.SecondStar.Alpha = 0;
-            }
-            else if (ParentHitObject is DrawableSlideFan fanSlide)
-            {
-                spinDuration = fanSlide.HitObject.Duration;
-                note.SecondStar.Alpha = 0;
             }
 
             note.Stars.Spin(spinDuration, RotationDirection.Counterclockwise, 0).Loop();

@@ -142,7 +142,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             private class FixedSizeBufferedContainer : BufferedContainer
             {
                 [Resolved]
-                private SentakkiPlayfield sentakkiPlayfield { get; set; }
+                private SentakkiPlayfield sentakkiPlayfield { get; set; } = null!;
 
                 protected override Quad ComputeScreenSpaceDrawQuad()
                 {
@@ -157,7 +157,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
             private class PlayfieldMask : Drawable
             {
-                private IShader shader;
+                private IShader shader = null!;
 
                 protected override DrawNode CreateDrawNode() => new PlayfieldMaskDrawNode(this);
 
@@ -189,13 +189,13 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 {
                     protected new PlayfieldMask Source => (PlayfieldMask)base.Source;
 
-                    private IShader shader;
+                    private IShader shader = null!;
                     private Quad screenSpaceDrawQuad;
 
                     private Vector2 maskPosition;
                     private Vector2 maskRadius;
 
-                    private IVertexBatch<PositionAndColourVertex> quadBatch;
+                    private IVertexBatch<PositionAndColourVertex> quadBatch = null!;
                     private Action<TexturedVertex2D> addAction;
 
                     public PlayfieldMaskDrawNode(PlayfieldMask source)

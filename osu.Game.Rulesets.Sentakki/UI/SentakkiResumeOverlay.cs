@@ -21,10 +21,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
     public class SentakkiResumeOverlay : ResumeOverlay
     {
         [Resolved]
-        private IBindable<WorkingBeatmap> beatmap { get; set; }
+        private IBindable<WorkingBeatmap> beatmap { get; set; } = null!;
 
-        [Resolved(canBeNull: true)]
-        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; }
+        [Resolved]
+        private DrawableSentakkiRuleset? drawableSentakkiRuleset { get; set; }
 
         private readonly string[] supporter_list = new string[]{
             "Ayato_K",
@@ -44,7 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         // We don't want the default message
         protected override LocalisableString Message => "";
 
-        private OsuSpriteText messageText;
+        private OsuSpriteText messageText = null!;
 
         private double beatlength;
 
@@ -53,13 +53,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private Bindable<int> beatsLeft = new Bindable<int>(4);
         private int barLength;
 
-        private OsuSpriteText supporterText;
+        private OsuSpriteText supporterText = null!;
 
-        private SkinnableSound countSound;
+        private SkinnableSound countSound = null!;
 
-        private SentakkiCursorContainer localCursorContainer;
+        private SentakkiCursorContainer? localCursorContainer = null;
 
-        public override CursorContainer LocalCursor => State.Value == Visibility.Visible ? localCursorContainer : null;
+        public override CursorContainer? LocalCursor => State.Value == Visibility.Visible ? localCursorContainer : null;
 
         [BackgroundDependencyLoader]
         private void load(OsuColour colours)

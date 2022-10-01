@@ -1,12 +1,10 @@
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Layout;
 using osu.Game.Skinning;
 using osuTK;
-using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
 {
@@ -17,7 +15,7 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
     /// </summary>
     public class SlideFanChevrons : CompositeDrawable
     {
-        private Container<ChevronBackingTexture> chevrons;
+        private Container<ChevronBackingTexture> chevrons = null!;
 
         public SlideFanChevrons()
         {
@@ -70,7 +68,7 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
                 Origin = Anchor.Centre;
                 AutoSizeAxes = Axes.Both;
 
-                AddInternal(new SkinnableDrawable(new SentakkiSkinComponent(SentakkiSkinComponents.SlideFanChevron), _ => new SlideFanChevron(progress))
+                AddInternal(new SkinnableDrawable(new SentakkiSkinComponent(SentakkiSkinComponents.SlideFanChevron), _ => new SlideFanChevronPiece(progress))
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,

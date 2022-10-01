@@ -4,16 +4,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
     public class TestSceneThunderSlide : TestSceneSlide
     {
-        private bool mirrored;
-
-        public TestSceneThunderSlide()
-        {
-            AddToggleStep("Mirrored", b =>
-            {
-                mirrored = b;
-                RefreshSlide();
-            });
-        }
-        protected override SentakkiSlidePath CreatePattern() => SlidePaths.GenerateThunderPattern(mirrored);
+        protected override SlidePaths.PathShapes PathShape => SlidePaths.PathShapes.Thunder;
     }
 }

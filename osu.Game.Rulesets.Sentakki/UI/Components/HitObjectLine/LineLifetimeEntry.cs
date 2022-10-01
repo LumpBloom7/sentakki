@@ -17,11 +17,11 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         public double GameplaySpeed => drawableRuleset?.GameplaySpeed ?? 1;
 
-        private readonly DrawableSentakkiRuleset drawableRuleset;
+        private readonly DrawableSentakkiRuleset? drawableRuleset;
 
         public double StartTime { get; private set; }
 
-        public LineLifetimeEntry(BindableDouble AnimationDuration, DrawableSentakkiRuleset drawableSentakkiRuleset, double startTime)
+        public LineLifetimeEntry(BindableDouble AnimationDuration, DrawableSentakkiRuleset? drawableSentakkiRuleset, double startTime)
         {
             StartTime = startTime;
             drawableRuleset = drawableSentakkiRuleset;
@@ -55,7 +55,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private void onBreakChanged(ValueChangedEvent<bool> obj) => UpdateLine();
 
-        public Action<LineLifetimeEntry> OnLineUpdated;
+        public Action<LineLifetimeEntry> OnLineUpdated = null!;
 
         public void UpdateLine()
         {
