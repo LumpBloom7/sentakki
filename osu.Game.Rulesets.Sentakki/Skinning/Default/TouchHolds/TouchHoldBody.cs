@@ -8,8 +8,14 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Default.TouchHolds
 {
-    public class TouchHoldBody : CircularContainer
+    public class TouchHoldBody : CircularContainer, ITouchHoldPiece
     {
+        public double Progress
+        {
+            get => ProgressPiece.ProgressBindable.Value;
+            set => ProgressPiece.ProgressBindable.Value = value;
+        }
+
         public readonly TouchHoldProgressPiece ProgressPiece;
         private readonly TouchHoldCentrePiece centrePiece;
 

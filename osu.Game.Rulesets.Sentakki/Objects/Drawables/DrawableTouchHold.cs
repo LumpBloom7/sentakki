@@ -110,7 +110,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             TouchHoldBody.FadeInFromZero(fadeIn).ScaleTo(1, fadeIn);
             using (BeginDelayedSequence(fadeIn, true))
             {
-                ((TouchHoldBody)TouchHoldBody.Drawable).ProgressPiece.TransformBindableTo(((TouchHoldBody)TouchHoldBody.Drawable).ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
+                ((ITouchHoldPiece)TouchHoldBody.Drawable).TransformTo(nameof(ITouchHoldPiece.Progress), 1.0, ((IHasDuration)HitObject).Duration);
             }
         }
 

@@ -1,4 +1,4 @@
-using System;
+
 using System.Diagnostics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -9,7 +9,6 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Skinning;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -17,8 +16,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHandler<SentakkiAction>
     {
-        protected virtual SentakkiSkinComponents TapPieceComponent => SentakkiSkinComponents.Tap;
-        protected virtual Type fallbackPieceType => typeof(TapPiece);
+        protected virtual Drawable CreateTapVisual() => new ProxyableSkinnableDrawable(new SentakkiSkinComponent(SentakkiSkinComponents.Tap), _ => new TapPiece())
+        {
+            Scale = new Vector2(0f),
+            Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE),
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+        };
 
         public override double LifetimeStart
         {
@@ -39,7 +43,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        public SkinnableDrawable TapVisual = null!;
+        public Drawable TapVisual = null!;
 
         public DrawableTap() : this(null) { }
 
@@ -52,13 +56,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             AddRangeInternal(new Drawable[] {
-                TapVisual = new ProxyableSkinnableDrawable(new SentakkiSkinComponent(TapPieceComponent), _ => (Drawable)Activator.CreateInstance(fallbackPieceType))
-                {
-                    Scale = new Vector2(0f),
-                    Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                }
+                TapVisual = CreateTapVisual()
             });
         }
 

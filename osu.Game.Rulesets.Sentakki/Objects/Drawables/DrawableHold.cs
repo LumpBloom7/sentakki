@@ -81,7 +81,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             double animTime = AdjustedAnimationDuration / 2;
             NoteBody.FadeInFromZero(animTime).ScaleTo(1, animTime);
 
-            ((HoldBody)NoteBody.Drawable).FadeColour(AccentColour.Value);
+            NoteBody.Drawable.FadeColour(AccentColour.Value);
 
             using (BeginDelayedSequence(animTime, true))
             {
@@ -99,7 +99,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         .ResizeHeightTo(0, stretchTime);
 
                 if (HoldStartTime == null && !Auto)
-                    ((HoldBody)NoteBody.Drawable).Delay(animTime).FadeColour(Color4.Gray, 100);
+                    NoteBody.Drawable.Delay(animTime).FadeColour(Color4.Gray, 100);
             }
         }
 
@@ -142,7 +142,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
 
                 case ArmedState.Miss:
-                    ((HoldBody)NoteBody.Drawable).ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                    NoteBody.Drawable.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                         .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
                         .MoveToOffset(new Vector2(0, -100), time_fade_miss, Easing.OutCubic)
                         .FadeOut(time_fade_miss);

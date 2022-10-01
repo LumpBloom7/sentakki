@@ -9,10 +9,14 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
 {
-    public class SlideTapPiece : CompositeDrawable
+    public class SlideTapPiece : CompositeDrawable, ISlideTapPiece
     {
-        public readonly Container Stars;
-        public readonly SkinnableDrawable SecondStar;
+        public override bool RemoveWhenNotAlive => false;
+        private readonly SkinnableDrawable secondStar;
+
+        public Container Stars { get; private set; }
+
+        public Drawable SecondStar => secondStar;
 
         public SlideTapPiece()
         {
@@ -34,7 +38,7 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
                             Origin = Anchor.Centre,
                             RelativeSizeAxes = Axes.None,
                         },
-                        SecondStar = new SkinnableDrawable(new SentakkiSkinComponent(SentakkiSkinComponents.SlideStar), _ => new StarPiece())
+                        secondStar = new SkinnableDrawable(new SentakkiSkinComponent(SentakkiSkinComponents.SlideStar), _ => new StarPiece())
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,

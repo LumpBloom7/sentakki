@@ -89,7 +89,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             using (BeginDelayedSequence(AdjustedAnimationDuration, true))
             {
                 TouchBody.ResizeTo(90, moveTo, Easing.InCirc);
-                ((TouchBody)TouchBody.Drawable).BorderContainer.Delay(moveTo).FadeIn();
+                ((ITouchPiece)TouchBody.Drawable).TouchBorder.Delay(moveTo).FadeIn();
             }
         }
 

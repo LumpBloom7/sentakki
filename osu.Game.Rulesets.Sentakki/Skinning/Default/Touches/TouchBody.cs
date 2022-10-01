@@ -9,8 +9,10 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Touches
 {
-    public class TouchBody : Container
+    public class TouchBody : Container, ITouchPiece
     {
+        public Drawable TouchBorder => BorderContainer;
+
         public Container BorderContainer;
         public Container PieceContainer;
         public TouchBody()
