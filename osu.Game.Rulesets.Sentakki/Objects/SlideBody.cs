@@ -36,6 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public SlideBody(SlideBodyInfo slideBodyInfo)
         {
             SlideBodyInfo = slideBodyInfo;
+            Break = slideBodyInfo.Break;
         }
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
