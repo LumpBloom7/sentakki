@@ -21,6 +21,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private Container<DrawableScorePaddingObject> scorePaddingObjects = null!;
 
+        private Container<DrawableScoreBonusObject> scoreBonusObjects = null!;
+
         public DrawableSentakkiLanedHitObject(SentakkiLanedHitObject? hitObject)
                     : base(hitObject) { }
 
@@ -29,6 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             AddRangeInternal(new Drawable[]{
                 scorePaddingObjects = new Container<DrawableScorePaddingObject>(),
+                scoreBonusObjects = new Container<DrawableScoreBonusObject>(),
                 breakSample = new PausableSkinnableSound(),
             });
 
@@ -53,23 +56,38 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
         {
-            if (hitObject is ScorePaddingObject x)
-                return new DrawableScorePaddingObject(x);
+            switch (hitObject)
+            {
+                case ScorePaddingObject p:
+                    return new DrawableScorePaddingObject(p);
+                case ScoreBonusObject b:
+                    return new DrawableScoreBonusObject(b);
+            }
 
             return base.CreateNestedHitObject(hitObject);
         }
 
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
         {
-            base.AddNestedHitObject(hitObject);
-            if (hitObject is DrawableScorePaddingObject x)
-                scorePaddingObjects.Add(x);
+            switch (hitObject)
+            {
+                case DrawableScorePaddingObject p:
+                    scorePaddingObjects.Add(p);
+                    break;
+                case DrawableScoreBonusObject b:
+                    scoreBonusObjects.Add(b);
+                    break;
+                default:
+                    base.AddNestedHitObject(hitObject);
+                    break;
+            }
         }
 
         protected override void ClearNestedHitObjects()
         {
             base.ClearNestedHitObjects();
             scorePaddingObjects.Clear(false);
+            scoreBonusObjects.Clear(false);
         }
 
         protected override void OnFree()
@@ -80,6 +98,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void ApplyResult(Action<JudgementResult> application)
         {
+            // Judge the scoreBonus
+            foreach (var bonusObject in scoreBonusObjects)
+                bonusObject.TriggerResult();
+
             // Also give Break note score padding a judgement
             for (int i = 0; i < scorePaddingObjects.Count; ++i)
                 scorePaddingObjects[^(i + 1)].ApplyResult(application);

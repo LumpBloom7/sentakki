@@ -59,6 +59,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             RegisterPool<SlideCheckpoint.CheckpointNode, DrawableSlideCheckpointNode>(18);
 
             RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(20);
+            RegisterPool<ScoreBonusObject, DrawableScoreBonusObject>(5);
         }
 
         protected override void OnNewDrawableHitObject(DrawableHitObject d) => OnLoaded?.Invoke(d);
