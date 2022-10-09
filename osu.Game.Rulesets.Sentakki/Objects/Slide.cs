@@ -55,17 +55,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             SlideBodies = new List<SlideBody>();
 
-            foreach (var SlideInfo in SlideInfoList)
+            foreach (var slideInfo in SlideInfoList)
             {
                 SlideBody body;
-                AddNested(body = new SlideBody());
+                AddNested(body = new SlideBody(slideInfo)
+                {
+                    Lane = slideInfo.SlidePath.EndLane + Lane,
+                    StartTime = StartTime,
+                    Samples = NodeSamples.Any() ? NodeSamples.Last() : new List<HitSampleInfo>()
+                });
 
                 SlideBodies.Add(body);
-
-                body.Lane = SlideInfo.SlidePath.EndLane + Lane;
-                body.StartTime = StartTime;
-                body.SlideInfo = SlideInfo;
-                body.Samples = NodeSamples.Any() ? NodeSamples.Last() : new List<HitSampleInfo>();
             }
         }
 

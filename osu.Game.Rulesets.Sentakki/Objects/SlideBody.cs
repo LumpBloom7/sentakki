@@ -27,11 +27,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public double Duration
         {
-            get => SlideInfo.Duration;
-            set => SlideInfo.Duration = value;
+            get => SlideBodyInfo.Duration;
+            set => SlideBodyInfo.Duration = value;
         }
 
-        public SlideBodyInfo SlideInfo { get; set; } = null!;
+        public SlideBodyInfo SlideBodyInfo { get; private set; }
+
+        public SlideBody(SlideBodyInfo slideBodyInfo)
+        {
+            SlideBodyInfo = slideBodyInfo;
+        }
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
@@ -44,9 +49,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected void CreateSlideCheckpoints()
         {
-            double totalDistance = SlideInfo.SlidePath.TotalDistance;
+            double totalDistance = SlideBodyInfo.SlidePath.TotalDistance;
             double runningDistance = 0;
-            foreach (var segment in SlideInfo.SlidePath.SlideSegments)
+            foreach (var segment in SlideBodyInfo.SlidePath.SlideSegments)
             {
                 double distance = segment.Distance;
                 int nodeCount = (int)Math.Floor(distance / 130);
@@ -62,7 +67,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     {
                         Progress = (float)progress,
                         StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
-                        NodePositions = new List<Vector2> { SlideInfo.SlidePath.PositionAt(progress) }
+                        NodePositions = new List<Vector2> { SlideBodyInfo.SlidePath.PositionAt(progress) }
                     };
 
                     AddNested(checkpoint);
@@ -74,14 +79,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected void CreateSlideFanCheckpoints()
         {
-            if (!SlideInfo.SlidePath.EndsWithSlideFan)
+            if (!SlideBodyInfo.SlidePath.EndsWithSlideFan)
                 return;
 
             // Add body nodes (should be two major sets)
-            Vector2 originpoint = SlideInfo.SlidePath.fanOrigin;
+            Vector2 originpoint = SlideBodyInfo.SlidePath.fanOrigin;
             for (int i = 1; i < 5; ++i)
             {
-                float progress = SlideInfo.SlidePath.FanStartProgress + (0.25f * i * (1 - SlideInfo.SlidePath.FanStartProgress));
+                float progress = SlideBodyInfo.SlidePath.FanStartProgress + (0.25f * i * (1 - SlideBodyInfo.SlidePath.FanStartProgress));
                 SlideCheckpoint checkpoint = new SlideCheckpoint()
                 {
                     Progress = progress,
@@ -91,7 +96,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
                 for (int j = -1; j < 2; ++j)
                 {
-                    Vector2 dest = SlideInfo.SlidePath.PositionAt(1, j);
+                    Vector2 dest = SlideBodyInfo.SlidePath.PositionAt(1, j);
                     checkpoint.NodePositions.Add(Vector2.Lerp(originpoint, dest, 0.25f * i));
                 }
                 AddNested(checkpoint);
@@ -105,7 +110,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
 
-            double delay = controlPointInfo.TimingPointAt(StartTime).BeatLength * SlideInfo.ShootDelay / 2;
+            double delay = controlPointInfo.TimingPointAt(StartTime).BeatLength * SlideBodyInfo.ShootDelay / 2;
             if (delay < Duration - 50)
                 ShootDelay = delay;
         }
