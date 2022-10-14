@@ -25,6 +25,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // Delay before the star on the slide starts moving to the end
         public int ShootDelay = 1;
 
+        // Whether the slide body should have a break modifier applied to them.
+        public bool Break;
+
         public void UpdatePaths() => SlidePath = SlidePaths.CreateSlidePath(slidePathParts);
 
         public override bool Equals(object obj) => obj is SlideBodyInfo other && Equals(other);
@@ -34,12 +37,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             if (ReferenceEquals(this, other))
                 return true;
 
+            if (Break != other.Break)
+                return false;
+
             if (Duration != other.Duration)
                 return false;
 
             if (ShootDelay != other.ShootDelay)
                 return false;
 
+            return ShapeEquals(other);
+        }
+
+        public bool ShapeEquals(SlideBodyInfo other)
+        {
             if (slidePathParts.Length != other.slidePathParts.Length)
                 return false;
 

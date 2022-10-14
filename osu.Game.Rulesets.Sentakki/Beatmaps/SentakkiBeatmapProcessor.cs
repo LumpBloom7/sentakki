@@ -47,10 +47,16 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         hitObject.NoteColour = noteColor;
                 }
 
-                // Color slide bodies if more than one slide body exists at the same time
-                if (slideBodiesInGroup.Count > 1)
-                    foreach (var slideBody in slideBodiesInGroup)
+                // Colour Slide bodies separately
+                foreach (var slideBody in slideBodiesInGroup)
+                {
+                    if (slideBody.Break)
+                        slideBody.NoteColour = breakColor;
+                    else if (slideBodiesInGroup.Count > 1)
                         slideBody.NoteColour = twinColor;
+                    else
+                        slideBody.NoteColour = slideBody.DefaultNoteColour;
+                }
             }
         }
     }
