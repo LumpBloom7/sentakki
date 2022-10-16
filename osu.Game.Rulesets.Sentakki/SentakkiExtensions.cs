@@ -70,6 +70,8 @@ namespace osu.Game.Rulesets.Sentakki
         {
             switch (result)
             {
+                case HitResult.LargeBonus:
+                    return "Critical Break Bonus";
                 case HitResult.Great:
                     return "Perfect";
                 case HitResult.Good:

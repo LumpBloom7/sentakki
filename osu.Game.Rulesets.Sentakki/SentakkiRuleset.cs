@@ -179,6 +179,7 @@ namespace osu.Game.Rulesets.Sentakki
         {
             return new[]
             {
+                HitResult.LargeBonus,
                 HitResult.Great,
                 HitResult.Good,
                 HitResult.Ok,
