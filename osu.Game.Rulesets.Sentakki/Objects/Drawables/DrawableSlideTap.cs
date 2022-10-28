@@ -1,12 +1,21 @@
 ﻿using System.Linq;
 using osu.Framework.Graphics;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.Skinning;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.Slides;
+using osu.Game.Rulesets.Sentakki.UI;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public class DrawableSlideTap : DrawableTap
     {
-        protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
+        protected override Drawable CreateTapVisual() => new SlideTapPiece()
+        {
+            Scale = new Vector2(0f),
+            Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE),
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+        };
 
         public DrawableSlideTap() : this(null) { }
         public DrawableSlideTap(SlideTap? hitObject)
@@ -16,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateInitialTransforms();
 
-            var note = (SlideTapPiece)TapVisual;
+            var note = (ISlideTapPiece)TapVisual;
 
             double spinDuration = 0;
 
@@ -24,9 +33,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 spinDuration = ((Slide)slide.HitObject).SlideInfoList.FirstOrDefault().Duration;
                 if (slide.SlideBodies.Count > 1)
-                    note.SecondStar.Alpha = 1;
+                    note.Stars[1].Alpha = 1;
                 else
-                    note.SecondStar.Alpha = 0;
+                    note.Stars[1].Alpha = 0;
             }
 
             note.Stars.Spin(spinDuration, RotationDirection.Counterclockwise, 0).Loop();

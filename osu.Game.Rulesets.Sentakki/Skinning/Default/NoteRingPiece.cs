@@ -1,7 +1,7 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default
 {
     // This piece is used for laned notes, which share consistent elements
     // Each half is extends beyond the area of this drawable

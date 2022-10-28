@@ -7,18 +7,19 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Touches
 {
-    public class TouchBody : Container
+    public class TouchBody : Container, ITouchPiece
     {
+        public Drawable TouchBorder => BorderContainer;
+
         public Container BorderContainer;
         public Container PieceContainer;
         public TouchBody()
         {
-            Size = new Vector2(130);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Alpha = 0;
+            RelativeSizeAxes = Axes.Both;
 
             InternalChildren = new Drawable[]{
                 BorderContainer = new Container{

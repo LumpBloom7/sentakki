@@ -6,10 +6,16 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.TouchHolds
 {
-    public class TouchHoldBody : CircularContainer
+    public class TouchHoldBody : CircularContainer, ITouchHoldPiece
     {
+        public double Progress
+        {
+            get => ProgressPiece.ProgressBindable.Value;
+            set => ProgressPiece.ProgressBindable.Value = value;
+        }
+
         public readonly TouchHoldProgressPiece ProgressPiece;
         private readonly TouchHoldCentrePiece centrePiece;
 
@@ -17,7 +23,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
 
         public TouchHoldBody()
         {
-            Size = new Vector2(110);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             InternalChildren = new Drawable[]{

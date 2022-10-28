@@ -28,11 +28,13 @@ using osu.Game.Rulesets.Sentakki.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.Sentakki.Scoring;
+using osu.Game.Rulesets.Sentakki.Skinning.Legacy;
 using osu.Game.Rulesets.Sentakki.Statistics;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
 using osu.Game.Screens.Ranking.Statistics;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -48,7 +50,10 @@ namespace osu.Game.Rulesets.Sentakki
 
         public override string Description => IsDevelopmentBuild ? "sentakki (Dev build)" : "sentakki";
         public override string PlayingVerb => "Washing laundry";
-        public override string ShortName => "Sentakki";
+
+        public const string SHORT_NAME = "Sentakki";
+
+        public override string ShortName => SHORT_NAME;
 
         public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor(this);
 
@@ -67,6 +72,17 @@ namespace osu.Game.Rulesets.Sentakki
         public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new SentakkiReplayFrame();
 
         public override PerformanceCalculator CreatePerformanceCalculator() => new SentakkiPerformanceCalculator(this);
+
+        public override ISkin? CreateSkinTransformer(ISkin skin, IBeatmap beatmap)
+        {
+            switch (skin)
+            {
+                case LegacySkin:
+                    return new SentakkiLegacySkinTransformer(skin);
+            }
+
+            return base.CreateSkinTransformer(skin, beatmap);
+        }
 
         public override IEnumerable<Mod> GetModsFor(ModType type)
         {
@@ -207,8 +223,7 @@ namespace osu.Game.Rulesets.Sentakki
             [BackgroundDependencyLoader]
             private void load(GameHost host)
             {
-                if (textureStore is null)
-                    textureStore = new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
+                textureStore ??= new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
 
                 AddInternal(new Sprite
                 {

@@ -7,8 +7,9 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Objects;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slides
 {
     public class SlideVisual : CompositeDrawable
     {

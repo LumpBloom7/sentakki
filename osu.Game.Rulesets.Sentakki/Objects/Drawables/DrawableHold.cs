@@ -8,8 +8,10 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Skinning;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -22,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private Container<DrawableHoldHead> headContainer = null!;
 
-        public HoldBody NoteBody = null!;
+        public SkinnableDrawable NoteBody = null!;
 
         public override double LifetimeStart
         {
@@ -54,7 +56,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             AddRangeInternal(new Drawable[]{
-                NoteBody = new HoldBody(),
+                NoteBody = new ProxyableSkinnableDrawable(new SentakkiSkinComponent(SentakkiSkinComponents.Hold), _=> new HoldBody())
+                {
+                    Scale = Vector2.Zero,
+                    Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE),
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.BottomCentre,
+                    RelativeSizeAxes = Axes.None,
+                },
                 headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
             });
         }
@@ -72,7 +81,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             double animTime = AdjustedAnimationDuration / 2;
             NoteBody.FadeInFromZero(animTime).ScaleTo(1, animTime);
 
-            NoteBody.FadeColour(AccentColour.Value);
+            NoteBody.Drawable.FadeColour(AccentColour.Value);
 
             using (BeginDelayedSequence(animTime, true))
             {
@@ -90,7 +99,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         .ResizeHeightTo(0, stretchTime);
 
                 if (HoldStartTime == null && !Auto)
-                    NoteBody.Delay(animTime).FadeColour(Color4.Gray, 100);
+                    NoteBody.Drawable.Delay(animTime).FadeColour(Color4.Gray, 100);
             }
         }
 
@@ -133,7 +142,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
 
                 case ArmedState.Miss:
-                    NoteBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                    NoteBody.Drawable.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                         .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
                         .MoveToOffset(new Vector2(0, -100), time_fade_miss, Easing.OutCubic)
                         .FadeOut(time_fade_miss);
