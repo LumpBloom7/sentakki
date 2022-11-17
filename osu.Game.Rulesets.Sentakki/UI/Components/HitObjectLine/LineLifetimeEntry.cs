@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {
     public class LineLifetimeEntry : LifetimeEntry
     {
-        public BindableDouble AnimationDuration = new BindableDouble(1000);
+        private readonly BindableDouble AnimationDuration = new BindableDouble(1000);
         public double AdjustedAnimationDuration => AnimationDuration.Value * GameplaySpeed;
 
         public double GameplaySpeed => drawableRuleset?.GameplaySpeed ?? 1;
@@ -31,7 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         public List<SentakkiLanedHitObject> HitObjects = new List<SentakkiLanedHitObject>();
 
-        public LineType Type { get; private set; }
+        public float AngleRange { get; private set; }
         public ColourInfo Colour { get; private set; }
         public float Rotation { get; private set; }
 
@@ -61,12 +61,12 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         {
             if (HitObjects.Count == 1)
             {
-                Type = LineType.Single;
+                AngleRange = 0.25f;
 
                 var hitObject = HitObjects.First();
 
                 Colour = hitObject.Break ? Color4.OrangeRed : hitObject.DefaultNoteColour;
-                Rotation = hitObject.Lane.GetRotationForLane();
+                Rotation = hitObject.Lane.GetRotationForLane() - 45;
             }
             else if (HitObjects.Count > 1)
             {
@@ -76,10 +76,13 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 int delta = maxDelta - minDelta;
 
                 bool allBreaks = HitObjects.All(h => h.Break);
-
-                Type = getLineTypeForDistance(Math.Abs(delta));
                 Colour = Color4.Gold;
-                Rotation = anchor.Lane.GetRotationForLane() + (delta * 22.5f);
+
+                int angleRange = 90 + (45 * delta);
+
+                AngleRange = angleRange / 360f;
+
+                Rotation = anchor.Lane.GetRotationForLane() + (delta * 22.5f) - (angleRange / 2);
             }
 
             // Notify the renderer that the line may be updated
@@ -90,23 +93,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         {
             LifetimeStart = StartTime - AdjustedAnimationDuration;
             LifetimeEnd = StartTime;
-        }
-
-        private static LineType getLineTypeForDistance(int distance)
-        {
-            switch (distance)
-            {
-                case 0:
-                    return LineType.Single;
-                case 1:
-                    return LineType.OneAway;
-                case 2:
-                    return LineType.TwoAway;
-                case 3:
-                    return LineType.ThreeAway;
-                default:
-                    return LineType.FullCircle;
-            }
         }
 
         private static int getDelta(SentakkiLanedHitObject a, SentakkiLanedHitObject b)
