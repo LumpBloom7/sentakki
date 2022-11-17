@@ -1,9 +1,7 @@
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Pooling;
-using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.UserInterface;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osuTK;
@@ -29,7 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         private readonly BindableDouble animationDuration = new BindableDouble(1000);
 
         [BackgroundDependencyLoader]
-        private void load(SentakkiRulesetConfigManager? sentakkiConfigs, TextureStore textures)
+        private void load(SentakkiRulesetConfigManager? sentakkiConfigs)
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
             animationDuration.BindValueChanged(_ => resetAnimation());

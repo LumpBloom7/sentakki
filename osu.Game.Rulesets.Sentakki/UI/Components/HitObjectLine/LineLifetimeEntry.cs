@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {
     public class LineLifetimeEntry : LifetimeEntry
     {
-        public BindableDouble AnimationDuration = new BindableDouble(1000);
+        private readonly BindableDouble AnimationDuration = new BindableDouble(1000);
         public double AdjustedAnimationDuration => AnimationDuration.Value * GameplaySpeed;
 
         public double GameplaySpeed => drawableRuleset?.GameplaySpeed ?? 1;
@@ -93,23 +93,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         {
             LifetimeStart = StartTime - AdjustedAnimationDuration;
             LifetimeEnd = StartTime;
-        }
-
-        private static LineType getLineTypeForDistance(int distance)
-        {
-            switch (distance)
-            {
-                case 0:
-                    return LineType.Single;
-                case 1:
-                    return LineType.OneAway;
-                case 2:
-                    return LineType.TwoAway;
-                case 3:
-                    return LineType.ThreeAway;
-                default:
-                    return LineType.FullCircle;
-            }
         }
 
         private static int getDelta(SentakkiLanedHitObject a, SentakkiLanedHitObject b)
