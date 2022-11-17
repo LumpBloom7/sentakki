@@ -207,8 +207,7 @@ namespace osu.Game.Rulesets.Sentakki
             [BackgroundDependencyLoader]
             private void load(GameHost host)
             {
-                if (textureStore is null)
-                    textureStore = new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
+                textureStore ??= new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
 
                 AddInternal(new Sprite
                 {

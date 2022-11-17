@@ -85,7 +85,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         {
             this.beatmap.BindTo(beatmap);
             texture = renderer.WhitePixel;
-            shader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, FragmentShaderDescriptor.TEXTURE_ROUNDED);
+            shader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, FragmentShaderDescriptor.TEXTURE);
 
             settings?.BindWith(SentakkiRulesetSettings.KiaiEffects, kiaiEffect);
             kiaiEffect.BindValueChanged(k =>
