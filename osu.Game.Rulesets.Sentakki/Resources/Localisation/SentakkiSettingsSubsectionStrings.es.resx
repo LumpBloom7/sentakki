@@ -87,7 +87,7 @@
         <value>Opacidad de aro</value>
     </data>
   <data name="lane_input_mode" xml:space="preserve">
-        <value>Modo de input del carril (No aplica al touch)</value>
+        <value>Modo de entrada del carril (No aplica al táctil)</value>
         <comment>"Touch"as in the verb, as in "touchscreen"</comment>
     </data>
   <data name="lane_input_mode_button" xml:space="preserve">
