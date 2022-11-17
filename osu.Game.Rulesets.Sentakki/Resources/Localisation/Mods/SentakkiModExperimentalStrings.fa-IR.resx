@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="mod_description" xml:space="preserve">
+        <value>ویژگی های آزمایشی که ممکن است در نسخه های بعدی Sentakka اضافه شوند. پخش خودکار / بدون شکست توصیه شده است. پخش مجدد پشتیبانی نخواهد شد.</value>
+    </data>
+  <data name="twin_notes" xml:space="preserve">
+        <value>نت های دوقلو</value>
+        <comment>Twin is an adjective.</comment>
+    </data>
+  <data name="twin_notes_description" xml:space="preserve">
+        <value>به بیش از یک نت برای اشتراک‌گذاری در زمان‌های یکسان اجازه دهید (نیاز به چند لمسی دارد)</value>
+    </data>
+  <data name="twin_slides" xml:space="preserve">
+        <value>اسلاید های دوقلو</value>
+        <comment>Twin is an adjective.</comment>
+    </data>
+  <data name="twin_slides_description" xml:space="preserve">
+        <value>به بیش از یک بدنه اسلاید اجازه دهید زمان و مبدا یکسان را به اشتراک بگذارند (نیاز به چند لمسی دارد)</value>
+    </data>
+  <data name="fan_slides" xml:space="preserve">
+        <value>اسلاید بادبزن</value>
+        <comment>Fan is a adjective, referring to the shape of the Slide.</comment>
+    </data>
+  <data name="fan_slides_description" xml:space="preserve">
+        <value>به اسلاید بادبزن اجازه دهید تا گاه و بیگاه ظاهر شود (نیازمند چندلمسی)</value>
+    </data>
+</root>
