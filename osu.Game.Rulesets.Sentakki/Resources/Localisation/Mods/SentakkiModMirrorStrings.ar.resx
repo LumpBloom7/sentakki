@@ -62,15 +62,15 @@
         <value>اقلب الملعب أفقيا أو رأسيا أو كليهما!</value>
     </data>
   <data name="mirror_vertically" xml:space="preserve">
-        <value>⇅اعكس عاموديا</value>
+        <value>⇅ اعكس عاموديا</value>
     </data>
   <data name="mirror_vertically_description" xml:space="preserve">
-        <value>اعكس الملعب بأكمله حول محور س</value>
+        <value>اعكس الملعب بأكمله حول محور السيني</value>
     </data>
   <data name="mirror_horizontally" xml:space="preserve">
         <value>⇆ اعكس افقيا</value>
     </data>
   <data name="mirror_horizontally_description" xml:space="preserve">
-        <value>اعكس الملعب بأكمله حول محور ص</value>
+        <value>اعكس الملعب بِرُمَّته حول محور الصادي</value>
     </data>
 </root>
