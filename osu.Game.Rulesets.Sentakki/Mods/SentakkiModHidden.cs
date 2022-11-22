@@ -1,16 +1,17 @@
 using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Batches;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.OpenGL.Vertices;
 using osu.Framework.Graphics.Primitives;
+using osu.Framework.Graphics.Rendering;
+using osu.Framework.Graphics.Rendering.Vertices;
 using osu.Framework.Graphics.Shaders;
-using osu.Framework.Graphics.Textures;
+using osu.Framework.Localisation;
 using osu.Game.Graphics.OpenGL.Vertices;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -21,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 {
     public class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset<SentakkiHitObject>
     {
-        public override string Description => "Notes fade out just before you hit them.";
+        public override LocalisableString Description => SentakkiModHiddenStrings.ModDescription;
 
         public override double ScoreMultiplier => 1.06;
 
@@ -33,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             var lanedHitObjectArea = lanedPlayfield.LanedHitObjectArea;
             var lanedNoteProxyContainer = lanedHitObjectArea.Child;
 
-            lanedHitObjectArea.Remove(lanedNoteProxyContainer);
+            lanedHitObjectArea.Remove(lanedNoteProxyContainer, false);
             lanedHitObjectArea.Add(new PlayfieldMaskingContainer(lanedNoteProxyContainer)
             {
                 CoverageRadius = 0.6f
@@ -140,7 +141,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             private class FixedSizeBufferedContainer : BufferedContainer
             {
                 [Resolved]
-                private SentakkiPlayfield sentakkiPlayfield { get; set; }
+                private SentakkiPlayfield sentakkiPlayfield { get; set; } = null!;
 
                 protected override Quad ComputeScreenSpaceDrawQuad()
                 {
@@ -155,7 +156,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
             private class PlayfieldMask : Drawable
             {
-                private IShader shader;
+                private IShader shader = null!;
 
                 protected override DrawNode CreateDrawNode() => new PlayfieldMaskDrawNode(this);
 
@@ -187,14 +188,14 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 {
                     protected new PlayfieldMask Source => (PlayfieldMask)base.Source;
 
-                    private IShader shader;
+                    private IShader shader = null!;
                     private Quad screenSpaceDrawQuad;
 
                     private Vector2 maskPosition;
                     private Vector2 maskRadius;
 
-                    private readonly VertexBatch<PositionAndColourVertex> quadBatch = new QuadBatch<PositionAndColourVertex>(1, 1);
-                    private readonly Action<TexturedVertex2D> addAction;
+                    private IVertexBatch<PositionAndColourVertex> quadBatch = null!;
+                    private Action<TexturedVertex2D> addAction;
 
                     public PlayfieldMaskDrawNode(PlayfieldMask source)
                         : base(source)
@@ -216,16 +217,26 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                         maskRadius = Source.MaskRadius * DrawInfo.Matrix.ExtractScale().Xy;
                     }
 
-                    public override void Draw(Action<TexturedVertex2D> vertexAction)
+                    public override void Draw(IRenderer renderer)
                     {
-                        base.Draw(vertexAction);
+                        base.Draw(renderer);
+
+                        if (quadBatch == null)
+                        {
+                            quadBatch = renderer.CreateQuadBatch<PositionAndColourVertex>(1, 1);
+                            addAction = v => quadBatch.Add(new PositionAndColourVertex
+                            {
+                                Position = v.Position,
+                                Colour = v.Colour
+                            });
+                        }
 
                         shader.Bind();
 
                         shader.GetUniform<Vector2>("maskPosition").UpdateValue(ref maskPosition);
                         shader.GetUniform<Vector2>("maskRadius").UpdateValue(ref maskRadius);
 
-                        DrawQuad(Texture.WhitePixel, screenSpaceDrawQuad, DrawColourInfo.Colour, vertexAction: addAction);
+                        renderer.DrawQuad(renderer.WhitePixel, screenSpaceDrawQuad, DrawColourInfo.Colour, vertexAction: addAction);
 
                         shader.Unbind();
                     }

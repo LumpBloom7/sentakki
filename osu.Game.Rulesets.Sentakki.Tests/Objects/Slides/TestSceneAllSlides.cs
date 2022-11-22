@@ -21,16 +21,21 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 
         private int id;
-        private bool mirrored;
+
         private readonly SlideVisual slide;
         private readonly Container nodes;
 
         [Cached]
-        private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
+        private readonly DrawablePool<SlideChevron> chevronPool;
+
+        [Cached]
+        private readonly SlideFanChevrons fanChevrons;
 
         public TestSceneAllSlides()
         {
-            Add(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(62));
+            Add(chevronPool = new DrawablePool<SlideChevron>(62));
+            Add(fanChevrons = new SlideFanChevrons());
+
             Add(new SentakkiRing()
             {
                 RelativeSizeAxes = Axes.None,
@@ -44,12 +49,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 RefreshSlide();
             });
 
-            AddToggleStep("Mirrored", b =>
-            {
-                mirrored = b;
-                RefreshSlide();
-            });
-
             Add(nodes = new Container()
             {
                 Anchor = Anchor.Centre,
@@ -57,7 +56,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             });
         }
 
-        protected SentakkiSlidePath CreatePattern() => SlidePaths.GetSlidePath(id, mirrored);
+        protected SentakkiSlidePath CreatePattern() => SlidePaths.CreateSlidePath(SlidePaths.VALIDPATHS[id].parameters);
 
         protected override void LoadComplete()
         {
@@ -69,6 +68,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         {
             slide.Path = CreatePattern();
             nodes.Clear();
+
             foreach (var node in slide.Path.SlideSegments.SelectMany(s => s.ControlPoints))
             {
                 nodes.Add(new CircularContainer

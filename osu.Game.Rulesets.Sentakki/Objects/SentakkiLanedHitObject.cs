@@ -31,8 +31,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             base.CreateNestedHitObjects(cancellationToken);
 
             if (Break)
+            {
                 for (int i = 0; i < 4; ++i)
                     AddNested(new ScorePaddingObject() { StartTime = this.GetEndTime() });
+
+                // Add bonus for players hitting within the critical window
+                AddNested(new ScoreBonusObject() { StartTime = this.GetEndTime() });
+            }
         }
 
         public override IList<HitSampleInfo> AuxiliarySamples => CreateBreakSample();

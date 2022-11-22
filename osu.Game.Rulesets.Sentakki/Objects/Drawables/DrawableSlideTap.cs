@@ -9,26 +9,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
 
         public DrawableSlideTap() : this(null) { }
-        public DrawableSlideTap(SlideTap hitObject)
+        public DrawableSlideTap(SlideTap? hitObject)
             : base(hitObject) { }
-
-        protected override void OnApply()
-        {
-            base.OnApply();
-            AccentColour.BindTo(ParentHitObject.AccentColour);
-        }
-
-        protected override void OnFree()
-        {
-            base.OnFree();
-            AccentColour.UnbindFrom(ParentHitObject.AccentColour);
-        }
 
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
 
-            var note = TapVisual as SlideTapPiece;
+            var note = (SlideTapPiece)TapVisual;
 
             double spinDuration = 0;
 
@@ -39,11 +27,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     note.SecondStar.Alpha = 1;
                 else
                     note.SecondStar.Alpha = 0;
-            }
-            else if (ParentHitObject is DrawableSlideFan fanSlide)
-            {
-                spinDuration = fanSlide.HitObject.Duration;
-                note.SecondStar.Alpha = 0;
             }
 
             if (spinDuration != 0)

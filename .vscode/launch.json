@@ -11,7 +11,12 @@
             ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "Build (Debug)",
-            "console": "internalConsole"
+            "console": "internalConsole",
+            "justMyCode": false,
+            "symbolOptions": {
+                "searchMicrosoftSymbolServer": true,
+                "searchNuGetOrgSymbolServer": true
+            },
         },
         {
             "name": "sentakki for osu! (Release)",

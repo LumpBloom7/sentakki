@@ -33,11 +33,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public override Color4 DefaultNoteColour => Color4.Aqua;
 
-        public List<SentakkiSlideInfo> SlideInfoList = new List<SentakkiSlideInfo>();
+        public List<SlideBodyInfo> SlideInfoList = new List<SlideBodyInfo>();
+
+        public SlideTap SlideTap { get; private set; } = null!;
+
+        public IList<SlideBody> SlideBodies { get; private set; } = null!;
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            AddNested(new SlideTap
+            AddNested(SlideTap = new SlideTap
             {
                 LaneBindable = { BindTarget = LaneBindable },
                 StartTime = StartTime,
@@ -49,18 +53,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         private void createSlideBodies()
         {
-            foreach (var SlideInfo in SlideInfoList)
+            SlideBodies = new List<SlideBody>();
+
+            foreach (var slideInfo in SlideInfoList)
             {
                 SlideBody body;
-                if (SlideInfo.ID == SlidePaths.FANID)
-                    AddNested(body = new SlideFan());
-                else
-                    AddNested(body = new SlideBody());
+                AddNested(body = new SlideBody(slideInfo)
+                {
+                    Lane = slideInfo.SlidePath.EndLane + Lane,
+                    StartTime = StartTime,
+                    Samples = NodeSamples.Any() ? NodeSamples.Last() : new List<HitSampleInfo>()
+                });
 
-                body.Lane = SlideInfo.SlidePath.EndLane + Lane;
-                body.StartTime = StartTime;
-                body.SlideInfo = SlideInfo;
-                body.Samples = NodeSamples.Any() ? NodeSamples.Last() : new List<HitSampleInfo>();
+                SlideBodies.Add(body);
             }
         }
 

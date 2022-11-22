@@ -43,17 +43,17 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 },
             };
 
-            borderRatio.BindValueChanged(_ => setBorderThiccness(), true);
+            borderRatio.BindValueChanged(setBorderThiccness, true);
         }
 
-        private void setBorderThiccness()
+        private void setBorderThiccness(ValueChangedEvent<float> v)
         {
-            circle.BorderThickness = Size.X / 2 * borderRatio.Value;
+            circle.BorderThickness = Size.X / 2 * v.NewValue;
         }
 
         private readonly BindableFloat borderRatio = new BindableFloat(1);
 
-        public void Apply(DrawableSentakkiHitObject drawableSentakkiHitObject)
+        public HitExplosion Apply(DrawableSentakkiHitObject drawableSentakkiHitObject)
         {
             Colour = drawableSentakkiHitObject.AccentColour.Value;
             switch (drawableSentakkiHitObject.HitObject)
@@ -74,6 +74,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                     Size = new Vector2(touch_hold_explosion_size);
                     break;
             }
+
+            return this;
         }
 
         protected override void PrepareForUse()

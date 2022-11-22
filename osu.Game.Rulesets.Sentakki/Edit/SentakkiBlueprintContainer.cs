@@ -5,7 +5,6 @@ using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
-using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds;
@@ -21,11 +20,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         public SentakkiBlueprintContainer(HitObjectComposer composer)
             : base(composer)
         {
-            AddInternal(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(100));
+            AddInternal(chevronPool = new DrawablePool<SlideChevron>(100));
         }
 
         [Cached]
-        private DrawablePool<SlideVisual.SlideChevron> chevronPool;
+        private DrawablePool<SlideChevron> chevronPool;
 
         protected override SelectionHandler<HitObject> CreateSelectionHandler() => new SentakkiSelectionHandler();
 
@@ -37,8 +36,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                     return new TapSelectionBlueprint(t);
                 case Hold h:
                     return new HoldSelectionBlueprint(h);
-                case Slide s:
-                    return new SlideSelectionBlueprint(s);
                 case Touch t:
                     return new TouchSelectionBlueprint(t);
                 case TouchHold th:
@@ -46,9 +43,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             }
             return base.CreateHitObjectBlueprintFor(hitObject);
         }
-
-        private Framework.Input.InputManager inputManager;
-        internal Framework.Input.InputManager InputManager => inputManager ??= GetContainingInputManager();
 
         private Vector2 currentMousePosition => InputManager.CurrentState.Mouse.Position;
 

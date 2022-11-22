@@ -8,8 +8,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
 {
     public class SentakkiCursorContainer : GameplayCursorContainer
     {
-        private Sprite cursorSprite;
-        private Texture cursorTexture;
+        private Sprite? cursorSprite;
+        private Texture? cursorTexture;
 
         protected override Drawable CreateCursor() => cursorSprite = new Sprite
         {

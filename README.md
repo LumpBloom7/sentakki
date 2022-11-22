@@ -4,6 +4,7 @@
 
 [![.NET Core](https://github.com/LumpBloom7/sentakki/workflows/.NET%20Core/badge.svg)](https://github.com/LumpBloom7/sentakki/actions?query=workflow%3A%22.NET+Core%22)
 [![CodeFactor](https://www.codefactor.io/repository/github/lumpbloom7/sentakki/badge)](https://www.codefactor.io/repository/github/lumpbloom7/sentakki)
+[![Crowdin](https://badges.crowdin.net/sentakki/localized.svg)](https://crowdin.com/project/sentakki)
 [![Discord Shield](https://discordapp.com/api/guilds/700619421466624050/widget.png?style=shield)](https://discord.gg/CQPNADu)
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E01N56M)
@@ -12,7 +13,7 @@ An attempt to recreate Sega's maimai within osu!lazer, while making it more flex
 
 ## Status
 
-This is very much a WIP. Some of maimai's note types are yet to be implemented. However, I do consider it playable, and pretty fun if I do say so myself.
+All the essential note types have been implemented. Features like editor is being developed on the side, since lazer doesn't support third party ruleset editors yet. PP/diff calc haven't been given considered yet, and it is currently open to ideas.
 
 ## Trying the ruleset
 
@@ -62,7 +63,19 @@ dotnet build osu.Game.Rulesets.Sentakki
 
 ## Contributing
 
-I welcome any sort of contributions, as long as they are helpful. Those who aren't able to develop may instead suggest changes or report issues via [GitHub issues](https://github.com/lumpbloom7/sentakki/issues)
+There are a few ways one can look to contribute to sentakki.
+
+### Code contributions
+
+If you are interested in implementing new features or improving current features, you can fork the repository and develop the feature/improvement on a topic branch of your fork before PR'ing the changes to this repository.
+
+### Localization contributions
+
+Want to see Sentakki display text in your language? You can help localize Sentakki via the [project's crowdin page](https://crowdin.com/project/sentakki).
+
+### Feedback / bug reports
+
+Notice a problem during gameplay? Feel free to leave an issue/suggestion over at [GitHub issues](https://github.com/LumpBloom7/sentakki/issues).
 
 ## Licence
 

@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         public readonly LineRenderer HitObjectLineRenderer;
 
         [Cached]
-        private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
+        private readonly DrawablePool<SlideChevron> chevronPool;
 
         public readonly Container LanedHitObjectArea;
 
@@ -45,7 +45,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             }
 
             AddRangeInternal(new Drawable[]{
-                chevronPool = new DrawablePool<SlideVisual.SlideChevron>(100),
+                chevronPool = new DrawablePool<SlideChevron>(100),
                 HitObjectLineRenderer = new LineRenderer(),
                 slideBodyProxyContainer = new SortedDrawableProxyContainer(),
                 LanedHitObjectArea = new Container

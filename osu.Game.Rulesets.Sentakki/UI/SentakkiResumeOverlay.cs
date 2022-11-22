@@ -2,15 +2,16 @@ using System;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Localisation;
 using osu.Framework.Utils;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Rulesets.Sentakki.Localisation;
 using osu.Game.Screens.Play;
 using osu.Game.Skinning;
 using osuTK.Graphics;
@@ -20,10 +21,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
     public class SentakkiResumeOverlay : ResumeOverlay
     {
         [Resolved]
-        private IBindable<WorkingBeatmap> beatmap { get; set; }
+        private IBindable<WorkingBeatmap> beatmap { get; set; } = null!;
 
-        [Resolved(canBeNull: true)]
-        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; }
+        [Resolved]
+        private DrawableSentakkiRuleset? drawableSentakkiRuleset { get; set; }
 
         private readonly string[] supporter_list = new string[]{
             "Ayato_K",
@@ -41,9 +42,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private static int currentSupporterIndex;
 
         // We don't want the default message
-        protected override string Message => "";
+        protected override LocalisableString Message => "";
 
-        private OsuSpriteText messageText;
+        private OsuSpriteText messageText = null!;
 
         private double beatlength;
 
@@ -52,13 +53,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private Bindable<int> beatsLeft = new Bindable<int>(4);
         private int barLength;
 
-        private OsuSpriteText supporterText;
+        private OsuSpriteText supporterText = null!;
 
-        private SkinnableSound countSound;
+        private SkinnableSound countSound = null!;
 
-        private SentakkiCursorContainer localCursorContainer;
+        private SentakkiCursorContainer? localCursorContainer = null;
 
-        public override CursorContainer LocalCursor => State.Value == Visibility.Visible ? localCursorContainer : null;
+        public override CursorContainer? LocalCursor => State.Value == Visibility.Visible ? localCursorContainer : null;
 
         [BackgroundDependencyLoader]
         private void load(OsuColour colours)
@@ -76,36 +77,16 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     Origin = Anchor.Centre,
                     ShadowColour = new Color4(0f, 0f, 0f, 0.25f)
                 },
-                new FillFlowContainer
+                supporterText = new OsuSpriteText
                 {
-                    Direction = FillDirection.Horizontal,
                     RelativePositionAxes = Axes.Both,
+                    Font = OsuFont.Torus.With(size: 20),
+                    Colour = Color4.White,
                     Y = -0.4f,
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
-                    Children = new Drawable[]
-                    {
-                        new OsuSpriteText
-                        {
-                            Text = "Sentakki is made with the support of ",
-                            Font = OsuFont.Torus.With(size: 20),
-                            Colour = Color4.White,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Shadow = true,
-                            ShadowColour = new Color4(0f, 0f, 0f, 0.25f)
-                        },
-                        supporterText = new OsuSpriteText
-                        {
-                            Text = "Marisa Kirisame",
-                            Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold),
-                            Colour = Color4Extensions.FromHex("ff0064"),
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Shadow = true,
-                            ShadowColour = new Color4(0f, 0f, 0f, 0.25f)
-                        }
-                    }
+                    Shadow = true,
+                    ShadowColour = new Color4(0f, 0f, 0f, 0.25f)
                 },
                 countSound = new SkinnableSound(new SampleInfo("Gameplay/Taka"))
             };
@@ -126,8 +107,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             base.PopIn();
 
-            supporterText.Text = getRandomSupporter();
-            messageText.Text = "Get ready!";
+            supporterText.Text = SentakkiResumeOverlayStrings.SentakkiSupportedBy(getRandomSupporter());
+            messageText.Text = SentakkiResumeOverlayStrings.GetReady;
 
             var currentTimingPoint = beatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(beatmap.Value.Track.CurrentTime);
             barLength = currentTimingPoint.TimeSignature.Numerator;
@@ -145,7 +126,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override void PopOut()
         {
             base.PopOut();
-            messageText.Text = "Let's go!";
+            messageText.Text = SentakkiResumeOverlayStrings.LetsGo;
 
             if (localCursorContainer != null && GameplayCursor?.ActiveCursor != null)
                 GameplayCursor.ActiveCursor.Position = localCursorContainer.ActiveCursor.Position;

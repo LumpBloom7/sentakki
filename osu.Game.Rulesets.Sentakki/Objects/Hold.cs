@@ -36,8 +36,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            base.CreateNestedHitObjects(cancellationToken);
-
             AddNested(new HoldHead
             {
                 Break = Break,

@@ -28,18 +28,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // All hits can only be done after the parent StartTime
         public bool IsHittable => Time.Current > ParentHitObject.HitObject.StartTime && isPreviousNodeHit();
 
-        private bool isPreviousNodeHit()
-        {
-            if (HitObject.StrictCompletionOrder)
-                return ThisIndex < 1 || parentSlide.SlideCheckpoints[ThisIndex - 1].IsHit;
+        private bool isPreviousNodeHit() => ThisIndex < 1 || parentSlide.SlideCheckpoints[ThisIndex - 1].IsHit;
 
-            return ThisIndex < 2 || parentSlide.SlideCheckpoints[ThisIndex - 2].IsHit;
-        }
-
-        private Container<DrawableSlideCheckpointNode> nodes;
+        private Container<DrawableSlideCheckpointNode> nodes = null!;
 
         public DrawableSlideCheckpoint() : this(null) { }
-        public DrawableSlideCheckpoint(SlideCheckpoint checkpoint)
+        public DrawableSlideCheckpoint(SlideCheckpoint? checkpoint)
             : base(checkpoint) { }
 
         [BackgroundDependencyLoader]
@@ -77,9 +71,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void ApplyResult(Action<JudgementResult> application)
         {
-            // Judge the previous node, because that isn't guaranteed due to the leniency;
-            if (ThisIndex > 0)
-                parentSlide.SlideCheckpoints[ThisIndex - 1]?.ApplyResult(application);
+            if (Judged)
+                return;
 
             // Make sure remaining nodes are judged
             foreach (var node in nodes)

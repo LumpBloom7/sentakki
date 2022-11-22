@@ -1,6 +1,7 @@
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
@@ -17,45 +18,67 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // While it is completely playable even beyond this value, it would look awkward for shorter slides
         public double MaxDuration => MinDuration * 10;
 
-        public double TotalDistance;
+        public double TotalDistance { get; private set; }
 
         public readonly SliderPath[] SlideSegments;
 
-        public readonly IReadOnlyList<Vector2> Vertices;
+        public readonly float FanStartProgress = 1;
 
-        public SentakkiSlidePath(SliderPath segment, int endLane)
-            : this(new SliderPath[] { segment }, endLane) { }
+        public bool EndsWithSlideFan { get; private set; }
+        public bool StartsWithSlideFan { get; private set; }
 
-        public SentakkiSlidePath(SliderPath[] segments, int endLane)
+        public readonly Vector2 pathOrigin;
+        public readonly Vector2 fanOrigin;
+
+        public SentakkiSlidePath(SliderPath segment, int endLane, bool lastSegmentIsFan = false)
+            : this(new[] { segment }, endLane, lastSegmentIsFan) { }
+
+        public SentakkiSlidePath(SliderPath[] segments, int endLane, bool lastSegmentIsFan = false)
         {
-            SlideSegments = segments;
-            TotalDistance = SlideSegments.Sum(p => p.Distance);
+            fanOrigin = pathOrigin = segments[0].PositionAt(0);
+            TotalDistance = segments.Sum(p => p.Distance);
             EndLane = endLane;
-            Vertices = SlideSegments.SelectMany(getVerticesOfPath).ToList();
+            EndsWithSlideFan = lastSegmentIsFan;
+            StartsWithSlideFan = lastSegmentIsFan && segments.Length == 1;
+
+            if (lastSegmentIsFan)
+            {
+                SlideSegments = new SliderPath[segments.Length - 1];
+                Array.Copy(segments, SlideSegments, segments.Length - 1);
+                FanStartProgress = (float)(SlideSegments.Sum(p => p.Distance) / TotalDistance);
+                fanOrigin = segments[^1].PositionAt(0);
+            }
+            else
+                SlideSegments = segments;
         }
 
-        public Vector2 PositionAt(double progress)
+        public Vector2 PositionAt(double progress, int laneOffset = 0)
         {
-            if (progress <= 0) return SlideSegments[0].PositionAt(0);
-            if (progress >= 1) return SlideSegments[^1].PositionAt(1);
+            if (progress <= 0) return pathOrigin;
+            if (progress >= 1 && !EndsWithSlideFan) return SlideSegments[^1].PositionAt(1);
 
-            double distanceLeft = TotalDistance * progress;
-            int i = 0;
-            while (distanceLeft > SlideSegments[i].Distance)
+            // Handle the regular shapes
+            if (progress < FanStartProgress)
             {
-                distanceLeft -= SlideSegments[i].Distance;
-                i++;
+                double distanceLeft = TotalDistance * progress;
+
+                foreach (var segment in SlideSegments)
+                {
+                    if (segment.Distance > distanceLeft)
+                        return segment.PositionAt(distanceLeft / segment.Distance);
+
+                    distanceLeft -= segment.Distance;
+                }
             }
 
-            return SlideSegments[i].PositionAt(distanceLeft / SlideSegments[i].Distance);
+            // Here starts the fan slide fallback
+            float originAngle = Vector2.Zero.GetDegreesFromPosition(fanOrigin);
+            float destAngle = originAngle + 180 + (laneOffset * 45);
+
+            var destPosition = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, destAngle);
+
+            return Vector2.Lerp(fanOrigin, destPosition, Math.Clamp((float)((progress - FanStartProgress) / (1 - FanStartProgress)), 0, 1));
         }
 
-        private List<Vector2> getVerticesOfPath(SliderPath path)
-        {
-            var vertices = new List<Vector2>();
-
-            path.GetPathToProgress(vertices, 0, 1);
-            return vertices;
-        }
     }
 }
