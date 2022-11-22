@@ -44,12 +44,12 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                 var oldPosition = moveEvent.Blueprint.ScreenSpaceSelectionPoint;
                 var newPosition = moveEvent.Blueprint.ScreenSpaceSelectionPoint + moveEvent.ScreenSpaceDelta;
                 var playfieldCentre = ToScreenSpace(new Vector2(300));
-                var angleDelta = playfieldCentre.GetDegreesFromPosition(newPosition) - playfieldCentre.GetDegreesFromPosition(oldPosition);
+                float angleDelta = playfieldCentre.GetDegreesFromPosition(newPosition) - playfieldCentre.GetDegreesFromPosition(oldPosition);
 
                 foreach (var bp in SelectedBlueprints.ToList())
                 {
                     var laned = (SentakkiLanedHitObject)bp.Item;
-                    var currentAngle = laned.Lane.GetRotationForLane() + angleDelta;
+                    float currentAngle = laned.Lane.GetRotationForLane() + angleDelta;
                     laned.Lane = currentAngle.GetNoteLaneFromDegrees();
                 }
                 return true;
@@ -107,14 +107,14 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             float circleIntersectionDistance(Vector2 centre, Vector2 direction)
             {
                 direction.Normalize();
-                var b = (direction.X * centre.X) + (direction.Y * centre.Y);
-                var c = centre.LengthSquared - (boundary_radius * boundary_radius);
+                float b = (direction.X * centre.X) + (direction.Y * centre.Y);
+                float c = centre.LengthSquared - (boundary_radius * boundary_radius);
                 return MathF.Sqrt((b * b) - c) - b;
             }
 
             var touches = SelectedBlueprints.Select(bp => (Touch)bp.Item).ToList();
-            var centre = touches.Aggregate(Vector2.Zero, (a, b) => a + b.Position) / touches.Count;
-            var cappedDragDelta = touches.Min(t => dragDistance(t.Position - centre, t.Position + dragDelta));
+            Vector2 centre = touches.Aggregate(Vector2.Zero, (a, b) => a + b.Position) / touches.Count;
+            float cappedDragDelta = touches.Min(t => dragDistance(t.Position - centre, t.Position + dragDelta));
 
             if (!(cappedDragDelta >= 0)) return; // No movement or invalid movement occurred
 

@@ -5,6 +5,7 @@ using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
+using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds;
@@ -40,6 +41,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                     return new TouchSelectionBlueprint(t);
                 case TouchHold th:
                     return new TouchHoldSelectionBlueprint(th);
+                case Slide s:
+                    return new SlideSelectionBlueprint(s);
             }
             return base.CreateHitObjectBlueprintFor(hitObject);
         }

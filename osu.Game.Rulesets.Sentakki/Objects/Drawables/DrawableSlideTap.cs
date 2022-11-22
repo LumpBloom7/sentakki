@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             if (ParentHitObject is DrawableSlide slide)
             {
-                spinDuration = ((Slide)slide.HitObject).SlideInfoList.FirstOrDefault().Duration;
+                spinDuration = slide.HitObject.SlideInfoList.FirstOrDefault().Duration;
                 if (slide.SlideBodies.Count > 1)
                     note.SecondStar.Alpha = 1;
                 else
