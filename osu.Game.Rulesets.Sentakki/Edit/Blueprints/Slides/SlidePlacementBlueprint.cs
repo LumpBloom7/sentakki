@@ -106,6 +106,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         protected override bool OnKeyDown(KeyDownEvent e)
         {
+            if (PlacementActive != PlacementState.Active)
+                return false;
+
             switch (e.Key)
             {
                 case Key.M:
