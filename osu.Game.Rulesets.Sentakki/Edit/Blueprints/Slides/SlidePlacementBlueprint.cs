@@ -184,7 +184,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
                     int delta = (i + 1) / 2 * (negative ? -1 : 1);
 
-                    int candidateOffset = newTargetOffset + delta;
+                    int candidateOffset = (newTargetOffset + delta).NormalizePath();
 
                     newPart = new SlideBodyPart(currentShape, candidateOffset, mirrored);
 
