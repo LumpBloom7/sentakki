@@ -49,7 +49,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             highlight.SlideTapPiece.Scale = Vector2.One;
         }
 
-
         private SlideBodyInfo commitedSlideBodyInfo = null!;
         private SlideBodyInfo previewSlideBodyInfo = null!;
         private int currentLaneOffset;
@@ -76,10 +75,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                 commitedSlideBodyInfo.SlidePathParts = bodyParts.ToArray();
                 commited.Path = commitedSlideBodyInfo.SlidePath;
 
-
                 bodyHighlight.Rotation = (HitObject.Lane + currentLaneOffset).GetRotationForLane();
-
-                targetPathOffset = -999; // Force re-evaluation of current path part
             }
 
             return true;
