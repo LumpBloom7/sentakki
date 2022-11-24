@@ -17,6 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         private readonly SlideTapHighlight highlight = null!;
 
         private readonly SlideVisual bodyHighlight = null!;
+        private readonly SlideVisual commited = null!;
 
         public new Slide HitObject => (Slide)base.HitObject;
 
@@ -24,18 +25,26 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             : base(new Slide())
         {
             Anchor = Origin = Anchor.Centre;
+
             AddRangeInternal(new Drawable[]{
                 highlight = new SlideTapHighlight(),
                 new Container{
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Rotation = -22.5f,
-                    Child = bodyHighlight = new SlideVisual(){
-                        Colour = Color4.GreenYellow,
-                        Alpha = 0.5f,
+                    Children = new Drawable[]{
+                        commited = new SlideVisual(){
+                            Colour = Color4.LimeGreen,
+                            Alpha = 0.5f,
+                        },
+                        bodyHighlight = new SlideVisual(){
+                            Colour = Color4.GreenYellow,
+                            Alpha = 0.8f,
+                        },
                     }
                 }
             });
+
             highlight.SlideTapPiece.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
             highlight.SlideTapPiece.Scale = Vector2.One;
         }
@@ -43,10 +52,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         protected override void Update()
         {
             highlight.Rotation = HitObject.Lane.GetRotationForLane();
-            bodyHighlight.Rotation = HitObject.Lane.GetRotationForLane();
+
         }
 
-        private SlideBodyInfo slideBodyInfo = null!;
+        private SlideBodyInfo commitedSlideBodyInfo = null!;
         private SlideBodyInfo previewSlideBodyInfo = null!;
         private int currentLaneOffset;
 
@@ -58,18 +67,24 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             if (PlacementActive != PlacementState.Active)
             {
                 BeginPlacement(true);
-                currentLaneOffset = HitObject.Lane;
-                HitObject.SlideInfoList.Add(slideBodyInfo = new SlideBodyInfo());
+
+                HitObject.SlideInfoList.Add(commitedSlideBodyInfo = new SlideBodyInfo());
                 previewSlideBodyInfo = new SlideBodyInfo();
-                currentLaneOffset = 0;
-                index = 0;
+
+                commited.Rotation = HitObject.Lane.GetRotationForLane();
+                bodyHighlight.Rotation = HitObject.Lane.GetRotationForLane();
             }
             else
             {
-                ++index;
-                currentLaneOffset += pathOffset;
-                slideBodyInfo.SlidePathParts = previewSlideBodyInfo.SlidePathParts;
-                bodyHighlight.Path = slideBodyInfo.SlidePath;
+                currentLaneOffset += validPathOffset;
+                bodyParts.Add(currentPart);
+                commitedSlideBodyInfo.SlidePathParts = bodyParts.ToArray();
+                commited.Path = commitedSlideBodyInfo.SlidePath;
+
+
+                bodyHighlight.Rotation = (HitObject.Lane + currentLaneOffset).GetRotationForLane();
+
+                targetPathOffset = -999; // Force re-evaluation of current path part
             }
 
             return true;
@@ -95,30 +110,35 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             {
                 case Key.M:
                     mirrored = !mirrored;
-                    updateCurrentPathPart();
+                    updateCurrentPathPart(targetPathOffset);
                     return true;
 
                 case Key.BracketRight:
                     currentShape = (SlidePaths.PathShapes)((int)(currentShape + 1) % 8);
-                    updateCurrentPathPart();
+                    updateCurrentPathPart(targetPathOffset);
                     return true;
 
                 case Key.BracketLeft:
                     currentShape = (SlidePaths.PathShapes)((int)(currentShape + 7) % 8);
-                    updateCurrentPathPart();
+                    updateCurrentPathPart(targetPathOffset);
                     return true;
             }
 
             return base.OnKeyDown(e);
         }
 
+        private List<SlideBodyPart> bodyParts = new List<SlideBodyPart>();
+
+        private SlideBodyPart currentPart = null!;
+
         private SlidePaths.PathShapes currentShape = SlidePaths.PathShapes.Straight;
 
-        private int pathOffset = 0;
+        // The pathOffset of a valid path that matches or closely matches the desired endOffset
+        // This will be used when committing a part
+        private int validPathOffset = 0;
 
-        private List<SlideBodyPart> bodyParts = new List<SlideBodyPart>();
-        private int index = 0;
-
+        // The path offset of the lane the player is pointing at
+        private int targetPathOffset = 0;
         private bool mirrored = false;
 
         public override void UpdateTimeAndPosition(SnapResult result)
@@ -128,15 +148,12 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             if (PlacementActive == PlacementState.Active)
             {
                 if (result.Time is double endTime)
-                    slideBodyInfo.Duration = endTime - HitObject.StartTime;
+                    commitedSlideBodyInfo.Duration = endTime - HitObject.StartTime;
 
                 int newPO = (OriginPosition.GetDegreesFromPosition(ToLocalSpace(result.ScreenSpacePosition)).GetNoteLaneFromDegrees() - currentLaneOffset - HitObject.Lane).NormalizePath();
 
-                if (pathOffset != newPO)
-                {
-                    pathOffset = newPO;
-                    updateCurrentPathPart();
-                }
+                if (targetPathOffset != newPO)
+                    updateCurrentPathPart(newPO);
             }
             else
             {
@@ -146,14 +163,40 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             }
         }
 
-        private void updateCurrentPathPart()
+        private void updateCurrentPathPart(int newTargetOffset)
         {
-            if (bodyParts.Count > index)
-                bodyParts.RemoveAt(index);
+            int oldValidPath = validPathOffset;
+            validPathOffset = newTargetOffset;
 
-            bodyParts.Add(new SlideBodyPart(currentShape, pathOffset, mirrored));
-            previewSlideBodyInfo.SlidePathParts = bodyParts.ToArray();
+            var newPart = new SlideBodyPart(currentShape, newTargetOffset, mirrored);
+
+            if (!SlidePaths.CheckSlideValidity(newPart))
+            {
+                bool tryNegativeDeltaFirst = (oldValidPath - newTargetOffset) < 0;
+
+                // Find closest valid offset
+                for (int i = 1; i < 8; ++i)
+                {
+                    bool negative = ((i % 2) == 0) ^ tryNegativeDeltaFirst;
+
+                    int delta = (i + 1) / 2 * (negative ? -1 : 1);
+
+                    int candidateOffset = newTargetOffset + delta;
+
+                    newPart = new SlideBodyPart(currentShape, candidateOffset, mirrored);
+
+                    if (SlidePaths.CheckSlideValidity(newPart))
+                    {
+                        validPathOffset = candidateOffset;
+                        break;
+                    }
+                }
+            }
+
+            currentPart = newPart;
+            previewSlideBodyInfo.SlidePathParts = new[] { currentPart };
             bodyHighlight.Path = previewSlideBodyInfo.SlidePath;
+            targetPathOffset = newTargetOffset;
         }
     }
 }
