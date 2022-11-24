@@ -18,7 +18,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         private readonly Container<SlideBodyHighlight> slideBodyHighlights;
 
-
         public SlideSelectionBlueprint(Slide hitObject)
             : base(hitObject)
         {

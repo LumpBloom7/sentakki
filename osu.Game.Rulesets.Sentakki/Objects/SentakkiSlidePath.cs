@@ -79,6 +79,5 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             return Vector2.Lerp(fanOrigin, destPosition, Math.Clamp((float)((progress - FanStartProgress) / (1 - FanStartProgress)), 0, 1));
         }
-
     }
 }

@@ -49,11 +49,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             highlight.SlideTapPiece.Scale = Vector2.One;
         }
 
-        protected override void Update()
-        {
-            highlight.Rotation = HitObject.Lane.GetRotationForLane();
-
-        }
 
         private SlideBodyInfo commitedSlideBodyInfo = null!;
         private SlideBodyInfo previewSlideBodyInfo = null!;
@@ -161,6 +156,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             else
             {
                 HitObject.Lane = OriginPosition.GetDegreesFromPosition(ToLocalSpace(result.ScreenSpacePosition)).GetNoteLaneFromDegrees();
+                highlight.Rotation = HitObject.Lane.GetRotationForLane();
                 if (result.Time is double startTime)
                     HitObject.StartTime = startTime;
             }
