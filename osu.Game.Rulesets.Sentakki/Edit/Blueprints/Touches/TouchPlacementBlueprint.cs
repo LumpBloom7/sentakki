@@ -1,4 +1,3 @@
-using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -7,16 +6,12 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches
 {
-    public class TouchPlacementBlueprint : PlacementBlueprint
+    public class TouchPlacementBlueprint : SentakkiPlacementBlueprint<Touch>
     {
         private readonly TouchHighlight highlight;
 
-        public new Touch HitObject => (Touch)base.HitObject;
-
         public TouchPlacementBlueprint()
-            : base(new Touch())
         {
-            Anchor = Origin = Anchor.Centre;
             InternalChild = highlight = new TouchHighlight();
         }
 

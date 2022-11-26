@@ -1,4 +1,3 @@
-using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -7,15 +6,12 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
 {
-    public class TapPlacementBlueprint : PlacementBlueprint
+    public class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
     {
         private readonly TapHighlight highlight;
 
-        public new Tap HitObject => (Tap)base.HitObject;
         public TapPlacementBlueprint()
-            : base(new Tap())
         {
-            Anchor = Origin = Anchor.Centre;
             InternalChild = highlight = new TapHighlight();
             highlight.Note.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
         }

@@ -1,5 +1,4 @@
 using System;
-using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -7,14 +6,10 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
 {
-    public class TouchHoldPlacementBlueprint : PlacementBlueprint
+    public class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<TouchHold>
     {
-        public new TouchHold HitObject => (TouchHold)base.HitObject;
-
         public TouchHoldPlacementBlueprint()
-            : base(new TouchHold())
         {
-            Anchor = Origin = Anchor.Centre;
             InternalChild = new TouchHoldHighlight();
         }
 

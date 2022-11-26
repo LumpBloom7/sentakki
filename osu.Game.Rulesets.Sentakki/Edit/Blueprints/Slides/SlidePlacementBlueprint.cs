@@ -13,20 +13,15 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 {
-    public class SlidePlacementBlueprint : PlacementBlueprint
+    public class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
     {
         private readonly SlideTapHighlight highlight;
 
         private readonly SlideVisual bodyHighlight;
         private readonly SlideVisual commited;
 
-        public new Slide HitObject => (Slide)base.HitObject;
-
         public SlidePlacementBlueprint()
-            : base(new Slide())
         {
-            Anchor = Origin = Anchor.Centre;
-
             AddRangeInternal(new Drawable[]
             {
                 highlight = new SlideTapHighlight(),

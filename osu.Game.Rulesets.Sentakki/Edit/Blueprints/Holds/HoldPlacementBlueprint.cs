@@ -1,5 +1,4 @@
 using System;
-using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -8,16 +7,12 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
 {
-    public class HoldPlacementBlueprint : PlacementBlueprint
+    public class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
     {
         private readonly HoldHighlight highlight;
 
-        public new Hold HitObject => (Hold)base.HitObject;
-
         public HoldPlacementBlueprint()
-            : base(new Hold())
         {
-            Anchor = Origin = Anchor.Centre;
             InternalChild = highlight = new HoldHighlight();
             highlight.Note.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
         }
