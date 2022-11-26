@@ -32,17 +32,19 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
             if (e.Button != MouseButton.Left)
                 return false;
 
-            BeginPlacement(true);
+            if (PlacementActive != PlacementState.Active)
+                BeginPlacement(true);
 
             return base.OnMouseDown(e);
         }
 
         protected override void OnMouseUp(MouseUpEvent e)
         {
-            if (e.Button != MouseButton.Left)
+            if (e.Button != MouseButton.Right)
                 return;
 
-            EndPlacement(true);
+            if (PlacementActive == PlacementState.Active)
+                EndPlacement(true);
         }
 
         private double originalStartTime;

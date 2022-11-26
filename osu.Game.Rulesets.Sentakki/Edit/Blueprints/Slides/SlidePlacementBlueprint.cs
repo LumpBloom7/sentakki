@@ -53,7 +53,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         private SlideBodyInfo previewSlideBodyInfo = null!;
         private int currentLaneOffset;
 
-        protected override bool OnClick(ClickEvent e)
+        protected override bool OnMouseDown(MouseDownEvent e)
         {
             if (e.Button != MouseButton.Left)
                 return false;
@@ -81,18 +81,13 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             return true;
         }
 
-        protected override bool OnDoubleClick(DoubleClickEvent e)
+        protected override void OnMouseUp(MouseUpEvent e)
         {
-            if (e.Button != MouseButton.Left)
-                return false;
+            if (e.Button != MouseButton.Right)
+                return;
 
             if (PlacementActive == PlacementState.Active)
-            {
                 EndPlacement(true);
-                return true;
-            }
-
-            return base.OnDoubleClick(e);
         }
 
         protected override bool OnKeyDown(KeyDownEvent e)
