@@ -41,6 +41,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
+        // This shouldn't play any samples
+        protected override void LoadSamples()
+        {
+        }
+
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             bool hasResultAndFinishedTransforms(DrawableHitObject d) => d.Result.HasResult && Time.Current >= d.LatestTransformEndTime;
