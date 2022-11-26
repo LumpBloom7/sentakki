@@ -30,7 +30,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
                 return;
 
             if (PlacementActive == PlacementState.Active)
-                EndPlacement(true);
+                EndPlacement(HitObject.Duration > 0);
         }
 
         private double originalStartTime;

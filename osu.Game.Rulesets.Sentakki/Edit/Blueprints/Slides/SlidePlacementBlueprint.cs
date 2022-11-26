@@ -93,12 +93,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                 return;
 
             if (PlacementActive == PlacementState.Active)
-            {
-                if (bodyParts.Count == 0 || commitedSlideBodyInfo.Duration == 0)
-                    EndPlacement(false);
-
-                EndPlacement(true);
-            }
+                EndPlacement(bodyParts.Count > 0 && commitedSlideBodyInfo.Duration > 0);
         }
 
         protected override bool OnKeyDown(KeyDownEvent e)
