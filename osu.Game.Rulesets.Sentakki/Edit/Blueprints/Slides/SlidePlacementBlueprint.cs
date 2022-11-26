@@ -103,7 +103,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
             switch (e.Key)
             {
-                case Key.M:
+                case Key.BackSlash:
                     mirrored = !mirrored;
                     updateCurrentPathPart(targetPathOffset);
                     return true;
