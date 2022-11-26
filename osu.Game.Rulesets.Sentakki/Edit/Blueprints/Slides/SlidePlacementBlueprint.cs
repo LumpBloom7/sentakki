@@ -75,7 +75,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
                 previewSlideBodyInfo = new SlideBodyInfo
                 {
-                    SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false) }
+                    SlidePathParts = new[] { currentPart = new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false) }
                 };
                 bodyHighlight.Path = previewSlideBodyInfo.SlidePath;
             }
