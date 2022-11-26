@@ -87,7 +87,16 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                 return;
 
             if (PlacementActive == PlacementState.Active)
+            {
+                // Check endTime > StartTime;
+                if (commitedSlideBodyInfo.Duration < 0)
+                {
+                    HitObject.StartTime -= commitedSlideBodyInfo.Duration;
+                    commitedSlideBodyInfo.Duration *= -1;
+                }
+
                 EndPlacement(true);
+            }
         }
 
         protected override bool OnKeyDown(KeyDownEvent e)
