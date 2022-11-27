@@ -109,16 +109,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private void updateSlideCompletion(DrawableHitObject hitObject, JudgementResult result)
         {
             updateCompletionProgress();
-            Slidepath.updateChevronVisibility();
-        }
-
-        protected override void Update()
-        {
-            base.Update();
-
-            // This is purely here to ensure the the visuals are more or less correct during rewind
-            if (Clock.Rate <= 0 && Time.Current >= HitObject.StartTime && State.Value == ArmedState.Idle)
-                Slidepath.updateChevronVisibility();
+            Slidepath.UpdateChevronVisibility();
         }
 
         // Used to hide and show segments accurately

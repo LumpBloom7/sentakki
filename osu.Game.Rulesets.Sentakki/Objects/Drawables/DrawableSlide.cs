@@ -29,7 +29,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Anchor = Anchor.Centre;
             AddRangeInternal(new Drawable[]
             {
-                SlideBodies = new Container<DrawableSlideBody>{
+                SlideBodies = new Container<DrawableSlideBody>
+                {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                 },
@@ -48,12 +49,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            bool hasResultAndFinishedTransforms(DrawableHitObject d) => d.Result.HasResult && Time.Current >= d.LatestTransformEndTime;
-
             // We also make sure all transforms have finished to avoid jank
             for (int i = 0; i < NestedHitObjects.Count; i++)
-                if (!hasResultAndFinishedTransforms(NestedHitObjects[i]))
+            {
+                var nested = NestedHitObjects[i];
+                if (!nested.Result.HasResult || Time.Current < nested.LatestTransformEndTime)
                     return;
+            }
 
             ApplyResult(Result.Judgement.MaxResult);
         }
