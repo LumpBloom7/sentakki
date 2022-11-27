@@ -8,7 +8,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
     public class SlideFanChevron : CompositeDrawable, ISlideChevron
     {
-        public double Progress { get; set; }
+        public double DisappearThreshold { get; set; }
+        public SlideVisual? SlideVisual { get; set; }
+
         private readonly IBindable<Vector2> textureSize = new Bindable<Vector2>();
 
         public SlideFanChevron((BufferedContainerView<Drawable> view, IBindable<Vector2> sizeBindable) chevron)

@@ -8,7 +8,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
     public class SlideChevron : PoolableDrawable, ISlideChevron
     {
-        public double Progress { get; set; }
+        public double DisappearThreshold { get; set; }
+        public SlideVisual? SlideVisual { get; set; }
 
         public SlideChevron()
         {
