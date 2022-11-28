@@ -4,6 +4,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
+using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -55,6 +56,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Text = "Shoot Delay: 1 beat",
+                    Font = OsuFont.Torus.With(size: 30f),
                     Alpha = 0,
                 }
             });
