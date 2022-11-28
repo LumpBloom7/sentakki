@@ -8,7 +8,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         private static readonly SentakkiSlidePath empty_path = SlidePaths.CreateSlidePath(new[]
         {
-            new SlideBodyPart(SlidePaths.PathShapes.Circle, 8, false)
+            new SlideBodyPart(SlidePaths.PathShapes.Straight, endOffset: 0, false)
         });
 
         private SlideBodyPart[] slidePathParts = null!;
