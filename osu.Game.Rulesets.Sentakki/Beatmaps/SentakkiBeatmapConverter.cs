@@ -314,7 +314,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     {
                         SlidePathParts = new SlideBodyPart[]{selectedPath},
                         Duration = ((IHasDuration)original).Duration,
-                        Break = hasBreakTail
+                        Break = hasBreakTail,
+                        ShootDelay = 0.5f,
                     }
                 },
                 Lane = noteLane,

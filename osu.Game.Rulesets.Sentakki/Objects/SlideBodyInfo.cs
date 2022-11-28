@@ -23,7 +23,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public double Duration;
 
         // Delay before the star on the slide starts moving to the end
-        public int ShootDelay = 1;
+        // Measured in beats
+        public float ShootDelay = 1;
 
         // Whether the slide body should have a break modifier applied to them.
         public bool Break;
