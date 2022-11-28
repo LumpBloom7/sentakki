@@ -76,12 +76,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             }
             else
             {
-                currentLaneOffset += validPathOffset;
-                bodyParts.Add(currentPart);
-                commitedSlideBodyInfo.SlidePathParts = bodyParts.ToArray();
-                commited.Path = commitedSlideBodyInfo.SlidePath;
-
-                bodyHighlight.Rotation = (HitObject.Lane + currentLaneOffset).GetRotationForLane();
+                commitCurrentPart();
             }
 
             return true;
@@ -103,6 +98,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
             switch (e.Key)
             {
+                case Key.BackSpace:
+                    uncommitLastPart();
+                    break;
+
                 case Key.BackSlash:
                     mirrored = !mirrored;
                     updateCurrentPathPart(targetPathOffset);
@@ -123,6 +122,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         }
 
         private readonly List<SlideBodyPart> bodyParts = new List<SlideBodyPart>();
+
+        // Only used to revert the lane offsets after uncommit
+        private readonly Stack<int> laneOffsets = new Stack<int>();
 
         private SlideBodyPart currentPart = null!;
 
@@ -198,6 +200,32 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             previewSlideBodyInfo.SlidePathParts = new[] { currentPart };
             bodyHighlight.Path = previewSlideBodyInfo.SlidePath;
             targetPathOffset = newTargetOffset;
+        }
+
+        private void commitCurrentPart()
+        {
+            laneOffsets.Push(validPathOffset);
+            bodyParts.Add(currentPart);
+
+            currentLaneOffset += validPathOffset;
+            commitedSlideBodyInfo.SlidePathParts = bodyParts.ToArray();
+            commited.Path = commitedSlideBodyInfo.SlidePath;
+
+            bodyHighlight.Rotation = (HitObject.Lane + currentLaneOffset).GetRotationForLane();
+        }
+
+        private void uncommitLastPart()
+        {
+            if (laneOffsets.Count == 0)
+                return;
+
+            currentLaneOffset -= laneOffsets.Pop();
+            bodyParts.RemoveAt(bodyParts.Count - 1);
+
+            commitedSlideBodyInfo.SlidePathParts = bodyParts.ToArray();
+            commited.Path = commitedSlideBodyInfo.SlidePath;
+
+            bodyHighlight.Rotation = (HitObject.Lane + currentLaneOffset).GetRotationForLane();
         }
     }
 }
