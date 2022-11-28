@@ -16,6 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
     public class SentakkiSelectionHandler : EditorSelectionHandler
     {
         private readonly Bindable<TernaryState> selectionBreakState = new Bindable<TernaryState>();
+        private readonly Bindable<TernaryState> selectionSlideBodyBreakState = new Bindable<TernaryState>();
 
         public SentakkiSelectionHandler()
         {
@@ -26,6 +27,16 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                     case TernaryState.False:
                     case TernaryState.True:
                         setBreakState(s.NewValue == TernaryState.True);
+                        break;
+                }
+            };
+            selectionSlideBodyBreakState.ValueChanged += s =>
+            {
+                switch (s.NewValue)
+                {
+                    case TernaryState.False:
+                    case TernaryState.True:
+                        setSlideBodyBreakState(s.NewValue == TernaryState.True);
                         break;
                 }
             };
@@ -81,17 +92,45 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             EditorBeatmap.EndChange();
         }
 
+        private void setSlideBodyBreakState(bool state)
+        {
+            var lhos = EditorBeatmap.SelectedHitObjects.OfType<Slide>();
+
+            EditorBeatmap.BeginChange();
+
+            foreach (var slide in lhos)
+            {
+                bool adjusted = false;
+                foreach (var body in slide.SlideInfoList)
+                {
+                    if (body.Break == state)
+                        continue;
+
+                    body.Break = state;
+                    adjusted = true;
+                }
+                if (adjusted)
+                    EditorBeatmap.Update(slide);
+            }
+
+            EditorBeatmap.EndChange();
+        }
+
         protected override void UpdateTernaryStates()
         {
             base.UpdateTernaryStates();
 
             selectionBreakState.Value = GetStateFromSelection(EditorBeatmap.SelectedHitObjects.OfType<SentakkiLanedHitObject>(), h => h.Break);
+            selectionSlideBodyBreakState.Value = GetStateFromSelection(EditorBeatmap.SelectedHitObjects.OfType<Slide>().SelectMany(h => h.SlideInfoList), s => s.Break);
         }
 
         protected override IEnumerable<MenuItem> GetContextMenuItemsForSelection(IEnumerable<SelectionBlueprint<HitObject>> selection)
         {
             if (selection.Any(s => s.Item is SentakkiLanedHitObject))
                 yield return new TernaryStateToggleMenuItem("Break") { State = { BindTarget = selectionBreakState } };
+
+            if (selection.Any(s => s.Item is Slide))
+                yield return new TernaryStateToggleMenuItem("Slide Break") { State = { BindTarget = selectionSlideBodyBreakState } };
 
             foreach (var item in base.GetContextMenuItemsForSelection(selection))
                 yield return item;
