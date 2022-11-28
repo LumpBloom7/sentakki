@@ -112,7 +112,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         private void updateShootDelayText()
         {
             shootDelayText.Text = string.Format("Shoot delay: {0} beats", commitedSlideBodyInfo.ShootDelay);
-            shootDelayText.ScaleTo(1.2f, 20).Then().ScaleTo(1f, 30);
+            shootDelayText.ScaleTo(1.1f, 20).Then().ScaleTo(1f, 30);
         }
 
         protected override bool OnKeyDown(KeyDownEvent e)
@@ -134,6 +134,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
                 case Key.Number0:
                     commitedSlideBodyInfo.ShootDelay = 1;
+                    updateShootDelayText();
                     break;
 
                 case Key.BackSpace:
