@@ -45,7 +45,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             CreateSlideCheckpoints();
             if (NestedHitObjects.Any())
-                NestedHitObjects.First().Samples.Add(new SentakkiHitSampleInfo("slide"));
+            {
+                NestedHitObjects[0].Samples.Add(new SentakkiHitSampleInfo("slide"));
+                NestedHitObjects[0].SampleControlPoint = SampleControlPoint;
+            }
         }
 
         protected void CreateSlideCheckpoints()
