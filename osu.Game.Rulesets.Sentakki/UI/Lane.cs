@@ -16,7 +16,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class Lane : Playfield, IKeyBindingHandler<SentakkiAction>
+    public partial class Lane : Playfield, IKeyBindingHandler<SentakkiAction>
     {
         public int LaneNumber { get; set; }
 

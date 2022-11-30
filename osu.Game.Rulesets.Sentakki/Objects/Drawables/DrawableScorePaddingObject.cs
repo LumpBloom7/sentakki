@@ -4,7 +4,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableScorePaddingObject : DrawableHitObject<ScorePaddingObject>
+    public partial class DrawableScorePaddingObject : DrawableHitObject<ScorePaddingObject>
     {
         public DrawableScorePaddingObject() : this(null) { }
 

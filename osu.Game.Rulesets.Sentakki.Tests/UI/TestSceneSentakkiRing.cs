@@ -9,7 +9,7 @@ using osuTK;
 namespace osu.Game.Rulesets.Sentakki.Tests.UI
 {
     [TestFixture]
-    public class TestSceneSentakkiRing : OsuTestScene
+    public partial class TestSceneSentakkiRing : OsuTestScene
     {
         private SentakkiRing ring = null!;
 

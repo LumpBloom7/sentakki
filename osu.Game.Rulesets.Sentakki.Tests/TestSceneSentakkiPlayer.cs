@@ -4,7 +4,7 @@ using osu.Game.Tests.Visual;
 namespace osu.Game.Rulesets.Sentakki.Tests
 {
     [TestFixture]
-    public class TestSceneSentakkiPlayer : PlayerTestScene
+    public partial class TestSceneSentakkiPlayer : PlayerTestScene
     {
         protected override Ruleset CreatePlayerRuleset() => new SentakkiRuleset();
         protected override bool Autoplay => true;

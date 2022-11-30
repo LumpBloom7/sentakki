@@ -2,7 +2,7 @@
 
 namespace osu.Game.Rulesets.Sentakki.Scoring
 {
-    public class SentakkiScoreProcessor : ScoreProcessor
+    public partial class SentakkiScoreProcessor : ScoreProcessor
     {
         public SentakkiScoreProcessor(SentakkiRuleset ruleset) : base(ruleset) { }
 

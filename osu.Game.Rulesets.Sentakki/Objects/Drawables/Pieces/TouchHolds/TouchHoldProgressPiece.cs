@@ -9,7 +9,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
 {
-    public class TouchHoldProgressPiece : CompositeDrawable
+    public partial class TouchHoldProgressPiece : CompositeDrawable
     {
         private readonly CircularProgress redProgress;
         private readonly CircularProgress yellowProgress;

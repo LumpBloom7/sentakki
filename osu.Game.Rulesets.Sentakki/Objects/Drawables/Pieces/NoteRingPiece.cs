@@ -6,7 +6,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     // This piece is used for laned notes, which share consistent elements
     // Each half is extends beyond the area of this drawable
     // The size property of this drawable affects the stretch of the ring
-    public class NoteRingPiece : CompositeDrawable
+    public partial class NoteRingPiece : CompositeDrawable
     {
         private const float base_circle_size = 75;
 

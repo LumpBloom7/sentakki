@@ -7,7 +7,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlide : DrawableSentakkiHitObject
+    public partial class DrawableSlide : DrawableSentakkiHitObject
     {
         public override bool DisplayResult => false;
 

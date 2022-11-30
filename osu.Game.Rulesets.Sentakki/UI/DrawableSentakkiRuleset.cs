@@ -19,7 +19,7 @@ using osu.Game.Screens.Play;
 namespace osu.Game.Rulesets.Sentakki.UI
 {
     [Cached]
-    public class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject>
+    public partial class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject>
     {
         private SlideFanChevrons slideFanChevronsTextures = null!;
 

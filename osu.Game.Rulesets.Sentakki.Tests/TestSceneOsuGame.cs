@@ -10,7 +10,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Tests
 {
-    public class TestSceneOsuGame : OsuTestScene
+    public partial class TestSceneOsuGame : OsuTestScene
     {
         [BackgroundDependencyLoader]
         private void load()
@@ -26,7 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests
             AddGame(new OsuGameSupporter());
         }
 
-        internal class OsuGameSupporter : OsuGame
+        internal partial class OsuGameSupporter : OsuGame
         {
             public OsuGameSupporter()
             {

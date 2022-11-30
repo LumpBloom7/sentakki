@@ -16,7 +16,7 @@ using osuTK.Graphics;
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     // New Judgement type to completely avoid the problem of legacy skins, they aren't appropriate for custom rulesets that use varied HitResults
-    public class DrawableSentakkiJudgement : PoolableDrawable
+    public partial class DrawableSentakkiJudgement : PoolableDrawable
     {
         public override bool RemoveCompletedTransforms => false;
 
@@ -120,7 +120,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             this.Delay(350).Expire();
         }
 
-        private class SentakkiJudgementPiece : DefaultJudgementPiece
+        private partial class SentakkiJudgementPiece : DefaultJudgementPiece
         {
             public SentakkiJudgementPiece(HitResult result) : base(result)
             {

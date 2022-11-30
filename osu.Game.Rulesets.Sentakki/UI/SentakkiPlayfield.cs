@@ -20,7 +20,7 @@ using osuTK.Graphics;
 namespace osu.Game.Rulesets.Sentakki.UI
 {
     [Cached]
-    public class SentakkiPlayfield : Playfield
+    public partial class SentakkiPlayfield : Playfield
     {
         private readonly Container<DrawableSentakkiJudgement> judgementLayer;
 

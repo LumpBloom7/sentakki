@@ -16,7 +16,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Statistics
 {
-    public class JudgementChart : CompositeDrawable
+    public partial class JudgementChart : CompositeDrawable
     {
         private const double entry_animation_duration = 150;
         private const double bar_fill_duration = 3000;
@@ -70,7 +70,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 },
             });
         }
-        public class NoteEntry : Container
+        public partial class NoteEntry : Container
         {
             public double InitialLifetimeOffset;
             private Container progressBox = null!;
@@ -198,7 +198,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 });
             }
 
-            public class TotalNoteCounter : RollingCounter<long>
+            public partial class TotalNoteCounter : RollingCounter<long>
             {
                 protected override double RollingDuration => bar_fill_duration;
 
@@ -217,7 +217,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 }
             }
 
-            private class ChartBar : Container
+            private partial class ChartBar : Container
             {
                 public double InitialLifetimeOffset;
 

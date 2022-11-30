@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Textures;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
-    public class StarPiece : CompositeDrawable
+    public partial class StarPiece : CompositeDrawable
     {
         public StarPiece()
         {

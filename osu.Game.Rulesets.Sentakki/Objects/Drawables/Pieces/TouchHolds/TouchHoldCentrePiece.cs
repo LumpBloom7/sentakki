@@ -8,7 +8,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
 {
-    public class TouchHoldCentrePiece : CompositeDrawable
+    public partial class TouchHoldCentrePiece : CompositeDrawable
     {
         private OsuColour colours = new OsuColour();
         public TouchHoldCentrePiece()

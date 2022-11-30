@@ -2,7 +2,7 @@
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class TrianglesPiece : Triangles
+    public partial class TrianglesPiece : Triangles
     {
         protected override float SpawnRatio => 1f;
 

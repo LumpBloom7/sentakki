@@ -5,7 +5,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class RingPiece : CircularContainer
+    public partial class RingPiece : CircularContainer
     {
         private const float outline_thickness = 2;
         public RingPiece(float thickness = 18)

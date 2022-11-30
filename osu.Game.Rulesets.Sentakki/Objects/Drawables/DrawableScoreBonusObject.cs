@@ -4,7 +4,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableScoreBonusObject : DrawableHitObject<ScoreBonusObject>
+    public partial class DrawableScoreBonusObject : DrawableHitObject<ScoreBonusObject>
     {
         public DrawableScoreBonusObject() : this(null) { }
 

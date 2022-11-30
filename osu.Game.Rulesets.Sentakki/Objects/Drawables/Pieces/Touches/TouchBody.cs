@@ -9,7 +9,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
 {
-    public class TouchBody : Container
+    public partial class TouchBody : Container
     {
         public Container BorderContainer;
         public Container PieceContainer;

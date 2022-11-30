@@ -73,7 +73,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             }
         }
 
-        private class PlayfieldMaskingContainer : CircularContainer
+        private partial class PlayfieldMaskingContainer : CircularContainer
         {
             private readonly PlayfieldMask cover;
 
@@ -138,7 +138,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             }
 
             // This buffered container maintains a SSDQ unaffected by rotation, so that the backing texture isn't being reallocated due to resizes
-            private class FixedSizeBufferedContainer : BufferedContainer
+            private partial class FixedSizeBufferedContainer : BufferedContainer
             {
                 [Resolved]
                 private SentakkiPlayfield sentakkiPlayfield { get; set; } = null!;
@@ -154,7 +154,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 }
             }
 
-            private class PlayfieldMask : Drawable
+            private partial class PlayfieldMask : Drawable
             {
                 private IShader shader = null!;
 

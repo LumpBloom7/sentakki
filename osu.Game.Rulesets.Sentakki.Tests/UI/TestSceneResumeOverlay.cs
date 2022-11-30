@@ -7,7 +7,7 @@ using osu.Game.Tests.Visual;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.UI
 {
-    public class TestSceneResumeOverlay : OsuTestScene
+    public partial class TestSceneResumeOverlay : OsuTestScene
     {
         protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 

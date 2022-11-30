@@ -8,7 +8,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class DotPiece : CompositeDrawable
+    public partial class DotPiece : CompositeDrawable
     {
         public DotPiece(float outlineThickness = 2, bool squared = false) : this(new Vector2(SentakkiPlayfield.DOTSIZE), outlineThickness, squared) { }
 

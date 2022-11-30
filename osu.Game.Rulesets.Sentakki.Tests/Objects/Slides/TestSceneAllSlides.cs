@@ -16,7 +16,7 @@ using osuTK.Graphics;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
     [TestFixture]
-    public class TestSceneAllSlides : OsuTestScene
+    public partial class TestSceneAllSlides : OsuTestScene
     {
         protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 

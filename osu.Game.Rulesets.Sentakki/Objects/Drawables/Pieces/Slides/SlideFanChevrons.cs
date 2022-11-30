@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
     /// <br/>
     /// A view of each chevron, along with their size, would be used by SlideFanVisual.
     /// </summary>
-    public class SlideFanChevrons : CompositeDrawable
+    public partial class SlideFanChevrons : CompositeDrawable
     {
         private Container<ChevronBackingTexture> chevrons = null!;
 
@@ -50,7 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             }
         }
 
-        private class ChevronBackingTexture : BufferedContainer
+        private partial class ChevronBackingTexture : BufferedContainer
         {
             public Bindable<Vector2> SizeBindable { get; } = new Bindable<Vector2>();
 

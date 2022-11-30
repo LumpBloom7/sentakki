@@ -7,7 +7,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
 {
-    public class TouchPiece : CompositeDrawable
+    public partial class TouchPiece : CompositeDrawable
     {
         private Texture touchTexture = null!;
         public TouchPiece()

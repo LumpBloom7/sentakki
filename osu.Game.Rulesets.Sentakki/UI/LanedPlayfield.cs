@@ -12,7 +12,7 @@ using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class LanedPlayfield : Playfield
+    public partial class LanedPlayfield : Playfield
     {
         public readonly List<Lane> Lanes = new List<Lane>();
 

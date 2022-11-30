@@ -11,7 +11,7 @@ using osu.Game.Skinning;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSentakkiLanedHitObject : DrawableSentakkiHitObject
+    public partial class DrawableSentakkiLanedHitObject : DrawableSentakkiHitObject
     {
         public new SentakkiLanedHitObject HitObject => (SentakkiLanedHitObject)base.HitObject;
 

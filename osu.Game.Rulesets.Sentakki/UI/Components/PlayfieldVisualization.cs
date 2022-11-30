@@ -19,7 +19,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components
 {
-    public class PlayfieldVisualisation : Drawable, IHasAccentColour
+    public partial class PlayfieldVisualisation : Drawable, IHasAccentColour
     {
         private readonly IBindable<WorkingBeatmap> beatmap = new Bindable<WorkingBeatmap>();
 
