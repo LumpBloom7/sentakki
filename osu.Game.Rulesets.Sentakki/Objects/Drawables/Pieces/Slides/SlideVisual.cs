@@ -10,7 +10,7 @@ using osu.Game.Rulesets.Sentakki.Configuration;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
-    public class SlideVisual : CompositeDrawable
+    public partial class SlideVisual : CompositeDrawable
     {
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;

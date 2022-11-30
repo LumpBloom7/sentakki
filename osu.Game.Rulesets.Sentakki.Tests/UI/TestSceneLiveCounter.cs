@@ -6,7 +6,7 @@ using osu.Game.Tests.Visual;
 namespace osu.Game.Rulesets.Sentakki.Tests.UI
 {
     [TestFixture]
-    public class TestSceneLiveCounter : OsuTestScene
+    public partial class TestSceneLiveCounter : OsuTestScene
     {
         private LiveCounter counter = null!;
         private BindableInt lives = new BindableInt

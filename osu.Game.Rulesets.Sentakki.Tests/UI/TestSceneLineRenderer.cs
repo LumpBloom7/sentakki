@@ -11,7 +11,7 @@ using osuTK.Graphics;
 namespace osu.Game.Rulesets.Sentakki.Tests.UI
 {
     [TestFixture]
-    public class TestSceneLineRenderer : OsuTestScene
+    public partial class TestSceneLineRenderer : OsuTestScene
     {
         private LineRenderer lineRenderer;
 

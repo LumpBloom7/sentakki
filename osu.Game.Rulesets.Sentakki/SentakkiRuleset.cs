@@ -188,7 +188,7 @@ namespace osu.Game.Rulesets.Sentakki
 
         public override LocalisableString GetDisplayNameForHitResult(HitResult result) => result.GetDisplayNameForSentakkiResult();
 
-        public class SentakkiIcon : CompositeDrawable
+        public partial class SentakkiIcon : CompositeDrawable
         {
             private readonly Ruleset ruleset;
 

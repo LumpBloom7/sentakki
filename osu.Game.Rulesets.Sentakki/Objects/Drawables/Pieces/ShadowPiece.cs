@@ -5,7 +5,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class ShadowPiece : Container
+    public partial class ShadowPiece : Container
     {
         public ShadowPiece()
         {

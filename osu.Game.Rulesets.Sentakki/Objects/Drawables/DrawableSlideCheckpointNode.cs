@@ -7,7 +7,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideCheckpointNode : DrawableSentakkiHitObject
+    public partial class DrawableSlideCheckpointNode : DrawableSentakkiHitObject
     {
         public new SlideCheckpoint.CheckpointNode HitObject => (SlideCheckpoint.CheckpointNode)base.HitObject;
 

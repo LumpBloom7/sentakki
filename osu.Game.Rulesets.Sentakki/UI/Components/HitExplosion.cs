@@ -11,7 +11,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components
 {
-    public class HitExplosion : PoolableDrawable
+    public partial class HitExplosion : PoolableDrawable
     {
         public override bool RemoveWhenNotAlive => true;
 

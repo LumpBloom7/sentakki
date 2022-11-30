@@ -18,7 +18,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class SentakkiResumeOverlay : ResumeOverlay
+    public partial class SentakkiResumeOverlay : ResumeOverlay
     {
         [Resolved]
         private IBindable<WorkingBeatmap> beatmap { get; set; } = null!;

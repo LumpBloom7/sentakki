@@ -8,7 +8,7 @@ using osu.Game.Rulesets.Sentakki.Localisation;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class SentakkiSettingsSubsection : RulesetSettingsSubsection
+    public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
     {
         private readonly Ruleset ruleset;
 
@@ -83,7 +83,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             };
         }
 
-        private class NoteTimeSlider : OsuSliderBar<double>
+        private partial class NoteTimeSlider : OsuSliderBar<double>
         {
             private string speedRating()
             {
@@ -97,7 +97,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             public override LocalisableString TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
         }
 
-        private class TouchTimeSlider : OsuSliderBar<double>
+        private partial class TouchTimeSlider : OsuSliderBar<double>
         {
             private string speedRating()
             {

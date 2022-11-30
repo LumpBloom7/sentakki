@@ -8,7 +8,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {
-    public class DrawableLine : PoolableDrawable
+    public partial class DrawableLine : PoolableDrawable
     {
         public override bool RemoveCompletedTransforms => false;
 

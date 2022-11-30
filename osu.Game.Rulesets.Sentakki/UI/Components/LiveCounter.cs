@@ -11,7 +11,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components
 {
-    public class LiveCounter : BeatSyncedContainer
+    public partial class LiveCounter : BeatSyncedContainer
     {
         public BindableInt LivesLeft = new BindableInt();
 
@@ -81,7 +81,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                     .Then().ScaleTo(1, 320 * panicDurationMultiplier);
         }
 
-        private class LiveRollingCounter : RollingCounter<int>
+        private partial class LiveRollingCounter : RollingCounter<int>
         {
             protected override double RollingDuration => 1000;
 

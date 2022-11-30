@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 {
     // A special playfield specifically made for TouchNotes
     // Contains extra functionality to better propogate touch input to Touch notes, and avoids some double hit weirdness
-    public class TouchPlayfield : Playfield
+    public partial class TouchPlayfield : Playfield
     {
         private SentakkiInputManager sentakkiActionInputManager = null!;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
@@ -95,7 +95,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         }
 
         // This HOC is specially built accommodate the custom input required to handle touch (even though I think the beatmap conversion is at fault)
-        private class TouchHitObjectContainer : HitObjectContainer
+        private partial class TouchHitObjectContainer : HitObjectContainer
         {
             // This is exposed to allow TouchPlayfield to iterate through touch objects without LINQ/ToList related allocations.
             // We pool DrawableTouch objects, and no other object shares this container, so it should be safe

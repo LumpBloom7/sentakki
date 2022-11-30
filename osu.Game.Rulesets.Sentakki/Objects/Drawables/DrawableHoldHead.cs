@@ -3,7 +3,7 @@ using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableHoldHead : DrawableSentakkiLanedHitObject
+    public partial class DrawableHoldHead : DrawableSentakkiLanedHitObject
     {
         public DrawableHoldHead() : this(null) { }
 

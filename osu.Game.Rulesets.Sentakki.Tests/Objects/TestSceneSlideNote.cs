@@ -18,7 +18,7 @@ using osuTK;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
     [TestFixture]
-    public class TestSceneSlideNote : OsuTestScene
+    public partial class TestSceneSlideNote : OsuTestScene
     {
         private readonly Container content;
         protected override Container<Drawable> Content => content;

@@ -6,7 +6,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
-    public class SlideFanChevron : CompositeDrawable, ISlideChevron
+    public partial class SlideFanChevron : CompositeDrawable, ISlideChevron
     {
         public double DisappearThreshold { get; set; }
         public SlideVisual? SlideVisual { get; set; }

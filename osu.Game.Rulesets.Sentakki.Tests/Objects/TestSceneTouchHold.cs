@@ -13,7 +13,7 @@ using osu.Game.Tests.Visual;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
     [TestFixture]
-    public class TestSceneTouchHold : OsuTestScene
+    public partial class TestSceneTouchHold : OsuTestScene
     {
         private readonly Container content;
         protected override Container<Drawable> Content => content;

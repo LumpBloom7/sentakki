@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Textures;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
-    public class SlideChevron : PoolableDrawable, ISlideChevron
+    public partial class SlideChevron : PoolableDrawable, ISlideChevron
     {
         public double DisappearThreshold { get; set; }
         public SlideVisual? SlideVisual { get; set; }

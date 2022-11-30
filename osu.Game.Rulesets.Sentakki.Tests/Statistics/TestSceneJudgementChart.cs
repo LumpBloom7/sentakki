@@ -8,7 +8,7 @@ using osu.Game.Tests.Visual;
 namespace osu.Game.Rulesets.Sentakki.Tests.Statistics
 {
     [TestFixture]
-    public class TestSceneJudgementChart : OsuTestScene
+    public partial class TestSceneJudgementChart : OsuTestScene
     {
         private List<HitEvent> testevents = new List<HitEvent>
         {

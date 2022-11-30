@@ -15,7 +15,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideBody : DrawableSentakkiLanedHitObject
+    public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
     {
         public new SlideBody HitObject => (SlideBody)base.HitObject;
 

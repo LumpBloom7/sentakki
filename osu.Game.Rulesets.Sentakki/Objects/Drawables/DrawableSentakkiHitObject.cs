@@ -8,7 +8,7 @@ using osu.Game.Rulesets.Sentakki.UI;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSentakkiHitObject : DrawableHitObject<SentakkiHitObject>
+    public partial class DrawableSentakkiHitObject : DrawableHitObject<SentakkiHitObject>
     {
         protected override double InitialLifetimeOffset => AdjustedAnimationDuration;
 

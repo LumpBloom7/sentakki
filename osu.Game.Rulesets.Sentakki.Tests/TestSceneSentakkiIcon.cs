@@ -4,7 +4,7 @@ using osu.Game.Tests.Visual;
 namespace osu.Game.Rulesets.Sentakki.Tests
 {
     [TestFixture]
-    public class TestSceneSentakkiIcon : OsuTestScene
+    public partial class TestSceneSentakkiIcon : OsuTestScene
     {
         protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 

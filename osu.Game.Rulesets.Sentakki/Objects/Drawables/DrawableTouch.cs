@@ -11,7 +11,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableTouch : DrawableSentakkiHitObject
+    public partial class DrawableTouch : DrawableSentakkiHitObject
     {
         protected new Touch HitObject => (Touch)base.HitObject;
 

@@ -4,7 +4,7 @@ using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideTap : DrawableTap
+    public partial class DrawableSlideTap : DrawableTap
     {
         protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
 

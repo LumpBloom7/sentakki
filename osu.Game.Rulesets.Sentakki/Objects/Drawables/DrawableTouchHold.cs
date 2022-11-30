@@ -19,7 +19,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableTouchHold : DrawableSentakkiHitObject
+    public partial class DrawableTouchHold : DrawableSentakkiHitObject
     {
         public new TouchHold HitObject => (TouchHold)base.HitObject;
 
