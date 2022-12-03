@@ -23,13 +23,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
 
         protected override bool OnMouseDown(MouseDownEvent e)
         {
-            if (e.Button == MouseButton.Left)
-            {
-                EndPlacement(true);
-                return true;
-            }
+            if (e.Button != MouseButton.Left) return false;
 
-            return base.OnMouseDown(e);
+            EndPlacement(true);
+            return true;
         }
 
         public override void UpdateTimeAndPosition(SnapResult result)
