@@ -78,7 +78,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 bool allBreaks = HitObjects.All(h => h.Break);
                 Colour = Color4.Gold;
 
-                int angleRange = 90 + (45 * delta);
+                int angleRange = delta == 4 ? 360 : (90 + (45 * delta));
 
                 AngleRange = angleRange / 360f;
 
