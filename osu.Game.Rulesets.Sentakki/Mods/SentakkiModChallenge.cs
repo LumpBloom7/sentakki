@@ -30,7 +30,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public override double ScoreMultiplier => 1.00;
 
-        public override Type[] IncompatibleMods => new Type[5]
+        public override Type[] IncompatibleMods => new[]
         {
             typeof(ModRelax),
             typeof(ModSuddenDeath),
@@ -41,13 +41,26 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public enum Lives
         {
-            [Description("5")] Five = 5,
-            [Description("10")] Ten = 10,
-            [Description("20")] Twenty = 20,
-            [Description("50")] Fifty = 50,
-            [Description("100")] Hundred = 100,
-            [Description("200")] TwoHundred = 200,
-            [Description("300")] ThreeHundred = 300,
+            [Description("5")]
+            Five = 5,
+
+            [Description("10")]
+            Ten = 10,
+
+            [Description("20")]
+            Twenty = 20,
+
+            [Description("50")]
+            Fifty = 50,
+
+            [Description("100")]
+            Hundred = 100,
+
+            [Description("200")]
+            TwoHundred = 200,
+
+            [Description("300")]
+            ThreeHundred = 300,
         }
 
         [SettingSource(typeof(SentakkiModChallengeStrings), nameof(SentakkiModChallengeStrings.NumberOfLives), nameof(SentakkiModChallengeStrings.NumberOfLivesDescription))]
@@ -63,7 +76,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public void ApplyToDrawableRuleset(DrawableRuleset<SentakkiHitObject> drawableRuleset)
         {
             int maxLives = (int)LiveSetting.Value;
-            LivesLeft = new BindableInt()
+            LivesLeft = new BindableInt
             {
                 Value = maxLives,
                 MaxValue = maxLives,
@@ -89,13 +102,16 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 case HitResult.Good:
                     newValue -= 1;
                     break;
+
                 case HitResult.Ok:
                     newValue -= 2;
                     break;
+
                 case HitResult.Miss:
                     newValue -= 5;
                     break;
             }
+
             if (newValue < 0) newValue = 0;
             LivesLeft.Value = newValue;
 

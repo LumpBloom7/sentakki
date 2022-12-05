@@ -6,7 +6,7 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
 {
-    public class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
+    public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
     {
         private readonly TapHighlight highlight;
 

@@ -6,7 +6,7 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches
 {
-    public class TouchPlacementBlueprint : SentakkiPlacementBlueprint<Touch>
+    public partial class TouchPlacementBlueprint : SentakkiPlacementBlueprint<Touch>
     {
         private readonly TouchHighlight highlight;
 
@@ -40,6 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches
                 float angle = Vector2.Zero.GetDegreesFromPosition(newPosition);
                 newPosition = SentakkiExtensions.GetCircularPosition(250, angle);
             }
+
             HitObject.Position = newPosition;
         }
     }

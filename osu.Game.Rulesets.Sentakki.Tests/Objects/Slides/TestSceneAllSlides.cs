@@ -16,7 +16,7 @@ using osuTK.Graphics;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
     [TestFixture]
-    public class TestSceneAllSlides : OsuTestScene
+    public partial class TestSceneAllSlides : OsuTestScene
     {
         protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 
@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             Add(chevronPool = new DrawablePool<SlideChevron>(62));
             Add(fanChevrons = new SlideFanChevrons());
 
-            Add(new SentakkiRing()
+            Add(new SentakkiRing
             {
                 RelativeSizeAxes = Axes.None,
                 Size = new Vector2(SentakkiPlayfield.RINGSIZE)
@@ -49,7 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 RefreshSlide();
             });
 
-            Add(nodes = new Container()
+            Add(nodes = new Container
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

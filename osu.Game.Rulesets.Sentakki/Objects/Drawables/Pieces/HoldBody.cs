@@ -9,7 +9,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class HoldBody : CompositeDrawable
+    public partial class HoldBody : CompositeDrawable
     {
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;

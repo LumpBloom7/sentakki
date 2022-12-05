@@ -6,7 +6,7 @@ using osu.Framework.Graphics.Textures;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
-    public class StarPiece : CompositeDrawable
+    public partial class StarPiece : CompositeDrawable
     {
         public StarPiece()
         {
@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            AddInternal(new Sprite()
+            AddInternal(new Sprite
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

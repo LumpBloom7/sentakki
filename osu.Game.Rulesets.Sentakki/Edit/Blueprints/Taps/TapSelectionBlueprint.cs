@@ -7,7 +7,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
 {
-    public class TapSelectionBlueprint : SentakkiSelectionBlueprint<Tap>
+    public partial class TapSelectionBlueprint : SentakkiSelectionBlueprint<Tap>
     {
         public new DrawableTap DrawableObject => (DrawableTap)base.DrawableObject;
 

@@ -8,7 +8,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {
-    public class DrawableLine : PoolableDrawable
+    public partial class DrawableLine : PoolableDrawable
     {
         public override bool RemoveCompletedTransforms => false;
 
@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
             animationDuration.BindValueChanged(_ => resetAnimation());
 
-            AddInternal(line = new CircularProgress()
+            AddInternal(line = new CircularProgress
             {
                 RelativeSizeAxes = Axes.Both,
                 FillMode = FillMode.Fit,
@@ -57,6 +57,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         private void resetAnimation()
         {
             if (!IsInUse) return;
+
             ApplyTransformsAt(double.MinValue);
             ClearTransforms();
             using (BeginAbsoluteSequence(Entry.StartTime - Entry.AdjustedAnimationDuration))

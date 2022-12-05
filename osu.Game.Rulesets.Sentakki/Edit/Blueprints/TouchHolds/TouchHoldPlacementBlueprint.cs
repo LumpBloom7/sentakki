@@ -6,7 +6,7 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
 {
-    public class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<TouchHold>
+    public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<TouchHold>
     {
         public TouchHoldPlacementBlueprint()
         {

@@ -5,7 +5,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class SlideBodyInfo : IEquatable<SlideBodyInfo>
     {
-
         private static readonly SentakkiSlidePath empty_path = SlidePaths.CreateSlidePath(new[]
         {
             new SlideBodyPart(SlidePaths.PathShapes.Straight, endOffset: 0, false)
@@ -62,8 +61,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 return false;
 
             for (int i = 0; i < slidePathParts.Length; ++i)
+            {
                 if (!slidePathParts[i].Equals(other.slidePathParts[i]))
                     return false;
+            }
 
             return true;
         }

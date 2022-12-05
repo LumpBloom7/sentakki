@@ -7,9 +7,10 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
 {
-    public class TouchPiece : CompositeDrawable
+    public partial class TouchPiece : CompositeDrawable
     {
         private Texture touchTexture = null!;
+
         public TouchPiece()
         {
             Size = new Vector2(75);
@@ -22,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
         private void load(TextureStore textures)
         {
             touchTexture = textures.Get("Touch");
-            AddInternal(new Sprite()
+            AddInternal(new Sprite
             {
                 RelativeSizeAxes = Axes.Both,
                 FillMode = FillMode.Fit,

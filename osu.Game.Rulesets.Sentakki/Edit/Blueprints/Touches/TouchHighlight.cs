@@ -4,7 +4,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches
 {
-    public class TouchHighlight : TouchBody
+    public partial class TouchHighlight : TouchBody
     {
         public TouchHighlight()
         {

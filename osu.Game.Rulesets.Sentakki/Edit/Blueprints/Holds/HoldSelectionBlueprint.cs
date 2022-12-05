@@ -7,7 +7,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
 {
-    public class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold>
+    public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold>
     {
         public new DrawableHold DrawableObject => (DrawableHold)base.DrawableObject;
 

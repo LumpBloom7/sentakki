@@ -5,13 +5,14 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints
 {
-    public class SentakkiPlacementBlueprint<T> : PlacementBlueprint where T : HitObject, new()
+    public partial class SentakkiPlacementBlueprint<T> : PlacementBlueprint where T : HitObject, new()
     {
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
 
         public new T HitObject => (T)base.HitObject;
 
-        public SentakkiPlacementBlueprint() : base(new T())
+        public SentakkiPlacementBlueprint()
+            : base(new T())
         {
             Anchor = Origin = Anchor.Centre;
         }

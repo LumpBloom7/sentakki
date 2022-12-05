@@ -12,7 +12,7 @@ using osuTK.Graphics;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
     [TestFixture]
-    public class TestSceneBreakNote : OsuTestScene
+    public partial class TestSceneBreakNote : OsuTestScene
     {
         private readonly Container content;
         protected override Container<Drawable> Content => content;
@@ -39,7 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 NoteColour = Color4.OrangeRed,
             };
 
-            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
+            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
             Add(new DrawableTap(circle)
             {

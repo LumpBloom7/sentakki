@@ -7,12 +7,13 @@ using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.UI;
 using osuTK;
+using Touch = osu.Game.Rulesets.Sentakki.Objects.Touch;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
     // A special playfield specifically made for TouchNotes
     // Contains extra functionality to better propogate touch input to Touch notes, and avoids some double hit weirdness
-    public class TouchPlayfield : Playfield
+    public partial class TouchPlayfield : Playfield
     {
         private SentakkiInputManager sentakkiActionInputManager = null!;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
@@ -33,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [BackgroundDependencyLoader]
         private void load()
         {
-            RegisterPool<Objects.Touch, DrawableTouch>(8);
+            RegisterPool<Touch, DrawableTouch>(8);
         }
 
         protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
@@ -53,6 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             // Handle mouse input
             var mousePosition = SentakkiActionInputManager.CurrentState.Mouse.Position;
             bool actionPressed = false;
+
             foreach (var action in SentakkiActionInputManager.PressedActions)
             {
                 if (action < SentakkiAction.Key1)
@@ -95,7 +97,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         }
 
         // This HOC is specially built accommodate the custom input required to handle touch (even though I think the beatmap conversion is at fault)
-        private class TouchHitObjectContainer : HitObjectContainer
+        private partial class TouchHitObjectContainer : HitObjectContainer
         {
             // This is exposed to allow TouchPlayfield to iterate through touch objects without LINQ/ToList related allocations.
             // We pool DrawableTouch objects, and no other object shares this container, so it should be safe

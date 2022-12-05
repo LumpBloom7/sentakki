@@ -7,7 +7,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlide : DrawableSentakkiHitObject
+    public partial class DrawableSlide : DrawableSentakkiHitObject
     {
         public new Slide HitObject => (Slide)base.HitObject;
 
@@ -16,10 +16,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public Container<DrawableSlideBody> SlideBodies = null!;
         public Container<DrawableSlideTap> SlideTaps = null!;
 
-        public DrawableSlide() : this(null) { }
+        public DrawableSlide()
+            : this(null)
+        {
+        }
 
         public DrawableSlide(SentakkiHitObject? hitObject = null)
-            : base(hitObject) { }
+            : base(hitObject)
+        {
+        }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -69,6 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     {
                         AutoBindable = { BindTarget = AutoBindable },
                     };
+
                 case SlideBody slideBody:
                     return new DrawableSlideBody(slideBody)
                     {
@@ -88,10 +94,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 case DrawableSlideBody body:
                     SlideBodies.Add(body);
                     break;
+
                 case DrawableSlideTap tap:
                     SlideTaps.Child = tap;
                     break;
             }
+
             base.AddNestedHitObject(hitObject);
         }
 

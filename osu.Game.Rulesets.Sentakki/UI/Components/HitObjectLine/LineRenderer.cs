@@ -12,7 +12,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {
-    public class LineRenderer : CompositeDrawable
+    public partial class LineRenderer : CompositeDrawable
     {
         private readonly Dictionary<double, LineLifetimeEntry> lineEntries = new Dictionary<double, LineLifetimeEntry>();
         private readonly Dictionary<HitObject, IBindable> startTimeMap = new Dictionary<HitObject, IBindable>();
@@ -127,6 +127,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 // We want to listen in on line changes in case we need to swap out colours/drawables
                 newEntry.OnLineUpdated += onEntryUpdated;
             }
+
             lineEntries[entryTime].Add(hitObject);
         }
     }

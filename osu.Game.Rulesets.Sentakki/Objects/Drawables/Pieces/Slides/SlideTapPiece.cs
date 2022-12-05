@@ -9,7 +9,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
-    public class SlideTapPiece : CompositeDrawable
+    public partial class SlideTapPiece : CompositeDrawable
     {
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
@@ -28,11 +28,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 
             InternalChildren = new Drawable[]
             {
-                Stars = new Container(){
+                Stars = new Container
+                {
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Children = new Drawable[]{
+                    Children = new Drawable[]
+                    {
                         new StarPiece(),
                         SecondStar = new StarPiece { Rotation = 36 }
                     }

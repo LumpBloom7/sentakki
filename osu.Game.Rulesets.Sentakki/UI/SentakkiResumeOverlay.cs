@@ -18,7 +18,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class SentakkiResumeOverlay : ResumeOverlay
+    public partial class SentakkiResumeOverlay : ResumeOverlay
     {
         [Resolved]
         private IBindable<WorkingBeatmap> beatmap { get; set; } = null!;
@@ -26,7 +26,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [Resolved]
         private DrawableSentakkiRuleset? drawableSentakkiRuleset { get; set; }
 
-        private readonly string[] supporter_list = new string[]{
+        private readonly string[] supporterList = new[]
+        {
             "Ayato_K",
             "Bosch",
             "Dubita",
@@ -50,14 +51,14 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private double remainingTime = 3500;
 
-        private Bindable<int> beatsLeft = new Bindable<int>(4);
+        private readonly Bindable<int> beatsLeft = new Bindable<int>(4);
         private int barLength;
 
         private OsuSpriteText supporterText = null!;
 
         private SkinnableSound countSound = null!;
 
-        private SentakkiCursorContainer? localCursorContainer = null;
+        private SentakkiCursorContainer? localCursorContainer;
 
         public override CursorContainer? LocalCursor => State.Value == Visibility.Visible ? localCursorContainer : null;
 
@@ -138,8 +139,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private string getRandomSupporter()
         {
-            string tmp = supporter_list[currentSupporterIndex++];
-            if (currentSupporterIndex >= supporter_list.Length) currentSupporterIndex = 0;
+            string tmp = supporterList[currentSupporterIndex++];
+            if (currentSupporterIndex >= supporterList.Length) currentSupporterIndex = 0;
 
             return tmp;
         }

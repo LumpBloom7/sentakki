@@ -11,11 +11,11 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components
 {
-    public class LiveCounter : BeatSyncedContainer
+    public partial class LiveCounter : BeatSyncedContainer
     {
         public BindableInt LivesLeft = new BindableInt();
 
-        private LiveRollingCounter livesText;
+        private readonly LiveRollingCounter livesText;
 
         public LiveCounter(BindableInt livesBindable)
         {
@@ -31,6 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 Shake();
             }, true);
         }
+
         protected override void LoadComplete()
         {
             base.LoadComplete();
@@ -75,13 +76,15 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             float beatMagnitude = 0.1f + (0.05f * panicLevel);
 
             if (beatIndex % (int)(timingPoint.TimeSignature.Numerator * Math.Max(panicDurationMultiplier, 0.5f)) == 0)
+            {
                 this.ScaleTo(1 + beatMagnitude, 200 * panicDurationMultiplier)
                     .Then().ScaleTo(1, 120 * panicDurationMultiplier)
                     .Then().ScaleTo(1 + beatMagnitude, 160 * panicDurationMultiplier)
                     .Then().ScaleTo(1, 320 * panicDurationMultiplier);
+            }
         }
 
-        private class LiveRollingCounter : RollingCounter<int>
+        private partial class LiveRollingCounter : RollingCounter<int>
         {
             protected override double RollingDuration => 1000;
 

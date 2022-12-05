@@ -16,7 +16,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class Lane : Playfield, IKeyBindingHandler<SentakkiAction>
+    public partial class Lane : Playfield, IKeyBindingHandler<SentakkiAction>
     {
         public int LaneNumber { get; set; }
 
@@ -67,6 +67,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
 
         #region Input Handling
+
         private const float receptor_angle_range = 45 * 1.4f;
 
         private SentakkiInputManager sentakkiActionInputManager = null!;
@@ -87,7 +88,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             return true;
         }
 
-        private readonly BindableInt currentKeys = new BindableInt(0);
+        private readonly BindableInt currentKeys = new BindableInt();
 
         private bool usingSensor => drawableSentakkiRuleset.UseSensorMode;
 
@@ -98,17 +99,28 @@ namespace osu.Game.Rulesets.Sentakki.UI
             int count = 0;
 
             foreach (var buttonState in buttonTriggerState)
-                if (buttonState.Value) ++count;
+            {
+                if (buttonState.Value)
+                    ++count;
+            }
 
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
 
             for (TouchSource t = TouchSource.Touch1; t <= TouchSource.Touch10; ++t)
-                if (touchInput.GetTouchPosition(t) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition)) ++count;
+            {
+                if (touchInput.GetTouchPosition(t) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
+                    ++count;
+            }
 
             // We don't attempt to check mouse input if touch input is used
             if (count == 0 && IsHovered && usingSensor)
+            {
                 foreach (var a in SentakkiActionInputManager.PressedActions)
-                    if (a < SentakkiAction.Key1) ++count;
+                {
+                    if (a < SentakkiAction.Key1)
+                        ++count;
+                }
+            }
 
             currentKeys.Value = count;
         }
@@ -140,6 +152,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             buttonTriggerState[e.Action] = false;
         }
+
         #endregion
     }
 }

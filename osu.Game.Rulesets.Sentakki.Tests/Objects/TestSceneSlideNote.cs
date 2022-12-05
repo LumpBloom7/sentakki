@@ -18,7 +18,7 @@ using osuTK;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
     [TestFixture]
-    public class TestSceneSlideNote : OsuTestScene
+    public partial class TestSceneSlideNote : OsuTestScene
     {
         private readonly Container content;
         protected override Container<Drawable> Content => content;
@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         public TestSceneSlideNote()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
-            Add(new SentakkiRing()
+            Add(new SentakkiRing
             {
                 RelativeSizeAxes = Axes.None,
                 Size = new Vector2(SentakkiPlayfield.RINGSIZE),
@@ -66,23 +66,26 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 //Break = true,
                 SlideInfoList = new List<SlideBodyInfo>
                 {
-                    new SlideBodyInfo {
-                        SlidePathParts = new []{new SlideBodyPart(SlidePaths.PathShapes.Circle, 0, false)},
+                    new SlideBodyInfo
+                    {
+                        SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Circle, 0, false) },
                         Duration = 1000,
                     },
-                    new SlideBodyInfo {
-                        SlidePathParts = new []{new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false)},
+                    new SlideBodyInfo
+                    {
+                        SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false) },
                         Duration = 1500,
                     },
-                    new SlideBodyInfo {
-                        SlidePathParts = new []{new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false)},
+                    new SlideBodyInfo
+                    {
+                        SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false) },
                         Duration = 2000,
                     }
                 },
                 StartTime = Time.Current + 1000,
             };
 
-            slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
+            slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
             DrawableSlide dSlide;
 
@@ -95,8 +98,10 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             });
 
             foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects)
+            {
                 foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects)
                     nested2.Auto = auto;
+            }
         }
 
         private void testChain(double duration, bool auto = false)
@@ -106,8 +111,10 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 //Break = true,
                 SlideInfoList = new List<SlideBodyInfo>
                 {
-                    new SlideBodyInfo {
-                        SlidePathParts = new []{
+                    new SlideBodyInfo
+                    {
+                        SlidePathParts = new[]
+                        {
                             new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
                             new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
                             new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
@@ -119,7 +126,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 StartTime = Time.Current + 1000,
             };
 
-            slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
+            slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
             DrawableSlide dSlide;
 
@@ -132,9 +139,12 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             });
 
             foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects)
+            {
                 foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects)
                     nested2.Auto = auto;
+            }
         }
+
         private void testChainWithFan(double duration, bool auto = false)
         {
             var slide = new Slide
@@ -142,8 +152,10 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 //Break = true,
                 SlideInfoList = new List<SlideBodyInfo>
                 {
-                    new SlideBodyInfo {
-                        SlidePathParts = new []{
+                    new SlideBodyInfo
+                    {
+                        SlidePathParts = new[]
+                        {
                             new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
                             new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
                             new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
@@ -156,7 +168,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 StartTime = Time.Current + 1000,
             };
 
-            slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
+            slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
             DrawableSlide dSlide;
 
@@ -169,8 +181,10 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             });
 
             foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects)
+            {
                 foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects)
                     nested2.Auto = auto;
+            }
         }
     }
 }

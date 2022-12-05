@@ -8,7 +8,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 {
-    public class SlideBodyHighlight : CompositeDrawable
+    public partial class SlideBodyHighlight : CompositeDrawable
     {
         private readonly Container<StarPiece> stars;
 
@@ -27,14 +27,15 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             Colour = Color4.YellowGreen;
             Alpha = 1;
 
-            InternalChildren = new Drawable[]{
+            InternalChildren = new Drawable[]
+            {
                 slideBody = new SlideVisual(),
                 stars = new Container<StarPiece>(),
             };
 
-            int numberOfStars = 3;
+            const int number_of_stars = 3;
 
-            for (int i = 0; i < numberOfStars; ++i)
+            for (int i = 0; i < number_of_stars; ++i)
                 stars.Add(new StarPiece());
 
             this.slideBodyInfo = slideBodyInfo;

@@ -71,7 +71,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             }
         }
 
-
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
         public override Judgement CreateJudgement() => new IgnoreJudgement();
     }

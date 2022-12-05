@@ -12,7 +12,7 @@ using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class LanedPlayfield : Playfield
+    public partial class LanedPlayfield : Playfield
     {
         public readonly List<Lane> Lanes = new List<Lane>();
 
@@ -44,7 +44,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 AddNested(lane);
             }
 
-            AddRangeInternal(new Drawable[]{
+            AddRangeInternal(new Drawable[]
+            {
                 chevronPool = new DrawablePool<SlideChevron>(100),
                 HitObjectLineRenderer = new LineRenderer(),
                 slideBodyProxyContainer = new SortedDrawableProxyContainer(),
@@ -88,9 +89,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 case DrawableSlideBody s:
                     slideBodyProxyContainer.Add(s.CreateProxy(), s);
                     break;
+
                 case DrawableTap t:
                     lanedNoteProxyContainer.Add(t.TapVisual.CreateProxy(), t);
                     break;
+
                 case DrawableHold h:
                     lanedNoteProxyContainer.Add(h.NoteBody.CreateProxy(), h);
                     break;

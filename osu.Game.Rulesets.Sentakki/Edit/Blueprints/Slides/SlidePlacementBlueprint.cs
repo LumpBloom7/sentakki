@@ -16,7 +16,7 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 {
-    public class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
+    public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
     {
         private readonly SlideTapHighlight highlight;
 
@@ -26,7 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         [Resolved]
         private IBeatSnapProvider beatSnapProvider { get; set; } = null!;
 
-        private OsuSpriteText shootDelayText;
+        private readonly OsuSpriteText shootDelayText;
 
         public SlidePlacementBlueprint()
         {
@@ -40,19 +40,20 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                     Rotation = -22.5f,
                     Children = new Drawable[]
                     {
-                        commited = new SlideVisual()
+                        commited = new SlideVisual
                         {
                             Colour = Color4.LimeGreen,
                             Alpha = 0.5f,
                         },
-                        bodyHighlight = new SlideVisual()
+                        bodyHighlight = new SlideVisual
                         {
                             Colour = Color4.GreenYellow,
                             Alpha = 0.8f,
                         },
                     }
                 },
-                shootDelayText = new OsuSpriteText(){
+                shootDelayText = new OsuSpriteText
+                {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Text = "Shoot Delay: 1 beat",
@@ -111,7 +112,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         private void updateShootDelayText()
         {
-            shootDelayText.Text = string.Format("Shoot delay: {0} beats", commitedSlideBodyInfo.ShootDelay);
+            shootDelayText.Text = $"Shoot delay: {commitedSlideBodyInfo.ShootDelay} beats";
             shootDelayText.ScaleTo(1.1f, 20).Then().ScaleTo(1f, 30);
         }
 
@@ -191,10 +192,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                     commitedSlideBodyInfo.Duration = Math.Abs(endTime - originalStartTime);
                 }
 
-                int newPO = (OriginPosition.GetDegreesFromPosition(ToLocalSpace(result.ScreenSpacePosition)).GetNoteLaneFromDegrees() - currentLaneOffset - HitObject.Lane).NormalizePath();
+                int newPo = (OriginPosition.GetDegreesFromPosition(ToLocalSpace(result.ScreenSpacePosition)).GetNoteLaneFromDegrees() - currentLaneOffset - HitObject.Lane).NormalizePath();
 
-                if (targetPathOffset != newPO)
-                    updateCurrentPathPart(newPO);
+                if (targetPathOffset != newPo)
+                    updateCurrentPathPart(newPo);
             }
             else
             {

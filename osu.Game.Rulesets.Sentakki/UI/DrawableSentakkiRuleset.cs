@@ -3,6 +3,7 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
+using osu.Framework.Input;
 using osu.Game.Beatmaps;
 using osu.Game.Input.Handlers;
 using osu.Game.Replays;
@@ -19,7 +20,7 @@ using osu.Game.Screens.Play;
 namespace osu.Game.Rulesets.Sentakki.UI
 {
     [Cached]
-    public class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject>
+    public partial class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject>
     {
         private SlideFanChevrons slideFanChevronsTextures = null!;
 
@@ -77,6 +78,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         protected override ResumeOverlay CreateResumeOverlay() => new SentakkiResumeOverlay();
 
-        protected override Framework.Input.PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset.RulesetInfo);
+        protected override PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset.RulesetInfo);
     }
 }

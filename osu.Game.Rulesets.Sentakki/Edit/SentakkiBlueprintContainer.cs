@@ -16,7 +16,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit
 {
-    public class SentakkiBlueprintContainer : ComposeBlueprintContainer
+    public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
     {
         public SentakkiBlueprintContainer(HitObjectComposer composer)
             : base(composer)
@@ -39,15 +39,20 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             {
                 case Tap t:
                     return new TapSelectionBlueprint(t);
+
                 case Hold h:
                     return new HoldSelectionBlueprint(h);
+
                 case Touch t:
                     return new TouchSelectionBlueprint(t);
+
                 case TouchHold th:
                     return new TouchHoldSelectionBlueprint(th);
+
                 case Slide s:
                     return new SlideSelectionBlueprint(s);
             }
+
             return base.CreateHitObjectBlueprintFor(hitObject);
         }
 

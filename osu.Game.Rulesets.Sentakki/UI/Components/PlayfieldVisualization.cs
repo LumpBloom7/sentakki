@@ -19,7 +19,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components
 {
-    public class PlayfieldVisualisation : Drawable, IHasAccentColour
+    public partial class PlayfieldVisualisation : Drawable, IHasAccentColour
     {
         private readonly IBindable<WorkingBeatmap> beatmap = new Bindable<WorkingBeatmap>();
 
@@ -135,6 +135,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             base.Update();
 
             timeDelta += Math.Abs(Time.Elapsed);
+
             if (timeDelta >= time_between_updates)
             {
                 timeDelta %= time_between_updates;

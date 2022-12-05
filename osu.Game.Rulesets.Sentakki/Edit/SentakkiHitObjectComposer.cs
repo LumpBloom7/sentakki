@@ -10,7 +10,7 @@ using osu.Game.Screens.Edit.Compose.Components;
 
 namespace osu.Game.Rulesets.Sentakki.Edit
 {
-    public class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitObject>
+    public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitObject>
     {
         public SentakkiHitObjectComposer(SentakkiRuleset ruleset)
             : base(ruleset)

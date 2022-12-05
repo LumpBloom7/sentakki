@@ -15,13 +15,11 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideBody : DrawableSentakkiLanedHitObject
+    public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
     {
         public new SlideBody HitObject => (SlideBody)base.HitObject;
 
         public override bool RemoveWhenNotAlive => false;
-
-        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset;
 
         public Container<DrawableSlideCheckpoint> SlideCheckpoints { get; private set; } = null!;
 
@@ -30,6 +28,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public Container<StarPiece> SlideStars { get; private set; } = null!;
 
         private float starProgress;
+
         public virtual float StarProgress
         {
             get => starProgress;
@@ -50,9 +49,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        public DrawableSlideBody() : this(null) { }
+        public DrawableSlideBody()
+            : this(null)
+        {
+        }
+
         public DrawableSlideBody(SlideBody? hitObject)
-            : base(hitObject) { }
+            : base(hitObject)
+        {
+        }
 
         [BackgroundDependencyLoader]
         private void load()
@@ -65,7 +70,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AddRangeInternal(new Drawable[]
             {
                 Slidepath = new SlideVisual(),
-                SlideStars = new Container<StarPiece>{
+                SlideStars = new Container<StarPiece>
+                {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                 },
@@ -77,6 +83,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
 
             for (int i = 0; i < 3; ++i)
+            {
                 SlideStars.Add(new StarPiece
                 {
                     Alpha = 0,
@@ -86,6 +93,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Position = SentakkiExtensions.GetCircularPosition(296.5f, 22.5f),
                     RelativeSizeAxes = Axes.None,
                 });
+            }
 
             AccentColour.BindValueChanged(c => Colour = c.NewValue);
             OnNewResult += updateSlideCompletion;
@@ -132,6 +140,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateInitialTransforms();
             Slidepath.PerformEntryAnimation(AdjustedAnimationDuration);
+
             using (BeginAbsoluteSequence(HitObject.StartTime - 50))
             {
                 SlideStars[2].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
@@ -147,11 +156,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 using (BeginDelayedSequence(50 + HitObject.ShootDelay))
                 {
                     if (!Slidepath.Path.StartsWithSlideFan && Slidepath.Path.EndsWithSlideFan)
+                    {
                         using (BeginDelayedSequence((HitObject.Duration - HitObject.ShootDelay) * Slidepath.Path.FanStartProgress))
                         {
                             SlideStars[0].FadeIn();
                             SlideStars[1].FadeIn();
                         }
+                    }
 
                     this.TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
                 }
@@ -164,6 +175,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             // Player completed all nodes, we consider this user triggered
             userTriggered = true;
+
             for (int i = 0; i < SlideCheckpoints.Count; ++i)
             {
                 if (!SlideCheckpoints[i].Result.HasResult)
@@ -201,6 +213,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateHitStateTransforms(state);
             const double time_fade_miss = 400 /* time_fade_miss = 400 */;
+
             switch (state)
             {
                 case ArmedState.Hit:
@@ -215,6 +228,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     }
 
                     break;
+
                 case ArmedState.Miss:
                     Slidepath.PerformExitAnimation(time_fade_miss);
                     this.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss).Expire();
@@ -241,6 +255,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
         {
             base.AddNestedHitObject(hitObject);
+
             switch (hitObject)
             {
                 case DrawableSlideCheckpoint node:

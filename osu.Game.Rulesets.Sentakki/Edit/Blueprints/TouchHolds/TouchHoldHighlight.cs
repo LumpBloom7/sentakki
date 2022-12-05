@@ -5,7 +5,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
 {
-    public class TouchHoldHighlight : TouchHoldBody
+    public partial class TouchHoldHighlight : TouchHoldBody
     {
         public override Quad ScreenSpaceDrawQuad => ProgressPiece.ScreenSpaceDrawQuad;
 

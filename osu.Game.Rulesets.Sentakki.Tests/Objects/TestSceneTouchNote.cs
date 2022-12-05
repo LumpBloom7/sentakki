@@ -15,7 +15,7 @@ using osuTK;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
     [TestFixture]
-    public class TestSceneTouchNote : OsuTestScene
+    public partial class TestSceneTouchNote : OsuTestScene
     {
         private readonly Container content;
         protected override Container<Drawable> Content => content;
@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         public TestSceneTouchNote()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
-            base.Content.Add(new SentakkiRing()
+            base.Content.Add(new SentakkiRing
             {
                 RelativeSizeAxes = Axes.None,
                 Size = new Vector2(SentakkiPlayfield.RINGSIZE)
@@ -46,7 +46,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                     Position = position,
                 };
 
-                circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
+                circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
                 Add(new DrawableTouch(circle)
                 {

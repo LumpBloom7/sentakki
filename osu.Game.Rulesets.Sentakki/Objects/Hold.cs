@@ -14,7 +14,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     {
         protected override bool NeedBreakSample => false;
 
-
         public IList<IList<HitSampleInfo>> NodeSamples { get; set; } = new List<IList<HitSampleInfo>>();
 
         public double EndTime
@@ -37,6 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 ColourBindable = ColourBindable.GetBoundCopy(),
             });
         }
+
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
 
         public class HoldHead : SentakkiLanedHitObject

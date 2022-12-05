@@ -7,7 +7,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideCheckpointNode : DrawableSentakkiHitObject
+    public partial class DrawableSlideCheckpointNode : DrawableSentakkiHitObject
     {
         public new SlideCheckpoint.CheckpointNode HitObject => (SlideCheckpoint.CheckpointNode)base.HitObject;
 
@@ -23,7 +23,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiInputManager sentakkiActionInputManager = null!;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= ((SentakkiInputManager)GetContainingInputManager());
 
-        public DrawableSlideCheckpointNode() : this(null) { }
+        public DrawableSlideCheckpointNode()
+            : this(null)
+        {
+        }
+
         public DrawableSlideCheckpointNode(SlideCheckpoint.CheckpointNode? node)
             : base(node)
         {

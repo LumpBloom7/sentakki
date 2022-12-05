@@ -11,9 +11,10 @@ using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Sentakki
 {
-    public class SentakkiInputManager : RulesetInputManager<SentakkiAction>
+    public partial class SentakkiInputManager : RulesetInputManager<SentakkiAction>
     {
         protected override bool MapMouseToLatestTouch => false;
+
         public bool AllowUserPresses
         {
             set => ((SentakkiKeyBindingContainer)KeyBindingContainer).AllowUserPresses = value;
@@ -22,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki
         protected override KeyBindingContainer<SentakkiAction> CreateKeyBindingContainer(RulesetInfo ruleset, int variant, SimultaneousBindingMode unique)
             => new SentakkiKeyBindingContainer(ruleset, variant, unique);
 
-        private class SentakkiKeyBindingContainer : RulesetKeyBindingContainer
+        private partial class SentakkiKeyBindingContainer : RulesetKeyBindingContainer
         {
             public bool AllowUserPresses = true;
 
@@ -48,8 +49,10 @@ namespace osu.Game.Rulesets.Sentakki
                 var pressed = (List<SentakkiAction>)PressedActions;
 
                 for (int i = 0; i < pressed.Count; ++i)
+                {
                     if (pressed[i] == released && ++actionCount > 1)
                         break;
+                }
 
                 if (actionCount > 1)
                     pressed.Remove(released);

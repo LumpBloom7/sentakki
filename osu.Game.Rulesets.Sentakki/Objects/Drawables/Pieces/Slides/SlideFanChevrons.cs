@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
     /// <br/>
     /// A view of each chevron, along with their size, would be used by SlideFanVisual.
     /// </summary>
-    public class SlideFanChevrons : CompositeDrawable
+    public partial class SlideFanChevrons : CompositeDrawable
     {
         private Container<ChevronBackingTexture> chevrons = null!;
 
@@ -50,7 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             }
         }
 
-        private class ChevronBackingTexture : BufferedContainer
+        private partial class ChevronBackingTexture : BufferedContainer
         {
             public Bindable<Vector2> SizeBindable { get; } = new Bindable<Vector2>();
 
@@ -63,13 +63,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 return base.OnInvalidate(invalidation, source);
             }
 
-            public ChevronBackingTexture(float lengthScale, float HeightScale) : base(cachedFrameBuffer: true)
+            public ChevronBackingTexture(float lengthScale, float heightScale)
+                : base(cachedFrameBuffer: true)
             {
                 Anchor = Anchor.Centre;
                 Origin = Anchor.Centre;
                 AutoSizeAxes = Axes.Both;
 
-                float chevHeight = 16 + (10 * HeightScale);
+                float chevHeight = 16 + (10 * heightScale);
                 float chevWidth = 6 + (210 * lengthScale);
 
                 AddInternal(new Container
@@ -77,20 +78,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
                     AutoSizeAxes = Axes.Both,
-                    Children = new Drawable[]{
+                    Children = new Drawable[]
+                    {
                         // Outlines
                         new Container
                         {
                             X = 2.5f,
                             Masking = true,
-                            CornerRadius = chevHeight/4,
+                            CornerRadius = chevHeight / 4,
                             CornerExponent = 2.5f,
                             Anchor = Anchor.BottomCentre,
                             Origin = Anchor.BottomRight,
                             Rotation = 22.5f,
                             Width = chevWidth,
                             Height = chevHeight,
-                            Child = new Box{
+                            Child = new Box
+                            {
                                 RelativeSizeAxes = Axes.Both,
                                 Colour = Color4.Gray
                             },
@@ -99,14 +102,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                         {
                             X = -2.5f,
                             Masking = true,
-                            CornerRadius = chevHeight/4,
+                            CornerRadius = chevHeight / 4,
                             CornerExponent = 2.5f,
                             Anchor = Anchor.BottomCentre,
                             Origin = Anchor.BottomLeft,
                             Rotation = -22.5f,
                             Width = chevWidth,
                             Height = chevHeight,
-                            Child = new Box{
+                            Child = new Box
+                            {
                                 RelativeSizeAxes = Axes.Both,
                                 Colour = Color4.Gray
                             },
@@ -120,14 +124,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                             Size = new Vector2(chevWidth, chevHeight),
                             Rotation = 22.5f,
                             Padding = new MarginPadding(2),
-                            Child = new Container{
+                            Child = new Container
+                            {
                                 RelativeSizeAxes = Axes.Both,
                                 Masking = true,
 
-                                CornerRadius = (chevHeight-4)/4,
+                                CornerRadius = (chevHeight - 4) / 4,
                                 CornerExponent = 2.5f,
                                 Colour = Color4.White,
-                                Child = new Box{
+                                Child = new Box
+                                {
                                     RelativeSizeAxes = Axes.Both,
                                     Colour = Color4.White
                                 }
@@ -145,9 +151,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                             {
                                 RelativeSizeAxes = Axes.Both,
                                 Masking = true,
-                                CornerRadius = (chevHeight-4)/4,
+                                CornerRadius = (chevHeight - 4) / 4,
                                 CornerExponent = 2.5f,
-                                Child = new Box{
+                                Child = new Box
+                                {
                                     RelativeSizeAxes = Axes.Both,
                                     Colour = Color4.White
                                 }

@@ -6,7 +6,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class SortedDrawableProxyContainer : LifetimeManagementContainer
+    public partial class SortedDrawableProxyContainer : LifetimeManagementContainer
     {
         public SortedDrawableProxyContainer()
         {

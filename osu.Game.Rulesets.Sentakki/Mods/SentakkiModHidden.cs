@@ -49,6 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         {
             double preemptTime;
             double fadeOutTime;
+
             switch (hitObject)
             {
                 case DrawableTouch t:
@@ -73,7 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             }
         }
 
-        private class PlayfieldMaskingContainer : CircularContainer
+        private partial class PlayfieldMaskingContainer : CircularContainer
         {
             private readonly PlayfieldMask cover;
 
@@ -138,23 +139,23 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             }
 
             // This buffered container maintains a SSDQ unaffected by rotation, so that the backing texture isn't being reallocated due to resizes
-            private class FixedSizeBufferedContainer : BufferedContainer
+            private partial class FixedSizeBufferedContainer : BufferedContainer
             {
                 [Resolved]
                 private SentakkiPlayfield sentakkiPlayfield { get; set; } = null!;
 
                 protected override Quad ComputeScreenSpaceDrawQuad()
                 {
-                    var SSDQDrawinfo = DrawInfo;
+                    var ssdqDrawinfo = DrawInfo;
 
                     // We apply a counter rotation so that the SSDQ retains the non-rotated Quad
-                    SSDQDrawinfo.ApplyTransform(AnchorPosition, Vector2.One, -sentakkiPlayfield.Rotation, Vector2.Zero, OriginPosition);
+                    ssdqDrawinfo.ApplyTransform(AnchorPosition, Vector2.One, -sentakkiPlayfield.Rotation, Vector2.Zero, OriginPosition);
 
-                    return Quad.FromRectangle(DrawRectangle) * SSDQDrawinfo.Matrix;
+                    return Quad.FromRectangle(DrawRectangle) * ssdqDrawinfo.Matrix;
                 }
             }
 
-            private class PlayfieldMask : Drawable
+            private partial class PlayfieldMask : Drawable
             {
                 private IShader shader = null!;
 

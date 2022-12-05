@@ -10,7 +10,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 {
-    public class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide>
+    public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide>
     {
         public new DrawableSlide DrawableObject => (DrawableSlide)base.DrawableObject;
 
@@ -21,8 +21,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         public SlideSelectionBlueprint(Slide hitObject)
             : base(hitObject)
         {
-            InternalChildren = new Drawable[]{
-                slideBodyHighlights = new Container<SlideBodyHighlight>{
+            InternalChildren = new Drawable[]
+            {
+                slideBodyHighlights = new Container<SlideBodyHighlight>
+                {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Rotation = -22.5f,

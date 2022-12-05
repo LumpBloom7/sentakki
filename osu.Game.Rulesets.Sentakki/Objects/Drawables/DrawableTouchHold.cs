@@ -19,7 +19,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableTouchHold : DrawableSentakkiHitObject
+    public partial class DrawableTouchHold : DrawableSentakkiHitObject
     {
         public new TouchHold HitObject => (TouchHold)base.HitObject;
 
@@ -34,10 +34,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private PausableSkinnableSound holdSample = null!;
 
-        public DrawableTouchHold() : this(null) { }
+        public DrawableTouchHold()
+            : this(null)
+        {
+        }
 
         public DrawableTouchHold(TouchHold? hitObject)
-            : base(hitObject) { }
+            : base(hitObject)
+        {
+        }
 
         [BackgroundDependencyLoader]
         private void load(SentakkiRulesetConfigManager? sentakkiConfigs)
@@ -48,7 +53,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Origin = Anchor.Centre;
             Scale = new Vector2(0f);
             Alpha = 0;
-            AddRangeInternal(new Drawable[] {
+            AddRangeInternal(new Drawable[]
+            {
                 TouchHoldBody = new TouchHoldBody(),
                 holdSample = new PausableSkinnableSound
                 {
@@ -103,7 +109,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.UpdateInitialTransforms();
             double fadeIn = AdjustedAnimationDuration;
             this.FadeInFromZero(fadeIn).ScaleTo(1, fadeIn);
-            using (BeginDelayedSequence(fadeIn, true))
+
+            using (BeginDelayedSequence(fadeIn))
             {
                 TouchHoldBody.ProgressPiece.TransformBindableTo(TouchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
             }
@@ -115,6 +122,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
         /// </summary>
         private double? holdStartTime;
+
         private double totalHoldTime;
 
         private void beginHold()
@@ -141,8 +149,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.Update();
 
             isHitting.Value = Time.Current >= HitObject.StartTime
-                            && Time.Current <= HitObject.GetEndTime()
-                            && (Auto || checkForTouchInput() || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
+                              && Time.Current <= HitObject.GetEndTime()
+                              && (Auto || checkForTouchInput() || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
 
             if (isHitting.Value)
                 holdSample.Frequency.Value = 0.5 + ((Time.Current - holdStartTime!.Value + totalHoldTime) / ((IHasDuration)HitObject).Duration);

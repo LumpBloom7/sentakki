@@ -16,7 +16,7 @@ using osuTK.Graphics;
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     // New Judgement type to completely avoid the problem of legacy skins, they aren't appropriate for custom rulesets that use varied HitResults
-    public class DrawableSentakkiJudgement : PoolableDrawable
+    public partial class DrawableSentakkiJudgement : PoolableDrawable
     {
         public override bool RemoveCompletedTransforms => false;
 
@@ -41,8 +41,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Scale = new Vector2(0.9f),
-                    Children = new Drawable[]{
-                        timingPiece = new OsuSpriteText{
+                    Children = new Drawable[]
+                    {
+                        timingPiece = new OsuSpriteText
+                        {
                             Y = -15,
                             Origin = Anchor.Centre,
                             Font = OsuFont.Torus.With(size: 20, weight: FontWeight.Bold),
@@ -68,6 +70,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             else
             {
                 timingPiece.Alpha = 1;
+
                 if (result.TimeOffset >= 16)
                 {
                     timingPiece.Text = "LATE";
@@ -84,6 +87,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     timingPiece.Colour = Color4.Orange;
                 }
             }
+
             LifetimeStart = result.TimeAbsolute;
 
             switch (hitObject)
@@ -92,6 +96,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Position = SentakkiExtensions.GetPositionAlongLane(240, laned.HitObject.Lane);
                     Rotation = laned.HitObject.Lane.GetRotationForLane();
                     break;
+
                 default:
                     Position = hitObject.Position;
                     Rotation = 0;
@@ -120,9 +125,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             this.Delay(350).Expire();
         }
 
-        private class SentakkiJudgementPiece : DefaultJudgementPiece
+        private partial class SentakkiJudgementPiece : DefaultJudgementPiece
         {
-            public SentakkiJudgementPiece(HitResult result) : base(result)
+            public SentakkiJudgementPiece(HitResult result)
+                : base(result)
             {
             }
 

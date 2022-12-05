@@ -7,7 +7,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
 {
-    public class HoldHighlight : CompositeDrawable
+    public partial class HoldHighlight : CompositeDrawable
     {
         public readonly Container Note;
 
@@ -25,16 +25,18 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
             Alpha = 0.5f;
             InternalChildren = new Drawable[]
             {
-                Note = new Container{
+                Note = new Container
+                {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.BottomCentre,
-                    Children = new Drawable[]{
+                    Children = new Drawable[]
+                    {
                         new Container
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding(-75/2),
+                            Padding = new MarginPadding(-75 / 2f),
                             Child = ring = new RingPiece()
                         },
                         new DotPiece(squared: true)

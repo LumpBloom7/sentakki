@@ -4,12 +4,17 @@ using osu.Game.Rulesets.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableScoreBonusObject : DrawableHitObject<ScoreBonusObject>
+    public partial class DrawableScoreBonusObject : DrawableHitObject<ScoreBonusObject>
     {
-        public DrawableScoreBonusObject() : this(null) { }
+        public DrawableScoreBonusObject()
+            : this(null)
+        {
+        }
 
         public DrawableScoreBonusObject(ScoreBonusObject? hitObject)
-            : base(hitObject!) { }
+            : base(hitObject!)
+        {
+        }
 
         public void TriggerResult() => ApplyResult(static r => r.Type = (Math.Abs(r.TimeOffset) < 16) ? r.Judgement.MaxResult : r.Judgement.MinResult);
 

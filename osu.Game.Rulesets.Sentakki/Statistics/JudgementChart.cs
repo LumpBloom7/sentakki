@@ -16,20 +16,22 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Statistics
 {
-    public class JudgementChart : CompositeDrawable
+    public partial class JudgementChart : CompositeDrawable
     {
         private const double entry_animation_duration = 150;
         private const double bar_fill_duration = 3000;
+
         public JudgementChart(List<HitEvent> hitEvents)
         {
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Size = new Vector2(500, 250);
-            AddRangeInternal(new Drawable[]{
+            AddRangeInternal(new Drawable[]
+            {
                 new NoteEntry
                 {
                     ObjectName = "Tap",
-                    HitEvents = hitEvents.Where(e=> e.HitObject is Tap x && !x.Break).ToList(),
+                    HitEvents = hitEvents.Where(e => e.HitObject is Tap x && !x.Break).ToList(),
                     Position = new Vector2(0, 0),
                     InitialLifetimeOffset = entry_animation_duration * 0
                 },
@@ -70,7 +72,8 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 },
             });
         }
-        public class NoteEntry : Container
+
+        public partial class NoteEntry : Container
         {
             public double InitialLifetimeOffset;
             private Container progressBox = null!;
@@ -82,30 +85,33 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
             [BackgroundDependencyLoader]
             private void load(OsuColour colours)
             {
-                float GoodCount = 0;
-                float GreatCount = 0;
-                float PerfectCount = 0;
+                float goodCount = 0;
+                float greatCount = 0;
+                float perfectCount = 0;
 
                 foreach (var e in HitEvents)
                 {
                     switch (e.Result)
                     {
                         case HitResult.Great:
-                            ++PerfectCount;
+                            ++perfectCount;
                             goto case HitResult.Good;
+
                         case HitResult.Good:
-                            ++GreatCount;
+                            ++greatCount;
                             goto case HitResult.Ok;
+
                         case HitResult.Ok:
-                            ++GoodCount;
+                            ++goodCount;
                             break;
                     }
                 }
 
-                Color4 textColour = !HitEvents.Any() ? Color4Extensions.FromHex("bcbcbc") : (PerfectCount == HitEvents.Count) ? Color4.White : Color4Extensions.FromHex("#3c5394");
-                Color4 boxColour = !HitEvents.Any() ? Color4Extensions.FromHex("808080") : (PerfectCount == HitEvents.Count) ? Color4Extensions.FromHex("fda908") : Color4Extensions.FromHex("#DCE9F9");
-                Color4 borderColour = !HitEvents.Any() ? Color4Extensions.FromHex("536277") : (PerfectCount == HitEvents.Count) ? Color4Extensions.FromHex("fda908") : Color4Extensions.FromHex("#98b8df");
-                Color4 numberColour = (PerfectCount == HitEvents.Count && HitEvents.Any()) ? Color4.White : Color4Extensions.FromHex("#3c5394");
+                Color4 textColour = !HitEvents.Any() ? Color4Extensions.FromHex("bcbcbc") : (perfectCount == HitEvents.Count) ? Color4.White : Color4Extensions.FromHex("#3c5394");
+                Color4 boxColour = !HitEvents.Any() ? Color4Extensions.FromHex("808080") : (perfectCount == HitEvents.Count) ? Color4Extensions.FromHex("fda908") : Color4Extensions.FromHex("#DCE9F9");
+                Color4 borderColour = !HitEvents.Any() ? Color4Extensions.FromHex("536277") :
+                    (perfectCount == HitEvents.Count) ? Color4Extensions.FromHex("fda908") : Color4Extensions.FromHex("#98b8df");
+                Color4 numberColour = (perfectCount == HitEvents.Count && HitEvents.Any()) ? Color4.White : Color4Extensions.FromHex("#3c5394");
 
                 Anchor = Anchor.TopCentre;
                 Origin = Anchor.TopCentre;
@@ -121,12 +127,16 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 CornerExponent = 2.5f;
                 AlwaysPresent = true;
 
-                InternalChildren = new Drawable[]{
-                    new Box {
+                InternalChildren = new Drawable[]
+                {
+                    new Box
+                    {
                         RelativeSizeAxes = Axes.Both,
                         Colour = boxColour,
                     },
-                    new Container { // Left
+                    new Container
+                    {
+                        // Left
                         RelativeSizeAxes = Axes.Both,
                         Origin = Anchor.CentreLeft,
                         Anchor = Anchor.CentreLeft,
@@ -140,7 +150,9 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                             Font = OsuFont.Torus.With(size: 20, weight: FontWeight.Bold)
                         }
                     },
-                    progressBox = new Container { // Centre
+                    progressBox = new Container
+                    {
+                        // Centre
                         RelativeSizeAxes = Axes.Both,
                         Origin = Anchor.Centre,
                         Anchor = Anchor.Centre,
@@ -150,14 +162,18 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                         Masking = true,
                         BorderThickness = 2,
                         BorderColour = Color4.Black,
-                        Children = new Drawable[]{
-                            new Box{
+                        Children = new Drawable[]
+                        {
+                            new Box
+                            {
                                 RelativeSizeAxes = Axes.Both,
-                                Colour = !HitEvents.Any() ? Color4Extensions.FromHex("343434"):Color4.DarkGray,
+                                Colour = !HitEvents.Any() ? Color4Extensions.FromHex("343434") : Color4.DarkGray,
                             }
                         }
                     },
-                    new Container { // Right
+                    new Container
+                    {
+                        // Right
                         RelativeSizeAxes = Axes.Both,
                         Origin = Anchor.CentreRight,
                         Anchor = Anchor.CentreRight,
@@ -172,14 +188,18 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                     },
                 };
 
-                progressBox.AddRange(new Drawable[]{
-                    new ChartBar(HitResult.Ok, GoodCount/HitEvents.Count){
+                progressBox.AddRange(new Drawable[]
+                {
+                    new ChartBar(HitResult.Ok, goodCount / HitEvents.Count)
+                    {
                         InitialLifetimeOffset = InitialLifetimeOffset
                     },
-                    new ChartBar(HitResult.Good, GreatCount/HitEvents.Count){
+                    new ChartBar(HitResult.Good, greatCount / HitEvents.Count)
+                    {
                         InitialLifetimeOffset = InitialLifetimeOffset
                     },
-                    new ChartBar(HitResult.Great, PerfectCount/HitEvents.Count){
+                    new ChartBar(HitResult.Great, perfectCount / HitEvents.Count)
+                    {
                         InitialLifetimeOffset = InitialLifetimeOffset
                     },
                 });
@@ -190,7 +210,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 base.LoadComplete();
                 ScheduleAfterChildren(() =>
                 {
-                    using (BeginDelayedSequence(InitialLifetimeOffset, true))
+                    using (BeginDelayedSequence(InitialLifetimeOffset))
                     {
                         this.ScaleTo(1, entry_animation_duration, Easing.OutBack).FadeIn();
                         noteCounter.Current.Value = HitEvents.Count;
@@ -198,7 +218,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 });
             }
 
-            public class TotalNoteCounter : RollingCounter<long>
+            public partial class TotalNoteCounter : RollingCounter<long>
             {
                 protected override double RollingDuration => bar_fill_duration;
 
@@ -217,7 +237,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 }
             }
 
-            private class ChartBar : Container
+            private partial class ChartBar : Container
             {
                 public double InitialLifetimeOffset;
 

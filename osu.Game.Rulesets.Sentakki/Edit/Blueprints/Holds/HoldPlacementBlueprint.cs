@@ -7,7 +7,7 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
 {
-    public class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
+    public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
     {
         private readonly HoldHighlight highlight;
 

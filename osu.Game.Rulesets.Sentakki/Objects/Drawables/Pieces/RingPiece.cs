@@ -5,9 +5,10 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class RingPiece : CircularContainer
+    public partial class RingPiece : CircularContainer
     {
         private const float outline_thickness = 2;
+
         public RingPiece(float thickness = 18)
         {
             RelativeSizeAxes = Axes.Both;
@@ -16,8 +17,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Masking = true;
             BorderThickness = thickness;
             BorderColour = Color4.Gray;
-            InternalChildren = new Drawable[]{
-                new Box{
+            InternalChildren = new Drawable[]
+            {
+                new Box
+                {
                     Alpha = 0,
                     RelativeSizeAxes = Axes.Both,
                     AlwaysPresent = true,

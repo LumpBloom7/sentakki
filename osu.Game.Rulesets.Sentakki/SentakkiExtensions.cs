@@ -57,10 +57,13 @@ namespace osu.Game.Rulesets.Sentakki
             {
                 case HitResult.Great:
                     return Color4.Orange;
+
                 case HitResult.Good:
                     return Color4.DeepPink;
+
                 case HitResult.Ok:
                     return Color4.Green;
+
                 default:
                     return Color4.LightGray;
             }
@@ -72,12 +75,16 @@ namespace osu.Game.Rulesets.Sentakki
             {
                 case HitResult.LargeBonus:
                     return "Critical Break Bonus";
+
                 case HitResult.Great:
                     return "Perfect";
+
                 case HitResult.Good:
                     return "Great";
+
                 case HitResult.Ok:
                     return "Good";
+
                 default:
                     return result.GetDescription();
             }

@@ -7,7 +7,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 {
-    public class SlideTapHighlight : CompositeDrawable
+    public partial class SlideTapHighlight : CompositeDrawable
     {
         public readonly SlideTapPiece SlideTapPiece;
 

@@ -5,7 +5,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
 {
-    public class TouchHoldSelectionBlueprint : SentakkiSelectionBlueprint<TouchHold>
+    public partial class TouchHoldSelectionBlueprint : SentakkiSelectionBlueprint<TouchHold>
     {
         public new DrawableTouchHold DrawableObject => (DrawableTouchHold)base.DrawableObject;
 

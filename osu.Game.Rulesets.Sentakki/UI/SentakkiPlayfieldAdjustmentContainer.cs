@@ -5,7 +5,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class SentakkiPlayfieldAdjustmentContainer : PlayfieldAdjustmentContainer
+    public partial class SentakkiPlayfieldAdjustmentContainer : PlayfieldAdjustmentContainer
     {
         protected override Container<Drawable> Content => content;
         private readonly Container content;
@@ -31,7 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         /// <summary>
         /// A <see cref="Container"/> which scales its content relative to a target width.
         /// </summary>
-        private class ScalingContainer : Container
+        private partial class ScalingContainer : Container
         {
             protected override void Update()
             {

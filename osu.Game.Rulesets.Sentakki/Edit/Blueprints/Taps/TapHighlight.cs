@@ -7,7 +7,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
 {
-    public class TapHighlight : CompositeDrawable
+    public partial class TapHighlight : CompositeDrawable
     {
         public readonly Container Note;
 
@@ -23,7 +23,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
             Alpha = 0.5f;
             InternalChildren = new Drawable[]
             {
-                Note = new Container{
+                Note = new Container
+                {
                     Size = new Vector2(75),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,

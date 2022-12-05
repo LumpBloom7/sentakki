@@ -13,7 +13,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit
 {
-    public class SentakkiSelectionHandler : EditorSelectionHandler
+    public partial class SentakkiSelectionHandler : EditorSelectionHandler
     {
         private readonly Bindable<TernaryState> selectionBreakState = new Bindable<TernaryState>();
         private readonly Bindable<TernaryState> selectionSlideBodyBreakState = new Bindable<TernaryState>();
@@ -63,6 +63,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                     float currentAngle = laned.Lane.GetRotationForLane() + angleDelta;
                     laned.Lane = currentAngle.GetNoteLaneFromDegrees();
                 }
+
                 return true;
             }
             else if (SelectedBlueprints.All(bp => bp.Item is Touch))
@@ -71,6 +72,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                 moveTouchNotes(this.ScreenSpaceDeltaToParentSpace(moveEvent.ScreenSpaceDelta));
                 return true;
             }
+
             return false;
         }
 
@@ -101,6 +103,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             foreach (var slide in lhos)
             {
                 bool adjusted = false;
+
                 foreach (var body in slide.SlideInfoList)
                 {
                     if (body.Break == state)
@@ -109,6 +112,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                     body.Break = state;
                     adjusted = true;
                 }
+
                 if (adjusted)
                     EditorBeatmap.Update(slide);
             }

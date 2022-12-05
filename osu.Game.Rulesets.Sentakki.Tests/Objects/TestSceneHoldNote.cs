@@ -11,7 +11,7 @@ using osu.Game.Tests.Visual;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
     [TestFixture]
-    public class TestSceneHoldNote : OsuTestScene
+    public partial class TestSceneHoldNote : OsuTestScene
     {
         private readonly Container content;
         protected override Container<Drawable> Content => content;
@@ -45,7 +45,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 EndTime = Time.Current + 1000 + duration,
             };
 
-            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
+            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
             Add(new DrawableHold(circle)
             {

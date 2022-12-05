@@ -5,7 +5,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches
 {
-    public class TouchSelectionBlueprint : SentakkiSelectionBlueprint<Touch>
+    public partial class TouchSelectionBlueprint : SentakkiSelectionBlueprint<Touch>
     {
         public new DrawableTouch DrawableObject => (DrawableTouch)base.DrawableObject;
 
