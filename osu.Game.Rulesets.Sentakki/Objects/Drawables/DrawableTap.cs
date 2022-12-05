@@ -101,6 +101,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
+                    TapVisual.FadeOut();
                     Expire();
                     break;
 
