@@ -7,6 +7,7 @@ using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.UI;
 using osuTK;
+using Touch = osu.Game.Rulesets.Sentakki.Objects.Touch;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -33,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [BackgroundDependencyLoader]
         private void load()
         {
-            RegisterPool<Objects.Touch, DrawableTouch>(8);
+            RegisterPool<Touch, DrawableTouch>(8);
         }
 
         protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
@@ -53,6 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             // Handle mouse input
             var mousePosition = SentakkiActionInputManager.CurrentState.Mouse.Position;
             bool actionPressed = false;
+
             foreach (var action in SentakkiActionInputManager.PressedActions)
             {
                 if (action < SentakkiAction.Key1)

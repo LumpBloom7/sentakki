@@ -33,6 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 NoteBody.LifetimeStart = value;
             }
         }
+
         public override double LifetimeEnd
         {
             get => base.LifetimeEnd;
@@ -43,17 +44,23 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        public DrawableHold() : this(null) { }
+        public DrawableHold()
+            : this(null)
+        {
+        }
 
         public DrawableHold(Hold? hitObject = null)
-            : base(hitObject) { }
+            : base(hitObject)
+        {
+        }
 
         [BackgroundDependencyLoader]
         private void load()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            AddRangeInternal(new Drawable[]{
+            AddRangeInternal(new Drawable[]
+            {
                 NoteBody = new HoldBody(),
                 headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
             });
@@ -74,14 +81,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             NoteBody.FadeColour(AccentColour.Value);
 
-            using (BeginDelayedSequence(animTime, true))
+            using (BeginDelayedSequence(animTime))
             {
                 // This is the movable length (not including start position)
-                float totalMovableDistance = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
-                float originalStretchAmount = (float)(totalMovableDistance / animTime * (HitObject as IHasDuration).Duration);
-                float stretchAmount = Math.Clamp((float)(totalMovableDistance / animTime * (HitObject as IHasDuration).Duration), 0, totalMovableDistance);
-                float stretchTime = (float)(stretchAmount / totalMovableDistance * animTime);
-                float excessDistance = (float)((-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime);
+                const float total_movable_distance = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
+                float stretchAmount = Math.Clamp((float)(total_movable_distance / animTime * (HitObject as IHasDuration).Duration), 0, total_movable_distance);
+                float stretchTime = (float)(stretchAmount / total_movable_distance * animTime);
 
                 NoteBody.ResizeHeightTo(stretchAmount, stretchTime)
                         .Delay((HitObject as IHasDuration).Duration)
@@ -134,11 +139,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 case ArmedState.Miss:
                     NoteBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
-                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
-                        .MoveToOffset(new Vector2(0, -100), time_fade_miss, Easing.OutCubic)
-                        .FadeOut(time_fade_miss);
+                            .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
+                            .MoveToOffset(new Vector2(0, -100), time_fade_miss, Easing.OutCubic)
+                            .FadeOut(time_fade_miss);
 
-                    using (BeginDelayedSequence(time_fade_miss, true))
+                    using (BeginDelayedSequence(time_fade_miss))
                         this.FadeOut();
                     break;
             }
@@ -156,12 +161,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         AutoBindable = { BindTarget = AutoBindable }
                     };
             }
+
             return base.CreateNestedHitObject(hitObject);
         }
 
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
         {
             base.AddNestedHitObject(hitObject);
+
             switch (hitObject)
             {
                 case DrawableHoldHead head:
@@ -180,6 +187,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
         /// </summary>
         public double? HoldStartTime { get; private set; }
+
         public double TotalHoldTime;
 
         private bool beginHoldAt(double timeOffset)

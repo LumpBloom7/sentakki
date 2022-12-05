@@ -78,7 +78,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 LanedPlayfield = new LanedPlayfield(),
                 HitObjectContainer, // This only contains TouchHolds, which needs to be above others types
                 touchPlayfield = new TouchPlayfield(), // This only contains Touch, which needs a custom playfield to handle their input
-                explosionLayer = new Container<HitExplosion>() { RelativeSizeAxes = Axes.Both },
+                explosionLayer = new Container<HitExplosion> { RelativeSizeAxes = Axes.Both },
                 judgementLayer = new Container<DrawableSentakkiJudgement>
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -128,12 +128,14 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             switch (h)
             {
-                case SentakkiLanedHitObject _:
+                case SentakkiLanedHitObject:
                     LanedPlayfield.Add(h);
                     break;
-                case Touch _:
+
+                case Touch:
                     touchPlayfield.Add(h);
                     break;
+
                 default:
                     base.Add(h);
                     break;
@@ -168,9 +170,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 case ColorOption.Difficulty:
                     AccentContainer.FadeColour(colours.ForDifficultyRating(beatmapDifficulty?.Value?.DifficultyRating ?? DifficultyRating.Normal, true), 200);
                     break;
+
                 case ColorOption.Skin:
                     AccentContainer.FadeColour(skin.Value.GetConfig<GlobalSkinColours, Color4>(GlobalSkinColours.MenuGlow)?.Value ?? Color4.White, 200);
                     break;
+
                 default:
                     AccentContainer.FadeColour(Color4.White, 200);
                     break;

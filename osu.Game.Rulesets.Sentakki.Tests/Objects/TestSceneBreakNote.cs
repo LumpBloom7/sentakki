@@ -39,7 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 NoteColour = Color4.OrangeRed,
             };
 
-            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
+            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
             Add(new DrawableTap(circle)
             {

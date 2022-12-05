@@ -44,6 +44,7 @@ namespace osu.Game.Rulesets.Sentakki
 
         private static readonly Lazy<bool> is_development_build
             = new Lazy<bool>(() => typeof(SentakkiRuleset).Assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled));
+
         public static bool IsDevelopmentBuild => is_development_build.Value;
 
         public override string Description => IsDevelopmentBuild ? "sentakki (Dev build)" : "sentakki";
@@ -97,7 +98,8 @@ namespace osu.Game.Rulesets.Sentakki
                     };
 
                 case ModType.Conversion:
-                    return new Mod[]{
+                    return new Mod[]
+                    {
                         new SentakkiModExperimental(),
                         new SentakkiModClassic(),
                         new SentakkiModMirror(),
@@ -154,11 +156,11 @@ namespace osu.Game.Rulesets.Sentakki
             {
                 Columns = new[]
                 {
-                    new StatisticItem(SentakkiStatisticsStrings.JudgementChart, () => new JudgementChart(score.HitEvents.Where(e=>e.HitObject is SentakkiHitObject).ToList())
+                    new StatisticItem(SentakkiStatisticsStrings.JudgementChart, () => new JudgementChart(score.HitEvents.Where(e => e.HitObject is SentakkiHitObject).ToList())
                     {
                         RelativeSizeAxes = Axes.X,
                         Size = new Vector2(1, 250)
-                    },true),
+                    }, true),
                 }
             },
             new StatisticRow
@@ -224,12 +226,14 @@ namespace osu.Game.Rulesets.Sentakki
                         Anchor = Anchor.BottomRight,
                         Origin = Anchor.BottomRight,
                         Size = new Vector2(60, 35),
-                        Children = new Drawable[]{
+                        Children = new Drawable[]
+                        {
                             // Used to offset the fonts being misaligned
-                            new Container{
+                            new Container
+                            {
                                 Anchor = Anchor.BottomCentre,
                                 Origin = Anchor.BottomCentre,
-                                Size = new Vector2(60,32),
+                                Size = new Vector2(60, 32),
                                 CornerRadius = 8f,
                                 CornerExponent = 2.5f,
                                 Masking = true,
@@ -242,7 +246,7 @@ namespace osu.Game.Rulesets.Sentakki
                             {
                                 Text = "DEV",
                                 Colour = Color4.Gray,
-                                Font = OsuFont.Torus.With(size: 32,weight: FontWeight.Bold),
+                                Font = OsuFont.Torus.With(size: 32, weight: FontWeight.Bold),
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
                             }

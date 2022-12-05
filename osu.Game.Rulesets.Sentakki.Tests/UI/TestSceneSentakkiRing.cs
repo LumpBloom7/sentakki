@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
                 });
             });
 
-            AddStep("Create Ring", () => Add(ring = new SentakkiRing()
+            AddStep("Create Ring", () => Add(ring = new SentakkiRing
             {
                 RelativeSizeAxes = Axes.None,
                 Size = new Vector2(SentakkiPlayfield.RINGSIZE)
@@ -33,7 +33,10 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
             AddUntilStep("Ring loaded", () => ring.IsLoaded && ring.Alpha == 1);
             AddToggleStep("Toggle notestart Indicators", b => ring.NoteStartIndicators.Value = b);
             AddRepeatStep("Trigger Kiai Beat", () => ring.KiaiBeat(), 5);
-            AddSliderStep<float>("Test opacity", 0, 1, 1, f => { if (ring != null) ring.RingOpacity.Value = f; });
+            AddSliderStep<float>("Test opacity", 0, 1, 1, f =>
+            {
+                if (ring != null) ring.RingOpacity.Value = f;
+            });
         }
     }
 }

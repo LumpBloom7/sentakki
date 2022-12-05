@@ -27,15 +27,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public bool EndsWithSlideFan { get; private set; }
         public bool StartsWithSlideFan { get; private set; }
 
-        public readonly Vector2 pathOrigin;
-        public readonly Vector2 fanOrigin;
+        public readonly Vector2 PathOrigin;
+        public readonly Vector2 FanOrigin;
 
         public SentakkiSlidePath(SliderPath segment, int endLane, bool lastSegmentIsFan = false)
-            : this(new[] { segment }, endLane, lastSegmentIsFan) { }
+            : this(new[] { segment }, endLane, lastSegmentIsFan)
+        {
+        }
 
         public SentakkiSlidePath(SliderPath[] segments, int endLane, bool lastSegmentIsFan = false)
         {
-            fanOrigin = pathOrigin = segments[0].PositionAt(0);
+            FanOrigin = PathOrigin = segments[0].PositionAt(0);
             TotalDistance = segments.Sum(p => p.Distance);
             EndLane = endLane;
             EndsWithSlideFan = lastSegmentIsFan;
@@ -46,7 +48,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 SlideSegments = new SliderPath[segments.Length - 1];
                 Array.Copy(segments, SlideSegments, segments.Length - 1);
                 FanStartProgress = (float)(SlideSegments.Sum(p => p.Distance) / TotalDistance);
-                fanOrigin = segments[^1].PositionAt(0);
+                FanOrigin = segments[^1].PositionAt(0);
             }
             else
                 SlideSegments = segments;
@@ -54,7 +56,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public Vector2 PositionAt(double progress, int laneOffset = 0)
         {
-            if (progress <= 0) return pathOrigin;
+            if (progress <= 0) return PathOrigin;
             if (progress >= 1 && !EndsWithSlideFan) return SlideSegments[^1].PositionAt(1);
 
             // Handle the regular shapes
@@ -72,12 +74,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             }
 
             // Here starts the fan slide fallback
-            float originAngle = Vector2.Zero.GetDegreesFromPosition(fanOrigin);
+            float originAngle = Vector2.Zero.GetDegreesFromPosition(FanOrigin);
             float destAngle = originAngle + 180 + (laneOffset * 45);
 
             var destPosition = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, destAngle);
 
-            return Vector2.Lerp(fanOrigin, destPosition, Math.Clamp((float)((progress - FanStartProgress) / (1 - FanStartProgress)), 0, 1));
+            return Vector2.Lerp(FanOrigin, destPosition, Math.Clamp((float)((progress - FanStartProgress) / (1 - FanStartProgress)), 0, 1));
         }
     }
 }

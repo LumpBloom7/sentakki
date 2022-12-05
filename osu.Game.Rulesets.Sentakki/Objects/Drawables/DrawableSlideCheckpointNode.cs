@@ -23,7 +23,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiInputManager sentakkiActionInputManager = null!;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= ((SentakkiInputManager)GetContainingInputManager());
 
-        public DrawableSlideCheckpointNode() : this(null) { }
+        public DrawableSlideCheckpointNode()
+            : this(null)
+        {
+        }
+
         public DrawableSlideCheckpointNode(SlideCheckpoint.CheckpointNode? node)
             : base(node)
         {

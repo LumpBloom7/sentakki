@@ -38,19 +38,21 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             {
                 AddInternal(new DotPiece
                 {
-                    Position = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
+                    Position = new Vector2(-(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))),
+                        -(SentakkiPlayfield.INTERSECTDISTANCE * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
                 });
 
                 spawnIndicator.Add(new DotPiece(size: new Vector2(16, 8))
                 {
                     Rotation = pathAngle,
-                    Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))), -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
+                    Position = new Vector2(-(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Cos((pathAngle + 90f) * (float)(Math.PI / 180))),
+                        -(SentakkiPlayfield.NOTESTARTDISTANCE * (float)Math.Sin((pathAngle + 90f) * (float)(Math.PI / 180)))),
                 });
             }
         }
 
         public readonly Bindable<float> RingOpacity = new Bindable<float>(1);
-        public readonly Bindable<bool> NoteStartIndicators = new Bindable<bool>(false);
+        public readonly Bindable<bool> NoteStartIndicators = new Bindable<bool>();
         private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
 
         [BackgroundDependencyLoader]

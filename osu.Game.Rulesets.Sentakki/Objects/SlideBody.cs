@@ -52,6 +52,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             double totalDistance = SlideBodyInfo.SlidePath.TotalDistance;
             double runningDistance = 0;
+
             foreach (var segment in SlideBodyInfo.SlidePath.SlideSegments)
             {
                 double distance = segment.Distance;
@@ -64,7 +65,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     runningDistance += nodeDelta;
                     double progress = runningDistance / totalDistance;
 
-                    SlideCheckpoint checkpoint = new SlideCheckpoint()
+                    SlideCheckpoint checkpoint = new SlideCheckpoint
                     {
                         Progress = (float)progress,
                         StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
@@ -84,11 +85,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 return;
 
             // Add body nodes (should be two major sets)
-            Vector2 originpoint = SlideBodyInfo.SlidePath.fanOrigin;
+            Vector2 originpoint = SlideBodyInfo.SlidePath.FanOrigin;
+
             for (int i = 1; i < 5; ++i)
             {
                 float progress = SlideBodyInfo.SlidePath.FanStartProgress + (0.25f * i * (1 - SlideBodyInfo.SlidePath.FanStartProgress));
-                SlideCheckpoint checkpoint = new SlideCheckpoint()
+                SlideCheckpoint checkpoint = new SlideCheckpoint
                 {
                     Progress = progress,
                     StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
@@ -100,6 +102,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     Vector2 dest = SlideBodyInfo.SlidePath.PositionAt(1, j);
                     checkpoint.NodePositions.Add(Vector2.Lerp(originpoint, dest, 0.25f * i));
                 }
+
                 AddNested(checkpoint);
             }
         }

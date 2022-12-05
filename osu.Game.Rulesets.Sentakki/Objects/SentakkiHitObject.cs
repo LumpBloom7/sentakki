@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public abstract class SentakkiHitObject : HitObject
     {
-        public SentakkiHitObject()
+        protected SentakkiHitObject()
         {
             // We initialize the note colour to the default value first for test scenes
             // The colours during gameplay will be set during beatmap post-process
@@ -43,7 +43,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // This special hitsample is used for Sentakki specific samples, with doesn't have bank specific variants
         public class SentakkiHitSampleInfo : HitSampleInfo, IEquatable<SentakkiHitSampleInfo>
         {
-            public SentakkiHitSampleInfo(string name, int volume = 0) : base(name, volume: volume) { }
+            public SentakkiHitSampleInfo(string name, int volume = 0)
+                : base(name, volume: volume)
+            {
+            }
+
             public override IEnumerable<string> LookupNames
             {
                 get

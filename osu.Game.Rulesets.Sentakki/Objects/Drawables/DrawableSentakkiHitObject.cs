@@ -12,7 +12,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         protected override double InitialLifetimeOffset => AdjustedAnimationDuration;
 
-        public readonly BindableBool AutoBindable = new BindableBool(false);
+        public readonly BindableBool AutoBindable = new BindableBool();
+
         public bool Auto
         {
             get => AutoBindable.Value;
@@ -24,10 +25,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override float SamplePlaybackPosition => Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
 
-        public DrawableSentakkiHitObject() : this(null) { }
+        public DrawableSentakkiHitObject()
+            : this(null)
+        {
+        }
 
         public DrawableSentakkiHitObject(SentakkiHitObject? hitObject = null)
-            : base(hitObject!) { }
+            : base(hitObject!)
+        {
+        }
 
         [Resolved]
         private DrawableSentakkiRuleset? drawableSentakkiRuleset { get; set; }

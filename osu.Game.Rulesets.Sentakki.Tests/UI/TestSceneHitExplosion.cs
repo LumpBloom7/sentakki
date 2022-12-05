@@ -7,9 +7,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
     [TestFixture]
     public partial class TestSceneHitExplosion : OsuTestScene
     {
-        private readonly HitExplosion explosion;
         public TestSceneHitExplosion()
         {
+            HitExplosion explosion;
             Add(explosion = new HitExplosion());
             AddStep("Explode", () =>
             {

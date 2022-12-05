@@ -20,7 +20,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
             Size = new Vector2(110);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            InternalChildren = new Drawable[]{
+            InternalChildren = new Drawable[]
+            {
                 ProgressPiece = new TouchHoldProgressPiece(),
                 centrePiece = new TouchHoldCentrePiece(),
             };
@@ -36,7 +37,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
 
         private void updateState(DrawableHitObject drawableObject, ArmedState state)
         {
-            using (BeginAbsoluteSequence(drawableObject.HitStateUpdateTime, true))
+            using (BeginAbsoluteSequence(drawableObject.HitStateUpdateTime))
             {
                 switch (state)
                 {

@@ -49,6 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         {
             double preemptTime;
             double fadeOutTime;
+
             switch (hitObject)
             {
                 case DrawableTouch t:
@@ -145,12 +146,12 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
                 protected override Quad ComputeScreenSpaceDrawQuad()
                 {
-                    var SSDQDrawinfo = DrawInfo;
+                    var ssdqDrawinfo = DrawInfo;
 
                     // We apply a counter rotation so that the SSDQ retains the non-rotated Quad
-                    SSDQDrawinfo.ApplyTransform(AnchorPosition, Vector2.One, -sentakkiPlayfield.Rotation, Vector2.Zero, OriginPosition);
+                    ssdqDrawinfo.ApplyTransform(AnchorPosition, Vector2.One, -sentakkiPlayfield.Rotation, Vector2.Zero, OriginPosition);
 
-                    return Quad.FromRectangle(DrawRectangle) * SSDQDrawinfo.Matrix;
+                    return Quad.FromRectangle(DrawRectangle) * ssdqDrawinfo.Matrix;
                 }
             }
 

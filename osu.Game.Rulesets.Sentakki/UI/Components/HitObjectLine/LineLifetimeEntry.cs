@@ -12,8 +12,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {
     public class LineLifetimeEntry : LifetimeEntry
     {
-        private readonly BindableDouble AnimationDuration = new BindableDouble(1000);
-        public double AdjustedAnimationDuration => AnimationDuration.Value * GameplaySpeed;
+        private readonly BindableDouble animationDuration = new BindableDouble(1000);
+        public double AdjustedAnimationDuration => animationDuration.Value * GameplaySpeed;
 
         public double GameplaySpeed => drawableRuleset?.GameplaySpeed ?? 1;
 
@@ -21,12 +21,12 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         public double StartTime { get; private set; }
 
-        public LineLifetimeEntry(BindableDouble AnimationDuration, DrawableSentakkiRuleset? drawableSentakkiRuleset, double startTime)
+        public LineLifetimeEntry(BindableDouble animationDuration, DrawableSentakkiRuleset? drawableSentakkiRuleset, double startTime)
         {
             StartTime = startTime;
             drawableRuleset = drawableSentakkiRuleset;
-            this.AnimationDuration.BindTo(AnimationDuration);
-            this.AnimationDuration.BindValueChanged(refreshLifetime, true);
+            this.animationDuration.BindTo(animationDuration);
+            this.animationDuration.BindValueChanged(refreshLifetime, true);
         }
 
         public List<SentakkiLanedHitObject> HitObjects = new List<SentakkiLanedHitObject>();
@@ -75,14 +75,13 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 var anchor = HitObjects.First(h => getDelta(HitObjects[0], h) == minDelta);
                 int delta = maxDelta - minDelta;
 
-                bool allBreaks = HitObjects.All(h => h.Break);
                 Colour = Color4.Gold;
 
                 int angleRange = delta == 4 ? 360 : (90 + (45 * delta));
 
                 AngleRange = angleRange / 360f;
 
-                Rotation = anchor.Lane.GetRotationForLane() + (delta * 22.5f) - (angleRange / 2);
+                Rotation = anchor.Lane.GetRotationForLane() + (delta * 22.5f) - (angleRange / 2f);
             }
 
             // Notify the renderer that the line may be updated

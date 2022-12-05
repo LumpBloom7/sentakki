@@ -44,7 +44,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 AddNested(lane);
             }
 
-            AddRangeInternal(new Drawable[]{
+            AddRangeInternal(new Drawable[]
+            {
                 chevronPool = new DrawablePool<SlideChevron>(100),
                 HitObjectLineRenderer = new LineRenderer(),
                 slideBodyProxyContainer = new SortedDrawableProxyContainer(),
@@ -88,9 +89,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 case DrawableSlideBody s:
                     slideBodyProxyContainer.Add(s.CreateProxy(), s);
                     break;
+
                 case DrawableTap t:
                     lanedNoteProxyContainer.Add(t.TapVisual.CreateProxy(), t);
                     break;
+
                 case DrawableHold h:
                     lanedNoteProxyContainer.Add(h.NoteBody.CreateProxy(), h);
                     break;

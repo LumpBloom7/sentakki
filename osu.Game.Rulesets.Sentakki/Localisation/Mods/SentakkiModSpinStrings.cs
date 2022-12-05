@@ -12,6 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.Localisation.Mods
         /// "Revolution duration"
         /// </summary>
         public static LocalisableString RevolutionDuration => new TranslatableString(getKey(@"revolution_duration"), @"Revolution duration");
+
         public static LocalisableString RevolutionDurationDescription => new TranslatableString(getKey(@"revolution_duration_description"), @"The duration in seconds to complete a revolution.");
 
         private static string getKey(string key) => $"{prefix}:{key}";

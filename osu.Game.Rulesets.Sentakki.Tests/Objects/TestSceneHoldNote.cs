@@ -45,7 +45,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 EndTime = Time.Current + 1000 + duration,
             };
 
-            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
+            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
             Add(new DrawableHold(circle)
             {

@@ -16,7 +16,7 @@
         <EmbeddedResource Include="Resources\**\*"/>
     </ItemGroup>
     <ItemGroup>
-        <EditorConfgFiles Include=".editorconfig" />
-        <EditorConfgFiles Include=".globalconfig" />
+        <EditorConfgFiles Include=".editorconfig"/>
+        <EditorConfgFiles Include=".globalconfig"/>
     </ItemGroup>
 </Project>

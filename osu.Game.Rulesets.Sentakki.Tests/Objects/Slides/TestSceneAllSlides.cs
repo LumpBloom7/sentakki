@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             Add(chevronPool = new DrawablePool<SlideChevron>(62));
             Add(fanChevrons = new SlideFanChevrons());
 
-            Add(new SentakkiRing()
+            Add(new SentakkiRing
             {
                 RelativeSizeAxes = Axes.None,
                 Size = new Vector2(SentakkiPlayfield.RINGSIZE)
@@ -49,7 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 RefreshSlide();
             });
 
-            Add(nodes = new Container()
+            Add(nodes = new Container
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -68,6 +68,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         {
             slide.Path = CreatePattern();
             nodes.Clear();
+
             foreach (var node in slide.Path.SlideSegments.SelectMany(s => s.ControlPoints))
             {
                 nodes.Add(new CircularContainer

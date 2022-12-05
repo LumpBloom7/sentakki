@@ -35,12 +35,13 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             {
                 StartTime = Time.Current + 1000,
                 Duration = 5000,
-                Samples = new List<HitSampleInfo>{
+                Samples = new List<HitSampleInfo>
+                {
                     new HitSampleInfo(HitSampleInfo.HIT_NORMAL)
                 },
             };
 
-            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
+            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
             Add(new DrawableTouchHold(circle)
             {

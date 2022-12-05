@@ -13,12 +13,14 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
                 case HitResult.Ok:
                 case HitResult.Miss:
                     return true;
+
                 default:
                     return false;
             }
         }
 
-        protected override DifficultyRange[] GetRanges() => new DifficultyRange[]{
+        protected override DifficultyRange[] GetRanges() => new[]
+        {
             new DifficultyRange(HitResult.Miss, 144, 144, 72),
             new DifficultyRange(HitResult.Ok, 144, 144, 72),
             new DifficultyRange(HitResult.Good, 96, 96, 48),

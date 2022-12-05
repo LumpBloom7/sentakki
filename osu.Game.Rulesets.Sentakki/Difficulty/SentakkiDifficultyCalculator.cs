@@ -11,11 +11,15 @@ namespace osu.Game.Rulesets.Sentakki.Difficulty
 {
     public class SentakkiDifficultyCalculator : DifficultyCalculator
     {
-        public SentakkiDifficultyCalculator(IRulesetInfo ruleset, IWorkingBeatmap beatmap) : base(ruleset, beatmap) { }
+        public SentakkiDifficultyCalculator(IRulesetInfo ruleset, IWorkingBeatmap beatmap)
+            : base(ruleset, beatmap)
+        {
+        }
 
         protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills, double clockRate)
         {
             int maxCombo = 0;
+
             foreach (SentakkiHitObject h in beatmap.HitObjects)
             {
                 switch (h)
@@ -23,12 +27,15 @@ namespace osu.Game.Rulesets.Sentakki.Difficulty
                     case Slide slide:
                         maxCombo += 1 + slide.SlideInfoList.Count + (slide.Break ? 4 : 0);
                         break;
+
                     case Hold hold:
                         maxCombo += 2 + (hold.Break ? 8 : 0);
                         break;
+
                     case Tap tap:
                         maxCombo += 1 + (tap.Break ? 4 : 0);
                         break;
+
                     default:
                         ++maxCombo;
                         break;

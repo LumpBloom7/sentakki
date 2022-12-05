@@ -135,6 +135,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             base.Update();
 
             timeDelta += Math.Abs(Time.Elapsed);
+
             if (timeDelta >= time_between_updates)
             {
                 timeDelta %= time_between_updates;

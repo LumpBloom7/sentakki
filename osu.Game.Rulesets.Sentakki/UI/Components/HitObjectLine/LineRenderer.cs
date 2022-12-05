@@ -127,6 +127,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 // We want to listen in on line changes in case we need to swap out colours/drawables
                 newEntry.OnLineUpdated += onEntryUpdated;
             }
+
             lineEntries[entryTime].Add(hitObject);
         }
     }

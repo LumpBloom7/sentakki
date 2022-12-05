@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         public TestSceneSlideFan()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
-            Add(new SentakkiRing()
+            Add(new SentakkiRing
             {
                 RelativeSizeAxes = Axes.None,
                 Size = new Vector2(SentakkiPlayfield.RINGSIZE),
@@ -53,15 +53,16 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 //Break = true,
                 SlideInfoList = new List<SlideBodyInfo>
                 {
-                    new SlideBodyInfo {
-                        SlidePathParts = new[] {new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false)},
+                    new SlideBodyInfo
+                    {
+                        SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false) },
                         Duration = 1000,
                     },
                 },
                 StartTime = Time.Current + 1000,
             };
 
-            slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
+            slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
             DrawableSlide dSlide;
 
@@ -74,8 +75,10 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             });
 
             foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects)
+            {
                 foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects)
                     nested2.Auto = auto;
+            }
         }
     }
 }

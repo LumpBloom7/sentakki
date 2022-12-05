@@ -9,7 +9,8 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
     public partial class TestSceneLiveCounter : OsuTestScene
     {
         private LiveCounter counter = null!;
-        private BindableInt lives = new BindableInt
+
+        private readonly BindableInt lives = new BindableInt
         {
             MaxValue = 500,
             Value = 500
@@ -17,10 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
 
         public TestSceneLiveCounter()
         {
-            AddStep("Clear test", () =>
-            {
-                Clear();
-            });
+            AddStep("Clear test", Clear);
 
             AddStep("Create counter", () => Add(counter = new LiveCounter(lives)));
             AddUntilStep("Counter loaded", () => counter.IsLoaded);

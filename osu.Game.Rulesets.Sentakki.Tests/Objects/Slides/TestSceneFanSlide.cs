@@ -18,18 +18,16 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         protected int StartPath;
         protected int EndPath;
 
-        private SentakkiRing ring;
-
         [Cached]
         private readonly SlideFanChevrons fanChevrons;
 
-        private SlideVisual slide;
+        private readonly SlideVisual slide;
 
         public TestSceneFanSlide()
         {
             Add(fanChevrons = new SlideFanChevrons());
 
-            Add(ring = new SentakkiRing()
+            Add(new SentakkiRing
             {
                 RelativeSizeAxes = Axes.None,
                 Size = new Vector2(SentakkiPlayfield.RINGSIZE)

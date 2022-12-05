@@ -42,7 +42,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     LabelText = SentakkiSettingsSubsectionStrings.SnakingInSlides,
                     Current = config.GetBindable<bool>(SentakkiRulesetSettings.SnakingSlideBody)
                 },
-                new SettingsCheckbox{
+                new SettingsCheckbox
+                {
                     LabelText = SentakkiSettingsSubsectionStrings.ShowDetailedJudgements,
                     Current = config.GetBindable<bool>(SentakkiRulesetSettings.DetailedJudgements)
                 },
@@ -94,6 +95,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
                 return speed.ToString();
             }
+
             public override LocalisableString TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
         }
 
@@ -108,6 +110,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
                 return speed.ToString();
             }
+
             public override LocalisableString TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
         }
     }

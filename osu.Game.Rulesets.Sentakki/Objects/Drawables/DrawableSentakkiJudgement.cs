@@ -41,8 +41,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Scale = new Vector2(0.9f),
-                    Children = new Drawable[]{
-                        timingPiece = new OsuSpriteText{
+                    Children = new Drawable[]
+                    {
+                        timingPiece = new OsuSpriteText
+                        {
                             Y = -15,
                             Origin = Anchor.Centre,
                             Font = OsuFont.Torus.With(size: 20, weight: FontWeight.Bold),
@@ -68,6 +70,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             else
             {
                 timingPiece.Alpha = 1;
+
                 if (result.TimeOffset >= 16)
                 {
                     timingPiece.Text = "LATE";
@@ -84,6 +87,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     timingPiece.Colour = Color4.Orange;
                 }
             }
+
             LifetimeStart = result.TimeAbsolute;
 
             switch (hitObject)
@@ -92,6 +96,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Position = SentakkiExtensions.GetPositionAlongLane(240, laned.HitObject.Lane);
                     Rotation = laned.HitObject.Lane.GetRotationForLane();
                     break;
+
                 default:
                     Position = hitObject.Position;
                     Rotation = 0;
@@ -122,7 +127,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private partial class SentakkiJudgementPiece : DefaultJudgementPiece
         {
-            public SentakkiJudgementPiece(HitResult result) : base(result)
+            public SentakkiJudgementPiece(HitResult result)
+                : base(result)
             {
             }
 

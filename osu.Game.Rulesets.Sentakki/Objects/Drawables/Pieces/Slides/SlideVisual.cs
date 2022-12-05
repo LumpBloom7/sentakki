@@ -44,26 +44,29 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         }
 
         [Resolved]
-        private DrawablePool<SlideChevron>? chevronPool { get; set; } = null!;
+        private DrawablePool<SlideChevron>? chevronPool { get; set; }
 
         private Container<Drawable> chevrons = null!;
 
         private readonly BindableBool snakingIn = new BindableBool(true);
 
-        private List<SlideFanChevron> fanChevrons = new List<SlideFanChevron>();
+        private readonly List<SlideFanChevron> fanChevrons = new List<SlideFanChevron>();
 
         [BackgroundDependencyLoader]
         private void load(SentakkiRulesetConfigManager? sentakkiConfig, SlideFanChevrons? fanChevrons)
         {
             sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
 
-            AddRangeInternal(new Drawable[]{
+            AddRangeInternal(new Drawable[]
+            {
                 chevrons = new Container()
             });
 
             if (fanChevrons != null)
+            {
                 for (int i = 0; i < 11; ++i)
                     this.fanChevrons.Add(new SlideFanChevron(fanChevrons.Get(i)));
+            }
         }
 
         private void updateVisuals()
@@ -93,6 +96,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 return;
 
             double runningDistance = 0;
+
             foreach (var path in path.SlideSegments)
             {
                 int chevronCount = chevronsInContinuousPath(path);
@@ -100,6 +104,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 double safeDistance = totalDistance - (endpoint_distance * 2);
 
                 var previousPosition = path.PositionAt(0);
+
                 for (int i = 0; i < chevronCount; i++)
                 {
                     double progress = (double)i / (chevronCount - 1); // from 0 to 1, both inclusive
@@ -118,6 +123,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 
                     previousPosition = position;
                 }
+
                 runningDistance += totalDistance;
             }
         }
@@ -127,7 +133,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             if (!path.EndsWithSlideFan)
                 return;
 
-            var delta = path.PositionAt(1) - path.fanOrigin;
+            var delta = path.PositionAt(1) - path.FanOrigin;
 
             for (int i = 0; i < 11; ++i)
             {
@@ -135,12 +141,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 float scale = progress;
                 SlideFanChevron fanChev = fanChevrons[i];
 
-                float safeSpaceRatio = 570 / 600f;
+                const float safe_space_ratio = 570 / 600f;
 
-                float Y = safeSpaceRatio * scale;
+                float y = safe_space_ratio * scale;
 
-                fanChev.Position = path.fanOrigin + (delta * Y);
-                fanChev.Rotation = fanChev.Position.GetDegreesFromPosition(path.fanOrigin);
+                fanChev.Position = path.FanOrigin + (delta * y);
+                fanChev.Rotation = fanChev.Position.GetDegreesFromPosition(path.FanOrigin);
 
                 fanChev.DisappearThreshold = path.FanStartProgress + ((i + 1) / 11f * (1 - path.FanStartProgress));
                 fanChev.Depth = chevrons.Count;

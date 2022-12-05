@@ -8,9 +8,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
 
-        public DrawableSlideTap() : this(null) { }
+        public DrawableSlideTap()
+            : this(null)
+        {
+        }
+
         public DrawableSlideTap(SlideTap? hitObject)
-            : base(hitObject) { }
+            : base(hitObject)
+        {
+        }
 
         protected override void UpdateInitialTransforms()
         {
@@ -23,13 +29,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (ParentHitObject is DrawableSlide slide)
             {
                 spinDuration = ((Slide)slide.HitObject).SlideInfoList.FirstOrDefault().Duration;
-                if (slide.SlideBodies.Count > 1)
-                    note.SecondStar.Alpha = 1;
-                else
-                    note.SecondStar.Alpha = 0;
+                note.SecondStar.Alpha = slide.SlideBodies.Count > 1 ? 1 : 0;
             }
 
-            note.Stars.Spin(spinDuration, RotationDirection.Counterclockwise, 0).Loop();
+            note.Stars.Spin(spinDuration, RotationDirection.Counterclockwise).Loop();
         }
     }
 }

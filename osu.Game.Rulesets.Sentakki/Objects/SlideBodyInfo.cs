@@ -56,8 +56,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 return false;
 
             for (int i = 0; i < slidePathParts.Length; ++i)
+            {
                 if (!slidePathParts[i].Equals(other.slidePathParts[i]))
                     return false;
+            }
 
             return true;
         }

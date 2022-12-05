@@ -15,7 +15,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         public new SentakkiLanedHitObject HitObject => (SentakkiLanedHitObject)base.HitObject;
 
-        protected override float SamplePlaybackPosition => (SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, HitObject.Lane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
+        protected override float SamplePlaybackPosition =>
+            (SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, HitObject.Lane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
 
         private PausableSkinnableSound breakSample = null!;
 
@@ -24,12 +25,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private Container<DrawableScoreBonusObject> scoreBonusObjects = null!;
 
         public DrawableSentakkiLanedHitObject(SentakkiLanedHitObject? hitObject)
-                    : base(hitObject) { }
+            : base(hitObject)
+        {
+        }
 
         [BackgroundDependencyLoader]
         private void load(SentakkiRulesetConfigManager? sentakkiConfig)
         {
-            AddRangeInternal(new Drawable[]{
+            AddRangeInternal(new Drawable[]
+            {
                 scorePaddingObjects = new Container<DrawableScorePaddingObject>(),
                 scoreBonusObjects = new Container<DrawableScoreBonusObject>(),
                 breakSample = new PausableSkinnableSound(),
@@ -60,6 +64,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 case ScorePaddingObject p:
                     return new DrawableScorePaddingObject(p);
+
                 case ScoreBonusObject b:
                     return new DrawableScoreBonusObject(b);
             }
@@ -74,9 +79,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 case DrawableScorePaddingObject p:
                     scorePaddingObjects.Add(p);
                     break;
+
                 case DrawableScoreBonusObject b:
                     scoreBonusObjects.Add(b);
                     break;
+
                 default:
                     base.AddNestedHitObject(hitObject);
                     break;

@@ -13,6 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
     {
         public Container BorderContainer;
         public Container PieceContainer;
+
         public TouchBody()
         {
             Size = new Vector2(130);
@@ -20,43 +21,52 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
             Origin = Anchor.Centre;
             Alpha = 0;
 
-            InternalChildren = new Drawable[]{
-                BorderContainer = new Container{
+            InternalChildren = new Drawable[]
+            {
+                BorderContainer = new Container
+                {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Size= new Vector2(105),
+                    Size = new Vector2(105),
                     CornerRadius = 25f,
                     CornerExponent = 2.5f,
                     Masking = true,
                     BorderThickness = 15,
                     BorderColour = Color4.White,
                     Alpha = 0,
-                    Child = new Box{
+                    Child = new Box
+                    {
                         Alpha = 0,
                         AlwaysPresent = true,
                         RelativeSizeAxes = Axes.Both
                     }
                 },
-                PieceContainer = new Container{
+                PieceContainer = new Container
+                {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    RelativeSizeAxes= Axes.Both,
-                    Children = new Drawable[]{
-                        new TouchPiece{
+                    RelativeSizeAxes = Axes.Both,
+                    Children = new Drawable[]
+                    {
+                        new TouchPiece
+                        {
                             Anchor = Anchor.TopCentre,
                             Origin = Anchor.TopCentre,
                         },
-                        new TouchPiece{
+                        new TouchPiece
+                        {
                             Anchor = Anchor.BottomCentre,
                             Origin = Anchor.TopCentre,
                             Rotation = 180
                         },
-                        new TouchPiece{
+                        new TouchPiece
+                        {
                             Anchor = Anchor.CentreLeft,
                             Origin = Anchor.TopCentre,
                             Rotation = 270
                         },
-                        new TouchPiece{
+                        new TouchPiece
+                        {
                             Anchor = Anchor.CentreRight,
                             Origin = Anchor.TopCentre,
                             Rotation = 90

@@ -53,6 +53,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 }
 
                 if (mirrored && laned is Slide slide)
+                {
                     foreach (var slideInfo in slide.SlideInfoList)
                     {
                         foreach (var part in slideInfo.SlidePathParts)
@@ -60,8 +61,10 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                             part.EndOffset = (part.EndOffset * -1).NormalizePath();
                             part.Mirrored ^= mirrored;
                         }
+
                         slideInfo.UpdatePaths();
                     }
+                }
             });
 
             beatmap.HitObjects.OfType<Touch>().ForEach(touch =>

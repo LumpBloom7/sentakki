@@ -16,7 +16,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             RelativeSizeAxes = Axes.Both;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            InternalChildren = new Drawable[]{
+            InternalChildren = new Drawable[]
+            {
                 new ShadowPiece(),
                 new RingPiece(),
             };

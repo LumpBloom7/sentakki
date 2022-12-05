@@ -36,12 +36,12 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         [Cached]
         private readonly SlideFanChevrons fanChevrons;
 
-        public TestSceneSlide()
+        protected TestSceneSlide()
         {
             Add(chevronPool = new DrawablePool<SlideChevron>(62));
             Add(fanChevrons = new SlideFanChevrons());
 
-            Add(new SentakkiRing()
+            Add(new SentakkiRing
             {
                 RelativeSizeAxes = Axes.None,
                 Size = new Vector2(SentakkiPlayfield.RINGSIZE)
@@ -76,7 +76,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             AddStep("Perform exit animation", () => slide.PerformExitAnimation(1000));
             AddWaitStep("Wait for transforms", 5);
 
-            Add(nodes = new Container()
+            Add(nodes = new Container
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -95,6 +95,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         {
             slide.Path = CreatePattern();
             nodes.Clear();
+
             foreach (var node in slide.Path.SlideSegments.SelectMany(s => s.ControlPoints))
             {
                 nodes.Add(new CircularContainer

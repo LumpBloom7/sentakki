@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
         {
-            AddInternal(new Sprite()
+            AddInternal(new Sprite
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

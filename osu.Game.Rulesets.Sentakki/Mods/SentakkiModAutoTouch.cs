@@ -26,11 +26,11 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
             switch (drawableSentakkiHitObject)
             {
-                case DrawableSlide _:
-                case DrawableTouch _:
-                case DrawableTouchHold _:
+                case DrawableSlide:
+                case DrawableTouch:
+                case DrawableTouchHold:
                 // Slide nodes needs to be handled as well because the pool creates the object outside the DHO context
-                case DrawableSlideCheckpointNode _:
+                case DrawableSlideCheckpointNode:
                     drawableSentakkiHitObject.Auto = true;
                     break;
             }

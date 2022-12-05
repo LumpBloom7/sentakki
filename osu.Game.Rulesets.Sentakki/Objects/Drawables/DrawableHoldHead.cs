@@ -5,7 +5,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public partial class DrawableHoldHead : DrawableSentakkiLanedHitObject
     {
-        public DrawableHoldHead() : this(null) { }
+        public DrawableHoldHead()
+            : this(null)
+        {
+        }
 
         public DrawableHoldHead(Hold.HoldHead? hitObject)
             : base(hitObject)
