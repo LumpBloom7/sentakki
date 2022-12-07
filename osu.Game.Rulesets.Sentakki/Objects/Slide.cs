@@ -24,7 +24,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
                 return max;
             }
-            set => SlideInfoList.First().Duration = value;
+            set
+            {
+                double ratio = value / Duration;
+
+                foreach (var slide in SlideInfoList)
+                    slide.Duration *= ratio;
+            }
         }
 
         public IList<IList<HitSampleInfo>> NodeSamples = new List<IList<HitSampleInfo>>();
