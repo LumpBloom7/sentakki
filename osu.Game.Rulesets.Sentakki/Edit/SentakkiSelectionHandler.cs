@@ -66,7 +66,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
                 return true;
             }
-            else if (SelectedBlueprints.All(bp => bp.Item is Touch))
+
+            if (SelectedBlueprints.All(bp => bp.Item is Touch))
             {
                 // Special movement handling to ensure that all touch notes are within 250 units from the playfield centre
                 moveTouchNotes(this.ScreenSpaceDeltaToParentSpace(moveEvent.ScreenSpaceDelta));
@@ -133,8 +134,16 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             if (selection.Any(s => s.Item is SentakkiLanedHitObject))
                 yield return new TernaryStateToggleMenuItem("Break") { State = { BindTarget = selectionBreakState } };
 
-            if (selection.Any(s => s.Item is Slide))
+            var slides = selection.Where(bp => bp.Item is Slide).Select(bp => (Slide)bp.Item).OrderBy(s => s.StartTime).ToList();
+
+            if (slides.Count > 0)
                 yield return new TernaryStateToggleMenuItem("Slide Break") { State = { BindTarget = selectionSlideBodyBreakState } };
+
+            if (canMergeSlides(slides))
+                yield return new OsuMenuItem("Merge slides", MenuItemType.Destructive, () => mergeSlides(slides));
+
+            if (canUnmerge(slides))
+                yield return new OsuMenuItem("Unmerge slides", MenuItemType.Destructive, () => unmergeSlides(slides));
 
             foreach (var item in base.GetContextMenuItemsForSelection(selection))
                 yield return item;
@@ -163,6 +172,110 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
             foreach (var touch in touches)
                 touch.Position = touch.Position - centre + (cappedDragDelta * (dragDelta + centre).Normalized());
+        }
+
+        private bool canMergeSlides(List<Slide> slides) => slides.Count > 1 && slides.GroupBy(s => s.Lane).Count() == 1;
+        private bool canUnmerge(List<Slide> hitObjects) => hitObjects.Any(s => s.SlideInfoList.Count > 1);
+
+        private void mergeSlides(List<Slide> slides)
+        {
+            var controlPointInfo = EditorBeatmap.ControlPointInfo;
+            var firstHitObject = slides[0];
+            var mergedSlide = new Slide
+            {
+                StartTime = firstHitObject.StartTime,
+                SlideInfoList = firstHitObject.SlideInfoList,
+                SampleControlPoint = firstHitObject.SampleControlPoint,
+                Samples = firstHitObject.Samples,
+                NodeSamples = firstHitObject.NodeSamples,
+                Lane = firstHitObject.Lane,
+                Break = firstHitObject.Break
+            };
+
+            double beatLength = controlPointInfo.TimingPointAt(mergedSlide.StartTime).BeatLength;
+
+            int findSimilarBody(SlideBodyInfo other)
+            {
+                for (int i = 0; i < mergedSlide!.SlideInfoList.Count; ++i)
+                    if (mergedSlide.SlideInfoList[i].ShapeEquals(other))
+                        return i;
+
+                return -1;
+            }
+
+            for (int i = 1; i < slides.Count; ++i)
+            {
+                var slide = slides[i];
+                double bodyBeatLength = controlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
+
+                foreach (var slideBody in slide.SlideInfoList)
+                {
+                    double bodyOffset = (bodyBeatLength * slideBody.ShootDelay);
+                    double startTimeDelta = slide.StartTime - firstHitObject.StartTime;
+                    double newBodyOffset = startTimeDelta + bodyOffset;
+                    slideBody.ShootDelay = (float)(newBodyOffset / beatLength);
+                    slideBody.Duration += startTimeDelta;
+
+                    int similarBodyIndex = findSimilarBody(slideBody);
+
+                    if (similarBodyIndex != -1)
+                    {
+                        mergedSlide.SlideInfoList[similarBodyIndex].Duration = slideBody.Duration;
+                        continue;
+                    }
+
+                    mergedSlide.SlideInfoList.Add(slideBody);
+                }
+            }
+
+            EditorBeatmap.BeginChange();
+
+            foreach (var slide in slides)
+                EditorBeatmap.Remove(slide);
+
+            EditorBeatmap.Add(mergedSlide);
+            SelectedItems.Add(mergedSlide);
+
+            EditorBeatmap.EndChange();
+        }
+
+        private void unmergeSlides(List<Slide> slides)
+        {
+            EditorBeatmap.BeginChange();
+
+            foreach (var slide in slides)
+            {
+                if (slide.SlideInfoList.Count <= 1)
+                    continue;
+
+                for (int i = 0; i < slide.SlideInfoList.Count; ++i)
+                {
+                    var slideInfo = slide.SlideInfoList[i];
+                    var cpi = EditorBeatmap.ControlPointInfo;
+                    double beatLengthOriginal = cpi.TimingPointAt(slide.StartTime).BeatLength;
+                    double newSt = slide.StartTime + (slideInfo.ShootDelay - 1) * beatLengthOriginal;
+
+                    slideInfo.ShootDelay = 1;
+                    slideInfo.Duration -= newSt - slide.Duration;
+
+                    var newSlide = new Slide
+                    {
+                        StartTime = newSt,
+                        SlideInfoList = new List<SlideBodyInfo> { slideInfo },
+                        SampleControlPoint = slide.SampleControlPoint,
+                        Samples = slide.Samples,
+                        NodeSamples = slide.NodeSamples,
+                        Lane = slide.Lane,
+                        Break = slide.Break
+                    };
+
+                    EditorBeatmap.Add(newSlide);
+                }
+
+                EditorBeatmap.Remove(slide);
+            }
+
+            EditorBeatmap.EndChange();
         }
     }
 }
