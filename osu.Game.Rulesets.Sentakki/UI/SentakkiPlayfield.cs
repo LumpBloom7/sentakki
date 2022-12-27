@@ -168,7 +168,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             switch (ringColor.Value)
             {
                 case ColorOption.Difficulty:
-                    AccentContainer.FadeColour(colours.ForDifficultyRating(beatmapDifficulty?.Value?.DifficultyRating ?? DifficultyRating.Normal, true), 200);
+                    AccentContainer.FadeColour(colours.ForStarDifficulty(beatmapDifficulty?.Value?.Stars ?? 0), 200);
                     break;
 
                 case ColorOption.Skin:
