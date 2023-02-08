@@ -17,7 +17,7 @@ using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {
-    public class SentakkiModChallenge : Mod, IApplicableToDrawableRuleset<SentakkiHitObject>, IApplicableToHealthProcessor
+    public class SentakkiModChallenge : ModFailCondition, IApplicableToDrawableRuleset<SentakkiHitObject>, IApplicableToHealthProcessor
     {
         public override string Name => "Challenge";
         public override LocalisableString Description => SentakkiModChallengeStrings.ModDescription;
@@ -33,8 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override Type[] IncompatibleMods => new[]
         {
             typeof(ModRelax),
-            typeof(ModSuddenDeath),
-            typeof(ModPerfect),
+            typeof(ModFailCondition),
             typeof(ModAutoplay),
             typeof(ModNoFail),
         };
@@ -85,12 +84,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             ((SentakkiPlayfield)drawableRuleset.Playfield).AccentContainer.Add(new LiveCounter(LivesLeft));
         }
 
-        public void ApplyToHealthProcessor(HealthProcessor healthProcessor)
-        {
-            healthProcessor.FailConditions += FailCondition;
-        }
-
-        protected bool FailCondition(HealthProcessor healthProcessor, JudgementResult result)
+        protected override bool FailCondition(HealthProcessor healthProcessor, JudgementResult result)
         {
             if (result.Judgement is not SentakkiJudgement || result.HitObject is ScorePaddingObject)
                 return false;
