@@ -100,7 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void OnFree()
         {
             base.OnFree();
-            breakSample.Samples = null!;
+            breakSample.ClearSamples();
         }
 
         protected override void ApplyResult(Action<JudgementResult> application)
