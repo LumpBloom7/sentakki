@@ -99,7 +99,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnFree();
 
-            holdSample.Samples = null!;
+            holdSample.ClearSamples();
             holdStartTime = null;
             totalHoldTime = 0;
         }
