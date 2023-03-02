@@ -89,7 +89,7 @@ namespace osu.Game.Rulesets.Sentakki
                     {
                         new SentakkiModHardRock(),
                         new MultiMod(new SentakkiModSuddenDeath(), new SentakkiModPerfect()),
-                        new SentakkiModChallenge(),
+                        new MultiMod(new SentakkiModChallenge(), new SentakkiModAccuracyChallenge()),
                         new MultiMod(new SentakkiModDoubleTime(), new SentakkiModNightcore()),
                         new SentakkiModHidden(),
                     };

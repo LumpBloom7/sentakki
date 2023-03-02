@@ -36,10 +36,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public void UpdatePaths() => SlidePath = (slidePathParts.Length > 0) ? SlidePaths.CreateSlidePath(slidePathParts) : empty_path;
 
-        public override bool Equals(object obj) => obj is SlideBodyInfo other && Equals(other);
+        public override bool Equals(object? obj) => obj is not null && obj is SlideBodyInfo other && Equals(other);
 
-        public bool Equals(SlideBodyInfo other)
+        public bool Equals(SlideBodyInfo? other)
         {
+            if (other is null)
+                return false;
+
             if (ReferenceEquals(this, other))
                 return true;
 

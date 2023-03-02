@@ -74,7 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     LabelText = SentakkiSettingsSubsectionStrings.LaneInputMode,
                     Current = config.GetBindable<LaneInputMode>(SentakkiRulesetSettings.LaneInputMode)
                 },
-                new SettingsSlider<double, OsuSliderBar<double>>
+                new SettingsSlider<double, RoundedSliderBar<double>>
                 {
                     LabelText = SentakkiSettingsSubsectionStrings.BreakSampleVolume,
                     Current = config.GetBindable<double>(SentakkiRulesetSettings.BreakSampleVolume),
@@ -84,7 +84,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             };
         }
 
-        private partial class NoteTimeSlider : OsuSliderBar<double>
+        private partial class NoteTimeSlider : RoundedSliderBar<double>
         {
             private string speedRating()
             {
@@ -99,7 +99,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             public override LocalisableString TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
         }
 
-        private partial class TouchTimeSlider : OsuSliderBar<double>
+        private partial class TouchTimeSlider : RoundedSliderBar<double>
         {
             private string speedRating()
             {
