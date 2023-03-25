@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using osu.Framework.Allocation;
-using osu.Framework.Audio;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
@@ -58,7 +57,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 TouchHoldBody = new TouchHoldBody(),
                 holdSample = new PausableSkinnableSound
                 {
-                    Volume = { Value = 0 },
+                    Volume = { Value = 1 },
                     Looping = true,
                     Frequency = { Value = 1 }
                 }
@@ -100,7 +99,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.OnFree();
 
             holdSample.ClearSamples();
-            holdStartTime = null;
+            isHitting.Value = false;
             totalHoldTime = 0;
         }
 
@@ -118,42 +117,33 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private readonly Bindable<bool> isHitting = new Bindable<bool>();
 
-        /// <summary>
-        /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
-        /// </summary>
-        private double? holdStartTime;
-
         private double totalHoldTime;
 
         private void beginHold()
         {
-            holdStartTime = Math.Max(Time.Current, HitObject.StartTime);
             Colour = Color4.White;
-            if (!holdSample.IsPlaying)
-                holdSample.Play();
-            holdSample.VolumeTo(1, 300);
+            holdSample.Play();
         }
 
         private void endHold()
         {
-            if (holdStartTime.HasValue)
-                totalHoldTime += Math.Max(Time.Current - holdStartTime.Value, 0);
-
-            holdStartTime = null;
             Colour = Color4.SlateGray;
-            holdSample.VolumeTo(0, 150);
+            holdSample.Stop();
         }
 
         protected override void Update()
         {
             base.Update();
 
+            if (isHitting.Value)
+            {
+                totalHoldTime = Math.Clamp(totalHoldTime + Time.Elapsed, 0, ((IHasDuration)HitObject).Duration);
+                holdSample.Frequency.Value = 0.5 + (totalHoldTime / ((IHasDuration)HitObject).Duration);
+            }
+
             isHitting.Value = Time.Current >= HitObject.StartTime
                               && Time.Current <= HitObject.GetEndTime()
                               && (Auto || checkForTouchInput() || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
-
-            if (isHitting.Value)
-                holdSample.Frequency.Value = 0.5 + ((Time.Current - holdStartTime!.Value + totalHoldTime) / ((IHasDuration)HitObject).Duration);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
