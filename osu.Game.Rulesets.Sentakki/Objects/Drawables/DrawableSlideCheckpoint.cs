@@ -61,6 +61,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // Nodes are applied before being added to the parent playfield, so this node isn't in SlideNodes yet
             // Since we know that the node isn't in the container yet, and that the count is always one higher than the topmost element, we can use that as the predicted index
             ThisIndex = parentSlide.SlideCheckpoints.Count;
+
+            OnNewResult += parentSlide.OnNewCheckpointResult;
+            OnRevertResult += parentSlide.OnRevertCheckpointResult;
+        }
+
+        protected override void OnFree()
+        {
+            base.OnFree();
+
+            OnNewResult -= parentSlide.OnNewCheckpointResult;
+            OnRevertResult -= parentSlide.OnRevertCheckpointResult;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
