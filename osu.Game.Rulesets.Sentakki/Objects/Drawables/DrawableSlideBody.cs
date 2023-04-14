@@ -128,7 +128,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private void onRevertResult(DrawableHitObject hitObject, JudgementResult result)
         {
-            var checkpoint = (DrawableSlideCheckpoint)hitObject;
+            if (hitObject is not DrawableSlideCheckpoint checkpoint)
+                return;
 
             Slidepath.Progress = checkpoint.ThisIndex == 0 ? 0 : SlideCheckpoints[checkpoint.ThisIndex - 1].HitObject.Progress;
 
