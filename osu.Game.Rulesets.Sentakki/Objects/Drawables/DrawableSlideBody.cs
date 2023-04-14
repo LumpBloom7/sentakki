@@ -96,6 +96,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
 
             AccentColour.BindValueChanged(c => Colour = c.NewValue);
+
+            OnNewResult += onNewResult;
+            OnRevertResult += onRevertResult;
         }
 
         protected override void OnApply()
@@ -111,16 +114,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Slidepath.Free();
         }
 
-        public void OnNewCheckpointResult(DrawableHitObject hitObject, JudgementResult result)
+        private void onNewResult(DrawableHitObject hitObject, JudgementResult result)
         {
             if (hitObject is not DrawableSlideCheckpoint checkpoint)
+                return;
+
+            if (!result.IsHit)
                 return;
 
             Slidepath.Progress = checkpoint.HitObject.Progress;
             Slidepath.UpdateChevronVisibility();
         }
 
-        public void OnRevertCheckpointResult(DrawableHitObject hitObject, JudgementResult result)
+        private void onRevertResult(DrawableHitObject hitObject, JudgementResult result)
         {
             var checkpoint = (DrawableSlideCheckpoint)hitObject;
 
