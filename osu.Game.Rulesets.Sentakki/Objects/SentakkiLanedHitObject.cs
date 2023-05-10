@@ -50,7 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             return new[]
             {
-                new SentakkiHitSampleInfo("Break", SampleControlPoint.SampleVolume)
+                new SentakkiHitSampleInfo("Break", GetSampleInfo().Volume)
             };
         }
     }

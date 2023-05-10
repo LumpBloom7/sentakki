@@ -74,15 +74,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.LoadSamples();
 
-            var firstSample = HitObject.Samples.FirstOrDefault();
-
-            if (firstSample != null)
-            {
-                var clone = HitObject.SampleControlPoint.ApplyTo(firstSample).With("spinnerspin");
-
-                holdSample.Samples = new ISampleInfo[] { clone };
-                holdSample.Frequency.Value = 1;
-            }
+            holdSample.Samples = HitObject.CreateHoldSample().Cast<ISampleInfo>().ToArray();
+            holdSample.Frequency.Value = 1;
         }
 
         public override void StopAllSamples()
