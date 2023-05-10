@@ -1,4 +1,8 @@
-﻿using osu.Game.Rulesets.Objects.Types;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using osu.Game.Audio;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
@@ -14,5 +18,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public double Duration { get; set; }
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
+
+        public override IList<HitSampleInfo> AuxiliarySamples => CreateHoldSample();
+
+        public HitSampleInfo[] CreateHoldSample()
+        {
+            var referenceSample = Samples.FirstOrDefault();
+
+            if (referenceSample == null)
+                return Array.Empty<HitSampleInfo>();
+
+            return new[]
+            {
+                referenceSample.With("spinnerspin")
+            };
+        }
     }
 }
