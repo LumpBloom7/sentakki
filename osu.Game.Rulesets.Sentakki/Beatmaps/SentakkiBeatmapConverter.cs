@@ -20,7 +20,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         none = 0,
         twinNotes = 1,
         twinSlides = 2,
-        fanSlides = 4
+        fanSlides = 4,
+        slideVelocity = 8,
+        forceSlides = 16
     }
 
     public class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObject>
@@ -136,7 +138,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         private IEnumerable<SentakkiHitObject> convertSlider(HitObject original)
         {
-            IHasDuration slider = (IHasDuration)original;
             bool breakHead = false;
             bool breakTail = false;
             bool special = false;
@@ -178,7 +179,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             }
 
             // See if we can convert to a slide object
-            if (special && slider.Duration >= 350)
+            if (EnabledExperiments.HasFlag(ConversionExperiments.forceSlides) || special)
             {
                 var result = tryConvertSliderToSlide(original, nodeSamples, twin, breakHead, breakTail).ToList();
 
@@ -313,17 +314,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private SentakkiHitObject createSlideNote(HitObject original, IList<IList<HitSampleInfo>> samples, bool twin = false, bool hasBreakHead = false, bool hasBreakTail = false)
         {
             int noteLane = patternGenerator.GetNextLane(twin);
-            List<SlideBodyPart> validPaths;
-
-            {
-                var pathEnumerable = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.MinDuration && ((IHasDuration)original).Duration <= p.MinDuration * 10)
-                                               .Select(t => t.parameters);
-
-                if (!EnabledExperiments.HasFlag(ConversionExperiments.fanSlides))
-                    pathEnumerable = pathEnumerable.Where(s => s.Shape != SlidePaths.PathShapes.Fan);
-
-                validPaths = pathEnumerable.ToList();
-            }
+            List<SlideBodyPart> validPaths = getSlidePartCandidatesFor(original);
 
             if (!validPaths.Any()) return null!;
 
@@ -346,6 +337,46 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 NodeSamples = samples,
                 Break = hasBreakHead
             };
+        }
+
+        private List<SlideBodyPart> getSlidePartCandidatesFor(HitObject original)
+        {
+            double velocity = ((IHasSliderVelocity)original).SliderVelocity;
+            double duration = ((IHasDuration)original).Duration;
+            double adjustedDuration = duration * velocity;
+
+            List<SlideBodyPart> candidateParts = new List<SlideBodyPart>();
+
+            if (EnabledExperiments.HasFlag(ConversionExperiments.slideVelocity))
+            {
+                // Find the part that is the closest
+                bool oversized = false;
+                candidateParts = SlidePaths.VALIDPATHS
+                                           .OrderBy(t => Math.Abs(adjustedDuration - (t.MinDuration * 2)))
+                                           .TakeWhile(t =>
+                                           {
+                                               bool current = oversized;
+                                               if (current)
+                                                   return false;
+
+                                               oversized = Math.Abs(adjustedDuration - (t.MinDuration * 2)) >= 200;
+                                               return true;
+                                           })
+                                           .Select(t => t.slidePart)
+                                           .ToList();
+            }
+            else
+            {
+                candidateParts = SlidePaths.VALIDPATHS
+                                           .Where(t => duration >= t.MinDuration && duration <= t.MinDuration * 10)
+                                           .Select(t => t.slidePart)
+                                           .ToList();
+            }
+
+            if (!EnabledExperiments.HasFlag(ConversionExperiments.fanSlides))
+                candidateParts.RemoveAll(p => p.Shape == SlidePaths.PathShapes.Fan);
+
+            return candidateParts;
         }
 
         private IEnumerable<Tap> createTapsFromNodes(HitObject original, IList<IList<HitSampleInfo>> nodeSamples)

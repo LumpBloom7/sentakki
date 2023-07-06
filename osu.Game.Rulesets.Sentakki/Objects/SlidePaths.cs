@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
@@ -22,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Fan,
         }
 
-        public static readonly List<(SlideBodyPart parameters, double MinDuration)> VALIDPATHS;
+        public static readonly List<(SlideBodyPart slidePart, double MinDuration)> VALIDPATHS;
 
         static SlidePaths()
         {
@@ -40,6 +41,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     }
                 }
             }
+
+            // sort it for future convenience
+            VALIDPATHS.Sort((lhs, rhs) => lhs.MinDuration.CompareTo(rhs.MinDuration));
         }
 
         // Checks if a slide is valid given parameters
