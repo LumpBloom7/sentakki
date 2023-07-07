@@ -56,7 +56,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             });
         }
 
-        protected SentakkiSlidePath CreatePattern() => SlidePaths.CreateSlidePath(SlidePaths.VALIDPATHS[id].slidePart);
+        protected SentakkiSlidePath CreatePattern() => SlidePaths.CreateSlidePath(SlidePaths.VALIDPATHS[id].SlidePart);
 
         protected override void LoadComplete()
         {
