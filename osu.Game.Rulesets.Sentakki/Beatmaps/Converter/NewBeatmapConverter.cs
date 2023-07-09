@@ -32,7 +32,7 @@ public partial class NewBeatmapConverter
         patternGenerator = new SentakkiPatternGenerator(beatmap);
     }
 
-    public IEnumerable<SentakkiHitObject> convertHitObject(HitObject original)
+    public IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original)
     {
         HitObject? previous = null;
         HitObject? next = null;
@@ -53,6 +53,11 @@ public partial class NewBeatmapConverter
         {
             case IHasPathWithRepeats:
                 yield return convertSlider(original, previous, next);
+
+                break;
+
+            case IHasDuration:
+                yield return convertSpinner(original);
 
                 break;
 

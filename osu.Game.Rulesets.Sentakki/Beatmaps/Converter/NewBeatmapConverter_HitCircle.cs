@@ -35,7 +35,7 @@ public partial class NewBeatmapConverter
             ? currentLane
             : (isStream ? currentLane + streamOffset : patternGenerator.RNG.Next(8));
 
-        Tap result = new Tap()
+        Tap result = new Tap
         {
             Lane = currentLane.NormalizePath(),
             Samples = original.Samples,

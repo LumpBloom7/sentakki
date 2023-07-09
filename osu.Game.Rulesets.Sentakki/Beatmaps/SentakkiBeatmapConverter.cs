@@ -79,7 +79,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             if ((original as IHasCombo)?.NewCombo ?? false)
                 patternGenerator.StartNextPattern();
 
-            return converterDX.convertHitObject(original);
+            return converterDX.ConvertHitObject(original);
 
             /*switch (original)
             {

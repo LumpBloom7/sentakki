@@ -34,7 +34,7 @@ public partial class NewBeatmapConverter
                 ? currentLane + streamOffset
                 : patternGenerator.RNG.Next(8);
 
-        return new Hold()
+        return new Hold
         {
             Lane = currentLane = lane.NormalizePath(),
             Break = isBreak,
