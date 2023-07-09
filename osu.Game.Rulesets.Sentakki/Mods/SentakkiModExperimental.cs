@@ -45,14 +45,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             Value = false
         };
 
-        [SettingSource("Consider slider velocity", "Slider velocity is now also considered when choosing a slide")]
-        public BindableBool SliderVelocity { get; } = new BindableBool
-        {
-            Default = false,
-            Value = false
-        };
-        [SettingSource("Force slides", "Attempts to place a SLIDE at any opportunity, only using HOLDs when needed")]
-        public BindableBool ForceSliders { get; } = new BindableBool
+        [SettingSource("Revamped conversion", "A rewritten conversion system that hopefully makes better feeling conversions based on how notes are placed in the original beatmap. (Does not support twins)")]
+        public BindableBool RevampedConversion { get; } = new BindableBool
         {
             Default = false,
             Value = false
@@ -69,11 +63,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             if (EnableSlideFans.Value)
                 ((SentakkiBeatmapConverter)beatmapConverter).EnabledExperiments |= ConversionExperiments.fanSlides;
 
-            if (SliderVelocity.Value)
-                ((SentakkiBeatmapConverter)beatmapConverter).EnabledExperiments |= ConversionExperiments.slideVelocity;
-
-            if (ForceSliders.Value)
-                ((SentakkiBeatmapConverter)beatmapConverter).EnabledExperiments |= ConversionExperiments.forceSlides;
+            if (RevampedConversion.Value)
+                ((SentakkiBeatmapConverter)beatmapConverter).EnabledExperiments |= ConversionExperiments.conversionRevamp;
         }
     }
 }

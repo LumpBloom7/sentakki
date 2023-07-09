@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using osu.Game.Audio;
@@ -10,7 +8,6 @@ using osu.Game.Beatmaps.Legacy;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
-using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
@@ -79,9 +76,10 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             if ((original as IHasCombo)?.NewCombo ?? false)
                 patternGenerator.StartNextPattern();
 
-            return converterDX.ConvertHitObject(original);
+            if (EnabledExperiments.HasFlag(ConversionExperiments.conversionRevamp))
+                return converterDX.ConvertHitObject(original);
 
-            /*switch (original)
+            switch (original)
             {
                 case IHasPathWithRepeats:
                     return convertSlider(original);
@@ -91,7 +89,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
                 default:
                     return convertHitCircle(original);
-            }*/
+            }
         }
 
         #region std -> sentakki conversion rules
@@ -177,7 +175,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             }
 
             // See if we can convert to a slide object
-            if (EnabledExperiments.HasFlag(ConversionExperiments.forceSlides) || special)
+            if (special)
             {
                 var result = tryConvertSliderToSlide(original, nodeSamples, twin, breakHead, breakTail).ToList();
 
@@ -348,31 +346,11 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             if (!EnabledExperiments.HasFlag(ConversionExperiments.fanSlides))
                 candidates = candidates.Where(p => p.SlidePart.Shape != SlidePaths.PathShapes.Fan).ToList();
 
-            if (EnabledExperiments.HasFlag(ConversionExperiments.slideVelocity))
-            {
-                // Find the part that is the closest
-                return candidates.GroupBy(t => getDelta(t.MinDuration))
-                                 .OrderBy(g => g.Key)
-                                 .Take(5)
-                                 .ProbabilityPick(t => t.Key, patternGenerator.RNG)
-                                 .Shuffle(patternGenerator.RNG)
-                                 .First()
-                                 .SlidePart;
-            }
-
             var candidateParts = candidates.Where(t => duration >= t.MinDuration && duration <= t.MinDuration * 10)
                                            .Select(t => t.SlidePart)
                                            .ToList();
 
             return !candidateParts.Any() ? null : candidateParts[patternGenerator.RNG.Next(candidateParts.Count)];
-
-            double getDelta(double d)
-            {
-                double diff = adjustedDuration - d * 2;
-                if (diff > 0) diff *= 1.5; // We don't want to overly favor longer slides when a shorter one is available
-
-                return Math.Round(Math.Abs(diff) * 0.02) * 50; // Round to nearest 50ms
-            }
         }
 
         private IEnumerable<Tap> createTapsFromNodes(HitObject original, IList<IList<HitSampleInfo>> nodeSamples)

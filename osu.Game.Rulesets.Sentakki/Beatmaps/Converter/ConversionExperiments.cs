@@ -9,6 +9,5 @@ public enum ConversionExperiments
     twinNotes = 1,
     twinSlides = 2,
     fanSlides = 4,
-    slideVelocity = 8,
-    forceSlides = 16
+    conversionRevamp = 8
 }
