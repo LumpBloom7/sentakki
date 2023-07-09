@@ -5,6 +5,7 @@ using osu.Game.Beatmaps;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
+using osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 
 namespace osu.Game.Rulesets.Sentakki.Mods

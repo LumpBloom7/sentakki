@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using osu.Game.Audio;
@@ -8,6 +9,7 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Beatmaps.Legacy;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -15,17 +17,6 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
-    [Flags]
-    public enum ConversionExperiments
-    {
-        none = 0,
-        twinNotes = 1,
-        twinSlides = 2,
-        fanSlides = 4,
-        slideVelocity = 8,
-        forceSlides = 16
-    }
-
     public class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObject>
     {
         // Conversion flags
@@ -58,6 +49,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         private readonly Dictionary<Vector2, double> endTimes = new Dictionary<Vector2, double>();
 
+        private NewBeatmapConverter converterDX = null!;
+
         public SentakkiBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
             : base(beatmap, ruleset)
         {
@@ -66,6 +59,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         protected override Beatmap<SentakkiHitObject> ConvertBeatmap(IBeatmap original, CancellationToken cancellationToken)
         {
+            converterDX = new NewBeatmapConverter(original, EnabledExperiments);
+
             var convertedBeatmap = base.ConvertBeatmap(original, cancellationToken);
 
             // We don't use any of the standard difficulty values
@@ -84,7 +79,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             if ((original as IHasCombo)?.NewCombo ?? false)
                 patternGenerator.StartNextPattern();
 
-            switch (original)
+            return converterDX.convertHitObject(original);
+
+            /*switch (original)
             {
                 case IHasPathWithRepeats:
                     return convertSlider(original);
@@ -94,7 +91,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
                 default:
                     return convertHitCircle(original);
-            }
+            }*/
         }
 
         #region std -> sentakki conversion rules
