@@ -51,6 +51,11 @@ public partial class NewBeatmapConverter
 
         switch (original)
         {
+            case IHasPathWithRepeats:
+                yield return convertSlider(original, previous, next);
+
+                break;
+
             default:
                 yield return convertHitCircle(original, previous, next);
 
