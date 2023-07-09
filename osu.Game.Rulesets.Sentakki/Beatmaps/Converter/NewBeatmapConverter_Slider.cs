@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using osu.Framework.Graphics;
 using osu.Game.Audio;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
@@ -12,50 +11,32 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 
 public partial class NewBeatmapConverter
 {
-    private SentakkiHitObject convertSlider(HitObject original, HitObject? previous, HitObject? next)
+    private SentakkiHitObject convertSlider(HitObject original)
     {
         double duration = ((IHasDuration)original).Duration;
-
-        bool stacked = isStack(original, previous);
-        bool inStream = isStream(original, previous);
 
         var slider = (IHasPathWithRepeats)original;
 
         bool isBreak = slider.NodeSamples[0].Any(s => s.Name == HitSampleInfo.HIT_FINISH);
         bool isSpecial = slider.NodeSamples[0].Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
 
-        if (stacked || !inStream)
-            streamDirection = null;
-        else
-            streamDirection = getStreamDirection(original, previous, next);
-
-        int streamOffset = streamDirection == RotationDirection.Clockwise ? 1 : -1;
-
-        int lane = stacked
-            ? currentLane
-            : inStream
-                ? currentLane + streamOffset
-                : patternGenerator.RNG.Next(8);
-
         if (isSpecial)
         {
-            var slide = tryConvertToSlide(original, lane);
+            var slide = tryConvertToSlide(original, currentLane);
 
             if (slide is not null)
-            {
-                currentLane = slide.Value.endLane;
                 return slide.Value.Item1;
-            }
         }
 
-        return new Hold
+        var hold = new Hold
         {
-            Lane = currentLane = lane.NormalizePath(),
+            Lane = currentLane = currentLane.NormalizePath(),
             Break = isBreak,
             StartTime = original.StartTime,
             Duration = duration,
             NodeSamples = slider.NodeSamples,
         };
+        return hold;
     }
 
     private (Slide, int endLane)? tryConvertToSlide(HitObject original, int lane)
