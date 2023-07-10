@@ -1,16 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Graphics;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 
 public partial class NewBeatmapConverter
 {
+    private static readonly Vector2 standard_playfield_size = new Vector2(512, 384);
+    private static readonly Vector2 standard_playfield_center = standard_playfield_size / 2;
+
     private ConversionExperiments conversionExperiments;
 
     private int currentLane;
@@ -40,7 +45,7 @@ public partial class NewBeatmapConverter
 
         patternGenerator = new SentakkiPatternGenerator(beatmap);
 
-        currentLane = patternGenerator.RNG.Next(8);
+        currentLane = getClosestLane(beatmap.HitObjects.FirstOrDefault());
     }
 
     public IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original)
@@ -80,7 +85,7 @@ public partial class NewBeatmapConverter
 
         currentLane = isStack
             ? currentLane
-            : (isStream ? currentLane + streamOffset : patternGenerator.RNG.Next(8));
+            : (isStream ? currentLane + streamOffset : getClosestLane(original));
 
         // Slides have special behavior
         if (result is Slide slide)
@@ -144,4 +149,29 @@ public partial class NewBeatmapConverter
 
     private static Vector2 midPointOf(HitObject current, HitObject previous, HitObject next)
         => (positionOf(current) + endPositionOf(previous) + positionOf(next)) / 3;
+
+    private static int getClosestLane(HitObject? current)
+    {
+        if (current is null)
+            return 0;
+
+        var position = positionOf(current);
+
+        float angle = standard_playfield_center.GetDegreesFromPosition(position);
+
+        float minDelta = float.MaxValue;
+        int closestLane = -1;
+
+        for (int i = 0; i < 8; ++i)
+        {
+            float delta = Math.Abs(i.GetRotationForLane() - angle);
+
+            if (!(delta < minDelta)) continue;
+
+            closestLane = i;
+            minDelta = delta;
+        }
+
+        return closestLane;
+    }
 }
