@@ -5,6 +5,7 @@ using osu.Framework.Graphics;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
@@ -45,7 +46,15 @@ public partial class NewBeatmapConverter
 
         patternGenerator = new SentakkiPatternGenerator(beatmap);
 
-        currentLane = getClosestLane(beatmap.HitObjects.FirstOrDefault());
+        if (beatmap.HitObjects.Count == 0)
+        {
+            currentLane = 0;
+            return;
+        }
+
+        float angle = standard_playfield_center.GetDegreesFromPosition(beatmap.HitObjects[0].GetPosition());
+
+        currentLane = getClosestLaneFor(angle);
     }
 
     public IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original)
@@ -73,26 +82,48 @@ public partial class NewBeatmapConverter
         };
 
         // Set up the next hitobject position
+        bool isJump = this.isJump(original, next);
         bool isStack = this.isStack(original, next);
         bool isStream = this.isStream(original, next);
 
-        if (isStack || !isStream)
-            activeStreamDirection = null;
-        else
-            activeStreamDirection = getStreamDirection(original, previous, next);
-
-        int streamOffset = activeStreamDirection == RotationDirection.Clockwise ? 1 : -1;
-
-        currentLane = isStack
-            ? currentLane
-            : (isStream ? currentLane + streamOffset : getClosestLane(original));
-
-        // Slides have special behavior
-        if (result is Slide slide)
+        if (isJump || isStack)
         {
-            if (!isStack && isStream)
-                currentLane = slide.Lane + slide.SlideInfoList[0].SlidePath.EndLane;
+            activeStreamDirection = null;
+
+            if (isJump)
+            {
+                currentLane += jumpLaneOffset(original, next);
+            }
+            else if (isStack)
+            {
+                // No assign
+            }
         }
+        else if (isStream)
+        {
+            // Slides have special behavior
+            if (result is Slide slide)
+            {
+                if (!isStack && isStream)
+                    currentLane = slide.Lane + slide.SlideInfoList[0].SlidePath.EndLane;
+            }
+            else
+            {
+                activeStreamDirection = getStreamDirection(original, previous, next);
+                int streamOffset = activeStreamDirection == RotationDirection.Clockwise ? 1 : -1;
+                currentLane += streamOffset;
+            }
+        }
+        else
+        {
+            float nextAngle = 0;
+            if (next is not null)
+                nextAngle = standard_playfield_center.GetDegreesFromPosition(next.GetPosition());
+
+            currentLane = getClosestLaneFor(nextAngle);
+        }
+
+        currentLane = currentLane.NormalizePath();
 
         yield return result;
     }
@@ -105,7 +136,7 @@ public partial class NewBeatmapConverter
         if (original.GetEndTime() + stackThreshold < next.StartTime)
             return false;
 
-        return Vector2Extensions.DistanceSquared(positionOf(original), positionOf(next)) < stackDistanceSquared;
+        return Vector2Extensions.DistanceSquared(original.GetPosition(), next.GetPosition()) < stackDistanceSquared;
     }
 
     private bool isStream(HitObject original, HitObject? next)
@@ -113,20 +144,32 @@ public partial class NewBeatmapConverter
         if (next is null)
             return false;
 
-        return Vector2Extensions.DistanceSquared(endPositionOf(original), endPositionOf(next)) > Math.Pow(circleRadius * 2, 2);
+        return Vector2Extensions.DistanceSquared(original.GetEndPosition(), next.GetPosition()) > Math.Pow(circleRadius * 2, 2);
     }
 
-    private static Vector2 positionOf(HitObject hitObject)
-        => ((IHasPosition)hitObject).Position;
-
-    private static Vector2 endPositionOf(HitObject hitObject)
+    private bool isJump(HitObject original, HitObject? next)
     {
-        var startPos = ((IHasPosition)hitObject).Position;
+        const float jump_distance_threshold_squared = 128 * 128;
 
-        if (hitObject is IHasPathWithRepeats slider)
-            return startPos + slider.Path.PositionAt(1);
+        if (next is null)
+            return false;
 
-        return startPos;
+        float distanceSqr = Vector2.DistanceSquared(original.GetEndPosition(), next.GetPosition());
+
+        return distanceSqr >= jump_distance_threshold_squared;
+    }
+
+    private int jumpLaneOffset(HitObject original, HitObject? next)
+    {
+        if (next is null)
+            return 0;
+
+        var midPoint = (original.GetEndPosition() + next.GetPosition()) * 0.5f;
+
+        float angle1 = midPoint.GetDegreesFromPosition(original.GetEndPosition());
+        float angle2 = midPoint.GetDegreesFromPosition(next.GetPosition());
+
+        return getClosestLaneFor(angle2) - getClosestLaneFor(angle1);
     }
 
     private RotationDirection getStreamDirection(HitObject original, HitObject? previous, HitObject? next)
@@ -136,8 +179,8 @@ public partial class NewBeatmapConverter
 
         var midpoint = midPointOf(original, previous, next);
 
-        float currAngle = midpoint.GetDegreesFromPosition(endPositionOf(original));
-        float nextAngle = midpoint.GetDegreesFromPosition(endPositionOf(next));
+        float currAngle = midpoint.GetDegreesFromPosition(original.GetEndPosition());
+        float nextAngle = midpoint.GetDegreesFromPosition(next.GetPosition());
 
         float angleDelta = SentakkiExtensions.GetDeltaAngle(currAngle, nextAngle);
 
@@ -148,17 +191,10 @@ public partial class NewBeatmapConverter
     }
 
     private static Vector2 midPointOf(HitObject current, HitObject previous, HitObject next)
-        => (positionOf(current) + endPositionOf(previous) + positionOf(next)) / 3;
+        => (current.GetPosition() + previous.GetEndPosition() + next.GetPosition()) / 3;
 
-    private static int getClosestLane(HitObject? current)
+    private static int getClosestLaneFor(float angle)
     {
-        if (current is null)
-            return 0;
-
-        var position = positionOf(current);
-
-        float angle = standard_playfield_center.GetDegreesFromPosition(position);
-
         float minDelta = float.MaxValue;
         int closestLane = -1;
 
