@@ -38,7 +38,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki
 {
-    public class SentakkiRuleset : Ruleset
+    public partial class SentakkiRuleset : Ruleset
     {
         public override string RulesetAPIVersionSupported => CURRENT_RULESET_API_VERSION;
 
