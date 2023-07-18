@@ -12,14 +12,16 @@ namespace osu.Game.Rulesets.Sentakki
         /// Normalizes the lane number to be between [0,8)
         /// </summary>
         public static int NormalizePath(this int laneNumber)
-        {
-            while (laneNumber < 0) laneNumber += 8;
-            laneNumber %= 8;
-            return laneNumber;
-        }
+            => laneNumber.Mod(8);
 
         /// <summary>
-        /// Gets the minimum absolute angle difference between <c>a</c> and <c>b</c>
+        /// Normalizes the angle to be between [0,360)
+        /// </summary>
+        public static float NormalizeAngle(this float angle)
+            => angle.Mod(360);
+
+        /// <summary>
+        /// Gets the minimum absolute angle (in degrees) difference between <c>a</c> and <c>b</c>
         /// </summary>
         /// <example>
         /// <code>
@@ -77,10 +79,17 @@ namespace osu.Game.Rulesets.Sentakki
         public static float GetDegreesFromPosition(this Vector2 origin, Vector2 target)
         {
             Vector2 direction = target - origin;
+
             float angle = MathHelper.RadiansToDegrees(MathF.Atan2(direction.Y, direction.X));
-            if (angle < 0f) angle += 360f;
-            return angle + 90;
+
+            return (angle + 90).NormalizeAngle();
         }
+
+        public static int Mod(this int a, int b)
+            => (a %= b) < 0 ? a + b : a;
+
+        public static float Mod(this float a, float b)
+            => (a %= b) < 0 ? a + b : a;
 
         public static Color4 GetColorForSentakkiResult(this HitResult result)
         {
