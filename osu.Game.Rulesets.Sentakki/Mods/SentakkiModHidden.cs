@@ -22,7 +22,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {
-    public class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset<SentakkiHitObject>
+    public partial class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset<SentakkiHitObject>
     {
         public override LocalisableString Description => SentakkiModHiddenStrings.ModDescription;
 
