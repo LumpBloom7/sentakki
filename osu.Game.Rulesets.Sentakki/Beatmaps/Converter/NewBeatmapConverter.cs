@@ -62,9 +62,10 @@ public partial class NewBeatmapConverter
         {
             if (beatmap.HitObjects[i] != original) continue;
 
-            if (i > 0)
+            if (i > 0 && isChronologicallyClose(beatmap.HitObjects[i - 1], original))
                 previous = beatmap.HitObjects[i - 1];
-            if (i < beatmap.HitObjects.Count - 1)
+
+            if (i < beatmap.HitObjects.Count - 1 && isChronologicallyClose(original, beatmap.HitObjects[i + 1]))
                 next = beatmap.HitObjects[i + 1];
 
             break;
@@ -125,9 +126,6 @@ public partial class NewBeatmapConverter
         if (next is null)
             return false;
 
-        if (original.GetEndTime() + stackThreshold < next.StartTime)
-            return false;
-
         bool isWithinStdStackDistance = Vector2Extensions.DistanceSquared(original.GetPosition(), next.GetPosition()) < stack_distance_squared;
 
         return isWithinStdStackDistance;
@@ -136,10 +134,6 @@ public partial class NewBeatmapConverter
     private bool isStream(HitObject original, HitObject? next)
     {
         if (next is null)
-            return false;
-
-        // If the next note only appears after the current note fully disappears, then it isn't a stream
-        if (next.StartTime - timePreempt >= original.GetEndTime())
             return false;
 
         bool isOverlapping = Vector2Extensions.DistanceSquared(original.GetEndPosition(), next.GetPosition()) > Math.Pow(circleRadius * 2, 2);
@@ -214,4 +208,14 @@ public partial class NewBeatmapConverter
 
         return closestLane;
     }
+
+    private bool isChronologicallyClose(HitObject a, HitObject b)
+    {
+        double timeDelta = b.StartTime - a.GetEndTime();
+        double beatLength = beatmap.ControlPointInfo.TimingPointAt(b.StartTime).BeatLength;
+
+        return timeDelta < beatLength || MathHelper.ApproximatelyEquivalent(timeDelta, beatLength, 0.1);
+    }
+
 }
+
