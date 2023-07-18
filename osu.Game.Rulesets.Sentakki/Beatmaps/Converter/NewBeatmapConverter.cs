@@ -136,7 +136,7 @@ public partial class NewBeatmapConverter
         if (next is null)
             return false;
 
-        bool isOverlapping = Vector2Extensions.DistanceSquared(original.GetEndPosition(), next.GetPosition()) > Math.Pow(circleRadius * 2, 2);
+        bool isOverlapping = Vector2Extensions.DistanceSquared(original.GetEndPosition(), next.GetPosition()) <= Math.Pow(circleRadius * 2, 2);
 
         return isOverlapping;
     }
