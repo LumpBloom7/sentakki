@@ -88,7 +88,7 @@ public partial class NewBeatmapConverter
             activeStreamDirection = null;
 
             if (isJump)
-                currentLane += jumpLaneOffset(original, next);
+                currentLane += jumpLaneOffset(original, previous, next);
         }
         else if (isStream)
         {
@@ -126,6 +126,9 @@ public partial class NewBeatmapConverter
         if (next is null)
             return false;
 
+        if (next.StartTime - original.GetEndTime() >= stackThreshold)
+            return false;
+
         bool isWithinStdStackDistance = Vector2Extensions.DistanceSquared(original.GetPosition(), next.GetPosition()) < stack_distance_squared;
 
         return isWithinStdStackDistance;
@@ -154,17 +157,16 @@ public partial class NewBeatmapConverter
         return distanceSqr >= jump_distance_threshold_squared;
     }
 
-    private static int jumpLaneOffset(HitObject original, HitObject? next)
+    private static int jumpLaneOffset(HitObject original, HitObject? previous, HitObject? next)
     {
         if (next is null)
             return 0;
 
-        var midPoint = (original.GetEndPosition() + next.GetPosition()) * 0.5f;
+        Vector2 midpoint = midpointOf(original, previous, next);
 
-        float angle1 = midPoint.GetDegreesFromPosition(original.GetEndPosition());
-        float angle2 = midPoint.GetDegreesFromPosition(next.GetPosition());
+        float angle1 = midpoint.GetDegreesFromPosition(original.GetEndPosition());
+        float angle2 = midpoint.GetDegreesFromPosition(next.GetPosition());
 
-        // This is currently always 180deg due to any two points being 180deg apart using the midpoint as the origin
         return getClosestLaneFor(angle2) - getClosestLaneFor(angle1);
     }
 
@@ -173,7 +175,7 @@ public partial class NewBeatmapConverter
         if (previous is null || next is null)
             return activeStreamDirection ?? RotationDirection.Clockwise;
 
-        var midpoint = midPointOf(original, previous, next);
+        var midpoint = midpointOf(original, previous, next);
 
         float currAngle = midpoint.GetDegreesFromPosition(original.GetEndPosition());
         float nextAngle = midpoint.GetDegreesFromPosition(next.GetPosition());
@@ -186,8 +188,38 @@ public partial class NewBeatmapConverter
         return angleDelta > 0 ? RotationDirection.Clockwise : RotationDirection.Counterclockwise;
     }
 
-    private static Vector2 midPointOf(HitObject current, HitObject previous, HitObject next)
-        => (current.GetPosition() + previous.GetEndPosition() + next.GetPosition()) / 3;
+    private static Vector2 midpointOf(HitObject current, HitObject? previous, HitObject? next)
+    {
+        // Use the playfield center as a fallback if we don't have the previous note
+        Vector2 midpoint = standard_playfield_center;
+
+        int pointCount = 1;
+        Vector2 pointSum = current.GetEndPosition();
+
+        if (previous is not null)
+        {
+            pointSum += previous.GetEndPosition();
+            pointCount++;
+        }
+
+        if (next is not null)
+        {
+            pointSum += next.GetPosition();
+            pointCount++;
+        }
+
+        // If the current hitobject has a different start and end position, we can use that as even more info
+        if (!current.GetPosition().Equals(current.GetEndPosition()))
+        {
+            pointSum += current.GetPosition();
+            pointCount++;
+        }
+
+        if (pointCount > 2)
+            midpoint = pointSum / pointCount;
+
+        return midpoint;
+    }
 
     private static int getClosestLaneFor(float angle)
     {
@@ -216,6 +248,4 @@ public partial class NewBeatmapConverter
 
         return timeDelta < beatLength || MathHelper.ApproximatelyEquivalent(timeDelta, beatLength, 0.1);
     }
-
 }
-
