@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Graphics;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
@@ -17,7 +15,7 @@ public partial class NewBeatmapConverter
     private static readonly Vector2 standard_playfield_size = new Vector2(512, 384);
     private static readonly Vector2 standard_playfield_center = standard_playfield_size / 2;
 
-    private ConversionExperiments conversionExperiments;
+    private readonly ConversionExperiments conversionExperiments;
 
     private int currentLane;
 
@@ -30,15 +28,13 @@ public partial class NewBeatmapConverter
 
     private RotationDirection? activeStreamDirection;
 
-    private const int stackDistanceSquared = 9;
-
     private double stackThreshold => timePreempt * beatmap.BeatmapInfo.StackLeniency;
 
     public NewBeatmapConverter(IBeatmap beatmap, ConversionExperiments experiments)
     {
         this.beatmap = beatmap;
 
-        this.conversionExperiments = experiments;
+        conversionExperiments = experiments;
 
         // Taking this from osu specific information that we need
         timePreempt = IBeatmapDifficultyInfo.DifficultyRange(beatmap.Difficulty.ApproachRate, 1800, 1200, 450);
@@ -82,7 +78,7 @@ public partial class NewBeatmapConverter
         };
 
         // Set up the next hitobject position
-        bool isJump = this.isJump(original, next);
+        bool isJump = NewBeatmapConverter.isJump(original, next);
         bool isStack = this.isStack(original, next);
         bool isStream = this.isStream(original, next);
 
@@ -91,13 +87,7 @@ public partial class NewBeatmapConverter
             activeStreamDirection = null;
 
             if (isJump)
-            {
                 currentLane += jumpLaneOffset(original, next);
-            }
-            else if (isStack)
-            {
-                // No assign
-            }
         }
         else if (isStream)
         {
@@ -130,13 +120,17 @@ public partial class NewBeatmapConverter
 
     private bool isStack(HitObject original, HitObject? next)
     {
+        const int stack_distance_squared = 9;
+
         if (next is null)
             return false;
 
         if (original.GetEndTime() + stackThreshold < next.StartTime)
             return false;
 
-        return Vector2Extensions.DistanceSquared(original.GetPosition(), next.GetPosition()) < stackDistanceSquared;
+        bool isWithinStdStackDistance = Vector2Extensions.DistanceSquared(original.GetPosition(), next.GetPosition()) < stack_distance_squared;
+
+        return isWithinStdStackDistance;
     }
 
     private bool isStream(HitObject original, HitObject? next)
@@ -144,11 +138,18 @@ public partial class NewBeatmapConverter
         if (next is null)
             return false;
 
-        return Vector2Extensions.DistanceSquared(original.GetEndPosition(), next.GetPosition()) > Math.Pow(circleRadius * 2, 2);
+        // If the next note only appears after the current note fully disappears, then it isn't a stream
+        if (next.StartTime - timePreempt >= original.GetEndTime())
+            return false;
+
+        bool isOverlapping = Vector2Extensions.DistanceSquared(original.GetEndPosition(), next.GetPosition()) > Math.Pow(circleRadius * 2, 2);
+
+        return isOverlapping;
     }
 
-    private bool isJump(HitObject original, HitObject? next)
+    private static bool isJump(HitObject original, HitObject? next)
     {
+        // If two notes are this distance apart, consider it a jump
         const float jump_distance_threshold_squared = 128 * 128;
 
         if (next is null)
@@ -159,7 +160,7 @@ public partial class NewBeatmapConverter
         return distanceSqr >= jump_distance_threshold_squared;
     }
 
-    private int jumpLaneOffset(HitObject original, HitObject? next)
+    private static int jumpLaneOffset(HitObject original, HitObject? next)
     {
         if (next is null)
             return 0;
@@ -169,6 +170,7 @@ public partial class NewBeatmapConverter
         float angle1 = midPoint.GetDegreesFromPosition(original.GetEndPosition());
         float angle2 = midPoint.GetDegreesFromPosition(next.GetPosition());
 
+        // This is currently always 180deg due to any two points being 180deg apart using the midpoint as the origin
         return getClosestLaneFor(angle2) - getClosestLaneFor(angle1);
     }
 
@@ -187,7 +189,7 @@ public partial class NewBeatmapConverter
         if (angleDelta == 0)
             return activeStreamDirection ?? RotationDirection.Clockwise;
 
-        return Math.Abs((currAngle + angleDelta) % 360 - nextAngle) < 0.1 ? RotationDirection.Clockwise : RotationDirection.Counterclockwise;
+        return angleDelta > 0 ? RotationDirection.Clockwise : RotationDirection.Counterclockwise;
     }
 
     private static Vector2 midPointOf(HitObject current, HitObject previous, HitObject next)
@@ -195,12 +197,14 @@ public partial class NewBeatmapConverter
 
     private static int getClosestLaneFor(float angle)
     {
+        angle = angle.NormalizeAngle();
+
         float minDelta = float.MaxValue;
         int closestLane = -1;
 
         for (int i = 0; i < 8; ++i)
         {
-            float delta = Math.Abs(i.GetRotationForLane() - angle);
+            float delta = Math.Abs(SentakkiExtensions.GetDeltaAngle(i.GetRotationForLane(), angle));
 
             if (!(delta < minDelta)) continue;
 
