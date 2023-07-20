@@ -9,5 +9,6 @@ public enum ConversionExperiments
     twinNotes = 1,
     twinSlides = 2,
     fanSlides = 4,
-    conversionRevamp = 8
+    conversionRevamp = 8,
+    restoreSlideHitWhistle = 16,
 }

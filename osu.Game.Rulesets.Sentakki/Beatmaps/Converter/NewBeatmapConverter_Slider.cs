@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using osu.Game.Audio;
+using osu.Game.Beatmaps.ControlPoints;
+using osu.Game.Beatmaps.Legacy;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Extensions;
@@ -17,8 +20,12 @@ public partial class NewBeatmapConverter
 
         var slider = (IHasPathWithRepeats)original;
 
+        bool isSuitableSlider = !isLazySlider(original);
+
         bool isBreak = slider.NodeSamples[0].Any(s => s.Name == HitSampleInfo.HIT_FINISH);
-        bool isSpecial = slider.NodeSamples[0].Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
+        bool isSpecial = isSuitableSlider
+                         && (!conversionExperiments.HasFlag(ConversionExperiments.restoreSlideHitWhistle)
+                             || slider.NodeSamples[0].Any(s => s.Name == HitSampleInfo.HIT_WHISTLE));
 
         if (isSpecial)
         {
@@ -76,7 +83,7 @@ public partial class NewBeatmapConverter
 
     private SlideBodyPart? chooseSlidePartFor(HitObject original)
     {
-        double velocity = original is IHasSliderVelocity slider ? slider.SliderVelocity : 1;
+        double velocity = original is IHasSliderVelocity slider ? (slider.SliderVelocity * beatmap.Difficulty.SliderMultiplier) : 1;
         double duration = ((IHasDuration)original).Duration;
         double adjustedDuration = duration * velocity;
 
@@ -100,5 +107,55 @@ public partial class NewBeatmapConverter
 
             return Math.Round(Math.Abs(diff) * 0.02) * 50; // Round to nearest 50ms
         }
+    }
+
+    private bool isLazySlider(HitObject hitObject)
+    {
+        const float follow_radius_scale = 2.4f;
+
+        if (hitObject is not IHasPathWithRepeats slider)
+            return false;
+
+        float distanceCutoffSquared = MathF.Pow(circleRadius * follow_radius_scale, 2);
+
+        double spanDuration = slider.Duration / (slider.RepeatCount + 1);
+        var difficulty = beatmap.BeatmapInfo.Difficulty;
+
+        var controlPointInfo = (LegacyControlPointInfo)beatmap.ControlPointInfo;
+
+        TimingControlPoint timingPoint = controlPointInfo.TimingPointAt(hitObject.StartTime);
+
+        double sliderVelocity = (hitObject is IHasSliderVelocity sv) ? sv.SliderVelocity : DifficultyControlPoint.DEFAULT.SliderVelocity;
+        double scoringDistance = 100 * difficulty.SliderMultiplier * sliderVelocity;
+        double velocity = scoringDistance / timingPoint.BeatLength;
+        double tickDistance = scoringDistance / difficulty.SliderTickRate;
+        double legacyLastTickOffset = (hitObject as IHasLegacyLastTickOffset)?.LegacyLastTickOffset ?? 0;
+
+        var sliderEvents = SliderEventGenerator.Generate(hitObject.StartTime, spanDuration, velocity, tickDistance, slider.Path.Distance, slider.RepeatCount + 1, legacyLastTickOffset,
+            CancellationToken.None);
+
+        var sliderOrigin = slider.Path.PositionAt(0);
+
+        Console.WriteLine($"{sliderOrigin}, {slider.Path.Distance}");
+
+        foreach (var e in sliderEvents)
+        {
+            switch (e.Type)
+            {
+                case SliderEventType.Repeat:
+                case SliderEventType.Tail:
+                case SliderEventType.Tick:
+                case SliderEventType.LegacyLastTick:
+                    if ((slider.Path.PositionAt(e.PathProgress) - sliderOrigin).LengthSquared > distanceCutoffSquared)
+                        return false;
+
+                    break;
+
+                default:
+                    continue;
+            }
+        }
+
+        return true;
     }
 }
