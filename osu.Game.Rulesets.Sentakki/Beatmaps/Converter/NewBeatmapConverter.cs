@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using osu.Framework.Graphics;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects;
@@ -92,16 +93,23 @@ public partial class NewBeatmapConverter
         }
         else if (isStream)
         {
+            Debug.Assert(next is not null);
+
+            bool isSpacedStream = isOverlapping(original, next);
+            activeStreamDirection = getStreamDirection(original, previous, next);
+            int streamOffset = activeStreamDirection == RotationDirection.Clockwise ? 1 : -1;
+
             // Slides have special behavior
             if (result is Slide slide)
             {
                 if (!isStack && isStream)
                     currentLane = slide.Lane + slide.SlideInfoList[0].SlidePath.EndLane;
+
+                if (isSpacedStream)
+                    currentLane += streamOffset;
             }
             else
             {
-                activeStreamDirection = getStreamDirection(original, previous, next);
-                int streamOffset = activeStreamDirection == RotationDirection.Clockwise ? 1 : -1;
                 currentLane += streamOffset;
             }
         }
@@ -139,10 +147,18 @@ public partial class NewBeatmapConverter
         if (next is null)
             return false;
 
-        bool isOverlapping = Vector2Extensions.DistanceSquared(original.GetEndPosition(), next.GetPosition()) <= Math.Pow(circleRadius * 2, 2);
+        double timeDelta = next.StartTime - original.GetEndTime();
+        double beatLength = beatmap.ControlPointInfo.TimingPointAt(next.StartTime).BeatLength;
 
-        return isOverlapping;
+        double quarterBeatLength = beatLength * 0.25f;
+
+        bool snappedToQuarterBeat = timeDelta <= quarterBeatLength || MathHelper.ApproximatelyEquivalent(timeDelta, quarterBeatLength, 0.1);
+
+        return isOverlapping(original, next) || snappedToQuarterBeat;
     }
+
+    private bool isOverlapping(HitObject original, HitObject next)
+        => (next.GetPosition() - original.GetPosition()).LengthSquared <= Math.Pow(circleRadius * 2, 2);
 
     private static bool isJump(HitObject original, HitObject? next)
     {
