@@ -105,7 +105,7 @@ public partial class NewBeatmapConverter
             double diff = adjustedDuration - d * 2;
             if (diff > 0) diff *= 1.5; // We don't want to overly favor longer slides when a shorter one is available
 
-            return Math.Round(Math.Abs(diff) * 0.02) * 50; // Round to nearest 50ms
+            return Math.Round(Math.Abs(diff) * 0.02) * 100; // Round to nearest 100ms
         }
     }
 
