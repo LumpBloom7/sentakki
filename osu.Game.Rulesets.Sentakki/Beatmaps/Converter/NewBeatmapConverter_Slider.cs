@@ -109,6 +109,7 @@ public partial class NewBeatmapConverter
         }
     }
 
+    // This checks whether a slider can be completed without moving the mouse at all.
     private bool isLazySlider(HitObject hitObject)
     {
         const float follow_radius_scale = 2.4f;
@@ -136,26 +137,7 @@ public partial class NewBeatmapConverter
 
         var sliderOrigin = slider.Path.PositionAt(0);
 
-        Console.WriteLine($"{sliderOrigin}, {slider.Path.Distance}");
-
-        foreach (var e in sliderEvents)
-        {
-            switch (e.Type)
-            {
-                case SliderEventType.Repeat:
-                case SliderEventType.Tail:
-                case SliderEventType.Tick:
-                case SliderEventType.LegacyLastTick:
-                    if ((slider.Path.PositionAt(e.PathProgress) - sliderOrigin).LengthSquared > distanceCutoffSquared)
-                        return false;
-
-                    break;
-
-                default:
-                    continue;
-            }
-        }
-
-        return true;
+        // Check if any events such as ticks or repeats are a certain distance from the origin, requiring a cursor move.
+        return sliderEvents.All(e => !((slider.Path.PositionAt(e.PathProgress) - sliderOrigin).LengthSquared >= distanceCutoffSquared));
     }
 }
