@@ -52,10 +52,15 @@ public partial class NewBeatmapConverter
 
         var selectedPath = chooseSlidePartFor(original);
 
+        if (selectedPath is null)
+            return null;
+
         bool tailBreak = nodeSamples.Last().Any(s => s.Name == HitSampleInfo.HIT_FINISH);
         bool headBreak = nodeSamples.First().Any(s => s.Name == HitSampleInfo.HIT_FINISH);
 
-        int end = lane + selectedPath.EndOffset;
+        int endOffset = selectedPath.Sum(p => p.EndOffset);
+
+        int end = lane + endOffset;
 
         var slide = new Slide
         {
@@ -63,7 +68,7 @@ public partial class NewBeatmapConverter
             {
                 new SlideBodyInfo
                 {
-                    SlidePathParts = new[] { selectedPath },
+                    SlidePathParts = selectedPath,
                     Duration = ((IHasDuration)original).Duration,
                     Break = tailBreak,
                     ShootDelay = 0.5f,
@@ -78,32 +83,83 @@ public partial class NewBeatmapConverter
         return (slide, end);
     }
 
-    private SlideBodyPart chooseSlidePartFor(HitObject original)
+    private SlideBodyPart[]? chooseSlidePartFor(HitObject original)
     {
         double velocity = original is IHasSliderVelocity slider ? (slider.SliderVelocity * beatmap.Difficulty.SliderMultiplier) : 1;
         double duration = ((IHasDuration)original).Duration;
         double adjustedDuration = duration * velocity;
 
-        var candidates = SlidePaths.VALIDPATHS;
+        var candidates = SlidePaths.VALIDPATHS.AsEnumerable();
         if (!conversionExperiments.HasFlag(ConversionExperiments.fanSlides))
-            candidates = candidates.Where(p => p.SlidePart.Shape != SlidePaths.PathShapes.Fan).ToList();
+            candidates = candidates.Where(p => p.SlidePart.Shape != SlidePaths.PathShapes.Fan);
 
-        // Find the part that is the closest
-        return candidates.GroupBy(t => getDelta(t.MinDuration))
-                         .OrderBy(g => g.Key)
-                         .Take(5)
-                         .ProbabilityPick(t => t.Key, patternGenerator.RNG)
-                         .Shuffle(patternGenerator.RNG)
-                         .First()
-                         .SlidePart;
+        if (conversionExperiments.HasFlag(ConversionExperiments.createCompositeSlides))
+        {
+            List<SlideBodyPart> parts = new List<SlideBodyPart>();
+
+            double durationLeft = duration;
+
+            SlideBodyPart? lastPart = null;
+
+            double velocityAdjustmentFactor = 1 + 0.5 / velocity;
+
+            while (true)
+            {
+                var nextChoices = candidates.Where(p => p.MinDuration * velocityAdjustmentFactor < durationLeft)
+                    .Shuffle(patternGenerator.RNG)
+                    .SkipWhile(p => p.SlidePart.Shape == SlidePaths.PathShapes.Circle && !isValidCircleComposition(p.SlidePart, lastPart));
+
+                if (!nextChoices.Any())
+                    break;
+
+                var chosen = nextChoices.First();
+
+                durationLeft -= chosen.MinDuration * velocityAdjustmentFactor;
+                parts.Add(lastPart = chosen.SlidePart);
+            }
+
+            if (!parts.Any())
+                return null;
+
+            return parts.ToArray();
+
+        }
+        else
+        {
+            // Find the part that is the closest
+            return new[]
+            {
+                candidates.GroupBy(t => getDelta(t.MinDuration))
+                          .OrderBy(g => g.Key)
+                          .Take(5)
+                          .ProbabilityPick(t => t.Key, patternGenerator.RNG)
+                          .Shuffle(patternGenerator.RNG)
+                          .First()
+                          .SlidePart
+            };
+        }
 
         double getDelta(double d)
         {
             double diff = adjustedDuration - d * 2;
-            if (diff > 0) diff *= 1.5; // We don't want to overly favor longer slides when a shorter one is available
+            if (diff > 0) diff *= 3; // We don't want to overly favor longer slides when a shorter one is available
 
             return Math.Round(Math.Abs(diff) * 0.02) * 100; // Round to nearest 100ms
         }
+    }
+
+    private static bool isValidCircleComposition(SlideBodyPart part, SlideBodyPart? previousPart)
+    {
+        if (previousPart is null)
+            return true;
+
+        if (previousPart.Shape != SlidePaths.PathShapes.Circle)
+            return true;
+
+        if (part.Mirrored != previousPart.Mirrored)
+            return true;
+
+        return previousPart.EndOffset == 0;
     }
 
     // This checks whether a slider can be completed without moving the mouse at all.

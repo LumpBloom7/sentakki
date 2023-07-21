@@ -11,4 +11,5 @@ public enum ConversionExperiments
     fanSlides = 4,
     conversionRevamp = 8,
     restoreSlideHitWhistle = 16,
+    createCompositeSlides = 32
 }

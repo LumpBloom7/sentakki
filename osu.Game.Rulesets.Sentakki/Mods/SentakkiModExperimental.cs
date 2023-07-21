@@ -49,8 +49,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             "A rewritten conversion system that hopefully makes better feeling conversions based on how notes are placed in the original beatmap. (Does not support twins)")]
         public BindableBool RevampedConversion { get; } = new BindableBool
         {
-            Default = false,
-            Value = false
+            Default = true,
+            Value = true
         };
 
         [SettingSource("Restore HitWhistle Slides", "Restores old Slide note conversion behavior where slides are only generated from sliders with hitWhistle")]
@@ -58,6 +58,13 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         {
             Default = false,
             Value = false
+        };
+
+        [SettingSource("Enable convert slide chains", "Allows chain slides to be considered in converts")]
+        public BindableBool ChainSlides { get; } = new BindableBool
+        {
+            Default = true,
+            Value = true
         };
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
@@ -77,6 +84,9 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
             if (HitWhistleSlides.Value)
                 sentakkiBeatmapConverter.EnabledExperiments |= ConversionExperiments.restoreSlideHitWhistle;
+
+            if (ChainSlides.Value)
+                sentakkiBeatmapConverter.EnabledExperiments |= ConversionExperiments.createCompositeSlides;
         }
     }
 }

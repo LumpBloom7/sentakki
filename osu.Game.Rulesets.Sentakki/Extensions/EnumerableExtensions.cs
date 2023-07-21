@@ -15,7 +15,11 @@ public static class EnumerableExtensions
 
         double max = probabilitySourceSelector(list.Last());
 
-        double pSum = enumerable.Sum(t => max - probabilitySourceSelector(t));
+        double pSum = 0;
+
+        foreach (var item in list)
+            pSum += max - probabilitySourceSelector(item);
+
 
         double ran = rng.NextSingle() * pSum;
 
@@ -23,7 +27,7 @@ public static class EnumerableExtensions
 
         foreach (var item in list)
         {
-            cumulative += max - (probabilitySourceSelector(item));
+            cumulative += max - probabilitySourceSelector(item);
 
             if (ran <= cumulative)
                 return item;
