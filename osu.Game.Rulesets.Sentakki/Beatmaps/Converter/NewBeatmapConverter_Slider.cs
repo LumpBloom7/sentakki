@@ -52,9 +52,6 @@ public partial class NewBeatmapConverter
 
         var selectedPath = chooseSlidePartFor(original);
 
-        if (selectedPath is null)
-            return null;
-
         bool tailBreak = nodeSamples.Last().Any(s => s.Name == HitSampleInfo.HIT_FINISH);
         bool headBreak = nodeSamples.First().Any(s => s.Name == HitSampleInfo.HIT_FINISH);
 
@@ -81,7 +78,7 @@ public partial class NewBeatmapConverter
         return (slide, end);
     }
 
-    private SlideBodyPart? chooseSlidePartFor(HitObject original)
+    private SlideBodyPart chooseSlidePartFor(HitObject original)
     {
         double velocity = original is IHasSliderVelocity slider ? (slider.SliderVelocity * beatmap.Difficulty.SliderMultiplier) : 1;
         double duration = ((IHasDuration)original).Duration;
