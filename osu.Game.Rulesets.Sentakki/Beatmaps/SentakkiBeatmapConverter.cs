@@ -376,9 +376,10 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             var controlPointInfo = (LegacyControlPointInfo)Beatmap.ControlPointInfo;
 
             TimingControlPoint timingPoint = controlPointInfo.TimingPointAt(original.StartTime);
-            DifficultyControlPoint difficultyPoint = original.DifficultyControlPoint;
 
-            double scoringDistance = 100 * difficulty.SliderMultiplier * difficultyPoint.SliderVelocity;
+            double sliderVelocity = (original is IHasSliderVelocity sv) ? sv.SliderVelocity : DifficultyControlPoint.DEFAULT.SliderVelocity;
+
+            double scoringDistance = 100 * difficulty.SliderMultiplier * sliderVelocity;
 
             double velocity = scoringDistance / timingPoint.BeatLength;
             double tickDistance = scoringDistance / difficulty.SliderTickRate;

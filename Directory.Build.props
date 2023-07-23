@@ -1,6 +1,6 @@
 <Project>
     <PropertyGroup Label="C#">
-        <LangVersion>9.0</LangVersion>
+        <LangVersion>10.0</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>

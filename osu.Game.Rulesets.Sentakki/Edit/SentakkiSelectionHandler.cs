@@ -185,7 +185,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             {
                 StartTime = firstHitObject.StartTime,
                 SlideInfoList = firstHitObject.SlideInfoList,
-                SampleControlPoint = firstHitObject.SampleControlPoint,
                 Samples = firstHitObject.Samples,
                 NodeSamples = firstHitObject.NodeSamples,
                 Lane = firstHitObject.Lane,
@@ -262,7 +261,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                     {
                         StartTime = newSt,
                         SlideInfoList = new List<SlideBodyInfo> { slideInfo },
-                        SampleControlPoint = slide.SampleControlPoint,
                         Samples = slide.Samples,
                         NodeSamples = slide.NodeSamples,
                         Lane = slide.Lane,

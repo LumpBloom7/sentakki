@@ -96,8 +96,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
 
             AccentColour.BindValueChanged(c => Colour = c.NewValue);
-            OnNewResult += updateSlideCompletion;
-            OnRevertResult += updateSlideCompletion;
+
+            OnNewResult += onNewResult;
+            OnRevertResult += onRevertResult;
         }
 
         protected override void OnApply()
@@ -113,27 +114,26 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Slidepath.Free();
         }
 
-        // Updates the path to have correct information of completion progress, then updates the visuals
-        private void updateSlideCompletion(DrawableHitObject hitObject, JudgementResult result)
+        private void onNewResult(DrawableHitObject hitObject, JudgementResult result)
         {
-            updateCompletionProgress();
+            if (hitObject is not DrawableSlideCheckpoint checkpoint)
+                return;
+
+            if (!result.IsHit)
+                return;
+
+            Slidepath.Progress = checkpoint.HitObject.Progress;
             Slidepath.UpdateChevronVisibility();
         }
 
-        // Used to hide and show segments accurately
-        private void updateCompletionProgress()
+        private void onRevertResult(DrawableHitObject hitObject, JudgementResult result)
         {
-            float progress = 0;
+            if (hitObject is not DrawableSlideCheckpoint checkpoint)
+                return;
 
-            for (int i = 0; i < SlideCheckpoints.Count; ++i)
-            {
-                if (!SlideCheckpoints[i].Result.IsHit)
-                    break;
+            Slidepath.Progress = checkpoint.ThisIndex == 0 ? 0 : SlideCheckpoints[checkpoint.ThisIndex - 1].HitObject.Progress;
 
-                progress = SlideCheckpoints[i].HitObject.Progress;
-            }
-
-            Slidepath.Progress = progress;
+            Slidepath.UpdateChevronVisibility();
         }
 
         protected override void UpdateInitialTransforms()

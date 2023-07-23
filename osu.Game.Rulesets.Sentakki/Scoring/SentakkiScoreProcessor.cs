@@ -1,4 +1,5 @@
-﻿using osu.Game.Rulesets.Scoring;
+﻿using System;
+using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Scoring
 {
@@ -9,7 +10,11 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
         {
         }
 
-        protected override double DefaultAccuracyPortion => 0.9;
-        protected override double DefaultComboPortion => 0.1;
+        protected override double ComputeTotalScore(double comboProgress, double accuracyProgress, double bonusPortion)
+        {
+            return (200000 * comboProgress)
+                   + (800000 * Math.Pow(Accuracy.Value, 2 + (2 * Accuracy.Value)) * accuracyProgress)
+                   + bonusPortion;
+        }
     }
 }

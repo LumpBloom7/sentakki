@@ -40,7 +40,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki
 {
-    public class SentakkiRuleset : Ruleset
+    public partial class SentakkiRuleset : Ruleset
     {
         public override string RulesetAPIVersionSupported => CURRENT_RULESET_API_VERSION;
 
@@ -143,40 +143,24 @@ namespace osu.Game.Rulesets.Sentakki
             new KeyBinding(InputKey.Number8, SentakkiAction.Key8),
         };
 
-        public override StatisticRow[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap) => new[]
+        public override StatisticItem[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap) => new[]
         {
-            new StatisticRow
+            new StatisticItem(SentakkiStatisticsStrings.TimingDistribution, () => new HitEventTimingDistributionGraph(score.HitEvents)
             {
-                Columns = new[]
-                {
-                    new StatisticItem(SentakkiStatisticsStrings.TimingDistribution, () => new HitEventTimingDistributionGraph(score.HitEvents)
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        Height = 250
-                    }, true)
-                }
-            },
-            new StatisticRow
+                RelativeSizeAxes = Axes.X,
+                Height = 250
+            }, true),
+
+            new StatisticItem(SentakkiStatisticsStrings.JudgementChart, () => new JudgementChart(score.HitEvents.Where(e => e.HitObject is SentakkiHitObject).ToList())
             {
-                Columns = new[]
-                {
-                    new StatisticItem(SentakkiStatisticsStrings.JudgementChart, () => new JudgementChart(score.HitEvents.Where(e => e.HitObject is SentakkiHitObject).ToList())
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        Size = new Vector2(1, 250)
-                    }, true),
-                }
-            },
-            new StatisticRow
+                RelativeSizeAxes = Axes.X,
+                Size = new Vector2(1, 250)
+            }, true),
+
+            new StatisticItem(string.Empty, () => new SimpleStatisticTable(3, new SimpleStatisticItem[]
             {
-                Columns = new[]
-                {
-                    new StatisticItem(string.Empty, () => new SimpleStatisticTable(3, new SimpleStatisticItem[]
-                    {
-                        new UnstableRate(score.HitEvents)
-                    }), true)
-                }
-            }
+                new UnstableRate(score.HitEvents)
+            }), true)
         };
 
         public override Drawable CreateIcon() => new SentakkiIcon(this);
