@@ -4,8 +4,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
-using osu.Game.Graphics;
-using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
@@ -24,10 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         private readonly SlideVisual commited;
 
         [Resolved]
-        private IBeatSnapProvider beatSnapProvider { get; set; } = null!;
-
-        private readonly OsuSpriteText shootDelayText;
-
+        private SlideEditorToolboxGroup slidePlacementToolbox { get; set; } = null!;
         public SlidePlacementBlueprint()
         {
             AddRangeInternal(new Drawable[]
@@ -52,14 +47,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                         },
                     }
                 },
-                shootDelayText = new OsuSpriteText
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Text = "Shoot Delay: 1 beat",
-                    Font = OsuFont.Torus.With(size: 30f),
-                    Alpha = 0,
-                }
             });
 
             highlight.SlideTapPiece.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
@@ -69,6 +56,18 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         private SlideBodyInfo commitedSlideBodyInfo = null!;
         private SlideBodyInfo previewSlideBodyInfo = null!;
         private int currentLaneOffset;
+
+        protected override void LoadComplete()
+        {
+            slidePlacementToolbox.CurrentPartBindable.BindValueChanged(v =>
+            {
+                previewSlideBodyInfo = new SlideBodyInfo
+                {
+                    SlidePathParts = new[] { v.NewValue }
+                };
+                bodyHighlight.Path = previewSlideBodyInfo.SlidePath;
+            }, false);
+        }
 
         protected override bool OnMouseDown(MouseDownEvent e)
         {
@@ -83,15 +82,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
                 commited.Rotation = HitObject.Lane.GetRotationForLane();
                 bodyHighlight.Rotation = HitObject.Lane.GetRotationForLane();
-
-                previewSlideBodyInfo = new SlideBodyInfo
-                {
-                    SlidePathParts = new[] { currentPart = new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false) }
-                };
-                bodyHighlight.Path = previewSlideBodyInfo.SlidePath;
-
-                shootDelayText.Position = SentakkiExtensions.GetCircularPosition(330, HitObject.Lane.GetRotationForLane());
-                shootDelayText.Alpha = 1;
             }
             else
             {
@@ -110,52 +100,13 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                 EndPlacement(bodyParts.Count > 0 && commitedSlideBodyInfo.Duration > 0);
         }
 
-        private void updateShootDelayText()
-        {
-            shootDelayText.Text = $"Shoot delay: {commitedSlideBodyInfo.ShootDelay} beats";
-            shootDelayText.ScaleTo(1.1f, 20).Then().ScaleTo(1f, 30);
-        }
-
         protected override bool OnKeyDown(KeyDownEvent e)
         {
-            if (PlacementActive != PlacementState.Active)
-                return false;
-
             switch (e.Key)
             {
-                case Key.Plus:
-                    commitedSlideBodyInfo.ShootDelay += 1f / beatSnapProvider.BeatDivisor;
-                    updateShootDelayText();
-                    break;
-
-                case Key.Minus:
-                    commitedSlideBodyInfo.ShootDelay = Math.Max(0, commitedSlideBodyInfo.ShootDelay - 1f / beatSnapProvider.BeatDivisor);
-                    updateShootDelayText();
-                    break;
-
-                case Key.Number0:
-                    commitedSlideBodyInfo.ShootDelay = 1;
-                    updateShootDelayText();
-                    break;
-
                 case Key.BackSpace:
                     uncommitLastPart();
                     break;
-
-                case Key.BackSlash:
-                    mirrored = !mirrored;
-                    updateCurrentPathPart(targetPathOffset);
-                    return true;
-
-                case Key.BracketRight:
-                    currentShape = (SlidePaths.PathShapes)((int)(currentShape + 1) % 8);
-                    updateCurrentPathPart(targetPathOffset);
-                    return true;
-
-                case Key.BracketLeft:
-                    currentShape = (SlidePaths.PathShapes)((int)(currentShape + 7) % 8);
-                    updateCurrentPathPart(targetPathOffset);
-                    return true;
             }
 
             return base.OnKeyDown(e);
@@ -166,17 +117,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         // Only used to revert the lane offsets after uncommit
         private readonly Stack<int> laneOffsets = new Stack<int>();
 
-        private SlideBodyPart currentPart = null!;
-
-        private SlidePaths.PathShapes currentShape = SlidePaths.PathShapes.Straight;
-
-        // The pathOffset of a valid path that matches or closely matches the desired endOffset
-        // This will be used when committing a part
-        private int validPathOffset;
-
         // The path offset of the lane the player is pointing at
         private int targetPathOffset;
-        private bool mirrored;
 
         private double originalStartTime;
 
@@ -195,7 +137,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                 int newPo = (OriginPosition.GetDegreesFromPosition(ToLocalSpace(result.ScreenSpacePosition)).GetNoteLaneFromDegrees() - currentLaneOffset - HitObject.Lane).NormalizePath();
 
                 if (targetPathOffset != newPo)
-                    updateCurrentPathPart(newPo);
+                {
+                    slidePlacementToolbox.LaneOffset.Value = newPo;
+                    targetPathOffset = newPo;
+                }
             }
             else
             {
@@ -206,48 +151,12 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             }
         }
 
-        private void updateCurrentPathPart(int newTargetOffset)
-        {
-            int oldValidPath = validPathOffset;
-            validPathOffset = newTargetOffset;
-
-            var newPart = new SlideBodyPart(currentShape, newTargetOffset, mirrored);
-
-            if (!SlidePaths.CheckSlideValidity(newPart))
-            {
-                bool tryNegativeDeltaFirst = (oldValidPath - newTargetOffset) < 0;
-
-                // Find closest valid offset
-                for (int i = 1; i < 8; ++i)
-                {
-                    bool negative = ((i % 2) == 0) ^ tryNegativeDeltaFirst;
-
-                    int delta = (i + 1) / 2 * (negative ? -1 : 1);
-
-                    int candidateOffset = (newTargetOffset + delta).NormalizePath();
-
-                    newPart = new SlideBodyPart(currentShape, candidateOffset, mirrored);
-
-                    if (SlidePaths.CheckSlideValidity(newPart))
-                    {
-                        validPathOffset = candidateOffset;
-                        break;
-                    }
-                }
-            }
-
-            currentPart = newPart;
-            previewSlideBodyInfo.SlidePathParts = new[] { currentPart };
-            bodyHighlight.Path = previewSlideBodyInfo.SlidePath;
-            targetPathOffset = newTargetOffset;
-        }
-
         private void commitCurrentPart()
         {
-            laneOffsets.Push(validPathOffset);
-            bodyParts.Add(currentPart);
+            laneOffsets.Push(slidePlacementToolbox.CurrentPart.EndOffset);
+            bodyParts.Add(slidePlacementToolbox.CurrentPart);
 
-            currentLaneOffset += validPathOffset;
+            currentLaneOffset += slidePlacementToolbox.CurrentPart.EndOffset;
             commitedSlideBodyInfo.SlidePathParts = bodyParts.ToArray();
             commited.Path = commitedSlideBodyInfo.SlidePath;
 

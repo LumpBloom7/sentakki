@@ -19,6 +19,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
         private DrawableRulesetDependencies dependencies = null!;
 
+
+        [Cached]
+        private SlideEditorToolboxGroup slideEditorToolboxGroup = new SlideEditorToolboxGroup();
+
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
             => dependencies = new DrawableRulesetDependencies(Ruleset, base.CreateChildDependencies(parent));
 
@@ -34,6 +38,12 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         protected override IEnumerable<TernaryButton> CreateTernaryButtons() => base.CreateTernaryButtons().Skip(1);
 
         protected override ComposeBlueprintContainer CreateBlueprintContainer() => new SentakkiBlueprintContainer(this);
+
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            RightToolbox.Add(slideEditorToolboxGroup);
+        }
 
         protected override void Dispose(bool isDisposing)
         {
