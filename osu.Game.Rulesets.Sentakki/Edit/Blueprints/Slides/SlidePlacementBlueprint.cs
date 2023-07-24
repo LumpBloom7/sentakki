@@ -135,7 +135,12 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                     commitedSlideBodyInfo.Duration = Math.Abs(endTime - originalStartTime);
                 }
 
-                int newPo = (OriginPosition.GetDegreesFromPosition(ToLocalSpace(result.ScreenSpacePosition)).GetNoteLaneFromDegrees() - currentLaneOffset - HitObject.Lane).NormalizePath();
+                var localSpacePointerCoord = ToLocalSpace(result.ScreenSpacePosition);
+
+                if ((localSpacePointerCoord - OriginPosition).LengthSquared > 400 * 400)
+                    return;
+
+                int newPo = (OriginPosition.GetDegreesFromPosition(localSpacePointerCoord).GetNoteLaneFromDegrees() - currentLaneOffset - HitObject.Lane).NormalizePath();
 
                 if (targetPathOffset != newPo)
                 {
