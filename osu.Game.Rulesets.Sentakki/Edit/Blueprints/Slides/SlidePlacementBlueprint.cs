@@ -43,7 +43,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                         bodyHighlight = new SlideVisual
                         {
                             Colour = Color4.GreenYellow,
-                            Alpha = 0.8f,
+                            Alpha = 0f,
                         },
                     }
                 },
@@ -66,7 +66,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                     SlidePathParts = new[] { v.NewValue }
                 };
                 bodyHighlight.Path = previewSlideBodyInfo.SlidePath;
-            }, false);
+            }, true);
         }
 
         protected override bool OnMouseDown(MouseDownEvent e)
@@ -82,6 +82,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
                 commited.Rotation = HitObject.Lane.GetRotationForLane();
                 bodyHighlight.Rotation = HitObject.Lane.GetRotationForLane();
+                bodyHighlight.Alpha = 0.8f;
             }
             else
             {
@@ -138,7 +139,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
                 if (targetPathOffset != newPo)
                 {
-                    slidePlacementToolbox.LaneOffset.Value = newPo;
+                    slidePlacementToolbox.RequestLaneChange(newPo);
                     targetPathOffset = newPo;
                 }
             }

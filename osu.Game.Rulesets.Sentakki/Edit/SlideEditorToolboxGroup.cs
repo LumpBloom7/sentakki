@@ -1,5 +1,4 @@
 using osu.Framework.Graphics;
-using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -17,9 +16,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit;
 public partial class SlideEditorToolboxGroup : EditorToolboxGroup
 {
     // Slide info
-    private Bindable<SlidePaths.PathShapes> shapeBindable = new Bindable<SlidePaths.PathShapes>();
+    private Bindable<SlidePaths.PathShapes> shapeBindable = new Bindable<SlidePaths.PathShapes>(); // This is locked
     public readonly Bindable<int> LaneOffset = new Bindable<int>(4);
-    private Bindable<bool> mirrored = new Bindable<bool>();
+    private Bindable<bool> mirrored = new Bindable<bool>(); // This is locked
 
     private Bindable<float> shootDelay = new Bindable<float>();
 
@@ -33,10 +32,10 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
             new ExpandableMenu<SlidePaths.PathShapes>("Shape"){
                 Current = shapeBindable
             },
-            new ExpandableCounter<int>("Lane offset"){
+            new LaneOffsetCounter{
                 Current = LaneOffset
             },
-            new ExpandableCounter<float>("Shoot delay"){
+            new ShootDelayCounter(){
                 Current = shootDelay
             },
         };
@@ -46,9 +45,8 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
     {
         base.LoadComplete();
 
-        shapeBindable.BindValueChanged(e => onShapeChanged());
-        LaneOffset.BindValueChanged(e => onShapeChanged());
-        mirrored.BindValueChanged(e => onShapeChanged());
+        shapeBindable.BindValueChanged(e => RequestLaneChange(LaneOffset.Value));
+        mirrored.BindValueChanged(e => RequestLaneChange(LaneOffset.Value));
     }
 
     [Resolved]
@@ -62,31 +60,25 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
         Show();
     }
 
-    private void onShapeChanged()
+    public void RequestLaneChange(int newLane)
     {
-        int oldOffset = CurrentPart.EndOffset;
-        int newOffset = LaneOffset.Value;
+        int oldOffset = LaneOffset.Value;
 
-        SlideBodyPart newPart;
+        int rotationFactor = newLane - oldOffset >= 0 ? 1 : -1;
 
-        bool tryNegativeDeltaFirst = (oldOffset - newOffset) < 0;
-        int shiftAmount = 0;
-
-        do
+        for (int i = 0; i < 8; ++i)
         {
-            bool negative = ((shiftAmount % 2) == 0) ^ tryNegativeDeltaFirst;
-            newPart = new SlideBodyPart(shapeBindable.Value, newOffset + shiftAmount * (negative ? -1 : 1), mirrored.Value);
+            var newPart = new SlideBodyPart(shapeBindable.Value, (newLane + i * rotationFactor).NormalizePath(), mirrored.Value);
 
-            if (CurrentPart.Equals(newPart))
-                break;
-
-            shiftAmount++;
+            if (SlidePaths.CheckSlideValidity(newPart))
+            {
+                CurrentPartBindable.Value = newPart;
+                LaneOffset.Value = newPart.EndOffset;
+                return;
+            }
         }
-        while (!SlidePaths.CheckSlideValidity(newPart));
-
-        CurrentPartBindable.Value = newPart;
-        LaneOffset.Value = newPart.EndOffset;
     }
+
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
@@ -113,7 +105,7 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
                 return true;
 
             case Key.BracketLeft:
-                shapeBindable.Value = (SlidePaths.PathShapes)((int)(shapeBindable.Value + 7) % 8);
+                shapeBindable.Value = (SlidePaths.PathShapes)(((int)(shapeBindable.Value + 7)) % 8);
                 return true;
         }
 
@@ -126,8 +118,11 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
         {
         }
 
-        protected override void OnLeftButtonPressed() => Current.Value = (Current.Value - 1) % 8;
-        protected override void OnRightButtonPressed() => Current.Value = (Current.Value + 1) % 8;
+        [Resolved]
+        private SlideEditorToolboxGroup slideEditorToolboxGroup { get; set; } = null!;
+
+        protected override void OnLeftButtonPressed() => slideEditorToolboxGroup.RequestLaneChange(Current.Value - 1);
+        protected override void OnRightButtonPressed() => slideEditorToolboxGroup.RequestLaneChange(Current.Value + 1);
     }
 
     private partial class ShootDelayCounter : ExpandableCounter<float>
@@ -135,12 +130,15 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
         [Resolved]
         private IBeatSnapProvider beatSnapProvider { get; set; } = null!;
 
-        public ShootDelayCounter() : base("Lane offset")
+        public ShootDelayCounter() : base("Shoot delay")
         {
         }
 
-        protected override void OnLeftButtonPressed() => Current.Value += 1f / beatSnapProvider.BeatDivisor;
-        protected override void OnRightButtonPressed() => Current.Value = Math.Max(0, Current.Value - 1f / beatSnapProvider.BeatDivisor);
+
+
+        protected override void OnLeftButtonPressed() => Current.Value = Math.Max(0, Current.Value - 1f / beatSnapProvider.BeatDivisor);
+
+        protected override void OnRightButtonPressed() => Current.Value += 1f / beatSnapProvider.BeatDivisor;
     }
 
 }
