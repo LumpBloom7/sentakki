@@ -38,6 +38,9 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
             new ShootDelayCounter(){
                 Current = shootDelay
             },
+            new ExpandableCheckbox("Mirrored"){
+                Current = mirrored
+            }
         };
     }
 
