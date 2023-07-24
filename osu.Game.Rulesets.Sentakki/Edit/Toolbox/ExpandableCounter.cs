@@ -90,7 +90,7 @@ public partial class ExpandableCounter<T> : CompositeDrawable, IExpandable, IHas
         Current.BindValueChanged(v =>
         {
             unexpandedLabeltext = $"{labelText}: {v.NewValue}";
-            counter.Text = $"{v.NewValue.ToSingle(NumberFormatInfo.InvariantInfo):0.#}";
+            counter.Text = $"{v.NewValue.ToSingle(NumberFormatInfo.InvariantInfo):0.###}";
             if (!Expanded.Value)
                 label.Text = unexpandedLabeltext;
         }, true);
