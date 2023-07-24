@@ -1,4 +1,3 @@
-using System;
 using osuTK;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -8,7 +7,6 @@ using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Framework.Allocation;
 using osu.Game.Graphics.UserInterface;
-using osu.Framework.Input.Events;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Toolbox;
 public partial class ExpandableCheckbox : CompositeDrawable, IExpandable, IHasCurrentValue<bool>

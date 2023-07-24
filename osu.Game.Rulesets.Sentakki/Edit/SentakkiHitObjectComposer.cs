@@ -19,7 +19,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
         private DrawableRulesetDependencies dependencies = null!;
 
-
         [Cached]
         private SlideEditorToolboxGroup slideEditorToolboxGroup = new SlideEditorToolboxGroup();
 

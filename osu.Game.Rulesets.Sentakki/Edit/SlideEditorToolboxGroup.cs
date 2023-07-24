@@ -9,7 +9,6 @@ using osu.Framework.Input.Events;
 using osuTK.Input;
 using System;
 
-
 namespace osu.Game.Rulesets.Sentakki.Edit;
 
 [Cached]
@@ -71,7 +70,7 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
 
         for (int i = 0; i < 8; ++i)
         {
-            var newPart = new SlideBodyPart(shapeBindable.Value, (newLane + i * rotationFactor).NormalizePath(), mirrored.Value);
+            var newPart = new SlideBodyPart(shapeBindable.Value, (newLane + (i * rotationFactor)).NormalizePath(), mirrored.Value);
 
             if (SlidePaths.CheckSlideValidity(newPart))
             {
@@ -82,7 +81,6 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
         }
     }
 
-
     protected override bool OnKeyDown(KeyDownEvent e)
     {
         switch (e.Key)
@@ -92,7 +90,7 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
                 break;
 
             case Key.Minus:
-                shootDelay.Value = Math.Max(0, shootDelay.Value - 1f / beatSnapProvider.BeatDivisor);
+                shootDelay.Value = Math.Max(0, shootDelay.Value - (1f / beatSnapProvider.BeatDivisor));
                 break;
 
             case Key.Number0:
@@ -137,11 +135,8 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
         {
         }
 
-
-
-        protected override void OnLeftButtonPressed() => Current.Value = Math.Max(0, Current.Value - 1f / beatSnapProvider.BeatDivisor);
+        protected override void OnLeftButtonPressed() => Current.Value = Math.Max(0, Current.Value - (1f / beatSnapProvider.BeatDivisor));
 
         protected override void OnRightButtonPressed() => Current.Value += 1f / beatSnapProvider.BeatDivisor;
     }
-
 }

@@ -252,7 +252,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                     var slideInfo = slide.SlideInfoList[i];
                     var cpi = EditorBeatmap.ControlPointInfo;
                     double beatLengthOriginal = cpi.TimingPointAt(slide.StartTime).BeatLength;
-                    double newSt = slide.StartTime + (slideInfo.ShootDelay - 1) * beatLengthOriginal;
+                    double newSt = slide.StartTime + ((slideInfo.ShootDelay - 1) * beatLengthOriginal);
 
                     slideInfo.ShootDelay = 1;
                     slideInfo.Duration -= newSt - slide.Duration;
