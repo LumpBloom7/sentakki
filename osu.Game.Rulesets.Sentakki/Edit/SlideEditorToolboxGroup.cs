@@ -130,7 +130,7 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
         [Resolved]
         private IBeatSnapProvider beatSnapProvider { get; set; } = null!;
 
-        public ShootDelayCounter() : base("Shoot delay")
+        public ShootDelayCounter() : base("Shoot delay", @"{0:0.##} beats")
         {
         }
 

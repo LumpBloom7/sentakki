@@ -28,8 +28,11 @@ public partial class ExpandableCounter<T> : CompositeDrawable, IExpandable, IHas
     private string unexpandedLabeltext = "";
     private GridContainer grid;
 
-    public ExpandableCounter(string label)
+    private string labelFormat;
+
+    public ExpandableCounter(string label, string format = @"{0:0.##}")
     {
+        labelFormat = format;
         RelativeSizeAxes = Axes.X;
         AutoSizeAxes = Axes.Y;
         labelText = label;
@@ -89,8 +92,8 @@ public partial class ExpandableCounter<T> : CompositeDrawable, IExpandable, IHas
 
         Current.BindValueChanged(v =>
         {
-            unexpandedLabeltext = $"{labelText}: {v.NewValue}";
-            counter.Text = $"{v.NewValue.ToSingle(NumberFormatInfo.InvariantInfo):0.###}";
+            counter.Text = string.Format(labelFormat, v.NewValue.ToSingle(NumberFormatInfo.InvariantInfo));
+            unexpandedLabeltext = $"{labelText}: {counter.Text}";
             if (!Expanded.Value)
                 label.Text = unexpandedLabeltext;
         }, true);
