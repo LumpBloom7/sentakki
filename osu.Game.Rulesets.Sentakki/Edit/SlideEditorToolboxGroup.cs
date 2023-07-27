@@ -62,7 +62,7 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
         Show();
     }
 
-    public void RequestLaneChange(int newLane)
+    public void RequestLaneChange(int newLane, bool findClosestMatch = false)
     {
         int oldOffset = LaneOffset.Value;
 
@@ -78,6 +78,8 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
                 LaneOffset.Value = newPart.EndOffset;
                 return;
             }
+            if (findClosestMatch)
+                rotationFactor *= -1;
         }
     }
 

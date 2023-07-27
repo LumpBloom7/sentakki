@@ -148,7 +148,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
                 if (targetPathOffset != newPo)
                 {
-                    slidePlacementToolbox.RequestLaneChange(newPo);
+                    slidePlacementToolbox.RequestLaneChange(newPo, true);
                     targetPathOffset = newPo;
                 }
             }
