@@ -80,11 +80,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateInitialTransforms();
             double fadeIn = AdjustedAnimationDuration / 2;
-            double moveTo = HitObject.HitWindows.WindowFor(HitResult.Ok);
+            double moveTo = HitObject.HitWindows.WindowFor(HitResult.Great);
 
             TouchBody.FadeIn(fadeIn);
 
-            using (BeginDelayedSequence(AdjustedAnimationDuration))
+            using (BeginAbsoluteSequence(HitObject.StartTime - moveTo))
             {
                 TouchBody.ResizeTo(90, moveTo, Easing.InCirc);
                 TouchBody.BorderContainer.Delay(moveTo).FadeIn();
