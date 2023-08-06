@@ -108,11 +108,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             var result = HitObject.HitWindows.ResultFor(timeOffset);
 
+            // This is hit before any hit window
             if (result == HitResult.None)
                 return;
 
-            if (timeOffset < 0)
-                result = Result.Judgement.MaxResult;
+            // Hit before the early Great window
+            if (timeOffset < 0 && result is not HitResult.Great)
+                return;
 
             ApplyResult(result);
         }
