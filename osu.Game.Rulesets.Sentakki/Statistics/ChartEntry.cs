@@ -12,6 +12,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Localisation;
+using osu.Framework.Utils;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
@@ -62,12 +63,17 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
 
             bool allPerfect = hitEvents.Any() && hitEvents.All(h => h.Result == HitResult.Great);
 
+            var bg = background_color;
+
+            if (allPerfect)
+                bg = Interpolation.ValueAt(0.1, bg, accent_color, 0, 1);
+
             InternalChildren = new Drawable[]
             {
                 new Box
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Colour = background_color,
+                    Colour = bg,
                 },
                 new GridContainer
                 {
