@@ -11,7 +11,7 @@ using osu.Game.Tests.Visual;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
     [TestFixture]
-    public class TestSceneTapNote : OsuTestScene
+    public partial class TestSceneTapNote : OsuTestScene
     {
         private readonly Container content;
         protected override Container<Drawable> Content => content;
@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
             AddStep("Miss Single", () => testSingle());
             AddStep("Hit Single", () => testSingle(true));
-            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject) && (h as DrawableSentakkiHitObject).AllJudged == false));
+            AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
         }
 
         private void testSingle(bool auto = false)
@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 StartTime = Time.Current + 1000,
             };
 
-            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
+            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
             Add(new DrawableTap(circle)
             {

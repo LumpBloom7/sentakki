@@ -30,19 +30,23 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         //The patterns will generate the note lane to be used based on the current offset
         // argument list is (offset, diff)
-        private List<Func<bool, int>> patternlist => new List<Func<bool, int>>{
+        private List<Func<bool, int>> patternlist => new List<Func<bool, int>>
+        {
             //Stream pattern, lane difference determined by offset2
-            (twin)=> {
-                if(twin) return offset + 4;
-                else offset+=offset2;
+            twin =>
+            {
+                if (twin) return offset + 4;
+                else offset += offset2;
+
                 return offset;
             },
             // Back and forth, works better with longer combos
             // Lane difference determined by offset2, but will make sure offset2 is never 0.
-            (twin)=>{
+            twin =>
+            {
                 offset2 = offset2 == 0 ? 1 : offset2;
-                offset+=offset2 * (twin ? 2: 1);
-                offset2= -offset2;
+                offset += offset2 * (twin ? 2 : 1);
+                offset2 = -offset2;
 
                 return offset;
             }

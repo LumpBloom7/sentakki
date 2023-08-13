@@ -10,13 +10,13 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         protected override bool FailCondition(HealthProcessor healthProcessor, JudgementResult result)
             => result.Judgement is not IgnoreJudgement && result.Type < result.Judgement.MaxResult;
 
-        public override Type[] IncompatibleMods => new Type[5]
+        public override Type[] IncompatibleMods => new[]
         {
-                typeof(ModNoFail),
-                typeof(ModRelax),
-                typeof(ModAutoplay),
-                typeof(SentakkiModChallenge),
-                typeof(ModSuddenDeath)
+            typeof(ModNoFail),
+            typeof(ModRelax),
+            typeof(ModAutoplay),
+            typeof(SentakkiModChallenge),
+            typeof(ModSuddenDeath)
         };
     }
 }

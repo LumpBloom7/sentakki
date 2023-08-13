@@ -20,6 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         }
 
         public readonly BindableInt LaneBindable = new BindableInt();
+
         public int Lane
         {
             get => LaneBindable.Value;
@@ -31,8 +32,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             base.CreateNestedHitObjects(cancellationToken);
 
             if (Break)
+            {
                 for (int i = 0; i < 4; ++i)
-                    AddNested(new ScorePaddingObject() { StartTime = this.GetEndTime() });
+                    AddNested(new ScorePaddingObject { StartTime = this.GetEndTime() });
+
+                // Add bonus for players hitting within the critical window
+                AddNested(new ScoreBonusObject { StartTime = this.GetEndTime() });
+            }
         }
 
         public override IList<HitSampleInfo> AuxiliarySamples => CreateBreakSample();
@@ -44,7 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             return new[]
             {
-                new SentakkiHitSampleInfo("Break", SampleControlPoint.SampleVolume)
+                new SentakkiHitSampleInfo("Break", CreateHitSampleInfo().Volume)
             };
         }
     }

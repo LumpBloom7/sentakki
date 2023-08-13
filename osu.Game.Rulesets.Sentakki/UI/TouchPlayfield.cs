@@ -1,22 +1,22 @@
-using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
+using osu.Framework.Lists;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.UI;
 using osuTK;
+using Touch = osu.Game.Rulesets.Sentakki.Objects.Touch;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
     // A special playfield specifically made for TouchNotes
     // Contains extra functionality to better propogate touch input to Touch notes, and avoids some double hit weirdness
-    public class TouchPlayfield : Playfield
+    public partial class TouchPlayfield : Playfield
     {
-        private SentakkiInputManager sentakkiActionInputManager;
-        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
+        private SentakkiInputManager sentakkiActionInputManager = null!;
+        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
 
         public TouchPlayfield()
         {
@@ -25,16 +25,16 @@ namespace osu.Game.Rulesets.Sentakki.UI
             RelativeSizeAxes = Axes.Both;
         }
 
-        private DrawableSentakkiRuleset drawableSentakkiRuleset;
-        private SentakkiRulesetConfigManager sentakkiRulesetConfig;
+        [Resolved]
+        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; } = null!;
 
-        [BackgroundDependencyLoader(true)]
-        private void load(DrawableSentakkiRuleset drawableRuleset, SentakkiRulesetConfigManager sentakkiRulesetConfigManager)
+        [Resolved]
+        private SentakkiRulesetConfigManager? sentakkiRulesetConfig { get; set; }
+
+        [BackgroundDependencyLoader]
+        private void load()
         {
-            drawableSentakkiRuleset = drawableRuleset;
-            sentakkiRulesetConfig = sentakkiRulesetConfigManager;
-
-            RegisterPool<Objects.Touch, DrawableTouch>(8);
+            RegisterPool<Touch, DrawableTouch>(8);
         }
 
         protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
@@ -43,17 +43,18 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private TouchHitObjectContainer touchHitObjectContainer => (TouchHitObjectContainer)HitObjectContainer;
 
-        private List<DrawableTouch> aliveTouchNotes => touchHitObjectContainer.AliveTouchNotes;
+        private SortedList<Drawable> aliveTouchNotes => touchHitObjectContainer.AliveTouchNotes;
 
         protected override void Update()
         {
             base.Update();
 
-            if (!aliveTouchNotes.Any()) return;
+            if (aliveTouchNotes.Count <= 0) return;
 
             // Handle mouse input
             var mousePosition = SentakkiActionInputManager.CurrentState.Mouse.Position;
             bool actionPressed = false;
+
             foreach (var action in SentakkiActionInputManager.PressedActions)
             {
                 if (action < SentakkiAction.Key1)
@@ -79,7 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             foreach (DrawableTouch touch in aliveTouchNotes)
             {
-                if (hasAction && touch.ReceivePositionalInputAt(pointerPosition.Value))
+                if (hasAction && touch.ReceivePositionalInputAt(pointerPosition!.Value))
                 {
                     if (!touch.PointInteractionState[pointID])
                     {
@@ -96,23 +97,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
         }
 
         // This HOC is specially built accommodate the custom input required to handle touch (even though I think the beatmap conversion is at fault)
-        // This HOC provides a completely tangible list of objects updated every time hitobjects life changes, rather than a query to fetch all objects
-        private class TouchHitObjectContainer : HitObjectContainer
+        private partial class TouchHitObjectContainer : HitObjectContainer
         {
-            // This list is exposed to the playfield, so that it can get a list of all objects
-            // To prevent this query from being executed 11 times in a single input handling cycle
-            // This updates when notes become alive/dead, instead of letting the playfield touch handler from polling every frame
-            public List<DrawableTouch> AliveTouchNotes = new List<DrawableTouch>();
-
-            protected override bool UpdateChildrenLife()
-            {
-                if (base.UpdateChildrenLife())
-                {
-                    AliveTouchNotes = AliveObjects.OfType<DrawableTouch>().ToList();
-                    return true;
-                }
-                return false;
-            }
+            // This is exposed to allow TouchPlayfield to iterate through touch objects without LINQ/ToList related allocations.
+            // We pool DrawableTouch objects, and no other object shares this container, so it should be safe
+            public SortedList<Drawable> AliveTouchNotes => (SortedList<Drawable>)AliveInternalChildren;
         }
     }
 }

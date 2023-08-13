@@ -5,11 +5,11 @@ using osu.Game.Tests.Visual;
 namespace osu.Game.Rulesets.Sentakki.Tests.UI
 {
     [TestFixture]
-    public class TestSceneHitExplosion : OsuTestScene
+    public partial class TestSceneHitExplosion : OsuTestScene
     {
-        private readonly HitExplosion explosion;
         public TestSceneHitExplosion()
         {
+            HitExplosion explosion;
             Add(explosion = new HitExplosion());
             AddStep("Explode", () =>
             {

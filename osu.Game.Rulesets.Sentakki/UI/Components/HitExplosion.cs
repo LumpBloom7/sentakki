@@ -11,7 +11,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components
 {
-    public class HitExplosion : PoolableDrawable
+    public partial class HitExplosion : PoolableDrawable
     {
         public override bool RemoveWhenNotAlive => true;
 
@@ -27,15 +27,18 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             Size = new Vector2(default_explosion_size);
             Colour = Color4.Cyan;
             Alpha = 0;
-            InternalChildren = new Drawable[]{
-                circle = new CircularContainer{
+            InternalChildren = new Drawable[]
+            {
+                circle = new CircularContainer
+                {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both,
                     Masking = true,
                     BorderThickness = 45,
                     BorderColour = Color4.White,
-                    Child = new Box{
+                    Child = new Box
+                    {
                         Alpha = 0,
                         RelativeSizeAxes = Axes.Both,
                         AlwaysPresent = true,
@@ -43,19 +46,20 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 },
             };
 
-            borderRatio.BindValueChanged(_ => setBorderThiccness(), true);
+            borderRatio.BindValueChanged(setBorderThiccness, true);
         }
 
-        private void setBorderThiccness()
+        private void setBorderThiccness(ValueChangedEvent<float> v)
         {
-            circle.BorderThickness = Size.X / 2 * borderRatio.Value;
+            circle.BorderThickness = Size.X / 2 * v.NewValue;
         }
 
         private readonly BindableFloat borderRatio = new BindableFloat(1);
 
-        public void Apply(DrawableSentakkiHitObject drawableSentakkiHitObject)
+        public HitExplosion Apply(DrawableSentakkiHitObject drawableSentakkiHitObject)
         {
             Colour = drawableSentakkiHitObject.AccentColour.Value;
+
             switch (drawableSentakkiHitObject.HitObject)
             {
                 case SentakkiLanedHitObject lanedObject:
@@ -74,6 +78,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                     Size = new Vector2(touch_hold_explosion_size);
                     break;
             }
+
+            return this;
         }
 
         protected override void PrepareForUse()

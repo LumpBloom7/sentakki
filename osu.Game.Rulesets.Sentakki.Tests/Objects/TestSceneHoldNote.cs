@@ -11,7 +11,7 @@ using osu.Game.Tests.Visual;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
     [TestFixture]
-    public class TestSceneHoldNote : OsuTestScene
+    public partial class TestSceneHoldNote : OsuTestScene
     {
         private readonly Container content;
         protected override Container<Drawable> Content => content;
@@ -34,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             AddStep("Hit Long", () => testSingle(1000, true));
             AddStep("Miss Very Long", () => testSingle(3000));
             AddStep("Hit Very Long", () => testSingle(3000, true));
-            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject) && (h as DrawableSentakkiHitObject).AllJudged == false));
+            AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
         }
 
         private void testSingle(double duration, bool auto = false)
@@ -45,7 +45,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 EndTime = Time.Current + 1000 + duration,
             };
 
-            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
+            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
             Add(new DrawableHold(circle)
             {

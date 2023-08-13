@@ -5,7 +5,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 {
     public class SentakkiModSuddenDeath : ModSuddenDeath
     {
-        public override Type[] IncompatibleMods => new Type[5]
+        public override Type[] IncompatibleMods => new[]
         {
             typeof(ModNoFail),
             typeof(ModRelax),

@@ -16,20 +16,20 @@ using osuTK.Graphics;
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     // New Judgement type to completely avoid the problem of legacy skins, they aren't appropriate for custom rulesets that use varied HitResults
-    public class DrawableSentakkiJudgement : PoolableDrawable
+    public partial class DrawableSentakkiJudgement : PoolableDrawable
     {
         public override bool RemoveCompletedTransforms => false;
 
-        private Container judgementBody;
-        private SentakkiJudgementPiece judgementPiece;
-        private OsuSpriteText timingPiece;
+        private Container judgementBody = null!;
+        private SentakkiJudgementPiece judgementPiece = null!;
+        private OsuSpriteText timingPiece = null!;
 
         private HitResult result = HitResult.Good;
 
         private readonly BindableBool detailedJudgements = new BindableBool();
 
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
+        [BackgroundDependencyLoader]
+        private void load(SentakkiRulesetConfigManager? sentakkiConfigs)
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.DetailedJudgements, detailedJudgements);
 
@@ -41,8 +41,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Scale = new Vector2(0.9f),
-                    Children = new Drawable[]{
-                        timingPiece = new OsuSpriteText{
+                    Children = new Drawable[]
+                    {
+                        timingPiece = new OsuSpriteText
+                        {
                             Y = -15,
                             Origin = Anchor.Centre,
                             Font = OsuFont.Torus.With(size: 20, weight: FontWeight.Bold),
@@ -55,7 +57,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             );
         }
 
-        public void Apply(JudgementResult result, DrawableHitObject hitObject)
+        public DrawableSentakkiJudgement Apply(JudgementResult result, DrawableHitObject hitObject)
         {
             this.result = result.Type;
             judgementPiece.JudgementText.Text = result.Type.GetDisplayNameForSentakkiResult().ToUpperInvariant();
@@ -68,6 +70,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             else
             {
                 timingPiece.Alpha = 1;
+
                 if (result.TimeOffset >= 16)
                 {
                     timingPiece.Text = "LATE";
@@ -84,6 +87,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     timingPiece.Colour = Color4.Orange;
                 }
             }
+
             LifetimeStart = result.TimeAbsolute;
 
             switch (hitObject)
@@ -92,11 +96,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Position = SentakkiExtensions.GetPositionAlongLane(240, laned.HitObject.Lane);
                     Rotation = laned.HitObject.Lane.GetRotationForLane();
                     break;
+
                 default:
                     Position = hitObject.Position;
                     Rotation = 0;
                     break;
             }
+
+            return this;
         }
 
         protected override void PrepareForUse()
@@ -118,9 +125,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             this.Delay(350).Expire();
         }
 
-        private class SentakkiJudgementPiece : DefaultJudgementPiece
+        private partial class SentakkiJudgementPiece : DefaultJudgementPiece
         {
-            public SentakkiJudgementPiece(HitResult result) : base(result)
+            public SentakkiJudgementPiece(HitResult result)
+                : base(result)
             {
             }
 

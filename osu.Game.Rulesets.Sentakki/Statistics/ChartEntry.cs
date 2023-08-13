@@ -20,7 +20,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Statistics
 {
-    internal class ChartEntry : CompositeDrawable
+    internal partial class ChartEntry : CompositeDrawable
     {
         private static readonly Color4 accent_color = Color4Extensions.FromHex("#66FFCC");
 
@@ -32,9 +32,9 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
 
         private readonly IReadOnlyList<HitEvent> hitEvents;
 
-        private RollingCounter<int> noteCounter;
+        private RollingCounter<int> noteCounter = null!;
 
-        private Container ratioBoxes;
+        private Container ratioBoxes = null!;
 
         public ChartEntry(string name, IReadOnlyList<HitEvent> hitEvents)
         {
@@ -148,7 +148,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
             });
         }
 
-        public class TotalNoteCounter : RollingCounter<int>
+        public partial class TotalNoteCounter : RollingCounter<int>
         {
             protected override double RollingDuration => bar_fill_duration;
 
@@ -164,23 +164,20 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
             };
         }
 
-        private class RatioBox : Sprite, ITexturedShaderDrawable
+        private partial class RatioBox : Sprite, ITexturedShaderDrawable
         {
-            public new IShader TextureShader { get; private set; }
-
-            public new IShader RoundedTextureShader { get; private set; }
+            public new IShader TextureShader { get; private set; } = null!;
 
             protected override DrawNode CreateDrawNode() => new RatioBoxDrawNode(this);
 
             [BackgroundDependencyLoader]
             private void load(ShaderManager shaders, IRenderer renderer)
             {
-                Texture = renderer.WhitePixel.Crop(new Framework.Graphics.Primitives.RectangleF(0, 0, 1f, 1f), Axes.None, WrapMode.Repeat, WrapMode.Repeat).\;
+                Texture = renderer.WhitePixel.Crop(new Framework.Graphics.Primitives.RectangleF(0, 0, 1f, 1f), Axes.None, WrapMode.Repeat, WrapMode.Repeat);
                 TextureRelativeSizeAxes = Axes.None;
                 TextureRectangle = new Framework.Graphics.Primitives.RectangleF(0, 0, 50, 50);
 
                 TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "DiagonalLinePattern");
-                RoundedTextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "DiagonalLinePatternRounded");
             }
 
             private class RatioBoxDrawNode : SpriteDrawNode

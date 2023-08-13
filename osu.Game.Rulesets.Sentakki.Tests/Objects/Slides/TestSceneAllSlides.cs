@@ -16,22 +16,27 @@ using osuTK.Graphics;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
     [TestFixture]
-    public class TestSceneAllSlides : OsuTestScene
+    public partial class TestSceneAllSlides : OsuTestScene
     {
         protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 
         private int id;
-        private bool mirrored;
+
         private readonly SlideVisual slide;
         private readonly Container nodes;
 
         [Cached]
-        private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
+        private readonly DrawablePool<SlideChevron> chevronPool;
+
+        [Cached]
+        private readonly SlideFanChevrons fanChevrons;
 
         public TestSceneAllSlides()
         {
-            Add(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(62));
-            Add(new SentakkiRing()
+            Add(chevronPool = new DrawablePool<SlideChevron>(62));
+            Add(fanChevrons = new SlideFanChevrons());
+
+            Add(new SentakkiRing
             {
                 RelativeSizeAxes = Axes.None,
                 Size = new Vector2(SentakkiPlayfield.RINGSIZE)
@@ -44,20 +49,14 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 RefreshSlide();
             });
 
-            AddToggleStep("Mirrored", b =>
-            {
-                mirrored = b;
-                RefreshSlide();
-            });
-
-            Add(nodes = new Container()
+            Add(nodes = new Container
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
             });
         }
 
-        protected SentakkiSlidePath CreatePattern() => SlidePaths.GetSlidePath(id, mirrored);
+        protected SentakkiSlidePath CreatePattern() => SlidePaths.CreateSlidePath(SlidePaths.VALIDPATHS[id].parameters);
 
         protected override void LoadComplete()
         {
@@ -69,6 +68,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         {
             slide.Path = CreatePattern();
             nodes.Clear();
+
             foreach (var node in slide.Path.SlideSegments.SelectMany(s => s.ControlPoints))
             {
                 nodes.Add(new CircularContainer

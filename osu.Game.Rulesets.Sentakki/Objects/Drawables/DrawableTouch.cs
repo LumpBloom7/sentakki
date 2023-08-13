@@ -11,7 +11,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableTouch : DrawableSentakkiHitObject
+    public partial class DrawableTouch : DrawableSentakkiHitObject
     {
         protected new Touch HitObject => (Touch)base.HitObject;
 
@@ -24,24 +24,31 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // Similar to IsHovered for mouse, this tracks whether a pointer (touch or mouse) is interacting with this drawable
         // Interaction == (IsHovered && ActionPressed) || (OnTouch && TouchPointerInBounds)
         public bool[] PointInteractionState = new bool[11];
-        public TouchBody TouchBody;
+        public TouchBody TouchBody = null!;
 
-        private SentakkiInputManager sentakkiActionInputManager;
-        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
+        private SentakkiInputManager sentakkiActionInputManager = null!;
+        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
 
-        public DrawableTouch() : this(null) { }
-        public DrawableTouch(Touch hitObject)
-            : base(hitObject) { }
+        public DrawableTouch()
+            : this(null)
+        {
+        }
 
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
+        public DrawableTouch(Touch? hitObject)
+            : base(hitObject)
+        {
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(SentakkiRulesetConfigManager? sentakkiConfigs)
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
 
             Size = new Vector2(105);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
-            AddRangeInternal(new Drawable[]{
+            AddRangeInternal(new Drawable[]
+            {
                 TouchBody = new TouchBody(),
             });
 
@@ -67,17 +74,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 PointInteractionState[i] = false;
         }
 
-        private BindableInt trackedKeys = new BindableInt(0);
+        private readonly BindableInt trackedKeys = new BindableInt();
 
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            double FadeIn = AdjustedAnimationDuration / 2;
+            double fadeIn = AdjustedAnimationDuration / 2;
             double moveTo = HitObject.HitWindows.WindowFor(HitResult.Ok);
 
-            TouchBody.FadeIn(FadeIn);
+            TouchBody.FadeIn(fadeIn);
 
-            using (BeginDelayedSequence(AdjustedAnimationDuration, true))
+            using (BeginDelayedSequence(AdjustedAnimationDuration))
             {
                 TouchBody.ResizeTo(90, moveTo, Easing.InCirc);
                 TouchBody.BorderContainer.Delay(moveTo).FadeIn();
@@ -125,8 +132,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 case ArmedState.Miss:
                     this.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
-                       .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
-                       .FadeOut(time_fade_miss);
+                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
+                        .FadeOut(time_fade_miss);
                     break;
             }
         }

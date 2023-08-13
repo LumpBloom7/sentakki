@@ -1,4 +1,6 @@
 ﻿namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public class Tap : SentakkiLanedHitObject { }
+    public class Tap : SentakkiLanedHitObject
+    {
+    }
 }

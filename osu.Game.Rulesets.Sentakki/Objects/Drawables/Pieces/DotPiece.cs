@@ -8,9 +8,12 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
-    public class DotPiece : CompositeDrawable
+    public partial class DotPiece : CompositeDrawable
     {
-        public DotPiece(float outlineThickness = 2, bool squared = false) : this(new Vector2(SentakkiPlayfield.DOTSIZE), outlineThickness, squared) { }
+        public DotPiece(float outlineThickness = 2, bool squared = false)
+            : this(new Vector2(SentakkiPlayfield.DOTSIZE), outlineThickness, squared)
+        {
+        }
 
         public DotPiece(Vector2 size, float outlineThickness = 2, bool squared = false)
         {
@@ -21,8 +24,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Masking = true;
             CornerExponent = squared ? 2.5f : 2f;
             CornerRadius = Math.Min(size.X, size.Y) / (squared ? 4 : 2);
-            InternalChildren = new Drawable[]{
-                new Box{
+            InternalChildren = new Drawable[]
+            {
+                new Box
+                {
                     Colour = Color4.Gray,
                     RelativeSizeAxes = Axes.Both,
                 },

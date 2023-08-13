@@ -7,19 +7,24 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlide : DrawableSentakkiHitObject
+    public partial class DrawableSlide : DrawableSentakkiHitObject
     {
         public override bool DisplayResult => false;
 
-        public Container<DrawableSlideBody> SlideBodies;
-        public Container<DrawableSlideTap> SlideTaps;
+        public Container<DrawableSlideBody> SlideBodies = null!;
+        public Container<DrawableSlideTap> SlideTaps = null!;
 
-        public DrawableSlide() : this(null) { }
+        public DrawableSlide()
+            : this(null)
+        {
+        }
 
-        public DrawableSlide(SentakkiHitObject hitObject = null)
-            : base(hitObject) { }
+        public DrawableSlide(SentakkiHitObject? hitObject = null)
+            : base(hitObject)
+        {
+        }
 
-        [BackgroundDependencyLoader(true)]
+        [BackgroundDependencyLoader]
         private void load()
         {
             Size = Vector2.Zero;
@@ -27,7 +32,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Anchor = Anchor.Centre;
             AddRangeInternal(new Drawable[]
             {
-                SlideBodies = new Container<DrawableSlideBody>{
+                SlideBodies = new Container<DrawableSlideBody>
+                {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                 },
@@ -41,12 +47,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            bool hasResultAndFinishedTransforms(DrawableHitObject d) => d.Result.HasResult && Time.Current >= d.LatestTransformEndTime;
-
             // We also make sure all transforms have finished to avoid jank
             for (int i = 0; i < NestedHitObjects.Count; i++)
-                if (!hasResultAndFinishedTransforms(NestedHitObjects[i]))
+            {
+                var nested = NestedHitObjects[i];
+                if (!nested.Result.HasResult || Time.Current < nested.LatestTransformEndTime)
                     return;
+            }
 
             ApplyResult(Result.Judgement.MaxResult);
         }
@@ -60,13 +67,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     {
                         AutoBindable = { BindTarget = AutoBindable },
                     };
-                case SlideFan slideFan:
-                    return new DrawableSlideFan(slideFan)
-                    {
-                        AutoBindable = { BindTarget = AutoBindable },
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                    };
+
                 case SlideBody slideBody:
                     return new DrawableSlideBody(slideBody)
                     {
@@ -86,10 +87,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 case DrawableSlideBody body:
                     SlideBodies.Add(body);
                     break;
+
                 case DrawableSlideTap tap:
                     SlideTaps.Child = tap;
                     break;
             }
+
             base.AddNestedHitObject(hitObject);
         }
 

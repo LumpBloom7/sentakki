@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -6,6 +7,7 @@ using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Rendering.Vertices;
 using osu.Framework.Graphics.Shaders;
+using osu.Framework.Graphics.Shaders.Types;
 using osu.Framework.Localisation;
 using osu.Game.Graphics.OpenGL.Vertices;
 using osu.Game.Rulesets.Mods;
@@ -20,7 +22,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {
-    public class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset<SentakkiHitObject>
+    public partial class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset<SentakkiHitObject>
     {
         public override LocalisableString Description => SentakkiModHiddenStrings.ModDescription;
 
@@ -49,6 +51,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         {
             double preemptTime;
             double fadeOutTime;
+
             switch (hitObject)
             {
                 case DrawableTouch t:
@@ -73,7 +76,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             }
         }
 
-        private class PlayfieldMaskingContainer : CircularContainer
+        private partial class PlayfieldMaskingContainer : CircularContainer
         {
             private readonly PlayfieldMask cover;
 
@@ -138,25 +141,25 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             }
 
             // This buffered container maintains a SSDQ unaffected by rotation, so that the backing texture isn't being reallocated due to resizes
-            private class FixedSizeBufferedContainer : BufferedContainer
+            private partial class FixedSizeBufferedContainer : BufferedContainer
             {
                 [Resolved]
-                private SentakkiPlayfield sentakkiPlayfield { get; set; }
+                private SentakkiPlayfield sentakkiPlayfield { get; set; } = null!;
 
                 protected override Quad ComputeScreenSpaceDrawQuad()
                 {
-                    var SSDQDrawinfo = DrawInfo;
+                    var ssdqDrawinfo = DrawInfo;
 
                     // We apply a counter rotation so that the SSDQ retains the non-rotated Quad
-                    SSDQDrawinfo.ApplyTransform(AnchorPosition, Vector2.One, -sentakkiPlayfield.Rotation, Vector2.Zero, OriginPosition);
+                    ssdqDrawinfo.ApplyTransform(AnchorPosition, Vector2.One, -sentakkiPlayfield.Rotation, Vector2.Zero, OriginPosition);
 
-                    return Quad.FromRectangle(DrawRectangle) * SSDQDrawinfo.Matrix;
+                    return Quad.FromRectangle(DrawRectangle) * ssdqDrawinfo.Matrix;
                 }
             }
 
-            private class PlayfieldMask : Drawable
+            private partial class PlayfieldMask : Drawable
             {
-                private IShader shader;
+                private IShader shader = null!;
 
                 protected override DrawNode CreateDrawNode() => new PlayfieldMaskDrawNode(this);
 
@@ -188,13 +191,15 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 {
                     protected new PlayfieldMask Source => (PlayfieldMask)base.Source;
 
-                    private IShader shader;
+                    private IShader shader = null!;
                     private Quad screenSpaceDrawQuad;
+
+                    private IUniformBuffer<MaskParameters>? maskParameters;
 
                     private Vector2 maskPosition;
                     private Vector2 maskRadius;
 
-                    private IVertexBatch<PositionAndColourVertex> quadBatch;
+                    private IVertexBatch<PositionAndColourVertex> quadBatch = null!;
                     private Action<TexturedVertex2D> addAction;
 
                     public PlayfieldMaskDrawNode(PlayfieldMask source)
@@ -221,6 +226,14 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                     {
                         base.Draw(renderer);
 
+                        maskParameters = renderer.CreateUniformBuffer<MaskParameters>();
+
+                        maskParameters.Data = maskParameters.Data with
+                        {
+                            MaskPosition = maskPosition,
+                            MaskRadius = maskRadius
+                        };
+
                         if (quadBatch == null)
                         {
                             quadBatch = renderer.CreateQuadBatch<PositionAndColourVertex>(1, 1);
@@ -232,9 +245,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                         }
 
                         shader.Bind();
-
-                        shader.GetUniform<Vector2>("maskPosition").UpdateValue(ref maskPosition);
-                        shader.GetUniform<Vector2>("maskRadius").UpdateValue(ref maskRadius);
+                        shader.BindUniformBlock("m_maskParameters", maskParameters);
 
                         renderer.DrawQuad(renderer.WhitePixel, screenSpaceDrawQuad, DrawColourInfo.Colour, vertexAction: addAction);
 
@@ -244,7 +255,16 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                     protected override void Dispose(bool isDisposing)
                     {
                         base.Dispose(isDisposing);
+                        maskParameters?.Dispose();
                         quadBatch?.Dispose();
+                    }
+
+
+                    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+                    private record struct MaskParameters
+                    {
+                        public UniformVector2 MaskPosition;
+                        public UniformVector2 MaskRadius;
                     }
                 }
             }

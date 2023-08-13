@@ -20,7 +20,7 @@ using osuTK.Graphics;
 namespace osu.Game.Rulesets.Sentakki.UI
 {
     [Cached]
-    public class SentakkiPlayfield : Playfield
+    public partial class SentakkiPlayfield : Playfield
     {
         private readonly Container<DrawableSentakkiJudgement> judgementLayer;
 
@@ -78,7 +78,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 LanedPlayfield = new LanedPlayfield(),
                 HitObjectContainer, // This only contains TouchHolds, which needs to be above others types
                 touchPlayfield = new TouchPlayfield(), // This only contains Touch, which needs a custom playfield to handle their input
-                explosionLayer = new Container<HitExplosion>() { RelativeSizeAxes = Axes.Both },
+                explosionLayer = new Container<HitExplosion> { RelativeSizeAxes = Axes.Both },
                 judgementLayer = new Container<DrawableSentakkiJudgement>
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -90,17 +90,17 @@ namespace osu.Game.Rulesets.Sentakki.UI
         }
 
         [Resolved]
-        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; }
+        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; } = null!;
 
-        [Resolved(canBeNull: true)]
-        private SentakkiRulesetConfigManager sentakkiRulesetConfig { get; set; }
+        [Resolved]
+        private SentakkiRulesetConfigManager? sentakkiRulesetConfig { get; set; }
 
-        private IBindable<Skin> skin;
-        private Bindable<ColorOption> ringColor = new Bindable<ColorOption>();
+        private IBindable<Skin> skin = null!;
+        private readonly Bindable<ColorOption> ringColor = new Bindable<ColorOption>();
 
-        private IBindable<StarDifficulty?> beatmapDifficulty;
+        private IBindable<StarDifficulty?>? beatmapDifficulty;
 
-        [BackgroundDependencyLoader(true)]
+        [BackgroundDependencyLoader]
         private void load(SkinManager skinManager, IBeatmap beatmap, BeatmapDifficultyCache difficultyCache)
         {
             RegisterPool<TouchHold, DrawableTouchHold>(2);
@@ -128,12 +128,14 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             switch (h)
             {
-                case SentakkiLanedHitObject _:
+                case SentakkiLanedHitObject:
                     LanedPlayfield.Add(h);
                     break;
-                case Touch _:
+
+                case Touch:
                     touchPlayfield.Add(h);
                     break;
+
                 default:
                     base.Add(h);
                     break;
@@ -145,7 +147,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             if (!judgedObject.DisplayResult || !DisplayJudgements.Value || judgedObject is not DrawableSentakkiHitObject sentakkiHitObject)
                 return;
 
-            judgementLayer.Add(judgementPool.Get(j => j.Apply(result, judgedObject)));
+            judgementLayer.Add(judgementPool.Get().Apply(result, judgedObject));
 
             if (!result.IsHit) return;
 
@@ -154,23 +156,25 @@ namespace osu.Game.Rulesets.Sentakki.UI
             if (judgedObject.HitObject.Kiai)
                 ring.KiaiBeat();
 
-            var explosion = explosionPool.Get(e => e.Apply(sentakkiHitObject));
+            var explosion = explosionPool.Get().Apply(sentakkiHitObject);
             explosionLayer.Add(explosion);
         }
 
         [Resolved]
-        private OsuColour colours { get; set; }
+        private OsuColour colours { get; set; } = null!;
 
         private void changePlayfieldAccent()
         {
             switch (ringColor.Value)
             {
                 case ColorOption.Difficulty:
-                    AccentContainer.FadeColour(colours.ForDifficultyRating(beatmapDifficulty?.Value.Value.DifficultyRating ?? DifficultyRating.Normal, true), 200);
+                    AccentContainer.FadeColour(colours.ForStarDifficulty(beatmapDifficulty?.Value?.Stars ?? 0), 200);
                     break;
+
                 case ColorOption.Skin:
                     AccentContainer.FadeColour(skin.Value.GetConfig<GlobalSkinColours, Color4>(GlobalSkinColours.MenuGlow)?.Value ?? Color4.White, 200);
                     break;
+
                 default:
                     AccentContainer.FadeColour(Color4.White, 200);
                     break;

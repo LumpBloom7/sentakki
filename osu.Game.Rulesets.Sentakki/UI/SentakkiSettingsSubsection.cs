@@ -8,7 +8,7 @@ using osu.Game.Rulesets.Sentakki.Localisation;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class SentakkiSettingsSubsection : RulesetSettingsSubsection
+    public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
     {
         private readonly Ruleset ruleset;
 
@@ -42,7 +42,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     LabelText = SentakkiSettingsSubsectionStrings.SnakingInSlides,
                     Current = config.GetBindable<bool>(SentakkiRulesetSettings.SnakingSlideBody)
                 },
-                new SettingsCheckbox{
+                new SettingsCheckbox
+                {
                     LabelText = SentakkiSettingsSubsectionStrings.ShowDetailedJudgements,
                     Current = config.GetBindable<bool>(SentakkiRulesetSettings.DetailedJudgements)
                 },
@@ -73,7 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     LabelText = SentakkiSettingsSubsectionStrings.LaneInputMode,
                     Current = config.GetBindable<LaneInputMode>(SentakkiRulesetSettings.LaneInputMode)
                 },
-                new SettingsSlider<double, OsuSliderBar<double>>
+                new SettingsSlider<double, RoundedSliderBar<double>>
                 {
                     LabelText = SentakkiSettingsSubsectionStrings.BreakSampleVolume,
                     Current = config.GetBindable<double>(SentakkiRulesetSettings.BreakSampleVolume),
@@ -83,7 +84,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             };
         }
 
-        private class NoteTimeSlider : OsuSliderBar<double>
+        private partial class NoteTimeSlider : RoundedSliderBar<double>
         {
             private string speedRating()
             {
@@ -94,10 +95,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
                 return speed.ToString();
             }
+
             public override LocalisableString TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
         }
 
-        private class TouchTimeSlider : OsuSliderBar<double>
+        private partial class TouchTimeSlider : RoundedSliderBar<double>
         {
             private string speedRating()
             {
@@ -108,6 +110,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
                 return speed.ToString();
             }
+
             public override LocalisableString TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
         }
     }

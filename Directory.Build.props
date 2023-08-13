@@ -1,9 +1,10 @@
 <Project>
     <PropertyGroup Label="C#">
-        <LangVersion>9.0</LangVersion>
+        <LangVersion>10.0</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <Nullable>enable</Nullable>
 
         <Authors>Derrick Timmermans</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -15,7 +16,7 @@
         <EmbeddedResource Include="Resources\**\*"/>
     </ItemGroup>
     <ItemGroup>
-        <EditorConfgFiles Include=".editorconfig" />
-        <EditorConfgFiles Include=".globalconfig" />
+        <EditorConfgFiles Include=".editorconfig"/>
+        <EditorConfgFiles Include=".globalconfig"/>
     </ItemGroup>
 </Project>

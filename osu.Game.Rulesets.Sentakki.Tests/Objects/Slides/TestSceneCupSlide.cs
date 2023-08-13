@@ -2,19 +2,8 @@ using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
-    public class TestSceneCupSlide : TestSceneSlide
+    public partial class TestSceneCupSlide : TestSceneSlide
     {
-        private bool mirrored;
-
-        public TestSceneCupSlide()
-        {
-            AddToggleStep("Mirrored", b =>
-            {
-                mirrored = b;
-                RefreshSlide();
-            });
-        }
-
-        protected override SentakkiSlidePath CreatePattern() => SlidePaths.GenerateCupPattern(EndPath, mirrored);
+        protected override SlidePaths.PathShapes PathShape => SlidePaths.PathShapes.Cup;
     }
 }

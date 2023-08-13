@@ -30,6 +30,7 @@ namespace osu.Game.Rulesets.Sentakki.Localisation
         /// "Ring colour"
         /// </summary>
         public static LocalisableString RingColor => new TranslatableString(getKey(@"ring_color"), @"Ring colour");
+
         public static LocalisableString RingColorDefault => new TranslatableString(getKey(@"ring_color_default"), @"Default");
         public static LocalisableString RingColorDifficulty => new TranslatableString(getKey(@"ring_color_difficulty"), @"Difficulty-based colour");
         public static LocalisableString RingColorSkin => new TranslatableString(getKey(@"ring_color_skin"), @"Skin");
@@ -53,6 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.Localisation
         /// "Lane input mode (Doesn't apply to touch)"
         /// </summary>
         public static LocalisableString LaneInputMode => new TranslatableString(getKey(@"lane_input_mode"), @"Lane input mode (Doesn't apply to touch)");
+
         public static LocalisableString LaneInputModeButton => new TranslatableString(getKey(@"lane_input_mode_button"), @"Button");
         public static LocalisableString LaneInputModeSensor => new TranslatableString(getKey(@"lane_input_mode_sensor"), @"Sensor");
 

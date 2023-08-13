@@ -8,9 +8,10 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
 {
-    public class TouchHoldCentrePiece : CompositeDrawable
+    public partial class TouchHoldCentrePiece : CompositeDrawable
     {
-        private OsuColour colours = new OsuColour();
+        private readonly OsuColour colours = new OsuColour();
+
         public TouchHoldCentrePiece()
         {
             Origin = Anchor.Centre;
@@ -25,15 +26,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                 Colour = Color4.Black,
                 Radius = 10f,
             };
-            InternalChildren = new Drawable[]{
-                new Container {
+            InternalChildren = new Drawable[]
+            {
+                new Container
+                {
                     Origin = Anchor.Centre,
                     Anchor = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both,
                     Size = new Vector2(2),
                     Rotation = -45f,
-                    Children = new Drawable[]{
-                        new CircularProgress{
+                    Children = new Drawable[]
+                    {
+                        new CircularProgress
+                        {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             InnerRadius = 1,
@@ -42,7 +47,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             Current = { Value = 1 },
                             Colour = colours.Blue
                         },
-                        new CircularProgress{
+                        new CircularProgress
+                        {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             InnerRadius = 1,
@@ -51,7 +57,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             Current = { Value = .75 },
                             Colour = colours.Green
                         },
-                        new CircularProgress{
+                        new CircularProgress
+                        {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             InnerRadius = 1,
@@ -60,7 +67,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             Current = { Value = .5 },
                             Colour = colours.Yellow,
                         },
-                        new CircularProgress{
+                        new CircularProgress
+                        {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             InnerRadius = 1,

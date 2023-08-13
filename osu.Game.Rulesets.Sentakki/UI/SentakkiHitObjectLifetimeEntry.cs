@@ -10,7 +10,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
     {
         protected override double InitialLifetimeOffset => initialLifetimeOffsetFor(HitObject);
 
-        private DrawableSentakkiRuleset drawableRuleset;
+        private readonly DrawableSentakkiRuleset drawableRuleset;
 
         public double GameplaySpeed => drawableRuleset?.GameplaySpeed ?? 1;
 
@@ -18,9 +18,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         protected double AdjustedAnimationDuration => AnimationDurationBindable.Value * GameplaySpeed;
 
-        private SentakkiRulesetConfigManager sentakkiConfigs;
+        private readonly SentakkiRulesetConfigManager? sentakkiConfigs;
 
-        public SentakkiHitObjectLifetimeEntry(HitObject hitObject, SentakkiRulesetConfigManager configManager, DrawableSentakkiRuleset senRuleset) : base(hitObject)
+        public SentakkiHitObjectLifetimeEntry(HitObject hitObject, SentakkiRulesetConfigManager? configManager, DrawableSentakkiRuleset senRuleset)
+            : base(hitObject)
         {
             sentakkiConfigs = configManager;
             drawableRuleset = senRuleset;
@@ -32,11 +33,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             switch (HitObject)
             {
-                case SentakkiLanedHitObject _:
+                case SentakkiLanedHitObject:
                     sentakkiConfigs?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDurationBindable);
                     break;
-                case Touch _:
-                case TouchHold _:
+
+                case Touch:
+                case TouchHold:
                     sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDurationBindable);
                     break;
             }
@@ -46,8 +48,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             switch (hitObject)
             {
-                case Touch _:
+                case Touch:
                     return AdjustedAnimationDuration + HitObject.HitWindows.WindowFor(HitResult.Ok);
+
                 default:
                     return AdjustedAnimationDuration;
             }

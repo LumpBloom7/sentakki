@@ -18,15 +18,16 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class SentakkiResumeOverlay : ResumeOverlay
+    public partial class SentakkiResumeOverlay : ResumeOverlay
     {
         [Resolved]
-        private IBindable<WorkingBeatmap> beatmap { get; set; }
+        private IBindable<WorkingBeatmap> beatmap { get; set; } = null!;
 
-        [Resolved(canBeNull: true)]
-        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; }
+        [Resolved]
+        private DrawableSentakkiRuleset? drawableSentakkiRuleset { get; set; }
 
-        private readonly string[] supporter_list = new string[]{
+        private readonly string[] supporterList = new[]
+        {
             "Ayato_K",
             "Bosch",
             "Dubita",
@@ -44,22 +45,22 @@ namespace osu.Game.Rulesets.Sentakki.UI
         // We don't want the default message
         protected override LocalisableString Message => "";
 
-        private OsuSpriteText messageText;
+        private OsuSpriteText messageText = null!;
 
         private double beatlength;
 
         private double remainingTime = 3500;
 
-        private Bindable<int> beatsLeft = new Bindable<int>(4);
+        private readonly Bindable<int> beatsLeft = new Bindable<int>(4);
         private int barLength;
 
-        private OsuSpriteText supporterText;
+        private OsuSpriteText supporterText = null!;
 
-        private SkinnableSound countSound;
+        private SkinnableSound countSound = null!;
 
-        private SentakkiCursorContainer localCursorContainer;
+        private SentakkiCursorContainer? localCursorContainer;
 
-        public override CursorContainer LocalCursor => State.Value == Visibility.Visible ? localCursorContainer : null;
+        public override CursorContainer? LocalCursor => State.Value == Visibility.Visible ? localCursorContainer : null;
 
         [BackgroundDependencyLoader]
         private void load(OsuColour colours)
@@ -138,8 +139,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private string getRandomSupporter()
         {
-            string tmp = supporter_list[currentSupporterIndex++];
-            if (currentSupporterIndex >= supporter_list.Length) currentSupporterIndex = 0;
+            string tmp = supporterList[currentSupporterIndex++];
+            if (currentSupporterIndex >= supporterList.Length) currentSupporterIndex = 0;
 
             return tmp;
         }

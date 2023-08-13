@@ -38,12 +38,13 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki
 {
-    public class SentakkiRuleset : Ruleset
+    public partial class SentakkiRuleset : Ruleset
     {
         public override string RulesetAPIVersionSupported => CURRENT_RULESET_API_VERSION;
 
         private static readonly Lazy<bool> is_development_build
             = new Lazy<bool>(() => typeof(SentakkiRuleset).Assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled));
+
         public static bool IsDevelopmentBuild => is_development_build.Value;
 
         public override string Description => IsDevelopmentBuild ? "sentakki (Dev build)" : "sentakki";
@@ -52,7 +53,7 @@ namespace osu.Game.Rulesets.Sentakki
 
         public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor(this);
 
-        public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod> mods) =>
+        public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod>? mods) =>
             new DrawableSentakkiRuleset(this, beatmap, mods);
 
         public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) =>
@@ -84,7 +85,7 @@ namespace osu.Game.Rulesets.Sentakki
                     {
                         new SentakkiModHardRock(),
                         new MultiMod(new SentakkiModSuddenDeath(), new SentakkiModPerfect()),
-                        new SentakkiModChallenge(),
+                        new MultiMod(new SentakkiModChallenge(), new SentakkiModAccuracyChallenge()),
                         new MultiMod(new SentakkiModDoubleTime(), new SentakkiModNightcore()),
                         new SentakkiModHidden(),
                     };
@@ -97,7 +98,8 @@ namespace osu.Game.Rulesets.Sentakki
                     };
 
                 case ModType.Conversion:
-                    return new Mod[]{
+                    return new Mod[]
+                    {
                         new SentakkiModExperimental(),
                         new SentakkiModClassic(),
                         new SentakkiModMirror(),
@@ -119,7 +121,7 @@ namespace osu.Game.Rulesets.Sentakki
 
         public override RulesetSettingsSubsection CreateSettings() => new SentakkiSettingsSubsection(this);
 
-        public override IRulesetConfigManager CreateConfig(SettingsStore settings) => new SentakkiRulesetConfigManager(settings, RulesetInfo);
+        public override IRulesetConfigManager CreateConfig(SettingsStore? settings) => new SentakkiRulesetConfigManager(settings, RulesetInfo);
 
         public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) => new[]
         {
@@ -137,40 +139,24 @@ namespace osu.Game.Rulesets.Sentakki
             new KeyBinding(InputKey.Number8, SentakkiAction.Key8),
         };
 
-        public override StatisticRow[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap) => new[]
+        public override StatisticItem[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap) => new[]
         {
-            new StatisticRow
+            new StatisticItem(SentakkiStatisticsStrings.TimingDistribution, () => new HitEventTimingDistributionGraph(score.HitEvents)
             {
-                Columns = new[]
-                {
-                    new StatisticItem(SentakkiStatisticsStrings.TimingDistribution, () => new HitEventTimingDistributionGraph(score.HitEvents)
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        Height = 250
-                    }, true)
-                }
-            },
-            new StatisticRow
+                RelativeSizeAxes = Axes.X,
+                Height = 250
+            }, true),
+
+            new StatisticItem(SentakkiStatisticsStrings.JudgementChart, () => new JudgementChart(score.HitEvents.Where(e => e.HitObject is SentakkiHitObject).ToList())
             {
-                Columns = new[]
-                {
-                    new StatisticItem(SentakkiStatisticsStrings.JudgementChart, () => new JudgementChart(score.HitEvents.Where(e=>e.HitObject is SentakkiHitObject).ToList())
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        Size = new Vector2(1, 250)
-                    },true),
-                }
-            },
-            new StatisticRow
+                RelativeSizeAxes = Axes.X,
+                Size = new Vector2(1, 250)
+            }, true),
+
+            new StatisticItem(string.Empty, () => new SimpleStatisticTable(3, new SimpleStatisticItem[]
             {
-                Columns = new[]
-                {
-                    new StatisticItem(string.Empty, () => new SimpleStatisticTable(3, new SimpleStatisticItem[]
-                    {
-                        new UnstableRate(score.HitEvents)
-                    }), true)
-                }
-            }
+                new UnstableRate(score.HitEvents)
+            }), true)
         };
 
         public override Drawable CreateIcon() => new SentakkiIcon(this);
@@ -179,6 +165,7 @@ namespace osu.Game.Rulesets.Sentakki
         {
             return new[]
             {
+                HitResult.LargeBonus,
                 HitResult.Great,
                 HitResult.Good,
                 HitResult.Ok,
@@ -187,7 +174,7 @@ namespace osu.Game.Rulesets.Sentakki
 
         public override LocalisableString GetDisplayNameForHitResult(HitResult result) => result.GetDisplayNameForSentakkiResult();
 
-        public class SentakkiIcon : CompositeDrawable
+        public partial class SentakkiIcon : CompositeDrawable
         {
             private readonly Ruleset ruleset;
 
@@ -201,13 +188,12 @@ namespace osu.Game.Rulesets.Sentakki
             }
 
             // We don't want to generate a new texture store everytime this used, so we create a single texture store for all usages of this icon.
-            private static LargeTextureStore textureStore;
+            private static LargeTextureStore textureStore = null!;
 
             [BackgroundDependencyLoader]
             private void load(GameHost host)
             {
-                if (textureStore is null)
-                    textureStore = new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
+                textureStore ??= new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
 
                 AddInternal(new Sprite
                 {
@@ -224,12 +210,14 @@ namespace osu.Game.Rulesets.Sentakki
                         Anchor = Anchor.BottomRight,
                         Origin = Anchor.BottomRight,
                         Size = new Vector2(60, 35),
-                        Children = new Drawable[]{
+                        Children = new Drawable[]
+                        {
                             // Used to offset the fonts being misaligned
-                            new Container{
+                            new Container
+                            {
                                 Anchor = Anchor.BottomCentre,
                                 Origin = Anchor.BottomCentre,
-                                Size = new Vector2(60,32),
+                                Size = new Vector2(60, 32),
                                 CornerRadius = 8f,
                                 CornerExponent = 2.5f,
                                 Masking = true,
@@ -242,7 +230,7 @@ namespace osu.Game.Rulesets.Sentakki
                             {
                                 Text = "DEV",
                                 Colour = Color4.Gray,
-                                Font = OsuFont.Torus.With(size: 32,weight: FontWeight.Bold),
+                                Font = OsuFont.Torus.With(size: 32, weight: FontWeight.Bold),
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
                             }

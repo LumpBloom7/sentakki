@@ -16,11 +16,11 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class Lane : Playfield, IKeyBindingHandler<SentakkiAction>
+    public partial class Lane : Playfield, IKeyBindingHandler<SentakkiAction>
     {
         public int LaneNumber { get; set; }
 
-        public Action<Drawable> OnLoaded;
+        public Action<Drawable> OnLoaded = null!;
 
         public Lane()
         {
@@ -38,15 +38,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
             updateInputState();
         }
 
-        private DrawableSentakkiRuleset drawableSentakkiRuleset;
-        private SentakkiRulesetConfigManager sentakkiRulesetConfig;
+        [Resolved]
+        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; } = null!;
 
-        [BackgroundDependencyLoader(true)]
-        private void load(DrawableSentakkiRuleset drawableRuleset, SentakkiRulesetConfigManager sentakkiRulesetConfigManager)
+        [Resolved]
+        private SentakkiRulesetConfigManager? sentakkiRulesetConfig { get; set; }
+
+        [BackgroundDependencyLoader]
+        private void load()
         {
-            drawableSentakkiRuleset = drawableRuleset;
-            sentakkiRulesetConfig = sentakkiRulesetConfigManager;
-
             RegisterPool<Tap, DrawableTap>(8);
 
             RegisterPool<Hold, DrawableHold>(8);
@@ -55,11 +55,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
             RegisterPool<Slide, DrawableSlide>(2);
             RegisterPool<SlideTap, DrawableSlideTap>(2);
             RegisterPool<SlideBody, DrawableSlideBody>(2);
-            RegisterPool<SlideFan, DrawableSlideFan>(2);
             RegisterPool<SlideCheckpoint, DrawableSlideCheckpoint>(18);
             RegisterPool<SlideCheckpoint.CheckpointNode, DrawableSlideCheckpointNode>(18);
 
             RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(20);
+            RegisterPool<ScoreBonusObject, DrawableScoreBonusObject>(5);
         }
 
         protected override void OnNewDrawableHitObject(DrawableHitObject d) => OnLoaded?.Invoke(d);
@@ -67,10 +67,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
 
         #region Input Handling
+
         private const float receptor_angle_range = 45 * 1.4f;
 
-        private SentakkiInputManager sentakkiActionInputManager;
-        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= GetContainingInputManager() as SentakkiInputManager;
+        private SentakkiInputManager sentakkiActionInputManager = null!;
+        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
 
         public override bool HandlePositionalInput => true;
 
@@ -87,7 +88,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             return true;
         }
 
-        private readonly BindableInt currentKeys = new BindableInt(0);
+        private readonly BindableInt currentKeys = new BindableInt();
 
         private bool usingSensor => drawableSentakkiRuleset.UseSensorMode;
 
@@ -98,17 +99,28 @@ namespace osu.Game.Rulesets.Sentakki.UI
             int count = 0;
 
             foreach (var buttonState in buttonTriggerState)
-                if (buttonState.Value) ++count;
+            {
+                if (buttonState.Value)
+                    ++count;
+            }
 
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
 
             for (TouchSource t = TouchSource.Touch1; t <= TouchSource.Touch10; ++t)
-                if (touchInput.GetTouchPosition(t) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition)) ++count;
+            {
+                if (touchInput.GetTouchPosition(t) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
+                    ++count;
+            }
 
             // We don't attempt to check mouse input if touch input is used
             if (count == 0 && IsHovered && usingSensor)
+            {
                 foreach (var a in SentakkiActionInputManager.PressedActions)
-                    if (a < SentakkiAction.Key1) ++count;
+                {
+                    if (a < SentakkiAction.Key1)
+                        ++count;
+                }
+            }
 
             currentKeys.Value = count;
         }
@@ -140,6 +152,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             buttonTriggerState[e.Action] = false;
         }
+
         #endregion
     }
 }

@@ -2,19 +2,8 @@ using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
 {
-    public class TestSceneUSlide : TestSceneSlide
+    public partial class TestSceneUSlide : TestSceneSlide
     {
-        private bool reversed;
-
-        public TestSceneUSlide()
-        {
-            AddToggleStep("Mirrored", b =>
-            {
-                reversed = b;
-                RefreshSlide();
-            });
-        }
-
-        protected override SentakkiSlidePath CreatePattern() => SlidePaths.GenerateUPattern(EndPath, reversed);
+        protected override SlidePaths.PathShapes PathShape => SlidePaths.PathShapes.U;
     }
 }

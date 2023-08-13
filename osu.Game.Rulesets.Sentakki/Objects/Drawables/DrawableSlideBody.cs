@@ -15,70 +15,63 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSlideBody : DrawableSentakkiLanedHitObject
+    public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
     {
         public new SlideBody HitObject => (SlideBody)base.HitObject;
 
         public override bool RemoveWhenNotAlive => false;
 
-        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset;
+        public Container<DrawableSlideCheckpoint> SlideCheckpoints { get; private set; } = null!;
 
-        public Container<DrawableSlideCheckpoint> SlideCheckpoints { get; private set; }
+        public SlideVisual Slidepath { get; private set; } = null!;
 
-        public ISlideVisual Slidepath;
-        public Container<StarPiece> SlideStars;
+        public Container<StarPiece> SlideStars { get; private set; } = null!;
 
-        protected float StarProg;
+        private float starProgress;
+
         public virtual float StarProgress
         {
-            get => StarProg;
+            get => starProgress;
             set
             {
-                StarProg = value;
-                foreach (var slideStar in SlideStars)
+                starProgress = value;
+
+                for (int i = 2; i >= 0; --i)
                 {
-                    slideStar.Position = ((SlideVisual)Slidepath).Path.PositionAt(value);
-                    slideStar.Rotation = ((SlideVisual)Slidepath).Path.PositionAt(value - .01f).GetDegreesFromPosition(((SlideVisual)Slidepath).Path.PositionAt(value + .01f));
+                    int laneOffset = ((i * 2) - 1) % 3;
+
+                    SlideStars[i].Position = Slidepath.Path.PositionAt(value, laneOffset);
+                    SlideStars[i].Rotation = Slidepath.Path.PositionAt(value - .01f, laneOffset).GetDegreesFromPosition(Slidepath.Path.PositionAt(value + .01f, laneOffset));
+
+                    if (i != 2 && value < Slidepath.Path.FanStartProgress)
+                        break;
                 }
             }
         }
 
-        public DrawableSlideBody() : this(null) { }
-        public DrawableSlideBody(SlideBody hitObject)
-            : base(hitObject) { }
-
-        protected virtual ISlideVisual CreateSlideVisuals() => new SlideVisual();
-
-        protected virtual void CreateSlideStars()
+        public DrawableSlideBody()
+            : this(null)
         {
-            SlideStars.Add(new StarPiece
-            {
-                Alpha = 0,
-                Scale = Vector2.Zero,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Position = SentakkiExtensions.GetCircularPosition(296.5f, 22.5f),
-                RelativeSizeAxes = Axes.None,
-            });
         }
 
-        protected virtual void UpdateSlidePath()
+        public DrawableSlideBody(SlideBody? hitObject)
+            : base(hitObject)
         {
-            ((SlideVisual)Slidepath).Path = HitObject.SlideInfo.SlidePath;
         }
 
-        [BackgroundDependencyLoader(true)]
+        [BackgroundDependencyLoader]
         private void load()
         {
             Size = Vector2.Zero;
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Rotation = -22.5f;
-            Slidepath = CreateSlideVisuals();
+
             AddRangeInternal(new Drawable[]
             {
-                (Drawable)Slidepath,
-                SlideStars = new Container<StarPiece>{
+                Slidepath = new SlideVisual(),
+                SlideStars = new Container<StarPiece>
+                {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                 },
@@ -89,18 +82,29 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 },
             });
 
-            CreateSlideStars();
+            for (int i = 0; i < 3; ++i)
+            {
+                SlideStars.Add(new StarPiece
+                {
+                    Alpha = 0,
+                    Scale = Vector2.Zero,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Position = SentakkiExtensions.GetCircularPosition(296.5f, 22.5f),
+                    RelativeSizeAxes = Axes.None,
+                });
+            }
 
             AccentColour.BindValueChanged(c => Colour = c.NewValue);
-            OnNewResult += queueProgressUpdate;
-            OnRevertResult += queueProgressUpdate;
+
+            OnNewResult += onNewResult;
+            OnRevertResult += onRevertResult;
         }
 
         protected override void OnApply()
         {
             base.OnApply();
-            UpdateSlidePath();
-            updatePathProgress();
+            Slidepath.Path = HitObject.SlideBodyInfo.SlidePath;
             StarProgress = 0;
         }
 
@@ -110,52 +114,58 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Slidepath.Free();
         }
 
-        // We want to ensure that the correct progress is visually shown on screen
-        // I don't think that OnRevert of HitObjects is ordered properly
-        // So just to make sure, when multiple OnReverts are called, we just queue for a forced update on the visuals
-        // This makes sure that we always have the right visuals shown.
-        private bool pendingProgressUpdate;
-
-        private void queueProgressUpdate(DrawableHitObject hitObject, JudgementResult result)
+        private void onNewResult(DrawableHitObject hitObject, JudgementResult result)
         {
-            pendingProgressUpdate = true;
+            if (hitObject is not DrawableSlideCheckpoint checkpoint)
+                return;
+
+            if (!result.IsHit)
+                return;
+
+            Slidepath.Progress = checkpoint.HitObject.Progress;
+            Slidepath.UpdateChevronVisibility();
         }
 
-        protected override void Update()
+        private void onRevertResult(DrawableHitObject hitObject, JudgementResult result)
         {
-            base.Update();
-            if (pendingProgressUpdate)
-                updatePathProgress();
-        }
+            if (hitObject is not DrawableSlideCheckpoint checkpoint)
+                return;
 
-        // Used to hide and show segments accurately
-        private void updatePathProgress()
-        {
-            float progress = 0;
+            Slidepath.Progress = checkpoint.ThisIndex == 0 ? 0 : SlideCheckpoints[checkpoint.ThisIndex - 1].HitObject.Progress;
 
-            for (int i = 0; i < SlideCheckpoints.Count; ++i)
-            {
-                if (!SlideCheckpoints[i].Result.IsHit)
-                    break;
-
-                progress = SlideCheckpoints[i].HitObject.Progress;
-            }
-
-            Slidepath.Progress = progress;
-
-            pendingProgressUpdate = false;
+            Slidepath.UpdateChevronVisibility();
         }
 
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
             Slidepath.PerformEntryAnimation(AdjustedAnimationDuration);
-            using (BeginAbsoluteSequence(HitObject.StartTime - 50, true))
-            {
-                foreach (var slideStar in SlideStars)
-                    slideStar.FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
 
-                this.Delay(50 + HitObject.ShootDelay).TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
+            using (BeginAbsoluteSequence(HitObject.StartTime - 50))
+            {
+                SlideStars[2].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
+                SlideStars[0].FadeOut().ScaleTo(1.25f, HitObject.ShootDelay);
+                SlideStars[1].FadeOut().ScaleTo(1.25f, HitObject.ShootDelay);
+
+                if (Slidepath.Path.StartsWithSlideFan)
+                {
+                    SlideStars[0].FadeInFromZero(HitObject.ShootDelay);
+                    SlideStars[1].FadeInFromZero(HitObject.ShootDelay);
+                }
+
+                using (BeginDelayedSequence(50 + HitObject.ShootDelay))
+                {
+                    if (!Slidepath.Path.StartsWithSlideFan && Slidepath.Path.EndsWithSlideFan)
+                    {
+                        using (BeginDelayedSequence((HitObject.Duration - HitObject.ShootDelay) * Slidepath.Path.FanStartProgress))
+                        {
+                            SlideStars[0].FadeIn();
+                            SlideStars[1].FadeIn();
+                        }
+                    }
+
+                    this.TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
+                }
             }
         }
 
@@ -165,6 +175,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             // Player completed all nodes, we consider this user triggered
             userTriggered = true;
+
             for (int i = 0; i < SlideCheckpoints.Count; ++i)
             {
                 if (!SlideCheckpoints[i].Result.HasResult)
@@ -178,8 +189,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
                 {
-                    // Miss the last node to ensure that all of them have results
-                    SlideCheckpoints[^1].ForcefullyMiss();
+                    // Ensure that all of them have results
+                    foreach (var checkpoint in SlideCheckpoints)
+                        checkpoint.ForcefullyMiss();
+
                     if (SlideCheckpoints.Count(node => !node.Result.IsHit) <= 2 && SlideCheckpoints.Count > 2)
                         ApplyResult(HitResult.Ok);
                     else
@@ -200,6 +213,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateHitStateTransforms(state);
             const double time_fade_miss = 400 /* time_fade_miss = 400 */;
+
             switch (state)
             {
                 case ArmedState.Hit:
@@ -214,6 +228,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     }
 
                     break;
+
                 case ArmedState.Miss:
                     Slidepath.PerformExitAnimation(time_fade_miss);
                     this.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss).Expire();
@@ -240,6 +255,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
         {
             base.AddNestedHitObject(hitObject);
+
             switch (hitObject)
             {
                 case DrawableSlideCheckpoint node:

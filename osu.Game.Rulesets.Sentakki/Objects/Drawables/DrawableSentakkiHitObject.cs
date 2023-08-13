@@ -8,11 +8,12 @@ using osu.Game.Rulesets.Sentakki.UI;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
-    public class DrawableSentakkiHitObject : DrawableHitObject<SentakkiHitObject>
+    public partial class DrawableSentakkiHitObject : DrawableHitObject<SentakkiHitObject>
     {
         protected override double InitialLifetimeOffset => AdjustedAnimationDuration;
 
-        public readonly BindableBool AutoBindable = new BindableBool(false);
+        public readonly BindableBool AutoBindable = new BindableBool();
+
         public bool Auto
         {
             get => AutoBindable.Value;
@@ -24,22 +25,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override float SamplePlaybackPosition => Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
 
-        public DrawableSentakkiHitObject() : this(null) { }
+        public DrawableSentakkiHitObject()
+            : this(null)
+        {
+        }
 
-        public DrawableSentakkiHitObject(SentakkiHitObject hitObject = null)
-            : base(hitObject) { }
+        public DrawableSentakkiHitObject(SentakkiHitObject? hitObject = null)
+            : base(hitObject!)
+        {
+        }
 
-        private DrawableSentakkiRuleset drawableSentakkiRuleset;
+        [Resolved]
+        private DrawableSentakkiRuleset? drawableSentakkiRuleset { get; set; }
 
         public double GameplaySpeed => drawableSentakkiRuleset?.GameplaySpeed ?? 1;
 
         protected double AdjustedAnimationDuration => AnimationDuration.Value * GameplaySpeed;
-
-        [BackgroundDependencyLoader(true)]
-        private void load(DrawableSentakkiRuleset drawableRuleset)
-        {
-            drawableSentakkiRuleset = drawableRuleset;
-        }
 
         protected override void LoadAsyncComplete()
         {

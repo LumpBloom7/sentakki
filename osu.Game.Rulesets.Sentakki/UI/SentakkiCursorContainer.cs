@@ -6,10 +6,10 @@ using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class SentakkiCursorContainer : GameplayCursorContainer
+    public partial class SentakkiCursorContainer : GameplayCursorContainer
     {
-        private Sprite cursorSprite;
-        private Texture cursorTexture;
+        private Sprite? cursorSprite;
+        private Texture? cursorTexture;
 
         protected override Drawable CreateCursor() => cursorSprite = new Sprite
         {

@@ -27,11 +27,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public double Duration
         {
-            get => SlideInfo.Duration;
-            set => SlideInfo.Duration = value;
+            get => SlideBodyInfo.Duration;
+            set => SlideBodyInfo.Duration = value;
         }
 
-        public SentakkiSlideInfo SlideInfo { get; set; }
+        public SlideBodyInfo SlideBodyInfo { get; private set; }
+
+        public SlideBody(SlideBodyInfo slideBodyInfo)
+        {
+            SlideBodyInfo = slideBodyInfo;
+            Break = slideBodyInfo.Break;
+        }
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
@@ -39,22 +45,64 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             CreateSlideCheckpoints();
             if (NestedHitObjects.Any())
-                NestedHitObjects.First().Samples.Add(new SentakkiHitSampleInfo("slide"));
+                NestedHitObjects.First().Samples.Add(new SentakkiHitSampleInfo("slide", CreateHitSampleInfo().Volume));
         }
 
-        protected virtual void CreateSlideCheckpoints()
+        protected void CreateSlideCheckpoints()
         {
-            double distance = SlideInfo.SlidePath.TotalDistance;
-            int nodeCount = (int)Math.Floor(distance / 100);
-            for (int i = 0; i < nodeCount; i++)
+            double totalDistance = SlideBodyInfo.SlidePath.TotalDistance;
+            double runningDistance = 0;
+
+            foreach (var segment in SlideBodyInfo.SlidePath.SlideSegments)
             {
-                double progress = (double)(i + 1) / nodeCount;
-                SlideCheckpoint checkpoint = new SlideCheckpoint()
+                double distance = segment.Distance;
+                int nodeCount = (int)Math.Floor(distance / 130);
+
+                double nodeDelta = distance / nodeCount;
+
+                for (int i = 0; i < nodeCount; i++)
                 {
-                    Progress = (float)progress,
+                    runningDistance += nodeDelta;
+                    double progress = runningDistance / totalDistance;
+
+                    SlideCheckpoint checkpoint = new SlideCheckpoint
+                    {
+                        Progress = (float)progress,
+                        StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
+                        NodePositions = new List<Vector2> { SlideBodyInfo.SlidePath.PositionAt(progress) }
+                    };
+
+                    AddNested(checkpoint);
+                }
+            }
+
+            CreateSlideFanCheckpoints();
+        }
+
+        protected void CreateSlideFanCheckpoints()
+        {
+            if (!SlideBodyInfo.SlidePath.EndsWithSlideFan)
+                return;
+
+            // Add body nodes (should be two major sets)
+            Vector2 originpoint = SlideBodyInfo.SlidePath.FanOrigin;
+
+            for (int i = 1; i < 5; ++i)
+            {
+                float progress = SlideBodyInfo.SlidePath.FanStartProgress + (0.25f * i * (1 - SlideBodyInfo.SlidePath.FanStartProgress));
+                SlideCheckpoint checkpoint = new SlideCheckpoint
+                {
+                    Progress = progress,
                     StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
-                    NodePositions = new List<Vector2> { SlideInfo.SlidePath.PositionAt(progress) },
+                    NodesToPass = 2,
                 };
+
+                for (int j = -1; j < 2; ++j)
+                {
+                    Vector2 dest = SlideBodyInfo.SlidePath.PositionAt(1, j);
+                    checkpoint.NodePositions.Add(Vector2.Lerp(originpoint, dest, 0.25f * i));
+                }
+
                 AddNested(checkpoint);
             }
         }
@@ -66,20 +114,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
 
-            double delay = controlPointInfo.TimingPointAt(StartTime).BeatLength * SlideInfo.ShootDelay / 2;
+            double delay = controlPointInfo.TimingPointAt(StartTime).BeatLength * SlideBodyInfo.ShootDelay;
             if (delay < Duration - 50)
                 ShootDelay = delay;
         }
 
         protected override HitWindows CreateHitWindows() => new SentakkiSlideHitWindows();
         public override Judgement CreateJudgement() => new SentakkiJudgement();
-
-        public class SlideNode : SentakkiHitObject
-        {
-            public virtual float Progress { get; set; }
-
-            protected override HitWindows CreateHitWindows() => HitWindows.Empty;
-            public override Judgement CreateJudgement() => new IgnoreJudgement();
-        }
     }
 }

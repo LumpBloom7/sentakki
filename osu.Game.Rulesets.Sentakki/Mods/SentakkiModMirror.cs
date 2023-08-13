@@ -44,9 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             beatmap.HitObjects.OfType<SentakkiLanedHitObject>().ForEach(laned =>
             {
                 if (HorizontalMirrored.Value)
-                {
                     laned.Lane = 7 - laned.Lane;
-                }
 
                 if (VerticalMirrored.Value)
                 {
@@ -55,7 +53,18 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 }
 
                 if (mirrored && laned is Slide slide)
-                    slide.SlideInfoList.ForEach(slideInfo => slideInfo.Mirrored ^= mirrored);
+                {
+                    foreach (var slideInfo in slide.SlideInfoList)
+                    {
+                        foreach (var part in slideInfo.SlidePathParts)
+                        {
+                            part.EndOffset = (part.EndOffset * -1).NormalizePath();
+                            part.Mirrored ^= mirrored;
+                        }
+
+                        slideInfo.UpdatePaths();
+                    }
+                }
             });
 
             beatmap.HitObjects.OfType<Touch>().ForEach(touch =>

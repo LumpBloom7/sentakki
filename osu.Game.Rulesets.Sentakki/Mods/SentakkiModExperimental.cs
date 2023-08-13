@@ -47,13 +47,13 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
             if (EnableTwinNotes.Value)
-                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.twinNotes;
+                ((SentakkiBeatmapConverter)beatmapConverter).EnabledExperiments |= ConversionExperiments.twinNotes;
 
             if (EnableTwinSlides.Value)
-                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.twinSlides;
+                ((SentakkiBeatmapConverter)beatmapConverter).EnabledExperiments |= ConversionExperiments.twinSlides;
 
             if (EnableSlideFans.Value)
-                (beatmapConverter as SentakkiBeatmapConverter).EnabledExperiments |= ConversionExperiments.fanSlides;
+                ((SentakkiBeatmapConverter)beatmapConverter).EnabledExperiments |= ConversionExperiments.fanSlides;
         }
     }
 }

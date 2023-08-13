@@ -10,12 +10,15 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
     [TestFixture]
-    public class TestSceneSlideNote : OsuTestScene
+    public partial class TestSceneSlideNote : OsuTestScene
     {
         private readonly Container content;
         protected override Container<Drawable> Content => content;
@@ -25,17 +28,35 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         private int depthIndex;
 
         [Cached]
-        private readonly DrawablePool<SlideVisual.SlideChevron> chevronPool;
+        private readonly DrawablePool<SlideChevron> chevronPool;
+
+        [Cached]
+        private readonly SlideFanChevrons fanChevrons;
 
         public TestSceneSlideNote()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
+            Add(new SentakkiRing
+            {
+                RelativeSizeAxes = Axes.None,
+                Size = new Vector2(SentakkiPlayfield.RINGSIZE),
+                Rotation = -22.5f
+            });
 
-            Add(chevronPool = new DrawablePool<SlideVisual.SlideChevron>(62));
+            Add(chevronPool = new DrawablePool<SlideChevron>(62));
+            Add(fanChevrons = new SlideFanChevrons());
 
             AddStep("Miss Single", () => testSingle(2000));
             AddStep("Hit Single", () => testSingle(2000, true));
-            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject) && (h as DrawableSentakkiHitObject).AllJudged == false));
+            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject hitObject) && hitObject.AllJudged == false));
+
+            AddStep("Miss chain", () => testChain(5000));
+            AddStep("Hit chain", () => testChain(5000, true));
+            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject hitObject) && hitObject.AllJudged == false));
+
+            AddStep("Miss chain with Fan", () => testChainWithFan(6000));
+            AddStep("Hit chain with Fan", () => testChainWithFan(6000, true));
+            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject hitObject) && hitObject.AllJudged == false));
         }
 
         private void testSingle(double duration, bool auto = false)
@@ -43,25 +64,28 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             var slide = new Slide
             {
                 //Break = true,
-                SlideInfoList = new List<SentakkiSlideInfo>
+                SlideInfoList = new List<SlideBodyInfo>
                 {
-                    new SentakkiSlideInfo {
-                        ID = 25,
+                    new SlideBodyInfo
+                    {
+                        SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Circle, 0, false) },
                         Duration = 1000,
                     },
-                    new SentakkiSlideInfo {
-                        ID = 27,
+                    new SlideBodyInfo
+                    {
+                        SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false) },
                         Duration = 1500,
                     },
-                    new SentakkiSlideInfo {
-                        ID = 0,
+                    new SlideBodyInfo
+                    {
+                        SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false) },
                         Duration = 2000,
                     }
                 },
                 StartTime = Time.Current + 1000,
             };
 
-            slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty { });
+            slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
             DrawableSlide dSlide;
 
@@ -74,8 +98,93 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             });
 
             foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects)
+            {
                 foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects)
                     nested2.Auto = auto;
+            }
+        }
+
+        private void testChain(double duration, bool auto = false)
+        {
+            var slide = new Slide
+            {
+                //Break = true,
+                SlideInfoList = new List<SlideBodyInfo>
+                {
+                    new SlideBodyInfo
+                    {
+                        SlidePathParts = new[]
+                        {
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
+                        },
+                        Duration = duration,
+                    },
+                },
+                StartTime = Time.Current + 1000,
+            };
+
+            slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
+
+            DrawableSlide dSlide;
+
+            Add(dSlide = new DrawableSlide(slide)
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Depth = depthIndex++,
+                Auto = auto
+            });
+
+            foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects)
+            {
+                foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects)
+                    nested2.Auto = auto;
+            }
+        }
+
+        private void testChainWithFan(double duration, bool auto = false)
+        {
+            var slide = new Slide
+            {
+                //Break = true,
+                SlideInfoList = new List<SlideBodyInfo>
+                {
+                    new SlideBodyInfo
+                    {
+                        SlidePathParts = new[]
+                        {
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
+                            new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false),
+                        },
+                        Duration = duration,
+                    },
+                },
+                StartTime = Time.Current + 1000,
+            };
+
+            slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
+
+            DrawableSlide dSlide;
+
+            Add(dSlide = new DrawableSlide(slide)
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Depth = depthIndex++,
+                Auto = auto
+            });
+
+            foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects)
+            {
+                foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects)
+                    nested2.Auto = auto;
+            }
         }
     }
 }

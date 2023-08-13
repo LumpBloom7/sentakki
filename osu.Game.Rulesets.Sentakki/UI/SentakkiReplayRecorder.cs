@@ -7,7 +7,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class SentakkiReplayRecorder : ReplayRecorder<SentakkiAction>
+    public partial class SentakkiReplayRecorder : ReplayRecorder<SentakkiAction>
     {
         private readonly DrawableSentakkiRuleset drawableRuleset;
 

@@ -10,7 +10,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Statistics
 {
-    public class JudgementChart : FillFlowContainer
+    public partial class JudgementChart : FillFlowContainer
     {
         private const double entry_animation_duration = 150;
 
@@ -18,7 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
         private static readonly (string, Func<HitEvent, bool>)[] entries =
         {
             ("Tap", e => e.HitObject is Tap x && !x.Break),
-            ("Hold", e => (e.HitObject is Hold x || e.HitObject is Hold.HoldHead) && !(e.HitObject as SentakkiLanedHitObject).Break),
+            ("Hold", e => (e.HitObject is Hold or Hold.HoldHead) && !((SentakkiLanedHitObject)e.HitObject).Break),
             ("Slide", e => e.HitObject is SlideBody x),
             ("Touch", e => e.HitObject is Touch),
             ("Touch Hold", e => e.HitObject is TouchHold),

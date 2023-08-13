@@ -6,7 +6,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public class SortedDrawableProxyContainer : LifetimeManagementContainer
+    public partial class SortedDrawableProxyContainer : LifetimeManagementContainer
     {
         public SortedDrawableProxyContainer()
         {
@@ -15,17 +15,32 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private readonly Dictionary<Drawable, IBindable<double>> startTimeMap = new Dictionary<Drawable, IBindable<double>>();
 
+        // We use this to batch changes
+        private bool sortQueued = true;
+
         public void Add(Drawable proxy, DrawableHitObject hitObject)
         {
-
             var startTimeBindable = hitObject.StartTimeBindable.GetBoundCopy();
-            startTimeBindable.BindValueChanged(s =>
-            {
-                if (LoadState >= LoadState.Ready)
-                    SortInternal();
-            });
+            startTimeBindable.BindValueChanged(onStartTimeChange);
             startTimeMap.Add(proxy, startTimeBindable);
             AddInternal(proxy);
+        }
+
+        private void onStartTimeChange(ValueChangedEvent<double> v)
+        {
+            if (LoadState >= LoadState.Ready)
+                sortQueued = true;
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (sortQueued)
+            {
+                SortInternal();
+                sortQueued = false;
+            }
         }
 
         protected override int Compare(Drawable x, Drawable y)

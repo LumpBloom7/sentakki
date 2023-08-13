@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -13,7 +12,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {
-    public class LineRenderer : CompositeDrawable
+    public partial class LineRenderer : CompositeDrawable
     {
         private readonly Dictionary<double, LineLifetimeEntry> lineEntries = new Dictionary<double, LineLifetimeEntry>();
         private readonly Dictionary<HitObject, IBindable> startTimeMap = new Dictionary<HitObject, IBindable>();
@@ -21,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         private readonly Dictionary<LifetimeEntry, DrawableLine> linesInUse = new Dictionary<LifetimeEntry, DrawableLine>();
         private readonly LifetimeEntryManager lifetimeManager = new LifetimeEntryManager();
 
-        private readonly Dictionary<LineType, DrawablePool<DrawableLine>> linePools = new Dictionary<LineType, DrawablePool<DrawableLine>>();
+        private DrawablePool<DrawableLine> linePool = null!;
 
         public LineRenderer()
         {
@@ -33,18 +32,15 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private readonly BindableDouble animationDuration = new BindableDouble(1000);
 
-        [Resolved(canBeNull: true)]
-        private DrawableSentakkiRuleset drawableRuleset { get; set; }
+        [Resolved]
+        private DrawableSentakkiRuleset? drawableRuleset { get; set; }
 
-        [BackgroundDependencyLoader(true)]
-        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
+        [BackgroundDependencyLoader]
+        private void load(SentakkiRulesetConfigManager? sentakkiConfigs)
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
 
-            foreach (var type in Enum.GetValues(typeof(LineType)).OfType<LineType>())
-                linePools.Add(type, new DrawableLinePool(type));
-
-            AddRangeInternal(linePools.Values);
+            AddInternal(linePool = new DrawablePool<DrawableLine>(5));
         }
 
         protected override bool CheckChildrenLife()
@@ -57,7 +53,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         private void onEntryBecameAlive(LifetimeEntry entry)
         {
             var laneLifetimeEntry = (LineLifetimeEntry)entry;
-            var line = linePools[laneLifetimeEntry.Type].Get();
+            var line = linePool.Get();
             line.Entry = laneLifetimeEntry;
 
             linesInUse[entry] = line;
@@ -131,21 +127,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
                 // We want to listen in on line changes in case we need to swap out colours/drawables
                 newEntry.OnLineUpdated += onEntryUpdated;
             }
+
             lineEntries[entryTime].Add(hitObject);
-        }
-
-        public class DrawableLinePool : DrawablePool<DrawableLine>
-        {
-            private readonly LineType type;
-
-            public DrawableLinePool(LineType type)
-                : base(5)
-            {
-                this.type = type;
-            }
-
-            protected override DrawableLine CreateNewDrawable()
-                => new DrawableLine { Type = type };
         }
     }
 }
