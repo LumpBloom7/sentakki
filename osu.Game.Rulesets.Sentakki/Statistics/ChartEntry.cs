@@ -10,6 +10,7 @@ using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osu.Framework.Utils;
 using osu.Game.Graphics;
@@ -40,6 +41,9 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
             this.name = name;
             this.hitEvents = hitEvents;
         }
+
+        private Drawable simpleStats = null!;
+        private Drawable detailedStats = null!;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -78,13 +82,11 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                     ColumnDimensions = new Dimension[]{
                         new Dimension(GridSizeMode.Relative, 0.3f),
                         new Dimension(GridSizeMode.Distributed),
-                        new Dimension(GridSizeMode.AutoSize)
                     },
                     Content = new[]{
                         new Drawable[]{
                             new SpriteText
                             {
-                                Margin = new MarginPadding{ Horizontal = 30 },
                                 Colour = accent_color,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
@@ -93,33 +95,49 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                             },
                             new Container
                             {
-                                Margin = new MarginPadding{ Horizontal = 10 },
                                 RelativeSizeAxes = Axes.Both,
-                                Origin = Anchor.Centre,
                                 Anchor = Anchor.Centre,
-                                CornerRadius = 5,
-                                CornerExponent = 2.5f,
-                                Masking = true,
-                                BorderThickness = 2,
-                                BorderColour = accent_color,
-                                Height = 0.8f,
-                                Children = new Drawable[]{
-                                    new Box
-                                    {
-                                        Alpha = 0,
-                                        AlwaysPresent = true,
-                                        RelativeSizeAxes = Axes.Both
-                                    },
-                                    ratioBoxes = new Container
+                                Origin = Anchor.Centre,
+
+                                Children = new Drawable[]
+                                {
+                                    simpleStats = new GridContainer
                                     {
                                         RelativeSizeAxes = Axes.Both,
-                                        Size = new Vector2(0,1),
-                                    }
+                                        Content = new[]{
+                                            new Drawable[]{
+                                                new Container
+                                                {
+                                                    RelativeSizeAxes = Axes.Both,
+                                                    Origin = Anchor.Centre,
+                                                    Anchor = Anchor.Centre,
+                                                    CornerRadius = 5,
+                                                    CornerExponent = 2.5f,
+                                                    Masking = true,
+                                                    BorderThickness = 2,
+                                                    BorderColour = accent_color,
+                                                    Height = 0.8f,
+                                                    Children = new Drawable[]{
+                                                        new Box
+                                                        {
+                                                            Alpha = 0,
+                                                            AlwaysPresent = true,
+                                                            RelativeSizeAxes = Axes.Both
+                                                        },
+                                                        ratioBoxes = new Container
+                                                        {
+                                                            RelativeSizeAxes = Axes.Both,
+                                                            Size = new Vector2(0,1),
+                                                        }
+                                                    }
+                                                },
+                                                new ResultsCounter("Total", hitEvents.Count){ Colour = accent_color },
+                                            }
+                                        }
+                                    },
+                                    detailedStats = new JudgementBreakdowns(hitEvents) { Alpha = 0 }
                                 }
                             },
-                            new JudgementBreakdowns(hitEvents){
-                                Margin = new MarginPadding{ Horizontal = 30 },
-                            }
                         }
                     }
                 },
@@ -131,6 +149,21 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
             addRatioBoxFor(HitResult.Good);
             addRatioBoxFor(HitResult.Great);
         }
+
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            simpleStats.FadeOut(100);
+            detailedStats.FadeIn(100);
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            detailedStats.FadeOut(100);
+            simpleStats.FadeIn(100);
+        }
+
 
         public void AnimateEntry(double entryDuration)
         {
@@ -199,18 +232,19 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                     });
                 }
             }
+        }
 
-            private partial class ResultsCounter : FillFlowContainer
+        private partial class ResultsCounter : FillFlowContainer
+        {
+            public ResultsCounter(string title, int count)
             {
-                public ResultsCounter(string title, int count)
-                {
-                    AutoSizeAxes = Axes.Both;
-                    Spacing = new Vector2(0, -5);
-                    Direction = FillDirection.Vertical;
-                    Anchor = Origin = Anchor.Centre;
+                AutoSizeAxes = Axes.Both;
+                Spacing = new Vector2(0, -5);
+                Direction = FillDirection.Vertical;
+                Anchor = Origin = Anchor.Centre;
 
-                    AddRangeInternal(new Drawable[]
-                    {
+                AddRangeInternal(new Drawable[]
+                {
                         new OsuSpriteText
                         {
                             Anchor = Anchor.Centre,
@@ -222,10 +256,8 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                         }
-                    });
-                }
+                });
             }
-
         }
 
         public partial class TotalNoteCounter : RollingCounter<int>
