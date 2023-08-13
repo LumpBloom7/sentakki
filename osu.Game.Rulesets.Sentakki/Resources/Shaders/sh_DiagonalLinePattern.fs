@@ -8,5 +8,5 @@ void main(void)
 {
     float DistanceToLine = mod((v_TexCoord.x+v_TexCoord.y) / (v_TexRect[2] - v_TexRect[0]), 0.3);
     bool pixelLit = DistanceToLine < 0.15;
-    o_Colour = getRoundedColor( vec4(1,1,1,pixelLit ? 1 : 0), v_TexCoord);
+    o_Colour = getRoundedColor( pixelLit ? vec4(1,1,1,1) : vec4(0.5,0.5,0.5,0.8), v_TexCoord);
 }
