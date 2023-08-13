@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.OpenGL.Textures;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shapes;
@@ -33,8 +32,6 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
         private readonly string name;
 
         private readonly IReadOnlyList<HitEvent> hitEvents;
-
-        private RollingCounter<int> noteCounter = null!;
 
         private Container ratioBoxes = null!;
 
@@ -78,10 +75,16 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 new GridContainer
                 {
                     RelativeSizeAxes = Axes.Both,
+                    ColumnDimensions = new Dimension[]{
+                        new Dimension(GridSizeMode.Relative, 0.3f),
+                        new Dimension(GridSizeMode.Distributed),
+                        new Dimension(GridSizeMode.AutoSize)
+                    },
                     Content = new[]{
                         new Drawable[]{
-                            new OsuSpriteText
+                            new SpriteText
                             {
+                                Margin = new MarginPadding{ Horizontal = 30 },
                                 Colour = accent_color,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
@@ -90,6 +93,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                             },
                             new Container
                             {
+                                Margin = new MarginPadding{ Horizontal = 10 },
                                 RelativeSizeAxes = Axes.Both,
                                 Origin = Anchor.Centre,
                                 Anchor = Anchor.Centre,
@@ -113,12 +117,8 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                                     }
                                 }
                             },
-                            noteCounter = new TotalNoteCounter
-                            {
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Colour = accent_color,
-                                Current = { Value = 0 },
+                            new JudgementBreakdowns(hitEvents){
+                                Margin = new MarginPadding{ Horizontal = 30 },
                             }
                         }
                     }
@@ -134,7 +134,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
 
         public void AnimateEntry(double entryDuration)
         {
-            this.ScaleTo(1, entryDuration, Easing.OutBack).TransformBindableTo(noteCounter.Current, hitEvents.Count);
+            this.ScaleTo(1, entryDuration, Easing.OutBack);
             ratioBoxes.ResizeWidthTo(1, bar_fill_duration, Easing.OutPow10);
         }
 
@@ -151,8 +151,81 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 RelativeSizeAxes = Axes.Both,
                 Width = (float)resultCount / hitEvents.Count,
                 Colour = result.GetColorForSentakkiResult(),
-                Alpha = 1f
+                Alpha = .8f
             });
+        }
+
+        public partial class JudgementBreakdowns : FillFlowContainer
+        {
+            private static readonly HitResult[] valid_results = new HitResult[]{
+                HitResult.Great,
+                HitResult.Good,
+                HitResult.Ok,
+                HitResult.Miss
+            };
+
+            public JudgementBreakdowns(IReadOnlyList<HitEvent> hitEvents)
+            {
+                Anchor = Origin = Anchor.Centre;
+
+                AutoSizeAxes = Axes.Both;
+                Spacing = new Vector2(10f, 0f);
+                Direction = FillDirection.Horizontal;
+
+                AddRangeInternal(
+                    new Drawable[]{
+                        new ResultsCounter("Total", hitEvents.Count){Colour = accent_color},
+                        new Box {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            RelativeSizeAxes = Axes.Y,
+                            Size = new Vector2(2, 1),
+                            Colour = Color4.Gray,
+                            Alpha = 0.8f,
+                            Margin = new MarginPadding{ Horizontal = 10 }
+                        }
+                    }
+                );
+
+                foreach (var resultType in valid_results)
+                {
+                    int amount = hitEvents.Count(e => e.Result == resultType);
+                    var colour = resultType.GetColorForSentakkiResult();
+                    var hspa = new HSPAColour(colour) { P = 0.6f }.ToColor4();
+                    AddInternal(new ResultsCounter(resultType.GetDisplayNameForSentakkiResult(), amount)
+                    {
+                        Colour = Interpolation.ValueAt(0.5f, colour, hspa, 0, 1),
+                        Scale = new Vector2(0.8f)
+                    });
+                }
+            }
+
+            private partial class ResultsCounter : FillFlowContainer
+            {
+                public ResultsCounter(string title, int count)
+                {
+                    AutoSizeAxes = Axes.Both;
+                    Spacing = new Vector2(0, -5);
+                    Direction = FillDirection.Vertical;
+                    Anchor = Origin = Anchor.Centre;
+
+                    AddRangeInternal(new Drawable[]
+                    {
+                        new OsuSpriteText
+                        {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Text = title.ToUpper(),
+                            Font = OsuFont.Torus.With(size: 20, weight: FontWeight.Bold)
+                        },
+                        new TotalNoteCounter(count){
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                        }
+                    });
+                }
+            }
+
         }
 
         public partial class TotalNoteCounter : RollingCounter<int>
@@ -163,12 +236,26 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
 
             protected override LocalisableString FormatCount(int count) => count.ToString("N0");
 
+            private int totalValue;
+
+            public TotalNoteCounter(int value)
+            {
+                Current = new Bindable<int> { Value = 0 };
+                totalValue = value;
+            }
+
             protected override OsuSpriteText CreateSpriteText() => new OsuSpriteText
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Font = OsuFont.Torus.With(size: 20, weight: FontWeight.SemiBold),
             };
+
+            protected override void LoadComplete()
+            {
+                base.LoadComplete();
+                this.TransformBindableTo(Current, totalValue);
+            }
         }
 
         private partial class RatioBox : Sprite, ITexturedShaderDrawable
