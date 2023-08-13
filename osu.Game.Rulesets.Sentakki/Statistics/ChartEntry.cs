@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -144,7 +145,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 RelativeSizeAxes = Axes.Both,
                 Width = (float)resultCount / hitEvents.Count,
                 Colour = result.GetColorForSentakkiResult(),
-                Alpha = 0.6f
+                Alpha = 1f
             });
         }
 
@@ -177,7 +178,14 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 TextureRelativeSizeAxes = Axes.None;
                 TextureRectangle = new Framework.Graphics.Primitives.RectangleF(0, 0, 50, 50);
 
-                TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "DiagonalLinePattern");
+                try
+                {
+                    TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "DiagonalLinePattern");
+                }
+                catch // Fallback
+                {
+                    TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, FragmentShaderDescriptor.TEXTURE);
+                }
             }
 
             private class RatioBoxDrawNode : SpriteDrawNode
