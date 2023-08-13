@@ -33,16 +33,13 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
         private readonly string name;
 
         private readonly IReadOnlyList<HitEvent> hitEvents;
-
-        private Container ratioBoxes = null!;
-
         public ChartEntry(string name, IReadOnlyList<HitEvent> hitEvents)
         {
             this.name = name;
             this.hitEvents = hitEvents;
         }
 
-        private Drawable simpleStats = null!;
+        private SimpleStatsSegment simpleStats = null!;
         private Drawable detailedStats = null!;
 
         [BackgroundDependencyLoader]
@@ -98,58 +95,17 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                                 RelativeSizeAxes = Axes.Both,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-
                                 Children = new Drawable[]
                                 {
-                                    simpleStats = new GridContainer
-                                    {
-                                        RelativeSizeAxes = Axes.Both,
-                                        Content = new[]{
-                                            new Drawable[]{
-                                                new Container
-                                                {
-                                                    RelativeSizeAxes = Axes.Both,
-                                                    Origin = Anchor.Centre,
-                                                    Anchor = Anchor.Centre,
-                                                    CornerRadius = 5,
-                                                    CornerExponent = 2.5f,
-                                                    Masking = true,
-                                                    BorderThickness = 2,
-                                                    BorderColour = accent_color,
-                                                    Height = 0.8f,
-                                                    Children = new Drawable[]{
-                                                        new Box
-                                                        {
-                                                            Alpha = 0,
-                                                            AlwaysPresent = true,
-                                                            RelativeSizeAxes = Axes.Both
-                                                        },
-                                                        ratioBoxes = new Container
-                                                        {
-                                                            RelativeSizeAxes = Axes.Both,
-                                                            Size = new Vector2(0,1),
-                                                        }
-                                                    }
-                                                },
-                                                new ResultsCounter("Total", hitEvents.Count){ Colour = accent_color },
-                                            }
-                                        }
-                                    },
-                                    detailedStats = new JudgementBreakdowns(hitEvents) { Alpha = 0 }
+                                    simpleStats = new SimpleStatsSegment(hitEvents),
+                                    detailedStats = new DetailedStatsSegment(hitEvents) { Alpha = 0 }
                                 }
                             },
                         }
                     }
                 },
             };
-
-            if (!hitEvents.Any()) return;
-
-            addRatioBoxFor(HitResult.Ok);
-            addRatioBoxFor(HitResult.Good);
-            addRatioBoxFor(HitResult.Great);
         }
-
 
         protected override bool OnHover(HoverEvent e)
         {
@@ -168,27 +124,79 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
         public void AnimateEntry(double entryDuration)
         {
             this.ScaleTo(1, entryDuration, Easing.OutBack);
-            ratioBoxes.ResizeWidthTo(1, bar_fill_duration, Easing.OutPow10);
+            simpleStats.AnimateEntry();
         }
 
-
-        // This will add a box for each valid sentakki HitResult, excluding those that aren't visible
-        private void addRatioBoxFor(HitResult result)
+        private partial class SimpleStatsSegment : GridContainer
         {
-            int resultCount = hitEvents.Count(e => e.Result >= result);
+            private Container ratioBoxes;
+            private IReadOnlyList<HitEvent> hitEvents;
 
-            if (resultCount == 0) return;
-
-            ratioBoxes.Add(new RatioBox
+            public SimpleStatsSegment(IReadOnlyList<HitEvent> hitEvents)
             {
-                RelativeSizeAxes = Axes.Both,
-                Width = (float)resultCount / hitEvents.Count,
-                Colour = result.GetColorForSentakkiResult(),
-                Alpha = .8f
-            });
+                this.hitEvents = hitEvents;
+                RelativeSizeAxes = Axes.Both;
+                Content = new[]{
+                    new Drawable[]{
+                        new Container
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Origin = Anchor.Centre,
+                            Anchor = Anchor.Centre,
+                            CornerRadius = 5,
+                            CornerExponent = 2.5f,
+                            Masking = true,
+                            BorderThickness = 2,
+                            BorderColour = accent_color,
+                            Height = 0.8f,
+                            Children = new Drawable[]{
+                                new Box
+                                {
+                                    Alpha = 0,
+                                    AlwaysPresent = true,
+                                    RelativeSizeAxes = Axes.Both
+                                },
+                                ratioBoxes = new Container
+                                {
+                                    RelativeSizeAxes = Axes.Both,
+                                    Size = new Vector2(0,1),
+                                }
+                            }
+                        },
+                        new ResultsCounter("Total", hitEvents.Count){ Colour = accent_color },
+                    }
+                };
+
+                if (!hitEvents.Any()) return;
+
+                addRatioBoxFor(HitResult.Ok);
+                addRatioBoxFor(HitResult.Good);
+                addRatioBoxFor(HitResult.Great);
+            }
+
+            public void AnimateEntry()
+            {
+                ratioBoxes.ResizeWidthTo(1, bar_fill_duration, Easing.OutPow10);
+            }
+
+            // This will add a box for each valid sentakki HitResult, excluding those that aren't visible
+            private void addRatioBoxFor(HitResult result)
+            {
+                int resultCount = hitEvents.Count(e => e.Result >= result);
+
+                if (resultCount == 0) return;
+
+                ratioBoxes.Add(new RatioBox
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Width = (float)resultCount / hitEvents.Count,
+                    Colour = result.GetColorForSentakkiResult(),
+                    Alpha = .8f
+                });
+            }
         }
 
-        public partial class JudgementBreakdowns : FillFlowContainer
+        public partial class DetailedStatsSegment : FillFlowContainer
         {
             private static readonly HitResult[] valid_results = new HitResult[]{
                 HitResult.Great,
@@ -197,7 +205,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 HitResult.Miss
             };
 
-            public JudgementBreakdowns(IReadOnlyList<HitEvent> hitEvents)
+            public DetailedStatsSegment(IReadOnlyList<HitEvent> hitEvents)
             {
                 Anchor = Origin = Anchor.Centre;
 
