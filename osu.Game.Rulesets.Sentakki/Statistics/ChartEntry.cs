@@ -77,30 +77,44 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 {
                     RelativeSizeAxes = Axes.Both,
                     ColumnDimensions = new Dimension[]{
-                        new Dimension(GridSizeMode.Relative, 0.3f),
-                        new Dimension(GridSizeMode.Distributed),
+                        new Dimension(GridSizeMode.Distributed, minSize: 10, maxSize:30),
+                        new Dimension(GridSizeMode.AutoSize), // Left text
+                        new Dimension(GridSizeMode.Distributed, minSize: 5, maxSize: 30),
+                        new Dimension(GridSizeMode.Distributed), // Bars
+                        new Dimension(GridSizeMode.Distributed, minSize: 5, maxSize: 30),
+                        new Dimension(GridSizeMode.AutoSize), // Total count
+                        new Dimension(GridSizeMode.AutoSize), // Detailed count
+                        new Dimension(GridSizeMode.Distributed, minSize: 10, maxSize:30),
                     },
                     Content = new[]{
                         new Drawable[]{
-                            new SpriteText
-                            {
-                                Colour = accent_color,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Text = name.ToUpper(),
-                                Font = OsuFont.Torus.With(size: 20, weight: FontWeight.Bold)
-                            },
+                            null!,
                             new Container
                             {
-                                RelativeSizeAxes = Axes.Both,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
-                                Children = new Drawable[]
+                                Size = new Vector2(102,20),
+                                Child = new OsuSpriteText
                                 {
-                                    simpleStats = new SimpleStatsSegment(hitEvents),
-                                    detailedStats = new DetailedStatsSegment(hitEvents) { Alpha = 0 }
-                                }
+                                    Colour = accent_color,
+                                    Anchor = Anchor.Centre,
+                                    Origin = Anchor.Centre,
+                                    Text = name.ToUpper(),
+                                    Font = OsuFont.Torus.With(size: 20, weight: FontWeight.Bold),
+                                },
                             },
+                            null!, // Container only
+                            simpleStats = new SimpleStatsSegment(hitEvents),
+                            null!,
+                            new ResultsCounter("Total", hitEvents.Count)
+                            {
+                                Colour = accent_color ,
+                            },
+                            detailedStats = new DetailedStatsSegment(hitEvents) {
+                                Scale = new Vector2(0,1),
+                                Margin = new MarginPadding{ Left = 15 }
+                            },
+                            null!,
                         }
                     }
                 },
@@ -109,15 +123,13 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
 
         protected override bool OnHover(HoverEvent e)
         {
-            simpleStats.FadeOut(100);
-            detailedStats.FadeIn(100);
+            detailedStats.ScaleTo(Vector2.One, 200, Easing.OutElasticQuarter);
             return true;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            detailedStats.FadeOut(100);
-            simpleStats.FadeIn(100);
+            detailedStats.ScaleTo(new Vector2(0, 1), 200, Easing.OutExpo);
         }
 
 
@@ -163,7 +175,6 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                                 }
                             }
                         },
-                        new ResultsCounter("Total", hitEvents.Count){ Colour = accent_color },
                     }
                 };
 
@@ -212,21 +223,6 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 AutoSizeAxes = Axes.Both;
                 Spacing = new Vector2(10f, 0f);
                 Direction = FillDirection.Horizontal;
-
-                AddRangeInternal(
-                    new Drawable[]{
-                        new ResultsCounter("Total", hitEvents.Count){Colour = accent_color},
-                        new Box {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            RelativeSizeAxes = Axes.Y,
-                            Size = new Vector2(2, 1),
-                            Colour = Color4.Gray,
-                            Alpha = 0.8f,
-                            Margin = new MarginPadding{ Horizontal = 10 }
-                        }
-                    }
-                );
 
                 foreach (var resultType in valid_results)
                 {
