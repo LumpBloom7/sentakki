@@ -27,7 +27,7 @@ public partial class NewBeatmapConverter
 
     private readonly SentakkiPatternGenerator patternGenerator;
 
-    private RotationDirection? activeStreamDirection;
+    private StreamDirection activeStreamDirection;
 
     private double stackThreshold => timePreempt * beatmap.BeatmapInfo.StackLeniency;
 
@@ -92,7 +92,7 @@ public partial class NewBeatmapConverter
 
         if (isJump || isStack)
         {
-            activeStreamDirection = null;
+            activeStreamDirection = StreamDirection.None;
 
             if (isJump)
                 currentLane += jumpLaneOffset(original, previous, next);
@@ -110,7 +110,7 @@ public partial class NewBeatmapConverter
             else
                 activeStreamDirection = getStreamDirection(original, previous, next);
 
-            int streamOffset = activeStreamDirection == RotationDirection.Clockwise ? 1 : -1;
+            int streamOffset = (int)activeStreamDirection;
 
             // Slides have special behavior
             if (result is Slide slide)
@@ -199,10 +199,10 @@ public partial class NewBeatmapConverter
         return getClosestLaneFor(angle2) - getClosestLaneFor(angle1);
     }
 
-    private RotationDirection getStreamDirection(HitObject original, HitObject? previous, HitObject? next)
+    private StreamDirection getStreamDirection(HitObject original, HitObject? previous, HitObject? next)
     {
         if (next is null)
-            return activeStreamDirection ?? RotationDirection.Clockwise;
+            return activeStreamDirection;
 
         var midpoint = midpointOf(original, previous, next);
 
@@ -211,12 +211,15 @@ public partial class NewBeatmapConverter
 
         float angleDelta = SentakkiExtensions.GetDeltaAngle(currAngle, nextAngle);
 
-        if (angleDelta == 0)
-            return activeStreamDirection ?? RotationDirection.Clockwise;
+        float absAngDelta = MathF.Abs(angleDelta);
 
-        return angleDelta > 0 ? RotationDirection.Clockwise : RotationDirection.Counterclockwise;
+        if (MathHelper.ApproximatelyEqualEpsilon(absAngDelta, 0, 0.1))
+            return activeStreamDirection;
+        else if (MathHelper.ApproximatelyEqualEpsilon(absAngDelta, 180, 0.1)) // Stream is collinear, equivalent to stack
+            return StreamDirection.None;
+
+        return angleDelta > 0 ? StreamDirection.Clockwise : StreamDirection.Counterclockwise;
     }
-
     private static Vector2 midpointOf(HitObject current, HitObject? previous, HitObject? next)
     {
         // Use the playfield center as a fallback if we don't have the previous note
