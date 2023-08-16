@@ -16,6 +16,7 @@ using osu.Game.Rulesets.UI;
 using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
+using osu.Framework.Utils;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -168,7 +169,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
             switch (ringColor.Value)
             {
                 case ColorOption.Difficulty:
-                    AccentContainer.FadeColour(colours.ForStarDifficulty(beatmapDifficulty?.Value?.Stars ?? 0), 200);
+                    double starRating = beatmapDifficulty?.Value?.Stars ?? 0;
+                    var colour = colours.ForStarDifficulty(starRating);
+
+                    // Normalize the colors to make sure the ring is actually visible
+                    colour = Interpolation.ValueAt(0.5f, colour, new HSPAColour(colour) { P = 0.6f }.ToColor4(), 0, 1);
+
+                    AccentContainer.FadeColour(colour, 200);
                     break;
 
                 case ColorOption.Skin:
