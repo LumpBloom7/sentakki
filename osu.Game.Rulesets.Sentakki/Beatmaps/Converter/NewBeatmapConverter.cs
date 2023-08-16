@@ -188,7 +188,7 @@ public partial class NewBeatmapConverter
 
     private RotationDirection getStreamDirection(HitObject original, HitObject? previous, HitObject? next)
     {
-        if (previous is null || next is null)
+        if (next is null)
             return activeStreamDirection ?? RotationDirection.Clockwise;
 
         var midpoint = midpointOf(original, previous, next);
