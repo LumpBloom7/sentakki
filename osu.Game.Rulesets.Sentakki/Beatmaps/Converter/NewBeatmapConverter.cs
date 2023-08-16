@@ -101,7 +101,7 @@ public partial class NewBeatmapConverter
         {
             Debug.Assert(next is not null);
 
-            bool isSpacedStream = !isOverlapping(original, next);
+            bool isSpacedStream = !isOverlapping(original.GetEndPosition(), next.GetPosition());
 
             // We try to look ahead into the stream in an effort to determine the initial direction of a stream
             // We would fallback to using the playfield midpoint if the stream is too short
@@ -167,11 +167,11 @@ public partial class NewBeatmapConverter
 
         bool snappedToQuarterBeat = timeDelta <= quarterBeatLength || MathHelper.ApproximatelyEquivalent(timeDelta, quarterBeatLength, 0.1);
 
-        return isOverlapping(original, next) || snappedToQuarterBeat;
+        return isOverlapping(original.GetEndPosition(), next.GetPosition()) || snappedToQuarterBeat;
     }
 
-    private bool isOverlapping(HitObject original, HitObject next)
-        => (next.GetPosition() - original.GetPosition()).LengthSquared <= Math.Pow(circleRadius * 2, 2);
+    private bool isOverlapping(Vector2 a, Vector2 b)
+        => (b - a).LengthSquared <= Math.Pow(circleRadius * 2, 2);
 
     private static bool isJump(HitObject original, HitObject? next)
     {
