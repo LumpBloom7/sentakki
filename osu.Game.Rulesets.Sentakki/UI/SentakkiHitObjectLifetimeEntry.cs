@@ -8,7 +8,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
 {
     public class SentakkiHitObjectLifetimeEntry : HitObjectLifetimeEntry
     {
-        protected override double InitialLifetimeOffset => initialLifetimeOffsetFor(HitObject);
+        protected override double InitialLifetimeOffset
+            => HitObject switch
+            {
+                Touch => AdjustedAnimationDuration + HitObject.HitWindows.WindowFor(HitResult.Great),
+                _ => AdjustedAnimationDuration
+            };
 
         private readonly DrawableSentakkiRuleset drawableRuleset;
 
@@ -41,18 +46,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 case TouchHold:
                     sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDurationBindable);
                     break;
-            }
-        }
-
-        private double initialLifetimeOffsetFor(HitObject hitObject)
-        {
-            switch (hitObject)
-            {
-                case Touch:
-                    return AdjustedAnimationDuration + HitObject.HitWindows.WindowFor(HitResult.Ok);
-
-                default:
-                    return AdjustedAnimationDuration;
             }
         }
     }

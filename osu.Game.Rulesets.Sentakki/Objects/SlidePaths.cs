@@ -85,8 +85,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             List<SliderPath> slideSegments = new List<SliderPath>();
 
-            foreach (var path in pathParameters)
+            for (int i = 0; i < pathParameters.Length; ++i)
             {
+                var path = pathParameters[i];
+
                 switch (path.Shape)
                 {
                     case PathShapes.Straight:
@@ -98,7 +100,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                         break;
 
                     case PathShapes.Circle:
-                        slideSegments.Add(generateCirclePattern(startOffset, path.EndOffset, path.Mirrored ? RotationDirection.Counterclockwise : RotationDirection.Clockwise));
+
+                        var newSegment = generateCirclePattern(startOffset, path.EndOffset, path.Mirrored ? RotationDirection.Counterclockwise : RotationDirection.Clockwise);
+
+                        // Combine Circle paths in the same direction
+                        if (i > 0)
+                        {
+                            var prevPath = pathParameters[i - 1];
+
+                            if (prevPath.Shape == PathShapes.Circle && prevPath.Mirrored == path.Mirrored)
+                            {
+                                slideSegments[^1].ControlPoints.AddRange(newSegment.ControlPoints);
+                                break;
+                            }
+                        }
+
+                        slideSegments.Add(newSegment);
                         break;
 
                     case PathShapes.V:
@@ -243,16 +260,41 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // DX Circle Pattern
         private static SliderPath generateCirclePattern(int offset, int end, RotationDirection direction = RotationDirection.Clockwise)
         {
-            float centre = ((offset.GetRotationForLane() + (end + offset).GetRotationForLane()) / 2) + (direction == RotationDirection.Counterclockwise ? 180 : 0);
-            Vector2 centreNode = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, centre == offset.GetRotationForLane() ? centre + 180 : centre);
+            bool isFullCircle = end.NormalizePath() == 0;
+            bool isCounterClockwise = direction == RotationDirection.Counterclockwise;
+
+            float startAngle = offset.GetRotationForLane();
+            float endAngle = (end + offset).GetRotationForLane();
+
+            float centreAngle;
+
+            if (isFullCircle)
+            {
+                // If it is a full circle, we simply put the centre node across that start point
+                centreAngle = (offset + 4).GetRotationForLane();
+            }
+            else
+            {
+                // Find the angle between the start and end points
+                centreAngle = (startAngle + endAngle) / 2;
+
+                // If the direction is Counterclockwise, then we flip the centre to the otherside;
+                if (isCounterClockwise)
+                    centreAngle += 180;
+            }
+
+            // This is a slight angle tweak to help SliderPath determine which direction the path goes
+            float angleTweak = 0.1f * (isCounterClockwise ? -1 : 1);
+
+            Vector2 node0Pos = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, startAngle + angleTweak);
+            Vector2 node1Pos = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, centreAngle);
+            Vector2 node2Pos = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, endAngle);
 
             return new SliderPath(new[]
             {
-                new PathControlPoint(
-                    SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, offset.GetRotationForLane() + (direction == RotationDirection.Counterclockwise ? -.5f : .5f)),
-                    PathType.PerfectCurve),
-                new PathControlPoint(centreNode),
-                new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end + offset), PathType.PerfectCurve)
+                new PathControlPoint(node0Pos, PathType.PerfectCurve),
+                new PathControlPoint(node1Pos),
+                new PathControlPoint(node2Pos, PathType.PerfectCurve)
             });
         }
 
