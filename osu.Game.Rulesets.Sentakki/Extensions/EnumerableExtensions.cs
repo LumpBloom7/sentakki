@@ -20,7 +20,6 @@ public static class EnumerableExtensions
         foreach (var item in list)
             pSum += max - probabilitySourceSelector(item);
 
-
         double ran = rng.NextSingle() * pSum;
 
         double cumulative = 0;

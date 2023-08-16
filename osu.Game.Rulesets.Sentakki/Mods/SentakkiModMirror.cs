@@ -56,8 +56,9 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                 {
                     foreach (var slideInfo in slide.SlideInfoList)
                     {
-                        foreach (var part in slideInfo.SlidePathParts)
+                        for (int i = 0; i < slideInfo.SlidePathParts.Length; ++i)
                         {
+                            ref var part = ref slideInfo.SlidePathParts[i];
                             part.EndOffset = (part.EndOffset * -1).NormalizePath();
                             part.Mirrored ^= mirrored;
                         }

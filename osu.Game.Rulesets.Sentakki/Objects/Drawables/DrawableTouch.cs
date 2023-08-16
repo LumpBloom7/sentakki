@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public override bool HandlePositionalInput => true;
 
         // This HitObject uses a completely different offset
-        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset + HitObject.HitWindows.WindowFor(HitResult.Ok);
+        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset + HitObject.HitWindows.WindowFor(HitResult.Great);
 
         // Similar to IsHovered for mouse, this tracks whether a pointer (touch or mouse) is interacting with this drawable
         // Interaction == (IsHovered && ActionPressed) || (OnTouch && TouchPointerInBounds)
@@ -80,11 +80,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateInitialTransforms();
             double fadeIn = AdjustedAnimationDuration / 2;
-            double moveTo = HitObject.HitWindows.WindowFor(HitResult.Ok);
+            double moveTo = HitObject.HitWindows.WindowFor(HitResult.Great);
 
             TouchBody.FadeIn(fadeIn);
 
-            using (BeginDelayedSequence(AdjustedAnimationDuration))
+            using (BeginAbsoluteSequence(HitObject.StartTime - moveTo))
             {
                 TouchBody.ResizeTo(90, moveTo, Easing.InCirc);
                 TouchBody.BorderContainer.Delay(moveTo).FadeIn();
@@ -108,11 +108,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             var result = HitObject.HitWindows.ResultFor(timeOffset);
 
+            // This is hit before any hit window
             if (result == HitResult.None)
                 return;
 
-            if (timeOffset < 0)
-                result = Result.Judgement.MaxResult;
+            // Hit before the early Great window
+            if (timeOffset < 0 && result is not HitResult.Great)
+                return;
 
             ApplyResult(result);
         }

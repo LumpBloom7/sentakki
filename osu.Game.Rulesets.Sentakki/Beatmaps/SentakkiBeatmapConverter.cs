@@ -323,7 +323,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 {
                     new SlideBodyInfo
                     {
-                        SlidePathParts = new[] { selectedPath },
+                        SlidePathParts = new[] { selectedPath.Value },
                         Duration = ((IHasDuration)original).Duration,
                         Break = hasBreakTail,
                         ShootDelay = 0.5f,

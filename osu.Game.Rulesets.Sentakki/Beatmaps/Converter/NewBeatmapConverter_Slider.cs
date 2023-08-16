@@ -101,7 +101,7 @@ public partial class NewBeatmapConverter
 
             SlideBodyPart? lastPart = null;
 
-            double velocityAdjustmentFactor = 1 + 0.5 / velocity;
+            double velocityAdjustmentFactor = 1 + (0.5 / velocity);
 
             while (true)
             {
@@ -115,14 +115,13 @@ public partial class NewBeatmapConverter
                 var chosen = nextChoices.First();
 
                 durationLeft -= chosen.MinDuration * velocityAdjustmentFactor;
-                parts.Add(lastPart = chosen.SlidePart);
+                parts.Add((lastPart = chosen.SlidePart).Value);
             }
 
             if (!parts.Any())
                 return null;
 
             return parts.ToArray();
-
         }
         else
         {
@@ -141,7 +140,7 @@ public partial class NewBeatmapConverter
 
         double getDelta(double d)
         {
-            double diff = adjustedDuration - d * 2;
+            double diff = adjustedDuration - (d * 2);
             if (diff > 0) diff *= 3; // We don't want to overly favor longer slides when a shorter one is available
 
             return Math.Round(Math.Abs(diff) * 0.02) * 100; // Round to nearest 100ms
@@ -153,13 +152,13 @@ public partial class NewBeatmapConverter
         if (previousPart is null)
             return true;
 
-        if (previousPart.Shape != SlidePaths.PathShapes.Circle)
+        if (previousPart.Value.Shape != SlidePaths.PathShapes.Circle)
             return true;
 
-        if (part.Mirrored != previousPart.Mirrored)
+        if (part.Mirrored != previousPart.Value.Mirrored)
             return true;
 
-        return previousPart.EndOffset == 0;
+        return previousPart.Value.EndOffset == 0;
     }
 
     // This checks whether a slider can be completed without moving the mouse at all.

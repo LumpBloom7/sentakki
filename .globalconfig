@@ -16,7 +16,7 @@ dotnet_diagnostic.IDE0003.severity = warning
 dotnet_diagnostic.IDE0004.severity = warning
 
 # IDE0005: Remove unnecessary imports
-dotnet_diagnostic.IDE0005.severity = warning
+dotnet_diagnostic.IDE0005.severity = suggestion
 
 # IDE0034: Simplify default literal
 dotnet_diagnostic.IDE0034.severity = warning
