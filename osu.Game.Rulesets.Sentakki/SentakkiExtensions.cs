@@ -32,21 +32,16 @@ namespace osu.Game.Rulesets.Sentakki
         /// </example>
         public static float GetDeltaAngle(float a, float b)
         {
-            float x = b;
-            float y = a;
+            float delta = b - a;
 
-            if (a > b)
-            {
-                x = a;
-                y = b;
-            }
+            delta.Mod(360);
 
-            if (x - y < 180)
-                x -= y;
-            else
-                x = 360 - x + y;
+            if (delta < -180)
+                delta += 360;
+            else if (delta > 180)
+                delta -= 360;
 
-            return x;
+            return delta;
         }
 
         /// <summary>
