@@ -101,7 +101,7 @@ public partial class NewBeatmapConverter
         {
             Debug.Assert(next is not null);
 
-            bool isSpacedStream = isOverlapping(original, next);
+            bool isSpacedStream = !isOverlapping(original, next);
 
             // We try to look ahead into the stream in an effort to determine the initial direction of a stream
             // We would fallback to using the playfield midpoint if the stream is too short
