@@ -59,6 +59,9 @@ public partial class NewBeatmapConverter
         HitObject? previous = null;
         HitObject? next = null;
 
+        // This is used to help determine the initial direction of a stream
+        HitObject? secondNext = null;
+
         for (int i = 0; i < beatmap.HitObjects.Count; ++i)
         {
             if (beatmap.HitObjects[i] != original) continue;
@@ -68,6 +71,9 @@ public partial class NewBeatmapConverter
 
             if (i < beatmap.HitObjects.Count - 1 && isChronologicallyClose(original, beatmap.HitObjects[i + 1]))
                 next = beatmap.HitObjects[i + 1];
+
+            if (next is not null && i < beatmap.HitObjects.Count - 2 && isChronologicallyClose(next, beatmap.HitObjects[i + 2]))
+                secondNext = beatmap.HitObjects[i + 2];
 
             break;
         }
@@ -96,7 +102,14 @@ public partial class NewBeatmapConverter
             Debug.Assert(next is not null);
 
             bool isSpacedStream = isOverlapping(original, next);
-            activeStreamDirection = getStreamDirection(original, previous, next);
+
+            // We try to look ahead into the stream in an effort to determine the initial direction of a stream
+            // We would fallback to using the playfield midpoint if the stream is too short
+            if (previous is null && this.isStream(next, secondNext))
+                activeStreamDirection = getStreamDirection(next, original, secondNext);
+            else
+                activeStreamDirection = getStreamDirection(original, previous, next);
+
             int streamOffset = activeStreamDirection == RotationDirection.Clockwise ? 1 : -1;
 
             // Slides have special behavior
