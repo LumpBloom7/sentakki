@@ -24,19 +24,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         [BackgroundDependencyLoader]
         private void load(TextureStore textures, DrawableHitObject? hitObject)
         {
-            AddInternal(glowTexture = new Sprite
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Texture = textures.Get("starGlow"),
-                Colour = Color4.Black
-            });
-
-            AddInternal(new Sprite
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Texture = textures.Get("starNoGlow"),
+            AddRangeInternal(new Drawable[]{
+                glowTexture = new Sprite
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Texture = textures.Get("starGlow"),
+                    Colour = Color4.Black
+                },
+                new Sprite
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Texture = textures.Get("star"),
+                }
             });
 
             if (hitObject is null)

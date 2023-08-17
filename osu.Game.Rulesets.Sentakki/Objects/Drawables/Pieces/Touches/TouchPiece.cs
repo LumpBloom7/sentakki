@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
                 Y = -34, // HACK
-                Texture = textures.Get("TouchNoGlow"),
+                Texture = textures.Get("touch"),
             });
         }
     }
