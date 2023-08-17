@@ -30,8 +30,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
 
             var result = HitObject.HitWindows.ResultFor(timeOffset);
+
             if (result == HitResult.None)
                 return;
+
+            if (HitObject.ExState && result.IsHit())
+                result = Result.Judgement.MaxResult;
 
             ApplyResult(result);
         }

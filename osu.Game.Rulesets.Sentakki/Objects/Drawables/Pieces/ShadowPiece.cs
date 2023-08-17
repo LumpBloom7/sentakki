@@ -42,16 +42,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private void load(DrawableHitObject hitObject)
         {
             // Bind exnote
+            ExNoteBindable.BindTo(((DrawableSentakkiHitObject)hitObject).ExModifierBindable);
             AccentColour.BindTo(hitObject.AccentColour);
-            AccentColour.BindValueChanged(_ => updateGlow());
 
+            AccentColour.BindValueChanged(_ => updateGlow());
             ExNoteBindable.BindValueChanged(_ => updateGlow(), true);
         }
 
         private void updateGlow()
         {
             if (!ExNoteBindable.Value)
+            {
                 glowContainer.EdgeEffect = shadow_parameters;
+                return;
+            }
 
             glowContainer.EdgeEffect = shadow_parameters with
             {

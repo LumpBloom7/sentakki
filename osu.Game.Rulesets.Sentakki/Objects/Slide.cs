@@ -12,6 +12,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Slide : SentakkiLanedHitObject, IHasDuration
     {
+        public Slide()
+        {
+            ExState = true;
+        }
+
         protected override bool NeedBreakSample => false;
 
         public double Duration
@@ -46,7 +51,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 LaneBindable = { BindTarget = LaneBindable },
                 StartTime = StartTime,
                 Samples = NodeSamples.Any() ? NodeSamples.First() : new List<HitSampleInfo>(),
-                Break = Break
+                Break = Break,
+                ExState = ExState
             });
             createSlideBodies();
         }

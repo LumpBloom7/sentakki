@@ -35,6 +35,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set => ColourBindable.Value = value;
         }
 
+        public Bindable<bool> ExStateBindable = new Bindable<bool>();
+
+        public bool ExState
+        {
+            get => ExStateBindable.Value;
+            set => ExStateBindable.Value = value;
+        }
+
         [JsonIgnore]
         public virtual Color4 DefaultNoteColour => Color4Extensions.FromHex("FF0064");
 

@@ -22,14 +22,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
+        private void load(TextureStore textures, DrawableHitObject hitObject)
         {
             AddInternal(glowTexture = new Sprite
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Texture = textures.Get("starGlow"),
-                Colour = Color4.White
+                Colour = Color4.Black
             });
 
             AddInternal(new Sprite
@@ -38,13 +38,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 Origin = Anchor.Centre,
                 Texture = textures.Get("starNoGlow"),
             });
-        }
 
-        [BackgroundDependencyLoader]
-        private void load(DrawableHitObject hitObject)
-        {
             // Bind exnote
-            ExNoteBindable.BindValueChanged(v => Colour = v.NewValue ? Color4.White : Color4.Black);
+            ExNoteBindable.BindTo(((DrawableSentakkiHitObject)hitObject).ExModifierBindable);
+            ExNoteBindable.BindValueChanged(v => glowTexture.Colour = v.NewValue ? Color4.White : Color4.Black, true);
         }
     }
 }
