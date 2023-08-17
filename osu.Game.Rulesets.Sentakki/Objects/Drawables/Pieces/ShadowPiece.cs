@@ -20,6 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Type = EdgeEffectType.Shadow,
             Radius = 15,
             Colour = Color4.Black,
+            Hollow = true
         };
 
         public ShadowPiece()
