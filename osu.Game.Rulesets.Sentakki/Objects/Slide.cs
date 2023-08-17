@@ -12,11 +12,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Slide : SentakkiLanedHitObject, IHasDuration
     {
-        public Slide()
-        {
-            ExState = true;
-        }
-
         protected override bool NeedBreakSample => false;
 
         public double Duration
