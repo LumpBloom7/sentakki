@@ -2,9 +2,7 @@ using System;
 using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
-
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {
@@ -26,9 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public void ApplyToBeatmap(IBeatmap beatmap)
         {
             foreach (SentakkiHitObject ho in beatmap.HitObjects)
-            {
                 ho.ExState = true;
-            }
         }
     }
 }

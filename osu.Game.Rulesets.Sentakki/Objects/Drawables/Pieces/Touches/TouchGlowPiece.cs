@@ -37,7 +37,5 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
             ExNoteBindable.BindTo(((DrawableSentakkiHitObject)hitObject).ExModifierBindable);
             ExNoteBindable.BindValueChanged(v => Colour = v.NewValue ? Color4.White : Color4.Black, true);
         }
-
-
     }
 }
