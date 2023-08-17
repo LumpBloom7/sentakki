@@ -5,17 +5,13 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.Objects.Drawables;
-using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
 {
     public partial class TouchGlowPiece : CompositeDrawable
     {
-        private Texture touchTexture = null!;
-
-
-        private Bindable<bool> ExNoteBindable = new Bindable<bool>(true);
+        private Bindable<bool> ExNoteBindable = new Bindable<bool>();
 
         public TouchGlowPiece()
         {
@@ -24,16 +20,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures, DrawableHitObject hitObject)
+        private void load(TextureStore textures, DrawableHitObject? hitObject)
         {
-            touchTexture = textures.Get("TouchGlow");
             AddInternal(new Sprite
             {
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
                 Y = -34, // HACK
-                Texture = touchTexture,
+                Texture = textures.Get("TouchGlow"),
             });
+
+            if (hitObject is null)
+                return;
 
             // Bind exnote
             ExNoteBindable.BindTo(((DrawableSentakkiHitObject)hitObject).ExModifierBindable);

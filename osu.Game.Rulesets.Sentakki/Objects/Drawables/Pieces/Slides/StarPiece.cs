@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         }
 
         [BackgroundDependencyLoader]
-        private void load(TextureStore textures, DrawableHitObject hitObject)
+        private void load(TextureStore textures, DrawableHitObject? hitObject)
         {
             AddInternal(glowTexture = new Sprite
             {
@@ -38,6 +38,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 Origin = Anchor.Centre,
                 Texture = textures.Get("starNoGlow"),
             });
+
+            if (hitObject is null)
+                return;
 
             // Bind exnote
             ExNoteBindable.BindTo(((DrawableSentakkiHitObject)hitObject).ExModifierBindable);
