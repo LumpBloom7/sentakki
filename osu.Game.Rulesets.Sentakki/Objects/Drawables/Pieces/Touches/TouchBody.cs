@@ -30,69 +30,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
                     RelativeSizeAxes = Axes.Both,
                     Children = new Drawable[]
                     {
-                        new Container
-                        {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            RelativeSizeAxes = Axes.Both,
-                            Children = new Drawable[]{
-                                new TouchGlowPiece
-                                {
-                                    Anchor = Anchor.TopCentre,
-                                    Origin = Anchor.TopCentre,
-                                },
-                                new TouchGlowPiece
-                                {
-                                    Anchor = Anchor.BottomCentre,
-                                    Origin = Anchor.TopCentre,
-                                    Rotation = 180
-                                },
-                                new TouchGlowPiece
-                                {
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.TopCentre,
-                                    Rotation = 270
-                                },
-                                new TouchGlowPiece
-                                {
-                                    Anchor = Anchor.CentreRight,
-                                    Origin = Anchor.TopCentre,
-                                    Rotation = 90
-                                },
-                            }
-                        },
-                        new Container
-                        {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            RelativeSizeAxes = Axes.Both,
-                            Children = new Drawable[]{
-                                new TouchPiece
-                                {
-                                    Anchor = Anchor.TopCentre,
-                                    Origin = Anchor.TopCentre,
-                                },
-                                new TouchPiece
-                                {
-                                    Anchor = Anchor.BottomCentre,
-                                    Origin = Anchor.TopCentre,
-                                    Rotation = 180
-                                },
-                                new TouchPiece
-                                {
-                                    Anchor = Anchor.CentreLeft,
-                                    Origin = Anchor.TopCentre,
-                                    Rotation = 270
-                                },
-                                new TouchPiece
-                                {
-                                    Anchor = Anchor.CentreRight,
-                                    Origin = Anchor.TopCentre,
-                                    Rotation = 90
-                                },
-                            }
-                        },
-
+                        createTouchShapeWith<TouchGlowPiece>(), // Meant for the drop shadow/glow
+                        createTouchShapeWith<TouchPiece>(),
                         new DotPiece()
                     }
                 },
@@ -123,10 +62,41 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
         private void load(DrawableHitObject drawableObject)
         {
             accentColour.BindTo(drawableObject.AccentColour);
-            accentColour.BindValueChanged(colour =>
-            {
-                PieceContainer.Colour = colour.NewValue;
-            }, true);
+            accentColour.BindValueChanged(colour => PieceContainer.Colour = colour.NewValue, true);
         }
+
+        // Creates the touch shape using the provided drawable as each of the 4 quarters
+        private Drawable createTouchShapeWith<T>() where T : Drawable, new()
+            => new Container
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                RelativeSizeAxes = Axes.Both,
+                Children = new Drawable[]{
+                    new T
+                    {
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                    },
+                    new T
+                    {
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.TopCentre,
+                        Rotation = 180
+                    },
+                    new T
+                    {
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.TopCentre,
+                        Rotation = 270
+                    },
+                    new T
+                    {
+                        Anchor = Anchor.CentreRight,
+                        Origin = Anchor.TopCentre,
+                        Rotation = 90
+                    },
+                }
+            };
     }
 }
