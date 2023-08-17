@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         [Resolved]
-        protected DrawableSentakkiRuleset? DrawableSentakkiRuleset { get; set; }
+        protected DrawableSentakkiRuleset? DrawableSentakkiRuleset { get; private set; }
 
         protected override void LoadAsyncComplete()
         {

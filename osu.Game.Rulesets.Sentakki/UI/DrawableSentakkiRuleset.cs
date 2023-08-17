@@ -17,11 +17,14 @@ using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
 using osu.Game.Screens.Play;
 using osu.Framework.Graphics;
+using osu.Framework.Input.Events;
+using osu.Framework.Input.Bindings;
+using osu.Game.Input.Bindings;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
     [Cached]
-    public partial class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject>
+    public partial class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject>, IKeyBindingHandler<GlobalAction>
     {
         private SlideFanChevrons slideFanChevronsTextures = null!;
 
@@ -60,7 +63,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
             smoothTouchAnimDuration = configTouchAnimDuration.Value;
         }
 
-        private readonly Bindable<double> configAnimDuration = new Bindable<double>(1000);
+        private readonly Bindable<double> configAnimDuration = new BindableDouble(1000)
+        {
+            MinValue = 100,
+            MaxValue = 2000,
+        };
         private double smoothAnimDuration = 1000;
         public readonly Bindable<double> AdjustedAnimDuration = new Bindable<double>(1000);
 
@@ -80,6 +87,22 @@ namespace osu.Game.Rulesets.Sentakki.UI
             AdjustedTouchAnimDuration.Value = smoothTouchAnimDuration * speedAdjustmentTrack.AggregateTempo.Value * speedAdjustmentTrack.AggregateFrequency.Value;
         }
 
+        public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
+        {
+            switch (e.Action)
+            {
+                case GlobalAction.DecreaseScrollSpeed:
+                    configAnimDuration.Value -= 100;
+                    return true;
+                case GlobalAction.IncreaseScrollSpeed:
+                    configAnimDuration.Value += 100;
+                    return true;
+            }
+
+            return false;
+        }
+
+        public void OnReleased(KeyBindingReleaseEvent<GlobalAction> e) { }
 
         // Gameplay speed specifics
         private readonly Track speedAdjustmentTrack = new TrackVirtual(0);
