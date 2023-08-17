@@ -16,6 +16,7 @@ using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
 using osu.Game.Screens.Play;
+using osu.Framework.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -46,10 +47,46 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [BackgroundDependencyLoader]
         private void load()
         {
-            (Config as SentakkiRulesetConfigManager)?.BindWith(SentakkiRulesetSettings.LaneInputMode, laneInputMode);
+            Config.BindWith(SentakkiRulesetSettings.LaneInputMode, laneInputMode);
 
             FrameStableComponents.Add(slideFanChevronsTextures);
+
+            Config.BindWith(SentakkiRulesetSettings.AnimationDuration, configAnimDuration);
+            Config.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, configTouchAnimDuration);
+
+            configAnimDuration.BindValueChanged(v => this.TransformTo(nameof(smoothAnimDuration), v.NewValue, 200, Easing.OutQuint));
+            configTouchAnimDuration.BindValueChanged(v => this.TransformTo(nameof(smoothTouchAnimDuration), v.NewValue, 200, Easing.OutQuint));
+            smoothAnimDuration = configAnimDuration.Value;
+            smoothTouchAnimDuration = configTouchAnimDuration.Value;
         }
+
+        private readonly Bindable<double> configAnimDuration = new Bindable<double>(1000);
+        private double smoothAnimDuration = 1000;
+        public readonly Bindable<double> AdjustedAnimDuration = new Bindable<double>(1000);
+
+        private readonly Bindable<double> configTouchAnimDuration = new Bindable<double>(1000);
+        private double smoothTouchAnimDuration = 1000;
+        public readonly Bindable<double> AdjustedTouchAnimDuration = new Bindable<double>(1000);
+
+        protected override void Update()
+        {
+            base.Update();
+            updateAnimationDurations();
+        }
+
+        private void updateAnimationDurations()
+        {
+            AdjustedAnimDuration.Value = smoothAnimDuration * speedAdjustmentTrack.AggregateTempo.Value * speedAdjustmentTrack.AggregateFrequency.Value;
+            AdjustedTouchAnimDuration.Value = smoothTouchAnimDuration * speedAdjustmentTrack.AggregateTempo.Value * speedAdjustmentTrack.AggregateFrequency.Value;
+        }
+
+
+        // Gameplay speed specifics
+        private readonly Track speedAdjustmentTrack = new TrackVirtual(0);
+
+        public double GameplaySpeed => speedAdjustmentTrack.Rate;
+
+        protected new SentakkiRulesetConfigManager Config => (SentakkiRulesetConfigManager)base.Config;
 
         // Input specifics (sensor/button) for replay and gameplay
         private readonly Bindable<LaneInputMode> laneInputMode = new Bindable<LaneInputMode>();
@@ -59,11 +96,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private SentakkiFramedReplayInputHandler sentakkiFramedReplayInput => (SentakkiFramedReplayInputHandler)((SentakkiInputManager)KeyBindingInputManager).ReplayInputHandler;
 
         public bool UseSensorMode => hasReplay ? sentakkiFramedReplayInput.UsingSensorMode : laneInputMode.Value == LaneInputMode.Sensor;
-
-        // Gameplay speed specifics
-        private readonly Track speedAdjustmentTrack = new TrackVirtual(0);
-
-        public double GameplaySpeed => speedAdjustmentTrack.Rate;
 
         // Default stuff
         protected override Playfield CreatePlayfield() => new SentakkiPlayfield();

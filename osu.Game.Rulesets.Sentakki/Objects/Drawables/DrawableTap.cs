@@ -62,7 +62,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            double animTime = AdjustedAnimationDuration / 2;
+            double animTime = AnimationDuration.Value / 2;
             TapVisual.FadeInFromZero(animTime).ScaleTo(1, animTime);
 
             using (BeginDelayedSequence(animTime))

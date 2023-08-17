@@ -99,7 +99,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            double fadeIn = AdjustedAnimationDuration;
+            double fadeIn = AnimationDuration.Value;
             this.FadeInFromZero(fadeIn).ScaleTo(1, fadeIn);
 
             using (BeginDelayedSequence(fadeIn))
