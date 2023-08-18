@@ -83,8 +83,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private void updateAnimationDurations()
         {
-            AdjustedAnimDuration.Value = smoothAnimDuration * speedAdjustmentTrack.AggregateTempo.Value * speedAdjustmentTrack.AggregateFrequency.Value;
-            AdjustedTouchAnimDuration.Value = smoothTouchAnimDuration * speedAdjustmentTrack.AggregateTempo.Value * speedAdjustmentTrack.AggregateFrequency.Value;
+            AdjustedAnimDuration.Value = smoothAnimDuration * GameplaySpeed;
+            AdjustedTouchAnimDuration.Value = smoothTouchAnimDuration * GameplaySpeed;
         }
 
         public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
