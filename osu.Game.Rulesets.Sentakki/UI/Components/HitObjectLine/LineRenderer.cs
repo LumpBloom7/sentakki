@@ -30,16 +30,12 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             lifetimeManager.EntryBecameDead += onEntryBecameDead;
         }
 
-        private readonly BindableDouble animationDuration = new BindableDouble(1000);
-
         [Resolved]
         private DrawableSentakkiRuleset? drawableRuleset { get; set; }
 
         [BackgroundDependencyLoader]
-        private void load(SentakkiRulesetConfigManager? sentakkiConfigs)
+        private void load()
         {
-            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
-
             AddInternal(linePool = new DrawablePool<DrawableLine>(5));
         }
 
@@ -120,7 +116,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             // Create new line entry for this entryTime if none exists
             if (!lineEntries.ContainsKey(entryTime))
             {
-                var newEntry = new LineLifetimeEntry(animationDuration, drawableRuleset, entryTime);
+                var newEntry = new LineLifetimeEntry(drawableRuleset, entryTime);
                 lineEntries[entryTime] = newEntry;
                 lifetimeManager.AddEntry(newEntry);
 
