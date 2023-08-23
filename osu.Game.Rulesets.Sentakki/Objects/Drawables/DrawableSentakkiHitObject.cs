@@ -5,6 +5,8 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Sentakki.Judgements;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -54,9 +56,28 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AccentColour.BindTo(HitObject.ColourBindable);
         }
 
+        public HitResult MinimumAcceptedHitResult = HitResult.None;
+
         protected void ApplyResult(HitResult result)
         {
             void resultApplication(JudgementResult r) => r.Type = result;
+
+            // SentakkiModGori turns subpar judgements into misses
+            if (Result.Judgement is SentakkiJudgement)
+            {
+                if (MinimumAcceptedHitResult == HitResult.Perfect) // using the Perfect result to represent Crits
+                {
+                    double absTimeOffset = Math.Abs(Time.Current - HitObject.GetEndTime());
+
+                    if (absTimeOffset > 16)
+                        result = Result.Judgement.MinResult;
+                }
+                else if (result < MinimumAcceptedHitResult)
+                {
+                    result = Result.Judgement.MinResult;
+                }
+            }
+
             ApplyResult(resultApplication);
         }
 
