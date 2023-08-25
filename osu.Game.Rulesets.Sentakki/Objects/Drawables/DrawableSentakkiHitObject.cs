@@ -64,10 +64,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             void resultApplication(JudgementResult r) => ((SentakkiJudgementResult)r).Type = result;
 
-            // SentakkiModGori turns subpar judgements into misses
-            if (Result.Judgement is SentakkiJudgement && result < MinimumAcceptedHitResult)
-                result = Result.Judgement.MinResult;
-
             ApplyResult(resultApplication);
         }
 

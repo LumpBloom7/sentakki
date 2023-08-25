@@ -1,4 +1,5 @@
 ﻿using osu.Game.Rulesets.Scoring;
+using osu.Game.Utils;
 
 namespace osu.Game.Rulesets.Sentakki.Scoring
 {
@@ -6,19 +7,25 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
     {
         protected const double timing_unit = 1000 / 60.0; // A single frame
 
-        public SentakkiHitWindows(SentakkiJudgementMode judgementMode = SentakkiJudgementMode.Normal, HitResult minimumHitResult = HitResult.None)
-        {
-        }
+        public HitResult MinimumHitResult = HitResult.None;
+        public SentakkiJudgementMode JudgementMode = SentakkiJudgementMode.Normal;
 
         public override bool IsHitResultAllowed(HitResult result)
         {
             switch (result)
             {
+                // These are guaranteed to be valid
                 case HitResult.Perfect:
+                case HitResult.Miss:
+                    return true;
+
+                // These are conditional on the minimum valid result
                 case HitResult.Great:
                 case HitResult.Good:
                 case HitResult.Ok:
-                case HitResult.Miss:
+                    if (result < MinimumHitResult)
+                        return false;
+
                     return true;
 
                 default:

@@ -1,17 +1,17 @@
 using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Framework.Localisation;
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Configuration;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Framework.Graphics.Sprites;
 using System;
 using System.ComponentModel;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Sentakki.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Mods;
 
-public class SentakkiModGori : Mod, IApplicableToDrawableHitObject
+public class SentakkiModGori : Mod, IApplicableToHitObject
 {
     public override string Name => "Gori";
     public override string Acronym => "GR";
@@ -31,10 +31,14 @@ public class SentakkiModGori : Mod, IApplicableToDrawableHitObject
     [SettingSource("Lowest valid hit result", "The minimum HitResult that is accepted during gameplay. Anything below will be considered a miss.")]
     public Bindable<SentakkiHitResult> MaxHitResult { get; } = new Bindable<SentakkiHitResult>(SentakkiHitResult.Perfect);
 
-    public void ApplyToDrawableHitObject(DrawableHitObject drawable)
+    public void ApplyToHitObject(HitObject hitObject)
     {
-        if (drawable is DrawableSentakkiHitObject d)
-            d.MinimumAcceptedHitResult = (HitResult)MaxHitResult.Value;
+        var minimumResult = (HitResult)MaxHitResult.Value;
+
+        if (hitObject.HitWindows is not SentakkiHitWindows shw)
+            return;
+
+        shw.MinimumHitResult = minimumResult;
     }
 
     public enum SentakkiHitResult
