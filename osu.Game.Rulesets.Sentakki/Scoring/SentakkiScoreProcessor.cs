@@ -1,5 +1,7 @@
 ﻿using System;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Judgements;
 
 namespace osu.Game.Rulesets.Sentakki.Scoring
 {

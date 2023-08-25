@@ -58,25 +58,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public HitResult MinimumAcceptedHitResult = HitResult.None;
 
+        protected override JudgementResult CreateResult(Judgement judgement) => new SentakkiJudgementResult(HitObject, judgement);
+
         protected void ApplyResult(HitResult result)
         {
-            void resultApplication(JudgementResult r) => r.Type = result;
+            void resultApplication(JudgementResult r) => ((SentakkiJudgementResult)r).Type = result;
 
             // SentakkiModGori turns subpar judgements into misses
-            if (Result.Judgement is SentakkiJudgement)
-            {
-                if (MinimumAcceptedHitResult == HitResult.Perfect) // using the Perfect result to represent Crits
-                {
-                    double absTimeOffset = Math.Abs(Time.Current - HitObject.GetEndTime());
-
-                    if (absTimeOffset > 16)
-                        result = Result.Judgement.MinResult;
-                }
-                else if (result < MinimumAcceptedHitResult)
-                {
-                    result = Result.Judgement.MinResult;
-                }
-            }
+            if (Result.Judgement is SentakkiJudgement && result < MinimumAcceptedHitResult)
+                result = Result.Judgement.MinResult;
 
             ApplyResult(resultApplication);
         }

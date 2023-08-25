@@ -6,10 +6,11 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
     {
         protected override DifficultyRange[] GetRanges() => new[]
         {
-            new DifficultyRange(HitResult.Miss, 576, 576, 288),
-            new DifficultyRange(HitResult.Ok, 576, 576, 288),
-            new DifficultyRange(HitResult.Good, 416, 416, 208),
-            new DifficultyRange(HitResult.Great, 288, 288, 144)
+            SimpleDifficultyRange(HitResult.Miss, 36 * timing_unit),
+            SimpleDifficultyRange(HitResult.Ok, 36 * timing_unit),
+            SimpleDifficultyRange(HitResult.Good, 26 * timing_unit),
+            SimpleDifficultyRange(HitResult.Great, 14 * timing_unit),
+            SimpleDifficultyRange(HitResult.Perfect, 14 * timing_unit),
         };
     }
 }

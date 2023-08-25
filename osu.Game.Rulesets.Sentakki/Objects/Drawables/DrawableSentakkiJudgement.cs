@@ -10,6 +10,7 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Judgements;
 using osuTK;
 using osuTK.Graphics;
 
@@ -23,8 +24,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private Container judgementBody = null!;
         private SentakkiJudgementPiece judgementPiece = null!;
         private OsuSpriteText timingPiece = null!;
-
-        private HitResult result = HitResult.Good;
 
         private readonly BindableBool detailedJudgements = new BindableBool();
 
@@ -51,7 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                             Shadow = true,
                             ShadowColour = Color4.Black
                         },
-                        judgementPiece = new SentakkiJudgementPiece(result)
+                        judgementPiece = new SentakkiJudgementPiece(HitResult.Great)
                     }
                 }
             );
@@ -59,11 +58,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public DrawableSentakkiJudgement Apply(JudgementResult result, DrawableHitObject hitObject)
         {
-            this.result = result.Type;
+            var senResult = (SentakkiJudgementResult)result;
             judgementPiece.JudgementText.Text = result.Type.GetDisplayNameForSentakkiResult().ToUpperInvariant();
             judgementPiece.JudgementText.Colour = result.Type.GetColorForSentakkiResult();
 
-            if (result.HitObject.HitWindows is HitWindows.EmptyHitWindows || result.Type == HitResult.Miss || !detailedJudgements.Value)
+            if (senResult.HitObject.HitWindows is HitWindows.EmptyHitWindows || result.Type == HitResult.Miss || !detailedJudgements.Value)
             {
                 timingPiece.Alpha = 0;
             }
@@ -71,20 +70,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 timingPiece.Alpha = 1;
 
-                if (result.TimeOffset >= 16)
+                if (senResult.Critical)
+                {
+                    timingPiece.Text = "CRITICAL";
+                    timingPiece.Colour = Color4.Orange;
+                }
+                else if (result.TimeOffset > 0)
                 {
                     timingPiece.Text = "LATE";
                     timingPiece.Colour = Color4.OrangeRed;
                 }
-                else if (result.TimeOffset <= -16)
+                else if (result.TimeOffset < 0)
                 {
                     timingPiece.Text = "EARLY";
                     timingPiece.Colour = Color4.GreenYellow;
-                }
-                else
-                {
-                    timingPiece.Text = "CRITICAL";
-                    timingPiece.Colour = Color4.Orange;
                 }
             }
 
