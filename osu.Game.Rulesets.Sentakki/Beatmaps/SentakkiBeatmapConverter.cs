@@ -61,19 +61,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             patternGenerator = new SentakkiPatternGenerator(beatmap);
         }
 
-        protected override Beatmap<SentakkiHitObject> ConvertBeatmap(IBeatmap original, CancellationToken cancellationToken)
-        {
-            var convertedBeatmap = base.ConvertBeatmap(original, cancellationToken);
-
-            // We don't use any of the standard difficulty values
-            // But we initialize to defaults so HR can adjust HitWindows in a controlled manner
-            // We clone beforehand to avoid altering the original (it really should be readonly :P)
-            convertedBeatmap.BeatmapInfo = convertedBeatmap.BeatmapInfo.Clone();
-            convertedBeatmap.BeatmapInfo.Difficulty = new BeatmapDifficulty();
-
-            return convertedBeatmap;
-        }
-
         protected override Beatmap<SentakkiHitObject> CreateBeatmap() => new SentakkiBeatmap();
 
         protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap, CancellationToken cancellationToken)

@@ -1,15 +1,50 @@
+using System.ComponentModel;
+using osu.Framework.Bindables;
 using osu.Game.Beatmaps;
+using osu.Game.Configuration;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {
-    public class SentakkiModHardRock : ModHardRock
+    public class SentakkiModHardRock : ModHardRock, IApplicableToHitObject
     {
-        public override double ScoreMultiplier => 1.06;
+        public override double ScoreMultiplier => 1;
 
         public override void ApplyToDifficulty(BeatmapDifficulty difficulty)
         {
-            difficulty.OverallDifficulty = 10f;
+            // This is a no-op since we don't use beatmap difficulty
+            // The only reason we still inherit from ModHardRock is to be able to use their localized strings
+        }
+
+        [SettingSource("Judgement mode", "Judgement modes determine how strict the hitwindows are during gameplay")]
+        public Bindable<SentakkiJudgementMode> judgementMode { get; } = new Bindable<SentakkiJudgementMode>(SentakkiJudgementMode.Maji);
+
+
+        [SettingSource("Lowest valid hit result", "The minimum HitResult that is accepted during gameplay. Anything below will be considered a miss.")]
+        public Bindable<SentakkiHitResult> minimumValidResult { get; } = new Bindable<SentakkiHitResult>(SentakkiHitResult.Good);
+
+        public void ApplyToHitObject(HitObject hitObject)
+        {
+            // Nested HitObjects should get the same treatment
+            foreach (var nested in hitObject.NestedHitObjects)
+                ApplyToHitObject(nested);
+
+            if (hitObject.HitWindows is not SentakkiHitWindows shw)
+                return;
+
+            shw.MinimumHitResult = (HitResult)minimumValidResult.Value;
+            shw.JudgementMode = judgementMode.Value;
+        }
+
+        public enum SentakkiHitResult
+        {
+            Good = 3,
+            Great = 4,
+            Perfect = 5,
+            [Description("Critical Perfect")] Critical = 6,
         }
     }
 }

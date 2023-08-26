@@ -113,7 +113,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
 
             // Hit before the early Great window
-            if (timeOffset < 0 && result is not HitResult.Great)
+            if (timeOffset < 0 && result is not HitResult.Perfect)
                 return;
 
             ApplyResult(result);

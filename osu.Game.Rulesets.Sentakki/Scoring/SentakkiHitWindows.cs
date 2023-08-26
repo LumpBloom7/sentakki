@@ -1,14 +1,26 @@
 ﻿using osu.Game.Rulesets.Scoring;
-using osu.Game.Utils;
 
 namespace osu.Game.Rulesets.Sentakki.Scoring
 {
-    public class SentakkiHitWindows : HitWindows
+    public abstract class SentakkiHitWindows : HitWindows
     {
         protected const double timing_unit = 1000 / 60.0; // A single frame
 
         public HitResult MinimumHitResult = HitResult.None;
-        public SentakkiJudgementMode JudgementMode = SentakkiJudgementMode.Normal;
+
+        private SentakkiJudgementMode judgementMode = SentakkiJudgementMode.Normal;
+        public SentakkiJudgementMode JudgementMode
+        {
+            get => judgementMode;
+            set
+            {
+                if (value == judgementMode)
+                    return;
+
+                judgementMode = value;
+                SetDifficulty(0);
+            }
+        }
 
         public override bool IsHitResultAllowed(HitResult result)
         {
@@ -33,14 +45,19 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
             }
         }
 
-        protected override DifficultyRange[] GetRanges() => new[]
+        protected abstract DifficultyRange[] GetDefaultRanges();
+        protected virtual DifficultyRange[] GetMajiRanges() => GetDefaultRanges();
+        protected virtual DifficultyRange[] GetGachiRanges() => GetMajiRanges();
+
+        protected sealed override DifficultyRange[] GetRanges() => JudgementMode switch
         {
-            SimpleDifficultyRange(HitResult.Miss, 9 * timing_unit),
-            SimpleDifficultyRange(HitResult.Ok, 9 * timing_unit),
-            SimpleDifficultyRange(HitResult.Good, 6 * timing_unit),
-            SimpleDifficultyRange(HitResult.Great, 3 * timing_unit),
-            SimpleDifficultyRange(HitResult.Perfect, 1 * timing_unit),
+            SentakkiJudgementMode.Maji => GetMajiRanges(),
+            SentakkiJudgementMode.Gati => GetGachiRanges(),
+            _ => GetDefaultRanges(),
         };
+
+        protected static DifficultyRange SimpleDifficultyRange(SentakkiHitResult result, double range)
+            => SimpleDifficultyRange((HitResult)result, range);
 
         protected static DifficultyRange SimpleDifficultyRange(HitResult result, double range)
             => new DifficultyRange(result, range, range, range);

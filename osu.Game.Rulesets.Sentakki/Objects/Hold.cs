@@ -51,7 +51,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public class HoldHead : SentakkiLanedHitObject
         {
             public override Judgement CreateJudgement() => new SentakkiJudgement();
-            protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
+            protected override HitWindows CreateHitWindows() => new SentakkiTapHitWindows();
         }
     }
 }
