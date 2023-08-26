@@ -6,18 +6,18 @@ public class SentakkiSlideHitWindows : SentakkiHitWindows
 {
     private static readonly DifficultyRange[] default_ranges = {
         SimpleDifficultyRange(HitResult.Miss, 36 * timing_unit),
-        SimpleDifficultyRange(SentakkiHitResult.Good, 36 * timing_unit),
-        SimpleDifficultyRange(SentakkiHitResult.Great, 26 * timing_unit),
-        SimpleDifficultyRange(SentakkiHitResult.Perfect, 14 * timing_unit),
-        SimpleDifficultyRange(SentakkiHitResult.Critical, 14 * timing_unit),
+        SimpleDifficultyRange(HitResult.Ok, 36 * timing_unit),
+        SimpleDifficultyRange(HitResult.Good, 26 * timing_unit),
+        SimpleDifficultyRange(HitResult.Great, 14 * timing_unit),
+        SimpleDifficultyRange(HitResult.Perfect, 14 * timing_unit),
     };
 
     private static readonly DifficultyRange[] maji_ranges = {
         SimpleDifficultyRange(HitResult.Miss, 26 * timing_unit),
-        SimpleDifficultyRange(SentakkiHitResult.Good, 26 * timing_unit),
-        SimpleDifficultyRange(SentakkiHitResult.Great, 14 * timing_unit),
-        SimpleDifficultyRange(SentakkiHitResult.Perfect, 14 * timing_unit),
-        SimpleDifficultyRange(SentakkiHitResult.Critical, 14 * timing_unit),
+        SimpleDifficultyRange(HitResult.Ok, 26 * timing_unit),
+        SimpleDifficultyRange(HitResult.Good, 14 * timing_unit),
+        SimpleDifficultyRange(HitResult.Great, 14 * timing_unit),
+        SimpleDifficultyRange(HitResult.Perfect, 14 * timing_unit),
     };
 
     protected override DifficultyRange[] GetDefaultRanges() => default_ranges;
