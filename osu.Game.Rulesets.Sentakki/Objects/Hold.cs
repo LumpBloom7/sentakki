@@ -14,7 +14,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     {
         protected override bool NeedBreakSample => false;
 
-        public IList<IList<HitSampleInfo>> NodeSamples { get; set; } = new List<IList<HitSampleInfo>>();
+        private IList<IList<HitSampleInfo>> nodeSamples = new List<IList<HitSampleInfo>>();
+
+        public IList<IList<HitSampleInfo>> NodeSamples
+        {
+            get => nodeSamples;
+            set
+            {
+                Samples = value.Last();
+                nodeSamples = value;
+            }
+        }
 
         public double EndTime
         {
