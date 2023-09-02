@@ -5,6 +5,7 @@ using osu.Game.Configuration;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Mods
@@ -19,11 +20,11 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             // The only reason we still inherit from ModHardRock is to be able to use their localized strings
         }
 
-        [SettingSource("Judgement mode", "Judgement modes determine how strict the hitwindows are during gameplay")]
+        [SettingSource(typeof(SentakkiModHardRockStrings), nameof(SentakkiModHardRockStrings.JudgementMode), nameof(SentakkiModHardRockStrings.JudgementModeDescription))]
         public Bindable<SentakkiJudgementMode> judgementMode { get; } = new Bindable<SentakkiJudgementMode>(SentakkiJudgementMode.Maji);
 
 
-        [SettingSource("Lowest valid hit result", "The minimum HitResult that is accepted during gameplay. Anything below will be considered a miss.")]
+        [SettingSource(typeof(SentakkiModHardRockStrings), nameof(SentakkiModHardRockStrings.MinimumResult), nameof(SentakkiModHardRockStrings.MinimumResultDescription))]
         public Bindable<SentakkiHitResult> minimumValidResult { get; } = new Bindable<SentakkiHitResult>(SentakkiHitResult.Good);
 
         public void ApplyToHitObject(HitObject hitObject)
