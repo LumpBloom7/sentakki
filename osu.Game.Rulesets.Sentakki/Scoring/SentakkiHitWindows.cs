@@ -56,9 +56,6 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
             _ => GetDefaultRanges(),
         };
 
-        protected static DifficultyRange SimpleDifficultyRange(SentakkiHitResult result, double range)
-            => SimpleDifficultyRange((HitResult)result, range);
-
         protected static DifficultyRange SimpleDifficultyRange(HitResult result, double range)
             => new DifficultyRange(result, range, range, range);
     }

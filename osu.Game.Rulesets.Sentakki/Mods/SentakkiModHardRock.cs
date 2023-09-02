@@ -23,7 +23,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         [SettingSource(typeof(SentakkiModHardRockStrings), nameof(SentakkiModHardRockStrings.JudgementMode), nameof(SentakkiModHardRockStrings.JudgementModeDescription))]
         public Bindable<SentakkiJudgementMode> judgementMode { get; } = new Bindable<SentakkiJudgementMode>(SentakkiJudgementMode.Maji);
 
-
         [SettingSource(typeof(SentakkiModHardRockStrings), nameof(SentakkiModHardRockStrings.MinimumResult), nameof(SentakkiModHardRockStrings.MinimumResultDescription))]
         public Bindable<SentakkiHitResult> minimumValidResult { get; } = new Bindable<SentakkiHitResult>(SentakkiHitResult.Good);
 
