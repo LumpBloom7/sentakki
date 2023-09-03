@@ -46,7 +46,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 LaneBindable = { BindTarget = LaneBindable },
                 StartTime = StartTime,
                 Samples = NodeSamples.Any() ? NodeSamples.First() : new List<HitSampleInfo>(),
-                Break = Break
+                Break = Break,
+                Ex = Ex
             });
             createSlideBodies();
         }

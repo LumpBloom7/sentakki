@@ -23,7 +23,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             typeof(ModPerfect),
             typeof(ModNoFail),
             typeof(SentakkiModAutoTouch),
-            typeof(SentakkiModChallenge)
+            typeof(SentakkiModChallenge),
+            typeof(SentakkiModRelax)
         };
 
         public void ApplyToDrawableHitObject(DrawableHitObject drawableHitObject)

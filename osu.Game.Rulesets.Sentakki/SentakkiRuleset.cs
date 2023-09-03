@@ -76,6 +76,7 @@ namespace osu.Game.Rulesets.Sentakki
                 case ModType.DifficultyReduction:
                     return new Mod[]
                     {
+                        new SentakkiModRelax(),
                         new MultiMod(new SentakkiModHalfTime(), new SentakkiModDaycore()),
                         new SentakkiModNoFail(),
                     };

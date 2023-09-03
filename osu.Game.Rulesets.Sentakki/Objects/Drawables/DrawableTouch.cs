@@ -44,7 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
 
-            Size = new Vector2(105);
+            Size = new Vector2(100);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             AddRangeInternal(new Drawable[]
@@ -113,8 +113,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
 
             // Hit before the early Great window
-            if (timeOffset < 0 && result is not HitResult.Great)
+            if (timeOffset < 0 && result != Result.Judgement.MaxResult)
                 return;
+
+            if (ExBindable.Value && result.IsHit())
+                result = Result.Judgement.MaxResult;
 
             ApplyResult(result);
         }
