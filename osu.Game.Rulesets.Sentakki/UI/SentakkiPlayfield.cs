@@ -3,6 +3,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
+using osu.Framework.Utils;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Judgements;
@@ -16,7 +17,6 @@ using osu.Game.Rulesets.UI;
 using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
-using osu.Framework.Utils;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {

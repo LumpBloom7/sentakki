@@ -116,6 +116,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 else
                     result = HitResult.Miss;
 
+                // This is specifically to accommodate the threshold setting in HR
+                if (!HitObject.HitWindows.IsHitResultAllowed(result))
+                    result = HitResult.Miss;
+
                 // Hold is over, but head windows are still active.
                 // Only happens on super short holds
                 // Force a miss on the head in this case

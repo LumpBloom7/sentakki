@@ -11,6 +11,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Judgements;
+using osu.Game.Rulesets.Sentakki.Scoring;
 using osuTK;
 using osuTK.Graphics;
 
@@ -62,7 +63,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             judgementPiece.JudgementText.Text = result.Type.GetDisplayNameForSentakkiResult().ToUpperInvariant();
             judgementPiece.JudgementText.Colour = result.Type.GetColorForSentakkiResult();
 
-            if (senResult.HitObject.HitWindows is HitWindows.EmptyHitWindows || result.Type == HitResult.Miss || !detailedJudgements.Value)
+            if (senResult.HitObject.HitWindows is SentakkiEmptyHitWindows || result.Type == HitResult.Miss || !detailedJudgements.Value)
             {
                 timingPiece.Alpha = 0;
             }
