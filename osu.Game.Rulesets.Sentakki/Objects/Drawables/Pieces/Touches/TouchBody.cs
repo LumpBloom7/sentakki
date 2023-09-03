@@ -76,24 +76,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
                     new T
                     {
                         Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre,
                     },
                     new T
                     {
                         Anchor = Anchor.BottomCentre,
-                        Origin = Anchor.TopCentre,
                         Rotation = 180
                     },
                     new T
                     {
                         Anchor = Anchor.CentreLeft,
-                        Origin = Anchor.TopCentre,
                         Rotation = 270
                     },
                     new T
                     {
                         Anchor = Anchor.CentreRight,
-                        Origin = Anchor.TopCentre,
                         Rotation = 90
                     },
                 }

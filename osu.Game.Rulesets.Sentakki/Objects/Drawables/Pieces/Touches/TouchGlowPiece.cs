@@ -22,12 +22,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
         [BackgroundDependencyLoader]
         private void load(TextureStore textures, DrawableHitObject? hitObject)
         {
+            var tex = textures.Get("touchGlow");
+
+            // We must shift the texture down by this amount to align the sprite to the top edge of the triangle
+            const float triangle_half_height = 43f;
+
+            // The textures are potentially scaled down when in use, so let's account for that (osu does supersampling by default)
+            float yShift = triangle_half_height / tex.ScaleAdjust;
+
             AddInternal(new Sprite
             {
                 Anchor = Anchor.TopCentre,
-                Origin = Anchor.TopCentre,
-                Y = -34, // HACK
-                Texture = textures.Get("touchGlow"),
+                Origin = Anchor.Centre,
+                Y = yShift,
+                Texture = tex,
             });
 
             if (hitObject is null)
