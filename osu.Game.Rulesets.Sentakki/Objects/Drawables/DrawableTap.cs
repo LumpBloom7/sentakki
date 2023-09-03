@@ -91,7 +91,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (result == HitResult.None)
                 return;
 
-            if (HitObject.ExState && result.IsHit())
+            if (HitObject.Ex && result.IsHit())
                 result = Result.Judgement.MaxResult;
 
             ApplyResult(result);

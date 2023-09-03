@@ -35,12 +35,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set => ColourBindable.Value = value;
         }
 
-        public Bindable<bool> ExStateBindable = new Bindable<bool>();
+        public Bindable<bool> ExBindable = new Bindable<bool>();
 
-        public bool ExState
+        public bool Ex
         {
-            get => ExStateBindable.Value;
-            set => ExStateBindable.Value = value;
+            get => ExBindable.Value;
+            set => ExBindable.Value = value;
         }
 
         [JsonIgnore]

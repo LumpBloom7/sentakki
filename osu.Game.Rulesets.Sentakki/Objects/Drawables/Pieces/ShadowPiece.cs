@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     {
         private CircularContainer glowContainer;
 
-        private Bindable<bool> ExNoteBindable = new Bindable<bool>(true);
+        private Bindable<bool> ExBindable = new Bindable<bool>(true);
         private Bindable<Color4> AccentColour = new Bindable<Color4>();
 
         private static readonly EdgeEffectParameters shadow_parameters = new EdgeEffectParameters
@@ -43,16 +43,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private void load(DrawableHitObject hitObject)
         {
             // Bind exnote
-            ExNoteBindable.BindTo(((DrawableSentakkiHitObject)hitObject).ExModifierBindable);
+            ExBindable.BindTo(((DrawableSentakkiHitObject)hitObject).ExBindable);
             AccentColour.BindTo(hitObject.AccentColour);
 
             AccentColour.BindValueChanged(_ => updateGlow());
-            ExNoteBindable.BindValueChanged(_ => updateGlow(), true);
+            ExBindable.BindValueChanged(_ => updateGlow(), true);
         }
 
         private void updateGlow()
         {
-            if (!ExNoteBindable.Value)
+            if (!ExBindable.Value)
             {
                 glowContainer.EdgeEffect = shadow_parameters;
                 return;

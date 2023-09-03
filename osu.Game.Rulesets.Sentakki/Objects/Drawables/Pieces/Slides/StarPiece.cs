@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
     {
         private Sprite glowTexture = null!;
 
-        private Bindable<bool> ExNoteBindable = new Bindable<bool>();
+        private Bindable<bool> ExBindable = new Bindable<bool>();
 
         public StarPiece()
         {
@@ -44,8 +44,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 return;
 
             // Bind exnote
-            ExNoteBindable.BindTo(((DrawableSentakkiHitObject)hitObject).ExModifierBindable);
-            ExNoteBindable.BindValueChanged(v => glowTexture.Colour = v.NewValue ? Color4.White : Color4.Black, true);
+            ExBindable.BindTo(((DrawableSentakkiHitObject)hitObject).ExBindable);
+            ExBindable.BindValueChanged(v => glowTexture.Colour = v.NewValue ? Color4.White : Color4.Black, true);
         }
     }
 }

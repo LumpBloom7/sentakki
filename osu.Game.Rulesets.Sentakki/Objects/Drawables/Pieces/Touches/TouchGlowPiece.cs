@@ -11,7 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
 {
     public partial class TouchGlowPiece : CompositeDrawable
     {
-        private Bindable<bool> ExNoteBindable = new Bindable<bool>();
+        private Bindable<bool> ExBindable = new Bindable<bool>();
 
         public TouchGlowPiece()
         {
@@ -42,8 +42,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
                 return;
 
             // Bind exnote
-            ExNoteBindable.BindTo(((DrawableSentakkiHitObject)hitObject).ExModifierBindable);
-            ExNoteBindable.BindValueChanged(v => Colour = v.NewValue ? Color4.White : Color4.Black, true);
+            ExBindable.BindTo(((DrawableSentakkiHitObject)hitObject).ExBindable);
+            ExBindable.BindValueChanged(v => Colour = v.NewValue ? Color4.White : Color4.Black, true);
         }
     }
 }

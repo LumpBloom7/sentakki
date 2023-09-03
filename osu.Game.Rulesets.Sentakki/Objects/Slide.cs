@@ -47,7 +47,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 StartTime = StartTime,
                 Samples = NodeSamples.Any() ? NodeSamples.First() : new List<HitSampleInfo>(),
                 Break = Break,
-                ExState = ExState
+                Ex = Ex
             });
             createSlideBodies();
         }

@@ -116,7 +116,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (timeOffset < 0 && result != Result.Judgement.MaxResult)
                 return;
 
-            if (ExModifierBindable.Value && result.IsHit())
+            if (ExBindable.Value && result.IsHit())
                 result = Result.Judgement.MaxResult;
 
             ApplyResult(result);
