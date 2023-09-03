@@ -19,13 +19,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public void TriggerResult()
         {
-            ApplyResult(static r =>
-                {
-                    bool isCrit = r.HitObject.HitWindows.ResultFor(r.TimeOffset) == HitResult.Perfect;
+            double timeOffset = Math.Abs(Time.Current - HitObject.StartTime);
 
-                    r.Type = isCrit ? r.Judgement.MaxResult : r.Judgement.MinResult;
-                }
-            );
+            ApplyResult(r =>
+            {
+                bool isCrit = r.HitObject.HitWindows.ResultFor(timeOffset) == HitResult.Perfect;
+                r.Type = isCrit ? r.Judgement.MaxResult : r.Judgement.MinResult;
+            });
         }
 
         public new void ApplyResult(Action<JudgementResult> application)

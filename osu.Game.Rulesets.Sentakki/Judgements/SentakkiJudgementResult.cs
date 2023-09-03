@@ -1,4 +1,3 @@
-using System;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Scoring;
@@ -17,7 +16,6 @@ public class SentakkiJudgementResult : JudgementResult
         set
         {
             Critical = value == HitResult.Perfect;
-            Console.WriteLine(Critical);
             base.Type = Critical ? HitResult.Great : value;
         }
     }
