@@ -212,19 +212,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            const double time_fade_miss = 400 /* time_fade_miss = 400 */;
+            double time_fade_miss = 400 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
+            double time_fade_hit = 200 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
 
             switch (state)
             {
                 case ArmedState.Hit:
                     using (BeginAbsoluteSequence(Math.Max(Result.TimeAbsolute, HitObject.GetEndTime() - HitObject.HitWindows.WindowFor(HitResult.Good))))
                     {
-                        Slidepath.PerformExitAnimation(200);
+                        Slidepath.PerformExitAnimation(time_fade_hit);
 
                         foreach (var star in SlideStars)
-                            star.FadeOut(200);
+                            star.FadeOut(time_fade_hit);
 
-                        this.FadeOut(200).Expire();
+                        this.FadeOut(time_fade_hit).Expire();
                     }
 
                     break;

@@ -123,14 +123,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            const double time_fade_hit = 100, time_fade_miss = 400;
+            double time_fade_miss = 400 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
 
             switch (state)
             {
                 case ArmedState.Hit:
-                    TouchBody.FadeOut();
-                    this.Delay(time_fade_hit).Expire();
-
+                    Expire();
                     break;
 
                 case ArmedState.Miss:
