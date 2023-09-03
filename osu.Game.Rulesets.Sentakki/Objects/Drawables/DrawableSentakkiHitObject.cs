@@ -50,10 +50,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AnimationDuration.BindValueChanged(_ => queueTransformReset(), true);
         }
 
+        public Bindable<bool> ExBindable = new Bindable<bool>();
+
         protected override void OnApply()
         {
             base.OnApply();
             AccentColour.BindTo(HitObject.ColourBindable);
+            ExBindable.BindTo(HitObject.ExBindable);
         }
 
         public HitResult MinimumAcceptedHitResult = HitResult.None;
@@ -71,6 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnFree();
             AccentColour.UnbindFrom(HitObject.ColourBindable);
+            ExBindable.UnbindFrom(HitObject.ExBindable);
         }
 
         protected override void Update()

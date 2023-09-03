@@ -10,7 +10,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Statistics
     [TestFixture]
     public partial class TestSceneJudgementChart : OsuTestScene
     {
-        private readonly List<HitEvent> testevents = new List<HitEvent>
+        protected override Ruleset CreateRuleset() => new SentakkiRuleset();
+
+        private List<HitEvent> testevents = new List<HitEvent>
         {
             // Tap
             new HitEvent(0, HitResult.Great, new Tap(), new Tap(), null),
