@@ -3,7 +3,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.UserInterface;
-using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
@@ -27,9 +27,9 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         private readonly BindableDouble animationDuration = new BindableDouble(1000);
 
         [BackgroundDependencyLoader]
-        private void load(SentakkiRulesetConfigManager? sentakkiConfigs)
+        private void load(DrawableSentakkiRuleset? drawableRuleset)
         {
-            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
+            animationDuration.TryBindTo(drawableRuleset?.AdjustedAnimDuration);
             animationDuration.BindValueChanged(_ => resetAnimation());
 
             AddInternal(line = new CircularProgress
@@ -60,8 +60,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
             ApplyTransformsAt(double.MinValue);
             ClearTransforms();
-            using (BeginAbsoluteSequence(Entry.StartTime - Entry.AdjustedAnimationDuration))
-                this.FadeIn(Entry.AdjustedAnimationDuration / 2).Then().ScaleTo(1, Entry.AdjustedAnimationDuration / 2).Then().FadeOut();
+            using (BeginAbsoluteSequence(Entry.StartTime - animationDuration.Value))
+                this.FadeIn(animationDuration.Value / 2).Then().ScaleTo(1, animationDuration.Value / 2).Then().FadeOut();
         }
     }
 }

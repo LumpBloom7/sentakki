@@ -40,9 +40,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         [BackgroundDependencyLoader]
-        private void load(SentakkiRulesetConfigManager? sentakkiConfigs)
+        private void load()
         {
-            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
+            if (DrawableSentakkiRuleset is not null)
+                AnimationDuration.BindTo(DrawableSentakkiRuleset?.AdjustedTouchAnimDuration);
 
             Size = new Vector2(100);
             Origin = Anchor.Centre;
@@ -79,7 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            double fadeIn = AdjustedAnimationDuration / 2;
+            double fadeIn = AnimationDuration.Value / 2;
             double moveTo = HitObject.HitWindows.WindowFor(HitResult.Great);
 
             TouchBody.FadeIn(fadeIn);
@@ -125,14 +126,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            const double time_fade_hit = 100, time_fade_miss = 400;
+            double time_fade_miss = 400 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
 
             switch (state)
             {
                 case ArmedState.Hit:
-                    TouchBody.FadeOut();
-                    this.Delay(time_fade_hit).Expire();
-
+                    Expire();
                     break;
 
                 case ArmedState.Miss:

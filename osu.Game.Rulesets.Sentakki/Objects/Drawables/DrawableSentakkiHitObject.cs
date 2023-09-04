@@ -10,7 +10,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public partial class DrawableSentakkiHitObject : DrawableHitObject<SentakkiHitObject>
     {
-        protected override double InitialLifetimeOffset => AdjustedAnimationDuration;
+        protected override double InitialLifetimeOffset => AnimationDuration.Value;
 
         public readonly BindableBool AutoBindable = new BindableBool();
 
@@ -36,11 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         [Resolved]
-        private DrawableSentakkiRuleset? drawableSentakkiRuleset { get; set; }
-
-        public double GameplaySpeed => drawableSentakkiRuleset?.GameplaySpeed ?? 1;
-
-        protected double AdjustedAnimationDuration => AnimationDuration.Value * GameplaySpeed;
+        protected DrawableSentakkiRuleset? DrawableSentakkiRuleset { get; private set; }
 
         protected override void LoadAsyncComplete()
         {

@@ -62,7 +62,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            double animTime = AdjustedAnimationDuration / 2;
+            double animTime = AnimationDuration.Value / 2;
             TapVisual.FadeInFromZero(animTime).ScaleTo(1, animTime);
 
             using (BeginDelayedSequence(animTime))
@@ -100,7 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            const double time_fade_miss = 400;
+            double time_fade_miss = 400 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
 
             switch (state)
             {
