@@ -121,7 +121,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             ringColor.BindValueChanged(_ => changePlayfieldAccent(), true);
         }
 
-        protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
+        protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, drawableSentakkiRuleset);
 
         protected override GameplayCursorContainer CreateCursor() => new SentakkiCursorContainer();
 

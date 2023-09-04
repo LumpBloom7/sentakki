@@ -12,6 +12,7 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Judgements;
 using osu.Game.Rulesets.Sentakki.Scoring;
+using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
 
@@ -28,8 +29,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private readonly BindableBool detailedJudgements = new BindableBool();
 
+        [Resolved]
+        private DrawableSentakkiRuleset drawableRuleset { get; set; } = null!;
+
         [BackgroundDependencyLoader]
-        private void load(SentakkiRulesetConfigManager? sentakkiConfigs)
+        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.DetailedJudgements, detailedJudgements);
 
@@ -116,13 +120,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private void applyHitAnimations()
         {
-            judgementBody.ScaleTo(1, 50, Easing.OutElastic);
+            double speedFactor = drawableRuleset.GameplaySpeed;
+            judgementBody.ScaleTo(1, 50 * speedFactor, Easing.OutElastic);
 
-            judgementBody.Delay(50)
-                         .ScaleTo(0.8f, 300)
-                         .FadeOut(300);
+            judgementBody.Delay(50 * speedFactor)
+                         .ScaleTo(0.8f, 300 * speedFactor)
+                         .FadeOut(300 * speedFactor);
 
-            this.Delay(350).Expire();
+            this.Delay(350 * speedFactor).Expire();
         }
 
         private partial class SentakkiJudgementPiece : DefaultJudgementPiece

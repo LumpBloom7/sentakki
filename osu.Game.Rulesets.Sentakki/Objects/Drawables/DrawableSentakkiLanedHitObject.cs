@@ -39,7 +39,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 breakSample = new PausableSkinnableSound(),
             });
 
-            sentakkiConfig?.BindWith(SentakkiRulesetSettings.AnimationDuration, AnimationDuration);
+            if (DrawableSentakkiRuleset is not null)
+                AnimationDuration.BindTo(DrawableSentakkiRuleset?.AdjustedAnimDuration);
+
             sentakkiConfig?.BindWith(SentakkiRulesetSettings.BreakSampleVolume, breakSample.Volume);
         }
 
