@@ -22,13 +22,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateInitialTransforms();
 
+            const double baseline_spin_duration = 250;
+
             var note = (SlideTapPiece)TapVisual;
 
-            double spinDuration = 0;
+            double spinDuration = baseline_spin_duration * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
 
             if (ParentHitObject is DrawableSlide slide)
             {
-                spinDuration = ((Slide)slide.HitObject).SlideInfoList.FirstOrDefault()?.Duration + 250 ?? 1000;
+                spinDuration += ((Slide)slide.HitObject).SlideInfoList.FirstOrDefault()?.Duration ?? 1000;
                 note.SecondStar.Alpha = slide.SlideBodies.Count > 1 ? 1 : 0;
             }
 

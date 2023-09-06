@@ -1,3 +1,4 @@
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -18,7 +19,10 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         private readonly CircularContainer circle;
 
         private const float default_explosion_size = 75;
-        private const float touch_hold_explosion_size = 110;
+        private const float touch_hold_explosion_size = 100;
+
+        [Resolved]
+        private DrawableSentakkiRuleset? drawableRuleset { get; set; }
 
         public HitExplosion()
         {
@@ -97,13 +101,15 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         {
             const double explode_duration = 100;
 
+            double adjustedExplodeDuration = explode_duration * (drawableRuleset?.GameplaySpeed ?? 1);
+
             var sequence = this.FadeIn()
                                .TransformBindableTo(borderRatio, 1)
                                .ScaleTo(1)
                                .Then()
-                               .TransformBindableTo(borderRatio, 0f, explode_duration)
-                               .ScaleTo(2f, explode_duration)
-                               .FadeOut(explode_duration);
+                               .TransformBindableTo(borderRatio, 0f, adjustedExplodeDuration)
+                               .ScaleTo(2f, adjustedExplodeDuration)
+                               .FadeOut(adjustedExplodeDuration);
 
             return sequence;
         }

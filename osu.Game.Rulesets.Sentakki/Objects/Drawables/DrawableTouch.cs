@@ -40,11 +40,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         [BackgroundDependencyLoader]
-        private void load(SentakkiRulesetConfigManager? sentakkiConfigs)
+        private void load()
         {
-            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
+            if (DrawableSentakkiRuleset is not null)
+                AnimationDuration.BindTo(DrawableSentakkiRuleset?.AdjustedTouchAnimDuration);
 
-            Size = new Vector2(105);
+            Size = new Vector2(100);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             AddRangeInternal(new Drawable[]
@@ -79,7 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            double fadeIn = AdjustedAnimationDuration / 2;
+            double fadeIn = AnimationDuration.Value / 2;
             double moveTo = HitObject.HitWindows.WindowFor(HitResult.Great);
 
             TouchBody.FadeIn(fadeIn);
@@ -99,7 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!userTriggered || Auto)
             {
                 if (Auto && timeOffset > 0)
-                    ApplyResult(Result.Judgement.MaxResult);
+                    ApplyResult(HitResult.Perfect);
                 else if (!HitObject.HitWindows.CanBeHit(timeOffset))
                     ApplyResult(Result.Judgement.MinResult);
 
@@ -112,9 +113,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (result == HitResult.None)
                 return;
 
-            // Hit before the early Great window
-            if (timeOffset < 0 && result is not HitResult.Great)
+            // Hit before the Perfect window
+            if (timeOffset < 0 && result is not HitResult.Perfect)
                 return;
+
+            if (ExBindable.Value && result.IsHit())
+                result = Result.Judgement.MaxResult;
 
             ApplyResult(result);
         }
@@ -122,14 +126,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            const double time_fade_hit = 100, time_fade_miss = 400;
+            double time_fade_miss = 400 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
 
             switch (state)
             {
                 case ArmedState.Hit:
-                    TouchBody.FadeOut();
-                    this.Delay(time_fade_hit).Expire();
-
+                    Expire();
                     break;
 
                 case ArmedState.Miss:

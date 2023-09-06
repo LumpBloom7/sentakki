@@ -1,6 +1,5 @@
 ﻿using System;
 using osu.Game.Rulesets.Scoring;
-
 namespace osu.Game.Rulesets.Sentakki.Scoring
 {
     public partial class SentakkiScoreProcessor : ScoreProcessor

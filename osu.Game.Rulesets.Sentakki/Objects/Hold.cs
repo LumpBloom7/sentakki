@@ -36,6 +36,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
+            // We intentionally not call the base method to avoid break notes being added
+
             AddNested(new HoldHead
             {
                 Break = Break,
@@ -43,15 +45,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 Lane = Lane,
                 Samples = nodeSamples.Any() ? nodeSamples.First() : new List<HitSampleInfo>(),
                 ColourBindable = ColourBindable.GetBoundCopy(),
+                Ex = Ex
             });
         }
 
-        protected override HitWindows CreateHitWindows() => HitWindows.Empty;
+        protected override HitWindows CreateHitWindows() => new SentakkiEmptyHitWindows();
 
         public class HoldHead : SentakkiLanedHitObject
         {
             public override Judgement CreateJudgement() => new SentakkiJudgement();
-            protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
+            protected override HitWindows CreateHitWindows() => new SentakkiTapHitWindows();
         }
     }
 }

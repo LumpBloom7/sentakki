@@ -10,6 +10,9 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Judgements;
+using osu.Game.Rulesets.Sentakki.Scoring;
+using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
 
@@ -24,12 +27,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiJudgementPiece judgementPiece = null!;
         private OsuSpriteText timingPiece = null!;
 
-        private HitResult result = HitResult.Good;
-
         private readonly BindableBool detailedJudgements = new BindableBool();
 
+        [Resolved]
+        private DrawableSentakkiRuleset drawableRuleset { get; set; } = null!;
+
         [BackgroundDependencyLoader]
-        private void load(SentakkiRulesetConfigManager? sentakkiConfigs)
+        private void load(SentakkiRulesetConfigManager sentakkiConfigs)
         {
             sentakkiConfigs?.BindWith(SentakkiRulesetSettings.DetailedJudgements, detailedJudgements);
 
@@ -51,7 +55,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                             Shadow = true,
                             ShadowColour = Color4.Black
                         },
-                        judgementPiece = new SentakkiJudgementPiece(result)
+                        judgementPiece = new SentakkiJudgementPiece(HitResult.Great)
                     }
                 }
             );
@@ -59,11 +63,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public DrawableSentakkiJudgement Apply(JudgementResult result, DrawableHitObject hitObject)
         {
-            this.result = result.Type;
+            var senResult = (SentakkiJudgementResult)result;
             judgementPiece.JudgementText.Text = result.Type.GetDisplayNameForSentakkiResult().ToUpperInvariant();
             judgementPiece.JudgementText.Colour = result.Type.GetColorForSentakkiResult();
 
-            if (result.HitObject.HitWindows is HitWindows.EmptyHitWindows || result.Type == HitResult.Miss || !detailedJudgements.Value)
+            if (senResult.HitObject.HitWindows is SentakkiEmptyHitWindows || result.Type == HitResult.Miss || !detailedJudgements.Value)
             {
                 timingPiece.Alpha = 0;
             }
@@ -71,20 +75,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 timingPiece.Alpha = 1;
 
-                if (result.TimeOffset >= 16)
+                if (senResult.Critical)
+                {
+                    timingPiece.Text = "CRITICAL";
+                    timingPiece.Colour = Color4.Orange;
+                }
+                else if (result.TimeOffset > 0)
                 {
                     timingPiece.Text = "LATE";
                     timingPiece.Colour = Color4.OrangeRed;
                 }
-                else if (result.TimeOffset <= -16)
+                else if (result.TimeOffset < 0)
                 {
                     timingPiece.Text = "EARLY";
                     timingPiece.Colour = Color4.GreenYellow;
-                }
-                else
-                {
-                    timingPiece.Text = "CRITICAL";
-                    timingPiece.Colour = Color4.Orange;
                 }
             }
 
@@ -116,13 +120,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private void applyHitAnimations()
         {
-            judgementBody.ScaleTo(1, 50, Easing.OutElastic);
+            double speedFactor = drawableRuleset.GameplaySpeed;
+            judgementBody.ScaleTo(1, 50 * speedFactor, Easing.OutElastic);
 
-            judgementBody.Delay(50)
-                         .ScaleTo(0.8f, 300)
-                         .FadeOut(300);
+            judgementBody.Delay(50 * speedFactor)
+                         .ScaleTo(0.8f, 300 * speedFactor)
+                         .FadeOut(300 * speedFactor);
 
-            this.Delay(350).Expire();
+            this.Delay(350 * speedFactor).Expire();
         }
 
         private partial class SentakkiJudgementPiece : DefaultJudgementPiece

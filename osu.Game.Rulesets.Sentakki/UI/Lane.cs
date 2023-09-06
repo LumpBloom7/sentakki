@@ -41,9 +41,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [Resolved]
         private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; } = null!;
 
-        [Resolved]
-        private SentakkiRulesetConfigManager? sentakkiRulesetConfig { get; set; }
-
         [BackgroundDependencyLoader]
         private void load()
         {
@@ -64,7 +61,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         protected override void OnNewDrawableHitObject(DrawableHitObject d) => OnLoaded?.Invoke(d);
 
-        protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
+        protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, drawableSentakkiRuleset);
 
         #region Input Handling
 

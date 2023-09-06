@@ -28,16 +28,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [Resolved]
         private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; } = null!;
 
-        [Resolved]
-        private SentakkiRulesetConfigManager? sentakkiRulesetConfig { get; set; }
-
         [BackgroundDependencyLoader]
         private void load()
         {
             RegisterPool<Touch, DrawableTouch>(8);
         }
 
-        protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
+        protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, drawableSentakkiRuleset);
 
         protected override HitObjectContainer CreateHitObjectContainer() => new TouchHitObjectContainer();
 
