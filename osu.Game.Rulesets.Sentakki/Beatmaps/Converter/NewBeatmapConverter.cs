@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects;
@@ -18,18 +19,18 @@ public partial class NewBeatmapConverter
 
     private readonly ConversionExperiments conversionExperiments;
 
-    private int currentLane;
-
+    // osu beatmap specific details
     private readonly double timePreempt;
     private readonly float circleRadius;
 
+    private readonly double stackThreshold;
+
     private readonly IBeatmap beatmap;
 
-    private readonly SentakkiPatternGenerator patternGenerator;
-
+    // Current converter state
     private StreamDirection activeStreamDirection;
-
-    private double stackThreshold => timePreempt * beatmap.BeatmapInfo.StackLeniency;
+    private int currentLane;
+    private readonly Random rng;
 
     public NewBeatmapConverter(IBeatmap beatmap, ConversionExperiments experiments)
     {
@@ -40,44 +41,22 @@ public partial class NewBeatmapConverter
         // Taking this from osu specific information that we need
         timePreempt = IBeatmapDifficultyInfo.DifficultyRange(beatmap.Difficulty.ApproachRate, 1800, 1200, 450);
         circleRadius = 54.4f - 4.48f * beatmap.Difficulty.CircleSize;
+        stackThreshold = timePreempt * beatmap.BeatmapInfo.StackLeniency;
 
-        patternGenerator = new SentakkiPatternGenerator(beatmap);
+        // Prep an RNG with a seed generated from beatmap diff
+        var difficulty = beatmap.BeatmapInfo.Difficulty;
+        int seed = ((int)MathF.Round(difficulty.DrainRate + difficulty.CircleSize) * 20) + (int)(difficulty.OverallDifficulty * 41.2) + (int)MathF.Round(difficulty.ApproachRate);
+        rng = new Random(seed);
 
         if (beatmap.HitObjects.Count == 0)
-        {
-            currentLane = 0;
             return;
-        }
 
         float angle = standard_playfield_center.GetDegreesFromPosition(beatmap.HitObjects[0].GetPosition());
-
         currentLane = getClosestLaneFor(angle);
     }
 
     public IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original)
     {
-        HitObject? previous = null;
-        HitObject? next = null;
-
-        // This is used to help determine the initial direction of a stream
-        HitObject? secondNext = null;
-
-        for (int i = 0; i < beatmap.HitObjects.Count; ++i)
-        {
-            if (beatmap.HitObjects[i] != original) continue;
-
-            if (i > 0 && isChronologicallyClose(beatmap.HitObjects[i - 1], original))
-                previous = beatmap.HitObjects[i - 1];
-
-            if (i < beatmap.HitObjects.Count - 1 && isChronologicallyClose(original, beatmap.HitObjects[i + 1]))
-                next = beatmap.HitObjects[i + 1];
-
-            if (next is not null && i < beatmap.HitObjects.Count - 2 && isChronologicallyClose(next, beatmap.HitObjects[i + 2]))
-                secondNext = beatmap.HitObjects[i + 2];
-
-            break;
-        }
-
         SentakkiHitObject result = original switch
         {
             IHasPathWithRepeats => convertSlider(original),
@@ -85,112 +64,88 @@ public partial class NewBeatmapConverter
             _ => convertHitCircle(original)
         };
 
-        // Set up the next hitobject position
-        bool isJump = NewBeatmapConverter.isJump(original, next);
-        bool isStack = this.isStack(original, next);
-        bool isStream = this.isStream(original, next);
-
-        if (isJump || isStack)
-        {
-            activeStreamDirection = StreamDirection.None;
-
-            if (isJump)
-                currentLane += jumpLaneOffset(original, previous, next);
-        }
-        else if (isStream)
-        {
-            Debug.Assert(next is not null);
-
-            bool isSpacedStream = !isOverlapping(original.GetEndPosition(), next.GetPosition());
-
-            // We try to look ahead into the stream in an effort to determine the initial direction of a stream
-            // We would fallback to using the playfield midpoint if the stream is too short
-            if (previous is null && this.isStream(next, secondNext))
-                activeStreamDirection = getStreamDirection(next, original, secondNext);
-            else
-                activeStreamDirection = getStreamDirection(original, previous, next);
-
-            int streamOffset = (int)activeStreamDirection;
-
-            // Slides have special behavior
-            if (result is Slide slide)
-            {
-                if (!isStack && isStream)
-                    currentLane = slide.Lane + slide.SlideInfoList[0].SlidePath.EndLane;
-
-                if (isSpacedStream)
-                    currentLane += streamOffset;
-            }
-            else
-            {
-                currentLane += streamOffset;
-            }
-        }
-        else
-        {
-            float nextAngle = 0;
-            if (next is not null)
-                nextAngle = standard_playfield_center.GetDegreesFromPosition(next.GetPosition());
-
-            currentLane = getClosestLaneFor(nextAngle);
-        }
-
-        currentLane = currentLane.NormalizePath();
+        // Update the lane to be used by the next hitobject
+        updateCurrentLane(original, result);
 
         yield return result;
     }
 
-    private bool isStack(HitObject original, HitObject? next)
+    private void updateCurrentLane(HitObject original, SentakkiHitObject converted)
     {
-        const int stack_distance_squared = 9;
+        HitObject? next = beatmap.HitObjects.GetNext(original);
 
+        // Check if next note even exists
         if (next is null)
-            return false;
+            return;
 
-        if (next.StartTime - original.GetEndTime() >= stackThreshold)
-            return false;
+        // If the next note is far off, we start from a fresh slate
+        if (!isChronologicallyClose(original, next))
+        {
+            float nextAngle = standard_playfield_center.GetDegreesFromPosition(next.GetPosition());
+            currentLane = getClosestLaneFor(nextAngle).NormalizePath();
+            activeStreamDirection = StreamDirection.None;
+            return;
+        }
 
-        bool isWithinStdStackDistance = Vector2Extensions.DistanceSquared(original.GetPosition(), next.GetPosition()) < stack_distance_squared;
+        var previous = beatmap.HitObjects.GetPrevious(original);
 
-        return isWithinStdStackDistance;
-    }
+        // If the jumps are huge, directly use angle differences to replicate the distance
+        if (isJump(original, next))
+        {
+            activeStreamDirection = StreamDirection.None;
+            currentLane = (currentLane + jumpLaneOffset(original, previous, next)).NormalizePath();
+            return;
+        }
 
-    private bool isStream(HitObject original, HitObject? next)
-    {
-        if (next is null)
-            return false;
+        bool isSpacedStream = !isOverlapping(original.GetEndPosition(), next.GetPosition());
 
-        double timeDelta = next.StartTime - original.GetEndTime();
-        double beatLength = beatmap.ControlPointInfo.TimingPointAt(next.StartTime).BeatLength;
+        var secondNext = beatmap.HitObjects.GetNext(next);
 
-        double quarterBeatLength = beatLength * 0.25f;
+        // We try to look ahead into the stream in an effort to determine the initial direction of a stream if we don't have a previous
+        if (previous is null || !isChronologicallyClose(previous, original))
+        {
+            if (secondNext is not null)
+                activeStreamDirection = getStreamDirection(next, original, secondNext);
 
-        bool snappedToQuarterBeat = timeDelta <= quarterBeatLength || MathHelper.ApproximatelyEquivalent(timeDelta, quarterBeatLength, 0.1);
+            // Fallback to using the midpoint as best effort
+            activeStreamDirection = getStreamDirection(original, null, next);
+        }
+        else
+        {
+            activeStreamDirection = getStreamDirection(original, previous, next);
+        }
 
-        return isOverlapping(original.GetEndPosition(), next.GetPosition()) || snappedToQuarterBeat;
+        int streamOffset = (int)activeStreamDirection;
+
+
+        // Slides have special behavior in streams that make it so that the next note will share the same lane as the slide end
+        if (converted is Slide slide)
+            currentLane = slide.Lane + slide.SlideInfoList[0].SlidePath.EndLane;
+        else
+            currentLane += streamOffset;
+
+        // If it is a spaced stream, we double the offset
+        if (isSpacedStream)
+            currentLane += activeStreamDirection == StreamDirection.Counterclockwise ? -1 : 1;
+
+        currentLane = currentLane.NormalizePath();
     }
 
     private bool isOverlapping(Vector2 a, Vector2 b)
         => (b - a).LengthSquared <= Math.Pow(circleRadius * 2, 2);
 
-    private static bool isJump(HitObject original, HitObject? next)
+    private bool isJump(HitObject original, HitObject next)
     {
         // If two notes are this distance apart, consider it a jump
         const float jump_distance_threshold_squared = 128 * 128;
-
-        if (next is null)
-            return false;
 
         float distanceSqr = Vector2.DistanceSquared(original.GetEndPosition(), next.GetPosition());
 
         return distanceSqr >= jump_distance_threshold_squared;
     }
 
-    private static int jumpLaneOffset(HitObject original, HitObject? previous, HitObject? next)
+    private static int jumpLaneOffset(HitObject original, HitObject? previous, HitObject next)
     {
-        if (next is null)
-            return 0;
-
         Vector2 midpoint = midpointOf(original, previous, next);
 
         float angle1 = midpoint.GetDegreesFromPosition(original.GetEndPosition());
@@ -213,14 +168,15 @@ public partial class NewBeatmapConverter
 
         float absAngDelta = MathF.Abs(angleDelta);
 
-        if (MathHelper.ApproximatelyEqualEpsilon(absAngDelta, 0, 0.1))
+        if (MathHelper.ApproximatelyEquivalent(absAngDelta, 0, 5))
             return activeStreamDirection;
-        else if (MathHelper.ApproximatelyEqualEpsilon(absAngDelta, 180, 0.1)) // Stream is collinear, equivalent to stack
+        else if (MathHelper.ApproximatelyEquivalent(absAngDelta, 180, 5)) // Stream is collinear, equivalent to stack
             return StreamDirection.None;
 
         return angleDelta > 0 ? StreamDirection.Clockwise : StreamDirection.Counterclockwise;
     }
-    private static Vector2 midpointOf(HitObject current, HitObject? previous, HitObject? next)
+
+    private static Vector2 midpointOf(HitObject current, HitObject? previous, HitObject next)
     {
         // Use the playfield center as a fallback if we don't have the previous note
         Vector2 midpoint = standard_playfield_center;
@@ -234,11 +190,8 @@ public partial class NewBeatmapConverter
             pointCount++;
         }
 
-        if (next is not null)
-        {
-            pointSum += next.GetPosition();
-            pointCount++;
-        }
+        pointSum += next.GetPosition();
+        pointCount++;
 
         // If the current hitobject has a different start and end position, we can use that as even more info
         if (!current.GetPosition().Equals(current.GetEndPosition()))
@@ -278,6 +231,6 @@ public partial class NewBeatmapConverter
         double timeDelta = b.StartTime - a.GetEndTime();
         double beatLength = beatmap.ControlPointInfo.TimingPointAt(b.StartTime).BeatLength;
 
-        return timeDelta < beatLength || MathHelper.ApproximatelyEquivalent(timeDelta, beatLength, 0.1);
+        return timeDelta <= beatLength;
     }
 }

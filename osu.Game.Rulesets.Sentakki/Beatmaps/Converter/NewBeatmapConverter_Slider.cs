@@ -106,7 +106,7 @@ public partial class NewBeatmapConverter
             while (true)
             {
                 var nextChoices = candidates.Where(p => p.MinDuration * velocityAdjustmentFactor < durationLeft)
-                    .Shuffle(patternGenerator.RNG)
+                    .Shuffle(rng)
                     .SkipWhile(p => p.SlidePart.Shape == SlidePaths.PathShapes.Circle && !isValidCircleComposition(p.SlidePart, lastPart));
 
                 if (!nextChoices.Any())
@@ -131,8 +131,8 @@ public partial class NewBeatmapConverter
                 candidates.GroupBy(t => getDelta(t.MinDuration))
                           .OrderBy(g => g.Key)
                           .Take(5)
-                          .ProbabilityPick(t => t.Key, patternGenerator.RNG)
-                          .Shuffle(patternGenerator.RNG)
+                          .ProbabilityPick(t => t.Key, rng)
+                          .Shuffle(rng)
                           .First()
                           .SlidePart
             };
