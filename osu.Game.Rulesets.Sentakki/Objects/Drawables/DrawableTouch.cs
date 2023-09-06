@@ -100,7 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!userTriggered || Auto)
             {
                 if (Auto && timeOffset > 0)
-                    ApplyResult(Result.Judgement.MaxResult);
+                    ApplyResult(HitResult.Perfect);
                 else if (!HitObject.HitWindows.CanBeHit(timeOffset))
                     ApplyResult(Result.Judgement.MinResult);
 
@@ -113,8 +113,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (result == HitResult.None)
                 return;
 
-            // Hit before the early Great window
-            if (timeOffset < 0 && result != Result.Judgement.MaxResult)
+            // Hit before the Perfect window
+            if (timeOffset < 0 && result is not HitResult.Perfect)
                 return;
 
             if (ExBindable.Value && result.IsHit())

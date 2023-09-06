@@ -5,9 +5,9 @@ using osu.Framework.Bindables;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Performance;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK.Graphics;
-using osu.Game.Rulesets.Sentakki.Extensions;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {

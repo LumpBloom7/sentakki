@@ -37,7 +37,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     AddNested(new ScorePaddingObject { StartTime = this.GetEndTime() });
 
                 // Add bonus for players hitting within the critical window
-                AddNested(new ScoreBonusObject { StartTime = this.GetEndTime() });
+                AddNested(new ScoreBonusObject
+                {
+                    StartTime = this.GetEndTime(),
+                    HitWindows = HitWindows
+                });
             }
         }
 

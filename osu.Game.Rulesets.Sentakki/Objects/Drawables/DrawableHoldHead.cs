@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!userTriggered)
             {
                 if (Auto && timeOffset > 0)
-                    ApplyResult(Result.Judgement.MaxResult);
+                    ApplyResult(HitResult.Perfect);
 
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
                     ApplyResult(Result.Judgement.MinResult);

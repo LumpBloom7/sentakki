@@ -156,6 +156,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             else
                 resultType = HitResult.Miss;
 
+            // This is specifically to accommodate the threshold setting in HR
+            if (!HitObject.HitWindows.IsHitResultAllowed(resultType))
+                resultType = HitResult.Miss;
+
             AccentColour.Value = colours.ForHitResult(resultType);
             ApplyResult(resultType);
         }

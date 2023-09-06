@@ -3,8 +3,12 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
+using osu.Framework.Graphics;
 using osu.Framework.Input;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Game.Beatmaps;
+using osu.Game.Input.Bindings;
 using osu.Game.Input.Handlers;
 using osu.Game.Replays;
 using osu.Game.Rulesets.Mods;
@@ -16,10 +20,6 @@ using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
 using osu.Game.Screens.Play;
-using osu.Framework.Graphics;
-using osu.Framework.Input.Events;
-using osu.Framework.Input.Bindings;
-using osu.Game.Input.Bindings;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {

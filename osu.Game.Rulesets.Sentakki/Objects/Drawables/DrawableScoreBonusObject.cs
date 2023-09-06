@@ -1,6 +1,7 @@
 using System;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -16,7 +17,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
         }
 
-        public void TriggerResult() => ApplyResult(static r => r.Type = (Math.Abs(r.TimeOffset) < 16) ? r.Judgement.MaxResult : r.Judgement.MinResult);
+        public void TriggerResult()
+        {
+            double timeOffset = Math.Abs(Time.Current - HitObject.StartTime);
+
+            ApplyResult(r =>
+            {
+                bool isCrit = r.HitObject.HitWindows.ResultFor(timeOffset) == HitResult.Perfect;
+                r.Type = isCrit ? r.Judgement.MaxResult : r.Judgement.MinResult;
+            });
+        }
 
         public new void ApplyResult(Action<JudgementResult> application)
         {

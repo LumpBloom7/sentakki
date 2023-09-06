@@ -2,8 +2,10 @@ using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Judgements;
 using osu.Game.Rulesets.Sentakki.UI;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
@@ -53,9 +55,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             ExBindable.BindTo(HitObject.ExBindable);
         }
 
+        protected override JudgementResult CreateResult(Judgement judgement) => new SentakkiJudgementResult(HitObject, judgement);
+
         protected void ApplyResult(HitResult result)
         {
-            void resultApplication(JudgementResult r) => r.Type = result;
+            void resultApplication(JudgementResult r) => ((SentakkiJudgementResult)r).Type = result;
+
             ApplyResult(resultApplication);
         }
 
