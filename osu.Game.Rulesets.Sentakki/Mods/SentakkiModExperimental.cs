@@ -24,69 +24,41 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public override double ScoreMultiplier => 1.00;
 
-        [SettingSource(typeof(SentakkiModExperimentalStrings), nameof(SentakkiModExperimentalStrings.TwinNotes), nameof(SentakkiModExperimentalStrings.TwinNotesDescription))]
-        public BindableBool EnableTwinNotes { get; } = new BindableBool
-        {
-            Default = false,
-            Value = false
-        };
-
-        [SettingSource(typeof(SentakkiModExperimentalStrings), nameof(SentakkiModExperimentalStrings.TwinSlides), nameof(SentakkiModExperimentalStrings.TwinSlidesDescription))]
-        public BindableBool EnableTwinSlides { get; } = new BindableBool
-        {
-            Default = false,
-            Value = false
-        };
-
         [SettingSource(typeof(SentakkiModExperimentalStrings), nameof(SentakkiModExperimentalStrings.FanSlides), nameof(SentakkiModExperimentalStrings.FanSlidesDescription))]
-        public BindableBool EnableSlideFans { get; } = new BindableBool
-        {
-            Default = false,
-            Value = false
-        };
-
-        [SettingSource("Revamped conversion",
-            "A rewritten conversion system that hopefully makes better feeling conversions based on how notes are placed in the original beatmap. (Does not support twins)")]
-        public BindableBool RevampedConversion { get; } = new BindableBool
-        {
-            Default = true,
-            Value = true
-        };
-
-        [SettingSource("Restore HitWhistle Slides", "Restores old Slide note conversion behavior where slides are only generated from sliders with hitWhistle")]
-        public BindableBool HitWhistleSlides { get; } = new BindableBool
-        {
-            Default = false,
-            Value = false
-        };
+        public Bindable<bool> EnableSlideFans { get; } = new BindableBool(false);
 
         [SettingSource("Enable convert slide chains", "Allows chain slides to be considered in converts")]
-        public BindableBool ChainSlides { get; } = new BindableBool
-        {
-            Default = true,
-            Value = true
-        };
+        public BindableBool ChainSlides { get; } = new BindableBool(true);
+
+        [SettingSource("Use old converter", "The old converter relied on RNG for just about everything. Included for comparison purposes.")]
+        public BindableBool OldConversion { get; } = new BindableBool(false);
+
+        [SettingSource(typeof(SentakkiModExperimentalStrings), nameof(SentakkiModExperimentalStrings.TwinNotes), nameof(SentakkiModExperimentalStrings.TwinNotesDescription))]
+        public BindableBool EnableTwinNotes { get; } = new BindableBool(false);
+
+        [SettingSource(typeof(SentakkiModExperimentalStrings), nameof(SentakkiModExperimentalStrings.TwinSlides), nameof(SentakkiModExperimentalStrings.TwinSlidesDescription))]
+        public BindableBool EnableTwinSlides { get; } = new BindableBool(false);
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
-            var sentakkiBeatmapConverter = (SentakkiBeatmapConverter)beatmapConverter;
-            if (EnableTwinNotes.Value)
-                sentakkiBeatmapConverter.EnabledExperiments |= ConversionExperiments.twinNotes;
-
-            if (EnableTwinSlides.Value)
-                sentakkiBeatmapConverter.EnabledExperiments |= ConversionExperiments.twinSlides;
+            var sentakkiBeatmapConverter = (CompositeBeatmapConverter)beatmapConverter;
 
             if (EnableSlideFans.Value)
-                sentakkiBeatmapConverter.EnabledExperiments |= ConversionExperiments.fanSlides;
-
-            if (RevampedConversion.Value)
-                sentakkiBeatmapConverter.EnabledExperiments |= ConversionExperiments.conversionRevamp;
-
-            if (HitWhistleSlides.Value)
-                sentakkiBeatmapConverter.EnabledExperiments |= ConversionExperiments.restoreSlideHitWhistle;
+                sentakkiBeatmapConverter.flags |= ConversionFlags.fanSlides;
 
             if (ChainSlides.Value)
-                sentakkiBeatmapConverter.EnabledExperiments |= ConversionExperiments.createCompositeSlides;
+                sentakkiBeatmapConverter.flags |= ConversionFlags.createCompositeSlides;
+
+            if (!OldConversion.Value)
+                return;
+
+            sentakkiBeatmapConverter.flags |= ConversionFlags.oldConverter;
+
+            if (EnableTwinNotes.Value)
+                sentakkiBeatmapConverter.flags |= ConversionFlags.twinNotes;
+
+            if (EnableTwinSlides.Value)
+                sentakkiBeatmapConverter.flags |= ConversionFlags.twinSlides;
         }
     }
 }

@@ -23,11 +23,8 @@ public partial class NewBeatmapConverter
         bool isSuitableSlider = !isLazySlider(original);
 
         bool isBreak = slider.NodeSamples[0].Any(s => s.Name == HitSampleInfo.HIT_FINISH);
-        bool isSpecial = isSuitableSlider
-                         && (!conversionExperiments.HasFlag(ConversionExperiments.restoreSlideHitWhistle)
-                             || slider.NodeSamples[0].Any(s => s.Name == HitSampleInfo.HIT_WHISTLE));
 
-        if (isSpecial)
+        if (isSuitableSlider)
         {
             var slide = tryConvertToSlide(original, currentLane);
 
@@ -90,10 +87,10 @@ public partial class NewBeatmapConverter
         double adjustedDuration = duration * velocity;
 
         var candidates = SlidePaths.VALIDPATHS.AsEnumerable();
-        if (!conversionExperiments.HasFlag(ConversionExperiments.fanSlides))
+        if (!ConversionFlags.HasFlag(ConversionFlags.fanSlides))
             candidates = candidates.Where(p => p.SlidePart.Shape != SlidePaths.PathShapes.Fan);
 
-        if (conversionExperiments.HasFlag(ConversionExperiments.createCompositeSlides))
+        if (ConversionFlags.HasFlag(ConversionFlags.createCompositeSlides))
         {
             List<SlideBodyPart> parts = new List<SlideBodyPart>();
 

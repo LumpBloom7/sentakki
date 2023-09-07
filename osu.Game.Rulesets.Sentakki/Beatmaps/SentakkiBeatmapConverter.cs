@@ -16,8 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
     public class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObject>
     {
-        // Conversion flags
-        public ConversionExperiments EnabledExperiments;
+        public ConversionFlags ConversionFlags;
         public bool ClassicMode;
 
         public static readonly List<Vector2> VALID_TOUCH_POSITIONS;
@@ -46,13 +45,10 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         private readonly Dictionary<Vector2, double> endTimes = new Dictionary<Vector2, double>();
 
-        private NewBeatmapConverter converterDX = null!;
-
         public SentakkiBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
             : base(beatmap, ruleset)
         {
             patternGenerator = new SentakkiPatternGenerator(beatmap);
-            converterDX = new NewBeatmapConverter(beatmap, EnabledExperiments);
         }
 
         protected override Beatmap<SentakkiHitObject> CreateBeatmap() => new SentakkiBeatmap();
@@ -61,9 +57,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         {
             if ((original as IHasCombo)?.NewCombo ?? false)
                 patternGenerator.StartNextPattern();
-
-            if (EnabledExperiments.HasFlag(ConversionExperiments.conversionRevamp))
-                return converterDX.ConvertHitObject(original);
 
             switch (original)
             {
@@ -90,7 +83,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 yield return createTouchNote(original);
             else
             {
-                if (twin && EnabledExperiments.HasFlag(ConversionExperiments.twinNotes))
+                if (twin && ConversionFlags.HasFlag(ConversionFlags.twinNotes))
                     yield return createTapNote(original, true, breakNote);
 
                 yield return createTapNote(original, false, breakNote);
@@ -175,7 +168,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             }
 
             // Fallback to hold notes
-            if (EnabledExperiments.HasFlag(ConversionExperiments.twinNotes))
+            if (ConversionFlags.HasFlag(ConversionFlags.twinNotes))
             {
                 if (twin)
                     yield return createHoldNote(original, nodeSamples, true, breakHead);
@@ -195,7 +188,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             List<Slide> slides = new List<Slide>();
             List<Tap> taps = new List<Tap>();
 
-            if (EnabledExperiments.HasFlag(ConversionExperiments.twinSlides))
+            if (ConversionFlags.HasFlag(ConversionFlags.twinSlides))
             {
                 if (twin)
                 {
@@ -329,7 +322,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             double adjustedDuration = duration * velocity;
 
             var candidates = SlidePaths.VALIDPATHS;
-            if (!EnabledExperiments.HasFlag(ConversionExperiments.fanSlides))
+            if (!ConversionFlags.HasFlag(ConversionFlags.fanSlides))
                 candidates = candidates.Where(p => p.SlidePart.Shape != SlidePaths.PathShapes.Fan).ToList();
 
             var candidateParts = candidates.Where(t => duration >= t.MinDuration && duration <= t.MinDuration * 10)

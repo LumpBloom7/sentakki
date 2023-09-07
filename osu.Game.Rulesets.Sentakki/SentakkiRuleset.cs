@@ -57,7 +57,7 @@ namespace osu.Game.Rulesets.Sentakki
             new DrawableSentakkiRuleset(this, beatmap, mods);
 
         public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) =>
-            new SentakkiBeatmapConverter(beatmap, this);
+            new CompositeBeatmapConverter(beatmap, this);
 
         public override IBeatmapProcessor CreateBeatmapProcessor(IBeatmap beatmap) =>
             new SentakkiBeatmapProcessor(beatmap);

@@ -3,13 +3,12 @@ using System;
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 
 [Flags]
-public enum ConversionExperiments
+public enum ConversionFlags
 {
     none = 0,
     twinNotes = 1,
     twinSlides = 2,
     fanSlides = 4,
-    conversionRevamp = 8,
-    restoreSlideHitWhistle = 16,
-    createCompositeSlides = 32
+    oldConverter = 8,
+    createCompositeSlides = 16
 }

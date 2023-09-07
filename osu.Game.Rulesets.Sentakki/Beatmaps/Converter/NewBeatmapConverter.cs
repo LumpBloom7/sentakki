@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects;
@@ -7,18 +9,20 @@ using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK;
-using TagLib.IFD;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 
-public partial class NewBeatmapConverter
+public partial class NewBeatmapConverter : BeatmapConverter<SentakkiHitObject>
 {
+    public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition);
+    protected override Beatmap<SentakkiHitObject> CreateBeatmap() => new SentakkiBeatmap();
+
     private static readonly Vector2 standard_playfield_size = new Vector2(512, 384);
     private static readonly Vector2 standard_playfield_center = standard_playfield_size / 2;
 
     private readonly float circleRadius;
 
-    private readonly ConversionExperiments conversionExperiments;
+    public ConversionFlags ConversionFlags;
 
     private readonly IBeatmap beatmap;
 
@@ -27,11 +31,9 @@ public partial class NewBeatmapConverter
     private int currentLane;
     private readonly Random rng;
 
-    public NewBeatmapConverter(IBeatmap beatmap, ConversionExperiments experiments)
+    public NewBeatmapConverter(IBeatmap beatmap, Ruleset ruleset) : base(beatmap, ruleset)
     {
         this.beatmap = beatmap;
-
-        conversionExperiments = experiments;
 
         // Taking this from osu specific information that we need
         circleRadius = 54.4f - 4.48f * beatmap.Difficulty.CircleSize;
@@ -48,7 +50,7 @@ public partial class NewBeatmapConverter
         currentLane = getClosestLaneFor(angle);
     }
 
-    public IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original)
+    protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap, CancellationToken cancellationToken)
     {
         SentakkiHitObject result = original switch
         {
