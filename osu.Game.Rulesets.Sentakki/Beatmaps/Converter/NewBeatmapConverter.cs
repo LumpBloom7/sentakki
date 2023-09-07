@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using osu.Framework.Extensions.IEnumerableExtensions;
-using osu.Framework.Graphics;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK;
+using TagLib.IFD;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 
@@ -17,13 +16,9 @@ public partial class NewBeatmapConverter
     private static readonly Vector2 standard_playfield_size = new Vector2(512, 384);
     private static readonly Vector2 standard_playfield_center = standard_playfield_size / 2;
 
-    private readonly ConversionExperiments conversionExperiments;
-
-    // osu beatmap specific details
-    private readonly double timePreempt;
     private readonly float circleRadius;
 
-    private readonly double stackThreshold;
+    private readonly ConversionExperiments conversionExperiments;
 
     private readonly IBeatmap beatmap;
 
@@ -39,9 +34,7 @@ public partial class NewBeatmapConverter
         conversionExperiments = experiments;
 
         // Taking this from osu specific information that we need
-        timePreempt = IBeatmapDifficultyInfo.DifficultyRange(beatmap.Difficulty.ApproachRate, 1800, 1200, 450);
         circleRadius = 54.4f - 4.48f * beatmap.Difficulty.CircleSize;
-        stackThreshold = timePreempt * beatmap.BeatmapInfo.StackLeniency;
 
         // Prep an RNG with a seed generated from beatmap diff
         var difficulty = beatmap.BeatmapInfo.Difficulty;
@@ -97,7 +90,10 @@ public partial class NewBeatmapConverter
             return;
         }
 
-        bool isSpacedStream = !isOverlapping(original.GetEndPosition(), next.GetPosition());
+        // Here we try to determine the flow direction of the hitobjects
+        // This is done by taking the midpoint of the adjacent notes and then measuring the angle differences
+
+        bool isOverlappingEnd = isOverlapping(original.GetEndPosition(), next.GetPosition());
 
         var secondNext = beatmap.HitObjects.GetNext(next);
 
@@ -105,10 +101,10 @@ public partial class NewBeatmapConverter
         if (previous is null || !isChronologicallyClose(previous, original))
         {
             if (secondNext is not null)
-                activeStreamDirection = getStreamDirection(next, original, secondNext);
-
-            // Fallback to using the midpoint as best effort
-            activeStreamDirection = getStreamDirection(original, null, next);
+                activeStreamDirection = getStreamDirection(next, previous, secondNext);
+            else
+                // Fallback to using the midpoint as best effort
+                activeStreamDirection = getStreamDirection(original, null, next);
         }
         else
         {
@@ -117,16 +113,20 @@ public partial class NewBeatmapConverter
 
         int streamOffset = (int)activeStreamDirection;
 
-
-        // Slides have special behavior in streams that make it so that the next note will share the same lane as the slide end
+        // Slides have special behavior that sets the next lane to be it's endlane, and the startLane if the next note overlaps the slide head
         if (converted is Slide slide)
-            currentLane = slide.Lane + slide.SlideInfoList[0].SlidePath.EndLane;
+        {
+            bool isOverlappingStart = isOverlapping(original.GetPosition(), next.GetPosition());
+            if (isOverlappingStart)
+                return;
+
+            currentLane = slide.SlideInfoList[0].SlidePath.EndLane;
+        }
         else
             currentLane += streamOffset;
 
-        // If it is a spaced stream, we double the offset
-        if (isSpacedStream)
-            currentLane += activeStreamDirection == StreamDirection.Counterclockwise ? -1 : 1;
+        if (!isOverlappingEnd)
+            currentLane += streamOffset == 0 ? 1 : streamOffset;
 
         currentLane = currentLane.NormalizePath();
     }
