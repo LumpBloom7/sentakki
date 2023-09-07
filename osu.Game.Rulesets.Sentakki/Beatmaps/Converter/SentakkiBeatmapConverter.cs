@@ -12,7 +12,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 
-public partial class NewBeatmapConverter : BeatmapConverter<SentakkiHitObject>
+public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObject>
 {
     public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition);
     protected override Beatmap<SentakkiHitObject> CreateBeatmap() => new SentakkiBeatmap();
@@ -31,7 +31,7 @@ public partial class NewBeatmapConverter : BeatmapConverter<SentakkiHitObject>
     private int currentLane;
     private readonly Random rng;
 
-    public NewBeatmapConverter(IBeatmap beatmap, Ruleset ruleset) : base(beatmap, ruleset)
+    public SentakkiBeatmapConverter(IBeatmap beatmap, Ruleset ruleset) : base(beatmap, ruleset)
     {
         this.beatmap = beatmap;
 

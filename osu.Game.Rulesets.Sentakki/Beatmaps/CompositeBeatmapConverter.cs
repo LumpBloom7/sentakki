@@ -25,9 +25,9 @@ public class CompositeBeatmapConverter : BeatmapConverter<SentakkiHitObject>
         BeatmapConverter<SentakkiHitObject> converter;
 
         if (flags.HasFlag(ConversionFlags.oldConverter))
-            converter = new SentakkiBeatmapConverter(original, ruleset) { ConversionFlags = flags };
+            converter = new SentakkiBeatmapConverterOld(original, ruleset) { ConversionFlags = flags };
         else
-            converter = new NewBeatmapConverter(original, ruleset) { ConversionFlags = flags };
+            converter = new SentakkiBeatmapConverter(original, ruleset) { ConversionFlags = flags };
 
         return ((SentakkiBeatmap)converter.Convert(cancellationToken)) ?? base.ConvertBeatmap(original, cancellationToken);
     }

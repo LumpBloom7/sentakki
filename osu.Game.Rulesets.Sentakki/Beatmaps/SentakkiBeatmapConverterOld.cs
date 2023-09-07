@@ -14,14 +14,14 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
-    public class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObject>
+    public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
     {
         public ConversionFlags ConversionFlags;
         public bool ClassicMode;
 
         public static readonly List<Vector2> VALID_TOUCH_POSITIONS;
 
-        static SentakkiBeatmapConverter()
+        static SentakkiBeatmapConverterOld()
         {
             var tmp = new List<Vector2>
             {
@@ -45,7 +45,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         private readonly Dictionary<Vector2, double> endTimes = new Dictionary<Vector2, double>();
 
-        public SentakkiBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
+        public SentakkiBeatmapConverterOld(IBeatmap beatmap, Ruleset ruleset)
             : base(beatmap, ruleset)
         {
             patternGenerator = new SentakkiPatternGenerator(beatmap);

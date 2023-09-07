@@ -5,7 +5,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 
-public partial class NewBeatmapConverter
+public partial class SentakkiBeatmapConverter
 {
     private Tap convertHitCircle(HitObject original)
     {

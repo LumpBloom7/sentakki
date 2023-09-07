@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
-            ((SentakkiBeatmapConverter)beatmapConverter).ClassicMode = true;
+            ((SentakkiBeatmapConverterOld)beatmapConverter).ClassicMode = true;
         }
     }
 }
