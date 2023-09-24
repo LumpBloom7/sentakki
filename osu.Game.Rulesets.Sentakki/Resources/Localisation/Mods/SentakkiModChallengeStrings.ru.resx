@@ -62,9 +62,9 @@
         <value>Количество жизней</value>
     </data>
   <data name="mod_description" xml:space="preserve">
-        <value>У Вас лишь небольшой запас промахов.</value>
+        <value>У вас лишь небольшой запас промахов.</value>
     </data>
   <data name="number_of_lives_description" xml:space="preserve">
-        <value>Количество жизней, с которыми Вы стартуете.</value>
+        <value>Количество жизней, с которыми вы стартуете.</value>
     </data>
 </root>
