@@ -58,13 +58,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="number_of_lives" xml:space="preserve">
-        <value>Количество жизней</value>
-    </data>
   <data name="mod_description" xml:space="preserve">
-        <value>У вас лишь небольшой запас промахов.</value>
+        <value>Dreht das Spielfeld horizontal, vertikal oder beides!</value>
     </data>
-  <data name="number_of_lives_description" xml:space="preserve">
-        <value>Количество жизней, с которыми вы стартуете.</value>
+  <data name="mirror_vertically" xml:space="preserve">
+        <value>⇅ Vertikal spiegeln</value>
+    </data>
+  <data name="mirror_vertically_description" xml:space="preserve">
+        <value>Gesamtes Spielfeld über die x-Achse spiegeln</value>
+    </data>
+  <data name="mirror_horizontally" xml:space="preserve">
+        <value>⇆ Horizontal spiegeln</value>
+    </data>
+  <data name="mirror_horizontally_description" xml:space="preserve">
+        <value>Gesamtes Spielfeld über die y-Achse spiegeln</value>
     </data>
 </root>

@@ -58,13 +58,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="number_of_lives" xml:space="preserve">
-        <value>Количество жизней</value>
+  <data name="judgement_mode" xml:space="preserve">
+        <value>Режим оценки попаданий</value>
     </data>
-  <data name="mod_description" xml:space="preserve">
-        <value>У вас лишь небольшой запас промахов.</value>
+  <data name="judgement_mode_description" xml:space="preserve">
+        <value>Режимы оценки попаданий задают строгость окон попаданий во время игры.</value>
     </data>
-  <data name="number_of_lives_description" xml:space="preserve">
-        <value>Количество жизней, с которыми вы стартуете.</value>
+  <data name="minimum_result" xml:space="preserve">
+        <value>Минимально допустимая оценка</value>
+    </data>
+  <data name="minimum_result_description" xml:space="preserve">
+        <value>Минимально допустимая оценка при попадании в ноту. Любая оценка хуже будет считаться промахом.</value>
     </data>
 </root>

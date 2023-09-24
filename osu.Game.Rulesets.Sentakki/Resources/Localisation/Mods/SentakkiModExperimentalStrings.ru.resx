@@ -59,7 +59,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mod_description" xml:space="preserve">
-        <value>Некоторые экспериментальные функции, которые будут добавлены в будущие билды sentakki. Рекомендовано играть с модами Autoplay/No-Fail. Записи игр не поддерживаются.</value>
+        <value>Некоторые экспериментальные функции, которые будут добавлены в будущие версии sentakki. Рекомендовано играть с модами Autoplay/No-Fail. Записи игр не поддерживаются.</value>
     </data>
   <data name="twin_notes" xml:space="preserve">
         <value>Двойные ноты</value>

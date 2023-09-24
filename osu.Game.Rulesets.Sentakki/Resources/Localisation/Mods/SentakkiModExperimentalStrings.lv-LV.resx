@@ -59,7 +59,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mod_description" xml:space="preserve">
-        <value>Dažas eksperimentālās funkcijas būs pievienotas turpmākajās sentakki versijās. Modi Autoplay/No-Fail ir ieteikti. Atkārtot ierakstus nav atbalstīts.</value>
+        <value>Dažas eksperimentālās funkcijas būs pievienotas turpmākajās sentakki versijās. Modi Autoplay/No-Fail ir ieteikti. Ierakstu atkārtošana nav atbalstīta.</value>
     </data>
   <data name="twin_notes" xml:space="preserve">
         <value>Dubultās notis</value>
