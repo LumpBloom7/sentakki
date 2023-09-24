@@ -82,7 +82,7 @@ public partial class SentakkiBeatmapConverter
 
     private SlideBodyPart[]? chooseSlidePartFor(HitObject original)
     {
-        double velocity = original is IHasSliderVelocity slider ? (slider.SliderVelocity * beatmap.Difficulty.SliderMultiplier) : 1;
+        double velocity = original is IHasSliderVelocity slider ? (slider.SliderVelocityMultiplier * beatmap.Difficulty.SliderMultiplier) : 1;
         double duration = ((IHasDuration)original).Duration;
         double adjustedDuration = duration * velocity;
 
@@ -175,7 +175,7 @@ public partial class SentakkiBeatmapConverter
 
         TimingControlPoint timingPoint = controlPointInfo.TimingPointAt(hitObject.StartTime);
 
-        double sliderVelocity = (hitObject is IHasSliderVelocity sv) ? sv.SliderVelocity : DifficultyControlPoint.DEFAULT.SliderVelocity;
+        double sliderVelocity = (hitObject is IHasSliderVelocity sv) ? sv.SliderVelocityMultiplier : DifficultyControlPoint.DEFAULT.SliderVelocity;
         double scoringDistance = 100 * difficulty.SliderMultiplier * sliderVelocity;
         double velocity = scoringDistance / timingPoint.BeatLength;
         double tickDistance = scoringDistance / difficulty.SliderTickRate;

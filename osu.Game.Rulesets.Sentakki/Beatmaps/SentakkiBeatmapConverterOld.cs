@@ -317,7 +317,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         private SlideBodyPart? chooseSlidePartFor(HitObject original)
         {
-            double velocity = original is IHasSliderVelocity slider ? slider.SliderVelocity : 1;
+            double velocity = original is IHasSliderVelocity slider ? slider.SliderVelocityMultiplier : 1;
             double duration = ((IHasDuration)original).Duration;
             double adjustedDuration = duration * velocity;
 
