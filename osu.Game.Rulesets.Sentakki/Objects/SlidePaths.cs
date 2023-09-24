@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
@@ -22,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Fan,
         }
 
-        public static readonly List<(SlideBodyPart parameters, double MinDuration)> VALIDPATHS;
+        public static readonly List<(SlideBodyPart SlidePart, double MinDuration)> VALIDPATHS;
 
         static SlidePaths()
         {
