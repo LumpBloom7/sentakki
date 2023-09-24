@@ -90,7 +90,7 @@ public partial class SentakkiBeatmapConverter
         if (!ConversionFlags.HasFlag(ConversionFlags.fanSlides))
             candidates = candidates.Where(p => p.SlidePart.Shape != SlidePaths.PathShapes.Fan);
 
-        if (ConversionFlags.HasFlag(ConversionFlags.createCompositeSlides))
+        if (!ConversionFlags.HasFlag(ConversionFlags.disableCompositeSlides))
         {
             List<SlideBodyPart> parts = new List<SlideBodyPart>();
 

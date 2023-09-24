@@ -19,16 +19,12 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override IconUsage? Icon => FontAwesome.Solid.Flask;
         public override ModType Type => ModType.Conversion;
 
-        public override bool UserPlayable => false;
         public override bool RequiresConfiguration => true;
 
         public override double ScoreMultiplier => 1.00;
 
         [SettingSource(typeof(SentakkiModExperimentalStrings), nameof(SentakkiModExperimentalStrings.FanSlides), nameof(SentakkiModExperimentalStrings.FanSlidesDescription))]
         public Bindable<bool> EnableSlideFans { get; } = new BindableBool(false);
-
-        [SettingSource("Enable convert slide chains", "Allows chain slides to be considered in converts")]
-        public BindableBool ChainSlides { get; } = new BindableBool(true);
 
         [SettingSource("Use old converter", "The old converter relied on RNG for just about everything. Included for comparison purposes.")]
         public BindableBool OldConversion { get; } = new BindableBool(false);
@@ -45,9 +41,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
             if (EnableSlideFans.Value)
                 sentakkiBeatmapConverter.flags |= ConversionFlags.fanSlides;
-
-            if (ChainSlides.Value)
-                sentakkiBeatmapConverter.flags |= ConversionFlags.createCompositeSlides;
 
             if (!OldConversion.Value)
                 return;
