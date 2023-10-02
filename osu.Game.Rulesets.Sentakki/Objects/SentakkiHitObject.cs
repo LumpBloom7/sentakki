@@ -50,10 +50,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set => ColourBindable.Value = value;
         }
 
+        public Bindable<bool> ExBindable = new Bindable<bool>();
+
+        public bool Ex
+        {
+            get => ExBindable.Value;
+            set => ExBindable.Value = value;
+        }
+
         [JsonIgnore]
         public virtual Color4 DefaultNoteColour => Color4Extensions.FromHex("FF0064");
 
-        protected override HitWindows CreateHitWindows() => new SentakkiHitWindows();
+        protected override HitWindows CreateHitWindows() => new SentakkiTapHitWindows();
 
         // This special hitsample is used for Sentakki specific samples, with doesn't have bank specific variants
         public class SentakkiHitSampleInfo : HitSampleInfo, IEquatable<SentakkiHitSampleInfo>

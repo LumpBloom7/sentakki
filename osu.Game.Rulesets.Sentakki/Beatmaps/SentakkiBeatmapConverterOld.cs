@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using osu.Game.Audio;
@@ -8,30 +7,21 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Beatmaps.Legacy;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
 {
-    [Flags]
-    public enum ConversionExperiments
+    public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
     {
-        none = 0,
-        twinNotes = 1,
-        twinSlides = 2,
-        fanSlides = 4
-    }
-
-    public class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObject>
-    {
-        // Conversion flags
-        public ConversionExperiments EnabledExperiments;
+        public ConversionFlags ConversionFlags;
         public bool ClassicMode;
 
         public static readonly List<Vector2> VALID_TOUCH_POSITIONS;
 
-        static SentakkiBeatmapConverter()
+        static SentakkiBeatmapConverterOld()
         {
             var tmp = new List<Vector2>
             {
@@ -55,23 +45,10 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         private readonly Dictionary<Vector2, double> endTimes = new Dictionary<Vector2, double>();
 
-        public SentakkiBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
+        public SentakkiBeatmapConverterOld(IBeatmap beatmap, Ruleset ruleset)
             : base(beatmap, ruleset)
         {
             patternGenerator = new SentakkiPatternGenerator(beatmap);
-        }
-
-        protected override Beatmap<SentakkiHitObject> ConvertBeatmap(IBeatmap original, CancellationToken cancellationToken)
-        {
-            var convertedBeatmap = base.ConvertBeatmap(original, cancellationToken);
-
-            // We don't use any of the standard difficulty values
-            // But we initialize to defaults so HR can adjust HitWindows in a controlled manner
-            // We clone beforehand to avoid altering the original (it really should be readonly :P)
-            convertedBeatmap.BeatmapInfo = convertedBeatmap.BeatmapInfo.Clone();
-            convertedBeatmap.BeatmapInfo.Difficulty = new BeatmapDifficulty();
-
-            return convertedBeatmap;
         }
 
         protected override Beatmap<SentakkiHitObject> CreateBeatmap() => new SentakkiBeatmap();
@@ -106,7 +83,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 yield return createTouchNote(original);
             else
             {
-                if (twin && EnabledExperiments.HasFlag(ConversionExperiments.twinNotes))
+                if (twin && ConversionFlags.HasFlag(ConversionFlags.twinNotes))
                     yield return createTapNote(original, true, breakNote);
 
                 yield return createTapNote(original, false, breakNote);
@@ -136,7 +113,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         private IEnumerable<SentakkiHitObject> convertSlider(HitObject original)
         {
-            IHasDuration slider = (IHasDuration)original;
             bool breakHead = false;
             bool breakTail = false;
             bool special = false;
@@ -178,7 +154,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             }
 
             // See if we can convert to a slide object
-            if (special && slider.Duration >= 350)
+            if (special)
             {
                 var result = tryConvertSliderToSlide(original, nodeSamples, twin, breakHead, breakTail).ToList();
 
@@ -192,7 +168,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             }
 
             // Fallback to hold notes
-            if (EnabledExperiments.HasFlag(ConversionExperiments.twinNotes))
+            if (ConversionFlags.HasFlag(ConversionFlags.twinNotes))
             {
                 if (twin)
                     yield return createHoldNote(original, nodeSamples, true, breakHead);
@@ -212,27 +188,31 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             List<Slide> slides = new List<Slide>();
             List<Tap> taps = new List<Tap>();
 
-            if (EnabledExperiments.HasFlag(ConversionExperiments.twinSlides))
+            if (ConversionFlags.HasFlag(ConversionFlags.twinSlides))
             {
                 if (twin)
-                    slides.Add((Slide)createSlideNote(original, nodeSamples, true, hasBreakHead, hasBreakTail));
+                {
+                    var secondSlide = createSlideNote(original, nodeSamples, true, hasBreakHead, hasBreakTail);
+                    if (secondSlide is not null)
+                        slides.Add(secondSlide);
+                }
                 else
                     taps.AddRange(createTapsFromNodes(original, nodeSamples));
             }
 
-            slides.Add((Slide)createSlideNote(original, nodeSamples, false, hasBreakHead, hasBreakTail));
+            var mainSlide = createSlideNote(original, nodeSamples, false, hasBreakHead, hasBreakTail);
 
-            slides.RemoveAll(x => x == null);
+            if (mainSlide is not null)
+                slides.Add(mainSlide);
 
             // If there is a SlideFan, we always prioritize that, and ignore the rest
             foreach (var slide in slides)
             {
-                if (slide.SlideInfoList[0].SlidePathParts[0].Shape == SlidePaths.PathShapes.Fan)
-                {
-                    yield return slide;
+                if (slide.SlideInfoList[0].SlidePathParts[0].Shape != SlidePaths.PathShapes.Fan) continue;
 
-                    yield break;
-                }
+                yield return slide;
+
+                yield break;
             }
 
             // If both slides have the same start lane, we attempt to merge them
@@ -245,14 +225,11 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 slides.RemoveAt(1);
             }
 
-            if (slides.Count > 0)
-            {
-                foreach (var slide in slides)
-                    yield return slide;
+            foreach (var slide in slides)
+                yield return slide;
 
-                foreach (var tap in taps)
-                    yield return tap;
-            }
+            foreach (var tap in taps)
+                yield return tap;
         }
 
         #endregion
@@ -299,7 +276,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             // Choosing a position
             var position = availableTouchPositions.Any()
                 ? availableTouchPositions.ElementAt(patternGenerator.RNG.Next(0, availableTouchPositions.Count()))
-                : endTimes.OrderBy(x => x.Value).First().Key;
+                : endTimes.MinBy(x => x.Value).Key;
 
             endTimes[position] = original.StartTime + 500;
 
@@ -311,24 +288,14 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             };
         }
 
-        private SentakkiHitObject createSlideNote(HitObject original, IList<IList<HitSampleInfo>> samples, bool twin = false, bool hasBreakHead = false, bool hasBreakTail = false)
+        private Slide? createSlideNote(HitObject original, IList<IList<HitSampleInfo>> samples, bool twin = false, bool hasBreakHead = false, bool hasBreakTail = false)
         {
             int noteLane = patternGenerator.GetNextLane(twin);
-            List<SlideBodyPart> validPaths;
 
-            {
-                var pathEnumerable = SlidePaths.VALIDPATHS.Where(p => ((IHasDuration)original).Duration >= p.MinDuration && ((IHasDuration)original).Duration <= p.MinDuration * 10)
-                                               .Select(t => t.parameters);
+            var selectedPath = chooseSlidePartFor(original);
 
-                if (!EnabledExperiments.HasFlag(ConversionExperiments.fanSlides))
-                    pathEnumerable = pathEnumerable.Where(s => s.Shape != SlidePaths.PathShapes.Fan);
-
-                validPaths = pathEnumerable.ToList();
-            }
-
-            if (!validPaths.Any()) return null!;
-
-            var selectedPath = validPaths[patternGenerator.RNG.Next(validPaths.Count)];
+            if (selectedPath is null)
+                return null;
 
             return new Slide
             {
@@ -336,7 +303,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 {
                     new SlideBodyInfo
                     {
-                        SlidePathParts = new[] { selectedPath },
+                        SlidePathParts = new[] { selectedPath.Value },
                         Duration = ((IHasDuration)original).Duration,
                         Break = hasBreakTail,
                         ShootDelay = 0.5f,
@@ -347,6 +314,23 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 NodeSamples = samples,
                 Break = hasBreakHead
             };
+        }
+
+        private SlideBodyPart? chooseSlidePartFor(HitObject original)
+        {
+            double velocity = original is IHasSliderVelocity slider ? slider.SliderVelocityMultiplier : 1;
+            double duration = ((IHasDuration)original).Duration;
+            double adjustedDuration = duration * velocity;
+
+            var candidates = SlidePaths.VALIDPATHS;
+            if (!ConversionFlags.HasFlag(ConversionFlags.fanSlides))
+                candidates = candidates.Where(p => p.SlidePart.Shape != SlidePaths.PathShapes.Fan).ToList();
+
+            var candidateParts = candidates.Where(t => duration >= t.MinDuration && duration <= t.MinDuration * 10)
+                                           .Select(t => t.SlidePart)
+                                           .ToList();
+
+            return !candidateParts.Any() ? null : candidateParts[patternGenerator.RNG.Next(candidateParts.Count)];
         }
 
         private IEnumerable<Tap> createTapsFromNodes(HitObject original, IList<IList<HitSampleInfo>> nodeSamples)
@@ -377,7 +361,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             TimingControlPoint timingPoint = controlPointInfo.TimingPointAt(original.StartTime);
 
-            double sliderVelocity = (original is IHasSliderVelocity sv) ? sv.SliderVelocity : DifficultyControlPoint.DEFAULT.SliderVelocity;
+            double sliderVelocity = (original is IHasSliderVelocity sv) ? sv.SliderVelocityMultiplier : DifficultyControlPoint.DEFAULT.SliderVelocity;
 
             double scoringDistance = 100 * difficulty.SliderMultiplier * sliderVelocity;
 

@@ -41,9 +41,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [Resolved]
         private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; } = null!;
 
-        [Resolved]
-        private SentakkiRulesetConfigManager? sentakkiRulesetConfig { get; set; }
-
         [BackgroundDependencyLoader]
         private void load()
         {
@@ -64,11 +61,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         protected override void OnNewDrawableHitObject(DrawableHitObject d) => OnLoaded?.Invoke(d);
 
-        protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, sentakkiRulesetConfig, drawableSentakkiRuleset);
+        protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, drawableSentakkiRuleset);
 
         #region Input Handling
 
         private const float receptor_angle_range = 45 * 1.4f;
+        private const float receptor_angle_range_mid = receptor_angle_range / 2;
 
         private SentakkiInputManager sentakkiActionInputManager = null!;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
@@ -79,11 +77,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             var localPos = ToLocalSpace(screenSpacePos);
 
-            float angleDelta = SentakkiExtensions.GetDeltaAngle(0, Vector2.Zero.GetDegreesFromPosition(localPos));
-            if (Math.Abs(angleDelta) > receptor_angle_range / 2) return false;
-
             float distance = Vector2.DistanceSquared(Vector2.Zero, localPos);
-            if (distance < 200 * 200 || distance > 400 * 400) return false;
+            if (distance is < (200 * 200) or > (400 * 400)) return false;
+
+            float angleDelta = SentakkiExtensions.GetDeltaAngle(0, Vector2.Zero.GetDegreesFromPosition(localPos));
+            if (Math.Abs(angleDelta) > receptor_angle_range_mid) return false;
 
             return true;
         }

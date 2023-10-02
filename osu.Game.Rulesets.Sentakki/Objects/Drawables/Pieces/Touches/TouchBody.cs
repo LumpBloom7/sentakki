@@ -23,15 +23,27 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
 
             InternalChildren = new Drawable[]
             {
+                PieceContainer = new Container
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    RelativeSizeAxes = Axes.Both,
+                    Children = new Drawable[]
+                    {
+                        createTouchShapeWith<TouchGlowPiece>(), // Meant for the drop shadow/glow
+                        createTouchShapeWith<TouchPiece>(),
+                        new DotPiece()
+                    }
+                },
                 BorderContainer = new Container
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Size = new Vector2(105),
+                    Size = new Vector2(100),
                     CornerRadius = 25f,
                     CornerExponent = 2.5f,
                     Masking = true,
-                    BorderThickness = 15,
+                    BorderThickness = 10,
                     BorderColour = Color4.White,
                     Alpha = 0,
                     Child = new Box
@@ -41,39 +53,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
                         RelativeSizeAxes = Axes.Both
                     }
                 },
-                PieceContainer = new Container
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    RelativeSizeAxes = Axes.Both,
-                    Children = new Drawable[]
-                    {
-                        new TouchPiece
-                        {
-                            Anchor = Anchor.TopCentre,
-                            Origin = Anchor.TopCentre,
-                        },
-                        new TouchPiece
-                        {
-                            Anchor = Anchor.BottomCentre,
-                            Origin = Anchor.TopCentre,
-                            Rotation = 180
-                        },
-                        new TouchPiece
-                        {
-                            Anchor = Anchor.CentreLeft,
-                            Origin = Anchor.TopCentre,
-                            Rotation = 270
-                        },
-                        new TouchPiece
-                        {
-                            Anchor = Anchor.CentreRight,
-                            Origin = Anchor.TopCentre,
-                            Rotation = 90
-                        },
-                        new DotPiece()
-                    }
-                }
             };
         }
 
@@ -85,10 +64,37 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
             if (drawableObject is null) return;
 
             accentColour.BindTo(drawableObject.AccentColour);
-            accentColour.BindValueChanged(colour =>
-            {
-                PieceContainer.Colour = colour.NewValue;
-            }, true);
+            accentColour.BindValueChanged(colour => PieceContainer.Colour = colour.NewValue, true);
         }
+
+        // Creates the touch shape using the provided drawable as each of the 4 quarters
+        private Drawable createTouchShapeWith<T>() where T : Drawable, new()
+            => new Container
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                RelativeSizeAxes = Axes.Both,
+                Children = new Drawable[]{
+                    new T
+                    {
+                        Anchor = Anchor.TopCentre,
+                    },
+                    new T
+                    {
+                        Anchor = Anchor.BottomCentre,
+                        Rotation = 180
+                    },
+                    new T
+                    {
+                        Anchor = Anchor.CentreLeft,
+                        Rotation = 270
+                    },
+                    new T
+                    {
+                        Anchor = Anchor.CentreRight,
+                        Rotation = 90
+                    },
+                }
+            };
     }
 }

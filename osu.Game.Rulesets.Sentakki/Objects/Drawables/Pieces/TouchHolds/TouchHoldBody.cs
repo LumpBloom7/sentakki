@@ -26,31 +26,5 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                 centrePiece = new TouchHoldCentrePiece(),
             };
         }
-
-        private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
-
-        [BackgroundDependencyLoader(true)]
-        private void load(DrawableHitObject drawableObject)
-        {
-            if (drawableObject is null) return;
-
-            accentColour.BindTo(drawableObject.AccentColour);
-
-            drawableObject.ApplyCustomUpdateState += updateState;
-        }
-
-        private void updateState(DrawableHitObject drawableObject, ArmedState state)
-        {
-            using (BeginAbsoluteSequence(drawableObject.HitStateUpdateTime))
-            {
-                switch (state)
-                {
-                    case ArmedState.Hit:
-                        ProgressPiece.FadeOut();
-                        centrePiece.FadeOut();
-                        break;
-                }
-            }
-        }
     }
 }

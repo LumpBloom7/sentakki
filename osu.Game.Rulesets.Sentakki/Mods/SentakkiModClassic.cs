@@ -10,9 +10,11 @@ namespace osu.Game.Rulesets.Sentakki.Mods
     {
         public override LocalisableString Description => SentakkiModClassicStrings.ModDescription;
 
+        public override bool HasImplementation => false;
+
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
-            ((SentakkiBeatmapConverter)beatmapConverter).ClassicMode = true;
+            ((SentakkiBeatmapConverterOld)beatmapConverter).ClassicMode = true;
         }
     }
 }

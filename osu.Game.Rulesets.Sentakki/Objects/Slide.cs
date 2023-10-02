@@ -52,7 +52,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 LaneBindable = { BindTarget = LaneBindable },
                 StartTime = StartTime,
                 Samples = NodeSamples.Any() ? NodeSamples.First() : Samples,
-                Break = Break
+                Break = Break,
+                Ex = Ex
             });
             createSlideBodies();
         }
@@ -68,7 +69,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 {
                     Lane = slideInfo.SlidePath.EndLane + Lane,
                     StartTime = StartTime,
-                    Samples = NodeSamples.Any() ? NodeSamples.Last() : Samples,
+                    // Lets remove samples from slide completions
+                    //Samples = NodeSamples.Any() ? NodeSamples.Last() : new List<HitSampleInfo>()
                 });
 
                 SlideBodies.Add(body);

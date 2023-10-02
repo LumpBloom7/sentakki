@@ -5,6 +5,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Performance;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK.Graphics;
 
@@ -13,20 +14,15 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
     public class LineLifetimeEntry : LifetimeEntry
     {
         private readonly BindableDouble animationDuration = new BindableDouble(1000);
-        public double AdjustedAnimationDuration => animationDuration.Value * GameplaySpeed;
-
-        public double GameplaySpeed => drawableRuleset?.GameplaySpeed ?? 1;
-
-        private readonly DrawableSentakkiRuleset? drawableRuleset;
 
         public double StartTime { get; private set; }
 
-        public LineLifetimeEntry(BindableDouble animationDuration, DrawableSentakkiRuleset? drawableSentakkiRuleset, double startTime)
+        public LineLifetimeEntry(DrawableSentakkiRuleset? drawableSentakkiRuleset, double startTime)
         {
             StartTime = startTime;
-            drawableRuleset = drawableSentakkiRuleset;
-            this.animationDuration.BindTo(animationDuration);
-            this.animationDuration.BindValueChanged(refreshLifetime, true);
+
+            animationDuration.TryBindTo(drawableSentakkiRuleset?.AdjustedAnimDuration);
+            animationDuration.BindValueChanged(refreshLifetime, true);
         }
 
         public List<SentakkiLanedHitObject> HitObjects = new List<SentakkiLanedHitObject>();
@@ -90,7 +86,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private void refreshLifetime(ValueChangedEvent<double> valueChangedEvent)
         {
-            LifetimeStart = StartTime - AdjustedAnimationDuration;
+            LifetimeStart = StartTime - valueChangedEvent.NewValue;
             LifetimeEnd = StartTime;
         }
 
