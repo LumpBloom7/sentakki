@@ -118,7 +118,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             // Reset the countdown, plus a second for preparation
             remainingTime = (barLength * beatlength) + 1000;
 
-
             if (localCursorContainer == null)
                 Add(localCursorContainer = new SentakkiCursorContainer());
 
