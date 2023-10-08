@@ -14,6 +14,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
     {
         public override double ScoreMultiplier => 1;
 
+        public override string ExtendedIconInformation => $"{(JudgementMode.Value == SentakkiJudgementMode.Normal ? string.Empty : JudgementMode.Value)}";
+
         public override void ApplyToDifficulty(BeatmapDifficulty difficulty)
         {
             // This is a no-op since we don't use beatmap difficulty
@@ -21,10 +23,10 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         }
 
         [SettingSource(typeof(SentakkiModHardRockStrings), nameof(SentakkiModHardRockStrings.JudgementMode), nameof(SentakkiModHardRockStrings.JudgementModeDescription))]
-        public Bindable<SentakkiJudgementMode> judgementMode { get; } = new Bindable<SentakkiJudgementMode>(SentakkiJudgementMode.Maji);
+        public Bindable<SentakkiJudgementMode> JudgementMode { get; } = new Bindable<SentakkiJudgementMode>(SentakkiJudgementMode.Maji);
 
         [SettingSource(typeof(SentakkiModHardRockStrings), nameof(SentakkiModHardRockStrings.MinimumResult), nameof(SentakkiModHardRockStrings.MinimumResultDescription))]
-        public Bindable<SentakkiHitResult> minimumValidResult { get; } = new Bindable<SentakkiHitResult>(SentakkiHitResult.Good);
+        public Bindable<SentakkiHitResult> MinimumValidResult { get; } = new Bindable<SentakkiHitResult>(SentakkiHitResult.Good);
 
         public void ApplyToHitObject(HitObject hitObject)
         {
@@ -35,8 +37,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             if (hitObject.HitWindows is not SentakkiHitWindows shw)
                 return;
 
-            shw.MinimumHitResult = (HitResult)minimumValidResult.Value;
-            shw.JudgementMode = judgementMode.Value;
+            shw.MinimumHitResult = (HitResult)MinimumValidResult.Value;
+            shw.JudgementMode = JudgementMode.Value;
         }
 
         public enum SentakkiHitResult
