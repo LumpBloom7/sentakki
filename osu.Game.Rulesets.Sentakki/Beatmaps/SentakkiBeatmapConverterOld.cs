@@ -367,12 +367,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             double velocity = scoringDistance / timingPoint.BeatLength;
             double tickDistance = scoringDistance / difficulty.SliderTickRate;
 
-            double legacyLastTickOffset = (original as IHasLegacyLastTickOffset)?.LegacyLastTickOffset ?? 0;
-
             int nodeSampleIndex = 0;
 
-            foreach (var e in SliderEventGenerator.Generate(original.StartTime, spanDuration, velocity, tickDistance, curve.Path.Distance, curve.RepeatCount + 1, legacyLastTickOffset,
-                         CancellationToken.None))
+            foreach (var e in SliderEventGenerator.Generate(original.StartTime, spanDuration, velocity, tickDistance, curve.Path.Distance, curve.RepeatCount + 1, CancellationToken.None))
             {
                 switch (e.Type)
                 {

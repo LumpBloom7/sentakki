@@ -179,10 +179,8 @@ public partial class SentakkiBeatmapConverter
         double scoringDistance = 100 * difficulty.SliderMultiplier * sliderVelocity;
         double velocity = scoringDistance / timingPoint.BeatLength;
         double tickDistance = scoringDistance / difficulty.SliderTickRate;
-        double legacyLastTickOffset = (hitObject as IHasLegacyLastTickOffset)?.LegacyLastTickOffset ?? 0;
 
-        var sliderEvents = SliderEventGenerator.Generate(hitObject.StartTime, spanDuration, velocity, tickDistance, slider.Path.Distance, slider.RepeatCount + 1, legacyLastTickOffset,
-            CancellationToken.None);
+        var sliderEvents = SliderEventGenerator.Generate(hitObject.StartTime, spanDuration, velocity, tickDistance, slider.Path.Distance, slider.RepeatCount + 1, CancellationToken.None);
 
         var sliderOrigin = slider.Path.PositionAt(0);
 
