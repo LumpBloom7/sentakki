@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -134,5 +135,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
         protected override ResumeOverlay CreateResumeOverlay() => new SentakkiResumeOverlay();
 
         protected override PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset.RulesetInfo);
+
+        public override void RequestResume(Action continueResume)
+        {
+            ResumeOverlay.GameplayCursor = Cursor;
+            ResumeOverlay.ResumeAction = continueResume;
+            ResumeOverlay.Show();
+        }
     }
 }
