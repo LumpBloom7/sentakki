@@ -118,10 +118,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
             // Reset the countdown, plus a second for preparation
             remainingTime = (barLength * beatlength) + 1000;
 
-            GameplayCursor.ActiveCursor.Hide();
-
             if (localCursorContainer == null)
                 Add(localCursorContainer = new SentakkiCursorContainer());
+
+            localCursorContainer.State.BindTo(GameplayCursor.State);
+            GameplayCursor.ActiveCursor.Hide();
         }
 
         protected override void PopOut()
@@ -130,7 +131,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
             messageText.Text = SentakkiResumeOverlayStrings.LetsGo;
 
             if (localCursorContainer != null && GameplayCursor?.ActiveCursor != null)
+            {
                 GameplayCursor.ActiveCursor.Position = localCursorContainer.ActiveCursor.Position;
+            }
 
             localCursorContainer?.Expire();
             localCursorContainer = null;
