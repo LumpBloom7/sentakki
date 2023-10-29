@@ -26,22 +26,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [Resolved]
         private DrawableSentakkiRuleset? drawableSentakkiRuleset { get; set; }
 
-        private readonly string[] supporterList = new[]
-        {
-            "Ayato_K",
-            "Bosch",
-            "Dubita",
-            "Ezz",
-            "Mae",
-            "Nutchapol",
-            "Shiuannie",
-            "Smoogipoo",
-            "Flutterish",
-            "Nooraldeen",
-        }.OrderBy(t => RNG.Next()).ToArray();
-
-        private static int currentSupporterIndex;
-
         // We don't want the default message
         protected override LocalisableString Message => "";
 
@@ -53,8 +37,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private readonly Bindable<int> beatsLeft = new Bindable<int>(4);
         private int barLength;
-
-        private OsuSpriteText supporterText = null!;
 
         private SkinnableSound countSound = null!;
 
@@ -78,17 +60,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     Origin = Anchor.Centre,
                     ShadowColour = new Color4(0f, 0f, 0f, 0.25f)
                 },
-                supporterText = new OsuSpriteText
-                {
-                    RelativePositionAxes = Axes.Both,
-                    Font = OsuFont.Torus.With(size: 20),
-                    Colour = Color4.White,
-                    Y = -0.4f,
-                    Anchor = Anchor.BottomCentre,
-                    Origin = Anchor.BottomCentre,
-                    Shadow = true,
-                    ShadowColour = new Color4(0f, 0f, 0f, 0.25f)
-                },
                 countSound = new SkinnableSound(new SampleInfo("Gameplay/Taka"))
             };
 
@@ -108,7 +79,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             base.PopIn();
 
-            supporterText.Text = SentakkiResumeOverlayStrings.SentakkiSupportedBy(getRandomSupporter());
             messageText.Text = SentakkiResumeOverlayStrings.GetReady;
 
             var currentTimingPoint = beatmap.Value.Beatmap.ControlPointInfo.TimingPointAt(beatmap.Value.Track.CurrentTime);
@@ -138,14 +108,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             localCursorContainer?.Expire();
             localCursorContainer = null;
             GameplayCursor?.ActiveCursor?.Show();
-        }
-
-        private string getRandomSupporter()
-        {
-            string tmp = supporterList[currentSupporterIndex++];
-            if (currentSupporterIndex >= supporterList.Length) currentSupporterIndex = 0;
-
-            return tmp;
         }
 
         private void onCountUpdated(ValueChangedEvent<int> beatsLeft)

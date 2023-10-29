@@ -132,15 +132,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public override DrawableHitObject<SentakkiHitObject> CreateDrawableRepresentation(SentakkiHitObject h) => null!;
 
-        protected override ResumeOverlay CreateResumeOverlay() => new SentakkiResumeOverlay();
+        // protected override ResumeOverlay CreateResumeOverlay() => new SentakkiResumeOverlay();
 
         protected override PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset.RulesetInfo);
 
-        public override void RequestResume(Action continueResume)
+        /* public override void RequestResume(Action continueResume)
         {
             ResumeOverlay.GameplayCursor = Cursor;
             ResumeOverlay.ResumeAction = continueResume;
             ResumeOverlay.Show();
-        }
+        } */
     }
 }
