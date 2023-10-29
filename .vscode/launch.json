@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "sentakki for osu! (Debug)",
+            "name": "sentakki",
             "type": "coreclr",
             "request": "launch",
             "program": "dotnet",
@@ -10,25 +10,8 @@
                 "${workspaceRoot}/osu.Game.Rulesets.Sentakki.Tests/bin/Debug/net6.0/osu.Game.Rulesets.Sentakki.Tests.dll"
             ],
             "cwd": "${workspaceRoot}",
-            "preLaunchTask": "Build (Debug)",
+            "preLaunchTask": "Build",
             "console": "internalConsole",
-            "justMyCode": false,
-            "symbolOptions": {
-                "searchMicrosoftSymbolServer": true,
-                "searchNuGetOrgSymbolServer": true
-            },
-        },
-        {
-            "name": "sentakki for osu! (Release)",
-            "type": "coreclr",
-            "request": "launch",
-            "program": "dotnet",
-            "args": [
-                "${workspaceRoot}/osu.Game.Rulesets.Sentakki.Tests/bin/Release/net6.0/osu.Game.Rulesets.Sentakki.Tests.dll"
-            ],
-            "cwd": "${workspaceRoot}",
-            "preLaunchTask": "Build (Release)",
-            "console": "internalConsole"
-        },
+        }
     ]
 }

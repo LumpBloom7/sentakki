@@ -23,6 +23,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override LocalisableString Description => SentakkiModChallengeStrings.ModDescription;
         public override string Acronym => "C";
 
+        public override string ExtendedIconInformation => $"{(int)LiveSetting.Value}♥";
+
         public override IconUsage? Icon => FontAwesome.Solid.HeartBroken;
         public override ModType Type => ModType.DifficultyIncrease;
 
