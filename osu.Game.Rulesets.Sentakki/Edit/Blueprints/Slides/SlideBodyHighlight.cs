@@ -41,11 +41,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             this.slideBodyInfo = slideBodyInfo;
         }
 
-        [BackgroundDependencyLoader]
-        private void load()
-        {
-            slideBody.Path = slideBodyInfo.SlidePath;
-        }
+        public void OnSelected() => slideBody.Path = slideBodyInfo.SlidePath;
+
+        public void OnDeselected() => slideBody.Free();
 
         public void UpdateFrom(DrawableSlideBody body)
         {

@@ -36,6 +36,22 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                 slideBodyHighlights.Add(new SlideBodyHighlight(body.SlideBodyInfo));
         }
 
+        protected override void OnDeselected()
+        {
+            foreach (var sb in slideBodyHighlights)
+                sb.OnDeselected();
+
+            base.OnDeselected();
+        }
+
+        protected override void OnSelected()
+        {
+            foreach (var sb in slideBodyHighlights)
+                sb.OnSelected();
+
+            base.OnSelected();
+        }
+
         protected override void Update()
         {
             base.Update();
