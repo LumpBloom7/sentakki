@@ -26,14 +26,15 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
             if (e.Button != MouseButton.Left) return false;
 
             EndPlacement(true);
+            EditorClock.SeekSmoothlyTo(HitObject.StartTime);
             return true;
         }
 
         public override void UpdateTimeAndPosition(SnapResult result)
         {
             base.UpdateTimeAndPosition(result);
-
-            HitObject.Lane = OriginPosition.GetDegreesFromPosition(ToLocalSpace(result.ScreenSpacePosition)).GetNoteLaneFromDegrees();
+            HitObject.Lane = ((SentakkiSnapResult)result).Lane;
+            highlight.Note.Y = -((SentakkiSnapResult)result).YPos;
         }
     }
 }

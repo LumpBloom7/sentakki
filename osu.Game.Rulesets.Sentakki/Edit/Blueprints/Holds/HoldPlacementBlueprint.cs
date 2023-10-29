@@ -1,8 +1,13 @@
 using System;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Edit;
+using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Screens.Edit;
 using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
@@ -17,9 +22,14 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
             highlight.Note.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
         }
 
+        [Resolved]
+        private SentakkiSnapGrid snapGrid { get; set; } = null!;
+
         protected override void Update()
         {
             highlight.Rotation = HitObject.Lane.GetRotationForLane();
+            highlight.Note.Y = -snapGrid.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
+            highlight.Note.Height = -snapGrid.GetDistanceRelativeToCurrentTime(HitObject.EndTime, SentakkiPlayfield.NOTESTARTDISTANCE) - highlight.Note.Y;
         }
 
         protected override bool OnMouseDown(MouseDownEvent e)
@@ -31,6 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
                 return false;
 
             BeginPlacement(true);
+            EditorClock.SeekSmoothlyTo(HitObject.StartTime);
 
             return true;
         }
@@ -60,7 +71,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
             }
             else
             {
-                HitObject.Lane = OriginPosition.GetDegreesFromPosition(ToLocalSpace(result.ScreenSpacePosition)).GetNoteLaneFromDegrees();
+                HitObject.Lane = ((SentakkiSnapResult)result).Lane;
                 if (result.Time is double startTime)
                     originalStartTime = HitObject.StartTime = startTime;
             }

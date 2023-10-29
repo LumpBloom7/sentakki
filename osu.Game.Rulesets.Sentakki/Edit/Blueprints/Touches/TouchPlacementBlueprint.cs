@@ -31,7 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches
 
         public override void UpdateTimeAndPosition(SnapResult result)
         {
-            base.UpdateTimeAndPosition(result);
+            base.UpdateTimeAndPosition(new SnapResult(Vector2.Zero, null));
 
             var newPosition = ToLocalSpace(result.ScreenSpacePosition) - OriginPosition;
 

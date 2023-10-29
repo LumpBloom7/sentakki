@@ -28,7 +28,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
                 Note = new Container
                 {
                     Anchor = Anchor.Centre,
-                    Origin = Anchor.BottomCentre,
+                    Origin = Anchor.TopCentre,
                     Children = new Drawable[]
                     {
                         new Container

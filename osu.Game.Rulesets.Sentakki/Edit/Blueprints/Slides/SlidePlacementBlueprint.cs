@@ -5,10 +5,13 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Edit;
+using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Screens.Edit;
 using osuTK;
 using osuTK.Graphics;
 using osuTK.Input;
@@ -54,6 +57,16 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             highlight.SlideTapPiece.Scale = Vector2.One;
         }
 
+        [Resolved]
+        private SentakkiSnapGrid snapGrid { get; set; } = null!;
+
+        protected override void Update()
+        {
+            highlight.Rotation = HitObject.Lane.GetRotationForLane();
+            highlight.SlideTapPiece.Y = -snapGrid.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
+        }
+
+
         private SlideBodyInfo commitedSlideBodyInfo = null!;
         private SlideBodyInfo previewSlideBodyInfo = null!;
         private int currentLaneOffset;
@@ -81,6 +94,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             if (PlacementActive != PlacementState.Active)
             {
                 BeginPlacement(true);
+
+                EditorClock.SeekSmoothlyTo(HitObject.StartTime);
 
                 HitObject.SlideInfoList.Add(commitedSlideBodyInfo = new SlideBodyInfo());
 
@@ -129,15 +144,12 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         public override void UpdateTimeAndPosition(SnapResult result)
         {
-            base.UpdateTimeAndPosition(result);
-
             if (PlacementActive == PlacementState.Active)
             {
-                if (result.Time is double endTime)
-                {
-                    HitObject.StartTime = endTime < originalStartTime ? endTime : originalStartTime;
-                    commitedSlideBodyInfo.Duration = Math.Abs(endTime - originalStartTime);
-                }
+                double endTime = EditorClock.CurrentTime;
+
+                HitObject.StartTime = endTime < originalStartTime ? endTime : originalStartTime;
+                commitedSlideBodyInfo.Duration = Math.Abs(endTime - originalStartTime);
 
                 var localSpacePointerCoord = ToLocalSpace(result.ScreenSpacePosition);
 
@@ -154,8 +166,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             }
             else
             {
-                HitObject.Lane = OriginPosition.GetDegreesFromPosition(ToLocalSpace(result.ScreenSpacePosition)).GetNoteLaneFromDegrees();
-                highlight.Rotation = HitObject.Lane.GetRotationForLane();
+                base.UpdateTimeAndPosition(result);
+
+                HitObject.Lane = ((SentakkiSnapResult)result).Lane;
+
                 if (result.Time is double startTime)
                     originalStartTime = HitObject.StartTime = startTime;
             }

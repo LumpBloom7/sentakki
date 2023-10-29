@@ -2,6 +2,7 @@ using System;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osuTK;
 using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
@@ -38,11 +39,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
 
         public override void UpdateTimeAndPosition(SnapResult result)
         {
-            base.UpdateTimeAndPosition(result);
-
             if (PlacementActive == PlacementState.Active)
             {
-                if (result.Time is double endTime)
+                if (EditorClock.CurrentTime is double endTime)
                 {
                     HitObject.StartTime = endTime < originalStartTime ? endTime : originalStartTime;
                     HitObject.Duration = Math.Abs(endTime - originalStartTime);
@@ -50,7 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
             }
             else
             {
-                if (result.Time is double startTime)
+                if (EditorClock.CurrentTime is double startTime)
                     originalStartTime = HitObject.StartTime = startTime;
             }
         }
