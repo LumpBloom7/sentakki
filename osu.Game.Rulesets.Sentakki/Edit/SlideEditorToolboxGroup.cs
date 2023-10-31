@@ -1,13 +1,13 @@
+using System;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
-using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Edit.Toolbox;
-using osu.Framework.Bindables;
-using osu.Framework.Allocation;
-using osu.Framework.Input.Events;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK.Input;
-using System;
 
 namespace osu.Game.Rulesets.Sentakki.Edit;
 

@@ -58,7 +58,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
 
         float length = localPosition.Length;
 
-        var closestLine = linesContainer.MinBy(l => MathF.Abs(length - l.DrawWidth / 2));
+        var closestLine = linesContainer.MinBy(l => MathF.Abs(length - (l.DrawWidth / 2)));
 
         return new SentakkiSnapResult(screenSpacePosition, closestLine?.SnappingTime)
         {
@@ -72,8 +72,8 @@ public partial class SentakkiSnapGrid : CompositeDrawable
         linesContainer.Clear(false);
         double time = editorClock.CurrentTime;
 
-        double maximumVisibleTime = editorClock.CurrentTime + animationDuration.Value * 0.5f;
-        double minimumVisibleTime = editorClock.CurrentTime - animationDuration.Value * 0.5f;
+        double maximumVisibleTime = editorClock.CurrentTime + (animationDuration.Value * 0.5f);
+        double minimumVisibleTime = editorClock.CurrentTime - (animationDuration.Value * 0.5f);
 
         for (int i = 0; i < editorBeatmap.ControlPointInfo.TimingPoints.Count; ++i)
         {

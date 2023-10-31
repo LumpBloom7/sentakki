@@ -5,9 +5,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
-using osu.Framework.Utils;
 using osu.Game.Rulesets.Edit;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -65,7 +63,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             highlight.Rotation = HitObject.Lane.GetRotationForLane();
             highlight.SlideTapPiece.Y = -snapGrid.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
         }
-
 
         private SlideBodyInfo commitedSlideBodyInfo = null!;
         private SlideBodyInfo previewSlideBodyInfo = null!;
@@ -156,7 +153,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                 if ((localSpacePointerCoord - OriginPosition).LengthSquared > 400 * 400)
                     return;
 
-                int newPo = (OriginPosition.GetDegreesFromPosition(localSpacePointerCoord).GetNoteLaneFromDegrees() - currentLaneOffset - HitObject.Lane).NormalizePath();
+                int newPo = (((SentakkiSnapResult)result).Lane - currentLaneOffset - HitObject.Lane).NormalizePath();
 
                 if (targetPathOffset != newPo)
                 {
