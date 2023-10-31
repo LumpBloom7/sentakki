@@ -1,4 +1,5 @@
 using System;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
@@ -60,6 +61,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             updateSlideBodyHighlights();
         }
 
+        [Resolved]
+        private SentakkiSnapGrid snapGrid { get; set; } = null!;
+
         private void updateTapHighlight()
         {
             var slideTap = DrawableObject.SlideTaps.Child;
@@ -68,7 +72,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             tapHighlight.SlideTapPiece.Stars.Rotation = ((SlideTapPiece)slideTap.TapVisual).Stars.Rotation;
             tapHighlight.SlideTapPiece.SecondStar.Alpha = ((SlideTapPiece)slideTap.TapVisual).SecondStar.Alpha;
             tapHighlight.Rotation = DrawableObject.HitObject.Lane.GetRotationForLane();
-            tapHighlight.SlideTapPiece.Y = Math.Max(slideTap.TapVisual.Y, -SentakkiPlayfield.INTERSECTDISTANCE);
+            tapHighlight.SlideTapPiece.Y = -snapGrid.GetDistanceRelativeToCurrentTime(DrawableObject.HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
         }
 
         private void updateSlideBodyHighlights()
