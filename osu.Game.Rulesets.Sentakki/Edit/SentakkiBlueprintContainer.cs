@@ -33,6 +33,31 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
         protected override SelectionHandler<HitObject> CreateSelectionHandler() => new SentakkiSelectionHandler();
 
+        protected override bool ApplySnapResult(SelectionBlueprint<HitObject>[] blueprints, SnapResult result)
+        {
+            if (!base.ApplySnapResult(blueprints, result))
+                return false;
+
+            if (blueprints.All(b => b.Item is SentakkiLanedHitObject))
+            {
+                SentakkiSnapResult senSnapResult = (SentakkiSnapResult)result;
+
+                int offset = senSnapResult.Lane - ((SentakkiLanedHitObject)blueprints.First().Item).Lane;
+                if (offset != 0)
+                {
+                    Beatmap.PerformOnSelection(delegate (HitObject ho)
+                    {
+                        var lho = (SentakkiLanedHitObject)ho;
+
+                        lho.Lane = (lho.Lane + offset).NormalizePath();
+                        Beatmap.Update(ho);
+                    });
+                }
+            }
+
+            return true;
+        }
+
         public override HitObjectSelectionBlueprint CreateHitObjectBlueprintFor(HitObject hitObject)
         {
             switch (hitObject)

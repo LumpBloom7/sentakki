@@ -57,28 +57,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
         public override bool HandleMovement(MoveSelectionEvent<HitObject> moveEvent)
         {
-            // The lanes are arranged in a circular fashion
-            // Blindly deriving new angle by adding the vector to each selection point will yield unintuitive results, such as all notes moving towards the drag direction
-            //
-            // Instead, we should derive an angle delta by comparing the current mouse position and the drag origin
-            // The drag origin is the blueprint most closest to the mouse during the beginning of the drag, rather than the earliest note (see "SentakkiBlueprintContainer.SortForMovement")
-            // This allows a more intuitive "steering wheel" like lane adjustments
             if (SelectedBlueprints.All(bp => bp.Item is SentakkiLanedHitObject))
-            {
-                var oldPosition = moveEvent.Blueprint.ScreenSpaceSelectionPoint;
-                var newPosition = moveEvent.Blueprint.ScreenSpaceSelectionPoint + moveEvent.ScreenSpaceDelta;
-                var playfieldCentre = ToScreenSpace(new Vector2(300));
-                float angleDelta = playfieldCentre.GetDegreesFromPosition(newPosition) - playfieldCentre.GetDegreesFromPosition(oldPosition);
-
-                foreach (var bp in SelectedBlueprints.ToList())
-                {
-                    var laned = (SentakkiLanedHitObject)bp.Item;
-                    float currentAngle = laned.Lane.GetRotationForLane() + angleDelta;
-                    laned.Lane = currentAngle.GetNoteLaneFromDegrees();
-                }
-
                 return true;
-            }
 
             if (SelectedBlueprints.All(bp => bp.Item is Touch))
             {
