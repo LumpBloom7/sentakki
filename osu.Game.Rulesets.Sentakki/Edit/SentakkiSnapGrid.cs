@@ -69,46 +69,62 @@ public partial class SentakkiSnapGrid : CompositeDrawable
 
     private void recreateLines()
     {
+        linesContainer.Clear(false);
         double time = editorClock.CurrentTime;
 
-        double itime = time - animationDuration.Value * 0.5f;
-        int lineIndex = 0;
+        double maximumVisibleTime = editorClock.CurrentTime + animationDuration.Value * 0.5f;
+        double minimumVisibleTime = editorClock.CurrentTime - animationDuration.Value * 0.5f;
 
-        while (true)
+        for (int i = 0; i < editorBeatmap.ControlPointInfo.TimingPoints.Count; ++i)
         {
-            double snappedTime = beatSnapProvider.SnapTime(itime);
-            double divisorLength = beatSnapProvider.GetBeatLengthAtTime(snappedTime);
+            var timingPoint = editorBeatmap.ControlPointInfo.TimingPoints[i];
 
-            var tcp = editorBeatmap.ControlPointInfo.TimingPointAt(snappedTime);
-            int beatIndex = (int)Math.Round((snappedTime - tcp.Time) / divisorLength);
+            double nextTimingPointTime = i + 1 == editorBeatmap.ControlPointInfo.TimingPoints.Count ? editorBeatmap.BeatmapInfo.Length : editorBeatmap.ControlPointInfo.TimingPoints[i + 1].Time;
 
-            itime = snappedTime + divisorLength;
+            // This timing point isn't visible from the current time (too late), subsequent timing points are later, so no need to consider them as well.
+            if (timingPoint.Time > maximumVisibleTime)
+                return;
 
-            float circleRadius = GetDistanceRelativeToCurrentTime(snappedTime);
-
-            if (circleRadius > SentakkiPlayfield.INTERSECTDISTANCE * 2 - SentakkiPlayfield.NOTESTARTDISTANCE)
+            // The current timing point isn't visible from the current time as it is too early
+            if (nextTimingPointTime <= minimumVisibleTime)
                 continue;
-            else if (circleRadius < SentakkiPlayfield.NOTESTARTDISTANCE)
-                break;
 
-            SnapGridLine line;
+            double beatLength = timingPoint.BeatLength / beatSnapProvider.BeatDivisor;
 
-            if (linesContainer.Count == lineIndex)
+            for (int beatIndex = 0; timingPoint.Time + (beatIndex * beatLength) < nextTimingPointTime; ++beatIndex)
+            {
+                double beatTime = timingPoint.Time + (beatIndex * beatLength);
+
+                if (beatTime > maximumVisibleTime)
+                    return;
+
+                if (beatTime < minimumVisibleTime)
+                    continue;
+
+                float circleRadius = GetDistanceRelativeToCurrentTime(beatTime);
+
+                SnapGridLine line;
                 linesContainer.Add(line = linePool.Get());
-            else
-                line = linesContainer[lineIndex];
 
-            int divisor = BindableBeatDivisor.GetDivisorForBeatIndex(beatIndex, beatSnapProvider.BeatDivisor);
+                int divisor = BindableBeatDivisor.GetDivisorForBeatIndex(beatIndex, beatSnapProvider.BeatDivisor);
 
-            line.Size = new Vector2(circleRadius * 2);
-            line.Colour = BindableBeatDivisor.GetColourFor(divisor, colours);
-            line.SnappingTime = snappedTime;
-            ++lineIndex;
+                float thickness = getWidthForDivisor(divisor);
+
+                line.Size = new Vector2(circleRadius * 2);
+                line.BorderThickness = thickness;
+                line.Colour = BindableBeatDivisor.GetColourFor(divisor, colours);
+                line.SnappingTime = beatTime;
+            }
         }
-
-        while (linesContainer.Count > lineIndex)
-            linesContainer.Remove(linesContainer[lineIndex], false);
     }
+
+    private int getWidthForDivisor(int divisor) => divisor switch
+    {
+        1 or 2 => 5,
+        3 or 4 => 4,
+        6 or 8 => 3,
+        _ => 2,
+    };
 
     protected override void Update()
     {
@@ -130,13 +146,20 @@ public partial class SentakkiSnapGrid : CompositeDrawable
         public override bool RemoveCompletedTransforms => false;
 
         public double SnappingTime { get; set; }
+        public new float BorderThickness
+        {
+            get => ring.BorderThickness;
+            set => ring.BorderThickness = value;
+        }
+
+        private CircularContainer ring = null!;
 
         [BackgroundDependencyLoader]
         private void load()
         {
             Anchor = Origin = Anchor.Centre;
 
-            AddInternal(new CircularContainer
+            AddInternal(ring = new CircularContainer
             {
                 Masking = true,
                 RelativeSizeAxes = Axes.Both,
