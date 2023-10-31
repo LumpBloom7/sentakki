@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Scale = Vector2.Zero;
             Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE);
             Anchor = Anchor.Centre;
-            Origin = Anchor.BottomCentre;
+            Origin = Anchor.TopCentre;
             InternalChildren = new Drawable[]
             {
                 new NoteRingPiece(),

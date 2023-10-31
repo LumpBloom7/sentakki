@@ -85,14 +85,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 // This is the movable length (not including start position)
                 const float total_movable_distance = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
+
+                // This is the amount of stretch needed. Capped to the max stretch amount.
                 float stretchAmount = Math.Clamp((float)(total_movable_distance / animTime * (HitObject as IHasDuration).Duration), 0, total_movable_distance);
+
+                // This is the amount of time that the note spends stretching or unstretching
                 float stretchTime = (float)(stretchAmount / total_movable_distance * animTime);
 
-                NoteBody.ResizeHeightTo(stretchAmount, stretchTime)
-                        .Delay((HitObject as IHasDuration).Duration)
-                        .MoveToY(-SentakkiPlayfield.INTERSECTDISTANCE, animTime)
-                        .Delay(animTime - stretchTime)
-                        .ResizeHeightTo(0, stretchTime);
+                NoteBody.MoveToY(-SentakkiPlayfield.INTERSECTDISTANCE, animTime) // Move the head towards the ring
+                        .ResizeHeightTo(stretchAmount, stretchTime) // While we are moving, we stretch the hold note to match desired length
+                        .Then().Delay(HitObject.Duration - stretchTime) // Wait until the end of the hold note, while considering how much time we need for shrinking
+                        .ResizeHeightTo(0, stretchTime); // We shrink the hold note as it exits
 
                 if (HoldStartTime == null && !Auto)
                     NoteBody.Delay(animTime).FadeColour(Color4.Gray, 100);
