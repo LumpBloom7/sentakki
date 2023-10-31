@@ -33,8 +33,12 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
         public override void UpdateTimeAndPosition(SnapResult result)
         {
             base.UpdateTimeAndPosition(result);
-            HitObject.Lane = ((SentakkiSnapResult)result).Lane;
-            highlight.Note.Y = -((SentakkiSnapResult)result).YPos;
+
+            if (result is not SentakkiLanedSnapResult senRes)
+                return;
+
+            HitObject.Lane = senRes.Lane;
+            highlight.Note.Y = -senRes.YPos;
         }
     }
 }

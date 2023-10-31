@@ -1,10 +1,7 @@
 using System;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Input.Events;
-using osu.Framework.Utils;
 using osu.Game.Rulesets.Edit;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
@@ -23,13 +20,13 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
         }
 
         [Resolved]
-        private SentakkiSnapGrid snapGrid { get; set; } = null!;
+        private SentakkiSnapProvider snapProvider { get; set; } = null!;
 
         protected override void Update()
         {
             highlight.Rotation = HitObject.Lane.GetRotationForLane();
-            highlight.Note.Y = -snapGrid.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
-            highlight.Note.Height = -snapGrid.GetDistanceRelativeToCurrentTime(HitObject.EndTime, SentakkiPlayfield.NOTESTARTDISTANCE) - highlight.Note.Y;
+            highlight.Note.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
+            highlight.Note.Height = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.EndTime, SentakkiPlayfield.NOTESTARTDISTANCE) - highlight.Note.Y;
         }
 
         protected override bool OnMouseDown(MouseDownEvent e)
@@ -61,6 +58,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
         {
             base.UpdateTimeAndPosition(result);
 
+            if (result is not SentakkiLanedSnapResult senRes)
+                return;
+
             if (PlacementActive == PlacementState.Active)
             {
                 if (result.Time is double endTime)
@@ -71,7 +71,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
             }
             else
             {
-                HitObject.Lane = ((SentakkiSnapResult)result).Lane;
+                HitObject.Lane = senRes.Lane;
                 if (result.Time is double startTime)
                     originalStartTime = HitObject.StartTime = startTime;
             }

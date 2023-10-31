@@ -1,4 +1,3 @@
-using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -21,15 +20,15 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
         }
 
         [Resolved]
-        private SentakkiSnapGrid snapGrid { get; set; } = null!;
+        private SentakkiSnapProvider snapProvider { get; set; } = null!;
 
         protected override void Update()
         {
             base.Update();
 
             highlight.Rotation = DrawableObject.HitObject.Lane.GetRotationForLane();
-            highlight.Note.Y = -snapGrid.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
-            highlight.Note.Height = -snapGrid.GetDistanceRelativeToCurrentTime(HitObject.EndTime, SentakkiPlayfield.NOTESTARTDISTANCE) - highlight.Note.Y;
+            highlight.Note.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
+            highlight.Note.Height = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.EndTime, SentakkiPlayfield.NOTESTARTDISTANCE) - highlight.Note.Y;
             highlight.Note.Scale = DrawableObject.NoteBody.Scale;
         }
 

@@ -6,12 +6,15 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Utils;
 using osu.Game.Graphics;
+using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
+using osu.Game.Screens.Edit.Components.TernaryButtons;
 using osuTK;
 using osuTK.Graphics;
 
@@ -19,11 +22,13 @@ namespace osu.Game.Rulesets.Sentakki.Edit;
 
 public partial class SentakkiSnapGrid : CompositeDrawable
 {
-    private DrawablePool<SnapGridLine> linePool = null!;
+    private Bindable<TernaryState> enabled = new Bindable<TernaryState>(TernaryState.True);
+
+    private DrawablePool<BeatSnapGridLine> linePool = null!;
 
     private Bindable<double> animationDuration = new Bindable<double>(1000);
 
-    private Container<SnapGridLine> linesContainer = null!;
+    private Container<BeatSnapGridLine> linesContainer = null!;
 
     [Resolved]
     private EditorClock editorClock { get; set; } = null!;
@@ -37,13 +42,15 @@ public partial class SentakkiSnapGrid : CompositeDrawable
     [Resolved]
     private OsuColour colours { get; set; } = null!;
 
+    public TernaryButton CreateTernaryButton() => new TernaryButton(enabled, "Lane beat snap", () => new SpriteIcon { Icon = FontAwesome.Solid.Ruler });
+
     [BackgroundDependencyLoader]
     private void load(SentakkiRulesetConfigManager configManager)
     {
         Anchor = Origin = Anchor.Centre;
         AddRangeInternal(new Drawable[]{
-            linePool = new DrawablePool<SnapGridLine>(10),
-            linesContainer = new Container<SnapGridLine>
+            linePool = new DrawablePool<BeatSnapGridLine>(10),
+            linesContainer = new Container<BeatSnapGridLine>
             {
                 RelativeSizeAxes = Axes.Both,
             },
@@ -52,17 +59,37 @@ public partial class SentakkiSnapGrid : CompositeDrawable
         configManager.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
     }
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        enabled.BindValueChanged(toggleVisibility);
+    }
+
+    private void toggleVisibility(ValueChangedEvent<TernaryState> v)
+    {
+        if (v.NewValue is TernaryState.True)
+        {
+            linesContainer.Show();
+            return;
+        }
+
+        linesContainer.Hide();
+    }
+
     public SnapResult GetSnapResult(Vector2 screenSpacePosition)
     {
         var localPosition = ToLocalSpace(screenSpacePosition);
+        int lane = Vector2.Zero.GetDegreesFromPosition(localPosition).GetNoteLaneFromDegrees();
+
+        if (enabled.Value is not TernaryState.True)
+            return new SentakkiLanedSnapResult(screenSpacePosition, lane, null) { YPos = SentakkiPlayfield.INTERSECTDISTANCE };
 
         float length = localPosition.Length;
 
         var closestLine = linesContainer.MinBy(l => MathF.Abs(length - (l.DrawWidth / 2)));
 
-        return new SentakkiSnapResult(screenSpacePosition, closestLine?.SnappingTime)
+        return new SentakkiLanedSnapResult(screenSpacePosition, lane, closestLine?.SnappingTime)
         {
-            Lane = Vector2.Zero.GetDegreesFromPosition(localPosition).GetNoteLaneFromDegrees(),
             YPos = closestLine is not null ? closestLine.DrawWidth / 2 : SentakkiPlayfield.INTERSECTDISTANCE,
         };
     }
@@ -103,7 +130,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
 
                 float circleRadius = GetDistanceRelativeToCurrentTime(beatTime);
 
-                SnapGridLine line;
+                BeatSnapGridLine line;
                 linesContainer.Add(line = linePool.Get());
 
                 int divisor = BindableBeatDivisor.GetDivisorForBeatIndex(beatIndex, beatSnapProvider.BeatDivisor);
@@ -141,7 +168,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
         return (float)Math.Clamp(distance, min, max);
     }
 
-    private partial class SnapGridLine : PoolableDrawable
+    private partial class BeatSnapGridLine : PoolableDrawable
     {
         public override bool RemoveCompletedTransforms => false;
 

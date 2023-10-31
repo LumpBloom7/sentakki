@@ -25,6 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         [Resolved]
         private SlideEditorToolboxGroup slidePlacementToolbox { get; set; } = null!;
+
         public SlidePlacementBlueprint()
         {
             AddRangeInternal(new Drawable[]
@@ -56,12 +57,12 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         }
 
         [Resolved]
-        private SentakkiSnapGrid snapGrid { get; set; } = null!;
+        private SentakkiSnapProvider snapProvider { get; set; } = null!;
 
         protected override void Update()
         {
             highlight.Rotation = HitObject.Lane.GetRotationForLane();
-            highlight.SlideTapPiece.Y = -snapGrid.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
+            highlight.SlideTapPiece.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
         }
 
         private SlideBodyInfo commitedSlideBodyInfo = null!;
@@ -141,6 +142,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         public override void UpdateTimeAndPosition(SnapResult result)
         {
+            if (result is not SentakkiLanedSnapResult senRes)
+                return;
+
             if (PlacementActive == PlacementState.Active)
             {
                 double endTime = EditorClock.CurrentTime;
@@ -153,7 +157,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                 if ((localSpacePointerCoord - OriginPosition).LengthSquared > 400 * 400)
                     return;
 
-                int newPo = (((SentakkiSnapResult)result).Lane - currentLaneOffset - HitObject.Lane).NormalizePath();
+                int newPo = (senRes.Lane - currentLaneOffset - HitObject.Lane).NormalizePath();
 
                 if (targetPathOffset != newPo)
                 {
@@ -165,7 +169,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             {
                 base.UpdateTimeAndPosition(result);
 
-                HitObject.Lane = ((SentakkiSnapResult)result).Lane;
+                HitObject.Lane = senRes.Lane;
 
                 if (result.Time is double startTime)
                     originalStartTime = HitObject.StartTime = startTime;

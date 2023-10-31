@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Edit.Tools;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Edit.Components.TernaryButtons;
@@ -14,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
     public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitObject>
     {
         [Cached]
-        private SentakkiSnapGrid snapGrid { get; set; } = new SentakkiSnapGrid();
+        private SentakkiSnapProvider snapProvider { get; set; } = new SentakkiSnapProvider();
 
         public SentakkiHitObjectComposer(SentakkiRuleset ruleset)
             : base(ruleset)
@@ -38,20 +40,66 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             new SlideCompositionTool(),
         };
 
-        protected override IEnumerable<TernaryButton> CreateTernaryButtons() => base.CreateTernaryButtons().Skip(1);
+        protected override IEnumerable<TernaryButton> CreateTernaryButtons()
+            => base.CreateTernaryButtons()
+                    .Skip(1)
+                    .Concat(snapProvider.CreateTernaryButtons());
+
 
         public override SnapResult FindSnappedPositionAndTime(Vector2 screenSpacePosition, SnapType snapType = SnapType.All)
-        {
-            return snapGrid.GetSnapResult(screenSpacePosition);
-        }
+            => snapProvider.GetSnapResult(screenSpacePosition);
+
 
         protected override ComposeBlueprintContainer CreateBlueprintContainer() => new SentakkiBlueprintContainer(this);
+
+        private BindableList<HitObject> selectedHitObjects = null!;
+
 
         [BackgroundDependencyLoader]
         private void load()
         {
             RightToolbox.Add(slideEditorToolboxGroup);
-            LayerBelowRuleset.Add(snapGrid);
+            LayerBelowRuleset.Add(snapProvider);
+
+            selectedHitObjects = EditorBeatmap.SelectedHitObjects.GetBoundCopy();
+            selectedHitObjects.CollectionChanged += (_, _) => updateSnapProvider();
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (BlueprintContainer.CurrentTool != lastTool)
+            {
+                lastTool = BlueprintContainer.CurrentTool;
+                updateSnapProvider();
+            }
+        }
+
+        private HitObjectCompositionTool? lastTool = null;
+
+        public void updateSnapProvider()
+        {
+            lastTool = BlueprintContainer.CurrentTool;
+            if (BlueprintContainer.CurrentTool is SelectTool)
+            {
+                if (selectedHitObjects.Count == 0)
+                    snapProvider.SwitchModes(SentakkiSnapProvider.SnapMode.Off);
+                else if (selectedHitObjects.All(h => h is Touch))
+                    snapProvider.SwitchModes(SentakkiSnapProvider.SnapMode.Touch);
+                else if (selectedHitObjects.All(h => h is SentakkiLanedHitObject))
+                    snapProvider.SwitchModes(SentakkiSnapProvider.SnapMode.Laned);
+                else
+                    snapProvider.SwitchModes(SentakkiSnapProvider.SnapMode.Off);
+                return;
+            }
+
+            snapProvider.SwitchModes(BlueprintContainer.CurrentTool switch
+            {
+                TouchCompositionTool => SentakkiSnapProvider.SnapMode.Touch,
+                TouchHoldCompositionTool => SentakkiSnapProvider.SnapMode.Off,
+                _ => SentakkiSnapProvider.SnapMode.Laned,
+            });
         }
 
         protected override void Dispose(bool isDisposing)

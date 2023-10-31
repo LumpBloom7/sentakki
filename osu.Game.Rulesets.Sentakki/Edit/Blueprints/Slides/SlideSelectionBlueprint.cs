@@ -1,4 +1,3 @@
-using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -62,7 +61,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         }
 
         [Resolved]
-        private SentakkiSnapGrid snapGrid { get; set; } = null!;
+        private SentakkiSnapProvider snapProvider { get; set; } = null!;
 
         private void updateTapHighlight()
         {
@@ -72,7 +71,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             tapHighlight.SlideTapPiece.Stars.Rotation = ((SlideTapPiece)slideTap.TapVisual).Stars.Rotation;
             tapHighlight.SlideTapPiece.SecondStar.Alpha = ((SlideTapPiece)slideTap.TapVisual).SecondStar.Alpha;
             tapHighlight.Rotation = DrawableObject.HitObject.Lane.GetRotationForLane();
-            tapHighlight.SlideTapPiece.Y = -snapGrid.GetDistanceRelativeToCurrentTime(DrawableObject.HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
+            tapHighlight.SlideTapPiece.Y = -snapProvider.GetDistanceRelativeToCurrentTime(DrawableObject.HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
         }
 
         private void updateSlideBodyHighlights()

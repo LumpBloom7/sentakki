@@ -40,7 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
             if (blueprints.All(b => b.Item is SentakkiLanedHitObject))
             {
-                SentakkiSnapResult senSnapResult = (SentakkiSnapResult)result;
+                SentakkiLanedSnapResult senSnapResult = (SentakkiLanedSnapResult)result;
 
                 int offset = senSnapResult.Lane - ((SentakkiLanedHitObject)blueprints.First().Item).Lane;
                 if (offset != 0)
