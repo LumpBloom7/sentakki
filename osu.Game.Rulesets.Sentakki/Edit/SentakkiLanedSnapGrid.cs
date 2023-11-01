@@ -8,6 +8,7 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Utils;
+using osu.Game.Beatmaps;
 using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Edit;
@@ -38,6 +39,9 @@ public partial class SentakkiSnapGrid : CompositeDrawable
 
     [Resolved]
     private IBeatSnapProvider beatSnapProvider { get; set; } = null!;
+
+    [Resolved]
+    private Bindable<WorkingBeatmap> working { get; set; } = null!;
 
     [Resolved]
     private OsuColour colours { get; set; } = null!;
@@ -106,7 +110,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
         {
             var timingPoint = editorBeatmap.ControlPointInfo.TimingPoints[i];
 
-            double nextTimingPointTime = i + 1 == editorBeatmap.ControlPointInfo.TimingPoints.Count ? editorBeatmap.BeatmapInfo.Length : editorBeatmap.ControlPointInfo.TimingPoints[i + 1].Time;
+            double nextTimingPointTime = i + 1 == editorBeatmap.ControlPointInfo.TimingPoints.Count ? working.Value.Track.Length : editorBeatmap.ControlPointInfo.TimingPoints[i + 1].Time;
 
             // This timing point isn't visible from the current time (too late), subsequent timing points are later, so no need to consider them as well.
             if (timingPoint.Time > maximumVisibleTime)
