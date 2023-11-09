@@ -1,10 +1,11 @@
+using System;
 using System.Diagnostics;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Transforms;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
 using osuTK;
 using osuTK.Graphics;
@@ -17,9 +18,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         // IsHovered is used
         public override bool HandlePositionalInput => true;
-
-        // This HitObject uses a completely different offset
-        protected override double InitialLifetimeOffset => base.InitialLifetimeOffset + HitObject.HitWindows.WindowFor(HitResult.Great);
 
         // Similar to IsHovered for mouse, this tracks whether a pointer (touch or mouse) is interacting with this drawable
         // Interaction == (IsHovered && ActionPressed) || (OnTouch && TouchPointerInBounds)
@@ -80,15 +78,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            double fadeIn = AnimationDuration.Value / 2;
-            double moveTo = HitObject.HitWindows.WindowFor(HitResult.Great);
+            double animTime = AnimationDuration.Value * 0.8;
+            double fadeTime = AnimationDuration.Value * 0.2;
 
-            TouchBody.FadeIn(fadeIn);
+            TouchBody.FadeIn(fadeTime);
 
-            using (BeginAbsoluteSequence(HitObject.StartTime - moveTo))
+            using (BeginAbsoluteSequence(HitObject.StartTime - animTime))
             {
-                TouchBody.ResizeTo(90, moveTo, Easing.InCirc);
-                TouchBody.BorderContainer.Delay(moveTo).FadeIn();
+                TouchBody.ResizeTo(90, animTime, Easing.InCirc);
+                TouchBody.BorderContainer.Delay(animTime).FadeIn();
             }
         }
 
@@ -143,5 +141,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         public bool OnNewPointInteraction() => UpdateResult(true);
+
+        private struct TouchEasingFunction : IEasingFunction
+        {
+            public readonly double ApplyEasing(double t)
+            {
+                double result = 3.5 * Math.Pow(t, 4) - 3.75 * Math.Pow(t, 3) + 1.45 * Math.Pow(t, 2) - 0.05 * t + 0.005;
+
+                return Math.Min(1, result);
+            }
+        }
     }
 }
