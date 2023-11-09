@@ -103,7 +103,15 @@
     <data name="note_entry_speed" xml:space="preserve">
         <value>Note entry speed</value>
     </data>
-    <data name="touch_note_fade_in_speed" xml:space="preserve">
-        <value>Touch note fade-in speed</value>
+    <data name="touch_note_entry_speed" xml:space="preserve">
+        <value>Touch note entry speed</value>
+    </data>
+    <data name="entry_speed_tooltip" xml:space="preserve">
+        <value>{0} ({1}ms)</value>
+        <comment>The left placeholder is the speed value between 0 - 10, or "Sonic" if too fast. The right placeholder duration value.</comment>
+    </data>
+    <data name="sonic" xml:space="preserve">
+        <value>Sonic</value>
+        <comment>Used when the speed value is greater than 10.</comment>
     </data>
 </root>

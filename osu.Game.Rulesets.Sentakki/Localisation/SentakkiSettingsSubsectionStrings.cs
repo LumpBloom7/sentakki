@@ -63,6 +63,11 @@ namespace osu.Game.Rulesets.Sentakki.Localisation
         /// </summary>
         public static LocalisableString BreakSampleVolume => new TranslatableString(getKey(@"break_sample_volume"), @"Break sample volume");
 
+        public static LocalisableString EntrySpeedTooltip(float speed, double time)
+            => new TranslatableString(getKey(@"entry_speed_tooltip"), @"{0} ({1}ms)", speed > 10 ? Sonic : $"{speed:N1}", $"{time:N0}");
+
+        public static LocalisableString Sonic => new TranslatableString(getKey(@"sonic"), @"Sonic");
+
         private static string getKey(string key) => $"{prefix}:{key}";
     }
 }

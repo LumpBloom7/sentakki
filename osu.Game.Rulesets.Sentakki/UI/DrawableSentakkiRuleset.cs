@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -20,7 +19,6 @@ using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
-using osu.Game.Screens.Play;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -55,26 +53,55 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             FrameStableComponents.Add(slideFanChevronsTextures);
 
-            Config.BindWith(SentakkiRulesetSettings.AnimationDuration, configAnimDuration);
-            Config.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, configTouchAnimDuration);
+            Config.BindWith(SentakkiRulesetSettings.AnimationDuration, configEntrySpeed);
+            Config.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, configTouchEntrySpeed);
 
-            configAnimDuration.BindValueChanged(v => this.TransformTo(nameof(smoothAnimDuration), v.NewValue, 200, Easing.OutQuint));
-            configTouchAnimDuration.BindValueChanged(v => this.TransformTo(nameof(smoothTouchAnimDuration), v.NewValue, 200, Easing.OutQuint));
-            smoothAnimDuration = configAnimDuration.Value;
-            smoothTouchAnimDuration = configTouchAnimDuration.Value;
+            configEntrySpeed.BindValueChanged(v => this.TransformTo(nameof(smoothAnimDuration), ComputeLaneNoteEntryTime(v.NewValue), 200, Easing.OutQuint));
+            configTouchEntrySpeed.BindValueChanged(v => this.TransformTo(nameof(smoothTouchAnimDuration), ComputeTouchNoteEntryTime(v.NewValue), 200, Easing.OutQuint));
+            smoothAnimDuration = ComputeLaneNoteEntryTime(configEntrySpeed.Value);
+            smoothTouchAnimDuration = ComputeTouchNoteEntryTime(configTouchEntrySpeed.Value);
         }
 
-        private readonly Bindable<double> configAnimDuration = new BindableDouble(1000)
+        private readonly Bindable<float> configEntrySpeed = new BindableFloat(2.0f)
         {
-            MinValue = 100,
-            MaxValue = 2000,
+            MinValue = 1.0f,
+            MaxValue = 10.5f,
         };
+
         private double smoothAnimDuration = 1000;
         public readonly Bindable<double> AdjustedAnimDuration = new Bindable<double>(1000);
 
-        private readonly Bindable<double> configTouchAnimDuration = new Bindable<double>(1000);
+        private readonly Bindable<float> configTouchEntrySpeed = new Bindable<float>(2.0f);
         private double smoothTouchAnimDuration = 1000;
         public readonly Bindable<double> AdjustedTouchAnimDuration = new Bindable<double>(1000);
+
+        // Computes the total animation time (in ms) for lane notes from a speedValue
+        public static double ComputeLaneNoteEntryTime(float speedValue)
+        {
+            // The formula is (2400 / (x + 1)) * 2 (We multiply by two to include fade in, which would be the same time)
+
+            if (speedValue > 10) // Sonic speed is equivalent to note speed 49
+                return 96f;
+
+            if (speedValue < 1)
+                return 2400f;
+
+            return 2 * (2400 / (speedValue + 1));
+        }
+
+        // Computes the total animation time (in ms) for touch notes from a speedValue
+        public static double ComputeTouchNoteEntryTime(float speedValue)
+        {
+            // The formula is (9600 / (2x + 5)) * 1.25 (We multiply by 1.25 to include fade in, which would a quarter of the time)
+
+            if (speedValue > 10) // Sonic speed is equivalent to touch note speed 97.5
+                return 60;
+
+            if (speedValue < 1)
+                return 9600 / 7 * 1.25f;
+
+            return 9600 / (2 * speedValue + 5) * 1.25f;
+        }
 
         protected override void Update()
         {
@@ -93,10 +120,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
             switch (e.Action)
             {
                 case GlobalAction.DecreaseScrollSpeed:
-                    configAnimDuration.Value -= 100;
+                    configEntrySpeed.Value -= 0.5f;
                     return true;
                 case GlobalAction.IncreaseScrollSpeed:
-                    configAnimDuration.Value += 100;
+                    configEntrySpeed.Value += 0.5f;
                     return true;
             }
 

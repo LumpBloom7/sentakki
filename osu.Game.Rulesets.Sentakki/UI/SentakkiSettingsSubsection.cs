@@ -52,15 +52,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     LabelText = SentakkiSettingsSubsectionStrings.RingColor,
                     Current = config.GetBindable<ColorOption>(SentakkiRulesetSettings.RingColor)
                 },
-                new SettingsSlider<double, NoteTimeSlider>
+                new SettingsSlider<float, NoteTimeSlider>
                 {
                     LabelText = SentakkiSettingsSubsectionStrings.NoteEntrySpeed,
-                    Current = config.GetBindable<double>(SentakkiRulesetSettings.AnimationDuration),
+                    Current = config.GetBindable<float>(SentakkiRulesetSettings.AnimationDuration),
                 },
-                new SettingsSlider<double, TouchTimeSlider>
+                new SettingsSlider<float, TouchTimeSlider>
                 {
                     LabelText = SentakkiSettingsSubsectionStrings.TouchNoteFadeInSpeed,
-                    Current = config.GetBindable<double>(SentakkiRulesetSettings.TouchAnimationDuration),
+                    Current = config.GetBindable<float>(SentakkiRulesetSettings.TouchAnimationDuration),
                 },
                 new SettingsSlider<float>
                 {
@@ -84,34 +84,14 @@ namespace osu.Game.Rulesets.Sentakki.UI
             };
         }
 
-        private partial class NoteTimeSlider : RoundedSliderBar<double>
+        private partial class NoteTimeSlider : RoundedSliderBar<float>
         {
-            private string speedRating()
-            {
-                double speed = (2200 - Current.Value) / 200;
-
-                if (speed == 10.5)
-                    return "Sonic";
-
-                return speed.ToString();
-            }
-
-            public override LocalisableString TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
+            public override LocalisableString TooltipText => SentakkiSettingsSubsectionStrings.EntrySpeedTooltip(Current.Value, DrawableSentakkiRuleset.ComputeLaneNoteEntryTime(Current.Value));
         }
 
-        private partial class TouchTimeSlider : RoundedSliderBar<double>
+        private partial class TouchTimeSlider : RoundedSliderBar<float>
         {
-            private string speedRating()
-            {
-                double speed = (1100 - Current.Value) / 100;
-
-                if (speed == 10.5)
-                    return "Sonic";
-
-                return speed.ToString();
-            }
-
-            public override LocalisableString TooltipText => Current.Value.ToString("N0") + "ms (" + speedRating() + ")";
+            public override LocalisableString TooltipText => SentakkiSettingsSubsectionStrings.EntrySpeedTooltip(Current.Value, DrawableSentakkiRuleset.ComputeTouchNoteEntryTime(Current.Value));
         }
     }
 }
