@@ -2,8 +2,10 @@
 using System.Linq;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Beatmaps;
+using osu.Game.Graphics;
 using osu.Game.Rulesets.Sentakki.Localisation;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.UI;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps
@@ -44,8 +46,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     Content = touchs.ToString(),
                     CreateIcon = () => new SpriteIcon
                     {
-                        Icon = FontAwesome.Regular.HandPointRight,
-                        Scale = new Vector2(.7f)
+                        Icon = OsuIcon.PlayStyleTouch,
+                        Scale = new Vector2(.8f)
                     },
                 },
                 new BeatmapStatistic
