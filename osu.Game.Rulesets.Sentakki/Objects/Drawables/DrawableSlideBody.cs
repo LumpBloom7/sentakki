@@ -18,9 +18,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
     {
+        public override bool RemoveWhenNotAlive => false;
+
+        private new DrawableSlide ParentHitObject => (DrawableSlide)base.ParentHitObject;
         public new SlideBody HitObject => (SlideBody)base.HitObject;
 
-        public override bool RemoveWhenNotAlive => false;
+        // This slide body can only be interacted with iff the slidetap associated with this slide is judged
+        public bool IsHittable => ParentHitObject is not null && ParentHitObject.SlideTaps.Child.Judged;
 
         public Container<DrawableSlideCheckpoint> SlideCheckpoints { get; private set; } = null!;
 
@@ -50,6 +54,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
+        private static readonly Color4 inactive_color = Color4.LightGray.Darken(0.25f);
+        private static readonly Color4 active_color = Color4.White;
+
         public DrawableSlideBody()
             : this(null)
         {
@@ -70,7 +77,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             AddRangeInternal(new Drawable[]
             {
-                Slidepath = new SlideVisual() { Colour = Color4.LightGray.Darken(0.25f) },
+                Slidepath = new SlideVisual() { Colour = inactive_color },
                 SlideStars = new Container<StarPiece>
                 {
                     Anchor = Anchor.Centre,
@@ -137,11 +144,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Slidepath.UpdateChevronVisibility();
         }
 
+        protected override void Update()
+        {
+            base.Update();
+
+            Slidepath.Colour = IsHittable ? active_color : inactive_color;
+        }
+
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
             Slidepath.PerformEntryAnimation(AnimationDuration.Value);
-            Slidepath.Delay(AnimationDuration.Value).FadeColour(Color4.White);
 
             using (BeginAbsoluteSequence(HitObject.StartTime - 50))
             {
@@ -175,9 +188,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             Debug.Assert(HitObject.HitWindows != null);
 
-            // Player completed all nodes, we consider this user triggered
+            // We start with the assumption that the player completed all checkpoints
             userTriggered = true;
 
+            // If any of the checkpoints aren't complete, we consider the slide to be incomplete
             for (int i = 0; i < SlideCheckpoints.Count; ++i)
             {
                 if (!SlideCheckpoints[i].Result.HasResult)
@@ -186,7 +200,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
                 }
             }
-
             if (!userTriggered)
             {
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
@@ -195,6 +208,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     foreach (var checkpoint in SlideCheckpoints)
                         checkpoint.ForcefullyMiss();
 
+                    // Apply a leniency if the player almost completed the slide
                     if (SlideCheckpoints.Count(node => !node.Result.IsHit) <= 2 && SlideCheckpoints.Count > 2)
                         ApplyResult(HitResult.Ok);
                     else
@@ -205,6 +219,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
 
             var result = HitObject.HitWindows.ResultFor(timeOffset);
+
+            // If the slide was completed before the early windows, just give an OK result
             if (result == HitResult.None)
                 result = HitResult.Ok;
 

@@ -18,17 +18,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public override bool DisplayResult => false;
 
-        private DrawableSlideBody parentSlide => (DrawableSlideBody)ParentHitObject;
+        private new DrawableSlideBody ParentHitObject => (DrawableSlideBody)base.ParentHitObject;
 
         // Used to determine the node order
         public int ThisIndex;
 
         // Hits are only possible if this the second node before this one is hit
         // If the second node before this one doesn't exist, it is allowed as this is one of the first nodes
-        // All hits can only be done after the parent StartTime
-        public bool IsHittable => Time.Current > ParentHitObject.HitObject.StartTime && isPreviousNodeHit();
+        // All hits can only be done after the slide tap has been judged
+        public bool IsHittable => ParentHitObject.IsHittable && isPreviousNodeHit();
 
-        private bool isPreviousNodeHit() => ThisIndex < 1 || parentSlide.SlideCheckpoints[ThisIndex - 1].IsHit;
+        private bool isPreviousNodeHit() => ThisIndex < 1 || ParentHitObject.SlideCheckpoints[ThisIndex - 1].IsHit;
 
         private Container<DrawableSlideCheckpointNode> nodes = null!;
 
@@ -60,7 +60,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             // Nodes are applied before being added to the parent playfield, so this node isn't in SlideNodes yet
             // Since we know that the node isn't in the container yet, and that the count is always one higher than the topmost element, we can use that as the predicted index
-            ThisIndex = parentSlide.SlideCheckpoints.Count;
+            ThisIndex = ParentHitObject.SlideCheckpoints.Count;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
