@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
@@ -69,7 +70,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             AddRangeInternal(new Drawable[]
             {
-                Slidepath = new SlideVisual(),
+                Slidepath = new SlideVisual() { Colour = Color4.LightGray.Darken(0.25f) },
                 SlideStars = new Container<StarPiece>
                 {
                     Anchor = Anchor.Centre,
@@ -140,6 +141,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateInitialTransforms();
             Slidepath.PerformEntryAnimation(AnimationDuration.Value);
+            Slidepath.Delay(AnimationDuration.Value).FadeColour(Color4.White);
 
             using (BeginAbsoluteSequence(HitObject.StartTime - 50))
             {
