@@ -11,9 +11,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     {
         protected virtual bool NeedBreakSample => true;
 
-        public readonly BindableBool BreakBindable = new BindableBool();
+        public override int ScoreWeighting => Break ? 5 : 1;
 
-        protected virtual int ScoreWeightingMultiplier => 1;
+        public readonly BindableBool BreakBindable = new BindableBool();
 
         public bool Break
         {
@@ -33,24 +33,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             base.CreateNestedHitObjects(cancellationToken);
 
-            for (int j = 0; j < ScoreWeightingMultiplier; ++j)
-            {
-                if (j > 0)
-                    AddNested(new ScorePaddingObject { StartTime = this.GetEndTime() }); //Add more weight
+            for (int i = 1; i < ScoreWeighting; ++i)
+                AddNested(new ScorePaddingObject { StartTime = this.GetEndTime() });
 
-                if (Break)
+            if (Break)
+                AddNested(new ScoreBonusObject
                 {
-                    for (int i = 0; i < 4; ++i)
-                        AddNested(new ScorePaddingObject { StartTime = this.GetEndTime() });
-
-                    // Add bonus for players hitting within the critical window
-                    AddNested(new ScoreBonusObject
-                    {
-                        StartTime = this.GetEndTime(),
-                        HitWindows = HitWindows
-                    });
-                }
-            }
+                    StartTime = this.GetEndTime(),
+                    HitWindows = HitWindows
+                });
         }
 
         public override IList<HitSampleInfo> AuxiliarySamples => CreateBreakSample();
