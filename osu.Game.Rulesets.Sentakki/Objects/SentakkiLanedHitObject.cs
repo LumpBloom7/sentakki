@@ -13,6 +13,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public readonly BindableBool BreakBindable = new BindableBool();
 
+        protected virtual int ScoreWeightingMultiplier => 1;
+
         public bool Break
         {
             get => BreakBindable.Value;
@@ -31,17 +33,23 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             base.CreateNestedHitObjects(cancellationToken);
 
-            if (Break)
+            for (int j = 0; j < ScoreWeightingMultiplier; ++j)
             {
-                for (int i = 0; i < 4; ++i)
-                    AddNested(new ScorePaddingObject { StartTime = this.GetEndTime() });
+                if (j > 0)
+                    AddNested(new ScorePaddingObject { StartTime = this.GetEndTime() }); //Add more weight
 
-                // Add bonus for players hitting within the critical window
-                AddNested(new ScoreBonusObject
+                if (Break)
                 {
-                    StartTime = this.GetEndTime(),
-                    HitWindows = HitWindows
-                });
+                    for (int i = 0; i < 4; ++i)
+                        AddNested(new ScorePaddingObject { StartTime = this.GetEndTime() });
+
+                    // Add bonus for players hitting within the critical window
+                    AddNested(new ScoreBonusObject
+                    {
+                        StartTime = this.GetEndTime(),
+                        HitWindows = HitWindows
+                    });
+                }
             }
         }
 
