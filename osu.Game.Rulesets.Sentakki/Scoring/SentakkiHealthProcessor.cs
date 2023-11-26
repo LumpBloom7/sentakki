@@ -6,7 +6,7 @@ namespace osu.Game.Rulesets.Sentakki.Scoring;
 
 public partial class SentakkiHealthProcessor : AccumulatingHealthProcessor
 {
-    public SentakkiHealthProcessor() : base(0.8)
+    public SentakkiHealthProcessor() : base(0)
     {
     }
 
