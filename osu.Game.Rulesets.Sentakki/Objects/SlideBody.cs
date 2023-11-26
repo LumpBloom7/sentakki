@@ -41,11 +41,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            base.CreateNestedHitObjects(cancellationToken);
-
             CreateSlideCheckpoints();
             if (NestedHitObjects.Any())
                 NestedHitObjects.First().Samples.Add(new SentakkiHitSampleInfo("slide", CreateHitSampleInfo().Volume));
+
+            base.CreateNestedHitObjects(cancellationToken);
         }
 
         protected void CreateSlideCheckpoints()
