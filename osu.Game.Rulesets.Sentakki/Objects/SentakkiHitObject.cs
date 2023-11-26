@@ -25,8 +25,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public override Judgement CreateJudgement() => new SentakkiJudgement();
 
-        public virtual int ScoreWeighting => 1;
-
         [JsonIgnore]
         public Bindable<Color4> ColourBindable = new Bindable<Color4>();
 

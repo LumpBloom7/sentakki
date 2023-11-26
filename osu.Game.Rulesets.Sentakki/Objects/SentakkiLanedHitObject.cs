@@ -11,7 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     {
         protected virtual bool NeedBreakSample => true;
 
-        public override int ScoreWeighting => Break ? 5 : 1;
+        public virtual int ScoreWeighting => Break ? 5 : 1;
 
         public readonly BindableBool BreakBindable = new BindableBool();
 
