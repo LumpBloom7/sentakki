@@ -10,7 +10,6 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
 using osu.Game.Skinning;
 using osuTK;
@@ -44,9 +43,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         [BackgroundDependencyLoader]
-        private void load(SentakkiRulesetConfigManager? sentakkiConfigs)
+        private void load()
         {
-            sentakkiConfigs?.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, AnimationDuration);
+            if (DrawableSentakkiRuleset is not null)
+                AnimationDuration.BindTo(DrawableSentakkiRuleset?.AdjustedTouchAnimDuration);
+
             Colour = Color4.SlateGray;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
