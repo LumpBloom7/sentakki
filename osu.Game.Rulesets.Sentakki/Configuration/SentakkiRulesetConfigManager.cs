@@ -18,8 +18,8 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
             base.InitialiseDefaults();
 
             SetDefault(SentakkiRulesetSettings.KiaiEffects, true);
-            SetDefault(SentakkiRulesetSettings.AnimationDuration, 2.0f, 1.0f, 10.5f, 0.5f);
-            SetDefault(SentakkiRulesetSettings.TouchAnimationDuration, 2.0f, 1.0f, 10.5f, 0.5f);
+            SetDefault(SentakkiRulesetSettings.AnimationSpeed, 2.0f, 1.0f, 10.5f, 0.5f);
+            SetDefault(SentakkiRulesetSettings.TouchAnimationSpeed, 2.0f, 1.0f, 10.5f, 0.5f);
             SetDefault(SentakkiRulesetSettings.ShowNoteStartIndicators, false);
             SetDefault(SentakkiRulesetSettings.RingColor, ColorOption.Default);
             SetDefault(SentakkiRulesetSettings.RingOpacity, 1f, 0f, 1f, 0.01f);
@@ -31,7 +31,7 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
 
         public override TrackedSettings CreateTrackedSettings() => new TrackedSettings
         {
-            new TrackedSetting<float>(SentakkiRulesetSettings.AnimationDuration, t => new SettingDescription(
+            new TrackedSetting<float>(SentakkiRulesetSettings.AnimationSpeed, t => new SettingDescription(
                 rawValue: t,
                 name: SentakkiSettingsSubsectionStrings.NoteEntrySpeed,
                 value: SentakkiSettingsSubsectionStrings.EntrySpeedTooltip(t, DrawableSentakkiRuleset.ComputeLaneNoteEntryTime(t))
@@ -42,11 +42,11 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
     public enum SentakkiRulesetSettings
     {
         KiaiEffects,
-        AnimationDuration,
+        AnimationSpeed,
         RingOpacity,
         ShowNoteStartIndicators,
         RingColor,
-        TouchAnimationDuration,
+        TouchAnimationSpeed,
         LaneInputMode,
         SnakingSlideBody,
         DetailedJudgements,

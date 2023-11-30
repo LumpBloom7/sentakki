@@ -53,8 +53,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             FrameStableComponents.Add(slideFanChevronsTextures);
 
-            Config.BindWith(SentakkiRulesetSettings.AnimationDuration, configEntrySpeed);
-            Config.BindWith(SentakkiRulesetSettings.TouchAnimationDuration, configTouchEntrySpeed);
+            Config.BindWith(SentakkiRulesetSettings.AnimationSpeed, configEntrySpeed);
+            Config.BindWith(SentakkiRulesetSettings.TouchAnimationSpeed, configTouchEntrySpeed);
 
             configEntrySpeed.BindValueChanged(v => this.TransformTo(nameof(smoothAnimDuration), ComputeLaneNoteEntryTime(v.NewValue), 200, Easing.OutQuint));
             configTouchEntrySpeed.BindValueChanged(v => this.TransformTo(nameof(smoothTouchAnimDuration), ComputeTouchNoteEntryTime(v.NewValue), 200, Easing.OutQuint));
