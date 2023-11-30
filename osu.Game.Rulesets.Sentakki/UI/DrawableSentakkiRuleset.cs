@@ -100,7 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             if (speedValue < 1)
                 return 9600 / 7 * 1.25f;
 
-            return 9600 / (2 * speedValue + 5) * 1.25f;
+            return 9600 / ((2 * speedValue) + 5) * 1.25f;
         }
 
         protected override void Update()
