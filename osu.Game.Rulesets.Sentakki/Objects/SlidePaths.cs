@@ -155,8 +155,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             return new SliderPath(new[]
             {
-                new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, offset), PathType.Linear),
-                new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end + offset), PathType.Linear),
+                new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, offset), PathType.LINEAR),
+                new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end + offset), PathType.LINEAR),
             });
         }
 
@@ -190,18 +190,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             {
                 new SliderPath(new[]
                 {
-                    new PathControlPoint(node0Pos, PathType.Linear),
-                    new PathControlPoint(node1Pos, PathType.Linear),
+                    new PathControlPoint(node0Pos, PathType.LINEAR),
+                    new PathControlPoint(node1Pos, PathType.LINEAR),
                 }),
                 new SliderPath(new[]
                 {
-                    new PathControlPoint(node1Pos, PathType.Linear),
-                    new PathControlPoint(node2Pos, PathType.Linear),
+                    new PathControlPoint(node1Pos, PathType.LINEAR),
+                    new PathControlPoint(node2Pos, PathType.LINEAR),
                 }),
                 new SliderPath(new[]
                 {
-                    new PathControlPoint(node2Pos, PathType.Linear),
-                    new PathControlPoint(node3Pos, PathType.Linear),
+                    new PathControlPoint(node2Pos, PathType.LINEAR),
+                    new PathControlPoint(node3Pos, PathType.LINEAR),
                 })
             };
         }
@@ -217,23 +217,23 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             {
                 yield return new SliderPath(new[]
                 {
-                    new PathControlPoint(node0Pos, PathType.Linear),
-                    new PathControlPoint(node1Pos, PathType.Linear),
-                    new PathControlPoint(node2Pos, PathType.Linear)
+                    new PathControlPoint(node0Pos, PathType.LINEAR),
+                    new PathControlPoint(node1Pos, PathType.LINEAR),
+                    new PathControlPoint(node2Pos, PathType.LINEAR)
                 });
             }
             else
             {
                 yield return new SliderPath(new[]
                 {
-                    new PathControlPoint(node0Pos, PathType.Linear),
-                    new PathControlPoint(node1Pos, PathType.Linear),
+                    new PathControlPoint(node0Pos, PathType.LINEAR),
+                    new PathControlPoint(node1Pos, PathType.LINEAR),
                 });
 
                 yield return new SliderPath(new[]
                 {
-                    new PathControlPoint(node1Pos, PathType.Linear),
-                    new PathControlPoint(node2Pos, PathType.Linear),
+                    new PathControlPoint(node1Pos, PathType.LINEAR),
+                    new PathControlPoint(node2Pos, PathType.LINEAR),
                 });
             }
         }
@@ -247,14 +247,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             yield return new SliderPath(new[]
             {
-                new PathControlPoint(node0Pos, PathType.Linear),
-                new PathControlPoint(node1Pos, PathType.Linear),
+                new PathControlPoint(node0Pos, PathType.LINEAR),
+                new PathControlPoint(node1Pos, PathType.LINEAR),
             });
 
             yield return new SliderPath(new[]
             {
-                new PathControlPoint(node1Pos, PathType.Linear),
-                new PathControlPoint(node2Pos, PathType.Linear),
+                new PathControlPoint(node1Pos, PathType.LINEAR),
+                new PathControlPoint(node2Pos, PathType.LINEAR),
             });
         }
 
@@ -293,9 +293,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             return new SliderPath(new[]
             {
-                new PathControlPoint(node0Pos, PathType.PerfectCurve),
+                new PathControlPoint(node0Pos, PathType.PERFECT_CURVE),
                 new PathControlPoint(node1Pos),
-                new PathControlPoint(node2Pos, PathType.PerfectCurve)
+                new PathControlPoint(node2Pos, PathType.PERFECT_CURVE)
             });
         }
 
@@ -312,11 +312,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             return new SliderPath(new[]
             {
-                new PathControlPoint(node0Pos, PathType.Linear),
-                new PathControlPoint(node1Pos, PathType.PerfectCurve),
+                new PathControlPoint(node0Pos, PathType.LINEAR),
+                new PathControlPoint(node1Pos, PathType.PERFECT_CURVE),
                 new PathControlPoint(node2Pos),
-                new PathControlPoint(node3Pos, PathType.PerfectCurve),
-                new PathControlPoint(node4Pos, PathType.Linear)
+                new PathControlPoint(node3Pos, PathType.PERFECT_CURVE),
+                new PathControlPoint(node4Pos, PathType.LINEAR)
             });
         }
 
@@ -365,13 +365,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             return new SliderPath(new[]
             {
-                new PathControlPoint(node0Pos, PathType.Linear),
-                new PathControlPoint(node1Pos, PathType.PerfectCurve),
+                new PathControlPoint(node0Pos, PathType.LINEAR),
+                new PathControlPoint(node1Pos, PathType.PERFECT_CURVE),
                 new PathControlPoint(node2Pos),
-                new PathControlPoint(node3Pos, PathType.PerfectCurve),
+                new PathControlPoint(node3Pos, PathType.PERFECT_CURVE),
                 new PathControlPoint(node4Pos),
-                new PathControlPoint(node5Pos, PathType.PerfectCurve),
-                new PathControlPoint(node6Pos, PathType.Linear)
+                new PathControlPoint(node5Pos, PathType.PERFECT_CURVE),
+                new PathControlPoint(node6Pos, PathType.LINEAR)
             });
         }
 
