@@ -99,7 +99,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
             foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects)
             {
-                foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects)
+                foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects.OfType<DrawableSentakkiHitObject>())
                     nested2.Auto = auto;
             }
         }
@@ -140,7 +140,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
             foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects)
             {
-                foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects)
+                foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects.OfType<DrawableSentakkiHitObject>())
                     nested2.Auto = auto;
             }
         }
@@ -182,7 +182,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 
             foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects)
             {
-                foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects)
+                foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects.OfType<DrawableSentakkiHitObject>())
                     nested2.Auto = auto;
             }
         }
