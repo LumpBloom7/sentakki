@@ -200,7 +200,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 audioData = Source.frequencyAmplitudes;
             }
 
-            public override void Draw(IRenderer renderer)
+            protected override void Draw(IRenderer renderer)
             {
                 if (!Source.ShouldDraw)
                     return;

@@ -222,7 +222,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                         maskRadius = Source.MaskRadius * DrawInfo.Matrix.ExtractScale().Xy;
                     }
 
-                    public override void Draw(IRenderer renderer)
+                    protected override void Draw(IRenderer renderer)
                     {
                         base.Draw(renderer);
 
