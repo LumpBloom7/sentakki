@@ -116,6 +116,12 @@ namespace osu.Game.Rulesets.Sentakki
                         new ModAdaptiveSpeed(),
                     };
 
+                case ModType.System:
+                    return new Mod[]
+                    {
+                        new SentakkiModTouchDevice()
+                    };
+
                 default:
                     return Array.Empty<Mod>();
             }
