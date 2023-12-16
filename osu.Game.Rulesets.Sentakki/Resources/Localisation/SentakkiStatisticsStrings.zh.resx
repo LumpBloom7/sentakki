@@ -59,9 +59,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="timing_distribution" xml:space="preserve">
-        <value>時序分佈</value>
+        <value>判定误差分布</value>
     </data>
   <data name="judgement_chart" xml:space="preserve">
-        <value>判断图表</value>
+        <value>判定图表</value>
     </data>
 </root>

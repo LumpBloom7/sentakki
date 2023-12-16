@@ -62,10 +62,10 @@
         <value>¡Prepárate!</value>
     </data>
   <data name="lets_go" xml:space="preserve">
-        <value>¡Vámonos!</value>
+        <value>¡Vamos!</value>
     </data>
   <data name="sentakki_supported_by" xml:space="preserve">
-        <value>Sentakki es hecho con el apoyo dé {0}.</value>
+        <value>Sentakki está hecho con el apoyo de {0}.</value>
         <comment>The placeholder is for the name of a sentakki supporter.</comment>
     </data>
 </root>

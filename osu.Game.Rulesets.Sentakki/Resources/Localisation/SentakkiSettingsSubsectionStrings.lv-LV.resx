@@ -81,7 +81,7 @@
         <value>Krāsa balstīta uz grūtības līmeņa</value>
     </data>
   <data name="ring_color_skin" xml:space="preserve">
-        <value>Skins</value>
+        <value>Motīvs</value>
     </data>
   <data name="ring_opacity" xml:space="preserve">
         <value>Ringa Necaurredzamība</value>
@@ -103,7 +103,15 @@
   <data name="note_entry_speed" xml:space="preserve">
         <value>Nošu ienākšanas ātrums</value>
     </data>
-  <data name="touch_note_fade_in_speed" xml:space="preserve">
-        <value>Skārien-nošu parādīšanās ātrums</value>
+  <data name="touch_note_entry_speed" xml:space="preserve">
+        <value>Skārien-nošu ienākšanas ātrums</value>
+    </data>
+  <data name="entry_speed_tooltip" xml:space="preserve">
+        <value>{0} ({1} ms)</value>
+        <comment>The left placeholder is the speed value between 0 - 10, or "Sonic" if too fast. The right placeholder duration value.</comment>
+    </data>
+  <data name="sonic" xml:space="preserve">
+        <value>SONIC</value>
+        <comment>Used when the speed value is greater than 10.</comment>
     </data>
 </root>

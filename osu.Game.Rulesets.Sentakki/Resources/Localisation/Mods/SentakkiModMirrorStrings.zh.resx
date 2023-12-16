@@ -59,18 +59,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mod_description" xml:space="preserve">
-        <value>水平、垂直或同时反映游戏场地！</value>
+        <value>水平或垂直翻转游玩区！</value>
     </data>
   <data name="mirror_vertically" xml:space="preserve">
-        <value>⇅ 垂直反映</value>
+        <value>⇅ 垂直翻转</value>
     </data>
   <data name="mirror_vertically_description" xml:space="preserve">
-        <value>沿 x 轴反映整个游戏场地</value>
+        <value>沿 x 轴翻转整个游玩区</value>
     </data>
   <data name="mirror_horizontally" xml:space="preserve">
-        <value>⇆ 水平反映</value>
+        <value>⇆ 水平翻转</value>
     </data>
   <data name="mirror_horizontally_description" xml:space="preserve">
-        <value>沿 y 轴反映整个游戏场地</value>
+        <value>沿 y 轴翻转整个游玩区</value>
     </data>
 </root>

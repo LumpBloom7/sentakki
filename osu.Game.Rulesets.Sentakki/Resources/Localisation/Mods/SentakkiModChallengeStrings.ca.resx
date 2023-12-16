@@ -58,7 +58,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="number_of_lives" xml:space="preserve">
+        <value>Nombre de vides</value>
+    </data>
   <data name="mod_description" xml:space="preserve">
-        <value>专注于下落的音符。 Touch 音符和 Slide 主体会自动完成。</value>
+        <value>Només tens un petit marge d'error.</value>
+    </data>
+  <data name="number_of_lives_description" xml:space="preserve">
+        <value>El nombre de vides amb les quals comences.</value>
     </data>
 </root>

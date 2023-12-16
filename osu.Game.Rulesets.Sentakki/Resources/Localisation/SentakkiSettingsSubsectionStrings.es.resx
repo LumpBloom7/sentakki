@@ -59,35 +59,35 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="show_kiai_effects" xml:space="preserve">
-        <value>Mostrar efectos Kiai</value>
+        <value>Mostrar efectos del Kiai</value>
     </data>
   <data name="show_note_start_indicators" xml:space="preserve">
-        <value>Mostrar indicadora inicial de la nota</value>
+        <value>Mostrar indicador inicial de las notas</value>
     </data>
   <data name="snaking_in_slides" xml:space="preserve">
-        <value>Serpenteando en Slides</value>
+        <value>Serpenteo en Slides</value>
         <comment>"Snaking in" refers to the animation of the Slide extending out telescopically from the origin piece by piece.</comment>
     </data>
   <data name="show_detailed_judgements" xml:space="preserve">
-        <value>Mostrar juicio detallado</value>
+        <value>Mostrar juicios detallados</value>
     </data>
   <data name="ring_color" xml:space="preserve">
-        <value>Color de aro</value>
+        <value>Color del aro</value>
     </data>
   <data name="ring_color_default" xml:space="preserve">
-        <value>Default</value>
+        <value>Por defecto</value>
     </data>
   <data name="ring_color_difficulty" xml:space="preserve">
-        <value>Color basada en dificultad</value>
+        <value>Color basado en la dificultad</value>
     </data>
   <data name="ring_color_skin" xml:space="preserve">
         <value>Skin</value>
     </data>
   <data name="ring_opacity" xml:space="preserve">
-        <value>Opacidad de aro</value>
+        <value>Opacidad del aro</value>
     </data>
   <data name="lane_input_mode" xml:space="preserve">
-        <value>Modo de entrada del carril (No aplica al táctil)</value>
+        <value>Modo de entrada del carril (no aplica al táctil)</value>
         <comment>"Touch"as in the verb, as in "touchscreen"</comment>
     </data>
   <data name="lane_input_mode_button" xml:space="preserve">
@@ -97,13 +97,21 @@
         <value>Sensor</value>
     </data>
   <data name="break_sample_volume" xml:space="preserve">
-        <value>Break muestra de volumen</value>
+        <value>Volumen de muestra de Break</value>
         <comment>Break is a proper noun, referring to a property on laned notes.</comment>
     </data>
   <data name="note_entry_speed" xml:space="preserve">
         <value>Velocidad inicial de nota</value>
     </data>
-  <data name="touch_note_fade_in_speed" xml:space="preserve">
-        <value>Nota Touch velocidad fundida</value>
+  <data name="touch_note_entry_speed" xml:space="preserve">
+        <value>Velocidad de entrada de las notas Touch</value>
+    </data>
+  <data name="entry_speed_tooltip" xml:space="preserve">
+        <value>{0} ({1} ms)</value>
+        <comment>The left placeholder is the speed value between 0 - 10, or "Sonic" if too fast. The right placeholder duration value.</comment>
+    </data>
+  <data name="sonic" xml:space="preserve">
+        <value>Sónico</value>
+        <comment>Used when the speed value is greater than 10.</comment>
     </data>
 </root>

@@ -59,7 +59,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mod_description" xml:space="preserve">
-        <value>미래에 추가될 실험적 기능들을 활성화합니다. 자동플레이/NF 모드를 사용하는걸 권장합니다. 리플레이 불가.</value>
+        <value>미래에 sentakki에 추가될 실험적 기능들을 활성화합니다. 자동플레이/Nf 모드를 사용하는걸 권장합니다. 리플레이는 불가합니다.</value>
     </data>
   <data name="twin_notes" xml:space="preserve">
         <value>트윈 노트</value>
