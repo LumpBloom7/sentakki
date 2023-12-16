@@ -59,7 +59,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mod_description" xml:space="preserve">
-        <value>플레이필드를 가로축, 세로축, 아니면 두 축 모두 뒤집습니다.</value>
+        <value>플레이필드를 가로축, 세로축, 또는 두 축 모두 뒤집습니다.</value>
     </data>
   <data name="mirror_vertically" xml:space="preserve">
         <value>⇅ 수직 반전</value>
