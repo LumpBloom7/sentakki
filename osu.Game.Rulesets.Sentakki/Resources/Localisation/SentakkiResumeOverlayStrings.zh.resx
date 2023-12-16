@@ -62,7 +62,7 @@
         <value>准备！</value>
     </data>
   <data name="lets_go" xml:space="preserve">
-        <value>走吧！</value>
+        <value>开始！</value>
     </data>
   <data name="sentakki_supported_by" xml:space="preserve">
         <value>Sentakki 是在 {0} 的支持下制作的。</value>
