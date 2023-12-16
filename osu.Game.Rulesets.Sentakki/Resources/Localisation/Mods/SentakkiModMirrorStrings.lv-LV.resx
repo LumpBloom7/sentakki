@@ -59,18 +59,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mod_description" xml:space="preserve">
-        <value>Apgriezt spēles laukumu horizontāli, vertikāli, vai abos virzienos!</value>
+        <value>Apgrieziet spēles laukumu horizontāli, vertikāli, vai abos virzienos!</value>
     </data>
   <data name="mirror_vertically" xml:space="preserve">
         <value>⇅ Atspoguļot vertikāli</value>
     </data>
   <data name="mirror_vertically_description" xml:space="preserve">
-        <value>Atspoguļot visu spēles laukumu pa x asi</value>
+        <value>Atspoguļo visu spēles laukumu pa x asi</value>
     </data>
   <data name="mirror_horizontally" xml:space="preserve">
         <value>⇆ Atspoguļot horizontāli</value>
     </data>
   <data name="mirror_horizontally_description" xml:space="preserve">
-        <value>Atspoguļot visu spēles laukumu pa y asi</value>
+        <value>Atspoguļo visu spēles laukumu pa y asi</value>
     </data>
 </root>
