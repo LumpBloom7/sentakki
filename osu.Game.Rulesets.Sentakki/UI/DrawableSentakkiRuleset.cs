@@ -120,10 +120,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
             switch (e.Action)
             {
                 case GlobalAction.DecreaseScrollSpeed:
-                    configEntrySpeed.Value -= 0.5f;
+                    configEntrySpeed.Value -= 0.25f;
                     return true;
                 case GlobalAction.IncreaseScrollSpeed:
-                    configEntrySpeed.Value += 0.5f;
+                    configEntrySpeed.Value += 0.25f;
                     return true;
             }
 
