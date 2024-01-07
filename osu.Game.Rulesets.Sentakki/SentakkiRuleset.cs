@@ -54,6 +54,7 @@ namespace osu.Game.Rulesets.Sentakki
         public override string ShortName => "Sentakki";
 
         public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor(this);
+        public override HealthProcessor CreateHealthProcessor(double drainStartTime) => new SentakkiHealthProcessor();
 
         public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod>? mods = null) =>
             new DrawableSentakkiRuleset(this, beatmap, mods);
@@ -117,6 +118,12 @@ namespace osu.Game.Rulesets.Sentakki
                         new SentakkiModSpin(),
                         new SentakkiModMuted(),
                         new ModAdaptiveSpeed(),
+                    };
+
+                case ModType.System:
+                    return new Mod[]
+                    {
+                        new SentakkiModTouchDevice()
                     };
 
                 default:

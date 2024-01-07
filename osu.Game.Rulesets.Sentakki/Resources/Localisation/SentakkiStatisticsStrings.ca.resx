@@ -58,7 +58,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="mod_description" xml:space="preserve">
-        <value>专注于下落的音符。 Touch 音符和 Slide 主体会自动完成。</value>
+  <data name="timing_distribution" xml:space="preserve">
+        <value>Distribució de temps</value>
+    </data>
+  <data name="judgement_chart" xml:space="preserve">
+        <value>Gràfic de judicis</value>
     </data>
 </root>

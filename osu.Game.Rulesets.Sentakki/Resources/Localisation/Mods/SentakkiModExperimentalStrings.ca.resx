@@ -59,6 +59,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mod_description" xml:space="preserve">
-        <value>专注于下落的音符。 Touch 音符和 Slide 主体会自动完成。</value>
+        <value>Algunes característiques experimentals s'afegiran a futures versions de sentakki. Es recomana Autoplay/No-Fail. Repeticions no admeses.</value>
+    </data>
+  <data name="twin_notes" xml:space="preserve">
+        <value>Notes dobles</value>
+        <comment>Twin is an adjective.</comment>
+    </data>
+  <data name="twin_notes_description" xml:space="preserve">
+        <value>Permet que aparegui més d'una nota alhora (requereix multitàctil)</value>
+    </data>
+  <data name="twin_slides" xml:space="preserve">
+        <value>Slides dobles</value>
+        <comment>Twin is an adjective.</comment>
+    </data>
+  <data name="twin_slides_description" xml:space="preserve">
+        <value>Permet que més d'un Slide comparteixi el mateix temps i origen (requereix multitàctil)</value>
+    </data>
+  <data name="fan_slides" xml:space="preserve">
+        <value>Slides ventilador</value>
+        <comment>Fan is a adjective, referring to the shape of the Slide.</comment>
+    </data>
+  <data name="fan_slides_description" xml:space="preserve">
+        <value>Permet que els slides ventilador apareguin de tant en tant (requereix multitàctil)</value>
     </data>
 </root>

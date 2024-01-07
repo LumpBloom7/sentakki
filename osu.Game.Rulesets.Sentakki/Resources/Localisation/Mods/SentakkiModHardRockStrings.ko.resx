@@ -58,7 +58,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="mod_description" xml:space="preserve">
-        <value>专注于下落的音符。 Touch 音符和 Slide 主体会自动完成。</value>
+  <data name="judgement_mode" xml:space="preserve">
+        <value>판정 모드</value>
+    </data>
+  <data name="judgement_mode_description" xml:space="preserve">
+        <value>판정 모드들은 게임 내 허용 가능한 타이밍 오차의 크기를 결정합니다.</value>
+    </data>
+  <data name="minimum_result" xml:space="preserve">
+        <value>최소 히트 결과</value>
+    </data>
+  <data name="minimum_result_description" xml:space="preserve">
+        <value>게임플레이 도중 허용되는 최소 히트 결과입니다. 최소 히트 결과보다 낮다면 미스로 판정됩니다.</value>
     </data>
 </root>

@@ -80,6 +80,6 @@
         <comment>Fan is a adjective, referring to the shape of the Slide.</comment>
     </data>
   <data name="fan_slides_description" xml:space="preserve">
-        <value>Autorise l'apparition occasionnel des fan slides (Requiert un support multitouch)</value>
+        <value>Autorise l'apparition occasionnelle des slides éventails (Requiert un support multitouch)</value>
     </data>
 </root>

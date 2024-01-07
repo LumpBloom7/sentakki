@@ -2,6 +2,7 @@
 using System.Linq;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Beatmaps;
+using osu.Game.Graphics;
 using osu.Game.Rulesets.Sentakki.Localisation;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK;
@@ -12,11 +13,11 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
     {
         public override IEnumerable<BeatmapStatistic> GetStatistics()
         {
-            int taps = HitObjects.Count(b => b is Tap);
+            int taps = HitObjects.Count(b => b is Tap or Slide);
             int holds = HitObjects.Count(h => h is Hold);
             int touchHolds = HitObjects.Count(h => h is TouchHold);
             int touchs = HitObjects.Count(h => h is Touch);
-            int slides = HitObjects.Count(h => h is Slide);
+            int slides = HitObjects.OfType<Slide>().Sum(h => h.SlideInfoList.Count);
 
             return new[]
             {
@@ -44,8 +45,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     Content = touchs.ToString(),
                     CreateIcon = () => new SpriteIcon
                     {
-                        Icon = FontAwesome.Regular.HandPointRight,
-                        Scale = new Vector2(.7f)
+                        Icon = OsuIcon.PlayStyleTouch,
+                        Scale = new Vector2(.8f)
                     },
                 },
                 new BeatmapStatistic

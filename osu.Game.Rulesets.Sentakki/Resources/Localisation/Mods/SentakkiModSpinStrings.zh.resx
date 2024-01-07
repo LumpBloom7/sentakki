@@ -59,12 +59,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mod_description" xml:space="preserve">
-        <value>复制真实的洗衣机体验。</value>
+        <value>复刻真正的洗衣机体验。</value>
     </data>
   <data name="revolution_duration" xml:space="preserve">
-        <value>转数时间</value>
+        <value>旋转周期</value>
     </data>
   <data name="revolution_duration_description" xml:space="preserve">
-        <value>完成一圈的持续时间（以秒为单位）。</value>
+        <value>旋转一圈的所需时间（以秒为单位）。</value>
     </data>
 </root>

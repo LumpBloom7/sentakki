@@ -58,7 +58,60 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="mod_description" xml:space="preserve">
-        <value>专注于下落的音符。 Touch 音符和 Slide 主体会自动完成。</value>
+  <data name="show_kiai_effects" xml:space="preserve">
+        <value>Mostrar efectes del Kiai</value>
+    </data>
+  <data name="show_note_start_indicators" xml:space="preserve">
+        <value>Mostrar indicador inicial de les notes</value>
+    </data>
+  <data name="snaking_in_slides" xml:space="preserve">
+        <value>Serpentegi en Slides</value>
+        <comment>"Snaking in" refers to the animation of the Slide extending out telescopically from the origin piece by piece.</comment>
+    </data>
+  <data name="show_detailed_judgements" xml:space="preserve">
+        <value>Mostrar judicis detallats</value>
+    </data>
+  <data name="ring_color" xml:space="preserve">
+        <value>Color de l'anell</value>
+    </data>
+  <data name="ring_color_default" xml:space="preserve">
+        <value>Per defecte</value>
+    </data>
+  <data name="ring_color_difficulty" xml:space="preserve">
+        <value>Color basat en la dificultat</value>
+    </data>
+  <data name="ring_color_skin" xml:space="preserve">
+        <value>Skin</value>
+    </data>
+  <data name="ring_opacity" xml:space="preserve">
+        <value>Opacitat de l'anell</value>
+    </data>
+  <data name="lane_input_mode" xml:space="preserve">
+        <value>Mode d'entrada del carril (no aplica al táctil)</value>
+        <comment>"Touch"as in the verb, as in "touchscreen"</comment>
+    </data>
+  <data name="lane_input_mode_button" xml:space="preserve">
+        <value>Botó</value>
+    </data>
+  <data name="lane_input_mode_sensor" xml:space="preserve">
+        <value>Sensor</value>
+    </data>
+  <data name="break_sample_volume" xml:space="preserve">
+        <value>Volum de mostra de Break</value>
+        <comment>Break is a proper noun, referring to a property on laned notes.</comment>
+    </data>
+  <data name="note_entry_speed" xml:space="preserve">
+        <value>Velocitat inicial de nota</value>
+    </data>
+  <data name="touch_note_entry_speed" xml:space="preserve">
+        <value>Velocitat d'entrada de les notes Touch</value>
+    </data>
+  <data name="entry_speed_tooltip" xml:space="preserve">
+        <value>{0} ({1} ms)</value>
+        <comment>The left placeholder is the speed value between 0 - 10, or "Sonic" if too fast. The right placeholder duration value.</comment>
+    </data>
+  <data name="sonic" xml:space="preserve">
+        <value>Sònic</value>
+        <comment>Used when the speed value is greater than 10.</comment>
     </data>
 </root>

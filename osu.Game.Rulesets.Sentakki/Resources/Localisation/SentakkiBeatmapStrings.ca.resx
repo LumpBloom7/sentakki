@@ -58,7 +58,24 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="mod_description" xml:space="preserve">
-        <value>专注于下落的音符。 Touch 音符和 Slide 主体会自动完成。</value>
+  <data name="tap_count" xml:space="preserve">
+        <value>Nombre de Taps</value>
+        <comment>Tap is a proper noun.</comment>
+    </data>
+  <data name="hold_count" xml:space="preserve">
+        <value>Nombre de Holds</value>
+        <comment>Hold is a proper noun.</comment>
+    </data>
+  <data name="touchhold_count" xml:space="preserve">
+        <value>Nombre de TouchHolds</value>
+        <comment>TouchHold is a proper noun.</comment>
+    </data>
+  <data name="touch_count" xml:space="preserve">
+        <value>Nombre de Touchs</value>
+        <comment>Touch is a proper noun.</comment>
+    </data>
+  <data name="slide_count" xml:space="preserve">
+        <value>Nombre de Slides</value>
+        <comment>Slide is a proper noun.</comment>
     </data>
 </root>

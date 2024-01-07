@@ -59,10 +59,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="show_kiai_effects" xml:space="preserve">
-        <value>Afficher les effets Kiai</value>
+        <value>Afficher l'effets Kiai</value>
     </data>
   <data name="show_note_start_indicators" xml:space="preserve">
-        <value>Afficher les indicateurs de début de note</value>
+        <value>Afficher l'indicateur de début de note</value>
     </data>
   <data name="snaking_in_slides" xml:space="preserve">
         <value>Étirement des Slides</value>
@@ -103,7 +103,15 @@
   <data name="note_entry_speed" xml:space="preserve">
         <value>Vitesse d'entrée des notes</value>
     </data>
-  <data name="touch_note_fade_in_speed" xml:space="preserve">
+  <data name="touch_note_entry_speed" xml:space="preserve">
         <value>Vitesse d'apparition des notes Touch</value>
+    </data>
+  <data name="entry_speed_tooltip" xml:space="preserve">
+        <value>{0} ({1}ms)</value>
+        <comment>The left placeholder is the speed value between 0 - 10, or "Sonic" if too fast. The right placeholder duration value.</comment>
+    </data>
+  <data name="sonic" xml:space="preserve">
+        <value>Sonique</value>
+        <comment>Used when the speed value is greater than 10.</comment>
     </data>
 </root>

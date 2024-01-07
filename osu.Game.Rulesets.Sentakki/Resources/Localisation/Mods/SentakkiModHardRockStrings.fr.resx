@@ -65,9 +65,9 @@
         <value>Le mode de jugement détermine à quel point les hitwindows sont stricts durant la partie.</value>
     </data>
   <data name="minimum_result" xml:space="preserve">
-        <value>Résultat minimum</value>
+        <value>Résultat minimum de hit</value>
     </data>
   <data name="minimum_result_description" xml:space="preserve">
-        <value>Le minimum de HitResult qui sera accepté durant la partie. Tout ce qui sera inférieur sera considéré comme raté.</value>
+        <value>Le résultat de hit minimum qui sera accepté durant la partie. Tout ce qui sera inférieur sera considéré comme raté.</value>
     </data>
 </root>

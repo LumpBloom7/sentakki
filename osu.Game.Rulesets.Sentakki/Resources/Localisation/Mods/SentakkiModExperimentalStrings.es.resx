@@ -66,7 +66,7 @@
         <comment>Twin is an adjective.</comment>
     </data>
   <data name="twin_notes_description" xml:space="preserve">
-        <value>Permitir que aparezca más de una nota al mismo tiempo (Requiere multitáctil)</value>
+        <value>Permitir que aparezca más de una nota al mismo tiempo (requiere multitáctil)</value>
     </data>
   <data name="twin_slides" xml:space="preserve">
         <value>Slides dobles</value>
@@ -80,6 +80,6 @@
         <comment>Fan is a adjective, referring to the shape of the Slide.</comment>
     </data>
   <data name="fan_slides_description" xml:space="preserve">
-        <value>Permitir que los slides ventilador aparezcan ocasionalmente (Requiere multitáctil)</value>
+        <value>Permitir que los slides ventilador aparezcan ocasionalmente (requiere multitáctil)</value>
     </data>
 </root>

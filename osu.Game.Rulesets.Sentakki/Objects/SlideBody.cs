@@ -19,6 +19,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     {
         public override Color4 DefaultNoteColour => Color4.Aqua;
 
+        public override int ScoreWeighting => Break ? 5 : 3;
+
         public double EndTime
         {
             get => StartTime + Duration;
@@ -41,12 +43,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            base.CreateNestedHitObjects(cancellationToken);
-
             CreateSlideCheckpoints();
 
             if (NestedHitObjects.Any())
-                NestedHitObjects[0].Samples.Add(new SentakkiHitSampleInfo("slide", CreateHitSampleInfo().Volume));
+                NestedHitObjects.First().Samples.Add(new SentakkiHitSampleInfo("slide", CreateHitSampleInfo().Volume));
+
+            base.CreateNestedHitObjects(cancellationToken);
         }
 
         protected void CreateSlideCheckpoints()

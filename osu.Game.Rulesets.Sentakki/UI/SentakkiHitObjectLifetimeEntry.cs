@@ -1,19 +1,12 @@
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
     public class SentakkiHitObjectLifetimeEntry : HitObjectLifetimeEntry
     {
-        protected override double InitialLifetimeOffset
-            => HitObject switch
-            {
-                Touch => AnimationDurationBindable.Value + HitObject.HitWindows.WindowFor(HitResult.Great),
-                _ => AnimationDurationBindable.Value
-            };
-
+        protected override double InitialLifetimeOffset => AnimationDurationBindable.Value;
         private readonly DrawableSentakkiRuleset drawableRuleset;
 
         public BindableDouble AnimationDurationBindable = new BindableDouble(1000);
