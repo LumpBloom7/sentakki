@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
@@ -23,6 +24,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             ColourBindable.Value = DefaultNoteColour;
         }
 
+        public int ScoreWeighting => (this is IBreakNote breakNote && breakNote.Break) ? breakNote.BreakScoreWeighting : BaseScoreWeighting;
+
+        protected virtual int BaseScoreWeighting => 1;
+
         public override Judgement CreateJudgement() => new SentakkiJudgement();
 
         [JsonIgnore]
@@ -35,18 +40,38 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set => ColourBindable.Value = value;
         }
 
-        public Bindable<bool> ExBindable = new Bindable<bool>();
-
-        public bool Ex
-        {
-            get => ExBindable.Value;
-            set => ExBindable.Value = value;
-        }
-
         [JsonIgnore]
         public virtual Color4 DefaultNoteColour => Color4Extensions.FromHex("FF0064");
 
         protected override HitWindows CreateHitWindows() => new SentakkiTapHitWindows();
+
+        protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
+        {
+            base.CreateNestedHitObjects(cancellationToken);
+
+            for (int i = 1; i < ScoreWeighting; ++i)
+                AddNested(new ScorePaddingObject { StartTime = this.GetEndTime() });
+
+            if (this is IBreakNote breakNote && breakNote.Break)
+                AddNested(new ScoreBonusObject
+                {
+                    StartTime = this.GetEndTime(),
+                    HitWindows = HitWindows
+                });
+        }
+
+        public override IList<HitSampleInfo> AuxiliarySamples => CreateBreakSample();
+
+        public HitSampleInfo[] CreateBreakSample()
+        {
+            if (this is not IBreakNote breakNote || !breakNote.NeedBreakSample || !breakNote.Break)
+                return Array.Empty<HitSampleInfo>();
+
+            return new[]
+            {
+                new SentakkiHitSampleInfo("Break", CreateHitSampleInfo().Volume)
+            };
+        }
 
         // This special hitsample is used for Sentakki specific samples, with doesn't have bank specific variants
         public class SentakkiHitSampleInfo : HitSampleInfo, IEquatable<SentakkiHitSampleInfo>
@@ -64,19 +89,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 }
             }
 
-#nullable enable
             public override HitSampleInfo With(Optional<string> newName = default, Optional<string> newBank = default, Optional<string?> newSuffix = default, Optional<int> newVolume = default)
             {
                 return new SentakkiHitSampleInfo(newName.GetOr(Name), newVolume.GetOr(Volume));
             }
-#nullable disable
 
-            public bool Equals(SentakkiHitSampleInfo other)
+            public bool Equals(SentakkiHitSampleInfo? other)
             {
                 return other != null && Name == other.Name;
             }
 
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
                 return obj is SentakkiHitSampleInfo s && Equals(s);
             }

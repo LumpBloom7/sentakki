@@ -1,12 +1,16 @@
 using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Judgements;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Skinning;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -27,6 +31,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override float SamplePlaybackPosition => Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
 
+        private PausableSkinnableSound breakSample = null!;
+
+        private Container<DrawableScorePaddingObject> scorePaddingObjects = null!;
+
+        private Container<DrawableScoreBonusObject> scoreBonusObjects = null!;
+
         public DrawableSentakkiHitObject()
             : this(null)
         {
@@ -35,6 +45,34 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableSentakkiHitObject(SentakkiHitObject? hitObject = null)
             : base(hitObject!)
         {
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(SentakkiRulesetConfigManager? sentakkiConfig)
+        {
+            AddRangeInternal(new Drawable[]
+            {
+                scorePaddingObjects = new Container<DrawableScorePaddingObject>(),
+                scoreBonusObjects = new Container<DrawableScoreBonusObject>(),
+                breakSample = new PausableSkinnableSound(),
+            });
+
+            sentakkiConfig?.BindWith(SentakkiRulesetSettings.BreakSampleVolume, breakSample.Volume);
+        }
+
+        protected override void LoadSamples()
+        {
+            base.LoadSamples();
+
+            breakSample.Samples = HitObject.CreateBreakSample();
+        }
+
+        public override void PlaySamples()
+        {
+            base.PlaySamples();
+
+            breakSample.Balance.Value = CalculateSamplePlaybackBalance(SamplePlaybackPosition);
+            breakSample.Play();
         }
 
         [Resolved]
@@ -52,7 +90,46 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnApply();
             AccentColour.BindTo(HitObject.ColourBindable);
-            ExBindable.BindTo(HitObject.ExBindable);
+            ExBindable.Value = (HitObject as IExNote)?.Ex ?? false;
+        }
+
+        protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
+        {
+            switch (hitObject)
+            {
+                case ScorePaddingObject p:
+                    return new DrawableScorePaddingObject(p);
+
+                case ScoreBonusObject b:
+                    return new DrawableScoreBonusObject(b);
+            }
+
+            return base.CreateNestedHitObject(hitObject);
+        }
+
+        protected override void AddNestedHitObject(DrawableHitObject hitObject)
+        {
+            switch (hitObject)
+            {
+                case DrawableScorePaddingObject p:
+                    scorePaddingObjects.Add(p);
+                    break;
+
+                case DrawableScoreBonusObject b:
+                    scoreBonusObjects.Add(b);
+                    break;
+
+                default:
+                    base.AddNestedHitObject(hitObject);
+                    break;
+            }
+        }
+
+        protected override void ClearNestedHitObjects()
+        {
+            base.ClearNestedHitObjects();
+            scorePaddingObjects.Clear(false);
+            scoreBonusObjects.Clear(false);
         }
 
         protected override JudgementResult CreateResult(Judgement judgement) => new SentakkiJudgementResult(HitObject, judgement);
@@ -68,7 +145,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnFree();
             AccentColour.UnbindFrom(HitObject.ColourBindable);
-            ExBindable.UnbindFrom(HitObject.ExBindable);
+            breakSample.ClearSamples();
         }
 
         protected override void Update()
@@ -98,6 +175,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected new virtual void ApplyResult(Action<JudgementResult> application)
         {
+            // Judge the scoreBonus
+            foreach (var bonusObject in scoreBonusObjects)
+                bonusObject.TriggerResult();
+
+            // Also give Break note score padding a judgement
+            for (int i = 0; i < scorePaddingObjects.Count; ++i)
+                scorePaddingObjects[^(i + 1)].ApplyResult(application);
+
             // Apply judgement to this object
             if (!Result.HasResult)
                 base.ApplyResult(application);

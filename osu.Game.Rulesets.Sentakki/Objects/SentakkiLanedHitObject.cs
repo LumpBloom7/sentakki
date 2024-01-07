@@ -1,26 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using osu.Framework.Bindables;
-using osu.Game.Audio;
-using osu.Game.Rulesets.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public abstract class SentakkiLanedHitObject : SentakkiHitObject
+    public abstract class SentakkiLanedHitObject : SentakkiHitObject, IBreakNote, IExNote
     {
-        protected virtual bool NeedBreakSample => true;
-
-        public virtual int ScoreWeighting => Break ? 5 : 1;
-
-        public readonly BindableBool BreakBindable = new BindableBool();
-
-        public bool Break
-        {
-            get => BreakBindable.Value;
-            set => BreakBindable.Value = value;
-        }
-
         public readonly BindableInt LaneBindable = new BindableInt();
 
         public int Lane
@@ -29,32 +12,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set => LaneBindable.Value = value;
         }
 
-        protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
+        public virtual int BreakScoreWeighting => 5;
+
+        public BindableBool BreakBindable { get; } = new BindableBool();
+
+        public bool Break
         {
-            base.CreateNestedHitObjects(cancellationToken);
-
-            for (int i = 1; i < ScoreWeighting; ++i)
-                AddNested(new ScorePaddingObject { StartTime = this.GetEndTime() });
-
-            if (Break)
-                AddNested(new ScoreBonusObject
-                {
-                    StartTime = this.GetEndTime(),
-                    HitWindows = HitWindows
-                });
+            get => BreakBindable.Value;
+            set => BreakBindable.Value = value;
         }
 
-        public override IList<HitSampleInfo> AuxiliarySamples => CreateBreakSample();
+        public bool Ex { get; set; }
 
-        public HitSampleInfo[] CreateBreakSample()
-        {
-            if (!NeedBreakSample || !Break)
-                return Array.Empty<HitSampleInfo>();
+        protected virtual bool NeedBreakSample => true;
 
-            return new[]
-            {
-                new SentakkiHitSampleInfo("Break", CreateHitSampleInfo().Volume)
-            };
-        }
+        bool IBreakNote.NeedBreakSample => NeedBreakSample;
     }
 }
