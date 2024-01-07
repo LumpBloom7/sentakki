@@ -18,8 +18,8 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
             base.InitialiseDefaults();
 
             SetDefault(SentakkiRulesetSettings.KiaiEffects, true);
-            SetDefault(SentakkiRulesetSettings.AnimationSpeed, 2.0f, 1.0f, 10.5f, 0.25f);
-            SetDefault(SentakkiRulesetSettings.TouchAnimationSpeed, 2.0f, 1.0f, 10.5f, 0.25f);
+            SetDefault(SentakkiRulesetSettings.AnimationSpeed, 2.0f, 1.0f, 10.25f, 0.25f);
+            SetDefault(SentakkiRulesetSettings.TouchAnimationSpeed, 2.0f, 1.0f, 10.25f, 0.25f);
             SetDefault(SentakkiRulesetSettings.ShowNoteStartIndicators, false);
             SetDefault(SentakkiRulesetSettings.RingColor, ColorOption.Default);
             SetDefault(SentakkiRulesetSettings.RingOpacity, 1f, 0f, 1f, 0.01f);
