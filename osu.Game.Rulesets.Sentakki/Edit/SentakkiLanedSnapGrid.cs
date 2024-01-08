@@ -27,7 +27,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
 
     private DrawablePool<BeatSnapGridLine> linePool = null!;
 
-    private Bindable<double> animationDuration = new Bindable<double>(1000);
+    private Bindable<float> animationSpeed = new Bindable<float>(2);
 
     private Container<BeatSnapGridLine> linesContainer = null!;
 
@@ -60,7 +60,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
             },
         });
 
-        configManager.BindWith(SentakkiRulesetSettings.AnimationDuration, animationDuration);
+        configManager.BindWith(SentakkiRulesetSettings.AnimationSpeed, animationSpeed);
     }
 
     protected override void LoadComplete()
@@ -102,9 +102,11 @@ public partial class SentakkiSnapGrid : CompositeDrawable
     {
         linesContainer.Clear(false);
         double time = editorClock.CurrentTime;
+        double animationDuration = DrawableSentakkiRuleset.ComputeLaneNoteEntryTime(animationSpeed.Value);
 
-        double maximumVisibleTime = editorClock.CurrentTime + (animationDuration.Value * 0.5f);
-        double minimumVisibleTime = editorClock.CurrentTime - (animationDuration.Value * 0.5f);
+
+        double maximumVisibleTime = editorClock.CurrentTime + (animationDuration * 0.5f);
+        double minimumVisibleTime = editorClock.CurrentTime - (animationDuration * 0.5f);
 
         for (int i = 0; i < editorBeatmap.ControlPointInfo.TimingPoints.Count; ++i)
         {
@@ -165,7 +167,9 @@ public partial class SentakkiSnapGrid : CompositeDrawable
 
     public float GetDistanceRelativeToCurrentTime(double time, float min = float.MinValue, float max = float.MaxValue)
     {
-        double offsetRatio = (time - editorClock.CurrentTime) / (animationDuration.Value * 0.5f);
+        double animationDuration = DrawableSentakkiRuleset.ComputeLaneNoteEntryTime(animationSpeed.Value);
+
+        double offsetRatio = (time - editorClock.CurrentTime) / (animationDuration * 0.5f);
 
         float distance = (float)Interpolation.Lerp(SentakkiPlayfield.INTERSECTDISTANCE, SentakkiPlayfield.NOTESTARTDISTANCE, offsetRatio);
 
