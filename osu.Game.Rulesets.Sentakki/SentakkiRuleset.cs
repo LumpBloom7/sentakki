@@ -21,6 +21,7 @@ using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Replays.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
+using osu.Game.Rulesets.Sentakki.Beatmaps.Formats;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Difficulty;
 using osu.Game.Rulesets.Sentakki.Localisation;
@@ -40,6 +41,12 @@ namespace osu.Game.Rulesets.Sentakki
 {
     public partial class SentakkiRuleset : Ruleset
     {
+        public SentakkiRuleset()
+        {
+            LegacySimaiBeatmapDecoder.Register();
+            RulesetInfo.OnlineID = 21;
+        }
+
         public override string RulesetAPIVersionSupported => CURRENT_RULESET_API_VERSION;
 
         private static readonly Lazy<bool> is_development_build
@@ -201,6 +208,7 @@ namespace osu.Game.Rulesets.Sentakki
             [BackgroundDependencyLoader]
             private void load(GameHost host)
             {
+
                 textureStore ??= new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
 
                 AddInternal(new Sprite
