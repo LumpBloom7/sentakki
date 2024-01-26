@@ -18,8 +18,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
     {
-        public override bool RemoveWhenNotAlive => false;
-
         private new DrawableSlide ParentHitObject => (DrawableSlide)base.ParentHitObject;
         public new SlideBody HitObject => (SlideBody)base.HitObject;
 
@@ -78,7 +76,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             AddRangeInternal(new Drawable[]
             {
                 Slidepath = new SlideVisual() { Colour = inactive_color },
-                SlideStars = new Container<StarPiece>
+                SlideStars = new ProxyableContainer<StarPiece>
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -287,6 +285,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.ClearNestedHitObjects();
             SlideCheckpoints.Clear(false);
+        }
+
+        private partial class ProxyableContainer<T> : Container<T> where T : Drawable
+        {
+            public override bool RemoveWhenNotAlive => false;
         }
     }
 }
