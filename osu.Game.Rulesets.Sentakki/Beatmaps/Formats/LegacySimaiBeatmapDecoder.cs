@@ -66,6 +66,27 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
         processNotes(output, string.Join('\n', noteLines));
     }
 
+    private void attachSample(SentakkiHitObject hitObject)
+    {
+        HitSampleInfo normal = new HitSampleInfo(HitSampleInfo.HIT_NORMAL);
+        HitSampleInfo soft = new HitSampleInfo(HitSampleInfo.HIT_NORMAL, HitSampleInfo.BANK_SOFT);
+
+        HitSampleInfo hitSampleInfo = hitObject.Ex ? soft : normal;
+
+        if (hitObject is Slide slide)
+        {
+            slide.NodeSamples = new IList<HitSampleInfo>[] { new[] { hitSampleInfo } };
+        }
+        else if (hitObject is Hold hold)
+        {
+            hold.NodeSamples = new IList<HitSampleInfo>[] { new[] { hitSampleInfo, soft } };
+        }
+        else
+        {
+            hitObject.Samples.Add(hitSampleInfo);
+        }
+    }
+
     private void processNotes(Beatmap beatmap, string chartNotes)
     {
         MaiChart chart = SimaiConvert.Deserialize(chartNotes);
@@ -98,7 +119,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                 var hitObject = noteToHitObject(noteCollection.time * 1000f, note, beatmap.ControlPointInfo);
                 if (hitObject != null)
                 {
-                    hitObject.Samples.Add(new HitSampleInfo(HitSampleInfo.HIT_NORMAL, hitObject.Ex ? HitSampleInfo.BANK_SOFT : HitSampleInfo.BANK_NORMAL));
+                    attachSample(hitObject);
                     beatmap.HitObjects.Add(hitObject);
                 }
             }
