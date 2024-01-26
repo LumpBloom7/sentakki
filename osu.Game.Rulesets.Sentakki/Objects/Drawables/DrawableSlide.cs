@@ -14,6 +14,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public Container<DrawableSlideBody> SlideBodies = null!;
         public Container<DrawableSlideTap> SlideTaps = null!;
 
+        public new Slide HitObject => (Slide)base.HitObject;
+
         public DrawableSlide()
             : this(null)
         {
