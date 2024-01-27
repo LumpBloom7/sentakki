@@ -17,7 +17,6 @@ namespace osu.Game.Rulesets.Sentakki.Difficulty
 
         protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills, double clockRate)
         {
-            int maxCombo = beatmap.GetMaxCombo();
             double starRating;
 
             if (beatmap.BeatmapInfo.Ruleset.ShortName == "Sentakki")
@@ -55,14 +54,13 @@ namespace osu.Game.Rulesets.Sentakki.Difficulty
             }
             else
             {
-                starRating = beatmap.BeatmapInfo.StarRating * 1.25f;
+                starRating = beatmap.BeatmapInfo.StarRating * 1.25f; // Inflate SR of converts, to encourage players to try lower diffs, without hurting their fragile ego.
             }
 
             return new DifficultyAttributes
             {
-                StarRating = starRating, // Inflate SR of converts, to encourage players to try lower diffs, without hurting their fragile ego.
+                StarRating = starRating,
                 Mods = mods,
-                MaxCombo = maxCombo
             };
         }
 

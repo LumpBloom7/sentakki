@@ -283,7 +283,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                 startLane = endLane;
             }
 
-            double millisPerBeat = controlPointInfo.TimingPointAt(note.parentCollection.time).BeatLength;
+            double millisPerBeat = controlPointInfo.TimingPointAt(note.parentCollection.time * 1000f).BeatLength;
             slide.SlideInfoList.Add(new SlideBodyInfo
             {
                 SlidePathParts = slideBodyParts.ToArray(),
