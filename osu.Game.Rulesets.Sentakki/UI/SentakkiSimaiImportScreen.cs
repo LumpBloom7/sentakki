@@ -17,6 +17,7 @@ using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Screens;
 using osuTK;
 using SimaiSharp;
+using SimaiSharp.Structures;
 
 namespace osu.Game.Rulesets.Sentakki.UI;
 
@@ -29,6 +30,7 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
     private OsuFileSelector fileSelector;
     private Container contentContainer;
 
+    private RoundedButton importRecursiveButton;
     private RoundedButton importButton;
 
     private const float duration = 300;
@@ -77,21 +79,16 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
                             Colour = colours.GreySeaFoamDarker,
                             RelativeSizeAxes = Axes.Both
                         },
-                        new Container
+                        importRecursiveButton = new RoundedButton
                         {
-                            RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding { Bottom = button_height + button_vertical_margin * 2 },
-                            Child = new OsuScrollContainer
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Anchor = Anchor.TopCentre,
-                                Origin = Anchor.TopCentre,
-                                ScrollContent =
-                                {
-                                    Anchor = Anchor.Centre,
-                                    Origin = Anchor.Centre,
-                                }
-                            },
+                            Text = "Import recursively from subfolders (VERY JANKY, DO NOT USE)",
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            RelativeSizeAxes = Axes.X,
+                            Height = button_height,
+                            Width = 0.9f,
+                            Margin = new MarginPadding { Vertical = button_vertical_margin },
+                            Action = () => startRecursiveImport(fileSelector.CurrentPath.Value)
                         },
                         importButton = new RoundedButton
                         {
@@ -102,8 +99,8 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
                             Height = button_height,
                             Width = 0.9f,
                             Margin = new MarginPadding { Vertical = button_vertical_margin },
-                            Action = () => startImport(fileSelector.CurrentPath.Value)
-                        }
+                            Action = () => startImportTask(fileSelector.CurrentPath.Value)
+                        },
                     }
                 }
             }
@@ -131,10 +128,11 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
     {
         if (e.NewValue == null)
         {
+            importRecursiveButton.Enabled.Value = false;
             importButton.Enabled.Value = false;
             return;
         }
-
+        importRecursiveButton.Enabled.Value = e.NewValue.EnumerateDirectories().Any();
         importButton.Enabled.Value = e.NewValue.EnumerateFiles().Any(f => f.Name is "maidata.txt");
         fileSelector.CurrentFile.Value = null;
     }
@@ -170,21 +168,60 @@ ArtistUnicode:{2}
 Creator:{3}
 Version:{4}
 Source:maimai
-Tags:sentakki-legacy {5}
+Tags:{5}
 [Events]
 {6}
 [HitObjects]
 {7}
 ";
 
-    private void startImport(DirectoryInfo path)
+    private void startRecursiveImport(DirectoryInfo path)
+    {
+        List<DirectoryInfo> directoryInfos = new List<DirectoryInfo>();
+
+        void recursive(DirectoryInfo dir)
+        {
+            if (dir.EnumerateFiles().Any(f => f.Name is "maidata.txt"))
+            {
+                directoryInfos.Add(dir);
+                // estimatedSize += (ulong)dir.EnumerateFiles().Sum(f => f.Length);
+            }
+            foreach (DirectoryInfo directoryInfo in dir.EnumerateDirectories())
+            {
+                recursive(directoryInfo);
+            }
+        }
+
+        recursive(path);
+
+        if (directoryInfos.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var dir in directoryInfos)
+        {
+            startImportTask(dir);
+        }
+    }
+
+    private void startImportTask(DirectoryInfo path)
+    {
+        Task.Factory.StartNew(async () =>
+        {
+            await game.Import(new[] { startImport(path) }).ConfigureAwait(false);
+        }
+    , TaskCreationOptions.LongRunning);
+    }
+
+    private ImportTask startImport(DirectoryInfo path)
     {
         SimaiFile simaiFile = new SimaiFile(path.EnumerateFileSystemInfos().First(f => f.Name is "maidata.txt"));
         Dictionary<string, string> dict = simaiFile.ToKeyValuePairs().ToDictionary(x => x.Key, x => x.Value);
 
         string title = dict.GetValueOrDefault("title", "Unknown Title");
         string artist = dict.GetValueOrDefault("artist", "Unknown Artist");
-        string allCreator = dict.GetValueOrDefault("des", "Unknown Creator");
+        string allCreator = dict.GetValueOrDefault("des", "-");
         string first = dict.GetValueOrDefault("first", "0");
 
         string trackName = "track.mp3";
@@ -243,15 +280,36 @@ Tags:sentakki-legacy {5}
                     chart = $"{{#{first}}}," + chart;
                 }
 
+                MaiChart maiChart = SimaiConvert.Deserialize(chart);
+
+                bool isDeluxe = false;
+
+                foreach (NoteCollection noteCollection in maiChart.NoteCollections)
+                {
+                    foreach (var note in noteCollection)
+                    {
+                        if (note.IsEx // Ex note
+                            || note.slidePaths.Any(slidePath => slidePath.segments.Count > 1 || slidePath.type == NoteType.Break) // Chain slide | Break slide
+                            || note.location.group != NoteGroup.Tap // TOUCH
+                           )
+                        {
+                            isDeluxe = true;
+                        }
+                    }
+                }
+
                 string creator = dict.GetValueOrDefault($"des_{diffIndex}", allCreator);
                 string level = dict.GetValueOrDefault($"lv_{diffIndex}", "0");
-                string osuFile = string.Format(osu_template, trackName, title, artist, creator, diffName, level, string.Join("\n", events), chart);
+
+                string[] tags = new[] { "sentakki-legacy", level, creator, isDeluxe ? "deluxe" : "standard" };
+
+                string osuFile = string.Format(osu_template, trackName, title, artist, creator, diffName, string.Join(" ", tags), string.Join("\n", events), chart);
                 ZipArchiveEntry entry = zip.CreateEntry($"{diffName}.osu", CompressionLevel.Fastest);
                 using Stream entryStream = entry.Open();
                 entryStream.Write(System.Text.Encoding.UTF8.GetBytes(osuFile));
             }
         }
 
-        game.Import(new[] { new ImportTask(zipStream, $"{artist} - {title}.osz") }).Wait();
+        return new ImportTask(zipStream, $"{artist} - {title}.osz");
     }
 }

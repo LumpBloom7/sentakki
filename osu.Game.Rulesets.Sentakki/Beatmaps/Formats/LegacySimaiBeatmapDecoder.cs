@@ -93,13 +93,17 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
         foreach (var timingChange in chart.TimingChanges)
         {
+            if (timingChange.SecondsPerBar <= 0f || (chartNotes.StartsWith("{#", StringComparison.Ordinal) && timingChange.time == 0f))
+                continue;
+
+            double coercedTime = timingChange.time >= 0f ? timingChange.time : timingChange.time - Math.Floor(timingChange.time / timingChange.SecondsPerBar) * timingChange.SecondsPerBar;
             var controlPoint = new TimingControlPoint
             {
-                Time = timingChange.time * 1000f,
+                Time = coercedTime * 1000f,
                 BeatLength = timingChange.SecondsPerBar * 1000f
             };
 
-            if (timingChange.subdivisions != 0 && timingChange.subdivisions % 1 == 0)
+            if (timingChange.subdivisions > 0 && timingChange.subdivisions % 1 == 0)
             {
                 controlPoint.TimeSignature = new TimeSignature((int)timingChange.subdivisions);
             }
@@ -117,6 +121,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
             foreach (var note in noteCollection)
             {
                 var hitObject = noteToHitObject(noteCollection.time * 1000f, note, beatmap.ControlPointInfo);
+
                 if (hitObject != null)
                 {
                     attachSample(hitObject);
