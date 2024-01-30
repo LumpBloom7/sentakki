@@ -199,7 +199,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                 StartTime = firstHitObject.StartTime,
                 SlideInfoList = firstHitObject.SlideInfoList,
                 Samples = firstHitObject.Samples,
-                NodeSamples = firstHitObject.NodeSamples,
                 Lane = firstHitObject.Lane,
                 Break = firstHitObject.Break
             };
@@ -275,7 +274,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                         StartTime = newSt,
                         SlideInfoList = new List<SlideBodyInfo> { slideInfo },
                         Samples = slide.Samples,
-                        NodeSamples = slide.NodeSamples,
                         Lane = slide.Lane,
                         Break = slide.Break
                     };
