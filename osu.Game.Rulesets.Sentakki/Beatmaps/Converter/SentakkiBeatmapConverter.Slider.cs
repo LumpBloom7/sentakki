@@ -73,7 +73,7 @@ public partial class SentakkiBeatmapConverter
             },
             Lane = lane.NormalizePath(),
             StartTime = original.StartTime,
-            NodeSamples = nodeSamples,
+            Samples = nodeSamples.FirstOrDefault(),
             Break = headBreak
         };
 

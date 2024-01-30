@@ -311,7 +311,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 },
                 Lane = noteLane,
                 StartTime = original.StartTime,
-                NodeSamples = samples,
+                Samples = samples.FirstOrDefault(),
                 Break = hasBreakHead
             };
         }

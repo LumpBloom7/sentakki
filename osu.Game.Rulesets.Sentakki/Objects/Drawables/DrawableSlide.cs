@@ -16,6 +16,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public Container<DrawableSlideBody> SlideBodies = null!;
         public Container<DrawableSlideTap> SlideTaps = null!;
 
+        public new Slide HitObject => (Slide)base.HitObject;
+
         public DrawableSlide()
             : this(null)
         {
@@ -45,6 +47,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Origin = Anchor.Centre,
                 }
             });
+        }
+        protected override void LoadSamples()
+        {
+            // The slide parent object doesn't need a sample
         }
 
         // This shouldn't play any samples

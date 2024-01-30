@@ -33,8 +33,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             }
         }
 
-        public IList<IList<HitSampleInfo>> NodeSamples = new List<IList<HitSampleInfo>>();
-
         public double EndTime => StartTime + Duration;
 
         public override Color4 DefaultNoteColour => Color4.Aqua;
@@ -51,7 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             {
                 LaneBindable = { BindTarget = LaneBindable },
                 StartTime = StartTime,
-                Samples = NodeSamples.Any() ? NodeSamples.First() : Samples,
+                Samples = Samples,
                 Break = Break,
                 Ex = Ex
             });
