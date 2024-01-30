@@ -17,6 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         public readonly List<Lane> Lanes = new List<Lane>();
 
         private readonly SortedDrawableProxyContainer slideBodyProxyContainer;
+        private readonly SortedDrawableProxyContainer slideStarProxyContainer;
         private readonly SortedDrawableProxyContainer lanedNoteProxyContainer;
 
         public readonly LineRenderer HitObjectLineRenderer;
@@ -49,6 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 chevronPool = new DrawablePool<SlideChevron>(100),
                 HitObjectLineRenderer = new LineRenderer(),
                 slideBodyProxyContainer = new SortedDrawableProxyContainer(),
+                slideStarProxyContainer = new SortedDrawableProxyContainer(),
                 LanedHitObjectArea = new Container
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -87,7 +89,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
             switch (hitObject)
             {
                 case DrawableSlideBody s:
-                    slideBodyProxyContainer.Add(s.CreateProxy(), s);
+                    slideBodyProxyContainer.Add(s.Slidepath.CreateProxy(), s);
+                    slideStarProxyContainer.Add(s.SlideStars.CreateProxy(), s);
                     break;
 
                 case DrawableTap t:
