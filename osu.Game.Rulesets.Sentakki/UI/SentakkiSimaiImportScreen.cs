@@ -9,10 +9,10 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Logging;
 using osu.Framework.Screens;
 using osu.Game.Database;
 using osu.Game.Graphics;
-using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Screens;
 using osuTK;
@@ -81,7 +81,7 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
                         },
                         importRecursiveButton = new RoundedButton
                         {
-                            Text = "Import recursively from subfolders (VERY JANKY, DO NOT USE)",
+                            Text = "Import recursively from subfolders (JANKY)",
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             RelativeSizeAxes = Axes.X,
@@ -132,6 +132,7 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
             importButton.Enabled.Value = false;
             return;
         }
+
         importRecursiveButton.Enabled.Value = e.NewValue.EnumerateDirectories().Any();
         importButton.Enabled.Value = e.NewValue.EnumerateFiles().Any(f => f.Name is "maidata.txt");
         fileSelector.CurrentFile.Value = null;
@@ -177,15 +178,20 @@ Tags:{5}
 
     private void startRecursiveImport(DirectoryInfo path)
     {
-        List<DirectoryInfo> directoryInfos = new List<DirectoryInfo>();
-
         void recursive(DirectoryInfo dir)
         {
             if (dir.EnumerateFiles().Any(f => f.Name is "maidata.txt"))
             {
-                directoryInfos.Add(dir);
-                // estimatedSize += (ulong)dir.EnumerateFiles().Sum(f => f.Length);
+                try
+                {
+                    startImportTask(dir);
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e, $"Error during importing {dir}");
+                }
             }
+
             foreach (DirectoryInfo directoryInfo in dir.EnumerateDirectories())
             {
                 recursive(directoryInfo);
@@ -193,25 +199,15 @@ Tags:{5}
         }
 
         recursive(path);
-
-        if (directoryInfos.Count == 0)
-        {
-            return;
-        }
-
-        foreach (var dir in directoryInfos)
-        {
-            startImportTask(dir);
-        }
     }
 
     private void startImportTask(DirectoryInfo path)
     {
         Task.Factory.StartNew(async () =>
-        {
-            await game.Import(new[] { startImport(path) }).ConfigureAwait(false);
-        }
-    , TaskCreationOptions.LongRunning);
+            {
+                await game.Import(new[] { startImport(path) }).ConfigureAwait(false);
+            }
+            , TaskCreationOptions.LongRunning);
     }
 
     private ImportTask startImport(DirectoryInfo path)
@@ -282,26 +278,16 @@ Tags:{5}
 
                 MaiChart maiChart = SimaiConvert.Deserialize(chart);
 
-                bool isDeluxe = false;
-
-                foreach (NoteCollection noteCollection in maiChart.NoteCollections)
-                {
-                    foreach (var note in noteCollection)
-                    {
-                        if (note.IsEx // Ex note
-                            || note.slidePaths.Any(slidePath => slidePath.segments.Count > 1 || slidePath.type == NoteType.Break) // Chain slide | Break slide
-                            || note.location.group != NoteGroup.Tap // TOUCH
-                           )
-                        {
-                            isDeluxe = true;
-                        }
-                    }
-                }
+                bool isDeluxe = maiChart.NoteCollections.Any(noteCollection => noteCollection.Any(note =>
+                        note.IsEx // Ex note
+                        || note.slidePaths.Any(slidePath => slidePath.segments.Count > 1 || slidePath.type == NoteType.Break) // Chain slide | Break slide
+                        || note.location.group != NoteGroup.Tap // TOUCH
+                ));
 
                 string creator = dict.GetValueOrDefault($"des_{diffIndex}", allCreator);
                 string level = dict.GetValueOrDefault($"lv_{diffIndex}", "0");
 
-                string[] tags = new[] { "sentakki-legacy", level, creator, isDeluxe ? "deluxe" : "standard" };
+                string[] tags = { "sentakki-legacy", level, creator, isDeluxe ? "deluxe" : "standard" };
 
                 string osuFile = string.Format(osu_template, trackName, title, artist, creator, diffName, string.Join(" ", tags), string.Join("\n", events), chart);
                 ZipArchiveEntry entry = zip.CreateEntry($"{diffName}.osu", CompressionLevel.Fastest);

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using osu.Framework.Logging;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
@@ -73,11 +72,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
         HitSampleInfo hitSampleInfo = hitObject.Ex ? soft : normal;
 
-        if (hitObject is Slide slide)
-        {
-            slide.NodeSamples = new IList<HitSampleInfo>[] { new[] { hitSampleInfo } };
-        }
-        else if (hitObject is Hold hold)
+        if (hitObject is Hold hold)
         {
             hold.NodeSamples = new IList<HitSampleInfo>[] { new[] { hitSampleInfo, soft } };
         }
