@@ -24,7 +24,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public void ApplyToBeatmap(IBeatmap beatmap)
         {
             foreach (SentakkiHitObject ho in beatmap.HitObjects)
-                ho.Ex = true;
+                if (ho is IExNote exNote)
+                    exNote.Ex = true;
         }
     }
 }
