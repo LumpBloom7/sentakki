@@ -280,7 +280,7 @@ Tags:{5}
 
                 bool isDeluxe = maiChart.NoteCollections.Any(noteCollection => noteCollection.Any(note =>
                         note.IsEx // Ex note
-                        || note.slidePaths.Any(slidePath => slidePath.segments.Count > 1 || slidePath.type == NoteType.Break) // Chain slide | Break slide
+                        || note.slidePaths.Any(isFestivalSlidePath) // Festival slide
                         || note.location.group != NoteGroup.Tap // TOUCH
                 ));
 
@@ -293,6 +293,14 @@ Tags:{5}
                 ZipArchiveEntry entry = zip.CreateEntry($"{diffName}.osu", CompressionLevel.Fastest);
                 using Stream entryStream = entry.Open();
                 entryStream.Write(System.Text.Encoding.UTF8.GetBytes(osuFile));
+                continue;
+
+                static bool isFestivalSlidePath(SlidePath slidePath) =>
+                    slidePath.type == NoteType.Break
+                    || (
+                        !(slidePath.segments.Count == 2 && slidePath.segments.All(seg => seg.slideType == SlideType.StraightLine))
+                        && slidePath.segments.Count > 1
+                    );
             }
         }
 
