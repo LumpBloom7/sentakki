@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using osu.Framework.Logging;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
@@ -139,27 +140,22 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
     private SentakkiHitObject? noteToHitObject(double time, Note note, ControlPointInfo controlPointInfo)
     {
         bool isBreak = note.type == NoteType.Break;
-        Slide.TapTypeEnum slideTapType = Slide.TapTypeEnum.Star;
+        NoteType senNoteType;
+
         if (note.IsStar || note.slidePaths.Count > 0)
         {
-            if (note.type == NoteType.ForceInvalidate)
-                slideTapType = Slide.TapTypeEnum.None;
-            else if (note.IsStar)
-                slideTapType = Slide.TapTypeEnum.Star;
-            else
-                slideTapType = Slide.TapTypeEnum.Tap;
-            note.type = NoteType.Slide;
+            senNoteType = NoteType.Slide;
         }
         else if (note.location.group != NoteGroup.Tap)
         {
-            note.type = NoteType.Touch;
+            senNoteType = NoteType.Touch;
         }
         else
         {
-            note.type = note.length != null ? NoteType.Hold : NoteType.Tap;
+            senNoteType = note.length != null ? NoteType.Hold : NoteType.Tap;
         }
 
-        switch (note.type)
+        switch (senNoteType)
         {
             case NoteType.Tap:
                 return new Tap
@@ -206,6 +202,13 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                     Ex = note.IsEx,
                     TapType = slideTapType,
                 };
+
+                if (note.type is NoteType.ForceInvalidate)
+                    slide.TapType = Slide.TapTypeEnum.None;
+
+                if (note.appearance is NoteAppearance.ForceNormal)
+                    slide.TapType = Slide.TapTypeEnum.Tap;
+
                 // Currently Sentakki's head of slide is always a star
                 attachSlideBodies(slide, note, controlPointInfo);
                 return slide;
