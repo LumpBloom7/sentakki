@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public new SlideBody HitObject => (SlideBody)base.HitObject;
 
         // This slide body can only be interacted with iff the slidetap associated with this slide is judged
-        public bool IsHittable => ParentHitObject is not null && ParentHitObject.SlideTaps.Child.Judged;
+        public bool IsHittable => ParentHitObject is not null && (ParentHitObject.HitObject.TapType is Slide.TapTypeEnum.None || ParentHitObject.SlideTaps.Child.Judged);
 
         public Container<DrawableSlideCheckpoint> SlideCheckpoints { get; private set; } = null!;
 
