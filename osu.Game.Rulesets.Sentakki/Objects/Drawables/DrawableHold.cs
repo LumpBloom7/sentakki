@@ -71,6 +71,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.OnFree();
             HoldStartTime = null;
             TotalHoldTime = 0;
+            pressedCount = 0;
         }
 
         protected override void UpdateInitialTransforms()
@@ -214,6 +215,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             HoldStartTime = null;
         }
 
+        // Tracks how many inputs are pressing on this HitObject currently
+        private int pressedCount = 0;
         public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)
         {
             if (AllJudged)
@@ -228,7 +231,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 NoteBody.FadeColour(AccentColour.Value, 50);
             }
 
-            return true;
+            // Only the first input to this hitobject will be blocked
+            if (pressedCount++ == 0)
+                return true;
+
+            // Passthrough excess inputs to later hitobjects in the same lane
+            return false;
         }
 
         public void OnReleased(KeyBindingReleaseEvent<SentakkiAction> e)
@@ -239,7 +247,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
                 return;
 
-            endHold();
+
+            // We only release the hold once ALL inputs are released
+            if (--pressedCount == 0)
+                endHold();
 
             if (!AllJudged)
                 NoteBody.FadeColour(Color4.Gray, 100);
