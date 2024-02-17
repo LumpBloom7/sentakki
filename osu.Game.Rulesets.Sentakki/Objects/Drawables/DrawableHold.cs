@@ -247,7 +247,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
                 return;
 
-
             // We only release the hold once ALL inputs are released
             if (--pressedCount == 0)
                 endHold();
