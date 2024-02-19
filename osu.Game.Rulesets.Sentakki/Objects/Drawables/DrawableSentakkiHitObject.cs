@@ -57,11 +57,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override JudgementResult CreateResult(Judgement judgement) => new SentakkiJudgementResult(HitObject, judgement);
 
-        protected void ApplyResult(HitResult result)
+        protected new void ApplyResult(HitResult result)
         {
-            void resultApplication(JudgementResult r) => ((SentakkiJudgementResult)r).Type = result;
+            var SentakkiJudgementResult = (SentakkiJudgementResult)Result;
+            if (result == HitResult.Perfect)
+            {
+                SentakkiJudgementResult.Critical = true;
+                result = Result.Judgement.MaxResult;
+            }
+            else
+            {
+                SentakkiJudgementResult.Critical = false;
+            }
 
-            ApplyResult(resultApplication);
+            base.ApplyResult(result);
         }
 
         protected override void OnFree()
@@ -95,12 +104,5 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         private bool transformResetQueued;
-
-        protected new virtual void ApplyResult(Action<JudgementResult> application)
-        {
-            // Apply judgement to this object
-            if (!Result.HasResult)
-                base.ApplyResult(application);
-        }
     }
 }

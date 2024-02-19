@@ -5,6 +5,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -78,16 +79,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 ApplyResult(Result.Judgement.MaxResult);
         }
 
-        protected override void ApplyResult(Action<JudgementResult> application)
+        protected new void ApplyResult(HitResult result)
         {
             if (Judged)
                 return;
 
             // Make sure remaining nodes are judged
             foreach (var node in nodes)
-                node.ApplyResult(application);
+                node.ApplyResult(result);
 
-            base.ApplyResult(application);
+            base.ApplyResult(result);
         }
 
         // Forcefully miss this node, used when players fail to complete the slide on time.

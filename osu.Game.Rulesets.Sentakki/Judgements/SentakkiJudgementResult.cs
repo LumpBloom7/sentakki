@@ -20,5 +20,5 @@ public class SentakkiJudgementResult : JudgementResult
         }
     }
 
-    public bool Critical { get; private set; }
+    public bool Critical { get; set; }
 }
