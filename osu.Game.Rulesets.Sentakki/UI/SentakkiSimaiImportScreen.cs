@@ -88,7 +88,7 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
                             Height = button_height,
                             Width = 0.9f,
                             Margin = new MarginPadding { Vertical = button_vertical_margin },
-                            Action = () => startRecursiveImport(fileSelector.CurrentPath.Value)
+                            Action = () => startRecursiveBatch(fileSelector.CurrentPath.Value)
                         },
                         importButton = new RoundedButton
                         {
@@ -176,6 +176,29 @@ Tags:{5}
 {7}
 ";
 
+    private void startRecursiveBatch(DirectoryInfo path)
+    {
+        static void recurse(DirectoryInfo path, List<DirectoryInfo> directories)
+        {
+            if (path.EnumerateFiles().Any(f => f.Name is "maidata.txt"))
+            {
+                directories.Add(path);
+            }
+
+            foreach (DirectoryInfo directoryInfo in path.EnumerateDirectories())
+            {
+                recurse(directoryInfo, directories);
+            }
+        }
+        List<DirectoryInfo> directories = new();
+
+        foreach (DirectoryInfo directoryInfo in path.EnumerateDirectories())
+        {
+            recurse(directoryInfo, directories);
+        }
+
+        startImportTask(directories);
+    }
     private void startRecursiveImport(DirectoryInfo path)
     {
         void recursive(DirectoryInfo dir)
@@ -208,6 +231,17 @@ Tags:{5}
                 await game.Import(new[] { startImport(path) }).ConfigureAwait(false);
             }
             , TaskCreationOptions.LongRunning);
+    }
+
+    private void startImportTask(List<DirectoryInfo> paths)
+    {
+        Task.Factory.StartNew(async () =>
+        {
+            foreach (var item in paths)
+            {
+                await game.Import(new[] { startImport(item) }).ConfigureAwait(false);
+            }
+        }, TaskCreationOptions.LongRunning);
     }
 
     private ImportTask startImport(DirectoryInfo path)
