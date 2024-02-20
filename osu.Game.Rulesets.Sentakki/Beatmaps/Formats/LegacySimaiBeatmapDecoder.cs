@@ -200,7 +200,6 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                     StartTime = time,
                     Break = isBreak,
                     Ex = note.IsEx,
-                    TapType = slideTapType,
                 };
 
                 if (note.type is NoteType.ForceInvalidate)
@@ -209,7 +208,6 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                 if (note.appearance is NoteAppearance.ForceNormal)
                     slide.TapType = Slide.TapTypeEnum.Tap;
 
-                // Currently Sentakki's head of slide is always a star
                 attachSlideBodies(slide, note, controlPointInfo);
                 return slide;
         }

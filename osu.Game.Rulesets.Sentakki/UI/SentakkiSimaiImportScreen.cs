@@ -14,6 +14,8 @@ using osu.Framework.Screens;
 using osu.Game.Database;
 using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterfaceV2;
+using osu.Game.Overlays;
+using osu.Game.Overlays.Notifications;
 using osu.Game.Screens;
 using osuTK;
 using SimaiSharp;
@@ -29,6 +31,7 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
 
     private OsuFileSelector fileSelector;
     private Container contentContainer;
+    private INotificationOverlay notificationOverlay;
 
     private RoundedButton importRecursiveButton;
     private RoundedButton importButton;
@@ -44,8 +47,9 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
     private OsuColour colours { get; set; }
 
     [BackgroundDependencyLoader(true)]
-    private void load()
+    private void load(INotificationOverlay notificationOverlay)
     {
+        this.notificationOverlay = notificationOverlay;
         InternalChild = contentContainer = new Container
         {
             Masking = true,
@@ -190,7 +194,8 @@ Tags:{5}
                 recurse(directoryInfo, directories);
             }
         }
-        List<DirectoryInfo> directories = new();
+
+        List<DirectoryInfo> directories = new List<DirectoryInfo>();
 
         foreach (DirectoryInfo directoryInfo in path.EnumerateDirectories())
         {
@@ -198,30 +203,6 @@ Tags:{5}
         }
 
         startImportTask(directories);
-    }
-    private void startRecursiveImport(DirectoryInfo path)
-    {
-        void recursive(DirectoryInfo dir)
-        {
-            if (dir.EnumerateFiles().Any(f => f.Name is "maidata.txt"))
-            {
-                try
-                {
-                    startImportTask(dir);
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e, $"Error during importing {dir}");
-                }
-            }
-
-            foreach (DirectoryInfo directoryInfo in dir.EnumerateDirectories())
-            {
-                recursive(directoryInfo);
-            }
-        }
-
-        recursive(path);
     }
 
     private void startImportTask(DirectoryInfo path)
@@ -235,12 +216,43 @@ Tags:{5}
 
     private void startImportTask(List<DirectoryInfo> paths)
     {
+        if (paths.Count == 0)
+        {
+            return;
+        }
+
+        var notification = new ProgressNotification
+        {
+            Progress = 0,
+            State = ProgressNotificationState.Active,
+            Text = "Importing simai files...",
+            CompletionText = $"Imported {paths.Count} simai beatmaps",
+        };
+
+        notificationOverlay.Post(notification);
+
         Task.Factory.StartNew(async () =>
         {
-            foreach (var item in paths)
+            foreach (var (index, item) in paths.Select((i, v) => (v, i)))
             {
-                await game.Import(new[] { startImport(item) }).ConfigureAwait(false);
+                try
+                {
+                    // TODO: Figure out how to avoid creating too many "import initialization" notifications
+                    await game.Import(new[] { startImport(item) }).ConfigureAwait(false);
+                }
+                catch (Exception e)
+                {
+                    notificationOverlay.Post(new SimpleErrorNotification
+                    {
+                        Text = $"Failed to import {item.Name}: {e.Message}"
+                    });
+                }
+
+                notification.Text = $"Imported {index + 1}/{paths.Count} simai beatmaps";
+                notification.Progress = (float)(index + 1) / paths.Count;
             }
+
+            notification.State = ProgressNotificationState.Completed;
         }, TaskCreationOptions.LongRunning);
     }
 
