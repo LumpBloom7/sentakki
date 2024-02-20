@@ -2,14 +2,14 @@
     <PropertyGroup Label="Project">
         <AssemblyTitle>sentakki for osu!lazer</AssemblyTitle>
         <Description>TAP, HOLD and SLIDE to the beat.</Description>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <OutputType>Library</OutputType>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <RootNamespace>osu.Game.Rulesets.Sentakki</RootNamespace>
         <AssemblyName>osu.Game.Rulesets.Sentakki</AssemblyName>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="ppy.osu.Game" Version="2024.130.2"/>
+        <PackageReference Include="ppy.osu.Game" Version="2024.219.0"/>
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\SimaiSharp\SimaiSharp\SimaiSharp.csproj" />

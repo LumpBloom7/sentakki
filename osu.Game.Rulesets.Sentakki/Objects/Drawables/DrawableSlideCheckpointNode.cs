@@ -3,6 +3,7 @@ using System.Linq;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Scoring;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
@@ -82,6 +83,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             return false;
         }
 
-        public new void ApplyResult(Action<JudgementResult> application) => base.ApplyResult(application);
+        public new void ApplyResult(HitResult result)
+        {
+            if (Judged)
+                return;
+
+            base.ApplyResult(result);
+        }
     }
 }
