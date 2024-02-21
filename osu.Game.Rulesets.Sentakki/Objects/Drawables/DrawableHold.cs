@@ -200,6 +200,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private bool beginHoldAt(double timeOffset)
         {
+            if (HoldStartTime is not null)
+                return false;
+
             if (timeOffset < -Head.HitObject.HitWindows.WindowFor(HitResult.Miss))
                 return false;
 
@@ -225,15 +228,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
                 return false;
 
+            pressedCount++;
+
             if (beginHoldAt(Time.Current - Head.HitObject.StartTime))
             {
                 Head.UpdateResult();
                 NoteBody.FadeColour(AccentColour.Value, 50);
-            }
-
-            // Only the first input to this hitobject will be blocked
-            if (pressedCount++ == 0)
                 return true;
+            }
 
             // Passthrough excess inputs to later hitobjects in the same lane
             return false;
