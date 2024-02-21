@@ -46,7 +46,7 @@ namespace osu.Game.Rulesets.Sentakki
             protected override void PropagateReleased(IEnumerable<Drawable> drawables, InputState state, SentakkiAction released)
             {
                 int actionCount = 0;
-                var pressed = (List<SentakkiAction>)PressedActions;
+                var pressed = PressedActions;
 
                 for (int i = 0; i < pressed.Count; ++i)
                 {
@@ -61,7 +61,7 @@ namespace osu.Game.Rulesets.Sentakki
             }
         }
 
-        public SlimReadOnlyListWrapper<SentakkiAction> PressedActions => ((List<SentakkiAction>)KeyBindingContainer.PressedActions).AsSlimReadOnly();
+        public SlimReadOnlyListWrapper<SentakkiAction> PressedActions => KeyBindingContainer.PressedActions;
 
         // For makeshift virtual input handling
         public void TriggerPressed(SentakkiAction action) => KeyBindingContainer.TriggerPressed(action);
