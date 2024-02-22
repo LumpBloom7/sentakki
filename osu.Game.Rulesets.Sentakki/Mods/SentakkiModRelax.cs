@@ -16,6 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override string Name => "Relax";
 
         public override string Acronym => "RX";
+        public override ModType Type => ModType.DifficultyReduction;
 
         public override LocalisableString Description => "All notes are EX notes, you've got nothing to prove!";
 
