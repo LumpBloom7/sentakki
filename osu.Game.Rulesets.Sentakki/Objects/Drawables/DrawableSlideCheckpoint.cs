@@ -29,7 +29,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // All hits can only be done after the slide tap has been judged
         public bool IsHittable => ParentHitObject.IsHittable && isPreviousNodeHit();
 
-        private bool isPreviousNodeHit() => ThisIndex < 1 || ParentHitObject.SlideCheckpoints[ThisIndex - 1].IsHit;
+        private bool isPreviousNodeHit() => ThisIndex < 2 || ParentHitObject.SlideCheckpoints[ThisIndex - 2].IsHit;
 
         private Container<DrawableSlideCheckpointNode> nodes = null!;
 
@@ -83,6 +83,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (Judged)
                 return;
+
+            // The previous node may not be judged due to slider hit order leniency allowing players to skip up to one node
+            if (ThisIndex > 0)
+                ParentHitObject.SlideCheckpoints[ThisIndex - 1].ApplyResult(result);
 
             // Make sure remaining nodes are judged
             foreach (var node in nodes)
