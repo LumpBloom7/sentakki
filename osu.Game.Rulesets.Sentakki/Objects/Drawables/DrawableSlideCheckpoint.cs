@@ -29,7 +29,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // All hits can only be done after the slide tap has been judged
         public bool IsHittable => ParentHitObject.IsHittable && isPreviousNodeHit();
 
-        private bool isPreviousNodeHit() => ThisIndex < 2 || ParentHitObject.SlideCheckpoints[ThisIndex - 2].IsHit;
+        public bool StrictSliderTracking { get; set; }
+
+        private int trackingLookBehindDistance => StrictSliderTracking ? 1 : 2;
+
+        private bool isPreviousNodeHit() => ThisIndex < trackingLookBehindDistance || ParentHitObject.SlideCheckpoints[ThisIndex - trackingLookBehindDistance].IsHit;
 
         private Container<DrawableSlideCheckpointNode> nodes = null!;
 
