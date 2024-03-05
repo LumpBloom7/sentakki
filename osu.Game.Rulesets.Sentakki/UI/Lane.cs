@@ -131,10 +131,16 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private void handleKeyPress(ValueChangedEvent<int> keys)
         {
             if (keys.NewValue < keys.OldValue)
-                SentakkiActionInputManager.TriggerReleased(SentakkiAction.Key1 + LaneNumber);
+                for (int i = 0; i < keys.OldValue - keys.NewValue; ++i)
+                {
+                    SentakkiActionInputManager.TriggerReleased(SentakkiAction.Key1 + LaneNumber);
+                }
 
             if (keys.NewValue > keys.OldValue)
-                SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + LaneNumber);
+                for (int i = 0; i < keys.NewValue - keys.OldValue; ++i)
+                {
+                    SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + LaneNumber);
+                }
         }
 
         public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)

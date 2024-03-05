@@ -250,8 +250,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
 
             // We only release the hold once ALL inputs are released
-            if (--pressedCount == 0)
-                endHold();
+            if (--pressedCount != 0)
+                return;
+
+            endHold();
 
             if (!AllJudged)
                 NoteBody.FadeColour(Color4.Gray, 100);
