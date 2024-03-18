@@ -144,6 +144,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (Time.Current < ((IHasDuration)HitObject).EndTime) return;
 
+            if (isHitting.Value)
+                totalHoldTime += 100;
+
             double result = totalHoldTime / ((IHasDuration)HitObject).Duration;
 
             HitResult resultType;

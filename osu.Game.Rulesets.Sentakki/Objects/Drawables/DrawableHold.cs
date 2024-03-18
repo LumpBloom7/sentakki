@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -106,7 +106,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (Time.Current > HitObject.GetEndTime())
             {
+                bool extendedHold = HoldStartTime is not null;
+
                 endHold();
+
+                TotalHoldTime += extendedHold ? 100 : 0;
+
                 double totalHoldRatio = TotalHoldTime / ((IHasDuration)HitObject).Duration;
                 HitResult result;
 
