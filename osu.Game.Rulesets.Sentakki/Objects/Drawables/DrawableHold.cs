@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -71,7 +71,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.OnFree();
             HoldStartTime = null;
             TotalHoldTime = 0;
-            pressedCount = 0;
         }
 
         protected override void UpdateInitialTransforms()
@@ -218,8 +217,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             HoldStartTime = null;
         }
 
-        // Tracks how many inputs are pressing on this HitObject currently
-        private int pressedCount = 0;
+        private SentakkiInputManager sentakkiActionInputManager = null!;
+        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
+
+        private int pressedCount
+        {
+            get
+            {
+                int count = 0;
+                foreach (var pressedAction in sentakkiActionInputManager.PressedActions)
+                {
+                    if (pressedAction == SentakkiAction.Key1 + HitObject.Lane)
+                        ++count;
+                }
+
+                return count;
+            }
+        }
+
         public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)
         {
             if (AllJudged)
@@ -227,8 +242,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
                 return false;
-
-            pressedCount++;
 
             if (beginHoldAt(Time.Current - Head.HitObject.StartTime))
             {
@@ -250,7 +263,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
 
             // We only release the hold once ALL inputs are released
-            if (--pressedCount != 0)
+            // We check for 1 here as drawables receive the event before the counter decrements
+            if (pressedCount > 1)
                 return;
 
             endHold();
