@@ -144,6 +144,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (Time.Current < ((IHasDuration)HitObject).EndTime) return;
 
+            // We award an extra 100ms hold time to encourage players to hold the note until the end
+            // This avoids the situation where a note is too short and is much harder to get a good judgement due to player reaction
+            if (isHitting.Value)
+                totalHoldTime += 100;
+
             double result = totalHoldTime / ((IHasDuration)HitObject).Duration;
 
             HitResult resultType;
