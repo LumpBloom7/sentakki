@@ -225,7 +225,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             get
             {
                 int count = 0;
-                foreach (var pressedAction in sentakkiActionInputManager.PressedActions)
+                foreach (var pressedAction in SentakkiActionInputManager.PressedActions)
                 {
                     if (pressedAction == SentakkiAction.Key1 + HitObject.Lane)
                         ++count;
