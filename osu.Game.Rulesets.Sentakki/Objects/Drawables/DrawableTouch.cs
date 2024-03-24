@@ -45,7 +45,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (DrawableSentakkiRuleset is not null)
                 AnimationDuration.BindTo(DrawableSentakkiRuleset?.AdjustedTouchAnimDuration);
 
-            Size = new Vector2(100);
+            Size = new Vector2(130);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             AddRangeInternal(new Drawable[]

@@ -65,8 +65,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         #region Input Handling
 
-        private const float receptor_angle_range = 45 * 1.4f;
+        private const float receptor_angle_range = 45;
         private const float receptor_angle_range_mid = receptor_angle_range / 2;
+
+        private const float receptor_angle_range_inner = receptor_angle_range * 1.4f;
+        private const float receptor_angle_range_inner_mid = receptor_angle_range_inner / 2;
 
         private SentakkiInputManager sentakkiActionInputManager = null!;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
@@ -78,10 +81,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
             var localPos = ToLocalSpace(screenSpacePos);
 
             float distance = Vector2.DistanceSquared(Vector2.Zero, localPos);
-            if (distance is < (200 * 200) or > (400 * 400)) return false;
+            if (distance is < (200 * 200) or > (600 * 600)) return false;
+
+            float targetAngleRangeMid = distance > 400 ? receptor_angle_range_mid : receptor_angle_range_inner_mid;
 
             float angleDelta = SentakkiExtensions.GetDeltaAngle(0, Vector2.Zero.GetDegreesFromPosition(localPos));
-            if (Math.Abs(angleDelta) > receptor_angle_range_mid) return false;
+            if (Math.Abs(angleDelta) > targetAngleRangeMid) return false;
 
             return true;
         }
@@ -126,10 +131,16 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private void handleKeyPress(ValueChangedEvent<int> keys)
         {
             if (keys.NewValue < keys.OldValue)
-                SentakkiActionInputManager.TriggerReleased(SentakkiAction.Key1 + LaneNumber);
+                for (int i = 0; i < keys.OldValue - keys.NewValue; ++i)
+                {
+                    SentakkiActionInputManager.TriggerReleased(SentakkiAction.Key1 + LaneNumber);
+                }
 
             if (keys.NewValue > keys.OldValue)
-                SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + LaneNumber);
+                for (int i = 0; i < keys.NewValue - keys.OldValue; ++i)
+                {
+                    SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + LaneNumber);
+                }
         }
 
         public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)

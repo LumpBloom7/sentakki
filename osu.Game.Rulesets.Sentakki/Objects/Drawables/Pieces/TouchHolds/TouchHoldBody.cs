@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
         public readonly TouchHoldProgressPiece ProgressPiece;
         private readonly TouchHoldCentrePiece centrePiece;
 
-        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => centrePiece.ReceivePositionalInputAt(screenSpacePos);
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => ProgressPiece.ReceivePositionalInputAt(screenSpacePos);
 
         public TouchHoldBody()
         {

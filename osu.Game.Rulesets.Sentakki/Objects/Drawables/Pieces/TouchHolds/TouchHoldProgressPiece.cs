@@ -48,7 +48,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             InnerRadius = 1,
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Current = { Value = 0 },
+                            Progress = 0,
                             Colour = colours.Blue
                         },
                         greenProgress = new CircularProgress
@@ -58,7 +58,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             InnerRadius = 1,
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Current = { Value = 0 },
+                            Progress = 0,
                             Colour = colours.Green
                         },
                         yellowProgress = new CircularProgress
@@ -68,7 +68,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             InnerRadius = 1,
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Current = { Value = 0 },
+                            Progress = 0,
                             Colour = colours.Yellow,
                         },
                         redProgress = new CircularProgress
@@ -78,7 +78,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             InnerRadius = 1,
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Current = { Value = 0 },
+                            Progress = 0,
                             Colour = colours.Red,
                         },
                     }
@@ -87,10 +87,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
 
             ProgressBindable.BindValueChanged(p =>
             {
-                redProgress.Current.Value = Math.Min(p.NewValue, .25);
-                yellowProgress.Current.Value = Math.Min(p.NewValue, .50);
-                greenProgress.Current.Value = Math.Min(p.NewValue, .75);
-                blueProgress.Current.Value = p.NewValue;
+                redProgress.Progress = Math.Min(p.NewValue, .25);
+                yellowProgress.Progress = Math.Min(p.NewValue, .50);
+                greenProgress.Progress = Math.Min(p.NewValue, .75);
+                blueProgress.Progress = p.NewValue;
             });
         }
     }

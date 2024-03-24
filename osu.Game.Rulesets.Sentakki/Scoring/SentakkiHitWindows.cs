@@ -6,7 +6,7 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
     {
         protected const double timing_unit = 1000 / 60.0; // A single frame
 
-        public HitResult MinimumHitResult = HitResult.None;
+        public HitResult MinimumHitResult = HitResult.Miss;
 
         private SentakkiJudgementMode judgementMode = SentakkiJudgementMode.Normal;
         public SentakkiJudgementMode JudgementMode
