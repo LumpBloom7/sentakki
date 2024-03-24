@@ -5,6 +5,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class SlideBodyInfo : IEquatable<SlideBodyInfo>
     {
+        private static readonly SentakkiSlidePath empty_path = SlidePaths.CreateSlidePath(new[]
+        {
+            new SlideBodyPart(SlidePaths.PathShapes.Straight, endOffset: 0, false)
+        });
+
         private SlideBodyPart[] slidePathParts = null!;
 
         public SlideBodyPart[] SlidePathParts
@@ -17,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             }
         }
 
-        public SentakkiSlidePath SlidePath { get; private set; } = null!;
+        public SentakkiSlidePath SlidePath { get; private set; } = empty_path;
 
         // Duration of the slide
         public double Duration;
@@ -29,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // Whether the slide body should have a break modifier applied to them.
         public bool Break;
 
-        public void UpdatePaths() => SlidePath = SlidePaths.CreateSlidePath(slidePathParts);
+        public void UpdatePaths() => SlidePath = (slidePathParts.Length > 0) ? SlidePaths.CreateSlidePath(slidePathParts) : empty_path;
 
         public override bool Equals(object? obj) => obj is not null && obj is SlideBodyInfo other && Equals(other);
 
