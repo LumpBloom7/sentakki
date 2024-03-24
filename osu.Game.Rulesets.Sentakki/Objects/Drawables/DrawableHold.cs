@@ -106,11 +106,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (Time.Current > HitObject.GetEndTime())
             {
-                bool extendedHold = HoldStartTime is not null;
+                bool holdingAtEndTime = HoldStartTime is not null;
 
                 endHold();
 
-                TotalHoldTime += extendedHold ? 100 : 0;
+                // We award an extra 100ms hold time to encourage players to hold the note until the end
+                // This avoids the situation where a note is too short and is much harder to get a good judgement due to player reaction
+                TotalHoldTime += holdingAtEndTime ? 100 : 0;
 
                 double totalHoldRatio = TotalHoldTime / ((IHasDuration)HitObject).Duration;
                 HitResult result;
