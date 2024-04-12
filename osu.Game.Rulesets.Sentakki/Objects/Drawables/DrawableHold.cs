@@ -69,7 +69,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void OnApply()
         {
             base.OnApply();
-            lastCatchTime = HitObject.StartTime;
             isHolding = false;
         }
 
@@ -106,14 +105,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (!userTriggered)
             {
-                if ((Auto || isHolding) && timeOffset >= 0)
+                if (timeOffset >= 0 && Auto)
                     ApplyResult(HitResult.Perfect);
+                else if (timeOffset >= 0 && isHolding)
+                    ApplyResult(applyDeductionTo(HitResult.Perfect));
                 else if (!HitObject.HitWindows.CanBeHit(timeOffset: timeOffset))
                     ApplyResult(Result.Judgement.MinResult);
 
                 return;
             }
-
             var result = HitObject.HitWindows.ResultFor(timeOffset);
 
             if (result == HitResult.None)
@@ -122,7 +122,34 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (HitObject.Ex && result.IsHit())
                 result = Result.Judgement.MaxResult;
 
-            ApplyResult(result);
+            ApplyResult(applyDeductionTo(result));
+
+            HitResult applyDeductionTo(HitResult originalResult)
+            {
+                int deduction = (int)Math.Min(Math.Floor(timeNotHeld / 300), 3);
+
+                var newResult = originalResult - deduction;
+
+                if (originalResult <= HitResult.Ok)
+                    return HitResult.Ok;
+
+                return newResult;
+            }
+        }
+
+        private double timeNotHeld = 0;
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (!Head.AllJudged)
+                return;
+
+            if (isHolding)
+                return;
+
+            timeNotHeld += Time.Elapsed;
         }
 
         protected override void UpdateHitStateTransforms(ArmedState state)
@@ -199,8 +226,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return count;
             }
         }
-        private double lastCatchTime = 0;
-        private bool recatchAllowed => lastCatchTime >= Time.Current - 200; // Allow recatch within 200ms of last catch;
+
         private bool isHolding = false;
 
         public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)
@@ -209,10 +235,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return false;
 
             if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
-                return false;
-
-            // Check recatch
-            if (!recatchAllowed)
                 return false;
 
             // Passthrough excess inputs to later hitobjects in the same lane
@@ -245,7 +267,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             UpdateResult(true);
             isHolding = false;
-            lastCatchTime = Time.Current;
 
             if (!AllJudged)
                 NoteBody.FadeColour(Color4.Gray, 100);
