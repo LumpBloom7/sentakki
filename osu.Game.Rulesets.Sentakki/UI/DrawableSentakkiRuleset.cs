@@ -8,6 +8,7 @@ using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Game.Beatmaps;
+using osu.Game.Screens.Play;
 using osu.Game.Input.Bindings;
 using osu.Game.Input.Handlers;
 using osu.Game.Replays;
@@ -159,15 +160,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public override DrawableHitObject<SentakkiHitObject> CreateDrawableRepresentation(SentakkiHitObject h) => null!;
 
-        // protected override ResumeOverlay CreateResumeOverlay() => new SentakkiResumeOverlay();
+        protected override ResumeOverlay CreateResumeOverlay() => new DelayedResumeOverlay();
 
         protected override PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset.RulesetInfo);
-
-        /* public override void RequestResume(Action continueResume)
-        {
-            ResumeOverlay.GameplayCursor = Cursor;
-            ResumeOverlay.ResumeAction = continueResume;
-            ResumeOverlay.Show();
-        } */
     }
 }
