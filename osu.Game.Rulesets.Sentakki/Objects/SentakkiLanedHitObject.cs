@@ -44,7 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 });
         }
 
-        public override IList<HitSampleInfo> AuxiliarySamples => CreateBreakSample();
+        public override IList<HitSampleInfo> AuxiliarySamples => new HitSampleInfo[] { new BreakSample(CreateHitSampleInfo()) };
 
         public HitSampleInfo[] CreateBreakSample()
         {
@@ -53,8 +53,29 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             return new[]
             {
-                new SentakkiHitSampleInfo("Break", CreateHitSampleInfo().Volume)
+                new BreakSample( CreateHitSampleInfo())
             };
+        }
+
+        public class BreakSample : HitSampleInfo
+        {
+            public override IEnumerable<string> LookupNames
+            {
+                get
+                {
+                    foreach (string name in base.LookupNames)
+                        yield return name;
+
+                    foreach (string name in base.LookupNames)
+                        yield return name.Replace("-max", string.Empty);
+                }
+            }
+
+            public BreakSample(HitSampleInfo sampleInfo)
+                : base("spinnerbonus-max", sampleInfo.Bank, sampleInfo.Suffix, sampleInfo.Volume)
+
+            {
+            }
         }
     }
 }

@@ -58,11 +58,6 @@ namespace osu.Game.Rulesets.Sentakki.Localisation
         public static LocalisableString LaneInputModeButton => new TranslatableString(getKey(@"lane_input_mode_button"), @"Button");
         public static LocalisableString LaneInputModeSensor => new TranslatableString(getKey(@"lane_input_mode_sensor"), @"Sensor");
 
-        /// <summary>
-        /// "Break sample volume"
-        /// </summary>
-        public static LocalisableString BreakSampleVolume => new TranslatableString(getKey(@"break_sample_volume"), @"Break sample volume");
-
         public static LocalisableString EntrySpeedTooltip(float speed, double time)
             => new TranslatableString(getKey(@"entry_speed_tooltip"), @"{0} ({1}ms)", speed > 10 ? Sonic : $"{speed:N2}", $"{time:N0}");
 
