@@ -1,12 +1,9 @@
-﻿using System;
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Skinning;
 
@@ -31,7 +28,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         [BackgroundDependencyLoader]
-        private void load(SentakkiRulesetConfigManager? sentakkiConfig)
+        private void load()
         {
             AddRangeInternal(new Drawable[]
             {
@@ -42,8 +39,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             if (DrawableSentakkiRuleset is not null)
                 AnimationDuration.BindTo(DrawableSentakkiRuleset?.AdjustedAnimDuration);
-
-            sentakkiConfig?.BindWith(SentakkiRulesetSettings.BreakSampleVolume, breakSample.Volume);
         }
 
         protected override void LoadSamples()
