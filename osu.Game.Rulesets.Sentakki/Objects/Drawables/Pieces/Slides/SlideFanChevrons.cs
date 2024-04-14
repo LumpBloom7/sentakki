@@ -1,9 +1,12 @@
+using System;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Layout;
+using osu.Framework.Utils;
 using osuTK;
 using osuTK.Graphics;
 
@@ -63,23 +66,37 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 return base.OnInvalidate(invalidation, source);
             }
 
+            private float chevHeight, chevWidth;
+
             public ChevronBackingTexture(float lengthScale, float heightScale)
                 : base(cachedFrameBuffer: true)
             {
-                Anchor = Anchor.Centre;
-                Origin = Anchor.Centre;
+                chevHeight = 16 + (10 * heightScale);
+                chevWidth = 6 + (210 * lengthScale);
                 AutoSizeAxes = Axes.Both;
 
-                float chevHeight = 16 + (10 * heightScale);
-                float chevWidth = 6 + (210 * lengthScale);
+                // Effect container
+                var effectWrapper = new BufferedContainer(cachedFrameBuffer: true)
+                {
+                    BlurSigma = new Vector2(20),
+                    EffectColour = Color4.White,
+                    EffectBlending = BlendingParameters.Additive,
+                    EffectPlacement = EffectPlacement.Behind,
 
-                AddInternal(new Container
+                    DrawOriginal = true,
+
+                    Padding = new MarginPadding
+                    {
+                        Horizontal = Blur.KernelSize(25),
+                        Vertical = Blur.KernelSize(25),
+                    },
+                }.Wrap((Drawable)new Container
                 {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
                     AutoSizeAxes = Axes.Both,
                     Children = new Drawable[]
-                    {
+                     {
                         // Outlines
                         new Container
                         {
@@ -160,8 +177,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                                 }
                             },
                         },
-                    }
+                     }
                 });
+
+                AddInternal(effectWrapper);
             }
         }
     }
