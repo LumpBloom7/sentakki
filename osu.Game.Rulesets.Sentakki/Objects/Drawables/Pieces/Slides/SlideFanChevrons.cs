@@ -75,28 +75,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 chevWidth = 6 + (210 * lengthScale);
                 AutoSizeAxes = Axes.Both;
 
+                BufferedContainer content;
+
                 // Effect container
-                var effectWrapper = new BufferedContainer(cachedFrameBuffer: true)
-                {
-                    BlurSigma = new Vector2(20),
-                    EffectColour = Color4.White,
-                    EffectBlending = BlendingParameters.Additive,
-                    EffectPlacement = EffectPlacement.Behind,
-
-                    DrawOriginal = true,
-
-                    Padding = new MarginPadding
-                    {
-                        Horizontal = Blur.KernelSize(25),
-                        Vertical = Blur.KernelSize(25),
-                    },
-                }.Wrap((Drawable)new Container
+                // We are doing this ourelves to increase the padding'
+                AddInternal(content = new Container
                 {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
                     AutoSizeAxes = Axes.Both,
                     Children = new Drawable[]
-                     {
+                    {
                         // Outlines
                         new Container
                         {
@@ -177,10 +166,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                                 }
                             },
                         },
-                     }
-                });
+                    }
+                }.WithEffect(new GlowEffect
+                {
+                    BlurSigma = new Vector2(20),
+                    Placement = EffectPlacement.Behind,
+                    Colour = Color4.Black
+                }));
 
-                AddInternal(effectWrapper);
+                // PadExtent doesn't fully avoid the clipped shadows, we pad with a more conservative estimate
+                content.Padding = new MarginPadding(Blur.KernelSize(25));
             }
         }
     }
