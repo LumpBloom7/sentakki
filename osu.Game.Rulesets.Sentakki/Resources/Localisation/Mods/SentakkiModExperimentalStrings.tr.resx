@@ -58,24 +58,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="tap_count" xml:space="preserve">
-        <value>Tap 总数</value>
-        <comment>Tap is a proper noun.</comment>
+  <data name="mod_description" xml:space="preserve">
+        <value>İlerideki sentakki yamalarında eklenecek bazı deneysel özellikler. Otomatik/No-Fail önerilir. Tekrardan oynatma bu modda desteklenmez.</value>
     </data>
-  <data name="hold_count" xml:space="preserve">
-        <value>Hold 总数</value>
-        <comment>Hold is a proper noun.</comment>
+  <data name="twin_notes" xml:space="preserve">
+        <value>İkiz notalar</value>
+        <comment>Twin is an adjective.</comment>
     </data>
-  <data name="touchhold_count" xml:space="preserve">
-        <value>TouchHold 总数</value>
-        <comment>TouchHold is a proper noun.</comment>
+  <data name="twin_notes_description" xml:space="preserve">
+        <value>Birden fazla notanın aynı zamanlamayı paylaşmasına izin ver (çoklu dokunma özelliğine sahip bir cihaz gerektirir)</value>
     </data>
-  <data name="touch_count" xml:space="preserve">
-        <value>Touch 总数</value>
-        <comment>Touch is a proper noun.</comment>
+  <data name="twin_slides" xml:space="preserve">
+        <value>İkiz kayan notalar</value>
+        <comment>Twin is an adjective.</comment>
     </data>
-  <data name="slide_count" xml:space="preserve">
-        <value>Slide 总数</value>
-        <comment>Slide is a proper noun.</comment>
+  <data name="twin_slides_description" xml:space="preserve">
+        <value>Birden fazla kayan-notanın aynı zamanlama ve başlangıç noktasını paylaşmasına izin ver (çoklu dokunma özelliğine sahip bir cihaz gerektirir)</value>
+    </data>
+  <data name="fan_slides" xml:space="preserve">
+        <value>Fan şekilli kayan notalar</value>
+        <comment>Fan is a adjective, referring to the shape of the Slide.</comment>
+    </data>
+  <data name="fan_slides_description" xml:space="preserve">
+        <value>Fan şekilli kayan notaların ara sıra çıkmasına izin verir (çoklu dokunma özelliğine sahip bir cihaz gerektirir)</value>
     </data>
 </root>

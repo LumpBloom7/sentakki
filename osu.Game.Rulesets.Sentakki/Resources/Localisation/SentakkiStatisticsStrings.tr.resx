@@ -58,24 +58,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="tap_count" xml:space="preserve">
-        <value>Tap 总数</value>
-        <comment>Tap is a proper noun.</comment>
+  <data name="timing_distribution" xml:space="preserve">
+        <value>Zamanlama dağılımı</value>
     </data>
-  <data name="hold_count" xml:space="preserve">
-        <value>Hold 总数</value>
-        <comment>Hold is a proper noun.</comment>
-    </data>
-  <data name="touchhold_count" xml:space="preserve">
-        <value>TouchHold 总数</value>
-        <comment>TouchHold is a proper noun.</comment>
-    </data>
-  <data name="touch_count" xml:space="preserve">
-        <value>Touch 总数</value>
-        <comment>Touch is a proper noun.</comment>
-    </data>
-  <data name="slide_count" xml:space="preserve">
-        <value>Slide 总数</value>
-        <comment>Slide is a proper noun.</comment>
+  <data name="judgement_chart" xml:space="preserve">
+        <value>Yargı haritası</value>
     </data>
 </root>
