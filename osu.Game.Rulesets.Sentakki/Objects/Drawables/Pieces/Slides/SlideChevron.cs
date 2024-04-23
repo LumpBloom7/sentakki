@@ -27,11 +27,5 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 Texture = textures.Get("slide"),
             });
         }
-
-        protected override void FreeAfterUse()
-        {
-            base.FreeAfterUse();
-            ClearTransforms();
-        }
     }
 }
