@@ -6,6 +6,7 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.UI;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -20,6 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public override bool DisplayResult => false;
 
         private new DrawableSlideBody ParentHitObject => (DrawableSlideBody)base.ParentHitObject;
+        private int slideOriginLane => ParentHitObject.ParentHitObject.HitObject.Lane;
 
         // Used to determine the node order
         public int ThisIndex;
@@ -36,6 +38,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private bool isPreviousNodeHit() => ThisIndex < trackingLookBehindDistance || ParentHitObject.SlideCheckpoints[ThisIndex - trackingLookBehindDistance].IsHit;
 
         private Container<DrawableSlideCheckpointNode> nodes = null!;
+
+        protected override float SamplePlaybackPosition => (SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideOriginLane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
 
         public DrawableSlideCheckpoint()
             : this(null)
@@ -70,7 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            // Counting  hit notes manually to avoid LINQ alloc overhead
+            // Counting hit notes manually to avoid LINQ alloc overhead
             int hitNotes = 0;
 
             foreach (var node in nodes)
