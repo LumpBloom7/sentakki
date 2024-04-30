@@ -18,7 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
     {
-        private new DrawableSlide ParentHitObject => (DrawableSlide)base.ParentHitObject;
+        public new DrawableSlide ParentHitObject => (DrawableSlide)base.ParentHitObject;
         public new SlideBody HitObject => (SlideBody)base.HitObject;
 
         // This slide body can only be interacted with iff the slidetap associated with this slide is judged
