@@ -11,8 +11,8 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
 
         protected override double ComputeTotalScore(double comboProgress, double accuracyProgress, double bonusPortion)
         {
-            return (50000 * comboProgress)
-                   + (950000 * Math.Pow(Accuracy.Value, 2 + (2 * Accuracy.Value)) * accuracyProgress)
+            return (10000 * comboProgress)
+                   + (990000 * Math.Pow(Accuracy.Value, 2 + (2 * Accuracy.Value)) * accuracyProgress)
                    + bonusPortion;
         }
     }
