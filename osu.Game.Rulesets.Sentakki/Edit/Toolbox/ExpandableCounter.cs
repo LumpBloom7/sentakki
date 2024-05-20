@@ -10,10 +10,13 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics.Sprites;
 using System;
 using System.Globalization;
+using System.Numerics;
+
+using Vector2 = osuTK.Vector2;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Toolbox;
 public partial class ExpandableCounter<T> : CompositeDrawable, IExpandable, IHasCurrentValue<T>
-    where T : struct, IComparable<T>, IConvertible, IEquatable<T>
+    where T : struct, IComparable<T>, IConvertible, IEquatable<T>, INumber<T>, IMinMaxValue<T>
 {
     public override bool HandlePositionalInput => true;
 
