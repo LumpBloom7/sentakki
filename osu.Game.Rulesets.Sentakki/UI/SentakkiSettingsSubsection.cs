@@ -59,7 +59,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 },
                 new SettingsSlider<float, TouchTimeSlider>
                 {
-                    LabelText = SentakkiSettingsSubsectionStrings.TouchNoteFadeInSpeed,
+                    LabelText = SentakkiSettingsSubsectionStrings.TouchNoteEntrySpeed,
                     Current = config.GetBindable<float>(SentakkiRulesetSettings.TouchAnimationSpeed),
                 },
                 new SettingsSlider<float>

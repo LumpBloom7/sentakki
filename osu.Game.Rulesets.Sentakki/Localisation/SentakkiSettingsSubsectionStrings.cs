@@ -43,7 +43,7 @@ namespace osu.Game.Rulesets.Sentakki.Localisation
         /// <summary>
         /// "Touch note fade-in speed"
         /// </summary>
-        public static LocalisableString TouchNoteFadeInSpeed => new TranslatableString(getKey(@"touch_note_fade_in_speed"), @"Touch note fade-in speed");
+        public static LocalisableString TouchNoteEntrySpeed => new TranslatableString(getKey(@"touch_note_entry_speed"), @"Touch note entry speed");
 
         /// <summary>
         /// "Ring Opacity"
