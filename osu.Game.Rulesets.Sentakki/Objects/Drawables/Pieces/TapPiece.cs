@@ -13,6 +13,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     {
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
+        private const float base_circle_size = 75;
+
 
         public TapPiece()
         {
@@ -22,8 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE);
             InternalChildren = new Drawable[]
             {
-                new NoteRingPiece(),
-                new DotPiece(),
+                new NoteRingPiece()
             };
         }
 

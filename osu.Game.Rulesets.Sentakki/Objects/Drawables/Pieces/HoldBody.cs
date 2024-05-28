@@ -13,6 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     {
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
+        private const float expansionsize = 0.134f * 75f;
 
         public HoldBody()
         {
@@ -22,17 +23,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Origin = Anchor.TopCentre;
             InternalChildren = new Drawable[]
             {
-                new NoteRingPiece(),
-                new DotPiece(squared: true)
-                {
-                    Rotation = 45,
-                    Anchor = Anchor.BottomCentre,
-                },
-                new DotPiece(squared: true)
-                {
-                    Rotation = 45,
-                    Anchor = Anchor.TopCentre,
-                },
+                new Container{
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                   // Padding = new MarginPadding(-expansionsize),
+                    Child =  new NoteRingPiece(true)
+                }
             };
         }
 
