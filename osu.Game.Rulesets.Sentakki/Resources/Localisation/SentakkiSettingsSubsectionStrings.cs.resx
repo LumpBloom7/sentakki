@@ -59,55 +59,55 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="show_kiai_effects" xml:space="preserve">
-        <value>Kiai 효과 표시하기</value>
+        <value>Zobrazit efekty Kiai</value>
     </data>
   <data name="show_note_start_indicators" xml:space="preserve">
-        <value>노트 시작 표시하기</value>
+        <value>Zobrazit indikátory počátku not</value>
     </data>
   <data name="snaking_in_slides" xml:space="preserve">
-        <value>늘어나는 슬라이드</value>
+        <value>Postupné najíždění slidů</value>
         <comment>"Snaking in" refers to the animation of the Slide extending out telescopically from the origin piece by piece.</comment>
     </data>
   <data name="show_detailed_judgements" xml:space="preserve">
-        <value>세부 판정 표시하기</value>
+        <value>Zobrazit detailní rozsudky</value>
     </data>
   <data name="ring_color" xml:space="preserve">
-        <value>링 색상</value>
+        <value>Barva kruhů</value>
     </data>
   <data name="ring_color_default" xml:space="preserve">
-        <value>기본값</value>
+        <value>Výchozí</value>
     </data>
   <data name="ring_color_difficulty" xml:space="preserve">
-        <value>난이도에 따른 색상</value>
+        <value>Barva založena na obtížnosti</value>
     </data>
   <data name="ring_color_skin" xml:space="preserve">
-        <value>스킨</value>
+        <value>Skin</value>
     </data>
   <data name="ring_opacity" xml:space="preserve">
-        <value>링 투명도</value>
+        <value>Průhlednost kruhu</value>
     </data>
   <data name="lane_input_mode" xml:space="preserve">
-        <value>레인 입력 모드 (터치에 적용되지 않음)</value>
+        <value>Linkový režim vstupu (nevztahuje se na dotyk)</value>
         <comment>"Touch"as in the verb, as in "touchscreen"</comment>
     </data>
   <data name="lane_input_mode_button" xml:space="preserve">
-        <value>버튼</value>
+        <value>Tlačítko</value>
     </data>
   <data name="lane_input_mode_sensor" xml:space="preserve">
-        <value>센서</value>
+        <value>Senzor</value>
     </data>
   <data name="note_entry_speed" xml:space="preserve">
-        <value>노트 진입 속도</value>
+        <value>Vstupní rychlost not</value>
     </data>
   <data name="touch_note_entry_speed" xml:space="preserve">
-        <value>터치 노트 진입 속도</value>
+        <value>Rychlost vstupu dotykových not</value>
     </data>
   <data name="entry_speed_tooltip" xml:space="preserve">
-        <value>{0} ({1}밀리초)</value>
+        <value>{0} ({1}ms)</value>
         <comment>The left placeholder is the speed value between 0 - 10, or "Sonic" if too fast. The right placeholder duration value.</comment>
     </data>
   <data name="sonic" xml:space="preserve">
-        <value>음속</value>
+        <value>Sonic</value>
         <comment>Used when the speed value is greater than 10.</comment>
     </data>
 </root>

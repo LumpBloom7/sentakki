@@ -1,9 +1,12 @@
+using System;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Layout;
+using osu.Framework.Utils;
 using osuTK;
 using osuTK.Graphics;
 
@@ -63,17 +66,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 return base.OnInvalidate(invalidation, source);
             }
 
+            private float chevHeight, chevWidth;
+
             public ChevronBackingTexture(float lengthScale, float heightScale)
                 : base(cachedFrameBuffer: true)
             {
-                Anchor = Anchor.Centre;
-                Origin = Anchor.Centre;
+                chevHeight = 16 + (10 * heightScale);
+                chevWidth = 6 + (210 * lengthScale);
                 AutoSizeAxes = Axes.Both;
 
-                float chevHeight = 16 + (10 * heightScale);
-                float chevWidth = 6 + (210 * lengthScale);
+                BufferedContainer content;
 
-                AddInternal(new Container
+                // Effect container
+                // We are doing this ourelves to increase the padding'
+                AddInternal(content = new Container
                 {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
@@ -161,7 +167,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                             },
                         },
                     }
-                });
+                }.WithEffect(new GlowEffect
+                {
+                    BlurSigma = new Vector2(20),
+                    Placement = EffectPlacement.Behind,
+                    Colour = Color4.Black
+                }));
+
+                // PadExtent doesn't fully avoid the clipped shadows, we pad with a more conservative estimate
+                content.Padding = new MarginPadding(Blur.KernelSize(25));
             }
         }
     }

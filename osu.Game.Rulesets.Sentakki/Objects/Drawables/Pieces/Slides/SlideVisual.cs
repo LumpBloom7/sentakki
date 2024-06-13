@@ -194,7 +194,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 
                 if (((ISlideChevron)chevron).DisappearThreshold <= Progress)
                 {
-                    chevron.FadeOut();
+                    chevron.Alpha = 0;
                     continue;
                 }
 
