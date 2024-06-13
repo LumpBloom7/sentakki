@@ -76,10 +76,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
                         ring = new SentakkiRing(),
                     }
                 },
+                explosionLayer = new Container<HitExplosion> { RelativeSizeAxes = Axes.Both },
                 LanedPlayfield = new LanedPlayfield(),
                 HitObjectContainer, // This only contains TouchHolds, which needs to be above others types
                 touchPlayfield = new TouchPlayfield(), // This only contains Touch, which needs a custom playfield to handle their input
-                explosionLayer = new Container<HitExplosion> { RelativeSizeAxes = Axes.Both },
                 judgementLayer = new Container<DrawableSentakkiJudgement>
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -143,15 +143,31 @@ namespace osu.Game.Rulesets.Sentakki.UI
             }
         }
 
+        public override bool Remove(HitObject h)
+        {
+            switch (h)
+            {
+                case SentakkiLanedHitObject:
+                    return LanedPlayfield.Remove(h);
+
+                case Touch:
+                    return touchPlayfield.Remove(h);
+                default:
+                    return base.Remove(h);
+            }
+        }
+
         private void onNewResult(DrawableHitObject judgedObject, JudgementResult result)
         {
             if (!judgedObject.DisplayResult || !DisplayJudgements.Value || judgedObject is not DrawableSentakkiHitObject sentakkiHitObject)
                 return;
 
-            judgementLayer.Add(judgementPool.Get().Apply(result, judgedObject));
+            if (!(skin.Value is ArgonProSkin && result.Type >= Rulesets.Scoring.HitResult.Great))
+                judgementLayer.Add(judgementPool.Get().Apply(result, judgedObject));
 
             if (!result.IsHit) return;
 
+            // We don't need an explosion for the slide body
             if (judgedObject is DrawableSlideBody) return;
 
             if (judgedObject.HitObject.Kiai)

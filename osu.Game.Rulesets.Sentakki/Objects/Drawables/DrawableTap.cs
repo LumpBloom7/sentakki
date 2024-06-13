@@ -79,7 +79,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!userTriggered)
             {
                 if (Auto && timeOffset > 0)
-                    ApplyResult(HitResult.Perfect);
+                    ApplyResult(Result.Judgement.MaxResult);
                 else if (!HitObject.HitWindows.CanBeHit(timeOffset))
                     ApplyResult(Result.Judgement.MinResult);
 
@@ -91,8 +91,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (result == HitResult.None)
                 return;
 
-            if (HitObject.Ex && result.IsHit())
-                result = Result.Judgement.MaxResult;
+            if (result < HitResult.Perfect && HitObject.Ex && result.IsHit())
+                result = HitResult.Great;
 
             ApplyResult(result);
         }

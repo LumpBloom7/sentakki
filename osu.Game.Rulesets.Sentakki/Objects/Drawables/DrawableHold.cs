@@ -70,6 +70,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnApply();
             isHolding = false;
+            timeNotHeld = 0;
         }
 
         protected override void UpdateInitialTransforms()
@@ -107,8 +108,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 if (timeOffset >= 0 && Auto)
                     ApplyResult(HitResult.Perfect);
-                else if (timeOffset >= 0 && isHolding)
-                    ApplyResult(applyDeductionTo(HitResult.Perfect));
+                else if (timeOffset > HitObject.HitWindows.WindowFor(HitResult.Perfect) && isHolding)
+                    ApplyResult(applyDeductionTo(HitResult.Great));
                 else if (!HitObject.HitWindows.CanBeHit(timeOffset: timeOffset))
                     ApplyResult(Result.Judgement.MinResult);
 
@@ -119,8 +120,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (result == HitResult.None)
                 return;
 
-            if (HitObject.Ex && result.IsHit())
-                result = Result.Judgement.MaxResult;
+            if (result < HitResult.Perfect && HitObject.Ex && result.IsHit())
+                result = HitResult.Great;
 
             ApplyResult(applyDeductionTo(result));
 
@@ -130,7 +131,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 var newResult = originalResult - deduction;
 
-                if (originalResult <= HitResult.Ok)
+                if (newResult <= HitResult.Ok)
                     return HitResult.Ok;
 
                 return newResult;

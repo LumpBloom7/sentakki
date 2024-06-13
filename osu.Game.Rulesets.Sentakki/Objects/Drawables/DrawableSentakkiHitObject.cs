@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // Used for the animation update
         protected readonly Bindable<double> AnimationDuration = new Bindable<double>(1000);
 
-        protected override float SamplePlaybackPosition => Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2);
+        protected override float SamplePlaybackPosition => (Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + 0.5f;
 
         public DrawableSentakkiHitObject()
             : this(null)
@@ -53,24 +53,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.OnApply();
             AccentColour.BindTo(HitObject.ColourBindable);
             ExBindable.BindTo(HitObject.ExBindable);
-        }
-
-        protected override JudgementResult CreateResult(Judgement judgement) => new SentakkiJudgementResult(HitObject, judgement);
-
-        protected new void ApplyResult(HitResult result)
-        {
-            var SentakkiJudgementResult = (SentakkiJudgementResult)Result;
-            if (result == HitResult.Perfect)
-            {
-                SentakkiJudgementResult.Critical = true;
-                result = Result.Judgement.MaxResult;
-            }
-            else
-            {
-                SentakkiJudgementResult.Critical = false;
-            }
-
-            base.ApplyResult(result);
         }
 
         protected override void OnFree()

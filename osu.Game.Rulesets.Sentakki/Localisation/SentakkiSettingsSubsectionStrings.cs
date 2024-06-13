@@ -43,7 +43,7 @@ namespace osu.Game.Rulesets.Sentakki.Localisation
         /// <summary>
         /// "Touch note fade-in speed"
         /// </summary>
-        public static LocalisableString TouchNoteFadeInSpeed => new TranslatableString(getKey(@"touch_note_fade_in_speed"), @"Touch note fade-in speed");
+        public static LocalisableString TouchNoteEntrySpeed => new TranslatableString(getKey(@"touch_note_entry_speed"), @"Touch note entry speed");
 
         /// <summary>
         /// "Ring Opacity"
@@ -57,11 +57,6 @@ namespace osu.Game.Rulesets.Sentakki.Localisation
 
         public static LocalisableString LaneInputModeButton => new TranslatableString(getKey(@"lane_input_mode_button"), @"Button");
         public static LocalisableString LaneInputModeSensor => new TranslatableString(getKey(@"lane_input_mode_sensor"), @"Sensor");
-
-        /// <summary>
-        /// "Break sample volume"
-        /// </summary>
-        public static LocalisableString BreakSampleVolume => new TranslatableString(getKey(@"break_sample_volume"), @"Break sample volume");
 
         public static LocalisableString EntrySpeedTooltip(float speed, double time)
             => new TranslatableString(getKey(@"entry_speed_tooltip"), @"{0} ({1}ms)", speed > 10 ? Sonic : $"{speed:N2}", $"{time:N0}");
