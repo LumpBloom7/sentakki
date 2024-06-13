@@ -61,7 +61,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
                 var hitObject = HitObjects.First();
 
-                Colour = hitObject.Break ? Color4.OrangeRed : hitObject.DefaultNoteColour;
+                Colour = hitObject.NoteColour;
                 Rotation = hitObject.Lane.GetRotationForLane() - 45;
             }
             else if (HitObjects.Count > 1)
