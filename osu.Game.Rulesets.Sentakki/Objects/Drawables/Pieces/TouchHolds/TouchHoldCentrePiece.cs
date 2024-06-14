@@ -44,7 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             InnerRadius = 1,
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Current = { Value = 1 },
+                            Progress = 1,
                             Colour = colours.Blue
                         },
                         new CircularProgress
@@ -54,7 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             InnerRadius = 1,
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Current = { Value = .75 },
+                            Progress = 0.75 ,
                             Colour = colours.Green
                         },
                         new CircularProgress
@@ -64,7 +64,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             InnerRadius = 1,
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Current = { Value = .5 },
+                            Progress = 0.5 ,
                             Colour = colours.Yellow,
                         },
                         new CircularProgress
@@ -74,7 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             InnerRadius = 1,
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Current = { Value = .25 },
+                            Progress = 0.25 ,
                             Colour = colours.Red,
                         },
                     }

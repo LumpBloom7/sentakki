@@ -43,7 +43,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (DrawableSentakkiRuleset is not null)
                 AnimationDuration.BindTo(DrawableSentakkiRuleset?.AdjustedTouchAnimDuration);
 
-            Size = new Vector2(100);
+            Size = new Vector2(130);
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             AddRangeInternal(new Drawable[]
@@ -115,7 +115,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (timeOffset < 0 && result is not HitResult.Perfect)
                 return;
 
-            if (HitObject.Ex && result.IsHit())
+            if (result < HitResult.Perfect && HitObject.Ex && result.IsHit())
                 result = Result.Judgement.MaxResult;
 
             ApplyResult(result);

@@ -26,7 +26,6 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
             SetDefault(SentakkiRulesetSettings.LaneInputMode, LaneInputMode.Button);
             SetDefault(SentakkiRulesetSettings.SnakingSlideBody, true);
             SetDefault(SentakkiRulesetSettings.DetailedJudgements, false);
-            SetDefault(SentakkiRulesetSettings.BreakSampleVolume, 1.0, 0.0, 1.0, 0.01);
         }
 
         public override TrackedSettings CreateTrackedSettings() => new TrackedSettings
@@ -50,6 +49,5 @@ namespace osu.Game.Rulesets.Sentakki.Configuration
         LaneInputMode,
         SnakingSlideBody,
         DetailedJudgements,
-        BreakSampleVolume
     }
 }

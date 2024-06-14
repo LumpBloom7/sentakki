@@ -5,6 +5,8 @@ using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.UI;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -19,6 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public override bool DisplayResult => false;
 
         private new DrawableSlideBody ParentHitObject => (DrawableSlideBody)base.ParentHitObject;
+        private int slideOriginLane => ParentHitObject.ParentHitObject.HitObject.Lane;
 
         // Used to determine the node order
         public int ThisIndex;
@@ -28,9 +31,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         // All hits can only be done after the slide tap has been judged
         public bool IsHittable => ParentHitObject.IsHittable && isPreviousNodeHit();
 
-        private bool isPreviousNodeHit() => ThisIndex < 1 || ParentHitObject.SlideCheckpoints[ThisIndex - 1].IsHit;
+        public bool StrictSliderTracking { get; set; }
+
+        private int trackingLookBehindDistance => StrictSliderTracking ? 1 : 2;
+
+        private bool isPreviousNodeHit() => ThisIndex < trackingLookBehindDistance || ParentHitObject.SlideCheckpoints[ThisIndex - trackingLookBehindDistance].IsHit;
 
         private Container<DrawableSlideCheckpointNode> nodes = null!;
+
+        protected override float SamplePlaybackPosition => (SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideOriginLane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + .5f;
 
         public DrawableSlideCheckpoint()
             : this(null)
@@ -65,7 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            // Counting  hit notes manually to avoid LINQ alloc overhead
+            // Counting hit notes manually to avoid LINQ alloc overhead
             int hitNotes = 0;
 
             foreach (var node in nodes)
@@ -78,16 +87,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 ApplyResult(Result.Judgement.MaxResult);
         }
 
-        protected override void ApplyResult(Action<JudgementResult> application)
+        protected new void ApplyResult(HitResult result)
         {
             if (Judged)
                 return;
 
+            // The previous node may not be judged due to slider hit order leniency allowing players to skip up to one node
+            if (ThisIndex > 0)
+                ParentHitObject.SlideCheckpoints[ThisIndex - 1].ApplyResult(result);
+
             // Make sure remaining nodes are judged
             foreach (var node in nodes)
-                node.ApplyResult(application);
+                node.ApplyResult(result);
 
-            base.ApplyResult(application);
+            base.ApplyResult(result);
         }
 
         // Forcefully miss this node, used when players fail to complete the slide on time.
