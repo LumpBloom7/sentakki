@@ -1,7 +1,11 @@
-#include "sh_Utils.h"
-#include "sh_Masking.h"
+#ifndef SENTAKKI_RING_FS
+#define SENTAKKI_RING_FS
 
-layout(location = 2) in mediump vec2 v_TexCoord;
+#include "sh_Utils.h"
+
+layout(location = 1) in lowp vec4 v_Colour;
+layout(location = 2) in highp vec2 v_TexCoord;
+layout(location = 3) in highp vec4 v_TexRect;
 
 layout(location = 0) out vec4 o_Colour;
 
@@ -91,8 +95,14 @@ highp vec4 ring(highp vec2 p, highp vec2 centre, highp float radius,  highp floa
 
     return vec4(shadowColor,shadow) * (1 - exclusion) + vec4(vec3(max(outline * 0.5, base)), outline);
 }
+/*
+void main(void) 
+{
+    vec2 wrappedCoord = wrap(v_TexCoord, v_TexRect);
+    o_Colour = getRoundedColor(wrappedSampler(wrappedCoord, v_TexRect, m_Texture, m_Sampler, -0.9), wrappedCoord);
+}*/
 
-void main() {
+void main(void) {
     highp vec2 resolution = v_TexRect.zw - v_TexRect.xy;
     highp vec2 pixelPos = (v_TexCoord - v_TexRect.xy) / resolution;
 
@@ -121,5 +131,7 @@ void main() {
     else{
         highp vec4 r = ring(p, c, radius, borderThickness, shadeRadius)+ circle(p,c, borderThickness+1);
         o_Colour = r * v_Colour;
-    }
+    } 
 }
+
+#endif
