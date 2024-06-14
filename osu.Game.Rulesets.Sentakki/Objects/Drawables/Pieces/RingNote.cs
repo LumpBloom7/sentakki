@@ -144,8 +144,6 @@ public partial class RingNote : Sprite, ITexturedShaderDrawable
             shader.BindUniformBlock("m_shapeParameters", shapeParameters);
         }
 
-
-
         protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
@@ -162,6 +160,5 @@ public partial class RingNote : Sprite, ITexturedShaderDrawable
             public UniformBool Glow;
             public UniformPadding8 padding_;
         }
-
     }
 }

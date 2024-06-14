@@ -12,33 +12,32 @@ layout(location = 0) out vec4 o_Colour;
 layout(std140, set = 0, binding = 0) uniform m_shapeParameters
 {
     bool hexagon;
-    highp float thickness;
-    highp vec2 size;
-    highp float shadowRadius;
+    float thickness;
+    vec2 size;
+    float shadowRadius;
     bool glow;
     //vec4 accentColor;
 };
 
-highp float distanceHex(in vec2 p, in vec2 origin, in float h, in float r){
-    const highp float Sin =  sqrt(3.0) * 0.5;
-    const highp float Cos = .5;
+float distanceHex(in vec2 p, in vec2 origin, in float h, in float r){
+    const float Sin =  sqrt(3.0) * 0.5;
+    const float Cos = .5;
 
-    highp  float sinR =  Sin * r;
-    highp float cosR = Cos * r;
+    float sinR =  Sin * r;
+    float cosR = Cos * r;
     
-    highp vec2 P = p - origin;
+    vec2 P = p - origin;
     
-    highp float absYDist = abs(P.y);
-    highp float absXDist = abs(P.x);
+    float absYDist = abs(P.y);
+    float absXDist = abs(P.x);
     
-    highp float rhs = h / 2.0 
+    float rhs = h / 2.0 
                 + (cosR) 
                 + (Cos/Sin) * (absXDist - sinR);
 
-
-    highp float factor = step(rhs,absYDist);
+    float factor = step(rhs,absYDist);
     
-    highp float a = absXDist 
+    float a = absXDist 
                 - sinR 
                 + (Sin / (2 * Cos)) 
                     * (absYDist 
@@ -46,7 +45,7 @@ highp float distanceHex(in vec2 p, in vec2 origin, in float h, in float r){
                         - (Cos * r) 
                         - (Cos / Sin) * (absXDist - sinR));
 
-    highp float b = absXDist - sinR;
+    float b = absXDist - sinR;
         
     return (a * factor) + b * (1.0-factor);
 }
@@ -56,18 +55,18 @@ float rand(in vec2 co){
 }
 
 
-highp vec4 hex(in vec2 p, in vec2 centre,in float radius, in float borderThickness, in float shadowThickness){
-    highp float h = size.y - size.x;
-    highp float dist = distanceHex(p, centre, h, radius);
+vec4 hex(in vec2 p, in vec2 centre,in float radius, in float borderThickness, in float shadowThickness){
+    float h = size.y - size.x;
+    float dist = distanceHex(p, centre, h, radius);
 
-    highp vec3 shadowColor = glow ? vec3(1) : vec3(0);
-    highp float shadowAlpha = glow ? 0.5 : 0.5;
+    vec3 shadowColor = glow ? vec3(1) : vec3(0);
+    float shadowAlpha = glow ? 0.5 : 0.5;
 
-    highp float shadow = pow(smoothstep(shadowThickness + borderThickness, borderThickness, dist) * shadowAlpha, 2);
-    highp float exclusion = smoothstep(borderThickness, borderThickness - 1.0, dist);
-    highp float outline = smoothstep(borderThickness, borderThickness - 1.0, abs(dist));
-    highp float base = smoothstep(borderThickness - 2.0, borderThickness - 3.0, abs(dist));
-    highp float innerBorder = smoothstep(borderThickness -2.0, 0.0 , abs(dist)) * 0.15;
+    float shadow = pow(smoothstep(shadowThickness + borderThickness, borderThickness, dist) * shadowAlpha, 2);
+    float exclusion = smoothstep(borderThickness, borderThickness - 1.0, dist);
+    float outline = smoothstep(borderThickness, borderThickness - 1.0, abs(dist));
+    float base = smoothstep(borderThickness - 2.0, borderThickness - 3.0, abs(dist));
+    float innerBorder = smoothstep(borderThickness -2.0, 0.0 , abs(dist)) * 0.15;
 
     return vec4(shadowColor,shadow) * (1 - exclusion) + vec4(vec3(max(outline * 0.5, base)), outline);
 }
@@ -81,44 +80,38 @@ vec4 circle(in vec2 p, in vec2 centre, in float radius){
     return vec4(vec3(min(base + outline*0.5, 1.0)), outline);
 }
 
-highp vec4 ring(highp vec2 p, highp vec2 centre, highp float radius,  highp float borderThickness, in float shadowThickness){
+vec4 ring(in vec2 p, in vec2 centre, in highp float radius, in float borderThickness, in float shadowThickness){
     float dist = length(p - centre) - radius;
     
-    highp vec3 shadowColor = glow ? vec3(1) : vec3(0);
-    highp float shadowAlpha = glow ? 0.5 : 0.5;
+    vec3 shadowColor = glow ? vec3(1) : vec3(0);
+    float shadowAlpha = glow ? 0.5 : 0.5;
 
-    highp float shadow = pow(smoothstep(shadowThickness + borderThickness, borderThickness, dist) * shadowAlpha, 2);
-    highp float exclusion = smoothstep(borderThickness, borderThickness - 1.0, dist);
-    highp float outline = smoothstep(borderThickness, borderThickness - 1.0, abs(dist));
-    highp float base = smoothstep(borderThickness - 2.0, borderThickness - 3.0, abs(dist));
-    highp float innerBorder = smoothstep(borderThickness -2.0, 0.0 , abs(dist)) * 0.15;
+    float shadow = pow(smoothstep(shadowThickness + borderThickness, borderThickness, dist) * shadowAlpha, 2);
+    float exclusion = smoothstep(borderThickness, borderThickness - 1.0, dist);
+    float outline = smoothstep(borderThickness, borderThickness - 1.0, abs(dist));
+    float base = smoothstep(borderThickness - 2.0, borderThickness - 3.0, abs(dist));
+    float innerBorder = smoothstep(borderThickness -2.0, 0.0 , abs(dist)) * 0.15;
 
     return vec4(shadowColor,shadow) * (1 - exclusion) + vec4(vec3(max(outline * 0.5, base)), outline);
 }
-/*
-void main(void) 
-{
-    vec2 wrappedCoord = wrap(v_TexCoord, v_TexRect);
-    o_Colour = getRoundedColor(wrappedSampler(wrappedCoord, v_TexRect, m_Texture, m_Sampler, -0.9), wrappedCoord);
-}*/
 
 void main(void) {
-    highp vec2 resolution = v_TexRect.zw - v_TexRect.xy;
-    highp vec2 pixelPos = (v_TexCoord - v_TexRect.xy) / resolution;
+    vec2 resolution = v_TexRect.zw - v_TexRect.xy;
+    vec2 pixelPos = (v_TexCoord - v_TexRect.xy) / resolution;
 
-    highp vec2 p = pixelPos * size;
-    highp vec2 c = 0.5 * size;
+    vec2 p = pixelPos * size;
+    vec2 c = 0.5 * size;
 
-    highp float shadeRadius = size.x * shadowRadius;
-    highp float noteW = size.x - shadeRadius * 2;
-    highp float borderThickness = thickness * 0.5 * noteW;
-    highp float paddingAmount = - borderThickness - shadeRadius;
+    float shadeRadius = size.x * shadowRadius;
+    float noteW = size.x - shadeRadius * 2;
+    float borderThickness = thickness * 0.5 * noteW;
+    float paddingAmount = - borderThickness - shadeRadius;
 
-    highp float radius = size.x * 0.5 + paddingAmount;
+    float radius = size.x * 0.5 + paddingAmount;
 
     if(hexagon){
-        highp float h = size.y - size.x;
-        highp vec4 r = hex(p, c, radius, borderThickness , shadeRadius) + circle(p, c+vec2(0, h * 0.5), borderThickness+1);
+        float h = size.y - size.x;
+        vec4 r = hex(p, c, radius, borderThickness , shadeRadius) + circle(p, c+vec2(0, h * 0.5), borderThickness+1);
 
         vec4 circle2 = circle(p, c -vec2(0, h * 0.5), borderThickness+1);
 
@@ -129,7 +122,7 @@ void main(void) {
         
     }
     else{
-        highp vec4 r = ring(p, c, radius, borderThickness, shadeRadius)+ circle(p,c, borderThickness+1);
+        vec4 r = ring(p, c, radius, borderThickness, shadeRadius)+ circle(p,c, borderThickness+1);
         o_Colour = r * v_Colour;
     } 
 }

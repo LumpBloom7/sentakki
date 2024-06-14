@@ -15,7 +15,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         public override bool RemoveWhenNotAlive => false;
         private const float base_circle_size = 75;
 
-
         public TapPiece()
         {
             Anchor = Anchor.Centre;
