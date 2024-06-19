@@ -65,12 +65,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             {
                 case SentakkiLanedHitObject laned:
                     HitObjectLineRenderer.AddHitObject(laned);
-                    laned.LaneBindable.BindValueChanged(lane =>
-                    {
-                        if (lane.OldValue != lane.NewValue)
-                            Lanes[lane.OldValue].Remove(h);
-                        Lanes[lane.NewValue].Add(h);
-                    }, true);
+                    Lanes[laned.Lane].Add(h);
                     break;
             }
         }
@@ -81,7 +76,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 return false;
 
             HitObjectLineRenderer.RemoveHitObject(lanedHitObject);
-            return Lanes[lanedHitObject.Lane].Remove(lanedHitObject);
+            return Lanes[lanedHitObject.Lane].Remove(hitObject: lanedHitObject);
         }
 
         private void onHitObjectLoaded(Drawable hitObject)

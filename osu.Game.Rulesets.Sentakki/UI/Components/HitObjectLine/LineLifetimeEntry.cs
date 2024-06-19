@@ -33,7 +33,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         public void Add(SentakkiLanedHitObject hitObject)
         {
-            hitObject.LaneBindable.ValueChanged += onLaneChanged;
             hitObject.BreakBindable.ValueChanged += onBreakChanged;
             HitObjects.AddInPlace(hitObject, Comparer<SentakkiLanedHitObject>.Create((lhs, rhs) => lhs.Lane.CompareTo(rhs.Lane)));
             UpdateLine();
@@ -41,13 +40,10 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         public void Remove(SentakkiLanedHitObject hitObject)
         {
-            hitObject.LaneBindable.ValueChanged -= onLaneChanged;
             hitObject.BreakBindable.ValueChanged -= onBreakChanged;
             HitObjects.Remove(hitObject);
             UpdateLine();
         }
-
-        private void onLaneChanged(ValueChangedEvent<int> obj) => UpdateLine();
 
         private void onBreakChanged(ValueChangedEvent<bool> obj) => UpdateLine();
 
