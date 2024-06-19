@@ -4,7 +4,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
@@ -60,15 +59,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
             });
         }
 
-        public override void Add(HitObject h)
+        public override void Add(HitObject hitObject)
         {
-            switch (h)
-            {
-                case SentakkiLanedHitObject laned:
-                    HitObjectLineRenderer.AddHitObject(laned);
-                    Lanes[laned.Lane].Add(h);
-                    break;
-            }
+            if (hitObject is not SentakkiLanedHitObject lanedHitObject)
+                return;
+
+            HitObjectLineRenderer.AddHitObject(lanedHitObject);
+            Lanes[lanedHitObject.Lane].Add(lanedHitObject);
         }
 
         public override bool Remove(HitObject hitObject)
@@ -76,24 +73,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
             if (hitObject is not SentakkiLanedHitObject lanedHitObject)
                 return false;
 
+            HitObjectLineRenderer.RemoveHitObject(lanedHitObject);
             return Lanes[lanedHitObject.Lane].Remove(lanedHitObject);
-        }
-        public override void Add(DrawableHitObject h)
-        {
-            switch (h)
-            {
-                case DrawableSentakkiLanedHitObject laned:
-                    Lanes[laned.HitObject.Lane].Add(h);
-                    break;
-            }
-        }
-
-        public override bool Remove(DrawableHitObject hitObject)
-        {
-            if (hitObject is not DrawableSentakkiLanedHitObject lanedHitObject)
-                return false;
-
-            return Lanes[lanedHitObject.HitObject.Lane].Remove(lanedHitObject);
         }
 
         private void onHitObjectLoaded(Drawable hitObject)
