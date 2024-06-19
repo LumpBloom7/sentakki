@@ -157,6 +157,39 @@ namespace osu.Game.Rulesets.Sentakki.UI
             }
         }
 
+        public override void Add(DrawableHitObject h)
+        {
+            switch (h)
+            {
+                case SentakkiLanedHitObject:
+                    LanedPlayfield.Add(h);
+                    break;
+
+                case Touch:
+                    touchPlayfield.Add(h);
+                    break;
+
+                default:
+                    base.Add(h);
+                    break;
+            }
+        }
+
+        public override bool Remove(DrawableHitObject h)
+        {
+            switch (h)
+            {
+                case SentakkiLanedHitObject:
+                    return LanedPlayfield.Remove(h);
+
+                case Touch:
+                    return touchPlayfield.Remove(h);
+                default:
+                    return base.Remove(h);
+            }
+        }
+
+
         private void onNewResult(DrawableHitObject judgedObject, JudgementResult result)
         {
             if (!judgedObject.DisplayResult || !DisplayJudgements.Value || judgedObject is not DrawableSentakkiHitObject sentakkiHitObject)
