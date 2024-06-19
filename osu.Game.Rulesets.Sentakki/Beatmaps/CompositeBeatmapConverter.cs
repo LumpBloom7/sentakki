@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -24,7 +26,7 @@ public class CompositeBeatmapConverter : BeatmapConverter<SentakkiHitObject>
     {
         if (Beatmap.HitObjects.All(h => h is SentakkiHitObject))
         {
-            return base.ConvertBeatmap(original, cancellationToken);
+            return cloneBeatmap(original);
         }
 
         BeatmapConverter<SentakkiHitObject> converter;
@@ -35,6 +37,104 @@ public class CompositeBeatmapConverter : BeatmapConverter<SentakkiHitObject>
             converter = new SentakkiBeatmapConverter(original, ruleset) { ConversionFlags = flags };
 
         return ((SentakkiBeatmap)converter.Convert(cancellationToken)) ?? base.ConvertBeatmap(original, cancellationToken);
+    }
+
+    private Beatmap<SentakkiHitObject> cloneBeatmap(IBeatmap original)
+    {
+        var beatmap = CreateBeatmap();
+        beatmap.BeatmapInfo = original.BeatmapInfo;
+        beatmap.ControlPointInfo = original.ControlPointInfo;
+        beatmap.Breaks = original.Breaks;
+        beatmap.UnhandledEventLines = original.UnhandledEventLines;
+        beatmap.HitObjects = cloneHitObjects(original.HitObjects);
+        return beatmap;
+    }
+
+    private List<SentakkiHitObject> cloneHitObjects(IReadOnlyList<HitObject> hitObjects)
+    {
+        var list = new List<SentakkiHitObject>(hitObjects.Count);
+
+        foreach (HitObject ho in hitObjects)
+        {
+            switch (ho)
+            {
+                case Tap tap:
+                    list.Add(new Tap
+                    {
+                        Lane = tap.Lane,
+                        StartTime = tap.StartTime,
+                        Break = tap.Break,
+                        Ex = tap.Ex,
+                        Samples = tap.Samples
+                    });
+                    break;
+
+                case Hold hold:
+                    list.Add(new Hold
+                    {
+                        Lane = hold.Lane,
+                        StartTime = hold.StartTime,
+                        Duration = hold.Duration,
+                        Break = hold.Break,
+                        Ex = hold.Ex,
+                        NodeSamples = hold.NodeSamples
+                    });
+                    break;
+
+                case Slide slide:
+                    var slideInfoList = new List<SlideBodyInfo>();
+                    foreach (var slideInfo in slide.SlideInfoList)
+                    {
+                        var slidePathParts = new SlideBodyPart[slideInfo.SlidePathParts.Length];
+
+                        for (int i = 0; i < slideInfo.SlidePathParts.Length; ++i)
+                        {
+                            ref var part = ref slideInfo.SlidePathParts[i];
+                            slidePathParts[i] = new SlideBodyPart(part.Shape, part.EndOffset, part.Mirrored);
+                        }
+                        slideInfoList.Add(new SlideBodyInfo
+                        {
+                            Duration = slideInfo.Duration,
+                            Break = slideInfo.Break,
+                            ShootDelay = slideInfo.ShootDelay,
+                            SlidePathParts = slidePathParts
+                        });
+                    }
+
+                    list.Add(new Slide
+                    {
+                        Samples = slide.Samples,
+                        Lane = slide.Lane,
+                        Break = slide.Break,
+                        Ex = slide.Ex,
+                        SlideInfoList = slideInfoList,
+                        StartTime = slide.StartTime
+                    });
+                    break;
+
+                case TouchHold th:
+                    list.Add(new TouchHold
+                    {
+                        StartTime = th.StartTime,
+                        Samples = th.Samples,
+                        Duration = th.Duration
+                    });
+                    break;
+
+                case Touch touch:
+                    list.Add(new Touch
+                    {
+                        Position = touch.Position,
+                        Samples = touch.Samples,
+                        StartTime = touch.StartTime,
+                        Ex = touch.Ex
+                    });
+                    break;
+
+            }
+        }
+
+        return list;
     }
 
     protected override Beatmap<SentakkiHitObject> CreateBeatmap() => new SentakkiBeatmap();
