@@ -8,9 +8,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     // The size property of this drawable affects the stretch of the ring
     public partial class NoteRingPiece : CompositeDrawable
     {
-        private const float base_circle_size = 75;
+        private const float base_circle_size = 105f;
 
-        public NoteRingPiece()
+        public NoteRingPiece(bool hex = false)
         {
             Padding = new MarginPadding(-base_circle_size / 2);
             RelativeSizeAxes = Axes.Both;
@@ -18,8 +18,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Origin = Anchor.Centre;
             InternalChildren = new Drawable[]
             {
-                new ShadowPiece(),
-                new RingPiece(),
+                new RingNote(){
+                    RelativeSizeAxes = Axes.Both,
+                    Hex = hex,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                }
             };
         }
     }
