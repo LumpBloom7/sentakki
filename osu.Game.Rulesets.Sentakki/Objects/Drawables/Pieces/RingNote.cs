@@ -12,21 +12,16 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 
+public enum NoteShape
+{
+    Ring,
+    Hex,
+    Star
+}
+
 public partial class RingNote : Sprite, ITexturedShaderDrawable
 {
-    private bool hex;
-    public bool Hex
-    {
-        get => hex;
-        set
-        {
-            if (hex == value)
-                return;
-            hex = value;
-            Invalidate(Invalidation.DrawNode);
-        }
-    }
-
+    public NoteShape Shape { get; init; } = NoteShape.Ring;
     private float thickness = 0.25f;
     public float Thickness
     {
@@ -66,29 +61,30 @@ public partial class RingNote : Sprite, ITexturedShaderDrawable
         }
     }
 
-    private Color4 secondaryColor = Color4.Gray;
-    public Color4 SecondaryColor
-    {
-        get => secondaryColor;
-        set
-        {
-            if (secondaryColor == value)
-                return;
-            secondaryColor = value;
-            Invalidate(Invalidation.DrawNode);
-        }
-    }
-
     public new IShader TextureShader { get; private set; } = null!;
 
     protected override DrawNode CreateDrawNode() => new RingNoteDrawNode(this);
 
     private BindableBool exBindable = new BindableBool();
 
+    private string fragmentShaderFor(NoteShape shape)
+    {
+        switch (shape)
+        {
+            case NoteShape.Ring:
+            default:
+                return "ringNote";
+            case NoteShape.Hex:
+                return "hexNote";
+            case NoteShape.Star:
+                return "starNote";
+        }
+    }
+
     [BackgroundDependencyLoader]
     private void load(ShaderManager shaders, IRenderer renderer, DrawableHitObject? hitObject)
     {
-        TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "ringShader");
+        TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, fragmentShaderFor(Shape));
         Texture = renderer.WhitePixel;
 
         if (hitObject is null)
@@ -105,7 +101,6 @@ public partial class RingNote : Sprite, ITexturedShaderDrawable
         protected override bool CanDrawOpaqueInterior => false;
         private IUniformBuffer<ShapeParameters>? shapeParameters;
 
-        private bool hex;
         private float thickness;
         private Vector2 size;
         private bool glow;
@@ -119,7 +114,6 @@ public partial class RingNote : Sprite, ITexturedShaderDrawable
         public override void ApplyState()
         {
             base.ApplyState();
-            hex = Source.Hex;
             thickness = Source.Thickness;
             size = Source.DrawSize;
             shadowRadius = Source.shadowRadius;
@@ -134,11 +128,10 @@ public partial class RingNote : Sprite, ITexturedShaderDrawable
 
             shapeParameters.Data = shapeParameters.Data with
             {
-                Hex = hex,
                 Thickness = thickness,
                 Size = size,
                 ShadowRadius = shadowRadius,
-                Glow = glow
+                Glow = glow,
             };
 
             shader.BindUniformBlock("m_shapeParameters", shapeParameters);
@@ -153,12 +146,14 @@ public partial class RingNote : Sprite, ITexturedShaderDrawable
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private record struct ShapeParameters
         {
-            public UniformBool Hex;
             public UniformFloat Thickness;
+            public UniformPadding4 _;
             public UniformVector2 Size;
             public UniformFloat ShadowRadius;
             public UniformBool Glow;
-            public UniformPadding8 padding_;
+
+            public UniformPadding8 __;
+
         }
     }
 }

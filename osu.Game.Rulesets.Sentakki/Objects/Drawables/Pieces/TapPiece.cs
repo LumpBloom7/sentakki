@@ -13,7 +13,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     {
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
-        private const float base_circle_size = 75;
 
         public TapPiece()
         {

@@ -30,7 +30,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
             {
                 Origin = Anchor.CentreLeft,
                 Anchor = Anchor.Centre,
-                Hex = true,
+                Shape = NoteShape.Hex,
                 Size = new Vector2(105, 105),
                 Colour = Color4Extensions.FromHex("FF0064"),
                 Glow = true,
@@ -40,7 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
             {
                 Origin = Anchor.CentreRight,
                 Anchor = Anchor.Centre,
-                Hex = false,
+                Shape = NoteShape.Ring,
                 Size = new Vector2(105, 105),
                 Colour = Color4Extensions.FromHex("FF0064"),
                 Thickness = 0.24f

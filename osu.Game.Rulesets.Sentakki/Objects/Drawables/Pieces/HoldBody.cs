@@ -13,7 +13,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     {
         // This will be proxied, so a must.
         public override bool RemoveWhenNotAlive => false;
-        private const float expansionsize = 0.134f * 75f;
 
         public HoldBody()
         {
@@ -27,7 +26,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                   // Padding = new MarginPadding(-expansionsize),
                     Child =  new NoteRingPiece(true)
                 }
             };
