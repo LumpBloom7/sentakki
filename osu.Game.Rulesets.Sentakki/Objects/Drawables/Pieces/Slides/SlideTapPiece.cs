@@ -45,9 +45,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
 
         [BackgroundDependencyLoader]
-        private void load(DrawableHitObject drawableObject)
+        private void load(DrawableHitObject? drawableObject)
         {
-            accentColour.BindTo(drawableObject.AccentColour);
+            if (drawableObject is null)
+                return;
+
+            accentColour.BindTo(drawableObject?.AccentColour);
             accentColour.BindValueChanged(colour =>
             {
                 Stars.Colour = colour.NewValue;
