@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Origin = Anchor.Centre;
             InternalChildren = new Drawable[]
             {
-                new RingNote(){
+                new LaneNoteVisual(){
                     RelativeSizeAxes = Axes.Both,
                     Shape = hex ? NoteShape.Hex : NoteShape.Ring,
                     Anchor = Anchor.Centre,

@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         private void load()
         {
             AddRangeInternal(new Drawable[]{
-                new RingNote{
+                new LaneNoteVisual{
                     RelativeSizeAxes = Axes.Both,
 
                     Shape = NoteShape.Star,

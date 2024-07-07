@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
     {
         protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 
-        private RingNote ring = null!;
+        private LaneNoteVisual ring = null!;
 
         public TestSceneNewRing()
         {
@@ -26,7 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
                 Colour = Color4.White
             });
 
-            Add(ring = new RingNote()
+            Add(ring = new LaneNoteVisual()
             {
                 Origin = Anchor.CentreLeft,
                 Anchor = Anchor.Centre,
@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI
                 Glow = true,
                 Thickness = 0.24f
             });
-            Add(new RingNote()
+            Add(new LaneNoteVisual()
             {
                 Origin = Anchor.CentreRight,
                 Anchor = Anchor.Centre,

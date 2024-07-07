@@ -8,7 +8,6 @@ using osu.Framework.Graphics.Shaders.Types;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Rulesets.Objects.Drawables;
 using osuTK;
-using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 
@@ -19,7 +18,7 @@ public enum NoteShape
     Star
 }
 
-public partial class RingNote : Sprite, ITexturedShaderDrawable
+public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
 {
     public NoteShape Shape { get; init; } = NoteShape.Ring;
     private float thickness = 0.25f;
@@ -63,7 +62,7 @@ public partial class RingNote : Sprite, ITexturedShaderDrawable
 
     public new IShader TextureShader { get; private set; } = null!;
 
-    protected override DrawNode CreateDrawNode() => new RingNoteDrawNode(this);
+    protected override DrawNode CreateDrawNode() => new LaneNoteVisualDrawNode(this);
 
     private BindableBool exBindable = new BindableBool();
 
@@ -95,9 +94,9 @@ public partial class RingNote : Sprite, ITexturedShaderDrawable
         exBindable.BindValueChanged(b => Glow = b.NewValue, true);
     }
 
-    private partial class RingNoteDrawNode : SpriteDrawNode
+    private partial class LaneNoteVisualDrawNode : SpriteDrawNode
     {
-        protected new RingNote Source => (RingNote)base.Source;
+        protected new LaneNoteVisual Source => (LaneNoteVisual)base.Source;
         protected override bool CanDrawOpaqueInterior => false;
         private IUniformBuffer<ShapeParameters>? shapeParameters;
 
@@ -106,7 +105,7 @@ public partial class RingNote : Sprite, ITexturedShaderDrawable
         private bool glow;
         private float shadowRadius;
 
-        public RingNoteDrawNode(RingNote source)
+        public LaneNoteVisualDrawNode(LaneNoteVisual source)
             : base(source)
         {
         }
@@ -153,7 +152,6 @@ public partial class RingNote : Sprite, ITexturedShaderDrawable
             public UniformBool Glow;
 
             public UniformPadding8 __;
-
         }
     }
 }
