@@ -3,35 +3,63 @@
 
 #include "sh_noteBase.fs"
 
-float hexSDF(in vec2 p, in vec2 origin, in float h, in float r){
-    const float Sin =  sqrt(3.0) * 0.5;
-    const float Cos = .5;
-
-    float sinR =  Sin * r;
-    float cosR = Cos * r;
-    
+// SDF that makes a rounded hexagon
+// Adapted from the Star shader provided at https://iquilezles.org/articles/distfunctions2d/
+float roundedHexSDF(in vec2 p, in vec2 origin, in float h, in float r)
+{
     vec2 P = p - origin;
-    
-    float absYDist = abs(P.y);
-    float absXDist = abs(P.x);
-    
-    float rhs = h / 2.0 
-                + (cosR) 
-                + (Cos/Sin) * (absXDist - sinR);
+    const float n = 6.0; // 6 sided star
+    const float w = 1.0; // With no angle
 
-    float factor = step(rhs,absYDist);
+    // these 5 lines can be precomputed for a given shape
+    //float m = n*(1.0-w) + w*2.0;
+    const float m = n + w * (2.0 - n);
     
-    float a = absXDist 
-                - sinR 
-                + (Sin / (2 * Cos)) 
-                    * (absYDist 
-                        - (h/2.0) 
-                        - (Cos * r) 
-                        - (Cos / Sin) * (absXDist - sinR));
+    const float an = 3.1415927 / n;
+    const float en = 3.1415927 / m;
+    const vec2  ecs = vec2(cos(en),sin(en)); // ecs=vec2(0,1) and simplify, for regular polygon,
 
-    float b = absXDist - sinR;
-        
-    return (a * factor) + b * (1.0-factor);
+    vec2 racs = r * vec2(cos(an),sin(an));
+
+    float halfHeight = h * 0.5;
+    float absY = abs(P.y);
+
+    if(absY <= halfHeight){
+        return abs(P.x) - racs.x;
+    }
+
+    P = vec2(abs(P.x), (absY - halfHeight));
+
+    // reduce to first sector
+    float bn = mod(atan(P.x,P.y), 2.0 * an) - an;
+    P = length(P) * vec2(cos(bn), abs(sin(bn)));
+
+    // line sdf
+    P -= racs;
+    P += ecs * clamp(-dot(P,ecs), 0.0, racs.y / ecs.y);
+    return length(P) * sign(P.x);
+}
+
+// A simple hex SDF, adapted from https://andrewhungblog.wordpress.com/2018/07/28/shader-art-tutorial-hexagonal-grids/
+// Supports arbitrary heights, while maintaining identical radius
+// This one doesn't support rounded corners
+float hexSDF(in vec2 p, in vec2 origin, in float h, in float r)
+{    
+    vec2 P = p - origin;
+
+    if(abs(P.y) < h/2.0){
+        return abs(P.x) - r;
+    }
+
+    float hexSize = r;
+    const vec2 s = vec2(1, 1.7320508);
+
+    float newY = (abs(P.y) - h/2.0);
+    p = vec2(P.x, newY);
+
+    p = abs(p);
+
+    return max(dot(p, s*.5), p.x) - hexSize;
 }
 
 void main(void) {
@@ -50,7 +78,7 @@ void main(void) {
 
     float h = size.y - size.x;
 
-    float hex = hexSDF(p, c, h, radius);
+    float hex = roundedHexSDF(p, c, h, radius);
     float dotDown = circleSDF(p, c + vec2(0, h * 0.5), borderThickness/4 - 1.5 );
     float dotUp =  circleSDF(p, c -vec2(0, h * 0.5), borderThickness/4 - 1.5);
 
