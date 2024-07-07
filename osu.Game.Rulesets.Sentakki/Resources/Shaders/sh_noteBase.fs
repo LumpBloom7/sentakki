@@ -19,7 +19,7 @@ layout(std140, set = 0, binding = 0) uniform m_shapeParameters
 
 vec4 sdfToShape(in float dist, in float borderThickness, in float shadowThickness){
     vec3 shadowColor =  glow ? vec3(1) : vec3(0);
-    float shadowAlpha = 0.5;
+    float shadowAlpha = glow ? 0.75: 0.6;
 
     float base = smoothstep(borderThickness - 2.0, borderThickness - 3.0, abs(dist));
     float outline = smoothstep(borderThickness, borderThickness - 1.0, abs(dist));
@@ -27,7 +27,9 @@ vec4 sdfToShape(in float dist, in float borderThickness, in float shadowThicknes
     if(shadowThickness < 1)
         return vec4(vec3(max(outline * 0.5, base)), outline) * v_Colour;
 
-    float shadow = pow(smoothstep(shadowThickness + borderThickness, borderThickness - 1.0, dist) * shadowAlpha, 2);
+    float shadowDist = dist - borderThickness;
+
+    float shadow =  pow((1 - clamp(((1 / shadowThickness) * shadowDist), 0.0 , 1.0)) * shadowAlpha, 2.0);
     float exclusion = smoothstep(borderThickness, borderThickness - 1.0, dist); // Inner cutout for shadow
 
     float innerShading = smoothstep(borderThickness -2.0, 0.0 , abs(dist));
