@@ -35,9 +35,9 @@ vec4 sdfToShape(in float dist, in float borderThickness, in float shadowThicknes
     vec4 shadowPart = vec4(shadowColor,shadow) * (1 - exclusion) * v_Colour;
     vec4 fillPart = vec4(vec3(max(outline * 0.5, base)), outline) * v_Colour;
 
-    vec4 stylizedFill = mix(fillPart, v_Colour * 0.85, innerShading);
+    //vec4 stylizedFill = mix(fillPart, v_Colour * 0.85, innerShading);
     
-    return shadowPart + stylizedFill;
+    return shadowPart + fillPart;
 }
 
 float circleSDF(in vec2 p, in vec2 centre, in float radius){
