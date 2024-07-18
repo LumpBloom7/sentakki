@@ -143,11 +143,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
         // Input specifics (sensor/button) for replay and gameplay
         private readonly Bindable<LaneInputMode> laneInputMode = new Bindable<LaneInputMode>();
 
-        private bool hasReplay => ((SentakkiInputManager)KeyBindingInputManager).ReplayInputHandler != null;
+        private SentakkiFramedReplayInputHandler? sentakkiFramedReplayInput => (SentakkiFramedReplayInputHandler?)((SentakkiInputManager)KeyBindingInputManager).ReplayInputHandler;
 
-        private SentakkiFramedReplayInputHandler sentakkiFramedReplayInput => (SentakkiFramedReplayInputHandler)((SentakkiInputManager)KeyBindingInputManager).ReplayInputHandler;
-
-        public bool UseSensorMode => hasReplay ? sentakkiFramedReplayInput.UsingSensorMode : laneInputMode.Value == LaneInputMode.Sensor;
+        public bool UseSensorMode => sentakkiFramedReplayInput is not null ? sentakkiFramedReplayInput.UsingSensorMode : laneInputMode.Value == LaneInputMode.Sensor;
 
         // Default stuff
         protected override Playfield CreatePlayfield() => new SentakkiPlayfield();

@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Replays
             if (currentFrame.MouseLeft) Actions.Add(SentakkiAction.Button1);
             if (currentFrame.MouseRight) Actions.Add(SentakkiAction.Button2);
 
-            UsingSensorMode = currentFrame.ButtonState.HasFlagFast(ReplayButtonState.Smoke);
+            UsingSensorMode = currentFrame.ButtonState.HasFlag(ReplayButtonState.Smoke);
         }
 
         public LegacyReplayFrame ToLegacy(IBeatmap beatmap)
