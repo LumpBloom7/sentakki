@@ -12,7 +12,7 @@
     <ItemGroup Label="Package References">
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0"/>
         <PackageReference Include="NUnit" Version="4.1.0"/>
-        <PackageReference Include="NUnit3TestAdapter" Version="4.5.0"/>
+        <PackageReference Include="NUnit3TestAdapter" Version="4.6.0"/>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\osu.Game.Rulesets.Sentakki\osu.Game.Rulesets.Sentakki.csproj"/>
