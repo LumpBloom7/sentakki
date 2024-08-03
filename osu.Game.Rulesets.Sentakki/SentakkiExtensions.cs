@@ -124,5 +124,16 @@ namespace osu.Game.Rulesets.Sentakki
                     return result.GetDescription();
             }
         }
+
+        public static int GetNoteLaneFromDegrees(this float degrees)
+        {
+            if (degrees < 0) degrees += 360;
+            if (degrees >= 360) degrees %= 360;
+
+            int lane = (int)MathF.Round((degrees - 22.5f) / 45f);
+            if (lane >= 8) lane -= 8;
+
+            return lane;
+        }
     }
 }
