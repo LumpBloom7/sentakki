@@ -218,9 +218,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             var result = HitObject.HitWindows.ResultFor(timeOffset);
 
-            // If the slide was completed before the early windows, just give an OK result
-            if (result == HitResult.None)
-                result = HitResult.Ok;
+            if (timeOffset < 0)
+            {
+                // If the slide was completed before the early windows, just give an OK result
+                if (result == HitResult.None)
+                    result = HitResult.Ok;
+
+                // Give a perfect result if the star is intersecting with the last node
+                // This is to preserve the expected invariant that following the star perfectly should guarantee a perfect judgement.
+                if ((1 - StarProgress) * Slidepath.Path.TotalDistance <= DrawableSlideCheckpointNode.DETECTION_RADIUS)
+                    result = HitResult.Perfect;
+            }
 
             ApplyResult(result);
         }
