@@ -18,11 +18,12 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
         private static readonly (string, Func<HitEvent, bool>)[] entries =
         {
             ("Tap", e => e.HitObject is Tap x && !x.Break),
-            ("Hold", e => (e.HitObject is Hold or Hold.HoldHead) && !((SentakkiLanedHitObject)e.HitObject).Break),
+            ("Hold", e => ((e.HitObject is Hold.HoldHead) && !((SentakkiLanedHitObject)e.HitObject).Break) || e.HitObject is Hold),
             ("Slide", e => e.HitObject is SlideBody x),
             ("Touch", e => e.HitObject is Touch),
             ("Touch Hold", e => e.HitObject is TouchHold),
-            ("Break", e => e.HitObject is SentakkiLanedHitObject x && x is not Hold && x.Break),
+            // Note Hold and Slide breaks are applied to child objects, not itself.
+            ("Break", e => e.HitObject is SentakkiLanedHitObject x && (x is not Hold) && (x is not Slide) && x.Break),
         };
 
         private readonly IReadOnlyList<HitEvent> hitEvents;
