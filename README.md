@@ -1,4 +1,4 @@
-![sentakki](assets/logov3.png)
+![sentakki](assets/logov4.png)
 
 ---
 [![.NET Core](https://github.com/LumpBloom7/sentakki/workflows/.NET%20Core/badge.svg)](https://github.com/LumpBloom7/sentakki/actions?query=workflow%3A%22.NET+Core%22)
