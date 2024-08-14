@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
             ("Slide", e => e.HitObject is SlideBody x),
             ("Touch", e => e.HitObject is Touch),
             ("Touch Hold", e => e.HitObject is TouchHold),
-            ("Break", e => e.HitObject is SentakkiLanedHitObject x && x.Break),
+            ("Break", e => e.HitObject is SentakkiLanedHitObject x && x is not Hold && x.Break),
         };
 
         private readonly IReadOnlyList<HitEvent> hitEvents;
