@@ -39,7 +39,7 @@ public partial class MaimaiDXAccuracy : SimpleStatisticItem<double>
                     break;
 
                 case HitResult.Good:
-                    actual += 0.75;
+                    actual += 0.8;
                     break;
 
                 case HitResult.Ok:
