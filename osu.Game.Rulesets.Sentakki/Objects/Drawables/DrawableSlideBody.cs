@@ -5,6 +5,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Logging;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -198,6 +199,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
                 }
             }
+
             if (!userTriggered)
             {
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
@@ -216,19 +218,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
             }
 
+
+
             var result = HitObject.HitWindows.ResultFor(timeOffset);
 
-            if (timeOffset < 0)
-            {
-                // If the slide was completed before the early windows, just give an OK result
-                if (result == HitResult.None)
-                    result = HitResult.Ok;
+            // Give the player an OK for extremely early completion
+            // This is also a safegaurd for super late hits beyond the late windows, where the input may have occured prior to the late window being exceeded due to lag.
+            if (result == HitResult.None)
+                result = HitResult.Ok;
 
-                // Give a perfect result if the star is intersecting with the last node
-                // This is to preserve the expected invariant that following the star perfectly should guarantee a perfect judgement.
+            // Give a perfect result if the star is intersecting with the last node
+            // This is to preserve the expected invariant that following the star perfectly should guarantee a perfect judgement.
+            if (timeOffset < 0)
                 if ((1 - StarProgress) * Slidepath.Path.TotalDistance <= DrawableSlideCheckpointNode.DETECTION_RADIUS)
                     result = HitResult.Perfect;
-            }
 
             ApplyResult(result);
         }
