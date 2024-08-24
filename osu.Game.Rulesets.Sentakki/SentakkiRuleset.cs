@@ -164,6 +164,8 @@ namespace osu.Game.Rulesets.Sentakki
             new StatisticItem(string.Empty, () => new SimpleStatisticTable(3, new SimpleStatisticItem[]
             {
                 new MaimaiDXAccuracy(score.HitEvents),
+                new EmptyStatistics(),
+                new EmptyStatistics(),
                 new UnstableRate(score.HitEvents)
             }), true)
         };
