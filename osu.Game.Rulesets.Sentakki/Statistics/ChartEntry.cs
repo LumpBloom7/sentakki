@@ -183,6 +183,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
                 addRatioBoxFor(HitResult.Ok);
                 addRatioBoxFor(HitResult.Good);
                 addRatioBoxFor(HitResult.Great);
+                addRatioBoxFor(HitResult.Perfect);
             }
 
             public void AnimateEntry()
@@ -210,6 +211,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
         public partial class DetailedStatsSegment : FillFlowContainer
         {
             private static readonly HitResult[] valid_results = new HitResult[]{
+                HitResult.Perfect,
                 HitResult.Great,
                 HitResult.Good,
                 HitResult.Ok,

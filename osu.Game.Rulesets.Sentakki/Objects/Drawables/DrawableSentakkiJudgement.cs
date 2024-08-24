@@ -81,7 +81,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 if (result.Type == HitResult.Perfect)
                 {
                     timingPiece.Text = "CRITICAL";
-                    timingPiece.Colour = Color4.Orange;
+                    timingPiece.Colour = result.Type.GetColorForSentakkiResult();
                 }
                 else if (result.TimeOffset > 0)
                 {
