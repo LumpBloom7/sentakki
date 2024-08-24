@@ -23,6 +23,7 @@ public partial class MaimaiDXAccuracy : SimpleStatisticItem<double>
         {
             switch (hitEvent.HitObject.Judgement.MaxResult)
             {
+                case HitResult.Perfect:
                 case HitResult.Great:
                     maximum += 1;
                     break;
@@ -34,6 +35,7 @@ public partial class MaimaiDXAccuracy : SimpleStatisticItem<double>
 
             switch (hitEvent.Result)
             {
+                case HitResult.Perfect:
                 case HitResult.Great:
                     actual += 1;
                     break;
