@@ -175,6 +175,7 @@ namespace osu.Game.Rulesets.Sentakki
             return new[]
             {
                 HitResult.LargeBonus,
+                HitResult.Perfect,
                 HitResult.Great,
                 HitResult.Good,
                 HitResult.Ok,

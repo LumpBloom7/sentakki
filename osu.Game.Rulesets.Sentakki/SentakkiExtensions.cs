@@ -90,6 +90,7 @@ namespace osu.Game.Rulesets.Sentakki
         {
             switch (result)
             {
+                case HitResult.Perfect:
                 case HitResult.Great:
                     return Color4.Orange;
 
@@ -110,6 +111,9 @@ namespace osu.Game.Rulesets.Sentakki
             {
                 case HitResult.LargeBonus:
                     return "Critical Break Bonus";
+
+                case HitResult.Perfect:
+                    return "Critical";
 
                 case HitResult.Great:
                     return "Perfect";

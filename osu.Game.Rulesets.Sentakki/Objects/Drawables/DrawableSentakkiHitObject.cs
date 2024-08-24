@@ -55,24 +55,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             ExBindable.BindTo(HitObject.ExBindable);
         }
 
-        protected override JudgementResult CreateResult(Judgement judgement) => new SentakkiJudgementResult(HitObject, judgement);
-
-        protected new void ApplyResult(HitResult result)
-        {
-            var SentakkiJudgementResult = (SentakkiJudgementResult)Result;
-            if (result == HitResult.Perfect)
-            {
-                SentakkiJudgementResult.Critical = true;
-                result = Result.Judgement.MaxResult;
-            }
-            else
-            {
-                SentakkiJudgementResult.Critical = false;
-            }
-
-            base.ApplyResult(result);
-        }
-
         protected override void OnFree()
         {
             base.OnFree();

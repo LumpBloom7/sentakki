@@ -17,14 +17,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
         }
 
-        public void TriggerResult()
+        public void TriggerResult(bool isCritical)
         {
-            ApplyResult((r, dho) =>
-            {
-                double timeOffset = Math.Abs(Time.Current - HitObject.StartTime);
-                bool isCrit = r.HitObject.HitWindows.ResultFor(timeOffset) == HitResult.Perfect;
-                r.Type = isCrit ? r.Judgement.MaxResult : r.Judgement.MinResult;
-            });
+            ApplyResult(isCritical ? HitResult.LargeBonus : HitResult.IgnoreMiss);
         }
     }
 }

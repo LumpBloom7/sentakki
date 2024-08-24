@@ -105,7 +105,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             // Judge the scoreBonus
             foreach (var bonusObject in scoreBonusObjects)
-                bonusObject.TriggerResult();
+                bonusObject.TriggerResult(hitResult == HitResult.Perfect);
 
             // Also give Break note score padding a judgement
             for (int i = 0; i < scorePaddingObjects.Count; ++i)
