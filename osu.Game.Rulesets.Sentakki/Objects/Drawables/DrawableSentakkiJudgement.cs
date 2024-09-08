@@ -62,7 +62,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public DrawableSentakkiJudgement Apply(JudgementResult result, DrawableHitObject hitObject)
         {
-
             if (result.Type == HitResult.Perfect)
                 judgementPiece.JudgementText.Text = HitResult.Great.GetDisplayNameForSentakkiResult().ToUpperInvariant();
             else
