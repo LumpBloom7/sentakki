@@ -28,7 +28,7 @@ public partial class MaimaiDXAccuracy : SimpleStatisticItem<double>
             maximum += ratioForHit(hitEvent.HitObject.Judgement.MaxResult);
             actual += ratioForHit(hitEvent.Result);
 
-            if (hitEvent.HitObject is SentakkiLanedHitObject sho && sho is not Hold)
+            if (hitEvent.HitObject is SentakkiLanedHitObject sho)
             {
                 if (sho.Break)
                 {
