@@ -10,7 +10,6 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
-using osu.Game.Rulesets.Sentakki.Judgements;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
@@ -63,11 +62,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public DrawableSentakkiJudgement Apply(JudgementResult result, DrawableHitObject hitObject)
         {
-            var senResult = (SentakkiJudgementResult)result;
-            judgementPiece.JudgementText.Text = result.Type.GetDisplayNameForSentakkiResult().ToUpperInvariant();
+            if (result.Type == HitResult.Perfect)
+                judgementPiece.JudgementText.Text = HitResult.Great.GetDisplayNameForSentakkiResult().ToUpperInvariant();
+            else
+                judgementPiece.JudgementText.Text = result.Type.GetDisplayNameForSentakkiResult().ToUpperInvariant();
+
             judgementPiece.JudgementText.Colour = result.Type.GetColorForSentakkiResult();
 
-            if (senResult.HitObject.HitWindows is SentakkiEmptyHitWindows || result.Type == HitResult.Miss || !detailedJudgements.Value)
+            if (result.HitObject.HitWindows is SentakkiEmptyHitWindows || result.Type == HitResult.Miss || !detailedJudgements.Value)
             {
                 timingPiece.Alpha = 0;
             }
@@ -75,10 +77,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 timingPiece.Alpha = 1;
 
-                if (senResult.Critical)
+                if (result.Type == HitResult.Perfect)
                 {
                     timingPiece.Text = "CRITICAL";
-                    timingPiece.Colour = Color4.Orange;
+                    timingPiece.Colour = result.Type.GetColorForSentakkiResult();
                 }
                 else if (result.TimeOffset > 0)
                 {

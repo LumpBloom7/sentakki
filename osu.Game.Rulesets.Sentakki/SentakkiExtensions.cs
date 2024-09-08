@@ -1,5 +1,6 @@
 using System;
 using osu.Framework.Extensions;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Game.Rulesets.Scoring;
 using osuTK;
 using osuTK.Graphics;
@@ -90,6 +91,8 @@ namespace osu.Game.Rulesets.Sentakki
         {
             switch (result)
             {
+                case HitResult.Perfect:
+                    return Color4.Orange.Lighten(0.3f);
                 case HitResult.Great:
                     return Color4.Orange;
 
@@ -110,6 +113,9 @@ namespace osu.Game.Rulesets.Sentakki
             {
                 case HitResult.LargeBonus:
                     return "Critical Break Bonus";
+
+                case HitResult.Perfect:
+                    return "Critical";
 
                 case HitResult.Great:
                     return "Perfect";

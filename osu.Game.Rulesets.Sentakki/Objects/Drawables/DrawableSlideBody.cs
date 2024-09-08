@@ -210,7 +210,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                     // Apply a leniency if the player almost completed the slide
                     if (SlideCheckpoints.Count(node => !node.Result.IsHit) <= 2 && SlideCheckpoints.Count > 2)
-                        ApplyResult(HitResult.Ok);
+                        ApplyResult(hitResult: HitResult.Ok);
                     else
                         ApplyResult(Result.Judgement.MinResult);
                 }
