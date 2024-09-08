@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Statistics
         {
             ("Tap", e => e.HitObject is Tap x && !x.Break),
             ("Hold", e => ((e.HitObject is Hold.HoldHead) && !((SentakkiLanedHitObject)e.HitObject).Break) || e.HitObject is Hold),
-            ("Slide", e => e.HitObject is SlideBody x),
+            ("Slide", e => e.HitObject is SlideBody x && !x.Break),
             ("Touch", e => e.HitObject is Touch),
             ("Touch Hold", e => e.HitObject is TouchHold),
             // Note Hold and Slide breaks are applied to child objects, not itself.
