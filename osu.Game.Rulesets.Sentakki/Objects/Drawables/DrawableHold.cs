@@ -131,7 +131,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 var newResult = originalResult - deduction;
 
-                if (originalResult <= HitResult.Ok)
+                if (newResult <= HitResult.Ok)
                     return HitResult.Ok;
 
                 return newResult;
