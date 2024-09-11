@@ -70,6 +70,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnApply();
             isHolding = false;
+            timeNotHeld = 0;
         }
 
         protected override void UpdateInitialTransforms()
