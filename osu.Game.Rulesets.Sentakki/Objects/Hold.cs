@@ -21,6 +21,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             get => nodeSamples;
             set
             {
+                if (!value.Any())
+                    return;
+
                 Samples = value.Last();
                 nodeSamples = value;
             }
@@ -43,7 +46,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 Break = Break,
                 StartTime = StartTime,
                 Lane = Lane,
-                Samples = nodeSamples.Any() ? nodeSamples.First() : new List<HitSampleInfo>(),
+                Samples = NodeSamples.Any() ? NodeSamples.First() : Samples,
                 ColourBindable = ColourBindable.GetBoundCopy(),
                 Ex = Ex
             });
