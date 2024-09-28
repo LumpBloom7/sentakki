@@ -35,13 +35,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             for (int i = 1; i < ScoreWeighting; ++i)
                 AddNested(new ScorePaddingObject { StartTime = this.GetEndTime() });
-
-            if (Break)
-                AddNested(new ScoreBonusObject
-                {
-                    StartTime = this.GetEndTime(),
-                    HitWindows = HitWindows
-                });
         }
 
         public override IList<HitSampleInfo> AuxiliarySamples => new HitSampleInfo[] { new BreakSample(CreateHitSampleInfo()) };
