@@ -56,16 +56,8 @@ public partial class JudgementChart : TableContainer
 
             int sum = results.Sum(kvp => kvp.Value);
 
-            bool perfected = sum == results.GetValueOrDefault(HitResult.Perfect) + results.GetValueOrDefault(HitResult.Great);
-            bool critPerfect = sum == results.GetValueOrDefault(HitResult.Perfect);
-
-            Color4 specialColor = Color4.White;
-
-            if (critPerfect)
-                specialColor = HitResult.Perfect.GetColorForSentakkiResult();
-            else if (perfected)
-                specialColor = HitResult.Great.GetColorForSentakkiResult();
-
+            HitResult minResult = sum == 0 ? HitResult.Perfect : results.MinBy(kvp => kvp.Key).Key;
+            Color4 specialColor = minResult.GetColorForSentakkiResult();
 
             // The alpha will be used to "disable" an hitobject entry if they don't exist
             float commonAlpha = sum == 0 ? 0.1f : 1;
