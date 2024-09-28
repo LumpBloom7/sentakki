@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using osu.Framework.Graphics;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Statistics;
 using osu.Game.Tests.Visual;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Statistics
 {
@@ -58,7 +60,13 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Statistics
 
         public TestSceneJudgementChart()
         {
-            Add(new JudgementChart(testevents));
+            Add(new JudgementChart(testevents)
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Size = new Vector2(1, 250),
+                RelativeSizeAxes = Axes.X,
+            });
         }
     }
 }
