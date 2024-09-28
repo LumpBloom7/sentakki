@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK.Graphics;
 
@@ -20,13 +21,11 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             Color4 twinColor = Color4.Gold;
             Color4 breakColor = Color4.OrangeRed;
 
-            var hitObjectGroups = Beatmap.HitObjects.GroupBy(h => h.StartTime).ToList();
+            var hitObjectGroups = getColorableHitObject(Beatmap.HitObjects).GroupBy(h => new { isSlide = h is SlideBody, time = h.StartTime + (h is SlideBody s ? s.ShootDelay : 0) });
 
             foreach (var group in hitObjectGroups)
             {
                 bool isTwin = group.Count() > 1; // This determines whether the twin colour should be used
-
-                List<SlideBody> slideBodiesInGroup = new List<SlideBody>();
 
                 foreach (SentakkiHitObject hitObject in group)
                 {
@@ -37,27 +36,33 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     else if (isTwin)
                         noteColor = twinColor;
 
-                    // SlideTaps follow the typical coloring rules, while SlideBodies follow a different set of rules
-                    if (hitObject is Slide slide)
-                    {
-                        slide.SlideTap.NoteColour = noteColor;
-                        slideBodiesInGroup.AddRange(slide.SlideBodies);
-                    }
-                    else
-                        hitObject.NoteColour = noteColor;
-                }
-
-                // Colour Slide bodies separately
-                foreach (var slideBody in slideBodiesInGroup)
-                {
-                    if (slideBody.Break)
-                        slideBody.NoteColour = breakColor;
-                    else if (slideBodiesInGroup.Count > 1)
-                        slideBody.NoteColour = twinColor;
-                    else
-                        slideBody.NoteColour = slideBody.DefaultNoteColour;
+                    hitObject.NoteColour = noteColor;
                 }
             }
+        }
+
+        private IEnumerable<HitObject> getColorableHitObject(IReadOnlyList<HitObject> hitObjects)
+        {
+            foreach (var hitObject in hitObjects)
+            {
+                if (canBeColored(hitObject)) yield return hitObject;
+
+                foreach (var nested in getColorableHitObject(hitObject.NestedHitObjects).AsEnumerable())
+                    yield return nested;
+            }
+        }
+
+        private bool canBeColored(HitObject hitObject)
+        {
+            switch (hitObject)
+            {
+                case Tap:
+                case SlideBody:
+                case Hold:
+                case Touch:
+                    return true;
+            }
+            return false;
         }
     }
 }

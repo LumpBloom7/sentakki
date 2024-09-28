@@ -1,10 +1,12 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Localisation;
+using osu.Framework.Screens;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Localisation;
+using osu.Game.Screens;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -21,7 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         }
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(IPerformFromScreenRunner? performer)
         {
             var config = (SentakkiRulesetConfigManager)Config;
 
@@ -74,6 +76,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     LabelText = SentakkiSettingsSubsectionStrings.LaneInputMode,
                     Current = config.GetBindable<LaneInputMode>(SentakkiRulesetSettings.LaneInputMode)
                 },
+                new SettingsButton
+                {
+                    Text = @"Import local simai chart",
+                    Action = () => performer?.PerformFromScreen(menu => menu.Push(new SentakkiSimaiImportScreen()))
+                }
             };
         }
 

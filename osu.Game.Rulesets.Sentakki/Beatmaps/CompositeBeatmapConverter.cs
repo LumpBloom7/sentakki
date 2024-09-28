@@ -9,7 +9,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps;
 
 public class CompositeBeatmapConverter : BeatmapConverter<SentakkiHitObject>
 {
-    public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition);
+    public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition) || Beatmap.BeatmapInfo.Ruleset.ShortName == "Sentakki";
 
     public ConversionFlags flags;
 
@@ -22,6 +22,11 @@ public class CompositeBeatmapConverter : BeatmapConverter<SentakkiHitObject>
 
     protected override Beatmap<SentakkiHitObject> ConvertBeatmap(IBeatmap original, CancellationToken cancellationToken)
     {
+        if (Beatmap.HitObjects.All(h => h is SentakkiHitObject))
+        {
+            return base.ConvertBeatmap(original, cancellationToken);
+        }
+
         BeatmapConverter<SentakkiHitObject> converter;
 
         if (flags.HasFlag(ConversionFlags.oldConverter))
@@ -31,4 +36,6 @@ public class CompositeBeatmapConverter : BeatmapConverter<SentakkiHitObject>
 
         return ((SentakkiBeatmap)converter.Convert(cancellationToken)) ?? base.ConvertBeatmap(original, cancellationToken);
     }
+
+    protected override Beatmap<SentakkiHitObject> CreateBeatmap() => new SentakkiBeatmap();
 }
