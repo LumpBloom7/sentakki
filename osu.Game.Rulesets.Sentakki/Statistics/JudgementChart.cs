@@ -22,12 +22,12 @@ public partial class JudgementChart : TableContainer
     private static readonly (string, Func<HitEvent, bool>)[] hitObjectTypes =
     {
             ("Tap", e => e.HitObject is Tap x && !x.Break),
-            ("Hold", e => ((e.HitObject is Hold.HoldHead) && !((SentakkiLanedHitObject)e.HitObject).Break) || e.HitObject is Hold),
-            ("Slide", e => e.HitObject is SlideBody x),
+            ("Hold", e => (e.HitObject is Hold.HoldHead || e.HitObject is Hold) && !((SentakkiLanedHitObject)e.HitObject).Break),
+            ("Slide", e => e.HitObject is SlideBody x && !x.Break),
             ("Touch", e => e.HitObject is Touch),
             ("Touch Hold", e => e.HitObject is TouchHold),
             // Note Hold and Slide breaks are applied to child objects, not itself.
-            ("Break", e => e.HitObject is SentakkiLanedHitObject x && (x is not Hold) && (x is not Slide) && x.Break),
+            ("Break", e => e.HitObject is SentakkiLanedHitObject x && (x is not Slide) && x.Break),
     };
 
     private static readonly HitResult[] valid_results = new HitResult[]{

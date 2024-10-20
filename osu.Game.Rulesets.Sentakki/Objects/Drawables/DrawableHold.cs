@@ -108,8 +108,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 if (timeOffset >= 0 && Auto)
                     ApplyResult(HitResult.Perfect);
-                else if (timeOffset >= 0 && isHolding)
-                    ApplyResult(applyDeductionTo(HitResult.Perfect));
+                else if (timeOffset > HitObject.HitWindows.WindowFor(HitResult.Perfect) && isHolding)
+                    ApplyResult(applyDeductionTo(HitResult.Great));
                 else if (!HitObject.HitWindows.CanBeHit(timeOffset: timeOffset))
                     ApplyResult(Result.Judgement.MinResult);
 

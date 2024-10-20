@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Screens.Ranking.Statistics;
 
 namespace osu.Game.Rulesets.Sentakki.Statistics;
@@ -17,40 +18,24 @@ public partial class MaimaiDXAccuracy : SimpleStatisticItem<double>
         double actual = 0;
 
         int maxBonus = 0;
-        int actualBonuses = 0;
+        float actualBonuses = 0;
 
         foreach (HitEvent hitEvent in hitEvents)
         {
-            switch (hitEvent.HitObject.Judgement.MaxResult)
+            if (hitEvent.Result == HitResult.IgnoreMiss || hitEvent.Result == HitResult.IgnoreHit)
+                continue;
+
+            maximum += ratioForHit(hitEvent.HitObject.Judgement.MaxResult);
+            actual += ratioForHit(hitEvent.Result);
+
+            if (hitEvent.HitObject is SentakkiLanedHitObject sho)
             {
-                case HitResult.Perfect:
-                case HitResult.Great:
-                    maximum += 1;
-                    break;
-
-                case HitResult.LargeBonus:
-                    maxBonus += 1;
-                    break;
-            }
-
-            switch (hitEvent.Result)
-            {
-                case HitResult.Perfect:
-                case HitResult.Great:
-                    actual += 1;
-                    break;
-
-                case HitResult.Good:
-                    actual += 0.8;
-                    break;
-
-                case HitResult.Ok:
-                    actual += 0.5;
-                    break;
-
-                case HitResult.LargeBonus:
-                    actualBonuses += 1;
-                    break;
+                if (sho.Break)
+                {
+                    maxBonus += 1 * sho.ScoreWeighting;
+                    if (hitEvent.Result == HitResult.Perfect)
+                        actualBonuses += 1 * sho.ScoreWeighting;
+                }
             }
         }
 
@@ -62,8 +47,17 @@ public partial class MaimaiDXAccuracy : SimpleStatisticItem<double>
         if (maxBonus == 0)
             actualBonuses = maxBonus = 1;
 
-        return ((actual / maximum) * 100) + (actualBonuses / (float)maxBonus);
+        return ((actual / maximum) * 100) + (actualBonuses / maxBonus);
     }
+
+    private static float ratioForHit(HitResult result) => result switch
+    {
+        HitResult.Perfect => 1,
+        HitResult.Great => 1,
+        HitResult.Good => 0.8f,
+        HitResult.Ok => 0.5f,
+        _ => 0
+    };
 
     protected override string DisplayValue(double value) => $"{value:N4}%";
 }
