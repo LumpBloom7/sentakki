@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 Position = position;
             }
 
-            public readonly Vector2 Position;
+            //public readonly Vector2 Position;
 
             protected override HitWindows CreateHitWindows() => HitWindows.Empty;
             public override Judgement CreateJudgement() => new IgnoreJudgement();
