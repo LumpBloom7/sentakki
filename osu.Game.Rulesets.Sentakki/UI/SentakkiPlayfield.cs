@@ -162,10 +162,12 @@ namespace osu.Game.Rulesets.Sentakki.UI
             if (!judgedObject.DisplayResult || !DisplayJudgements.Value || judgedObject is not DrawableSentakkiHitObject sentakkiHitObject)
                 return;
 
-            judgementLayer.Add(judgementPool.Get().Apply(result, judgedObject));
+            if (!(skin.Value is ArgonProSkin && result.Type >= Rulesets.Scoring.HitResult.Great))
+                judgementLayer.Add(judgementPool.Get().Apply(result, judgedObject));
 
             if (!result.IsHit) return;
 
+            // We don't need an explosion for the slide body
             if (judgedObject is DrawableSlideBody) return;
 
             if (judgedObject.HitObject.Kiai)
