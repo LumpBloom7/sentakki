@@ -69,11 +69,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     KeyboardStep = 0.01f,
                     DisplayAsPercentage = true
                 },
-                new SettingsEnumDropdown<LaneInputMode>
-                {
-                    LabelText = SentakkiSettingsSubsectionStrings.LaneInputMode,
-                    Current = config.GetBindable<LaneInputMode>(SentakkiRulesetSettings.LaneInputMode)
-                },
             };
         }
 

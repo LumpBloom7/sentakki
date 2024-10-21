@@ -12,18 +12,16 @@ namespace osu.Game.Rulesets.Sentakki.Replays
     {
         public Vector2 Position;
         public List<SentakkiAction> Actions = new List<SentakkiAction>();
-        public bool UsingSensorMode;
 
         public SentakkiReplayFrame()
         {
         }
 
-        public SentakkiReplayFrame(double time, Vector2 position, bool usingSensorMode, IEnumerable<SentakkiAction> actions)
+        public SentakkiReplayFrame(double time, Vector2 position, IEnumerable<SentakkiAction> actions)
             : base(time)
         {
             Position = position;
             Actions.AddRange(actions);
-            UsingSensorMode = usingSensorMode;
         }
 
         public void FromLegacy(LegacyReplayFrame currentFrame, IBeatmap beatmap, ReplayFrame? lastFrame = null)
@@ -32,8 +30,6 @@ namespace osu.Game.Rulesets.Sentakki.Replays
 
             if (currentFrame.MouseLeft) Actions.Add(SentakkiAction.Button1);
             if (currentFrame.MouseRight) Actions.Add(SentakkiAction.Button2);
-
-            UsingSensorMode = currentFrame.ButtonState.HasFlag(ReplayButtonState.Smoke);
         }
 
         public LegacyReplayFrame ToLegacy(IBeatmap beatmap)
@@ -42,7 +38,6 @@ namespace osu.Game.Rulesets.Sentakki.Replays
 
             if (Actions.Contains(SentakkiAction.Button1)) state |= ReplayButtonState.Left1;
             if (Actions.Contains(SentakkiAction.Button2)) state |= ReplayButtonState.Right1;
-            if (UsingSensorMode) state |= ReplayButtonState.Smoke;
 
             return new LegacyReplayFrame(Time, Position.X, Position.Y, state);
         }

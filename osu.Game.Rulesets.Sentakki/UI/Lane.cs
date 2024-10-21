@@ -15,7 +15,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public partial class Lane : Playfield, IKeyBindingHandler<SentakkiAction>
+    public partial class Lane : Playfield
     {
         public int LaneNumber { get; set; }
 
@@ -91,8 +91,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private readonly BindableInt currentKeys = new BindableInt();
 
-        private bool usingSensor => drawableSentakkiRuleset.UseSensorMode;
-
         private readonly Dictionary<SentakkiAction, bool> buttonTriggerState = new Dictionary<SentakkiAction, bool>();
 
         private void updateInputState()
@@ -114,7 +112,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             }
 
             // We don't attempt to check mouse input if touch input is used
-            if (count == 0 && IsHovered && usingSensor)
+            if (count == 0 && IsHovered)
             {
                 foreach (var a in SentakkiActionInputManager.PressedActions)
                 {
@@ -139,25 +137,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 {
                     SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + LaneNumber);
                 }
-        }
-
-        public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)
-        {
-            if (usingSensor) return false;
-
-            if (e.Action >= SentakkiAction.Key1 || !IsHovered) return false;
-
-            buttonTriggerState[e.Action] = true;
-            return false;
-        }
-
-        public void OnReleased(KeyBindingReleaseEvent<SentakkiAction> e)
-        {
-            if (usingSensor) return;
-
-            if (e.Action >= SentakkiAction.Key1) return;
-
-            buttonTriggerState[e.Action] = false;
         }
 
         #endregion
