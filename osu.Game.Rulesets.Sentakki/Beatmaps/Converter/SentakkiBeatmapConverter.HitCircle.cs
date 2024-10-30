@@ -7,15 +7,16 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 
 public partial class SentakkiBeatmapConverter
 {
-    private Tap convertHitCircle(HitObject original)
+    private Tap convertHitCircle(HitObject original) => convertHitCircle(original, currentLane, original.StartTime);
+    private Tap convertHitCircle(HitObject original, int lane, double startTime)
     {
         bool isBreak = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
 
         Tap result = new Tap
         {
-            Lane = currentLane.NormalizePath(),
+            Lane = lane.NormalizePath(),
             Samples = original.Samples,
-            StartTime = original.StartTime,
+            StartTime = startTime,
             Break = isBreak
         };
 

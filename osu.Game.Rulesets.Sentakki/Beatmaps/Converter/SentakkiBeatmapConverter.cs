@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using osu.Framework.Extensions.IEnumerableExtensions;
+using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
@@ -25,11 +26,15 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
     public ConversionFlags ConversionFlags;
 
     private readonly IBeatmap beatmap;
-
     // Current converter state
     private StreamDirection activeStreamDirection;
     private int currentLane;
     private readonly Random rng;
+
+    private TwinPattern currentPattern = null!;
+
+    private double lastTwinTime = 0;
+    private bool newComboSinceLastTwin = true;
 
     public SentakkiBeatmapConverter(IBeatmap beatmap, Ruleset ruleset) : base(beatmap, ruleset)
     {
@@ -46,18 +51,88 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         if (beatmap.HitObjects.Count == 0)
             return;
 
+        currentPattern = new TwinPattern(rng);
         float angle = standard_playfield_center.GetDegreesFromPosition(beatmap.HitObjects[0].GetPosition());
         currentLane = getClosestLaneFor(angle);
     }
 
     protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap, CancellationToken cancellationToken)
     {
-        SentakkiHitObject result = original switch
+        SentakkiHitObject result;
+        switch (original)
         {
-            IHasPathWithRepeats => convertSlider(original),
-            IHasDuration => convertSpinner(original),
-            _ => convertHitCircle(original)
-        };
+            case IHasPathWithRepeats s:
+                result = convertSlider(original);
+
+                bool startClap = s.NodeSamples.First().Any(h => h.Name == HitSampleInfo.HIT_CLAP);
+                bool endClap = s.NodeSamples.Last().Any(h => h.Name == HitSampleInfo.HIT_CLAP);
+
+                if (startClap && !endClap)
+                {
+                    if (!isChronologicallyClose(lastTwinTime, original.StartTime) && newComboSinceLastTwin)
+                        currentPattern.NewPattern();
+
+                    newComboSinceLastTwin = false;
+                    lastTwinTime = original.GetEndTime();
+
+                    int originalLane = ((SentakkiLanedHitObject)result).Lane;
+                    int twinLane = currentPattern.getNextLane(originalLane).NormalizePath();
+
+                    if (twinLane != originalLane)
+                        yield return convertHitCircle(original, twinLane, original.StartTime);
+                }
+                else if (startClap && endClap)
+                {
+                    if (!isChronologicallyClose(lastTwinTime, original.StartTime) && newComboSinceLastTwin)
+                        currentPattern.NewPattern();
+
+                    newComboSinceLastTwin = false;
+                    lastTwinTime = original.GetEndTime();
+
+                    int originalLane = ((SentakkiLanedHitObject)result).Lane;
+                    int twinLane = currentPattern.getNextLane(originalLane).NormalizePath();
+
+                    if (twinLane != originalLane)
+                        yield return convertSlider(original, twinLane);
+                }
+                else if (endClap)
+                {
+                    if (!isChronologicallyClose(lastTwinTime, original.GetEndTime()) && newComboSinceLastTwin)
+                        currentPattern.NewPattern();
+
+                    newComboSinceLastTwin = false;
+                    lastTwinTime = original.GetEndTime();
+
+                    int originalLane = ((SentakkiLanedHitObject)result).Lane;
+                    int twinLane = currentPattern.getNextLane(originalLane).NormalizePath();
+
+                    if (twinLane != originalLane)
+                        yield return convertHitCircle(original, twinLane, original.GetEndTime());
+                }
+
+                break;
+            case IHasDuration:
+                result = convertSpinner(original);
+                break;
+            default:
+                result = convertHitCircle(original);
+
+                if (original.Samples.Any(h => h.Name == HitSampleInfo.HIT_CLAP))
+                {
+                    if (!isChronologicallyClose(lastTwinTime, original.StartTime) && newComboSinceLastTwin)
+                        currentPattern.NewPattern();
+
+                    newComboSinceLastTwin = false;
+                    lastTwinTime = original.GetEndTime();
+
+                    int originalLane = ((SentakkiLanedHitObject)result).Lane;
+                    int twinLane = currentPattern.getNextLane(originalLane).NormalizePath();
+
+                    if (twinLane != originalLane)
+                        yield return convertHitCircle(original, twinLane, original.StartTime);
+                }
+                break;
+        }
 
         // Update the lane to be used by the next hitobject
         updateCurrentLane(original, result);
@@ -72,6 +147,9 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         // Check if next note even exists
         if (next is null)
             return;
+
+        if (((IHasCombo)next).NewCombo)
+            newComboSinceLastTwin = true;
 
         // If the next note is far off, we start from a fresh slate
         if (!isChronologicallyClose(original, next))
@@ -228,11 +306,15 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         return closestLane;
     }
 
-    private bool isChronologicallyClose(HitObject a, HitObject b)
+    private bool isChronologicallyClose(double a, double b)
     {
-        double timeDelta = b.StartTime - a.GetEndTime();
-        double beatLength = beatmap.ControlPointInfo.TimingPointAt(b.StartTime).BeatLength;
+        double timeDelta = b - a;
+        double beatLength = beatmap.ControlPointInfo.TimingPointAt(b).BeatLength;
 
         return timeDelta <= beatLength;
+    }
+    private bool isChronologicallyClose(HitObject a, HitObject b)
+    {
+        return isChronologicallyClose(a.GetEndTime(), b.StartTime);
     }
 }
