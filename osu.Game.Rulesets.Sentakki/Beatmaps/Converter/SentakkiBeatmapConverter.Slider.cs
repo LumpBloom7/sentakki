@@ -14,8 +14,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 
 public partial class SentakkiBeatmapConverter
 {
-    private SentakkiHitObject convertSlider(HitObject original) => convertSlider(original, currentLane);
-    private SentakkiHitObject convertSlider(HitObject original, int lane)
+    private SentakkiHitObject convertSlider(HitObject original) => convertSlider(original, currentLane, false);
+    private SentakkiHitObject convertSlider(HitObject original, int lane, bool forceHoldNote)
     {
         double duration = ((IHasDuration)original).Duration;
 
@@ -25,7 +25,7 @@ public partial class SentakkiBeatmapConverter
 
         bool isBreak = slider.NodeSamples[0].Any(s => s.Name == HitSampleInfo.HIT_FINISH);
 
-        if (isSuitableSlider)
+        if (isSuitableSlider && !forceHoldNote)
         {
             var slide = tryConvertToSlide(original, lane);
 
@@ -35,7 +35,7 @@ public partial class SentakkiBeatmapConverter
 
         var hold = new Hold
         {
-            Lane = lane.NormalizePath(),
+            Lane = lane,
             Break = isBreak,
             StartTime = original.StartTime,
             Duration = duration,

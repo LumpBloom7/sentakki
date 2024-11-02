@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using Markdig.Extensions.Yaml;
 using osu.Framework.Extensions.EnumExtensions;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Beatmaps;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 
@@ -23,6 +26,7 @@ public class TwinPattern
     public TwinPattern(Random rng)
     {
         this.rng = rng;
+
         NewPattern();
     }
 

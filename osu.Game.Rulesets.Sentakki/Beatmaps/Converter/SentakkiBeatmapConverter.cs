@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
@@ -56,6 +57,18 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         currentLane = getClosestLaneFor(angle);
     }
 
+    private bool tryGetLaneForTwinNote(double targetTime, out int twinLane)
+    {
+        if (!isChronologicallyClose(lastTwinTime, targetTime) && newComboSinceLastTwin)
+            currentPattern.NewPattern();
+
+        newComboSinceLastTwin = false;
+        lastTwinTime = targetTime;
+
+        twinLane = currentPattern.getNextLane(currentLane).NormalizePath();
+        return currentLane != twinLane;
+    }
+
     protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap, CancellationToken cancellationToken)
     {
         SentakkiHitObject result;
@@ -63,75 +76,59 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         {
             case IHasPathWithRepeats s:
                 result = convertSlider(original);
-
-                bool startClap = s.NodeSamples.First().Any(h => h.Name == HitSampleInfo.HIT_CLAP);
-                bool endClap = s.NodeSamples.Last().Any(h => h.Name == HitSampleInfo.HIT_CLAP);
-
-                if (startClap && !endClap)
-                {
-                    if (!isChronologicallyClose(lastTwinTime, original.StartTime) && newComboSinceLastTwin)
-                        currentPattern.NewPattern();
-
-                    newComboSinceLastTwin = false;
-                    lastTwinTime = original.GetEndTime();
-
-                    int originalLane = ((SentakkiLanedHitObject)result).Lane;
-                    int twinLane = currentPattern.getNextLane(originalLane).NormalizePath();
-
-                    if (twinLane != originalLane)
-                        yield return convertHitCircle(original, twinLane, original.StartTime);
-                }
-                else if (startClap && endClap)
-                {
-                    if (!isChronologicallyClose(lastTwinTime, original.StartTime) && newComboSinceLastTwin)
-                        currentPattern.NewPattern();
-
-                    newComboSinceLastTwin = false;
-                    lastTwinTime = original.GetEndTime();
-
-                    int originalLane = ((SentakkiLanedHitObject)result).Lane;
-                    int twinLane = currentPattern.getNextLane(originalLane).NormalizePath();
-
-                    if (twinLane != originalLane)
-                        yield return convertSlider(original, twinLane);
-                }
-                else if (endClap)
-                {
-                    if (!isChronologicallyClose(lastTwinTime, original.GetEndTime()) && newComboSinceLastTwin)
-                        currentPattern.NewPattern();
-
-                    newComboSinceLastTwin = false;
-                    lastTwinTime = original.GetEndTime();
-
-                    int originalLane = ((SentakkiLanedHitObject)result).Lane;
-                    int twinLane = currentPattern.getNextLane(originalLane).NormalizePath();
-
-                    if (twinLane != originalLane)
-                        yield return convertHitCircle(original, twinLane, original.GetEndTime());
-                }
-
                 break;
             case IHasDuration:
                 result = convertSpinner(original);
                 break;
             default:
                 result = convertHitCircle(original);
-
-                if (original.Samples.Any(h => h.Name == HitSampleInfo.HIT_CLAP))
-                {
-                    if (!isChronologicallyClose(lastTwinTime, original.StartTime) && newComboSinceLastTwin)
-                        currentPattern.NewPattern();
-
-                    newComboSinceLastTwin = false;
-                    lastTwinTime = original.GetEndTime();
-
-                    int originalLane = ((SentakkiLanedHitObject)result).Lane;
-                    int twinLane = currentPattern.getNextLane(originalLane).NormalizePath();
-
-                    if (twinLane != originalLane)
-                        yield return convertHitCircle(original, twinLane, original.StartTime);
-                }
                 break;
+        }
+
+        // Twin note generation section
+        if (ConversionFlags.HasFlagFast(ConversionFlags.twinNotes))
+        {
+            switch (original)
+            {
+                case IHasPathWithRepeats s:
+                    bool allClaps = s.NodeSamples.All(ns => ns.Any(h => h.Name == HitSampleInfo.HIT_CLAP));
+
+                    if (allClaps)
+                    {
+                        if (tryGetLaneForTwinNote(original.StartTime, out int twinLane))
+                            yield return convertSlider(original, twinLane, false);
+                        break;
+                    }
+
+                    // Fallback to using taps for each node with a clap
+                    double spansDuration = s.Duration / (s.RepeatCount + 1);
+
+                    for (int i = 0; i < s.NodeSamples.Count; ++i)
+                    {
+                        var samples = s.NodeSamples[i];
+                        if (samples.All(h => h.Name != HitSampleInfo.HIT_CLAP))
+                            continue;
+
+                        double targetTime = original.StartTime + spansDuration * i;
+                        bool isBreak = samples.Any(h => h.Name == HitSampleInfo.HIT_CLAP);
+
+                        if (tryGetLaneForTwinNote(original.StartTime, out int twinLane))
+                        {
+                            var sho = (SentakkiLanedHitObject)convertHitCircle(original, twinLane, targetTime);
+                            sho.Break = isBreak;
+                            sho.Samples = samples;
+                        };
+                    }
+
+                    break;
+                default:
+                    if (original.Samples.Any(h => h.Name == HitSampleInfo.HIT_CLAP))
+                    {
+                        if (tryGetLaneForTwinNote(original.StartTime, out int twinLane))
+                            yield return convertHitCircle(original, twinLane, original.StartTime);
+                    }
+                    break;
+            }
         }
 
         // Update the lane to be used by the next hitobject

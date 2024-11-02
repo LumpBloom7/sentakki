@@ -14,7 +14,7 @@ public partial class SentakkiBeatmapConverter
 
         Tap result = new Tap
         {
-            Lane = lane.NormalizePath(),
+            Lane = lane,
             Samples = original.Samples,
             StartTime = startTime,
             Break = isBreak
