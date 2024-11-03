@@ -14,8 +14,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 
 public partial class SentakkiBeatmapConverter
 {
-    private SentakkiHitObject convertSlider(HitObject original) => convertSlider(original, currentLane, false);
-    private SentakkiHitObject convertSlider(HitObject original, int lane, bool forceHoldNote)
+    private SentakkiHitObject convertSlider(HitObject original) => convertSlider(original, currentLane, false, true);
+    private SentakkiHitObject convertSlider(HitObject original, int lane, bool forceHoldNote, bool allowFans)
     {
         double duration = ((IHasDuration)original).Duration;
 
@@ -27,7 +27,7 @@ public partial class SentakkiBeatmapConverter
 
         if (isSuitableSlider && !forceHoldNote)
         {
-            var slide = tryConvertToSlide(original, lane);
+            var slide = tryConvertToSlide(original, lane, allowFans);
 
             if (slide is not null)
                 return slide.Value.Item1;
@@ -44,11 +44,11 @@ public partial class SentakkiBeatmapConverter
         return hold;
     }
 
-    private (Slide, int endLane)? tryConvertToSlide(HitObject original, int lane)
+    private (Slide, int endLane)? tryConvertToSlide(HitObject original, int lane, bool allowFans)
     {
         var nodeSamples = ((IHasPathWithRepeats)original).NodeSamples;
 
-        var selectedPath = chooseSlidePartFor(original);
+        var selectedPath = chooseSlidePartFor(original, allowFans);
 
         if (selectedPath is null)
             return null;
@@ -81,14 +81,14 @@ public partial class SentakkiBeatmapConverter
         return (slide, end);
     }
 
-    private SlideBodyPart[]? chooseSlidePartFor(HitObject original)
+    private SlideBodyPart[]? chooseSlidePartFor(HitObject original, bool allowFans)
     {
         double velocity = original is IHasSliderVelocity slider ? (slider.SliderVelocityMultiplier * beatmap.Difficulty.SliderMultiplier) : 1;
         double duration = ((IHasDuration)original).Duration;
         double adjustedDuration = duration * velocity;
 
         var candidates = SlidePaths.VALIDPATHS.AsEnumerable();
-        if (!ConversionFlags.HasFlag(ConversionFlags.fanSlides))
+        if (!ConversionFlags.HasFlag(ConversionFlags.fanSlides) || !allowFans)
             candidates = candidates.Where(p => p.SlidePart.Shape != SlidePaths.PathShapes.Fan);
 
         if (!ConversionFlags.HasFlag(ConversionFlags.disableCompositeSlides))

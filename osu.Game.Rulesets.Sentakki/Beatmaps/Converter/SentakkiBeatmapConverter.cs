@@ -93,10 +93,18 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
                 case IHasPathWithRepeats s:
                     bool allClaps = s.NodeSamples.All(ns => ns.Any(h => h.Name == HitSampleInfo.HIT_CLAP));
 
-                    if (allClaps)
+                    double fanStartTime = double.MaxValue;
+                    if (result is Slide slide)
+                    {
+                        var slidePath = slide.SlideInfoList[0].SlidePath;
+                        if (slidePath.EndsWithSlideFan)
+                            fanStartTime = slide.StartTime + slide.Duration * slidePath.FanStartProgress;
+                    }
+
+                    if (allClaps && fanStartTime != double.MaxValue)
                     {
                         if (tryGetLaneForTwinNote(original.StartTime, out int twinLane))
-                            yield return convertSlider(original, twinLane, false);
+                            yield return convertSlider(original, twinLane, false, false);
                         break;
                     }
 
@@ -110,7 +118,9 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
                             continue;
 
                         double targetTime = original.StartTime + spansDuration * i;
-                        bool isBreak = samples.Any(h => h.Name == HitSampleInfo.HIT_CLAP);
+
+                        if (targetTime >= fanStartTime)
+                            break;
 
                         if (tryGetLaneForTwinNote(original.StartTime, out int twinLane))
                         {
