@@ -122,11 +122,17 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
                         if (targetTime >= fanStartTime)
                             break;
 
-                        if (tryGetLaneForTwinNote(original.StartTime, out int twinLane))
+                        bool isBreak = samples.Any(h => h.Name == HitSampleInfo.HIT_FINISH);
+                        bool isSoft = samples.Any(h => h.Name == HitSampleInfo.HIT_WHISTLE);
+
+                        if (tryGetLaneForTwinNote(targetTime, out int twinLane))
                         {
                             var sho = (SentakkiLanedHitObject)convertHitCircle(original, twinLane, targetTime);
                             sho.Break = isBreak;
                             sho.Samples = samples;
+                            sho.Ex = isSoft;
+
+                            yield return sho;
                         };
                     }
 

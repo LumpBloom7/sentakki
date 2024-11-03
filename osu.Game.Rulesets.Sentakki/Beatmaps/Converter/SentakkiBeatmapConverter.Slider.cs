@@ -23,8 +23,6 @@ public partial class SentakkiBeatmapConverter
 
         bool isSuitableSlider = !isLazySlider(original);
 
-        bool isBreak = slider.NodeSamples[0].Any(s => s.Name == HitSampleInfo.HIT_FINISH);
-
         if (isSuitableSlider && !forceHoldNote)
         {
             var slide = tryConvertToSlide(original, lane, allowFans);
@@ -33,6 +31,9 @@ public partial class SentakkiBeatmapConverter
                 return slide.Value.Item1;
         }
 
+        bool isBreak = slider.NodeSamples[0].Any(s => s.Name == HitSampleInfo.HIT_FINISH);
+        bool isSoft = slider.NodeSamples[0].Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
+
         var hold = new Hold
         {
             Lane = lane,
@@ -40,6 +41,7 @@ public partial class SentakkiBeatmapConverter
             StartTime = original.StartTime,
             Duration = duration,
             NodeSamples = slider.NodeSamples,
+            Ex = isSoft,
         };
         return hold;
     }
@@ -55,6 +57,7 @@ public partial class SentakkiBeatmapConverter
 
         bool tailBreak = nodeSamples.Last().Any(s => s.Name == HitSampleInfo.HIT_FINISH);
         bool headBreak = nodeSamples.First().Any(s => s.Name == HitSampleInfo.HIT_FINISH);
+        bool isSoft = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
 
         int endOffset = selectedPath.Sum(p => p.EndOffset);
 
@@ -75,7 +78,8 @@ public partial class SentakkiBeatmapConverter
             Lane = lane.NormalizePath(),
             StartTime = original.StartTime,
             Samples = nodeSamples.FirstOrDefault(),
-            Break = headBreak
+            Break = headBreak,
+            Ex = isSoft
         };
 
         return (slide, end);
