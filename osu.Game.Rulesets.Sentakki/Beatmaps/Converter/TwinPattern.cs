@@ -10,6 +10,16 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 
 public class TwinPattern
 {
+    private static readonly TwinFlags[] allowedFlags = new TwinFlags[]{
+        TwinFlags.None,
+        TwinFlags.SpinCW,
+        TwinFlags.SpinCCW,
+        TwinFlags.Cycle,
+        TwinFlags.Copy,
+        TwinFlags.Mirror,
+        TwinFlags.Copy | TwinFlags.Mirror
+    };
+
     private TwinFlags flags;
 
     private List<int> cycleLanes = new List<int>();
@@ -32,8 +42,8 @@ public class TwinPattern
 
     public void NewPattern()
     {
-        flags = (TwinFlags)(1 << (rng.Next(1, 6)));
-        originLane = rng.Next(0, 4);
+        flags = allowedFlags[rng.Next(0, allowedFlags.Length)];
+        originLane = rng.Next(0, 8);
 
         if (flags.HasFlagFast(TwinFlags.Cycle))
         {
@@ -52,19 +62,14 @@ public class TwinPattern
                 prob *= 0.5f;
             }
         }
+        else if (flags.HasFlagFast(TwinFlags.Copy))
+        {
+            copyOffset = rng.Next(1, 7);
+        }
     }
 
     public int getNextLane(int currentLane)
     {
-        if (flags.HasFlagFast(TwinFlags.Mirror))
-            return 7 - currentLane;
-
-        if (flags.HasFlagFast(TwinFlags.SpinCW))
-            return originLane + (++spinIncrement);
-
-        if (flags.HasFlagFast(TwinFlags.SpinCCW))
-            return originLane + (--spinIncrement);
-
         if (flags.HasFlagFast(TwinFlags.Cycle))
         {
             int tmp = originLane + cycleLanes[cycleIndex];
@@ -73,11 +78,21 @@ public class TwinPattern
             return tmp;
         }
 
+        if (flags.HasFlagFast(TwinFlags.SpinCW))
+            return originLane + (++spinIncrement);
+
+        if (flags.HasFlagFast(TwinFlags.SpinCCW))
+            return originLane + (--spinIncrement);
+
+
+        int result = currentLane;
         if (flags.HasFlagFast(TwinFlags.Copy))
-        {
-            return currentLane + copyOffset;
-        }
-        return currentLane;
+            result += copyOffset;
+
+        if (flags.HasFlagFast(TwinFlags.Mirror))
+            result = 7 - result;
+
+        return result.NormalizePath();
     }
 
 
