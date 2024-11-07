@@ -80,7 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             tryCreateFanChevrons();
         }
 
-        private const int chevrons_per_eith = 8;
+        private const int chevrons_per_eith = 9;
         private const double ring_radius = 297;
         private const double chevrons_per_distance = chevrons_per_eith * 8 / (2 * Math.PI * ring_radius);
         private const double endpoint_distance = 30; // margin for each end
