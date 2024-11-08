@@ -75,7 +75,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Graphics
                 float scale = progress - (2f / 12);
                 var middlePosition = lineStart + middleLineDelta * progress;
 
-                float t = 6.5f + 3.5f * scale;
+                float t = 6.5f + 2.5f * scale;
 
                 float chevWidth = MathF.Abs(lineStart.X - middlePosition.X);
 
@@ -101,6 +101,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Graphics
                     Height = h + 30,
                     Thickness = t,
                     Y = -y + 300 - 50,
+                    FanChevron = true,
                 };
 
                 fanChevContainer.Add(fanChev);

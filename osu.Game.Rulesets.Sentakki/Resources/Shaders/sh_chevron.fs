@@ -3,6 +3,10 @@
 
 #include "sh_noteBase.fs"
 
+layout(std140, set = 1, binding = 0) uniform m_chevParameters
+{
+    bool fanChevron;
+};
 
 const int N = 6;
 
@@ -30,9 +34,6 @@ float sdPolygon( in vec2 p, in vec2 origin, in vec2[N] v )
     
     return s*sqrt(d);
 }
-
-
-
 
 vec4 sdfFill(in float dist, in float borderThickness, in float shadowThickness){
     vec3 shadowColor =  glow ? vec3(1) : vec3(0);
@@ -78,6 +79,32 @@ float chev(in vec2 p, in vec2 centre, in vec2 hexSize, in float thickness){
     return dist;
 }
 
+#define PI 3.1415926538
+
+float fanChev(in vec2 p, in vec2 centre, in vec2 hexSize, in float thickness){    
+    float h = hexSize.y*0.5;
+    float w = hexSize.x*0.5;
+
+    vec2 v0 = vec2(0, -h);
+	vec2 v1 = vec2(w, h - thickness);
+
+    float rad1 = ((200+2.5)/180.0) * PI;
+    float rad2 = ((160-2.5)/180.0) * PI;
+
+	vec2 v2 = vec2(sin(rad1) * thickness, -cos(rad1) * thickness) + v1;
+	vec2 v3 = vec2(0.0, -h + thickness);
+
+	vec2 v5 = vec2(-w, h - thickness);
+    vec2 v4 = vec2(sin(rad2) * thickness, -cos(rad2) * thickness) + v5;
+
+    // add more points
+    vec2[] polygon = vec2[](v0,v1,v2, v3, v4, v5);
+
+    float dist = sdPolygon(p, centre, polygon);
+
+    return dist;
+}
+
 
 void main(void) {
     vec2 resolution = v_TexRect.zw - v_TexRect.xy;
@@ -90,7 +117,10 @@ void main(void) {
     float borderThickness = thickness;
     float paddingAmount = - borderThickness - shadeRadius;
 
-    float ringSDF = chev(p, c,size - vec2(shadeRadius + borderThickness) * 2, borderThickness);
+    float ringSDF = 0;
+    if(fanChevron)
+        ringSDF = fanChev(p, c,size - vec2(shadeRadius + borderThickness) * 2, borderThickness);
+    else ringSDF = chev(p, c,size - vec2(shadeRadius + borderThickness) * 2, borderThickness);
 
     vec4 r = sdfFill(ringSDF, borderThickness, shadeRadius);
     o_Colour = r;

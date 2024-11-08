@@ -10,7 +10,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         public double DisappearThreshold { get; set; }
         private DrawableChevron chevron = null!;
 
-
+        public bool FanChevron
+        {
+            get => chevron.FanChevron;
+            set => chevron.FanChevron = value;
+        }
 
         public float Thickness
         {

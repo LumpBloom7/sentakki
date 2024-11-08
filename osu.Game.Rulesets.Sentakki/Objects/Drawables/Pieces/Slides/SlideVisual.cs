@@ -120,8 +120,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 
                     chevron.Thickness = 6.5f;
                     chevron.Height = 60;
+                    chevron.FanChevron = false;
                     chevron.Width = 80;
                     chevrons.Add(chevron);
+
 
                     previousPosition = position;
                 }
@@ -151,7 +153,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 float scale = progress - (1f) / 12f;
                 var middlePosition = lineStart + middleLineDelta * progress;
 
-                float t = 6.5f + 3.5f * scale;
+                float t = 6.5f + 2.5f * scale;
 
                 float chevWidth = MathF.Abs(lineStart.X - middlePosition.X);
 
@@ -180,6 +182,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 chevron.Width = w + 30;
                 chevron.Height = h + 30;
                 chevron.Thickness = t;
+                chevron.FanChevron = true;
 
                 chevrons.Add(chevron);
             }
