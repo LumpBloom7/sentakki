@@ -7,6 +7,8 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.UI;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
@@ -119,6 +121,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                     chevron.Rotation = angle;
                     chevron.Depth = chevrons.Count;
                     chevron.SlideVisual = this;
+                    chevron.Thickness = 6.5f;
+                    chevron.Height = 60;
+                    chevron.Width = 80;
                     chevrons.Add(chevron);
 
                     previousPosition = position;
@@ -130,29 +135,57 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 
         private void tryCreateFanChevrons()
         {
+            if (chevronPool is null)
+                return;
+
             if (!path.EndsWithSlideFan)
                 return;
 
             var delta = path.PositionAt(1) - path.FanOrigin;
+            Vector2 lineStart = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0);
+            Vector2 middleLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 4);
+            Vector2 middleLineDelta = middleLineEnd - lineStart;
 
             for (int i = 0; i < 11; ++i)
             {
-                float progress = (i + 1) / (float)12;
-                float scale = progress;
-                SlideFanChevron fanChev = fanChevrons[i];
 
-                const float safe_space_ratio = 570 / 600f;
+                float progress = (i + 2f) / 12f;
+
+                float scale = progress - (1f) / 12f;
+                var middlePosition = lineStart + middleLineDelta * progress;
+
+                float t = 6.5f + 3.5f * scale;
+
+                float chevWidth = MathF.Abs(lineStart.X - middlePosition.X);
+
+                (float sin, float cos) = MathF.SinCos((-135 + 90f) / 180f * MathF.PI);
+
+                Vector2 secondPoint = new Vector2(sin, -cos) * chevWidth;
+                Vector2 one = new Vector2(chevWidth, 0);
+
+                var middle = (one + secondPoint) * 0.5f;
+                float h = (middle - Vector2.Zero).Length + t * 3;
+
+                float w = (secondPoint - one).Length;
+
+                const float safe_space_ratio = (570 / 600f);
 
                 float y = safe_space_ratio * scale;
 
-                fanChev.Position = path.FanOrigin + (delta * y);
-                fanChev.Rotation = fanChev.Position.GetDegreesFromPosition(path.FanOrigin);
+                var chevron = chevronPool.Get();
 
-                fanChev.DisappearThreshold = path.FanStartProgress + ((i + 1) / 11f * (1 - path.FanStartProgress));
-                fanChev.Depth = chevrons.Count;
-                fanChev.SlideVisual = this;
+                chevron.Position = path.FanOrigin + (delta * y);
+                chevron.Rotation = chevron.Position.GetDegreesFromPosition(path.PositionAt(1));
 
-                chevrons.Add(fanChev);
+                chevron.DisappearThreshold = path.FanStartProgress + ((i + 1) / 11f * (1 - path.FanStartProgress));
+                chevron.Depth = chevrons.Count;
+                chevron.SlideVisual = this;
+
+                chevron.Width = w + 30;
+                chevron.Height = h + 30;
+                chevron.Thickness = t;
+
+                chevrons.Add(chevron);
             }
         }
 

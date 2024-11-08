@@ -64,11 +64,11 @@ float chev(in vec2 p, in vec2 centre, in vec2 hexSize, in float thickness){
     float w = hexSize.x*0.5;
 
     vec2 v0 = vec2(0, -h);
-	vec2 v1 = vec2(w, h  - thickness);
+	vec2 v1 = vec2(w, h - thickness);
 	vec2 v2 = vec2(w,  h );
-	vec2 v3= vec2(0.0,  -h + thickness);
-	vec2 v4= vec2(-w,  h);
-	vec2 v5= vec2(-w,  h - thickness);
+	vec2 v3 = vec2(0.0, -h + thickness);
+	vec2 v4 = vec2(-w, h);
+	vec2 v5 = vec2(-w, h - thickness);
 
     // add more points
     vec2[] polygon = vec2[](v0,v1,v2, v3, v4, v5);
@@ -87,13 +87,10 @@ void main(void) {
     vec2 c = 0.5 * size;
 
     float shadeRadius = shadowRadius;
-    float noteW = size.x - shadeRadius * 2;
     float borderThickness = thickness;
     float paddingAmount = - borderThickness - shadeRadius;
 
-    float radius = size.x * 0.5 + paddingAmount;
-
-    float ringSDF = chev(p, c,size - vec2(shadeRadius + borderThickness)*2, borderThickness);
+    float ringSDF = chev(p, c,size - vec2(shadeRadius + borderThickness) * 2, borderThickness);
 
     vec4 r = sdfFill(ringSDF, borderThickness, shadeRadius);
     o_Colour = r;
