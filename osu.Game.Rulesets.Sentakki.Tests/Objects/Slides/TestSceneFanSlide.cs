@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -19,13 +20,14 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
         protected int EndPath;
 
         [Cached]
-        private readonly SlideFanChevrons fanChevrons;
+        private readonly DrawablePool<SlideChevron> chevronPool = null!;
+
 
         private readonly SlideVisual slide;
 
         public TestSceneFanSlide()
         {
-            Add(fanChevrons = new SlideFanChevrons());
+            Add(chevronPool = new DrawablePool<SlideChevron>(62));
 
             Add(new SentakkiRing
             {

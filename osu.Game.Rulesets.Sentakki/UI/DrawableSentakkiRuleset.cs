@@ -26,8 +26,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
     [Cached]
     public partial class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject>, IKeyBindingHandler<GlobalAction>
     {
-        private SlideFanChevrons slideFanChevronsTextures = null!;
-
         public DrawableSentakkiRuleset(SentakkiRuleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod>? mods)
             : base(ruleset, beatmap, mods)
         {
@@ -35,24 +33,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 mod.ApplyToTrack(speedAdjustmentTrack);
         }
 
-        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
-        {
-            var dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
-
-            // We create and render the FanChevron outside of the playfield
-            // This is to ensure that the fan chevrons doesn't get affected by Playfield transforms (avoiding excessive buffer allocs/deallocs)
-            // FanSlides will use BufferedContainerView to show the chevrons
-            dependencies.CacheAs(slideFanChevronsTextures = new SlideFanChevrons());
-
-            return dependencies;
-        }
-
         [BackgroundDependencyLoader]
         private void load()
         {
             Config.BindWith(SentakkiRulesetSettings.LaneInputMode, laneInputMode);
-
-            FrameStableComponents.Add(slideFanChevronsTextures);
 
             Config.BindWith(SentakkiRulesetSettings.AnimationSpeed, configEntrySpeed);
             Config.BindWith(SentakkiRulesetSettings.TouchAnimationSpeed, configTouchEntrySpeed);

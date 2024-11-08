@@ -5,11 +5,12 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 {
-    public partial class SlideChevron : PoolableDrawable, ISlideChevron
+    public partial class SlideChevron : PoolableDrawable
     {
         public double DisappearThreshold { get; set; }
-        public SlideVisual? SlideVisual { get; set; }
         private DrawableChevron chevron = null!;
+
+
 
         public float Thickness
         {

@@ -19,8 +19,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Graphics
     public partial class TestSceneFanChevronVisual : OsuGridTestScene
     {
         protected override Ruleset CreateRuleset() => new SentakkiRuleset();
-        [Cached]
-        private SlideFanChevrons chevrons;
         private readonly SlideVisual slide;
 
         private readonly Container fanChevContainer;
@@ -29,7 +27,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Graphics
         private readonly DrawablePool<SlideChevron> chevronPool;
         public TestSceneFanChevronVisual() : base(1, 2)
         {
-            Cell(0).Add(chevrons = new SlideFanChevrons());
             Cell(0).Add(chevronPool = new DrawablePool<SlideChevron>(62));
             Cell(0).Add(new Box
             {

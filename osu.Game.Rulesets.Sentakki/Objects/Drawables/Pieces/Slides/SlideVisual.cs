@@ -33,10 +33,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             }
         }
 
+        public void UpdateProgress(SlideChevron chevron)
+        {
+            chevron.Alpha = Progress >= chevron.DisappearThreshold ? 0 : 1;
+        }
+
         public void UpdateChevronVisibility()
         {
             for (int i = 0; i < chevrons.Count; i++)
-                ISlideChevron.UpdateProgress((ISlideChevron)chevrons[i]);
+                UpdateProgress(chevrons[i]);
         }
 
         public SlideVisual()
@@ -48,27 +53,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         [Resolved]
         private DrawablePool<SlideChevron>? chevronPool { get; set; }
 
-        private Container<Drawable> chevrons = null!;
+        private Container<SlideChevron> chevrons = null!;
 
         private readonly BindableBool snakingIn = new BindableBool(true);
 
-        private readonly List<SlideFanChevron> fanChevrons = new List<SlideFanChevron>();
-
         [BackgroundDependencyLoader]
-        private void load(SentakkiRulesetConfigManager? sentakkiConfig, SlideFanChevrons? fanChevrons)
+        private void load(SentakkiRulesetConfigManager? sentakkiConfig)
         {
             sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
 
             AddRangeInternal(new Drawable[]
             {
-                chevrons = new Container()
+                chevrons = new Container<SlideChevron>()
             });
-
-            if (fanChevrons != null)
-            {
-                for (int i = 0; i < 11; ++i)
-                    this.fanChevrons.Add(new SlideFanChevron(fanChevrons.Get(i)));
-            }
         }
 
         private void updateVisuals()
@@ -120,7 +117,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                     chevron.DisappearThreshold = (runningDistance + distance) / this.path.TotalDistance;
                     chevron.Rotation = angle;
                     chevron.Depth = chevrons.Count;
-                    chevron.SlideVisual = this;
+
                     chevron.Thickness = 6.5f;
                     chevron.Height = 60;
                     chevron.Width = 80;
@@ -179,7 +176,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 
                 chevron.DisappearThreshold = path.FanStartProgress + ((i + 1) / 11f * (1 - path.FanStartProgress));
                 chevron.Depth = chevrons.Count;
-                chevron.SlideVisual = this;
 
                 chevron.Width = w + 30;
                 chevron.Height = h + 30;
@@ -204,7 +200,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                            .Delay(currentOffset)
                            .FadeIn(fadeDuration)
                            // This finally clause ensures the chevron maintains the correct visibility state after a rewind
-                           .Finally(static c => ISlideChevron.UpdateProgress((ISlideChevron)c));
+                           .Finally(c => UpdateProgress(c));
 
                     currentOffset += offsetIncrement;
                 }
@@ -225,7 +221,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             {
                 var chevron = chevrons[i];
 
-                if (((ISlideChevron)chevron).DisappearThreshold <= Progress)
+                if (chevron.DisappearThreshold <= Progress)
                 {
                     chevron.Alpha = 0;
                     continue;
