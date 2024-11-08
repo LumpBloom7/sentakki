@@ -40,6 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             AddSliderStep("Progress", 0.0f, 1.0f, 0.0f, p =>
             {
                 slide.Progress = p;
+                slide.UpdateChevronVisibility();
             });
 
             AddSliderStep("Rotation", 0.0f, 360f, 22.5f, p =>

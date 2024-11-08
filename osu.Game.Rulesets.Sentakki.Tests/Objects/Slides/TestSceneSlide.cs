@@ -58,6 +58,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             AddSliderStep("Progress", 0.0f, 1.0f, 0.0f, p =>
             {
                 slide.Progress = p;
+                slide.UpdateChevronVisibility();
             });
 
             AddToggleStep("Mirrored", b =>
