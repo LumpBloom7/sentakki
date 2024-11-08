@@ -65,7 +65,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             }
 
 #nullable enable
-            public override HitSampleInfo With(Optional<string> newName = default, Optional<string> newBank = default, Optional<string?> newSuffix = default, Optional<int> newVolume = default)
+            public override HitSampleInfo With(Optional<string> newName = default, Optional<string> newBank = default, Optional<string?> newSuffix = default, Optional<int> newVolume = default, Optional<bool> newEditorAutoBank = default)
             {
                 return new SentakkiHitSampleInfo(newName.GetOr(Name), newVolume.GetOr(Volume));
             }
