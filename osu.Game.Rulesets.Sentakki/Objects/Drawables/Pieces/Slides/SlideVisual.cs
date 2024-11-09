@@ -155,7 +155,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 
                 float t = 6.5f + 2.5f * scale;
 
-                float chevWidth = MathF.Abs(lineStart.X - middlePosition.X);
+                float chevWidth = MathF.Abs(lineStart.X - middlePosition.X) - t;
 
                 (float sin, float cos) = MathF.SinCos((-135 + 90f) / 180f * MathF.PI);
 
