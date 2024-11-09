@@ -124,7 +124,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                     chevron.Width = 80;
                     chevrons.Add(chevron);
 
-
                     previousPosition = position;
                 }
 
