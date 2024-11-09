@@ -128,8 +128,8 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
                 ShadowRadius = shadowRadius,
                 Glow = glow,
             };
-            chevParameters ??= renderer.CreateUniformBuffer<ChevParameters>();
 
+            chevParameters ??= renderer.CreateUniformBuffer<ChevParameters>();
             chevParameters.Data = chevParameters.Data with
             {
                 FanChevron = fanChev
@@ -143,6 +143,7 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
         {
             base.Dispose(isDisposing);
             shapeParameters?.Dispose();
+            chevParameters?.Dispose();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
