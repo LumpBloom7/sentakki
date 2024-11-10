@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
                 Size = new Vector2(75, 45f),
-                Thickness = 8f,
+                Thickness = 9f,
                 ShadowRadius = 0f,
             });
         }
