@@ -30,8 +30,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
                     RelativeSizeAxes = Axes.Both,
                     Children = new Drawable[]
                     {
-                        createTouchShapeWith<TouchGlowPiece>(), // Meant for the drop shadow/glow
-                        createTouchShapeWith<TouchPiece>(),
+                        createTouchShape<TouchPieceShadow>(),
+                        createTouchShape<TouchPiece>(),
                         new DotPiece()
                     }
                 },
@@ -66,28 +66,28 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
         }
 
         // Creates the touch shape using the provided drawable as each of the 4 quarters
-        private Drawable createTouchShapeWith<T>() where T : Drawable, new()
+        private Drawable createTouchShape<T>(bool shadow = false) where T : Drawable, new()
             => new Container
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]{
-                    new T
+                    new T()
                     {
                         Anchor = Anchor.TopCentre,
                     },
-                    new T
+                    new T()
                     {
                         Anchor = Anchor.BottomCentre,
                         Rotation = 180
                     },
-                    new T
+                    new T()
                     {
                         Anchor = Anchor.CentreLeft,
                         Rotation = 270
                     },
-                    new T
+                    new T()
                     {
                         Anchor = Anchor.CentreRight,
                         Rotation = 90

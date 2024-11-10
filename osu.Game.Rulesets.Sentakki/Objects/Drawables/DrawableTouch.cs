@@ -85,8 +85,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             using (BeginAbsoluteSequence(HitObject.StartTime - animTime))
             {
-                TouchBody.ResizeTo(90, animTime, Easing.InCirc);
-                TouchBody.BorderContainer.Delay(animTime).FadeIn();
+                TouchBody.ResizeTo(90, animTime, new TouchEasingFunction());
+                TouchBody.BorderContainer.Delay(animTime * 0.95).FadeIn();
             }
         }
 
