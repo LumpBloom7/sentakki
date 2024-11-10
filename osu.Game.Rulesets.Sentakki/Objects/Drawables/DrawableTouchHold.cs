@@ -106,11 +106,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             using (BeginAbsoluteSequence(HitObject.StartTime - animTime))
             {
-                TouchHoldBody.ResizeTo(90, animTime, Easing.InCirc);
-                TouchHoldBody.BorderContainer.Delay(animTime).FadeIn();
+                TouchHoldBody.ResizeTo(80, animTime, Easing.InCirc);
             }
             using (BeginDelayedSequence(fadeTime + animTime))
             {
+                TouchHoldBody.centrePiece.FadeOut();
+                TouchHoldBody.CompletedCentre.FadeIn();
                 TouchHoldBody.ProgressPiece.TransformBindableTo(TouchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
             }
         }

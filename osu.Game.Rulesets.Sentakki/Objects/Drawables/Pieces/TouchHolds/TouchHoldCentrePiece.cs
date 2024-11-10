@@ -21,6 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
             Anchor = Anchor.Centre;
             RelativeSizeAxes = Axes.Both;
             Rotation = 45;
+            Scale = new Vector2(80 / 90f);
 
             InternalChildren = new Drawable[]
             {
@@ -33,7 +34,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                     {
                         createTouchShapeWith<TouchPieceShadow>(),
                         createTouchShapeWith<TouchHoldPiece>(),
-                        new DotPiece()
                     }
                 },
             };

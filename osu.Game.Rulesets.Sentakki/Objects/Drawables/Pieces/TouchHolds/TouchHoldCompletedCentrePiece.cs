@@ -1,7 +1,6 @@
-using System;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.UserInterface;
 using osu.Game.Graphics;
 using osuTK;
@@ -9,27 +8,25 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
 {
-    public partial class TouchHoldProgressPiece : CompositeDrawable
+    public partial class TouchHoldCompletedCentre : CompositeDrawable
     {
-        public BindableDouble ProgressBindable = new BindableDouble();
+        private readonly OsuColour colours = new OsuColour();
 
-        public TouchHoldProgressPiece()
+        public TouchHoldCompletedCentre()
         {
-            CircularProgress blueProgress;
-            CircularProgress greenProgress;
-            CircularProgress yellowProgress;
-            CircularProgress redProgress;
-
-            OsuColour colours = new OsuColour();
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
+            Size = new Vector2(80);
             Masking = true;
-            BorderColour = Color4.White;
-            BorderThickness = 3;
-            Alpha = .8f;
-            Size = new Vector2(110);
-            CornerRadius = 27.5f;
+            CornerRadius = 20;
             Rotation = 45;
+            Alpha = 0;
+            EdgeEffect = new EdgeEffectParameters
+            {
+                Type = EdgeEffectType.Shadow,
+                Colour = Color4.Black,
+                Radius = 10f,
+            };
             InternalChildren = new Drawable[]
             {
                 new Container
@@ -41,57 +38,49 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                     Rotation = -45f,
                     Children = new Drawable[]
                     {
-                        blueProgress = new CircularProgress
+                        new CircularProgress
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             InnerRadius = 1,
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Progress = 0,
+                            Progress = 1,
                             Colour = colours.Blue
                         },
-                        greenProgress = new CircularProgress
+                        new CircularProgress
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             InnerRadius = 1,
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Progress = 0,
+                            Progress = 0.75 ,
                             Colour = colours.Green
                         },
-                        yellowProgress = new CircularProgress
+                        new CircularProgress
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             InnerRadius = 1,
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Progress = 0,
+                            Progress = 0.5 ,
                             Colour = colours.Yellow,
                         },
-                        redProgress = new CircularProgress
+                        new CircularProgress
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             InnerRadius = 1,
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Progress = 0,
+                            Progress = 0.25 ,
                             Colour = colours.Red,
                         },
                     }
-                }
+                },
             };
-
-            ProgressBindable.BindValueChanged(p =>
-            {
-                redProgress.Progress = Math.Min(p.NewValue, .25);
-                yellowProgress.Progress = Math.Min(p.NewValue, .50);
-                greenProgress.Progress = Math.Min(p.NewValue, .75);
-                blueProgress.Progress = p.NewValue;
-            });
         }
     }
 }
