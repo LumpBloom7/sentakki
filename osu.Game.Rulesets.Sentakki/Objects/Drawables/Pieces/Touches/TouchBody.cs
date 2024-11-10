@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
 
         public TouchBody()
         {
-            Size = new Vector2(130);
+            Size = new Vector2(value: 130);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Alpha = 0;
@@ -40,10 +40,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Size = new Vector2(100),
-                    CornerRadius = 25f,
+                    CornerRadius = 25,
                     CornerExponent = 2.5f,
                     Masking = true,
-                    BorderThickness = 10,
+                    BorderThickness = 12,
                     BorderColour = Color4.White,
                     Alpha = 0,
                     Child = new Box

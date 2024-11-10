@@ -25,10 +25,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
             Anchor = Anchor.Centre;
             Masking = true;
             BorderColour = Color4.White;
-            BorderThickness = 3;
-            Alpha = .8f;
-            Size = new Vector2(110);
-            CornerRadius = 27.5f;
+            BorderThickness = 6;
+            Size = new Vector2(130);
+            CornerRadius = 30f;
             Rotation = 45;
             InternalChildren = new Drawable[]
             {
