@@ -104,7 +104,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
                     if (allClaps && fanStartTime == double.MaxValue)
                     {
                         if (tryGetLaneForTwinNote(original.StartTime, out int twinLane))
-                            yield return convertSlider(original, twinLane, false, false);
+                            yield return convertSlider(original, twinLane, !ConversionFlags.HasFlagFast(ConversionFlags.twinSlides), false);
                         break;
                     }
 
