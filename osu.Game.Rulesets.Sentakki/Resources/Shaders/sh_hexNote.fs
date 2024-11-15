@@ -40,28 +40,6 @@ float roundedHexSDF(in vec2 p, in vec2 origin, in float h, in float r)
     return length(P) * sign(P.x);
 }
 
-// A simple hex SDF, adapted from https://andrewhungblog.wordpress.com/2018/07/28/shader-art-tutorial-hexagonal-grids/
-// Supports arbitrary heights, while maintaining identical radius
-// This one doesn't support rounded corners
-float hexSDF(in vec2 p, in vec2 origin, in float h, in float r)
-{    
-    vec2 P = p - origin;
-
-    if(abs(P.y) < h/2.0){
-        return abs(P.x) - r;
-    }
-
-    float hexSize = r;
-    const vec2 s = vec2(1, 1.7320508);
-
-    float newY = (abs(P.y) - h/2.0);
-    p = vec2(P.x, newY);
-
-    p = abs(p);
-
-    return max(dot(p, s*.5), p.x) - hexSize;
-}
-
 void main(void) {
     vec2 resolution = v_TexRect.zw - v_TexRect.xy;
     vec2 pixelPos = (v_TexCoord - v_TexRect.xy) / resolution;
