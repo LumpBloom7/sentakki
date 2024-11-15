@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
 
         public TouchBody()
         {
-            Size = new Vector2(130);
+            Size = new Vector2(value: 130);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Alpha = 0;
@@ -30,8 +30,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
                     RelativeSizeAxes = Axes.Both,
                     Children = new Drawable[]
                     {
-                        createTouchShapeWith<TouchGlowPiece>(), // Meant for the drop shadow/glow
-                        createTouchShapeWith<TouchPiece>(),
+                        createTouchShape<TouchPieceShadow>(),
+                        createTouchShape<TouchPiece>(),
                         new DotPiece()
                     }
                 },
@@ -40,10 +40,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Size = new Vector2(100),
-                    CornerRadius = 25f,
+                    CornerRadius = 25,
                     CornerExponent = 2.5f,
                     Masking = true,
-                    BorderThickness = 10,
+                    BorderThickness = 12,
                     BorderColour = Color4.White,
                     Alpha = 0,
                     Child = new Box
@@ -66,28 +66,28 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
         }
 
         // Creates the touch shape using the provided drawable as each of the 4 quarters
-        private Drawable createTouchShapeWith<T>() where T : Drawable, new()
+        private Drawable createTouchShape<T>(bool shadow = false) where T : Drawable, new()
             => new Container
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]{
-                    new T
+                    new T()
                     {
                         Anchor = Anchor.TopCentre,
                     },
-                    new T
+                    new T()
                     {
                         Anchor = Anchor.BottomCentre,
                         Rotation = 180
                     },
-                    new T
+                    new T()
                     {
                         Anchor = Anchor.CentreLeft,
                         Rotation = 270
                     },
-                    new T
+                    new T()
                     {
                         Anchor = Anchor.CentreRight,
                         Rotation = 90

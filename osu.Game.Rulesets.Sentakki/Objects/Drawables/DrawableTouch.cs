@@ -141,15 +141,5 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         }
 
         public bool OnNewPointInteraction() => UpdateResult(true);
-
-        private struct TouchEasingFunction : IEasingFunction
-        {
-            public readonly double ApplyEasing(double t)
-            {
-                double result = (3.5 * Math.Pow(t, 4)) - (3.75 * Math.Pow(t, 3)) + (1.45 * Math.Pow(t, 2)) - (0.05 * t) + 0.005;
-
-                return Math.Min(1, result);
-            }
-        }
     }
 }

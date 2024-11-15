@@ -4,9 +4,9 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
 {
-    public partial class TouchPiece : CompositeDrawable
+    public partial class TouchPieceShadow : CompositeDrawable
     {
-        public TouchPiece()
+        public TouchPieceShadow()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
@@ -15,9 +15,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
             {
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
-                Size = new Vector2(73, 45f),
+                Size = new Vector2(103, 75f),
                 Thickness = 8f,
-                ShadowRadius = 0f,
+                ShadowRadius = 15,
+                ShadowOnly = true,
+                Y = -15
             });
         }
     }
