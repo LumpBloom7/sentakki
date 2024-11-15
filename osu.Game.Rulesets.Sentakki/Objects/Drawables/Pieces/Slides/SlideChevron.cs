@@ -27,7 +27,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Size = new Vector2(80, 60);
-
         }
 
         [BackgroundDependencyLoader]
