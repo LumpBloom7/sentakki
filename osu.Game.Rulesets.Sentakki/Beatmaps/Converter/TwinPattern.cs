@@ -94,6 +94,4 @@ public class TwinPattern
 
         return result.NormalizePath();
     }
-
-
 }

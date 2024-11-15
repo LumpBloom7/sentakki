@@ -42,7 +42,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         this.beatmap = beatmap;
 
         // Taking this from osu specific information that we need
-        circleRadius = 54.4f - 4.48f * beatmap.Difficulty.CircleSize;
+        circleRadius = 54.4f - (4.48f * beatmap.Difficulty.CircleSize);
 
         // Prep an RNG with a seed generated from beatmap diff
         var difficulty = beatmap.BeatmapInfo.Difficulty;
@@ -98,7 +98,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
                     {
                         var slidePath = slide.SlideInfoList[0].SlidePath;
                         if (slidePath.EndsWithSlideFan)
-                            fanStartTime = slide.StartTime + slide.Duration * slidePath.FanStartProgress;
+                            fanStartTime = slide.StartTime + (slide.Duration * slidePath.FanStartProgress);
                     }
 
                     if (allClaps && fanStartTime == double.MaxValue)
@@ -117,7 +117,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
                         if (samples.All(h => h.Name != HitSampleInfo.HIT_CLAP))
                             continue;
 
-                        double targetTime = original.StartTime + spansDuration * i;
+                        double targetTime = original.StartTime + (spansDuration * i);
 
                         if (targetTime >= fanStartTime)
                             break;
@@ -133,7 +133,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
                             sho.Ex = isSoft;
 
                             yield return sho;
-                        };
+                        }
                     }
 
                     break;
