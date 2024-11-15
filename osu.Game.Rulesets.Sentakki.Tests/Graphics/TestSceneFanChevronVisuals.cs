@@ -73,9 +73,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Graphics
                 float progress = (i + 2f) / 12f;
 
                 float scale = progress - (2f / 12);
-                var middlePosition = lineStart + middleLineDelta * progress;
+                var middlePosition = lineStart + (middleLineDelta * progress);
 
-                float t = 6.5f + 2.5f * scale;
+                float t = 6.5f + (2.5f * scale);
 
                 float chevWidth = MathF.Abs(lineStart.X - middlePosition.X);
 
@@ -85,7 +85,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Graphics
                 Vector2 one = new Vector2(chevWidth, 0);
 
                 var middle = (one + secondPoint) * 0.5f;
-                float h = (middle - Vector2.Zero).Length + t * 3;
+                float h = (middle - Vector2.Zero).Length + (t * 3);
 
                 float w = (secondPoint - one).Length;
 
@@ -114,5 +114,4 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Graphics
             slide.Path = SlidePaths.CreateSlidePath(new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false));
         }
     }
-
 }
