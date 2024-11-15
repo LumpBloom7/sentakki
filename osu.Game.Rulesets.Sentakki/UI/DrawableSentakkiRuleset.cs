@@ -50,8 +50,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [BackgroundDependencyLoader]
         private void load()
         {
-            Config.BindWith(SentakkiRulesetSettings.LaneInputMode, laneInputMode);
-
             FrameStableComponents.Add(slideFanChevronsTextures);
 
             Config.BindWith(SentakkiRulesetSettings.AnimationSpeed, configEntrySpeed);
@@ -140,12 +138,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         protected new SentakkiRulesetConfigManager Config => (SentakkiRulesetConfigManager)base.Config;
 
-        // Input specifics (sensor/button) for replay and gameplay
-        private readonly Bindable<LaneInputMode> laneInputMode = new Bindable<LaneInputMode>();
-
         private SentakkiFramedReplayInputHandler? sentakkiFramedReplayInput => (SentakkiFramedReplayInputHandler?)((SentakkiInputManager)KeyBindingInputManager).ReplayInputHandler;
-
-        public bool UseSensorMode => sentakkiFramedReplayInput is not null ? sentakkiFramedReplayInput.UsingSensorMode : laneInputMode.Value == LaneInputMode.Sensor;
 
         // Default stuff
         protected override Playfield CreatePlayfield() => new SentakkiPlayfield();
