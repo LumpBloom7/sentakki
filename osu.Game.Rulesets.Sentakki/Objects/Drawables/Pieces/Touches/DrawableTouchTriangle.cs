@@ -66,7 +66,6 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
             fillTriangle = value;
             Invalidate(Invalidation.DrawNode);
         }
-
     }
 
     private bool shadowOnly;
@@ -80,7 +79,6 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
             shadowOnly = value;
             Invalidate(Invalidation.DrawNode);
         }
-
     }
 
     public new IShader TextureShader { get; private set; } = null!;
