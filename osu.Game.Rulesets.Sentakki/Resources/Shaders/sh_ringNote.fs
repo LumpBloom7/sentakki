@@ -1,6 +1,8 @@
 #ifndef SENTAKKI_RING_FS
 #define SENTAKKI_RING_FS
 
+#include "sh_SDFUtils.fs"
+
 layout(std140, set = 0, binding = 0) uniform m_shapeParameters
 {
     float thickness;
@@ -8,8 +10,6 @@ layout(std140, set = 0, binding = 0) uniform m_shapeParameters
     float shadowRadius;
     bool glow;
 };
-
-#include "sh_noteBase.fs"
 
 void main(void) {
     vec2 resolution = v_TexRect.zw - v_TexRect.xy;
@@ -28,7 +28,7 @@ void main(void) {
     float dotSDF = circleSDF(p,c, borderThickness / 4  - 1.5);
     float ringSDF = circleSDF(p, c, radius);
 
-    vec4 r = sdfToShape(ringSDF, borderThickness, shadeRadius) + sdfToShape(dotSDF, borderThickness, 0);
+    vec4 r = sdfToShape(ringSDF, borderThickness, shadeRadius, glow) + sdfToShape(dotSDF, borderThickness, 0, false);
     o_Colour = r;
 }
 

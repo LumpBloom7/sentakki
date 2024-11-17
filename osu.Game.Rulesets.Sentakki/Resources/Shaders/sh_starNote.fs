@@ -1,6 +1,8 @@
 #ifndef SENTAKKI_STAR_NOTE_FS
 #define SENTAKKI_STAR_NOTE_FS
 
+#include "sh_SDFUtils.fs"
+
 layout(std140, set = 0, binding = 0) uniform m_shapeParameters
 {
     float thickness;
@@ -8,8 +10,6 @@ layout(std140, set = 0, binding = 0) uniform m_shapeParameters
     float shadowRadius;
     bool glow;
 };
-
-#include "sh_noteBase.fs"
 
 // signed distance to a n-star polygon, with external angle w
 float sdStar(in vec2 p, in vec2 origin, in float r, in float n, in float w)
@@ -57,7 +57,7 @@ void main(void) {
 
     float star = sdStar(p, c, radius, 5, 0.6);
 
-    vec4 r = sdfToShape(star, borderThickness * 0.75, shadeRadius);
+    vec4 r = sdfToShape(star, borderThickness * 0.75, shadeRadius, glow);
 
     o_Colour = r;
 }

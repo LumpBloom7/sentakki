@@ -9,7 +9,7 @@ layout(location = 3) in highp vec4 v_TexRect;
 
 layout(location = 0) out vec4 o_Colour;
 
-vec4 sdfToShape(in float dist, in float borderThickness, in float shadowThickness){
+vec4 sdfToShape(in float dist, in float borderThickness, in float shadowThickness, in bool glow){
     vec3 shadowColor =  glow ? vec3(1) : vec3(0);
     float shadowAlpha = glow ? 0.75: 0.6;
 
@@ -34,7 +34,7 @@ vec4 sdfToShape(in float dist, in float borderThickness, in float shadowThicknes
     return shadowPart + fillPart;
 }
 
-vec4 sdfFill(in float dist, in float borderThickness, in float shadowThickness){
+vec4 sdfFill(in float dist, in float borderThickness, in float shadowThickness, in bool glow){
     vec3 shadowColor =  glow ? vec3(1) : vec3(0);
     float shadowAlpha = glow ? 0.75: 0.6;
 

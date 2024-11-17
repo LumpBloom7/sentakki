@@ -1,6 +1,8 @@
 #ifndef SENTAKKI_CHEVRON_FS
 #define SENTAKKI_CHEVRON_FS
 
+#include "sh_SDFUtils.fs"
+
 layout(std140, set = 0, binding = 0) uniform m_shapeParameters
 {
     float thickness;
@@ -10,7 +12,6 @@ layout(std140, set = 0, binding = 0) uniform m_shapeParameters
     bool fanChevron;
 };
 
-#include "sh_noteBase.fs"
 
 float sdPolygon( in vec2 p, in vec2 origin, in vec2[6] v )
 {
@@ -101,7 +102,7 @@ void main(void) {
         ringSDF = fanChev(p, c,size - vec2(shadeRadius + borderThickness) * 2, borderThickness);
     else ringSDF = chev(p, c,size - vec2(shadeRadius + borderThickness) * 2, borderThickness);
 
-    vec4 r = sdfFill(ringSDF, borderThickness, shadeRadius);
+    vec4 r = sdfFill(ringSDF, borderThickness, shadeRadius, glow);
     o_Colour = r;
 }
 #endif

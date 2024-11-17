@@ -1,6 +1,8 @@
 #ifndef SENTAKKI_HEX_NOTE_FS
 #define SENTAKKI_HEX_NOTE_FS
 
+#include "sh_SDFUtils.fs"
+
 layout(std140, set = 0, binding = 0) uniform m_shapeParameters
 {
     float thickness;
@@ -8,8 +10,6 @@ layout(std140, set = 0, binding = 0) uniform m_shapeParameters
     float shadowRadius;
     bool glow;
 };
-
-#include "sh_noteBase.fs"
 
 // SDF that makes a rounded hexagon
 // Adapted from the Star shader provided at https://iquilezles.org/articles/distfunctions2d/
@@ -65,15 +65,15 @@ void main(void) {
     float h = size.y - size.x;
 
     float hex = roundedHexSDF(p, c, h, radius);
-    float dotDown = circleSDF(p, c + vec2(0, h * 0.5), borderThickness/4 - 1.5 );
+    float dotDown = circleSDF(p, c + vec2(0, h * 0.5), borderThickness/4 - 1.5);
     float dotUp =  circleSDF(p, c -vec2(0, h * 0.5), borderThickness/4 - 1.5);
 
-    vec4 dotDownShape = sdfToShape(dotDown, borderThickness, 0);
-    vec4 dotUpShape = sdfToShape(dotUp, borderThickness, 0);
+    vec4 dotDownShape = sdfToShape(dotDown, borderThickness, 0, false);
+    vec4 dotUpShape = sdfToShape(dotUp, borderThickness, 0, false);
 
     vec4 r2 = max(dotDownShape - dotUpShape, vec4(0,0,0,0)) + dotUpShape;
 
-    vec4 r = sdfToShape(hex, borderThickness, shadeRadius) + r2;
+    vec4 r = sdfToShape(hex, borderThickness, shadeRadius, glow) + r2;
 
     o_Colour = r;
 }

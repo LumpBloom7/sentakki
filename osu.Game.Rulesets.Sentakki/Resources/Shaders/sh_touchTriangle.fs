@@ -1,6 +1,8 @@
 #ifndef SENTAKKI_CHEVRON_FS
 #define SENTAKKI_CHEVRON_FS
 
+#include "sh_SDFUtils.fs"
+
 layout(std140, set = 0, binding = 0) uniform m_shapeParameters
 {
     float thickness;
@@ -10,8 +12,6 @@ layout(std140, set = 0, binding = 0) uniform m_shapeParameters
     bool fillTriangle;
     bool shadowOnly;
 };
-
-#include "sh_noteBase.fs"
 
 float sdTriangle( in vec2 p, in vec2 p0, in vec2 p1, in vec2 p2 )
 {
@@ -73,8 +73,8 @@ void main(void) {
     if(shadowOnly)
         o_Colour = sdfShadow(ringSDF, borderThickness, shadeRadius);
     else if(fillTriangle) 
-        o_Colour = sdfFill(ringSDF, borderThickness, shadeRadius);
+        o_Colour = sdfFill(ringSDF, borderThickness, shadeRadius, glow);
     else
-        o_Colour = sdfToShape(ringSDF, borderThickness, shadeRadius);
+        o_Colour = sdfToShape(ringSDF, borderThickness, shadeRadius, glow);
 }
 #endif
