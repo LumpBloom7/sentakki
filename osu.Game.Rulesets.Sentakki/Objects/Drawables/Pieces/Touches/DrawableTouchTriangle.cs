@@ -106,7 +106,6 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
         protected new DrawableTouchTriangle Source => (DrawableTouchTriangle)base.Source;
         protected override bool CanDrawOpaqueInterior => false;
         private IUniformBuffer<ShapeParameters>? shapeParameters;
-        private IUniformBuffer<TriangleParameters>? triangleParameters;
 
         private float thickness;
         private Vector2 size;
@@ -143,18 +142,11 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
                 Size = size,
                 ShadowRadius = shadowRadius,
                 Glow = glow,
-            };
-
-            triangleParameters ??= renderer.CreateUniformBuffer<TriangleParameters>();
-
-            triangleParameters.Data = triangleParameters.Data with
-            {
                 fillTriangle = fillTriangle,
                 shadowOnly = shadowOnly
             };
 
             shader.BindUniformBlock("m_shapeParameters", shapeParameters);
-            shader.BindUniformBlock("m_triangleParameters", triangleParameters);
         }
 
         protected override void Dispose(bool isDisposing)
@@ -171,16 +163,8 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
             public UniformVector2 Size;
             public UniformFloat ShadowRadius;
             public UniformBool Glow;
-
-            public UniformPadding8 __;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        private record struct TriangleParameters
-        {
             public UniformBool fillTriangle;
             public UniformBool shadowOnly;
-            public UniformPadding8 __;
         }
     }
 }

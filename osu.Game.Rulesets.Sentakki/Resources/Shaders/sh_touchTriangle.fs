@@ -1,14 +1,17 @@
 #ifndef SENTAKKI_CHEVRON_FS
 #define SENTAKKI_CHEVRON_FS
 
-#include "sh_noteBase.fs"
-
-layout(std140, set = 1, binding = 0) uniform m_triangleParameters
+layout(std140, set = 0, binding = 0) uniform m_shapeParameters
 {
+    float thickness;
+    vec2 size;
+    float shadowRadius;
+    bool glow;
     bool fillTriangle;
     bool shadowOnly;
 };
 
+#include "sh_noteBase.fs"
 
 float sdTriangle( in vec2 p, in vec2 p0, in vec2 p1, in vec2 p2 )
 {
@@ -51,30 +54,6 @@ vec4 sdfShadow(in float dist, in float borderThickness, in float shadowThickness
     return shadowPart;
 }
 
-vec4 sdfFill(in float dist, in float borderThickness, in float shadowThickness){
-    vec3 shadowColor =  glow ? vec3(1) : vec3(0);
-    float shadowAlpha = glow ? 0.75: 0.6;
-
-    float base = smoothstep(borderThickness - 2.0, borderThickness - 3.0, dist);
-    float outline = smoothstep(borderThickness, borderThickness - 1.0, dist);
-
-    if(shadowThickness < 1)
-        return vec4(vec3(max(outline * 0.5, base)), outline) * v_Colour;
-
-    float shadowDist = dist - borderThickness;
-
-    float shadow =  pow((1 - clamp(((1 / shadowThickness) * shadowDist), 0.0 , 1.0)) * shadowAlpha, 2.0);
-    float exclusion = smoothstep(borderThickness, borderThickness - 1.0, dist); // Inner cutout for shadow
-
-    float innerShading = smoothstep(borderThickness -2.0, 0.0 , dist);
-
-    vec4 shadowPart = vec4(shadowColor,shadow) * (1 - exclusion) * v_Colour;
-    vec4 fillPart = vec4(vec3(max(outline * 0.5, base)), outline) * v_Colour;
-
-    //vec4 stylizedFill = mix(fillPart, v_Colour * 0.85, innerShading);
-    
-    return shadowPart + fillPart;
-}
 
 void main(void) {
     vec2 resolution = v_TexRect.zw - v_TexRect.xy;

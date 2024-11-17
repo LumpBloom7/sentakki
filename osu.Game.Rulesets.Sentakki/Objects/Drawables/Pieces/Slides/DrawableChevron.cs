@@ -92,7 +92,6 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
         protected new DrawableChevron Source => (DrawableChevron)base.Source;
         protected override bool CanDrawOpaqueInterior => false;
         private IUniformBuffer<ShapeParameters>? shapeParameters;
-        private IUniformBuffer<ChevParameters>? chevParameters;
 
         private float thickness;
         private Vector2 size;
@@ -127,23 +126,16 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
                 Size = size,
                 ShadowRadius = shadowRadius,
                 Glow = glow,
-            };
-
-            chevParameters ??= renderer.CreateUniformBuffer<ChevParameters>();
-            chevParameters.Data = chevParameters.Data with
-            {
                 FanChevron = fanChev
             };
 
             shader.BindUniformBlock("m_shapeParameters", shapeParameters);
-            shader.BindUniformBlock("m_chevParameters", chevParameters);
         }
 
         protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
             shapeParameters?.Dispose();
-            chevParameters?.Dispose();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -154,14 +146,9 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
             public UniformVector2 Size;
             public UniformFloat ShadowRadius;
             public UniformBool Glow;
-
-            public UniformPadding8 __;
-        }
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        private record struct ChevParameters
-        {
             public UniformBool FanChevron;
-            public UniformPadding12 _;
+
+            public UniformPadding4 __;
         }
     }
 }

@@ -1,6 +1,14 @@
 #ifndef SENTAKKI_RING_FS
 #define SENTAKKI_RING_FS
 
+layout(std140, set = 0, binding = 0) uniform m_shapeParameters
+{
+    float thickness;
+    vec2 size;
+    float shadowRadius;
+    bool glow;
+};
+
 #include "sh_noteBase.fs"
 
 void main(void) {

@@ -1,16 +1,18 @@
 #ifndef SENTAKKI_CHEVRON_FS
 #define SENTAKKI_CHEVRON_FS
 
-#include "sh_noteBase.fs"
-
-layout(std140, set = 1, binding = 0) uniform m_chevParameters
+layout(std140, set = 0, binding = 0) uniform m_shapeParameters
 {
+    float thickness;
+    vec2 size;
+    float shadowRadius;
+    bool glow;
     bool fanChevron;
 };
 
-const int N = 6;
+#include "sh_noteBase.fs"
 
-float sdPolygon( in vec2 p, in vec2 origin, in vec2[N] v )
+float sdPolygon( in vec2 p, in vec2 origin, in vec2[6] v )
 {
     vec2 P = p-origin;
 
@@ -35,34 +37,9 @@ float sdPolygon( in vec2 p, in vec2 origin, in vec2[N] v )
     return s*sqrt(d);
 }
 
-vec4 sdfFill(in float dist, in float borderThickness, in float shadowThickness){
-    vec3 shadowColor =  glow ? vec3(1) : vec3(0);
-    float shadowAlpha = glow ? 0.75: 0.6;
-
-    float base = smoothstep(borderThickness - 2.0, borderThickness - 3.0, dist);
-    float outline = smoothstep(borderThickness, borderThickness - 1.0, dist);
-
-    if(shadowThickness < 1)
-        return vec4(vec3(max(outline * 0.5, base)), outline) * v_Colour;
-
-    float shadowDist = dist - borderThickness;
-
-    float shadow =  pow((1 - clamp(((1 / shadowThickness) * shadowDist), 0.0 , 1.0)) * shadowAlpha, 2.0);
-    float exclusion = smoothstep(borderThickness, borderThickness - 1.0, dist); // Inner cutout for shadow
-
-    float innerShading = smoothstep(borderThickness -2.0, 0.0 , dist);
-
-    vec4 shadowPart = vec4(shadowColor,shadow) * (1 - exclusion) * v_Colour;
-    vec4 fillPart = vec4(vec3(max(outline * 0.5, base)), outline) * v_Colour;
-
-    //vec4 stylizedFill = mix(fillPart, v_Colour * 0.85, innerShading);
-    
-    return shadowPart + fillPart;
-}
-
 float chev(in vec2 p, in vec2 centre, in vec2 hexSize, in float thickness){    
-    float h = hexSize.y*0.5;
-    float w = hexSize.x*0.5;
+    float h = hexSize.y * 0.5;
+    float w = hexSize.x * 0.5;
 
     vec2 v0 = vec2(0, -h);
 	vec2 v1 = vec2(w, h - thickness);
@@ -80,16 +57,18 @@ float chev(in vec2 p, in vec2 centre, in vec2 hexSize, in float thickness){
 }
 
 #define PI 3.1415926538
+const float deg2rad_factor = (PI / 180.0);
 
 float fanChev(in vec2 p, in vec2 centre, in vec2 hexSize, in float thickness){    
-    float h = hexSize.y*0.5;
-    float w = hexSize.x*0.5;
+    float h = hexSize.y * 0.5;
+    float w = hexSize.x * 0.5;
 
     vec2 v0 = vec2(0, -h);
 	vec2 v1 = vec2(w, h - thickness);
 
-    float rad1 = ((200+2.5)/180.0) * PI;
-    float rad2 = ((160-2.5)/180.0) * PI;
+    // We want to make the chevron edges angled inwards a bit, so they line up better when in a fan formation
+    float rad1 = (180 + 22.5) * deg2rad_factor;
+    float rad2 = (180 - 22.5) * deg2rad_factor;
 
 	vec2 v2 = vec2(sin(rad1) * thickness, -cos(rad1) * thickness) + v1;
 	vec2 v3 = vec2(0.0, -h + thickness);

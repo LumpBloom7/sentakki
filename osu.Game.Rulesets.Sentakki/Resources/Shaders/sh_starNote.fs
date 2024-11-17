@@ -1,6 +1,14 @@
 #ifndef SENTAKKI_STAR_NOTE_FS
 #define SENTAKKI_STAR_NOTE_FS
 
+layout(std140, set = 0, binding = 0) uniform m_shapeParameters
+{
+    float thickness;
+    vec2 size;
+    float shadowRadius;
+    bool glow;
+};
+
 #include "sh_noteBase.fs"
 
 // signed distance to a n-star polygon, with external angle w
