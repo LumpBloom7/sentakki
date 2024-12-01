@@ -155,7 +155,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.UpdateInitialTransforms();
             Slidepath.PerformEntryAnimation(AnimationDuration.Value);
 
-            using (BeginAbsoluteSequence(HitObject.StartTime - 50))
+            using (BeginAbsoluteSequence(HitObject.StartTime))
             {
                 SlideStars[2].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
                 SlideStars[0].FadeOut().ScaleTo(1.25f, HitObject.ShootDelay);
@@ -167,7 +167,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     SlideStars[1].FadeInFromZero(HitObject.ShootDelay);
                 }
 
-                using (BeginDelayedSequence(50 + HitObject.ShootDelay))
+                using (BeginDelayedSequence(HitObject.ShootDelay))
                 {
                     if (!Slidepath.Path.StartsWithSlideFan && Slidepath.Path.EndsWithSlideFan)
                     {
