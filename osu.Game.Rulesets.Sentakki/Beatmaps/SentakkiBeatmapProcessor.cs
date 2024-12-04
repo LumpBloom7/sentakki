@@ -43,8 +43,9 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
         private IEnumerable<HitObject> getColorableHitObject(IReadOnlyList<HitObject> hitObjects)
         {
-            foreach (var hitObject in hitObjects)
+            for (int i = 0; i < hitObjects.Count; ++i)
             {
+                var hitObject = hitObjects[i];
                 if (canBeColored(hitObject)) yield return hitObject;
 
                 foreach (var nested in getColorableHitObject(hitObject.NestedHitObjects).AsEnumerable())
