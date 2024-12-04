@@ -5,7 +5,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Logging;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -23,7 +22,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public new SlideBody HitObject => (SlideBody)base.HitObject;
 
         // This slide body can only be interacted with iff the slidetap associated with this slide is judged
-        public bool IsHittable => ParentHitObject is not null && ParentHitObject.SlideTaps.Child.Judged;
+        public bool IsHittable
+        {
+            get
+            {
+                if (ParentHitObject is null)
+                    return false;
+
+                if (ParentHitObject.HitObject.TapType is Slide.TapTypeEnum.None)
+                    return Time.Current >= HitObject.StartTime;
+
+                return ParentHitObject.SlideTaps.Child.Judged;
+            }
+        }
 
         public Container<DrawableSlideCheckpoint> SlideCheckpoints { get; private set; } = null!;
 
@@ -155,7 +166,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.UpdateInitialTransforms();
             Slidepath.PerformEntryAnimation(AnimationDuration.Value);
 
-            using (BeginAbsoluteSequence(HitObject.StartTime))
+            using (BeginAbsoluteSequence(HitObject.StartTime - 50))
             {
                 SlideStars[2].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
                 SlideStars[0].FadeOut().ScaleTo(1.25f, HitObject.ShootDelay);
@@ -167,7 +178,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     SlideStars[1].FadeInFromZero(HitObject.ShootDelay);
                 }
 
-                using (BeginDelayedSequence(HitObject.ShootDelay))
+                using (BeginDelayedSequence(50 + HitObject.ShootDelay))
                 {
                     if (!Slidepath.Path.StartsWithSlideFan && Slidepath.Path.EndsWithSlideFan)
                     {
@@ -199,7 +210,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
                 }
             }
-
             if (!userTriggered)
             {
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
@@ -210,7 +220,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                     // Apply a leniency if the player almost completed the slide
                     if (SlideCheckpoints.Count(node => !node.Result.IsHit) <= 2 && SlideCheckpoints.Count > 2)
-                        ApplyResult(hitResult: HitResult.Ok);
+                        ApplyResult(HitResult.Ok);
                     else
                         ApplyResult(Result.Judgement.MinResult);
                 }
@@ -218,20 +228,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
             }
 
-
-
             var result = HitObject.HitWindows.ResultFor(timeOffset);
 
-            // Give the player an OK for extremely early completion
-            // This is also a safegaurd for super late hits beyond the late windows, where the input may have occured prior to the late window being exceeded due to lag.
+            // If the slide was completed before the early windows, just give an OK result
             if (result == HitResult.None)
                 result = HitResult.Ok;
-
-            // Give a perfect result if the star is intersecting with the last node
-            // This is to preserve the expected invariant that following the star perfectly should guarantee a perfect judgement.
-            if (timeOffset < 0)
-                if ((1 - StarProgress) * Slidepath.Path.TotalDistance <= DrawableSlideCheckpointNode.DETECTION_RADIUS)
-                    result = HitResult.Perfect;
 
             ApplyResult(result);
         }
