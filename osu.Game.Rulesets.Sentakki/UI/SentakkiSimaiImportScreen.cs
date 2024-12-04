@@ -46,6 +46,9 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
     [Resolved]
     private OsuColour colours { get; set; }
 
+    [Cached]
+    private OverlayColourProvider overlayColourProvider = new OverlayColourProvider(OverlayColourScheme.Red);
+
     [BackgroundDependencyLoader(true)]
     private void load(INotificationOverlay notificationOverlay)
     {
