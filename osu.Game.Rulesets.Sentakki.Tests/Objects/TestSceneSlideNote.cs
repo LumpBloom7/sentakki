@@ -30,9 +30,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         [Cached]
         private readonly DrawablePool<SlideChevron> chevronPool;
 
-        [Cached]
-        private readonly SlideFanChevrons fanChevrons;
-
         public TestSceneSlideNote()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
@@ -44,7 +41,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             });
 
             Add(chevronPool = new DrawablePool<SlideChevron>(62));
-            Add(fanChevrons = new SlideFanChevrons());
 
             AddStep("Miss Single", () => testSingle(2000));
             AddStep("Hit Single", () => testSingle(2000, true));

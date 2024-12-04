@@ -4,6 +4,7 @@ using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Pooling;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -27,7 +28,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         private int depthIndex;
 
         [Cached]
-        private readonly SlideFanChevrons fanChevrons;
+        private readonly DrawablePool<SlideChevron> chevronPool = null!;
 
         public TestSceneSlideFan()
         {
@@ -39,7 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 Rotation = -22.5f
             });
 
-            Add(fanChevrons = new SlideFanChevrons());
+            Add(chevronPool = new DrawablePool<SlideChevron>(62));
 
             AddStep("Miss Single", () => testSingle(2000));
             AddStep("Hit Single", () => testSingle(2000, true));

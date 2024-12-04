@@ -28,6 +28,7 @@ public partial class SentakkiHealthProcessor : AccumulatingHealthProcessor
     {
         return result switch
         {
+            HitResult.Perfect => 1,
             HitResult.Great => 1,
             HitResult.Good => 2 / 3f,
             HitResult.Ok => 1 / 3f,

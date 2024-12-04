@@ -1,4 +1,4 @@
-![sentakki](assets/logov3.png)
+![sentakki](assets/logov4.png)
 
 ---
 [![.NET Core](https://github.com/LumpBloom7/sentakki/workflows/.NET%20Core/badge.svg)](https://github.com/LumpBloom7/sentakki/actions?query=workflow%3A%22.NET+Core%22)
@@ -12,18 +12,12 @@ sentakki is a recreation of maimaiDX for use within osu, taking advantage of the
 
 ## Status
 
+
 All the essential note types have been implemented. Features like editor is being developed on the side, since lazer doesn't support third party ruleset editors yet. PP/diff calc haven't been given considered yet, and it is currently open to ideas.
 
-## Demo videos
+## Demo
 
-These charts have been ported from maimaiDX, but conversions of osu!std charts are also supported.
-|||
-|:---:|:---:|
-|<video src="https://github.com/LumpBloom7/sentakki/assets/12001167/20c5c1af-084b-478c-a8b3-2975c0672f42"/>|<video src="https://github.com/LumpBloom7/sentakki/assets/12001167/250ba2fe-e22f-48e8-8f64-aff91a7afe4b"/>|
-|<video src="https://github.com/LumpBloom7/sentakki/assets/12001167/a0170ef2-9472-4008-8ca2-b813c335c897"/>|<video src="https://github.com/LumpBloom7/sentakki/assets/12001167/58e9c427-6e14-4e08-bec9-e3a2c00ca7de"/>|
-
-
-
+https://github.com/user-attachments/assets/5d8723ee-98c1-48af-92f5-5b3c8a633e9f
 
 ## Trying the ruleset
 

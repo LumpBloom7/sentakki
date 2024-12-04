@@ -33,7 +33,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         public bool StrictSliderTracking { get; set; }
 
-        private int trackingLookBehindDistance => StrictSliderTracking ? 1 : 2;
+        // Short slides should always have strict tracking
+        // This is a QoL improvement that prevents short slides from being completed without intention when hitting a laned note along the tail.
+        private bool shouldBeStrict => StrictSliderTracking || ParentHitObject.SlideCheckpoints.Count <= 3;
+
+        private int trackingLookBehindDistance => shouldBeStrict ? 1 : 2;
 
         private bool isPreviousNodeHit() => ThisIndex < trackingLookBehindDistance || ParentHitObject.SlideCheckpoints[ThisIndex - trackingLookBehindDistance].IsHit;
 

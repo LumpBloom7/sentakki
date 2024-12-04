@@ -18,22 +18,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
         }
 
-        protected override JudgementResult CreateResult(Judgement judgement) => new SentakkiJudgementResult(HitObject, judgement);
-
-        public new void ApplyResult(HitResult result)
-        {
-            var SentakkiJudgementResult = (SentakkiJudgementResult)Result;
-            if (result == HitResult.Perfect)
-            {
-                SentakkiJudgementResult.Critical = true;
-                result = Result.Judgement.MaxResult;
-            }
-            else
-            {
-                SentakkiJudgementResult.Critical = false;
-            }
-
-            base.ApplyResult(result);
-        }
+        public new void ApplyResult(HitResult result) => base.ApplyResult(result);
     }
 }

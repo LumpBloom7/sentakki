@@ -85,7 +85,11 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         public void RemoveHitObject(SentakkiLanedHitObject hitObject)
         {
+            // Ensure that we don't continue to receive time changes
+            startTimeMap[hitObject].UnbindAll();
+
             startTimeMap.Remove(hitObject);
+
             removeHitObjectFromEntry(hitObject.StartTime, hitObject);
         }
 

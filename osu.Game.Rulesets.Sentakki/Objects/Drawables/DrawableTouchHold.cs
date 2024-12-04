@@ -51,7 +51,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Colour = Color4.SlateGray;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Scale = new Vector2(0f);
             Alpha = 0;
             AddRangeInternal(new Drawable[]
             {
@@ -100,11 +99,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            double fadeIn = AnimationDuration.Value;
-            this.FadeInFromZero(fadeIn).ScaleTo(1, fadeIn);
+            double animTime = AnimationDuration.Value * 0.8;
+            double fadeTime = AnimationDuration.Value * 0.2;
 
-            using (BeginDelayedSequence(fadeIn))
+            this.FadeInFromZero(fadeTime).ScaleTo(1);
+
+            using (BeginAbsoluteSequence(HitObject.StartTime - animTime))
             {
+                TouchHoldBody.ResizeTo(80, animTime, Easing.InCirc);
+            }
+            using (BeginDelayedSequence(fadeTime + animTime))
+            {
+                TouchHoldBody.centrePiece.FadeOut();
+                TouchHoldBody.CompletedCentre.FadeIn();
                 TouchHoldBody.ProgressPiece.TransformBindableTo(TouchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
             }
         }
@@ -148,7 +155,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             HitResult resultType;
 
-            if (result >= .75)
+            if (result >= .90)
+                resultType = HitResult.Perfect;
+            else if (result >= .75)
                 resultType = HitResult.Great;
             else if (result >= .5)
                 resultType = HitResult.Good;

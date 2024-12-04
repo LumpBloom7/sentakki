@@ -35,7 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
 
             if (result < HitResult.Perfect && HitObject.Ex && result.IsHit())
-                result = Result.Judgement.MaxResult;
+                result = HitResult.Great;
 
             ApplyResult(result);
         }
