@@ -33,23 +33,21 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         public void Add(SentakkiLanedHitObject hitObject)
         {
-            hitObject.LaneBindable.ValueChanged += onLaneChanged;
             hitObject.BreakBindable.ValueChanged += onBreakChanged;
+            hitObject.ColourBindable.ValueChanged += onColorChanged;
             HitObjects.AddInPlace(hitObject, Comparer<SentakkiLanedHitObject>.Create((lhs, rhs) => lhs.Lane.CompareTo(rhs.Lane)));
             UpdateLine();
         }
 
         public void Remove(SentakkiLanedHitObject hitObject)
         {
-            hitObject.LaneBindable.ValueChanged -= onLaneChanged;
             hitObject.BreakBindable.ValueChanged -= onBreakChanged;
             HitObjects.Remove(hitObject);
             UpdateLine();
         }
 
-        private void onLaneChanged(ValueChangedEvent<int> obj) => UpdateLine();
-
         private void onBreakChanged(ValueChangedEvent<bool> obj) => UpdateLine();
+        private void onColorChanged(ValueChangedEvent<Color4> obj) => UpdateLine();
 
         public Action<LineLifetimeEntry> OnLineUpdated = null!;
 
@@ -61,7 +59,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
                 var hitObject = HitObjects.First();
 
-                Colour = hitObject.Break ? Color4.OrangeRed : hitObject.DefaultNoteColour;
+                Colour = hitObject.NoteColour;
                 Rotation = hitObject.Lane.GetRotationForLane() - 45;
             }
             else if (HitObjects.Count > 1)

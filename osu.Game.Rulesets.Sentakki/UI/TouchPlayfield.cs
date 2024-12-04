@@ -73,8 +73,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private void handlePointInput(int pointID, bool hasAction, Vector2? pointerPosition)
         {
-            bool continueEventPropogation = true;
-
             foreach (DrawableTouch touch in aliveTouchNotes)
             {
                 if (hasAction && touch.ReceivePositionalInputAt(pointerPosition!.Value))
@@ -82,8 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     if (!touch.PointInteractionState[pointID])
                     {
                         touch.PointInteractionState[pointID] = true;
-                        if (continueEventPropogation)
-                            continueEventPropogation = !touch.OnNewPointInteraction();
+                        touch.OnNewPointInteraction();
                     }
                 }
                 else

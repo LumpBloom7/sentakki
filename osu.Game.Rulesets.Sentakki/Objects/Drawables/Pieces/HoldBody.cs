@@ -22,17 +22,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Origin = Anchor.TopCentre;
             InternalChildren = new Drawable[]
             {
-                new NoteRingPiece(),
-                new DotPiece(squared: true)
-                {
-                    Rotation = 45,
-                    Anchor = Anchor.BottomCentre,
-                },
-                new DotPiece(squared: true)
-                {
-                    Rotation = 45,
-                    Anchor = Anchor.TopCentre,
-                },
+                new Container{
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Child =  new NoteRingPiece(true)
+                }
             };
         }
 

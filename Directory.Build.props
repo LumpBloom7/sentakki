@@ -1,15 +1,16 @@
 <Project>
     <PropertyGroup Label="C#">
-        <LangVersion>10.0</LangVersion>
+        <LangVersion>12.0</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <Nullable>enable</Nullable>
+        <WarningsNotAsErrors>NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
 
         <Authors>Derrick Timmermans</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/LumpBloom7/sentakki</RepositoryUrl>
-        <Copyright>Copyright (c) 2022 Derrick Timmermans</Copyright>
+        <Copyright>Copyright (c) 2024 Derrick Timmermans</Copyright>
         <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     </PropertyGroup>
     <ItemGroup>

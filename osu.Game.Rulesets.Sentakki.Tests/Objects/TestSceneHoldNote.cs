@@ -15,6 +15,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
     {
         private readonly Container content;
         protected override Container<Drawable> Content => content;
+        protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 
         private int depthIndex;
 

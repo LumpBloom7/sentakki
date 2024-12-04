@@ -103,7 +103,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
             double adjustedExplodeDuration = explode_duration * (drawableRuleset?.GameplaySpeed ?? 1);
 
-            var sequence = this.FadeIn()
+            var sequence = this.FadeTo(0.8f)
                                .TransformBindableTo(borderRatio, 1)
                                .ScaleTo(1)
                                .Then()

@@ -22,8 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE);
             InternalChildren = new Drawable[]
             {
-                new NoteRingPiece(),
-                new DotPiece(),
+                new NoteRingPiece()
             };
         }
 

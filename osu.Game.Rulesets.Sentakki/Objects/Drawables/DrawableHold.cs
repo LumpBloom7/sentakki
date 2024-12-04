@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -66,11 +66,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
-        protected override void OnFree()
+        protected override void OnApply()
         {
-            base.OnFree();
-            HoldStartTime = null;
-            TotalHoldTime = 0;
+            base.OnApply();
+            isHolding = false;
+            timeNotHeld = 0;
         }
 
         protected override void UpdateInitialTransforms()
@@ -97,40 +97,60 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         .Then().Delay(HitObject.Duration - stretchTime) // Wait until the end of the hold note, while considering how much time we need for shrinking
                         .ResizeHeightTo(0, stretchTime); // We shrink the hold note as it exits
 
-                if (HoldStartTime == null && !Auto)
+                if (isHolding == false && !Auto)
                     NoteBody.Delay(animTime).FadeColour(Color4.Gray, 100);
             }
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            if (Time.Current > HitObject.GetEndTime())
+            if (!userTriggered)
             {
-                endHold();
-                double totalHoldRatio = TotalHoldTime / ((IHasDuration)HitObject).Duration;
-                HitResult result;
+                if (timeOffset >= 0 && Auto)
+                    ApplyResult(HitResult.Perfect);
+                else if (timeOffset > HitObject.HitWindows.WindowFor(HitResult.Perfect) && isHolding)
+                    ApplyResult(applyDeductionTo(HitResult.Great));
+                else if (!HitObject.HitWindows.CanBeHit(timeOffset: timeOffset))
+                    ApplyResult(Result.Judgement.MinResult);
 
-                if (totalHoldRatio >= .75 || Auto)
-                    result = HitResult.Great;
-                else if (totalHoldRatio >= .5)
-                    result = HitResult.Good;
-                else if (totalHoldRatio >= .25)
-                    result = HitResult.Ok;
-                else
-                    result = HitResult.Miss;
-
-                // This is specifically to accommodate the threshold setting in HR
-                if (!HitObject.HitWindows.IsHitResultAllowed(result))
-                    result = HitResult.Miss;
-
-                // Hold is over, but head windows are still active.
-                // Only happens on super short holds
-                // Force a miss on the head in this case
-                if (!headContainer[0].Result.HasResult)
-                    headContainer[0].MissForcefully();
-
-                ApplyResult(result);
+                return;
             }
+            var result = HitObject.HitWindows.ResultFor(timeOffset);
+
+            if (result == HitResult.None)
+                return;
+
+            if (result < HitResult.Perfect && HitObject.Ex && result.IsHit())
+                result = HitResult.Great;
+
+            ApplyResult(applyDeductionTo(result));
+
+            HitResult applyDeductionTo(HitResult originalResult)
+            {
+                int deduction = (int)Math.Min(Math.Floor(timeNotHeld / 300), 3);
+
+                var newResult = originalResult - deduction;
+
+                if (newResult <= HitResult.Ok)
+                    return HitResult.Ok;
+
+                return newResult;
+            }
+        }
+
+        private double timeNotHeld = 0;
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (!Head.AllJudged)
+                return;
+
+            if (isHolding)
+                return;
+
+            timeNotHeld += Time.Elapsed;
         }
 
         protected override void UpdateHitStateTransforms(ArmedState state)
@@ -190,29 +210,25 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             headContainer.Clear(false);
         }
 
-        /// <summary>
-        /// Time at which the user started holding this hold note. Null if the user is not holding this hold note.
-        /// </summary>
-        public double? HoldStartTime { get; private set; }
+        private SentakkiInputManager sentakkiActionInputManager = null!;
+        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
 
-        public double TotalHoldTime;
-
-        private bool beginHoldAt(double timeOffset)
+        private int pressedCount
         {
-            if (timeOffset < -Head.HitObject.HitWindows.WindowFor(HitResult.Miss))
-                return false;
+            get
+            {
+                int count = 0;
+                foreach (var pressedAction in SentakkiActionInputManager.PressedActions)
+                {
+                    if (pressedAction == SentakkiAction.Key1 + HitObject.Lane)
+                        ++count;
+                }
 
-            HoldStartTime = Math.Max(Time.Current, HitObject.StartTime);
-            return true;
+                return count;
+            }
         }
 
-        private void endHold()
-        {
-            if (HoldStartTime.HasValue)
-                TotalHoldTime += Math.Max(Time.Current - HoldStartTime.Value, 0);
-
-            HoldStartTime = null;
-        }
+        private bool isHolding = false;
 
         public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)
         {
@@ -222,24 +238,36 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
                 return false;
 
-            if (beginHoldAt(Time.Current - Head.HitObject.StartTime))
-            {
-                Head.UpdateResult();
-                NoteBody.FadeColour(AccentColour.Value, 50);
-            }
+            // Passthrough excess inputs to later hitobjects in the same lane
+            if (isHolding)
+                return false;
 
+            double timeOffset = Time.Current - HitObject.StartTime;
+
+            if (timeOffset < -Head.HitObject.HitWindows.WindowFor(HitResult.Miss))
+                return false;
+
+            Head.UpdateResult();
+            isHolding = true;
+            NoteBody.FadeColour(AccentColour.Value, 50);
             return true;
         }
 
         public void OnReleased(KeyBindingReleaseEvent<SentakkiAction> e)
         {
             if (AllJudged) return;
-            if (HoldStartTime is null) return;
+            if (!isHolding) return;
 
             if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
                 return;
 
-            endHold();
+            // We only release the hold once ALL inputs are released
+            // We check for 1 here as drawables receive the event before the counter decrements
+            if (pressedCount > 1)
+                return;
+
+            UpdateResult(true);
+            isHolding = false;
 
             if (!AllJudged)
                 NoteBody.FadeColour(Color4.Gray, 100);

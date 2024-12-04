@@ -1,7 +1,6 @@
-![sentakki](assets/logov3.png)
+![sentakki](assets/logov4.png)
 
-# sentakki
-
+---
 [![.NET Core](https://github.com/LumpBloom7/sentakki/workflows/.NET%20Core/badge.svg)](https://github.com/LumpBloom7/sentakki/actions?query=workflow%3A%22.NET+Core%22)
 [![CodeFactor](https://www.codefactor.io/repository/github/lumpbloom7/sentakki/badge)](https://www.codefactor.io/repository/github/lumpbloom7/sentakki)
 [![Crowdin](https://badges.crowdin.net/sentakki/localized.svg)](https://crowdin.com/project/sentakki)
@@ -9,11 +8,16 @@
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E01N56M)
 
-An attempt to recreate Sega's maimai within osu!lazer, while making it more flexible.
+sentakki is a recreation of maimaiDX for use within osu, taking advantage of the longevity and the osu ecosystem for features such as multiplayer, beatmap listing, and leaderboards.
 
 ## Status
 
+
 All the essential note types have been implemented. Features like editor is being developed on the side, since lazer doesn't support third party ruleset editors yet. PP/diff calc haven't been given considered yet, and it is currently open to ideas.
+
+## Demo
+
+https://github.com/user-attachments/assets/5d8723ee-98c1-48af-92f5-5b3c8a633e9f
 
 ## Trying the ruleset
 
@@ -32,7 +36,7 @@ Prebuilt binaries are provided for users who doesn't want to create a developmen
 
 Some prerequisites are required before attempting to debug or develop:
 
-* A desktop platform with the .NET 5 SDK or higher installed.
+* A desktop platform with the .NET 8 SDK or higher installed.
 * An IDE with support for C#, providing auto completion and syntax highlighting. I recommend using Visual Studio 2019 or Visual Studio Code.
 * Other requirements are shared with osu!lazer and osu!framework
 
@@ -47,7 +51,7 @@ cd sentakki
 
 To update the source code to the latest commit, run the following command inside the osu directory:
 
-```she
+```sh
 git pull
 ```
 

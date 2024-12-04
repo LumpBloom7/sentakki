@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
@@ -16,7 +15,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Straight,
             Circle,
             V,
-            L,
             U,
             Cup,
             Thunder,
@@ -62,9 +60,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
                 case PathShapes.V:
                     return (!mirrored || !discardRedundantMirrors) && normalizedEnd != 0;
-
-                case PathShapes.L:
-                    return normalizedEnd != 0 && (mirrored ? normalizedEnd > 3 : normalizedEnd < 5);
 
                 case PathShapes.U:
                 case PathShapes.Cup:
@@ -121,10 +116,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
                     case PathShapes.V:
                         slideSegments.AddRange(generateVPattern(startOffset, path.EndOffset));
-                        break;
-
-                    case PathShapes.L:
-                        slideSegments.AddRange(generateLPattern(startOffset, path.EndOffset, path.Mirrored));
                         break;
 
                     case PathShapes.U:
@@ -236,26 +227,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     new PathControlPoint(node2Pos, PathType.LINEAR),
                 });
             }
-        }
-
-        // Covers DX L pattern 2-5
-        private static IEnumerable<SliderPath> generateLPattern(int offset, int end, bool mirrored = false)
-        {
-            Vector2 node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, offset);
-            Vector2 node1Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, (mirrored ? 2 : 6) + offset);
-            Vector2 node2Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end + offset);
-
-            yield return new SliderPath(new[]
-            {
-                new PathControlPoint(node0Pos, PathType.LINEAR),
-                new PathControlPoint(node1Pos, PathType.LINEAR),
-            });
-
-            yield return new SliderPath(new[]
-            {
-                new PathControlPoint(node1Pos, PathType.LINEAR),
-                new PathControlPoint(node2Pos, PathType.LINEAR),
-            });
         }
 
         // DX Circle Pattern
@@ -374,7 +345,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 new PathControlPoint(node6Pos, PathType.LINEAR)
             });
         }
-
         #endregion
     }
 }

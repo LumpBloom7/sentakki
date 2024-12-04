@@ -1,8 +1,6 @@
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Textures;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
 {
@@ -12,16 +10,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-        }
 
-        [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
-        {
-            AddInternal(new Sprite
+            AddInternal(new DrawableTouchTriangle
             {
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
-                Texture = textures.Get("touch"),
+                Size = new Vector2(73, 45f),
+                Thickness = 8f,
+                ShadowRadius = 0f,
             });
         }
     }

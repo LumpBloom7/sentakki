@@ -19,7 +19,7 @@ jobs:
     - name: Unit Tests
       run: dotnet test --no-build --no-restore
     - name: Upload Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: Sentakki (Dev build)
         path: osu.Game.Rulesets.Sentakki/bin/Debug/**/osu.Game.Rulesets.Sentakki.dll

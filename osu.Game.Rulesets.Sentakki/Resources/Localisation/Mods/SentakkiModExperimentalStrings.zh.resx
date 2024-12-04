@@ -59,7 +59,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mod_description" xml:space="preserve">
-        <value>将被添加到未来 sentakki 版本的一些实验性功能。 推荐使用 Autoplay/No-Fail 。 不支持录制游玩。</value>
+        <value>将被添加到未来 sentakki 版本的一些实验性功能。推荐使用 Autoplay/No-Fail。不支持录制回放。</value>
     </data>
   <data name="twin_notes" xml:space="preserve">
         <value>双音符</value>

@@ -10,20 +10,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
     public partial class DotPiece : CompositeDrawable
     {
-        public DotPiece(float outlineThickness = 2, bool squared = false)
-            : this(new Vector2(SentakkiPlayfield.DOTSIZE), outlineThickness, squared)
+        public DotPiece(float outlineThickness = 2)
+            : this(new Vector2(SentakkiPlayfield.DOTSIZE), outlineThickness)
         {
         }
 
-        public DotPiece(Vector2 size, float outlineThickness = 2, bool squared = false)
+        public DotPiece(Vector2 size, float outlineThickness = 2)
         {
             Size = size;
             Vector2 innerDotSize = size - new Vector2(outlineThickness * 2);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Masking = true;
-            CornerExponent = squared ? 2.5f : 2f;
-            CornerRadius = Math.Min(size.X, size.Y) / (squared ? 4 : 2);
+            CornerExponent = 2f;
+            CornerRadius = Math.Min(size.X, size.Y) / 2;
             InternalChildren = new Drawable[]
             {
                 new Box
@@ -33,8 +33,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 },
                 new Container
                 {
-                    CornerExponent = squared ? 2.5f : 2f,
-                    CornerRadius = Math.Min(innerDotSize.X, innerDotSize.Y) / (squared ? 4 : 2),
+                    CornerExponent =  2f,
+                    CornerRadius = Math.Min(innerDotSize.X, innerDotSize.Y) /  2,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Size = innerDotSize,

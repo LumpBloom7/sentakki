@@ -50,7 +50,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
             Colour = Entry.Colour;
             Rotation = Entry.Rotation;
-            line.Current.Value = Entry.AngleRange;
+            line.Progress = Entry.AngleRange;
             resetAnimation();
         }
 

@@ -96,10 +96,6 @@
   <data name="lane_input_mode_sensor" xml:space="preserve">
         <value>센서</value>
     </data>
-  <data name="break_sample_volume" xml:space="preserve">
-        <value>브레이크 샘플 볼륨</value>
-        <comment>Break is a proper noun, referring to a property on laned notes.</comment>
-    </data>
   <data name="note_entry_speed" xml:space="preserve">
         <value>노트 진입 속도</value>
     </data>

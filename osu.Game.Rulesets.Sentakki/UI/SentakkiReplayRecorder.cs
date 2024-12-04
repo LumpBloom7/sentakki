@@ -18,6 +18,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
         }
 
         protected override ReplayFrame HandleFrame(Vector2 mousePosition, List<SentakkiAction> actions, ReplayFrame previousFrame)
-            => new SentakkiReplayFrame(Time.Current, mousePosition, drawableRuleset.UseSensorMode, actions);
+            => new SentakkiReplayFrame(Time.Current, mousePosition, actions);
     }
 }

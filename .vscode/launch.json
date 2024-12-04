@@ -7,7 +7,7 @@
             "request": "launch",
             "program": "dotnet",
             "args": [
-                "${workspaceRoot}/osu.Game.Rulesets.Sentakki.Tests/bin/Debug/net6.0/osu.Game.Rulesets.Sentakki.Tests.dll"
+                "${workspaceRoot}/osu.Game.Rulesets.Sentakki.Tests/bin/Debug/net8.0/osu.Game.Rulesets.Sentakki.Tests.dll"
             ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "Build",
