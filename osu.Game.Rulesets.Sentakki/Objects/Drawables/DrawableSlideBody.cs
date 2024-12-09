@@ -126,6 +126,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             StarProgress = 0;
         }
 
+        protected override void LoadSamples()
+        {
+            // The slidebody object doesn't need a sample
+        }
+
         protected override void OnFree()
         {
             base.OnFree();
