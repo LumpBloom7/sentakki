@@ -55,7 +55,7 @@ public class TwinPattern
 
             while (true)
             {
-                if (rng.NextSingle() > prob)
+                if (rng.NextDouble() > prob)
                     break;
 
                 cycleLanes.Add(rng.Next(0, 8));
