@@ -61,6 +61,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 {
                     Lane = slideInfo.SlidePath.EndLane + Lane,
                     StartTime = StartTime,
+                    Samples = Samples
                 });
 
                 SlideBodies.Add(body);

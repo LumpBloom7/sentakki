@@ -46,6 +46,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 }
             });
         }
+
         protected override void LoadSamples()
         {
             // The slide parent object doesn't need a sample
