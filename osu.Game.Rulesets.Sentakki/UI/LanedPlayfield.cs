@@ -64,7 +64,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
             if (hitObject is not SentakkiLanedHitObject lanedHitObject)
                 return;
 
-            HitObjectLineRenderer.AddHitObject(lanedHitObject);
+            if (hitObject is not Slide slide || slide.TapType is not Slide.TapTypeEnum.None)
+                HitObjectLineRenderer.AddHitObject(lanedHitObject);
+
             Lanes[lanedHitObject.Lane].Add(lanedHitObject);
         }
 

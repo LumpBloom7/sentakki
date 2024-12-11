@@ -5,7 +5,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Logging;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -23,7 +22,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public new SlideBody HitObject => (SlideBody)base.HitObject;
 
         // This slide body can only be interacted with iff the slidetap associated with this slide is judged
-        public bool IsHittable => ParentHitObject is not null && ParentHitObject.SlideTaps.Child.Judged;
+        public bool IsHittable
+        {
+            get
+            {
+                if (ParentHitObject is null)
+                    return false;
+
+                if (ParentHitObject.HitObject.TapType is Slide.TapTypeEnum.None)
+                    return Time.Current >= HitObject.StartTime;
+
+                return ParentHitObject.SlideTaps.Child.Judged;
+            }
+        }
 
         public Container<DrawableSlideCheckpoint> SlideCheckpoints { get; private set; } = null!;
 
