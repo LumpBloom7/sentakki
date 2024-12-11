@@ -42,6 +42,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.LoadSamples();
 
+            LoadBreakSamples();
+        }
+
+        public void LoadBreakSamples()
+        {
             breakSample.Samples = HitObject.CreateBreakSample();
         }
 
