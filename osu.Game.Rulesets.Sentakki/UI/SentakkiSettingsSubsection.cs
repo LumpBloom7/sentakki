@@ -59,7 +59,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 },
                 new SettingsSlider<float, TouchTimeSlider>
                 {
-                    LabelText = SentakkiSettingsSubsectionStrings.TouchNoteFadeInSpeed,
+                    LabelText = SentakkiSettingsSubsectionStrings.TouchNoteEntrySpeed,
                     Current = config.GetBindable<float>(SentakkiRulesetSettings.TouchAnimationSpeed),
                 },
                 new SettingsSlider<float>
@@ -69,18 +69,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     KeyboardStep = 0.01f,
                     DisplayAsPercentage = true
                 },
-                new SettingsEnumDropdown<LaneInputMode>
-                {
-                    LabelText = SentakkiSettingsSubsectionStrings.LaneInputMode,
-                    Current = config.GetBindable<LaneInputMode>(SentakkiRulesetSettings.LaneInputMode)
-                },
-                new SettingsSlider<double, RoundedSliderBar<double>>
-                {
-                    LabelText = SentakkiSettingsSubsectionStrings.BreakSampleVolume,
-                    Current = config.GetBindable<double>(SentakkiRulesetSettings.BreakSampleVolume),
-                    KeyboardStep = 0.01f,
-                    DisplayAsPercentage = true,
-                }
             };
         }
 

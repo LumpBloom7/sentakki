@@ -74,8 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 {
                     Lane = slideInfo.SlidePath.EndLane + Lane,
                     StartTime = StartTime,
-                    // Lets remove samples from slide completions
-                    //Samples = NodeSamples.Any() ? NodeSamples.Last() : new List<HitSampleInfo>()
+                    Samples = Samples
                 });
 
                 SlideBodies.Add(body);

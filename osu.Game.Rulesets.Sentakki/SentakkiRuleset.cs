@@ -161,9 +161,11 @@ namespace osu.Game.Rulesets.Sentakki
                 Size = new Vector2(1, 250)
             }, true),
 
-            new StatisticItem(string.Empty, () => new SimpleStatisticTable(3, new SimpleStatisticItem[]
+            new StatisticItem(string.Empty, () => new SimpleStatisticTable(2, new SimpleStatisticItem[]
             {
-                new UnstableRate(score.HitEvents)
+                new AverageHitError(score.HitEvents),
+                new UnstableRate(score.HitEvents),
+                new MaimaiDXAccuracy(score.HitEvents)
             }), true)
         };
 
@@ -173,7 +175,7 @@ namespace osu.Game.Rulesets.Sentakki
         {
             return new[]
             {
-                HitResult.LargeBonus,
+                HitResult.Perfect,
                 HitResult.Great,
                 HitResult.Good,
                 HitResult.Ok,

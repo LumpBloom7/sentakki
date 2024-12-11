@@ -8,6 +8,7 @@ using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Game.Beatmaps;
+using osu.Game.Screens.Play;
 using osu.Game.Input.Bindings;
 using osu.Game.Input.Handlers;
 using osu.Game.Replays;
@@ -25,8 +26,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
     [Cached]
     public partial class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject>, IKeyBindingHandler<GlobalAction>
     {
-        private SlideFanChevrons slideFanChevronsTextures = null!;
-
         public DrawableSentakkiRuleset(SentakkiRuleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod>? mods)
             : base(ruleset, beatmap, mods)
         {
@@ -34,25 +33,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 mod.ApplyToTrack(speedAdjustmentTrack);
         }
 
-        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
-        {
-            var dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
-
-            // We create and render the FanChevron outside of the playfield
-            // This is to ensure that the fan chevrons doesn't get affected by Playfield transforms (avoiding excessive buffer allocs/deallocs)
-            // FanSlides will use BufferedContainerView to show the chevrons
-            dependencies.CacheAs(slideFanChevronsTextures = new SlideFanChevrons());
-
-            return dependencies;
-        }
-
         [BackgroundDependencyLoader]
         private void load()
         {
-            Config.BindWith(SentakkiRulesetSettings.LaneInputMode, laneInputMode);
-
-            FrameStableComponents.Add(slideFanChevronsTextures);
-
             Config.BindWith(SentakkiRulesetSettings.AnimationSpeed, configEntrySpeed);
             Config.BindWith(SentakkiRulesetSettings.TouchAnimationSpeed, configTouchEntrySpeed);
 
@@ -139,14 +122,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         protected new SentakkiRulesetConfigManager Config => (SentakkiRulesetConfigManager)base.Config;
 
-        // Input specifics (sensor/button) for replay and gameplay
-        private readonly Bindable<LaneInputMode> laneInputMode = new Bindable<LaneInputMode>();
-
-        private bool hasReplay => ((SentakkiInputManager)KeyBindingInputManager).ReplayInputHandler != null;
-
-        private SentakkiFramedReplayInputHandler sentakkiFramedReplayInput => (SentakkiFramedReplayInputHandler)((SentakkiInputManager)KeyBindingInputManager).ReplayInputHandler;
-
-        public bool UseSensorMode => hasReplay ? sentakkiFramedReplayInput.UsingSensorMode : laneInputMode.Value == LaneInputMode.Sensor;
+        private SentakkiFramedReplayInputHandler? sentakkiFramedReplayInput => (SentakkiFramedReplayInputHandler?)((SentakkiInputManager)KeyBindingInputManager).ReplayInputHandler;
 
         // Default stuff
         protected override Playfield CreatePlayfield() => new SentakkiPlayfield();
@@ -159,15 +135,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         public override DrawableHitObject<SentakkiHitObject> CreateDrawableRepresentation(SentakkiHitObject h) => null!;
 
-        // protected override ResumeOverlay CreateResumeOverlay() => new SentakkiResumeOverlay();
+        protected override ResumeOverlay CreateResumeOverlay() => new DelayedResumeOverlay();
 
         protected override PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset.RulesetInfo);
-
-        /* public override void RequestResume(Action continueResume)
-        {
-            ResumeOverlay.GameplayCursor = Cursor;
-            ResumeOverlay.ResumeAction = continueResume;
-            ResumeOverlay.Show();
-        } */
     }
 }

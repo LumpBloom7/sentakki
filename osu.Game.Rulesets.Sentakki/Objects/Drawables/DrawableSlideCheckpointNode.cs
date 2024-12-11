@@ -3,6 +3,7 @@ using System.Linq;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Scoring;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
@@ -23,6 +24,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private SentakkiInputManager sentakkiActionInputManager = null!;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= ((SentakkiInputManager)GetContainingInputManager());
 
+        public const float DETECTION_RADIUS = 100;
+
         public DrawableSlideCheckpointNode()
             : this(null)
         {
@@ -34,9 +37,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             RelativeSizeAxes = Axes.None;
-            Size = new Vector2(200);
+            Size = new Vector2(DETECTION_RADIUS * 2);
             CornerExponent = 2f;
-            CornerRadius = 100;
+            CornerRadius = DETECTION_RADIUS;
         }
 
         protected override void OnApply()
@@ -82,6 +85,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             return false;
         }
 
-        public new void ApplyResult(Action<JudgementResult> application) => base.ApplyResult(application);
+        public new void ApplyResult(HitResult result)
+        {
+            if (Judged)
+                return;
+
+            base.ApplyResult(result);
+        }
     }
 }

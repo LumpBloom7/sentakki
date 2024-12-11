@@ -8,7 +8,6 @@ using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.UI;
@@ -16,7 +15,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
-    public partial class Lane : Playfield, IKeyBindingHandler<SentakkiAction>
+    public partial class Lane : Playfield
     {
         public int LaneNumber { get; set; }
 
@@ -56,7 +55,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
             RegisterPool<SlideCheckpoint.CheckpointNode, DrawableSlideCheckpointNode>(18);
 
             RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(20);
-            RegisterPool<ScoreBonusObject, DrawableScoreBonusObject>(5);
         }
 
         protected override void OnNewDrawableHitObject(DrawableHitObject d) => OnLoaded?.Invoke(d);
@@ -65,8 +63,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         #region Input Handling
 
-        private const float receptor_angle_range = 45 * 1.4f;
+        private const float receptor_angle_range = 45;
         private const float receptor_angle_range_mid = receptor_angle_range / 2;
+
+        private const float receptor_angle_range_inner = receptor_angle_range * 1.4f;
+        private const float receptor_angle_range_inner_mid = receptor_angle_range_inner / 2;
 
         private SentakkiInputManager sentakkiActionInputManager = null!;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
@@ -78,17 +79,17 @@ namespace osu.Game.Rulesets.Sentakki.UI
             var localPos = ToLocalSpace(screenSpacePos);
 
             float distance = Vector2.DistanceSquared(Vector2.Zero, localPos);
-            if (distance is < (200 * 200) or > (400 * 400)) return false;
+            if (distance is < (200 * 200) or > (600 * 600)) return false;
+
+            float targetAngleRangeMid = distance > 400 ? receptor_angle_range_mid : receptor_angle_range_inner_mid;
 
             float angleDelta = SentakkiExtensions.GetDeltaAngle(0, Vector2.Zero.GetDegreesFromPosition(localPos));
-            if (Math.Abs(angleDelta) > receptor_angle_range_mid) return false;
+            if (Math.Abs(angleDelta) > targetAngleRangeMid) return false;
 
             return true;
         }
 
         private readonly BindableInt currentKeys = new BindableInt();
-
-        private bool usingSensor => drawableSentakkiRuleset.UseSensorMode;
 
         private readonly Dictionary<SentakkiAction, bool> buttonTriggerState = new Dictionary<SentakkiAction, bool>();
 
@@ -111,7 +112,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             }
 
             // We don't attempt to check mouse input if touch input is used
-            if (count == 0 && IsHovered && usingSensor)
+            if (count == 0 && IsHovered)
             {
                 foreach (var a in SentakkiActionInputManager.PressedActions)
                 {
@@ -126,29 +127,16 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private void handleKeyPress(ValueChangedEvent<int> keys)
         {
             if (keys.NewValue < keys.OldValue)
-                SentakkiActionInputManager.TriggerReleased(SentakkiAction.Key1 + LaneNumber);
+                for (int i = 0; i < keys.OldValue - keys.NewValue; ++i)
+                {
+                    SentakkiActionInputManager.TriggerReleased(SentakkiAction.Key1 + LaneNumber);
+                }
 
             if (keys.NewValue > keys.OldValue)
-                SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + LaneNumber);
-        }
-
-        public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)
-        {
-            if (usingSensor) return false;
-
-            if (e.Action >= SentakkiAction.Key1 || !IsHovered) return false;
-
-            buttonTriggerState[e.Action] = true;
-            return false;
-        }
-
-        public void OnReleased(KeyBindingReleaseEvent<SentakkiAction> e)
-        {
-            if (usingSensor) return;
-
-            if (e.Action >= SentakkiAction.Key1) return;
-
-            buttonTriggerState[e.Action] = false;
+                for (int i = 0; i < keys.NewValue - keys.OldValue; ++i)
+                {
+                    SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + LaneNumber);
+                }
         }
 
         #endregion
