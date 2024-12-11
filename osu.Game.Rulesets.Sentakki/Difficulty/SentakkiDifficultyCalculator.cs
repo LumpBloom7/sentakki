@@ -18,49 +18,29 @@ namespace osu.Game.Rulesets.Sentakki.Difficulty
         protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills, double clockRate)
         {
             double starRating;
-
             if (beatmap.BeatmapInfo.Ruleset.ShortName == "Sentakki")
             {
-                string difficultyName = beatmap.BeatmapInfo.DifficultyName.ToLower();
+                string diffText = beatmap.Metadata.Tags.Split(' ')[1];
+                bool isPlus = diffText[^1] == '+';
 
-                if (difficultyName.Contains("re:master"))
+                if (int.TryParse(diffText.Replace('+', ' ').Trim(), out int diffNumber) && diffNumber > 0)
                 {
-                    starRating = 7.0;
-                }
-                else if (difficultyName.Contains("master"))
-                {
-                    starRating = 6.0;
-                }
-                else if (difficultyName.Contains("expert"))
-                {
-                    starRating = 4.5;
-                }
-                else if (difficultyName.Contains("advanced"))
-                {
-                    starRating = 3.0;
-                }
-                else if (difficultyName.Contains("basic"))
-                {
-                    starRating = 2.0;
-                }
-                else if (difficultyName.Contains("easy"))
-                {
-                    starRating = 1.0;
+                    starRating = (diffNumber + (isPlus ? 0.5 : 0)) / 15.5 * 7.699999809265137;
                 }
                 else
                 {
-                    starRating = 10.0; // Probably utage
+                    starRating = 10;
                 }
             }
             else
             {
-                starRating = beatmap.BeatmapInfo.StarRating * 1.25f; // Inflate SR of converts, to encourage players to try lower diffs, without hurting their fragile ego.
+                starRating = beatmap.BeatmapInfo.StarRating * 1.25;
             }
 
             return new DifficultyAttributes
             {
                 StarRating = starRating,
-                Mods = mods,
+                Mods = mods
             };
         }
 
