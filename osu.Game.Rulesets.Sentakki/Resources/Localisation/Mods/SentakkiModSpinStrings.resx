@@ -67,4 +67,8 @@
     <data name="revolution_duration_description" xml:space="preserve">
         <value>The duration in seconds to complete a revolution.</value>
     </data>
+    <data name="revolution_duration_tooltip" xml:space="preserve">
+        <value>{0}s</value>
+        <comment>This is used to show the exact value, along with the local seconds symbol</comment>
+    </data>
 </root>
