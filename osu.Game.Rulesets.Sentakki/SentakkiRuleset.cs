@@ -114,6 +114,7 @@ namespace osu.Game.Rulesets.Sentakki
                         new SentakkiModSpin(),
                         new SentakkiModMuted(),
                         new ModAdaptiveSpeed(),
+                        new SentakkiModSynesthesia()
                     };
 
                 case ModType.System:
