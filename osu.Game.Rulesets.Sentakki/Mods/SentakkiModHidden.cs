@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public override string ExtendedIconInformation => VisibleRadius.IsDefault ? string.Empty : $"{VisibleRadius.Value:P0}";
 
-        public override double ScoreMultiplier => 1 + MathF.Pow(1 - VisibleRadius.Value, 2) * 0.2;
+        public override double ScoreMultiplier => 1 + (MathF.Pow(1 - VisibleRadius.Value, 2) * 0.2);
 
         [SettingSource(
         typeof(SentakkiModHiddenStrings),
