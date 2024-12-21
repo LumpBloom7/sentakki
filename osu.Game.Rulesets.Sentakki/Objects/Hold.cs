@@ -49,7 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             base.CreateNestedHitObjects(cancellationToken);
         }
 
-        protected override HitWindows CreateHitWindows() => new SentakkiTapHitWindows();
+        protected override HitWindows CreateHitWindows() => new SentakkiHoldReleaseWindows();
 
         public class HoldHead : SentakkiLanedHitObject
         {
