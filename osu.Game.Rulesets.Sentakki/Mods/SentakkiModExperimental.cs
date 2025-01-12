@@ -42,10 +42,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             if (EnableSlideFans.Value)
                 sentakkiBeatmapConverter.flags |= ConversionFlags.fanSlides;
 
-            if (!OldConversion.Value)
-                return;
-
-            sentakkiBeatmapConverter.flags |= ConversionFlags.oldConverter;
+            if (OldConversion.Value)
+                sentakkiBeatmapConverter.flags |= ConversionFlags.oldConverter;
 
             if (EnableTwinNotes.Value)
                 sentakkiBeatmapConverter.flags |= ConversionFlags.twinNotes;

@@ -39,8 +39,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            // We intentionally not call the base method to avoid break notes being added
-
             AddNested(new HoldHead
             {
                 Break = Break,
@@ -50,6 +48,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 ColourBindable = ColourBindable.GetBoundCopy(),
                 Ex = Ex
             });
+
+            base.CreateNestedHitObjects(cancellationToken);
         }
 
         protected override HitWindows CreateHitWindows() => new SentakkiTapHitWindows();
