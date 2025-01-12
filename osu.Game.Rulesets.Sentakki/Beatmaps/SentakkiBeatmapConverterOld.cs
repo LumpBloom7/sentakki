@@ -32,6 +32,10 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 tmp.Add(SentakkiExtensions.GetCircularPosition(190, angle - 22.5f));
                 tmp.Add(SentakkiExtensions.GetCircularPosition(130, angle));
+
+
+                tmp.Add(SentakkiExtensions.GetCircularPosition(270, angle - 22.5f));
+                tmp.Add(SentakkiExtensions.GetCircularPosition(270, angle));
             }
 
             VALID_TOUCH_POSITIONS = tmp;
