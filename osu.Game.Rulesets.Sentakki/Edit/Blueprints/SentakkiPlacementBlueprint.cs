@@ -5,7 +5,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints
 {
-    public partial class SentakkiPlacementBlueprint<T> : PlacementBlueprint where T : HitObject, new()
+    public partial class SentakkiPlacementBlueprint<T> : HitObjectPlacementBlueprint where T : HitObject, new()
     {
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
 

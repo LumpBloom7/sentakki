@@ -7,7 +7,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Edit
 {
-    public class HoldCompositionTool : HitObjectCompositionTool
+    public class HoldCompositionTool : CompositionTool
     {
         public HoldCompositionTool()
             : base(nameof(Hold))

@@ -7,7 +7,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Edit
 {
-    public class TouchCompositionTool : HitObjectCompositionTool
+    public class TouchCompositionTool : CompositionTool
     {
         public TouchCompositionTool()
             : base(nameof(Touch))

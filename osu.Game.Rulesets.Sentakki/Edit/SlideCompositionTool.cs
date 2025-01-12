@@ -7,7 +7,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Edit
 {
-    public class SlideCompositionTool : HitObjectCompositionTool
+    public class SlideCompositionTool : CompositionTool
     {
         public SlideCompositionTool()
             : base(nameof(Slide))

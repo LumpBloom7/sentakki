@@ -31,14 +31,14 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
             => dependencies = new DrawableRulesetDependencies(Ruleset, base.CreateChildDependencies(parent));
 
-        protected override IReadOnlyList<HitObjectCompositionTool> CompositionTools => new HitObjectCompositionTool[]
-        {
+        protected override IReadOnlyList<CompositionTool> CompositionTools =>
+        [
             new TapCompositionTool(),
             new HoldCompositionTool(),
             new TouchCompositionTool(),
             new TouchHoldCompositionTool(),
             new SlideCompositionTool(),
-        };
+        ];
 
         protected override IEnumerable<TernaryButton> CreateTernaryButtons()
             => base.CreateTernaryButtons()
@@ -76,7 +76,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             }
         }
 
-        private HitObjectCompositionTool? lastTool = null;
+        private CompositionTool? lastTool = null;
 
         public void updateSnapProvider()
         {

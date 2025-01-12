@@ -39,12 +39,12 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
                             Padding = new MarginPadding(-75 / 2f),
                             Child = ring = new RingPiece()
                         },
-                        new DotPiece(squared: true)
+                        new DotPiece
                         {
                             Anchor = Anchor.TopCentre,
                             Rotation = 45,
                         },
-                        new DotPiece(squared: true)
+                        new DotPiece
                         {
                             Anchor = Anchor.BottomCentre,
                             Rotation = 45,

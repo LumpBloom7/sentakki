@@ -22,14 +22,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             : base(composer)
         {
             AddInternal(chevronPool = new DrawablePool<SlideChevron>(100));
-            AddInternal(fanChevrons = new SlideFanChevrons());
         }
 
         [Cached]
         private DrawablePool<SlideChevron> chevronPool;
-
-        [Cached]
-        private SlideFanChevrons fanChevrons;
 
         protected override SelectionHandler<HitObject> CreateSelectionHandler() => new SentakkiSelectionHandler();
 
