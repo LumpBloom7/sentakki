@@ -71,7 +71,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             tapHighlight.SlideTapPiece.Stars.Rotation = ((SlideTapPiece)slideTap.TapVisual).Stars.Rotation;
             tapHighlight.SlideTapPiece.SecondStar.Alpha = ((SlideTapPiece)slideTap.TapVisual).SecondStar.Alpha;
             tapHighlight.Rotation = DrawableObject.HitObject.Lane.GetRotationForLane();
-            tapHighlight.SlideTapPiece.Y = -snapProvider.GetDistanceRelativeToCurrentTime(DrawableObject.HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
+            tapHighlight.SlideTapPiece.Y = -snapProvider.GetDistanceRelativeToCurrentTime(DrawableObject.HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE, SentakkiPlayfield.INTERSECTDISTANCE);
         }
 
         private void updateSlideBodyHighlights()

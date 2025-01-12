@@ -19,16 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         public readonly Container Stars;
         public readonly StarPiece SecondStar;
 
-        protected override Quad ComputeScreenSpaceDrawQuad()
-        {
-            Quad final = Stars[0].ScreenSpaceDrawQuad;
-            if (SecondStar.Alpha != 0)
-            {
-                var unionRect = RectangleF.Union(Stars[0].DrawRectangle, SecondStar.DrawRectangle);
-                final = ToScreenSpace(unionRect);
-            }
-            return final;
-        }
+        public override Quad ScreenSpaceDrawQuad => Stars[0].ScreenSpaceDrawQuad;
 
         public SlideTapPiece()
         {
