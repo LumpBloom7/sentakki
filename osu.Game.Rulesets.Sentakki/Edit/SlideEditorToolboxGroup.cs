@@ -19,11 +19,12 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
     public readonly Bindable<int> LaneOffset = new Bindable<int>(4);
     private Bindable<bool> mirrored = new Bindable<bool>(); // This is locked
 
-    private Bindable<float> shootDelay = new Bindable<float>();
+    public Bindable<float> ShootDelayBindable = new Bindable<float>();
 
     public readonly Bindable<SlideBodyPart> CurrentPartBindable = new Bindable<SlideBodyPart>(new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false));
 
     public SlideBodyPart CurrentPart => CurrentPartBindable.Value;
+    public float CurrentShootDelay => ShootDelayBindable.Value;
 
     public SlideEditorToolboxGroup() : base("slide")
     {
@@ -35,7 +36,7 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
                 Current = LaneOffset
             },
             new ShootDelayCounter(){
-                Current = shootDelay
+                Current = ShootDelayBindable
             },
             new ExpandableCheckbox("Mirrored"){
                 Current = mirrored
@@ -88,15 +89,15 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
         switch (e.Key)
         {
             case Key.Plus:
-                shootDelay.Value += 1f / beatSnapProvider.BeatDivisor;
+                ShootDelayBindable.Value += 1f / beatSnapProvider.BeatDivisor;
                 break;
 
             case Key.Minus:
-                shootDelay.Value = Math.Max(0, shootDelay.Value - (1f / beatSnapProvider.BeatDivisor));
+                ShootDelayBindable.Value = Math.Max(0, ShootDelayBindable.Value - (1f / beatSnapProvider.BeatDivisor));
                 break;
 
             case Key.Number0:
-                shootDelay.Value = 1;
+                ShootDelayBindable.Value = 1;
                 break;
 
             case Key.BackSlash:
