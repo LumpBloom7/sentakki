@@ -144,19 +144,20 @@ public partial class SentakkiSnapGrid : CompositeDrawable
                 float thickness = getWidthForDivisor(divisor);
 
                 line.Size = new Vector2(circleRadius * 2);
-                line.BorderThickness = thickness;
+                line.BorderThickness = thickness * 2;
                 line.Colour = BindableBeatDivisor.GetColourFor(divisor, colours);
+                line.Alpha = thickness;
                 line.SnappingTime = beatTime;
             }
         }
     }
 
-    private int getWidthForDivisor(int divisor) => divisor switch
+    private float getWidthForDivisor(int divisor) => divisor switch
     {
-        1 or 2 => 5,
-        3 or 4 => 4,
-        6 or 8 => 3,
-        _ => 2,
+        1 or 2 => 1,
+        3 or 4 => 0.8f,
+        6 or 8 => .7f,
+        _ => 0.6f,
     };
 
     protected override void Update()
@@ -198,8 +199,8 @@ public partial class SentakkiSnapGrid : CompositeDrawable
             {
                 Masking = true,
                 RelativeSizeAxes = Axes.Both,
+                BorderThickness = 1,
                 BorderColour = Color4.White,
-                BorderThickness = 2,
                 Child = new Box
                 {
                     RelativeSizeAxes = Axes.Both,
