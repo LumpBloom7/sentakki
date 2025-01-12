@@ -23,6 +23,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         private readonly SlideVisual bodyHighlight;
         private readonly SlideVisual commited;
+        protected override bool IsValidForPlacement => HitObject.Duration > 0 && commitedSlideBodyInfo?.SlidePathParts?.Length > 0;
 
         [Resolved]
         private SlideEditorToolboxGroup slidePlacementToolbox { get; set; } = null!;

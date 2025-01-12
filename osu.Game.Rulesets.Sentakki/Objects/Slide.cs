@@ -26,6 +26,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             }
             set
             {
+                if (Duration == 0)
+                {
+                    foreach (var slide in SlideInfoList)
+                        slide.Duration = value;
+
+                    return;
+                }
+
                 double ratio = value / Duration;
 
                 foreach (var slide in SlideInfoList)

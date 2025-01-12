@@ -11,6 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
 {
     public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
     {
+        protected override bool IsValidForPlacement => HitObject.Duration > 0;
         private readonly HoldHighlight highlight;
 
         public HoldPlacementBlueprint()

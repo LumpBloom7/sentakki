@@ -9,6 +9,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
 {
     public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<TouchHold>
     {
+        protected override bool IsValidForPlacement => HitObject.Duration > 0;
+
         public TouchHoldPlacementBlueprint()
         {
             InternalChild = new TouchHoldHighlight();

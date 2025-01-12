@@ -35,10 +35,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches
 
             var newPosition = ToLocalSpace(result.ScreenSpacePosition) - OriginPosition;
 
-            if (Vector2.Distance(Vector2.Zero, newPosition) > 250)
+            if (Vector2.Distance(Vector2.Zero, newPosition) > 270)
             {
                 float angle = Vector2.Zero.GetDegreesFromPosition(newPosition);
-                newPosition = SentakkiExtensions.GetCircularPosition(250, angle);
+                newPosition = SentakkiExtensions.GetCircularPosition(270, angle);
             }
 
             HitObject.Position = newPosition;
