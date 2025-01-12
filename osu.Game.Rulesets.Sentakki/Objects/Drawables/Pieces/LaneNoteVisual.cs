@@ -21,10 +21,8 @@ public enum NoteShape
 
 public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
 {
-    protected override Quad ComputeConservativeScreenSpaceDrawQuad()
-    {
-        return ToScreenSpace(DrawRectangle.Shrink(shadowRadius * 105 * 1.333f));
-    }
+    protected override Quad ComputeConservativeScreenSpaceDrawQuad() => ToScreenSpace(DrawRectangle.Shrink(shadowRadius * 105 * 1.333f));
+
     public NoteShape Shape { get; init; } = NoteShape.Ring;
     private float thickness = 0.25f;
     public float Thickness

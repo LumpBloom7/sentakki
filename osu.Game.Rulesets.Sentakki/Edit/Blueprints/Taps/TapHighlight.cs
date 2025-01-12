@@ -7,14 +7,17 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
 {
-    public partial class TapHighlight : CompositeDrawable
+    public partial class TapHighlight : NoteRingPiece
     {
         public readonly Container Note;
 
         // This drawable is zero width
         // We should use the quad of the note container
-        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => Note.ReceivePositionalInputAt(screenSpacePos);
-        public override Quad ScreenSpaceDrawQuad => Note.ScreenSpaceDrawQuad;
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => ring.ReceivePositionalInputAt(screenSpacePos);
+        public override Quad ScreenSpaceDrawQuad => ring.ScreenSpaceDrawQuad;
+
+        private readonly NoteRingPiece ring;
+
 
         public TapHighlight()
         {
@@ -25,14 +28,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
             {
                 Note = new Container
                 {
-                    Size = new Vector2(75),
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Children = new Drawable[]
-                    {
-                        new RingPiece(),
-                        new DotPiece(),
-                    }
+                    Child = ring = new NoteRingPiece()
                 }
             };
         }

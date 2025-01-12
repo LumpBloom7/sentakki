@@ -1,7 +1,9 @@
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
@@ -16,6 +18,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 
         public readonly Container Stars;
         public readonly StarPiece SecondStar;
+
+        protected override Quad ComputeScreenSpaceDrawQuad()
+        {
+            Quad final = Stars[0].ScreenSpaceDrawQuad;
+            if (SecondStar.Alpha != 0)
+            {
+                var unionRect = RectangleF.Union(Stars[0].DrawRectangle, SecondStar.DrawRectangle);
+                final = ToScreenSpace(unionRect);
+            }
+            return final;
+        }
 
         public SlideTapPiece()
         {

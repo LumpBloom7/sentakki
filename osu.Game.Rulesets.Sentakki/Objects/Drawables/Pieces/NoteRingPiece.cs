@@ -1,6 +1,7 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
@@ -16,6 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         // We don't want to include the area where the shadow would be
         public override Quad ScreenSpaceDrawQuad => visual.ConservativeScreenSpaceDrawQuad;
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => ScreenSpaceDrawQuad.Contains(screenSpacePos);
 
         public NoteRingPiece(bool hex = false)
         {
