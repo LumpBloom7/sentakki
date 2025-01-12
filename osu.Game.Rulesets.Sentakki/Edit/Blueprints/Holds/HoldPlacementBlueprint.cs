@@ -24,6 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
 
         protected override void Update()
         {
+            base.Update();
             highlight.Rotation = HitObject.Lane.GetRotationForLane();
             highlight.Note.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
             highlight.Note.Height = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.EndTime, SentakkiPlayfield.NOTESTARTDISTANCE) - highlight.Note.Y;

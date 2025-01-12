@@ -61,6 +61,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         protected override void Update()
         {
+            base.Update();
             highlight.Rotation = HitObject.Lane.GetRotationForLane();
             highlight.SlideTapPiece.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
         }
@@ -73,6 +74,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         protected override void LoadComplete()
         {
+            base.LoadComplete();
+
             currentPart.BindTo(slidePlacementToolbox.CurrentPartBindable);
             currentPart.BindValueChanged(v =>
             {
