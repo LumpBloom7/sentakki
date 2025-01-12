@@ -1,6 +1,8 @@
+using osu.Framework.Allocation;
 using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
+using osu.Game.Screens.Edit;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
@@ -17,12 +19,18 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
             InternalChild = highlight = new TouchHoldHighlight();
         }
 
+        [Resolved]
+        private EditorClock editorClock { get; set; } = null!;
+
+
         protected override void Update()
         {
             base.Update();
 
+            highlight.Size = DrawableObject.TouchHoldBody.Size;
+            highlight.CompletedCentre.Alpha = DrawableObject.TouchHoldBody.CompletedCentre.Alpha;
+            highlight.CentrePiece.Alpha = DrawableObject.TouchHoldBody.CentrePiece.Alpha;
             highlight.Position = DrawableObject.Position;
-            highlight.Scale = DrawableObject.Scale;
             highlight.ProgressPiece.ProgressBindable.Value = DrawableObject.TouchHoldBody.ProgressPiece.ProgressBindable.Value;
         }
 

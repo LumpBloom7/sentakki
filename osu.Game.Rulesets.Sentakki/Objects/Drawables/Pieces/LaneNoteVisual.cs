@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shaders.Types;
@@ -20,6 +21,10 @@ public enum NoteShape
 
 public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
 {
+    protected override Quad ComputeConservativeScreenSpaceDrawQuad()
+    {
+        return ToScreenSpace(DrawRectangle.Shrink(shadowRadius * 105 * 1.333f));
+    }
     public NoteShape Shape { get; init; } = NoteShape.Ring;
     private float thickness = 0.25f;
     public float Thickness

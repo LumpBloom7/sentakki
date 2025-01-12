@@ -7,7 +7,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
     public partial class TouchHoldBody : CircularContainer
     {
         public readonly TouchHoldProgressPiece ProgressPiece;
-        public readonly TouchHoldCentrePiece centrePiece;
+        public readonly TouchHoldCentrePiece CentrePiece;
 
         public readonly TouchHoldCompletedCentre CompletedCentre;
 
@@ -21,7 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
             InternalChildren = new Drawable[]
             {
                 ProgressPiece = new TouchHoldProgressPiece(),
-                centrePiece = new TouchHoldCentrePiece(),
+                CentrePiece = new TouchHoldCentrePiece(),
                 // We swap the centre piece with this other drawable to make it look better with the progress bar
                 // Otherwise we'd need to add a thick border in between the centre and the progress
                 CompletedCentre = new TouchHoldCompletedCentre(),

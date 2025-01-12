@@ -13,10 +13,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
 
         // This drawable is zero width
         // We should use the quad of the note container
-        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => ring.ReceivePositionalInputAt(screenSpacePos);
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => ring.ScreenSpaceDrawQuad.Contains(screenSpacePos);
         public override Quad ScreenSpaceDrawQuad => ring.ScreenSpaceDrawQuad;
 
-        private readonly RingPiece ring;
+        private readonly NoteRingPiece ring;
 
         public HoldHighlight()
         {
@@ -36,18 +36,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             RelativeSizeAxes = Axes.Both,
-                            Padding = new MarginPadding(-75 / 2f),
-                            Child = ring = new RingPiece()
-                        },
-                        new DotPiece
-                        {
-                            Anchor = Anchor.TopCentre,
-                            Rotation = 45,
-                        },
-                        new DotPiece
-                        {
-                            Anchor = Anchor.BottomCentre,
-                            Rotation = 45,
+                            Child = ring = new NoteRingPiece(true)
                         },
                     }
                 }
