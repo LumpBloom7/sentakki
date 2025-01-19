@@ -35,7 +35,17 @@ public class SentakkiModQuantization : Mod, IApplicableToBeatmap, IApplicableToD
 
     public override double ScoreMultiplier => 0.9;
 
-    private Dictionary<HitObject, Color4> hitObjectDeltaDivisor = new Dictionary<HitObject, Color4>();
+    private Dictionary<HitObject, Color4> hitObjectDeltaDivisor = [];
+
+    public static double getStartTime(HitObject ho)
+    {
+        if (ho is SlideBody sb)
+        {
+            return sb.StartTime + sb.ShootDelay;
+        }
+
+        return ho.StartTime;
+    }
 
     public void ApplyToBeatmap(IBeatmap beatmap)
     {
@@ -45,16 +55,17 @@ public class SentakkiModQuantization : Mod, IApplicableToBeatmap, IApplicableToD
 
         var hitobjects = beatmap.HitObjects.Where(h => h is Slide).SelectMany(s => s.NestedHitObjects).ToList();
         hitobjects.AddRange(beatmap.HitObjects);
+        hitobjects = [.. hitobjects.OrderBy(h => h.StartTime)];
 
         for (int i = 0; i < hitobjects.Count; ++i)
         {
-            double currentTime = hitobjects[i].StartTime;
+            double currentTime = getStartTime(hitobjects[i]);
 
             // check the back
             double prevDelta = double.MaxValue;
             for (int j = i - 1; j >= 0; --j)
             {
-                double delta = hitobjects[i].StartTime - hitobjects[j].StartTime;
+                double delta = currentTime - getStartTime(hitobjects[j]);
 
                 if (delta >= double.Epsilon)
                 {
@@ -67,7 +78,7 @@ public class SentakkiModQuantization : Mod, IApplicableToBeatmap, IApplicableToD
             double frontDelta = double.MaxValue;
             for (int j = i + 1; j < hitobjects.Count; ++j)
             {
-                double delta = hitobjects[j].StartTime - hitobjects[i].StartTime;
+                double delta = getStartTime(hitobjects[j]) - currentTime;
 
                 if (delta >= double.Epsilon)
                 {
