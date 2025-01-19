@@ -63,7 +63,7 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
 
         var hitobjects = beatmap.HitObjects.Where(h => h is Slide).SelectMany(s => s.NestedHitObjects).Cast<SentakkiHitObject>().ToList();
         hitobjects.AddRange(beatmap.HitObjects);
-        hitobjects = [.. hitobjects.OrderBy(h => h.StartTime)];
+        hitobjects = [.. hitobjects.OrderBy(getStartTime)];
 
         for (int i = 0; i < hitobjects.Count; ++i)
         {
