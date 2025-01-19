@@ -30,6 +30,7 @@ public class SentakkiModQuantization : Mod, IApplicableToBeatmap, IApplicableToD
     public override string Acronym => "Qt";
 
     public override LocalisableString Description => "Colour groups of notes based on their rate";
+    public override ModType Type => ModType.Fun;
 
     public override double ScoreMultiplier => 0.9;
 
@@ -87,7 +88,7 @@ public class SentakkiModQuantization : Mod, IApplicableToBeatmap, IApplicableToD
 
                 if (newDelta >= double.Epsilon)
                 {
-                    prevDelta = newDelta;
+                    frontDelta = newDelta;
                     break;
                 }
             }
