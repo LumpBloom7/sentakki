@@ -58,7 +58,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             var lanedHitObjectArea = lanedPlayfield.LanedHitObjectArea;
             var lanedNoteProxyContainer = lanedHitObjectArea.Child;
 
-            float noteVisiblePoint = SentakkiPlayfield.NOTESTARTDISTANCE - NoteRingPiece.DRAWABLE_SIZE / 2f;
+            float noteVisiblePoint = SentakkiPlayfield.NOTESTARTDISTANCE - (NoteRingPiece.DRAWABLE_SIZE / 2f);
             float totalVisibleDistance = SentakkiPlayfield.INTERSECTDISTANCE;
 
             float visibilityStartPoint = noteVisiblePoint / totalVisibleDistance;
@@ -67,7 +67,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             lanedHitObjectArea.Remove(lanedNoteProxyContainer, false);
             lanedHitObjectArea.Add(new PlayfieldMaskingContainer(lanedNoteProxyContainer)
             {
-                CoverageRadius = visibilityStartPoint + visibleRatio * VisibleRadius.Value
+                CoverageRadius = visibilityStartPoint + (visibleRatio * VisibleRadius.Value)
             });
 
             lanedPlayfield.HitObjectLineRenderer.Hide();
