@@ -53,20 +53,11 @@ public class SentakkiModQuantization : Mod, IApplicableToBeatmap, IApplicableToD
             double prevDelta = double.MaxValue;
             for (int j = i - 1; j >= 0; --j)
             {
-                double delta1 = hitobjects[i].StartTime - hitobjects[j].GetEndTime();
-                double delta2 = hitobjects[i].StartTime - hitobjects[j].StartTime;
+                double delta = hitobjects[i].StartTime - hitobjects[j].StartTime;
 
-                double newDelta = double.MaxValue;
-
-                if (delta1 == delta2)
-                    newDelta = delta1;
-                else if (delta1 <= double.Epsilon)
-                    newDelta = delta2;
-                else newDelta = delta1;
-
-                if (newDelta >= double.Epsilon)
+                if (delta >= double.Epsilon)
                 {
-                    prevDelta = newDelta;
+                    prevDelta = delta;
                     break;
                 }
             }
@@ -75,20 +66,11 @@ public class SentakkiModQuantization : Mod, IApplicableToBeatmap, IApplicableToD
             double frontDelta = double.MaxValue;
             for (int j = i + 1; j < hitobjects.Count; ++j)
             {
-                double delta1 = hitobjects[j].StartTime - hitobjects[i].GetEndTime();
-                double delta2 = hitobjects[j].StartTime - hitobjects[i].StartTime;
+                double delta = hitobjects[j].StartTime - hitobjects[i].StartTime;
 
-                double newDelta = double.MaxValue;
-
-                if (delta1 == delta2)
-                    newDelta = delta1;
-                else if (delta1 <= double.Epsilon)
-                    newDelta = delta2;
-                else newDelta = delta1;
-
-                if (newDelta >= double.Epsilon)
+                if (delta >= double.Epsilon)
                 {
-                    frontDelta = newDelta;
+                    frontDelta = delta;
                     break;
                 }
             }
@@ -96,6 +78,8 @@ public class SentakkiModQuantization : Mod, IApplicableToBeatmap, IApplicableToD
             double smallestDelta = double.Min(prevDelta, frontDelta);
 
             double beatLength = beatmap.ControlPointInfo.TimingPointAt(currentTime).BeatLength;
+
+            smallestDelta = double.Min(smallestDelta, beatLength);
             int divisor = (int)Math.Round(beatLength / smallestDelta);
             var colour = BindableBeatDivisor.GetColourFor(divisor, colours);
 
