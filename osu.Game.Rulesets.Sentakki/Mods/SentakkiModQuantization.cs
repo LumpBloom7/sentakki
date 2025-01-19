@@ -31,6 +31,7 @@ public class SentakkiModQuantization : Mod, IApplicableToBeatmap, IApplicableToD
 
     public override LocalisableString Description => "Colour groups of notes based on their rate";
     public override ModType Type => ModType.Fun;
+    public override Type[] IncompatibleMods => [typeof(SentakkiModSynesthesia)];
 
     public override double ScoreMultiplier => 0.9;
 
