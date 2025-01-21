@@ -17,7 +17,12 @@ public partial class SentakkiTouchSnapGrid : CompositeDrawable
 {
     private Bindable<TernaryState> enabled = new Bindable<TernaryState>(TernaryState.True);
 
-    public TernaryButton CreateTernaryButton() => new TernaryButton(enabled, "Touch Snap", () => new SpriteIcon { Icon = FontAwesome.Solid.Thumbtack });
+    public DrawableTernaryButton CreateTernaryButton() => new DrawableTernaryButton
+    {
+        Current = enabled,
+        Description = "Touch Snap",
+        CreateIcon = () => new SpriteIcon { Icon = FontAwesome.Solid.Thumbtack }
+    };
 
     private Container dotContainer = null!;
 

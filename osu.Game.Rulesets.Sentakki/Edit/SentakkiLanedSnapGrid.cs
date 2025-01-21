@@ -46,7 +46,12 @@ public partial class SentakkiSnapGrid : CompositeDrawable
     [Resolved]
     private OsuColour colours { get; set; } = null!;
 
-    public TernaryButton CreateTernaryButton() => new TernaryButton(enabled, "Lane beat snap", () => new SpriteIcon { Icon = FontAwesome.Solid.Ruler });
+    public DrawableTernaryButton CreateTernaryButton() => new DrawableTernaryButton
+    {
+        Current = enabled,
+        Description = "Lane beat snap",
+        CreateIcon = () => new SpriteIcon { Icon = FontAwesome.Solid.Ruler }
+    };
 
     [BackgroundDependencyLoader]
     private void load(SentakkiRulesetConfigManager configManager)

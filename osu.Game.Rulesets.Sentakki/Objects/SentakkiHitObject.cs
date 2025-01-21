@@ -22,8 +22,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // No-op IHasPosition properties are added to allow work on editor. Remove ASAP
 
         public virtual Vector2 Position { get; set; }
-        public float X => Position.X;
-        public float Y => Position.Y;
+        public float X { get => Position.X; set { } }
+        public float Y { get => Position.Y; set { } }
 
         protected SentakkiHitObject()
         {

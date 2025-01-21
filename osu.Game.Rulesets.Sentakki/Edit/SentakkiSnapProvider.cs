@@ -21,7 +21,7 @@ public partial class SentakkiSnapProvider : CompositeDrawable
     private SentakkiSnapGrid lanedSnapGrid = null!;
     private SentakkiTouchSnapGrid touchSnapGrid = null!;
 
-    public IEnumerable<TernaryButton> CreateTernaryButtons()
+    public IEnumerable<DrawableTernaryButton> CreateTernaryButtons()
     {
         yield return lanedSnapGrid.CreateTernaryButton();
         yield return touchSnapGrid.CreateTernaryButton();
