@@ -102,13 +102,5 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 }
             }, true);
         }
-
-        public void Recycle()
-        {
-            /*             colourContainer.ClearTransforms();
-                        colourContainer.Colour = accentColour.Value;
-                        hitExplosion.ClearTransforms();
-                        hitExplosion.Alpha = 0; */
-        }
     }
 }

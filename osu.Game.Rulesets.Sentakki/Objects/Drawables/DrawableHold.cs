@@ -74,7 +74,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.OnKilled();
             isHolding.Value = false;
             timeNotHeld = 0;
-            NoteBody.Recycle();
         }
 
         protected override void UpdateInitialTransforms()
