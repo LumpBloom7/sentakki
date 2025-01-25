@@ -67,21 +67,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             accentColour.BindValueChanged(colour =>
             {
                 colourContainer.Colour = colour.NewValue;
-                flashingColor = lighten(colour.NewValue, 0.4f);
+                flashingColor = colour.NewValue.LightenHSL(0.4f);
             }, true);
-        }
-
-        private Color4 lighten(Color4 colour, float amount)
-        {
-            float distanceR = 1 - colour.R;
-            float distanceG = 1 - colour.G;
-            float distanceB = 1 - colour.B;
-
-            float r = colour.R + amount * distanceR;
-            float g = colour.G + amount * distanceG;
-            float b = colour.B + amount * distanceB;
-
-            return new Color4(r, g, b, colour.A);
         }
 
         protected override void LoadComplete()
@@ -118,10 +105,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 
         public void Recycle()
         {
-            colourContainer.ClearTransforms();
-            colourContainer.Colour = accentColour.Value;
-            hitExplosion.ClearTransforms();
-            hitExplosion.Alpha = 0;
+            /*             colourContainer.ClearTransforms();
+                        colourContainer.Colour = accentColour.Value;
+                        hitExplosion.ClearTransforms();
+                        hitExplosion.Alpha = 0; */
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using osu.Framework.Extensions;
 using osu.Framework.Extensions.Color4Extensions;
+using osu.Framework.Graphics;
 using osu.Game.Rulesets.Scoring;
 using osuTK;
 using osuTK.Graphics;
@@ -126,6 +127,29 @@ namespace osu.Game.Rulesets.Sentakki
                 default:
                     return result.GetDescription();
             }
+        }
+
+        public static Color4 LightenHSL(this Color4 colour, float amount)
+        {
+            float distanceR = 1 - colour.R;
+            float distanceG = 1 - colour.G;
+            float distanceB = 1 - colour.B;
+
+            float r = colour.R + amount * distanceR;
+            float g = colour.G + amount * distanceG;
+            float b = colour.B + amount * distanceB;
+
+            return new Color4(r, g, b, colour.A);
+        }
+
+        public static Color4 IncreaseLightness(this Color4 colour, float amount)
+        {
+            Colour4 colour2 = colour;
+
+            var hsl = colour2.ToHSL();
+            float l = MathF.Min(hsl.Z + amount, 1);
+
+            return Colour4.FromHSL(hsl.X, hsl.Y, l, hsl.W);
         }
     }
 }

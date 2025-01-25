@@ -38,37 +38,37 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                     Rotation = -45f,
                     Children = new Drawable[]
                     {
-                        new CircularProgress
+                        new TouchHoldCircularProgress(colours.Blue)
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             InnerRadius = 1,
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Progress = 1,
-                            Colour = colours.Blue
+                            Progress = 0.25,
+                            Rotation = 270
                         },
-                        new CircularProgress
+                        new TouchHoldCircularProgress(colours.Green)
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             InnerRadius = 1,
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Progress = 0.75 ,
-                            Colour = colours.Green
+                            Progress = 0.25,
+                            Rotation = 180
                         },
-                        new CircularProgress
+                        new TouchHoldCircularProgress(colours.Yellow)
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             InnerRadius = 1,
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Progress = 0.5 ,
-                            Colour = colours.Yellow,
+                            Progress = 0.25,
+                            Rotation = 90
                         },
-                        new CircularProgress
+                        new TouchHoldCircularProgress(colours.Red)
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
@@ -76,7 +76,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
                             Progress = 0.25 ,
-                            Colour = colours.Red,
                         },
                     }
                 },
