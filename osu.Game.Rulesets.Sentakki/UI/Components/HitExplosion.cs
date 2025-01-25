@@ -29,7 +29,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Size = new Vector2(default_explosion_size);
-            Colour = Color4.Cyan;
+            Colour = Color4.White;
             Alpha = 0;
             InternalChildren = new Drawable[]
             {
@@ -97,19 +97,15 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             Explode().Expire(true);
         }
 
-        public TransformSequence<HitExplosion> Explode()
+        public TransformSequence<HitExplosion> Explode(double explode_duration = 80)
         {
-            const double explode_duration = 100;
-
-            double adjustedExplodeDuration = explode_duration * (drawableRuleset?.GameplaySpeed ?? 1);
-
             var sequence = this.FadeTo(0.8f)
                                .TransformBindableTo(borderRatio, 1)
                                .ScaleTo(1)
                                .Then()
-                               .TransformBindableTo(borderRatio, 0f, adjustedExplodeDuration)
-                               .ScaleTo(2f, adjustedExplodeDuration)
-                               .FadeOut(adjustedExplodeDuration);
+                               .TransformBindableTo(borderRatio, 0f, duration: explode_duration)
+                               .ScaleTo(2f, explode_duration)
+                               .FadeOut(explode_duration);
 
             return sequence;
         }
