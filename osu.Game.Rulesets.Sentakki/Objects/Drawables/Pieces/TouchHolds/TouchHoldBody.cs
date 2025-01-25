@@ -30,9 +30,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Alpha = 0.25f,
-                    Child = hitExplosion = new HitExplosion
+                    Child = hitExplosion = new HitExplosion(true)
                     {
-                        Size = new Vector2(100)
+                        Size = new Vector2(80),
+                        Rotation = 45f
                     },
                 },
                 ProgressPiece = new TouchHoldProgressPiece(),

@@ -1,3 +1,4 @@
+using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -16,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
     {
         public override bool RemoveWhenNotAlive => true;
 
-        private readonly CircularContainer circle;
+        private readonly HitExplosionContainer visual;
 
         private const float default_explosion_size = 75;
         private const float touch_hold_explosion_size = 100;
@@ -24,7 +25,9 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         [Resolved]
         private DrawableSentakkiRuleset? drawableRuleset { get; set; }
 
-        public HitExplosion()
+        public HitExplosion() : this(false) { }
+
+        public HitExplosion(bool forTouch = false)
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
@@ -33,20 +36,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             Alpha = 0;
             InternalChildren = new Drawable[]
             {
-                circle = new CircularContainer
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    RelativeSizeAxes = Axes.Both,
-                    Masking = true,
-                    BorderThickness = 45,
-                    BorderColour = Color4.White,
-                    Child = new Box
-                    {
-                        Alpha = 0,
-                        RelativeSizeAxes = Axes.Both,
-                        AlwaysPresent = true,
-                    }
+                visual = new HitExplosionContainer(){
+                    Circular = !forTouch
                 },
             };
 
@@ -55,7 +46,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
         private void setBorderThiccness(ValueChangedEvent<float> v)
         {
-            circle.BorderThickness = Size.X / 2 * v.NewValue;
+            visual.BorderThickness = Size.X / 2 * v.NewValue;
         }
 
         private readonly BindableFloat borderRatio = new BindableFloat(1);
@@ -69,17 +60,22 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 case SentakkiLanedHitObject lanedObject:
                     Position = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, lanedObject.Lane);
                     Size = new Vector2(default_explosion_size);
+                    visual.Circular = true;
                     break;
 
                 case Touch touchObject:
                     Position = touchObject.Position;
                     Size = new Vector2(default_explosion_size);
+                    visual.Circular = false;
+                    Rotation = 0;
                     break;
 
                 case TouchHold _:
                 default:
                     Position = Vector2.Zero;
                     Size = new Vector2(touch_hold_explosion_size);
+                    visual.Circular = false;
+                    Rotation = 45;
                     break;
             }
 
@@ -108,6 +104,36 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                                .FadeOut(explode_duration);
 
             return sequence;
+        }
+
+        private partial class HitExplosionContainer : Container
+        {
+            public bool Circular { get; set; }
+
+            public HitExplosionContainer()
+            {
+                Masking = true;
+                CornerExponent = 2;
+                Anchor = Anchor.Centre;
+                Origin = Anchor.Centre;
+                RelativeSizeAxes = Axes.Both;
+                BorderColour = Color4.White;
+                Child = new Box
+                {
+                    Alpha = 0,
+                    RelativeSizeAxes = Axes.Both,
+                    AlwaysPresent = true,
+                };
+            }
+
+            protected override void Update()
+            {
+                base.Update();
+                if (Circular)
+                    CornerRadius = Math.Min(DrawSize.X, DrawSize.Y) * 0.5f;
+                else
+                    CornerRadius = 20;
+            }
         }
     }
 }
