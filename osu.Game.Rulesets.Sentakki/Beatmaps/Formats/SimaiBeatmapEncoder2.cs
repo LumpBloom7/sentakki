@@ -60,7 +60,7 @@ public class SimaiBeatmap
 
         // Add padding timingPoint prior to first hitobject
         if (hitObjectsGroups[0].Key > 0)
-            maidataBuilder.Append($"\n{{#{hitObjectsGroups[0].Key / 1000}}},");
+            maidataBuilder.Append($"\n{{#{hitObjectsGroups[0].Key / 1000:F3}}},");
 
         for (int i = 0; i < hitObjectsGroups.Count; ++i)
         {
@@ -71,7 +71,7 @@ public class SimaiBeatmap
                 var nextGroup = hitObjectsGroups[i + 1];
                 double delta = nextGroup.Key - group.Key;
 
-                maidataBuilder.Append($"\n{{#{delta / 1000}}}");
+                maidataBuilder.Append($"\n{{#{delta / 1000:F3}}}");
             }
 
             var hitobjects = group.ToList();
@@ -103,7 +103,7 @@ public class SimaiBeatmap
     }
 
     private static string tapToString(Tap tap) => $"{tap.Lane + 1}{(tap.Break ? "b" : "")}{(tap.Ex ? "x" : "")}";
-    private static string holdToString(Hold hold) => $"{hold.Lane + 1}h{(hold.Break ? "b" : "")}{(hold.Ex ? "x" : "")}[#{hold.Duration / 1000}]";
+    private static string holdToString(Hold hold) => $"{hold.Lane + 1}h{(hold.Break ? "b" : "")}{(hold.Ex ? "x" : "")}[#{hold.Duration / 1000:F3}]";
 
     private string slideToString(Slide slide)
     {
@@ -146,7 +146,7 @@ public class SimaiBeatmap
 
                 double durationWithoutDelay = slideInfo.Duration - shootDelayMs;
 
-                slideBuilder.Append($"[{shootDelayMs / 1000}##{durationWithoutDelay / 1000}]");
+                slideBuilder.Append($"[{shootDelayMs / 1000:F3}##{durationWithoutDelay / 1000:F3}]");
                 if (slideInfo.Break)
                     slideBuilder.Append('b');
 
@@ -165,8 +165,7 @@ public class SimaiBeatmap
                                                         return Math.Sqrt(xDelta * xDelta + yDelta * yDelta);
                                                     }).Value;
 
-    private static string touchHoldToString(TouchHold touchHold) => $"C[#{touchHold.Duration / 1000}]";
-
+    private static string touchHoldToString(TouchHold touchHold) => $"C[#{touchHold.Duration / 1000:F3}]";
 
     private static string shapeForSlidePart(int startLane, int endLane, SlideBodyPart part)
     {
