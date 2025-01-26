@@ -4,200 +4,201 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using osu.Game.Beatmaps;
-using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
-using SimaiSharp;
-using SimaiSharp.Internal.SyntacticAnalysis;
-using SimaiSharp.Structures;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Formats;
 
 public class SimaiBeatmap
 {
-    internal static Dictionary<Vector2, Location> PositionsToLocations = SentakkiPlayfield
-        .LANEANGLES.SelectMany<float, KeyValuePair<Vector2, Location>>(
+    internal static Dictionary<Vector2, string> PositionsToLocations = SentakkiPlayfield
+        .LANEANGLES.SelectMany<float, KeyValuePair<Vector2, string>>(
             (angle, index) =>
 
                 [
                     new(
                         SentakkiExtensions.GetCircularPosition(130, angle),
-                        new(index, NoteGroup.BSensor)
+                        $"B{index+1}"
                     ),
                     new(
                         SentakkiExtensions.GetCircularPosition(190, angle - 22.5f),
-                        new(index, NoteGroup.ESensor)
+                        $"E{index+1}"
                     ),
                     new(
                         SentakkiExtensions.GetCircularPosition(270, angle),
-                        new(index, NoteGroup.ASensor)
+                        $"A{index+1}"
                     ),
                     new(
                         SentakkiExtensions.GetCircularPosition(270, angle - 22.5f),
-                        new(index, NoteGroup.DSensor)
+                        $"D{index+1}"
                     ),
                 ]
         )
-        .Append(new(new(0, 0), new(0, NoteGroup.CSensor)))
+        .Append(new(new(0, 0), "C"))
         .ToDictionary();
 
-    private MaiChart maiChart = new();
     private Beatmap<SentakkiHitObject> beatmap;
 
     public SimaiBeatmap(Beatmap<SentakkiHitObject> beatmap)
     {
         this.beatmap = beatmap;
-        // Encode ending
-        maiChart.FinishTiming = (float)(beatmap.BeatmapInfo.Length / 1000.0);
-        List<TimingChange> timingChanges = [];
 
-        if (beatmap.ControlPointInfo.TimingPoints.Count == 0)
-            return;
-
-        // Add a virtual padding timingPoint to accomodate simaiSharp devs being braindead
-        double timeBeforeFirstTimingPoint = beatmap.ControlPointInfo.TimingPoints[0].Time / 1000;
-        if (timeBeforeFirstTimingPoint > 0)
-        {
-            TimingChange timingChange = new TimingChange
-            {
-                subdivisions = 4,
-                tempo = (float)(60 / timeBeforeFirstTimingPoint),
-                time = 0
-            };
-
-            timingChanges.Add(timingChange);
-        }
-
-        foreach (var timingPoint in beatmap.ControlPointInfo.TimingPoints)
-        {
-            double coercedTime = timingPoint.Time / 1000;
-            TimingChange timingChange = new TimingChange
-            {
-                subdivisions = 128,
-                tempo = 60 / (float)(timingPoint.BeatLength / 1000),
-                time = (float)coercedTime,
-            };
-
-            Console.WriteLine($"{timingChange.SecondsPerBar}, {(float)(timingPoint.BeatLength / 1000)}");
-            timingChanges.Add(timingChange);
-        }
-
-        List<NoteCollection> noteCollections = [];
-
-        if (beatmap.HitObjects.Count == 0)
-            return;
-
-        foreach (var hitObjectGroup in beatmap.HitObjects.GroupBy(h => h.StartTime))
-        {
-            NoteCollection noteCollection = new NoteCollection((float)(hitObjectGroup.Key / 1000));
-
-            foreach (var hitObject in hitObjectGroup)
-                noteCollection.Add(hitObjectToNote(hitObject, noteCollection));
-
-            noteCollections.Add(noteCollection);
-        }
-
-        maiChart = new MaiChart
-        {
-            FinishTiming = (float)(beatmap.HitObjects.Last().GetEndTime() / 1000),
-            NoteCollections = [.. noteCollections],
-            TimingChanges = [.. timingChanges]
-        };
+        maidata = maidataFromSentakkiBeatmap(beatmap);
     }
 
-    private Note hitObjectToNote(SentakkiHitObject hitObject, NoteCollection parentCollection)
+    private string maidata = "";
+
+    private string maidataFromSentakkiBeatmap(Beatmap<SentakkiHitObject> beatmap)
     {
-        Note note = new Note(parentCollection);
+        var hitObjectsGroups = beatmap.HitObjects.GroupBy(h => h.StartTime).OrderBy(g => g.Key).ToList();
 
-        switch (hitObject)
+        if (hitObjectsGroups.Count == 0)
+            return "E";
+
+        StringBuilder maidataBuilder = new();
+
+        // Add padding timingPoint prior to first hitobject
+        if (hitObjectsGroups[0].Key > 0)
+            maidataBuilder.Append($"\n{{#{hitObjectsGroups[0].Key / 1000}}},");
+
+        for (int i = 0; i < hitObjectsGroups.Count; ++i)
         {
-            case Tap tap:
-                note.type = tap.Break ? NoteType.Break : NoteType.Tap;
-                note.location = new Location(tap.Lane, NoteGroup.Tap);
-                note.styles |= tap.Ex ? NoteStyles.Ex : 0;
-                break;
-            case Hold hold:
-                note.type = hold.Break ? NoteType.Break : NoteType.Hold;
-                note.location = new Location(hold.Lane, NoteGroup.Tap);
-                note.length = (float)(hold.Duration / 1000);
-                note.styles |= hold.Ex ? NoteStyles.Ex : 0;
-                break;
-            case Touch touch:
-                note.location = PositionsToLocations.MinBy(kv =>
-                    {
-                        double xDelta = Math.Abs(kv.Key.X - hitObject.Position.X);
-                        double yDelta = Math.Abs(kv.Key.Y - hitObject.Position.Y);
-                        return Math.Sqrt(xDelta * xDelta + yDelta * yDelta);
-                    }).Value;
-                note.type = NoteType.Touch;
-                break;
-            case TouchHold touchHold:
-                note.location = new Location(0, NoteGroup.CSensor);
-                note.length = (float)(touchHold.Duration / 1000);
-                break;
-            case Slide slide:
-                note.type = slide.Break ? NoteType.Break : NoteType.Tap;
-                note.location = new Location(slide.Lane, NoteGroup.Tap);
-                note.styles |= slide.Ex ? NoteStyles.Ex : 0;
+            var group = hitObjectsGroups[i];
 
-                if (slide.TapType == Slide.TapTypeEnum.None)
-                    note.type = NoteType.ForceInvalidate;
+            if (i < hitObjectsGroups.Count - 1)
+            {
+                var nextGroup = hitObjectsGroups[i + 1];
+                double delta = nextGroup.Key - group.Key;
 
-                if (slide.TapType == Slide.TapTypeEnum.Tap)
-                    note.appearance = NoteAppearance.ForceNormal;
+                maidataBuilder.Append($"\n{{#{delta / 1000}}}");
+            }
 
-                if (slide.SlideInfoList.Count == 0)
+            var hitobjects = group.ToList();
+            for (int j = 0; j < hitobjects.Count; ++j)
+            {
+                var hitobject = hitobjects[j];
+
+                string hitObjectString = hitobject switch
                 {
-                    note.appearance = NoteAppearance.ForceStar;
-                    break;
-                }
+                    Tap t => tapToString(t),
+                    Hold h => holdToString(h),
+                    Slide s => slideToString(s),
+                    Touch tc => touchToString(tc),
+                    TouchHold th => touchHoldToString(th),
+                    _ => ""
+                };
 
-                List<SlidePath> slidePaths = [];
+                maidataBuilder.Append(hitObjectString);
+                if (j < hitobjects.Count - 1)
+                    maidataBuilder.Append('/');
+            }
 
-                foreach (var slideBodyInfo in slide.SlideInfoList)
-                {
-                    List<SlideSegment> segments = [];
-                    int currentLane = slide.Lane;
-
-                    foreach (var part in slideBodyInfo.SlidePathParts)
-                    {
-                        currentLane = (currentLane + part.EndOffset).NormalizePath();
-                        SlideSegment segment = new()
-                        {
-                            vertices = [new(currentLane, NoteGroup.Tap)],
-                            slideType = part.Shape switch
-                            {
-                                SlidePaths.PathShapes.Fan => SlideType.Fan,
-                                SlidePaths.PathShapes.Circle => part.Mirrored ? SlideType.RingCcw : SlideType.RingCw,
-                                SlidePaths.PathShapes.V => SlideType.Fold,
-                                SlidePaths.PathShapes.U => part.Mirrored ? SlideType.CurveCw : SlideType.CurveCcw,
-                                SlidePaths.PathShapes.Thunder => part.Mirrored ? SlideType.ZigZagZ : SlideType.ZigZagS,
-                                SlidePaths.PathShapes.Cup => part.Mirrored ? SlideType.EdgeCurveCw : SlideType.EdgeCurveCcw,
-                                SlidePaths.PathShapes.Straight => SlideType.StraightLine,
-                                _ => SlideType.StraightLine,
-                            }
-                        };
-                        segments.Add(segment);
-                    }
-                    double millisPerBeat = beatmap.ControlPointInfo.TimingPointAt(hitObject.StartTime).BeatLength;
-
-                    double shootDelayMs = slideBodyInfo.ShootDelay * millisPerBeat;
-
-                    SlidePath path = new(segments)
-                    {
-                        duration = (float)((slideBodyInfo.Duration - shootDelayMs) / 1000),
-                        startLocation = note.location,
-                        type = slideBodyInfo.Break ? NoteType.Break : NoteType.Slide,
-                        delay = (float)(shootDelayMs / 1000)
-                    };
-                    slidePaths.Add(path);
-                }
-                note.slidePaths = slidePaths;
-                break;
+            maidataBuilder.Append(',');
         }
 
-        return note;
+        maidataBuilder.Append('E');
+
+        return maidataBuilder.ToString();
+    }
+
+    private static string tapToString(Tap tap) => $"{tap.Lane + 1}{(tap.Break ? "b" : "")}{(tap.Ex ? "x" : "")}";
+    private static string holdToString(Hold hold) => $"{hold.Lane + 1}h{(hold.Break ? "b" : "")}{(hold.Ex ? "x" : "")}[#{hold.Duration / 1000}]";
+
+    private string slideToString(Slide slide)
+    {
+        StringBuilder slideBuilder = new();
+
+        slideBuilder.Append($"{slide.Lane + 1}");
+
+        // Tap has break
+        if (slide.Break)
+            slideBuilder.Append('b');
+
+        // Tap no star
+        if (slide.TapType == Slide.TapTypeEnum.Star)
+            slideBuilder.Append("$$");
+        else if (slide.TapType == Slide.TapTypeEnum.Tap)
+            slideBuilder.Append('@');
+        else if (slide.TapType == Slide.TapTypeEnum.None)
+            slideBuilder.Append('?');
+
+        // Tap EX
+        if (slide.Ex)
+            slideBuilder.Append('x');
+
+        if (slide.SlideInfoList.Count > 0)
+        {
+            for (int i = 0; i < slide.SlideInfoList.Count; ++i)
+            {
+                var slideInfo = slide.SlideInfoList[i];
+                int currentLane = slide.Lane;
+                foreach (var part in slideInfo.SlidePathParts)
+                {
+                    int endLane = (currentLane + part.EndOffset).NormalizePath();
+                    slideBuilder.Append(shapeForSlidePart(currentLane, endLane, part));
+                    slideBuilder.Append(endLane + 1);
+                    currentLane = endLane;
+                }
+
+                double millisPerBeat = beatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
+                double shootDelayMs = slideInfo.ShootDelay * millisPerBeat;
+
+                double durationWithoutDelay = slideInfo.Duration - shootDelayMs;
+
+                slideBuilder.Append($"[{shootDelayMs / 1000}##{durationWithoutDelay / 1000}]");
+                if (slideInfo.Break)
+                    slideBuilder.Append('b');
+
+                if (i < slide.SlideInfoList.Count - 1)
+                    slideBuilder.Append('*');
+            }
+        }
+
+        return slideBuilder.ToString();
+    }
+
+    private static string touchToString(Touch touch) => PositionsToLocations.MinBy(kv =>
+                                                    {
+                                                        double xDelta = Math.Abs(kv.Key.X - touch.Position.X);
+                                                        double yDelta = Math.Abs(kv.Key.Y - touch.Position.Y);
+                                                        return Math.Sqrt(xDelta * xDelta + yDelta * yDelta);
+                                                    }).Value;
+
+    private static string touchHoldToString(TouchHold touchHold) => $"C[#{touchHold.Duration / 1000}]";
+
+
+    private static string shapeForSlidePart(int startLane, int endLane, SlideBodyPart part)
+    {
+        switch (part.Shape)
+        {
+            case SlidePaths.PathShapes.Straight:
+                return "-";
+
+            case SlidePaths.PathShapes.Circle:
+                bool startsFromBottom = ((startLane + 2) % 8) >= 4;
+                bool facingLeft = part.Mirrored ^ startsFromBottom;
+
+                return facingLeft ? "<" : ">";
+
+            case SlidePaths.PathShapes.V:
+                return "v";
+
+            case SlidePaths.PathShapes.U:
+                return part.Mirrored ? "q" : "p";
+
+            case SlidePaths.PathShapes.Thunder:
+                return part.Mirrored ? "z" : "s";
+
+            case SlidePaths.PathShapes.Cup:
+                return part.Mirrored ? "qq" : "pp";
+
+            case SlidePaths.PathShapes.Fan:
+                return "w";
+
+            default:
+                return "-";
+        }
     }
 
     public void SerializeToFile()
@@ -209,7 +210,7 @@ public class SimaiBeatmap
         fileContentBuilder.AppendLine($"&artist={metadata.ArtistUnicode}");
         fileContentBuilder.AppendLine($"&wholebpm={Math.Round(beatmap.BeatmapInfo.BPM)}");
         fileContentBuilder.AppendLine($"&lv_7=洗");
-        fileContentBuilder.AppendLine($"&inote_7={SimaiConvert.Serialize(maiChart)}");
+        fileContentBuilder.AppendLine($"&inote_7={maidata}");
 
         var file = File.CreateText(path);
         file.Write(fileContentBuilder);
