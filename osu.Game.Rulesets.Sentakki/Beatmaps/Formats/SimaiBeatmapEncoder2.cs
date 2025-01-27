@@ -365,6 +365,11 @@ public class SimaiBeatmap
         }
     }
 
+    public static string cleanFileName(string filename)
+    {
+        return Path.GetInvalidFileNameChars().Aggregate(filename, (current, c) => current.Replace(c.ToString(), ""));
+    }
+
     public void SerializeToFile()
     {
         var metadata = beatmap.BeatmapInfo.Metadata;
@@ -376,7 +381,7 @@ public class SimaiBeatmap
         fileContentBuilder.AppendLine($"&lv_7=洗");
         fileContentBuilder.AppendLine($"&inote_7={maidata}");
 
-        var file = File.CreateText(path);
+        var file = File.CreateText(cleanFileName(path));
         file.Write(fileContentBuilder);
         file.Close();
     }
