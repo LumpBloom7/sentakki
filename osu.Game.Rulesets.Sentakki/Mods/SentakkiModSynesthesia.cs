@@ -8,6 +8,7 @@ using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
+using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Screens.Edit;
@@ -20,19 +21,18 @@ namespace osu.Game.Rulesets.Sentakki.Mods;
 /// </summary>
 public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProcessor
 {
-    [SettingSource("Colour Note Groups")]
-    public BindableBool ColourNoteGroups { get; } = new BindableBool(false);
+    [SettingSource(typeof(SentakkiModSynesthesiaStrings), nameof(SentakkiModSynesthesiaStrings.IntervalColouring), nameof(SentakkiModSynesthesiaStrings.IntervalColouringDescription))]
+    public BindableBool IntervalColouring { get; } = new BindableBool(false);
 
     public void ApplyToBeatmapProcessor(IBeatmapProcessor beatmapProcessor)
     {
         if (beatmapProcessor is not SentakkiBeatmapProcessor sbp)
             return;
 
-        sbp.CustomNoteColouringDelegate = ColourNoteGroups.Value ? applyGCBasedNoteColouring : applyDivisorBasedNoteColouring;
+        sbp.CustomNoteColouringDelegate = IntervalColouring.Value ? applyIntervalBasedNoteColouring : applyDivisorBasedNoteColouring;
     }
 
-
-    private void applyDivisorBasedNoteColouring(SentakkiBeatmap beatmap)
+    private static void applyDivisorBasedNoteColouring(SentakkiBeatmap beatmap)
     {
         OsuColour colours = new OsuColour();
         foreach (var hitObject in beatmap.HitObjects)
@@ -57,7 +57,7 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
         }
     }
 
-    private void applyGCBasedNoteColouring(SentakkiBeatmap beatmap)
+    private static void applyIntervalBasedNoteColouring(SentakkiBeatmap beatmap)
     {
         OsuColour colours = new OsuColour();
 
@@ -101,7 +101,7 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
 
             smallestDelta = double.Min(smallestDelta, beatLength);
             int divisor = (int)Math.Round(beatLength / smallestDelta);
-            var colour = BindableBeatDivisor.GetColourFor(divisor, colours);
+            Color4 colour = BindableBeatDivisor.GetColourFor(divisor, colours);
 
             hitobjects[i].NoteColour = colour;
         }
