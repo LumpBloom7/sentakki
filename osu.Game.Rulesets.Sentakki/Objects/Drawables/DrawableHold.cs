@@ -155,7 +155,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
 
             timeNotHeld += Time.Elapsed;
-
         }
 
         protected override void UpdateHitStateTransforms(ArmedState state)
@@ -254,7 +253,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             Head.UpdateResult();
             isHolding.Value = true;
-            NoteBody.FadeColour(AccentColour.Value, 50);
             return true;
         }
 
@@ -273,9 +271,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             UpdateResult(true);
             isHolding.Value = false;
-
-            if (!AllJudged)
-                NoteBody.FadeColour(Color4.Gray, 100);
         }
     }
 }
