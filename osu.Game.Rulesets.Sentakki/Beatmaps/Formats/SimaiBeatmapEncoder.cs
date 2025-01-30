@@ -189,7 +189,7 @@ public class SimaiBeatmapEncoder
                 foreach (var part in slideInfo.SlidePathParts)
                 {
                     int endLane = (currentLane + part.EndOffset).NormalizePath();
-                    slideBuilder.Append(shapeForSlidePart(currentLane, part));
+                    slideBuilder.Append(shapeForSlidePart(currentLane, part, slide.SlideInfoList.Count > 1));
                     slideBuilder.Append(endLane + 1);
                     currentLane = endLane;
                 }
@@ -211,7 +211,7 @@ public class SimaiBeatmapEncoder
         return slideBuilder.ToString();
     }
 
-    private static string shapeForSlidePart(int startLane, in SlideBodyPart part)
+    private static string shapeForSlidePart(int startLane, in SlideBodyPart part, bool inChain)
     {
         switch (part.Shape)
         {
@@ -240,6 +240,11 @@ public class SimaiBeatmapEncoder
                 return part.Mirrored ? "qq" : "pp";
 
             case SlidePaths.PathShapes.Fan:
+                // Slide chain into a fan is only supported in sentakki
+                // Coerce the slide into a straight
+                if (inChain)
+                    return "-";
+
                 return "w";
 
             default:
