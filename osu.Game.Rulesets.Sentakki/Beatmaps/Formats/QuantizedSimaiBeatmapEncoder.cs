@@ -170,7 +170,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
 
             if (numberOfSubBeats > 0)
             {
-                paddingBeats.Add(new DivisorUnit(currentDivisor * activeTimingPoint.TimeSignature.Numerator));
+                paddingBeats.Add(new DivisorUnit(currentDivisor * 4));
 
                 for (int i = 0; i < numberOfSubBeats; ++i)
                     paddingBeats.Add(new BeatUnit());
