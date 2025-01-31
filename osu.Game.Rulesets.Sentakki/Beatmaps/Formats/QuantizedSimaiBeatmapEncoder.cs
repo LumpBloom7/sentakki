@@ -58,16 +58,8 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                 else
                 {
                     var prevTimingPoint = timingGroups[i - 1].TimingPoint;
-                    int divisorForTimeDiff = beatmap.ControlPointInfo.GetClosestBeatDivisor(timeUntilTimingPoint + prevTimingPoint.Time);
-                    double subBeat = prevTimingPoint.BeatLength / divisorForTimeDiff;
-                    maidataUnits.Add(new DivisorUnit(divisorForTimeDiff * timingPoint.TimeSignature.Numerator));
-
-                    while (timeUntilTimingPoint >= subBeat)
-                    {
-                        maidataUnits.Add(new BeatUnit());
-                        timeUntilTimingPoint -= subBeat;
-                        currentTime += subBeat;
-                    }
+                    maidataUnits.AddRange(generatePaddingBeats(timeUntilTimingPoint, prevTimingPoint, out double timeRemaining));
+                    currentTime = timingPoint.Time - timeRemaining;
                 }
             }
 
@@ -79,25 +71,8 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                 // Handle time before hitObject time
                 double timeUntilCurrent = hitObjectGroups[j].Time - currentTime;
 
-                if (timeUntilCurrent > 5)
-                {
-                    int divisorForFirstObject = beatmap.ControlPointInfo.GetClosestBeatDivisor(timeUntilCurrent + timingPoint.Time);
-                    double subBeat = beatLength / divisorForFirstObject;
-
-                    maidataUnits.Add(new DivisorUnit(divisorForFirstObject * timingPoint.TimeSignature.Numerator));
-
-                    bool beatAfterDivisor = false;
-
-                    while (hitObjectGroups[j].Time - currentTime + 5 >= subBeat)
-                    {
-                        maidataUnits.Add(new BeatUnit());
-                        timeUntilCurrent -= subBeat;
-                        currentTime += subBeat;
-                        beatAfterDivisor = true;
-                    }
-
-                    Debug.Assert(beatAfterDivisor);
-                }
+                maidataUnits.AddRange(generatePaddingBeats(timeUntilCurrent, timingPoint, out double timeRemaining));
+                currentTime = hitObjectGroups[j].Time - timeRemaining;
 
                 StringBuilder hitObjectGroupBuilder = new();
 
@@ -175,6 +150,42 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
         maichartBuilder.Append(",\nE");
 
         return maichartBuilder.ToString();
+    }
+
+    private static List<IMaidataUnit> generatePaddingBeats(double timeDelta, TimingControlPoint activeTimingPoint, out double timeRemaining)
+    {
+        if (timeDelta < 5)
+        {
+            timeRemaining = timeDelta;
+            return [];
+        }
+
+        List<IMaidataUnit> paddingBeats = [];
+
+        int currentDivisor = 1;
+
+        while (timeDelta > 5)
+        {
+            double subBeatLength = activeTimingPoint.BeatLength / currentDivisor;
+
+            int numberOfSubBeats = (int)(timeDelta / subBeatLength);
+
+            if (numberOfSubBeats > 0)
+            {
+                paddingBeats.Add(new DivisorUnit(currentDivisor * activeTimingPoint.TimeSignature.Numerator));
+
+                for (int i = 0; i < numberOfSubBeats; ++i)
+                    paddingBeats.Add(new BeatUnit());
+            }
+
+            timeDelta -= numberOfSubBeats * subBeatLength;
+
+            currentDivisor <<= 1;
+        }
+
+        timeRemaining = timeDelta;
+
+        return paddingBeats;
     }
 
     private interface IMaidataUnit
