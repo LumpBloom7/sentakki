@@ -98,16 +98,11 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
             }
         }
 
-        // Ensure all divisor units are before hitObject units
+        // Ensure all timing units are before hitObject units
         for (int i = 0; i < maidataUnits.Count - 1; ++i)
-        {
-            if (maidataUnits[i] is HitObjectCollectionUnit && maidataUnits[i + 1] is DivisorUnit)
-            {
-                var tmp = maidataUnits[i];
-                maidataUnits[i] = maidataUnits[i + 1];
-                maidataUnits[i + 1] = tmp;
-            }
-        }
+            if (maidataUnits[i] is HitObjectCollectionUnit
+                && maidataUnits[i + 1] is DivisorUnit or BeatTimeUnit or BPMUnit)
+                (maidataUnits[i + 1], maidataUnits[i]) = (maidataUnits[i], maidataUnits[i + 1]);
 
         // Clean out redundant divisor units
         double currentBPM = 0;
@@ -154,21 +149,24 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
 
     private static List<IMaidataUnit> generatePaddingBeats(double timeDelta, TimingControlPoint activeTimingPoint, out double timeRemaining)
     {
+        timeRemaining = timeDelta;
         if (timeDelta < 5)
-        {
-            timeRemaining = timeDelta;
             return [];
-        }
 
         List<IMaidataUnit> paddingBeats = [];
 
         int currentDivisor = 1;
 
-        while (timeDelta > 5)
+        while (timeRemaining > 5)
         {
             double subBeatLength = activeTimingPoint.BeatLength / currentDivisor;
 
-            int numberOfSubBeats = (int)(timeDelta / subBeatLength);
+            int numberOfSubBeats = (int)(timeRemaining / subBeatLength);
+
+            // Is it possible to get within 5ms if we allow timeDelta to go negative?
+            // If so, we would prefer that as it is "close enough" while reducing number of subdivisions
+            if (Math.Abs(timeRemaining - subBeatLength * (numberOfSubBeats + 1)) < 5)
+                ++numberOfSubBeats;
 
             if (numberOfSubBeats > 0)
             {
@@ -178,12 +176,9 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                     paddingBeats.Add(new BeatUnit());
             }
 
-            timeDelta -= numberOfSubBeats * subBeatLength;
-
+            timeRemaining -= numberOfSubBeats * subBeatLength;
             currentDivisor <<= 1;
         }
-
-        timeRemaining = timeDelta;
 
         return paddingBeats;
     }
@@ -211,7 +206,6 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
     private record struct BeatTimeUnit(double beatLength) : IMaidataUnit
     {
         public override readonly string ToString() => $"\n({tempo}){{{divisor}}}";
-
 
         public double tempo = 60000 / beatLength;
         public float divisor = 4;
