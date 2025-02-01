@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using osu.Framework.Logging;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
@@ -89,9 +88,6 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
         foreach (var timingChange in chart.TimingChanges)
         {
-            if (timingChange.SecondsPerBar <= 0f || (chartNotes.StartsWith("{#", StringComparison.Ordinal) && timingChange.time == 0f))
-                continue;
-
             double coercedTime = timingChange.time >= 0f ? timingChange.time : timingChange.time - Math.Floor(timingChange.time / timingChange.SecondsPerBar) * timingChange.SecondsPerBar;
             var controlPoint = new TimingControlPoint
             {
@@ -125,6 +121,14 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                 }
             }
         }
+
+        // Remove useless timingpoints
+        var usedTimingPoints = beatmap.ControlPointInfo.TimingPoints.Where(
+            t => beatmap.HitObjects.Any(h => beatmap.ControlPointInfo.TimingPointAt(h.StartTime) == t)).ToList();
+
+        beatmap.ControlPointInfo.Clear();
+        foreach (var t in usedTimingPoints)
+            beatmap.ControlPointInfo.Add(t.Time, t);
     }
 
     private int locationToLane(Location location)
