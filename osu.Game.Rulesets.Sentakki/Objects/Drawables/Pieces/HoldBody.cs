@@ -69,11 +69,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 colourContainer.Colour = colour.NewValue;
                 flashingColor = colour.NewValue.LightenHSL(0.4f);
             }, true);
-        }
 
-        protected override void LoadComplete()
-        {
-            base.LoadComplete();
             IsHitting.BindValueChanged(hitting =>
             {
                 const float animation_length = 80;
@@ -86,6 +82,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                     // wait for the next sync point
                     double synchronisedOffset = animation_length * 2 - Time.Current % (animation_length * 2);
 
+                    colourContainer.FadeColour(accentColour.Value);
+
                     using (BeginDelayedSequence(synchronisedOffset))
                     {
                         colourContainer.FadeColour(flashingColor, animation_length, Easing.OutSine).Then()
@@ -97,10 +95,17 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 }
                 else
                 {
-                    colourContainer.FadeColour(accentColour.Value);
+                    colourContainer.FadeColour(Color4.Gray, 50);
                     hitExplosion.Alpha = 0;
                 }
-            }, true);
+            }, false);
+        }
+
+        public void TriggerChange() => IsHitting.TriggerChange();
+        public void Recycle()
+        {
+            colourContainer.ClearTransforms();
+            colourContainer.Colour = accentColour.Value;
         }
     }
 }

@@ -74,6 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.OnKilled();
             isHolding.Value = false;
             timeNotHeld = 0;
+            NoteBody.Recycle();
         }
 
         protected override void UpdateInitialTransforms()
@@ -97,6 +98,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         .ResizeHeightTo(stretchAmount, stretchTime) // While we are moving, we stretch the hold note to match desired length
                         .Then().Delay(HitObject.Duration - stretchTime) // Wait until the end of the hold note, while considering how much time we need for shrinking
                         .ResizeHeightTo(0, stretchTime); // We shrink the hold note as it exits
+
+                // Safety to ensure note animations remain after note speed adjustments
+                using (BeginDelayedSequence(animTime))
+                    NoteBody.TriggerChange();
             }
         }
 
@@ -146,10 +151,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
 
             if (Auto && Time.Current >= HitObject.StartTime)
-            {
                 isHolding.Value = true;
-                Console.WriteLine("Holding");
-            }
 
             if (isHolding.Value)
                 return;
