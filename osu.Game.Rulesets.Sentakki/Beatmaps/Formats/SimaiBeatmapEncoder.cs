@@ -189,7 +189,7 @@ public class SimaiBeatmapEncoder
                 foreach (var part in slideInfo.SlidePathParts)
                 {
                     int endLane = (currentLane + part.EndOffset).NormalizePath();
-                    slideBuilder.Append(shapeForSlidePart(currentLane, part, slide.SlideInfoList.Count > 1));
+                    slideBuilder.Append(shapeForSlidePart(currentLane, part, slideInfo.SlidePathParts.Length > 1));
                     slideBuilder.Append(endLane + 1);
                     currentLane = endLane;
                 }
