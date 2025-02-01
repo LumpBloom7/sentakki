@@ -3,6 +3,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.UserInterface;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
@@ -18,8 +19,13 @@ public partial class TouchHoldCircularProgress : CircularProgress
         flashingColour = colour.Lighten(0.4f);
     }
 
-    [Resolved]
-    private Bindable<bool> isHitting { get; set; } = null!;
+    private Bindable<bool> isHitting { get; set; } = new();
+
+    [BackgroundDependencyLoader]
+    private void load(Bindable<bool>? isHittingBindable)
+    {
+        isHitting.TryBindTo(isHittingBindable);
+    }
 
     protected override void LoadComplete()
     {

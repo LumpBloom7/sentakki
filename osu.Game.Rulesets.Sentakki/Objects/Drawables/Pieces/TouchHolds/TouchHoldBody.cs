@@ -2,6 +2,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osuTK;
 using osuTK.Graphics;
@@ -55,18 +56,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
             };
         }
 
-        [Resolved]
-        private Bindable<bool> isHitting { get; set; } = null!;
-
-        [Resolved]
-        private DrawableTouchHold drawableTouchHold { get; set; } = null!;
+        private Bindable<bool> isHitting { get; set; } = new();
 
         private Bindable<Color4> accentColour = new();
 
-        [BackgroundDependencyLoader]
-        private void load()
+        [BackgroundDependencyLoader(true)]
+        private void load(Bindable<bool>? isHittingBindable, DrawableTouchHold? dth)
         {
-            accentColour.BindTo(drawableTouchHold.AccentColour);
+            isHitting.TryBindTo(isHittingBindable);
+            accentColour.TryBindTo(dth?.AccentColour);
 
             isHitting.BindValueChanged(hitting =>
             {
