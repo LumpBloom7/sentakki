@@ -8,6 +8,8 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Beatmaps.Formats;
 using osu.Game.Beatmaps.Timing;
 using osu.Game.IO;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
@@ -129,6 +131,8 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
         beatmap.ControlPointInfo.Clear();
         foreach (var t in usedTimingPoints)
             beatmap.ControlPointInfo.Add(t.Time, t);
+
+        autoGenerateBreaks(beatmap);
     }
 
     private int locationToLane(Location location)
@@ -303,6 +307,45 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                 Break = path.type == NoteType.Break,
                 ShootDelay = (float)(path.delay * 1000f / millisPerBeat),
             });
+        }
+    }
+
+    private void autoGenerateBreaks(IBeatmap beatmap)
+    {
+        double currentMaxEndTime = double.MinValue;
+
+        for (int i = 1; i < beatmap.HitObjects.Count; ++i)
+        {
+            var previousObject = beatmap.HitObjects[i - 1];
+            var nextObject = beatmap.HitObjects[i];
+
+            // Keep track of the maximum end time encountered thus far.
+            // This handles cases like osu!mania's hold notes, which could have concurrent other objects after their start time.
+            // Note that we're relying on the implicit assumption that objects are sorted by start time,
+            // which is why similar tracking is not done for start time.
+            currentMaxEndTime = Math.Max(currentMaxEndTime, previousObject.GetEndTime());
+
+            if (nextObject.StartTime - currentMaxEndTime < BreakPeriod.MIN_GAP_DURATION)
+                continue;
+
+            double breakStartTime = currentMaxEndTime + BreakPeriod.GAP_BEFORE_BREAK;
+
+            double breakEndTime = nextObject.StartTime;
+
+            if (nextObject is IHasTimePreempt hasTimePreempt)
+                breakEndTime -= hasTimePreempt.TimePreempt;
+            else
+                breakEndTime -= Math.Max(BreakPeriod.GAP_AFTER_BREAK, beatmap.ControlPointInfo.TimingPointAt(nextObject.StartTime).BeatLength * 2);
+
+            if (breakEndTime - breakStartTime < BreakPeriod.MIN_BREAK_DURATION)
+                continue;
+
+            var breakPeriod = new BreakPeriod(breakStartTime, breakEndTime);
+
+            if (beatmap.Breaks.Any(b => b.Intersects(breakPeriod)))
+                continue;
+
+            beatmap.Breaks.Add(breakPeriod);
         }
     }
 }
