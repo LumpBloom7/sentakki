@@ -199,7 +199,7 @@ public class SimaiBeatmapEncoder
                 double durationWithoutDelay = slideInfo.Duration - shootDelayMs;
 
                 // TODO: Remove this when ShootDelay is no longer in ms and incorrect at convert time
-                if (durationWithoutDelay - 50 > shootDelayMs)
+                if (shootDelayMs >= slideInfo.Duration - 50)
                 {
                     shootDelayMs = 0;
                     durationWithoutDelay = slideInfo.Duration;
