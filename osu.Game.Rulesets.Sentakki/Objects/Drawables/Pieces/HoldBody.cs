@@ -101,7 +101,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             }, false);
         }
 
-        public void TriggerChange() => IsHitting.TriggerChange();
+        public void TriggerHitFeedback() => IsHitting.TriggerChange();
         public void Recycle()
         {
             colourContainer.ClearTransforms();

@@ -101,7 +101,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 // Safety to ensure note animations remain after note speed adjustments
                 using (BeginDelayedSequence(animTime))
-                    NoteBody.TriggerChange();
+                    NoteBody.TriggerHitFeedback();
             }
         }
 

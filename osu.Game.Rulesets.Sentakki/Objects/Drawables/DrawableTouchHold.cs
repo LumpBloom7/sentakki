@@ -91,6 +91,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnApply();
             AccentColour.Value = getCurrentHitResult().GetColorForSentakkiResult();
+            TouchHoldBody.Recycle();
         }
 
         protected override void OnFree()
@@ -119,6 +120,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 TouchHoldBody.centrePiece.FadeOut();
                 TouchHoldBody.CompletedCentre.FadeIn();
                 TouchHoldBody.ProgressPiece.TransformBindableTo(TouchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
+
+                TouchHoldBody.TriggerHitFeedback();
             }
         }
 
