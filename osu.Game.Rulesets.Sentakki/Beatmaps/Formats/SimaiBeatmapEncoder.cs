@@ -76,8 +76,8 @@ public class SimaiBeatmapEncoder
         }
         else
         {
-            writer.WriteLine(Invariant($"&artist={metadata.TitleUnicode}"));
-            writer.WriteLine(Invariant($"&artistRomanised={metadata.Title}"));
+            writer.WriteLine(Invariant($"&artist={metadata.ArtistUnicode}"));
+            writer.WriteLine(Invariant($"&artistRomanised={metadata.Artist}"));
         }
 
         if (!string.IsNullOrEmpty(metadata.Source))
@@ -168,7 +168,7 @@ public class SimaiBeatmapEncoder
         if (slide.Break)
             slideBuilder.Append('b');
 
-        // Tap no star
+        // Star appearances
         if (slide.TapType == Slide.TapTypeEnum.Star && slide.SlideInfoList.Count == 0)
             slideBuilder.Append("$$");
         else if (slide.TapType == Slide.TapTypeEnum.Tap)
