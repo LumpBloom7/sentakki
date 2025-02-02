@@ -11,6 +11,11 @@ using static System.FormattableString;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Formats;
 
+/// <summary>
+/// Basic simai encoder that perfectly encodes a sentakki chart by using the beatLength notation of simai, encoding the intervals between notes in absolute time.
+///
+/// This is officially supported by Celeca's simai spec, and is supported by AstroDX/SimaiSharp, but not by Majdata[play/edit]
+/// </summary>
 public class SimaiBeatmapEncoder
 {
     private static Dictionary<Vector2, string> TouchPositionMapping = SentakkiPlayfield

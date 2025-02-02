@@ -11,6 +11,14 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Formats;
 
+/// <summary>
+/// Alternativee simai encoder that encodes the chart in idiomatic simai, using the beats and divisor notation of simai.
+///
+/// This encoder lossy due to osu/sentakki hitobjects not necessarily lining up to subbeats perfectly due to mapper error or floating-point error.
+/// In practice this is not noticable as all notes will have at most 5ms deviation from their true timing.
+///
+/// The resulting simai chart is fully compatible with Majdata and AstroDX.
+/// </summary>
 public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
 {
     public QuantizedSimaiBeatmapEncoder(IBeatmap<SentakkiHitObject> beatmap) : base(beatmap) { }
