@@ -266,7 +266,7 @@ public class SimaiBeatmapEncoder
                                                         return Math.Sqrt(xDelta * xDelta + yDelta * yDelta);
                                                     }).Value;
 
-    protected static string TouchHoldToString(TouchHold touchHold) => $"C[#{touchHold.Duration / 1000:F3}]";
+    protected static string TouchHoldToString(TouchHold touchHold) => $"Ch[#{touchHold.Duration / 1000:F3}]";
 
     public void SerializeToFile()
     {
