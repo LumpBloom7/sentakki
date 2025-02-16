@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using osu.Game.Audio;
 using osu.Game.Rulesets.Objects.Types;
@@ -14,6 +13,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             get => StartTime + Duration;
             set => Duration = value - StartTime;
+        }
+
+        public override bool Ex
+        {
+            get => base.Ex;
+            set { } // TouchHold doesn't support EX note (how would that even work?!)
         }
 
         public double Duration { get; set; }

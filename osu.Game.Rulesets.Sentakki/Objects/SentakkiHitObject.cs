@@ -58,7 +58,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public Bindable<bool> ExBindable => exState.Bindable;
 
-        public bool Ex
+        public virtual bool Ex
         {
             get => exState.Value;
             set => exState.Value = value;
