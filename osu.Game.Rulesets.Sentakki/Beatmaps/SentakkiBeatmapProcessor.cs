@@ -43,6 +43,12 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
                 foreach (SentakkiHitObject hitObject in group)
                 {
+                    if (hitObject is TouchHold th)
+                    {
+                        th.ColourPalette = th.Break ? TouchHold.BreakPalette : TouchHold.DefaultPalette;
+                        continue;
+                    }
+
                     Color4 noteColor = hitObject.DefaultNoteColour;
 
                     if (hitObject is SentakkiLanedHitObject laned && laned.Break)
@@ -76,6 +82,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 case Hold:
                 case Hold.HoldHead:
                 case Touch:
+                case TouchHold:
                     return true;
             }
             return false;

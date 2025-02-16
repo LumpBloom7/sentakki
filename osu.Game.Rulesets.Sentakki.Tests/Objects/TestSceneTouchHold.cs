@@ -51,6 +51,9 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 Break = breakState
             };
 
+            if (breakState)
+                circle.ColourPalette = TouchHold.BreakPalette;
+
             circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
             Add(new DrawableTouchHold(circle)
