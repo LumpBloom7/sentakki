@@ -1,6 +1,7 @@
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.Containers;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -114,6 +115,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.ApplyResult(hitResult);
         }
 
+        protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
+        {
+            switch (hitObject)
+            {
+                case ScorePaddingObject p:
+                    return new DrawableScorePaddingObject(p);
+
+
+                default:
+                    return base.CreateNestedHitObject(hitObject);
+
+            }
+        }
+
         protected override void AddNestedHitObject(DrawableHitObject hitObject)
         {
             switch (hitObject)
@@ -128,6 +143,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
             }
         }
+
         protected override void ClearNestedHitObjects()
         {
             base.ClearNestedHitObjects();
