@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     {
         public override Color4 DefaultNoteColour => Color4.Aqua;
 
-        public override int ScoreWeighting => Break ? 5 : 3;
+        protected override int BaseScoreWeighting => 3;
 
         public double EndTime
         {

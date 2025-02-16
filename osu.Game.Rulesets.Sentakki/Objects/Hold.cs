@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Hold : SentakkiLanedHitObject, IHasDuration
     {
-        protected override bool NeedBreakSample => false;
+        protected override bool PlaysBreakSample => false;
 
         private IList<IList<HitSampleInfo>> nodeSamples = new List<IList<HitSampleInfo>>();
 

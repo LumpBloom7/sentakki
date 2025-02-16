@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             None,
         }
 
-        protected override bool NeedBreakSample => false;
+        protected override bool PlaysBreakSample => false;
 
         public double Duration
         {
