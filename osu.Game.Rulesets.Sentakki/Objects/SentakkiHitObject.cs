@@ -21,41 +21,47 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected virtual int BaseScoreWeighting => 1;
 
-        public readonly BindableBool BreakBindable = new BindableBool();
-
         protected virtual bool PlaysBreakSample => true;
+
+        private HitObjectProperty<bool> breakState;
+
+        public Bindable<bool> BreakBindable => breakState.Bindable;
 
         public bool Break
         {
-            get => BreakBindable.Value;
-            set => BreakBindable.Value = value;
+            get => breakState.Value;
+            set => breakState.Value = value;
         }
 
         protected SentakkiHitObject()
         {
             // We initialize the note colour to the default value first for test scenes
             // The colours during gameplay will be set during beatmap post-process
-            ColourBindable.Value = DefaultNoteColour;
+            colour.Value = DefaultNoteColour;
         }
 
         public override Judgement CreateJudgement() => new SentakkiJudgement();
 
+        private HitObjectProperty<Color4> colour;
+
         [JsonIgnore]
-        public Bindable<Color4> ColourBindable = new Bindable<Color4>();
+        public Bindable<Color4> ColourBindable => colour.Bindable;
 
         [JsonIgnore]
         public Color4 NoteColour
         {
-            get => ColourBindable.Value;
-            set => ColourBindable.Value = value;
+            get => colour.Value;
+            set => colour.Value = value;
         }
 
-        public Bindable<bool> ExBindable = new Bindable<bool>();
+        private HitObjectProperty<bool> exState;
+
+        public Bindable<bool> ExBindable => exState.Bindable;
 
         public bool Ex
         {
-            get => ExBindable.Value;
-            set => ExBindable.Value = value;
+            get => exState.Value;
+            set => exState.Value = value;
         }
 
         [JsonIgnore]

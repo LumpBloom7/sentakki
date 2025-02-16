@@ -74,6 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 case Tap:
                 case SlideBody:
                 case Hold:
+                case Hold.HoldHead:
                 case Touch:
                     return true;
             }

@@ -1,15 +1,19 @@
 using osu.Framework.Bindables;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.Types;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public abstract class SentakkiLanedHitObject : SentakkiHitObject
+    public abstract class SentakkiLanedHitObject : SentakkiHitObject, IHasLane
     {
-        public readonly BindableInt LaneBindable = new BindableInt();
+        private HitObjectProperty<int> lane;
+
+        public Bindable<int> LaneBindable => lane.Bindable;
 
         public int Lane
         {
-            get => LaneBindable.Value;
-            set => LaneBindable.Value = value;
+            get => lane.Value;
+            set => lane.Value = value;
         }
     }
 }

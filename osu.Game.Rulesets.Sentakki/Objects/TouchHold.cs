@@ -27,12 +27,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             var referenceSample = Samples.FirstOrDefault();
 
             if (referenceSample == null)
-                return Array.Empty<HitSampleInfo>();
+                return [];
 
-            return new[]
-            {
-                referenceSample.With("spinnerspin")
-            };
+            return [referenceSample.With("spinnerspin")];
         }
     }
 }
