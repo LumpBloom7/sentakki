@@ -14,6 +14,7 @@ using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
@@ -30,6 +31,16 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         [Cached]
         private readonly DrawablePool<SlideChevron> chevronPool;
 
+        public static bool[][] ObjectFlagsSource = [
+            [false, false, false, false],
+            [true, false, false, false],
+            [false, true, false, false],
+            [true, true, false, false],
+            [false, false, true, false],
+            [false, false, false, true],
+            [false, false, true, true],
+        ];
+
         public TestSceneSlideNote()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
@@ -41,21 +52,26 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             });
 
             Add(chevronPool = new DrawablePool<SlideChevron>(62));
+        }
 
-            AddStep("Miss Single", () => testSingle(2000));
-            AddStep("Hit Single", () => testSingle(2000, true));
+        [TestCaseSource(nameof(ObjectFlagsSource))]
+        public void TestSlides(bool headBreak, bool headEX, bool bodyBreak, bool bodyEx)
+        {
+
+            AddStep("Miss Single", () => testSingle(2000, false, headBreak, headEX, bodyBreak, bodyEx));
+            AddStep("Hit Single", () => testSingle(2000, true, headBreak, headEX, bodyBreak, bodyEx));
             AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject hitObject) && hitObject.AllJudged == false));
 
-            AddStep("Miss chain", () => testChain(5000));
-            AddStep("Hit chain", () => testChain(5000, true));
+            AddStep("Miss chain", () => testChain(5000, false, headBreak, headEX, bodyBreak, bodyEx));
+            AddStep("Hit chain", () => testChain(5000, true, headBreak, headEX, bodyBreak, bodyEx));
             AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject hitObject) && hitObject.AllJudged == false));
 
-            AddStep("Miss chain with Fan", () => testChainWithFan(6000));
-            AddStep("Hit chain with Fan", () => testChainWithFan(6000, true));
+            AddStep("Miss chain with Fan", () => testChainWithFan(6000, false, headBreak, headEX, bodyBreak, bodyEx));
+            AddStep("Hit chain with Fan", () => testChainWithFan(6000, true, headBreak, headEX, bodyBreak, bodyEx));
             AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject hitObject) && hitObject.AllJudged == false));
         }
 
-        private void testSingle(double duration, bool auto = false)
+        private void testSingle(double duration, bool auto = false, bool headBreak = false, bool headEX = false, bool bodyBreak = false, bool bodyEx = false)
         {
             var slide = new Slide
             {
@@ -66,22 +82,35 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                     {
                         SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Circle, 0, false) },
                         Duration = 1000,
+                        Break = bodyBreak,
                     },
                     new SlideBodyInfo
                     {
                         SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false) },
                         Duration = 1500,
+                        Break = bodyBreak,
                     },
                     new SlideBodyInfo
                     {
                         SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false) },
                         Duration = 2000,
+                        Break = bodyBreak,
                     }
                 },
                 StartTime = Time.Current + 1000,
+                Ex = headEX,
+                Break = headBreak,
             };
 
             slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
+
+            if (headBreak)
+                slide.SlideTap.NoteColour = Color4.OrangeRed;
+            if (bodyBreak)
+            {
+                foreach (var body in slide.SlideBodies)
+                    body.NoteColour = Color4.OrangeRed;
+            }
 
             DrawableSlide dSlide;
 
@@ -100,7 +129,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             }
         }
 
-        private void testChain(double duration, bool auto = false)
+        private void testChain(double duration, bool auto = false, bool headBreak = false, bool headEX = false, bool bodyBreak = false, bool bodyEx = false)
         {
             var slide = new Slide
             {
@@ -117,12 +146,23 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                             new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
                         },
                         Duration = duration,
+                        Break = bodyBreak,
                     },
                 },
                 StartTime = Time.Current + 1000,
+                Break = headBreak,
+                Ex = headEX
             };
 
             slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
+
+            if (headBreak)
+                slide.SlideTap.NoteColour = Color4.OrangeRed;
+            if (bodyBreak)
+            {
+                foreach (var body in slide.SlideBodies)
+                    body.NoteColour = Color4.OrangeRed;
+            }
 
             DrawableSlide dSlide;
 
@@ -141,7 +181,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             }
         }
 
-        private void testChainWithFan(double duration, bool auto = false)
+        private void testChainWithFan(double duration, bool auto = false, bool headBreak = false, bool headEX = false, bool bodyBreak = false, bool bodyEx = false)
         {
             var slide = new Slide
             {
@@ -159,12 +199,23 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                             new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false),
                         },
                         Duration = duration,
+                        Break = bodyBreak,
                     },
                 },
                 StartTime = Time.Current + 1000,
+                Break = headBreak,
+                Ex = headEX
             };
 
             slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
+
+            if (headBreak)
+                slide.SlideTap.NoteColour = Color4.OrangeRed;
+            if (bodyBreak)
+            {
+                foreach (var body in slide.SlideBodies)
+                    body.NoteColour = Color4.OrangeRed;
+            }
 
             DrawableSlide dSlide;
 

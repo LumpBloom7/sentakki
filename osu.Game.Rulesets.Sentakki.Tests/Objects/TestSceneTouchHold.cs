@@ -23,13 +23,22 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         public TestSceneTouchHold()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
+        }
 
-            AddStep("Miss Single", () => testSingle());
-            AddStep("Hit Single", () => testSingle(true));
+        public static bool[][] ObjectFlagsSource = [
+            [false],
+            [true],
+        ];
+
+        [TestCaseSource(nameof(ObjectFlagsSource))]
+        public void TestTouchHold(bool breakState)
+        {
+            AddStep("Miss Single", () => testSingle(false, breakState));
+            AddStep("Hit Single", () => testSingle(true, breakState));
             AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject sentakkiHitObject) && sentakkiHitObject.AllJudged == false));
         }
 
-        private void testSingle(bool auto = false)
+        private void testSingle(bool auto = false, bool breakState = false)
         {
             var circle = new TouchHold
             {
@@ -39,6 +48,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                 {
                     new HitSampleInfo(HitSampleInfo.HIT_NORMAL)
                 },
+                Break = breakState
             };
 
             circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
