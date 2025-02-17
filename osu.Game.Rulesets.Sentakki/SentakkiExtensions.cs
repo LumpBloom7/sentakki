@@ -135,9 +135,9 @@ namespace osu.Game.Rulesets.Sentakki
             float distanceG = 1 - colour.G;
             float distanceB = 1 - colour.B;
 
-            float r = colour.R + amount * distanceR;
-            float g = colour.G + amount * distanceG;
-            float b = colour.B + amount * distanceB;
+            float r = colour.R + (amount * distanceR);
+            float g = colour.G + (amount * distanceG);
+            float b = colour.B + (amount * distanceB);
 
             return new Color4(r, g, b, colour.A);
         }

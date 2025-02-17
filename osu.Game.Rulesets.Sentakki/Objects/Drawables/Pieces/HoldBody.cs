@@ -1,4 +1,4 @@
-﻿using osu.Framework.Allocation;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -80,7 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
                 if (hitting.NewValue)
                 {
                     // wait for the next sync point
-                    double synchronisedOffset = animation_length * 2 - Time.Current % (animation_length * 2);
+                    double synchronisedOffset = (animation_length * 2) - (Time.Current % (animation_length * 2));
 
                     colourContainer.FadeColour(accentColour.Value);
 

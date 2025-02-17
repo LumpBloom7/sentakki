@@ -52,7 +52,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                         new DotPiece(),
                     ]
                 }
-
             };
         }
 
@@ -76,7 +75,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                 if (hitting.NewValue)
                 {
                     // wait for the next sync point
-                    double synchronisedOffset = animation_length * 2 - Time.Current % (animation_length * 2);
+                    double synchronisedOffset = (animation_length * 2) - (Time.Current % (animation_length * 2));
                     colourContainer.FadeColour(Color4.White);
 
                     using (BeginDelayedSequence(synchronisedOffset))

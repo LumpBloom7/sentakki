@@ -39,7 +39,7 @@ public partial class TouchHoldCircularProgress : CircularProgress
             if (hitting.NewValue)
             {
                 // wait for the next sync point
-                double synchronisedOffset = animation_length * 2 - Time.Current % (animation_length * 2);
+                double synchronisedOffset = (animation_length * 2) - (Time.Current % (animation_length * 2));
 
                 using (BeginDelayedSequence(synchronisedOffset))
                 {
