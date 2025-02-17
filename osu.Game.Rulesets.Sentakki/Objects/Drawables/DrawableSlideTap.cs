@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using osu.Framework.Graphics;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
@@ -20,28 +21,34 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
         }
 
+        private double spinDurationModifier = 0;
+
         protected override void OnApply()
         {
             base.OnApply();
 
             if (TapVisual is SlideTapPiece note)
                 note.SecondStar.Alpha = ParentHitObject.HitObject.SlideInfoList.Count > 1 ? 1 : 0;
+
+            if (ParentHitObject is DrawableSlide slide)
+                spinDurationModifier = slide.HitObject.SlideInfoList.MinBy(si => si.Duration)?.Duration ?? 0;
+            else
+                spinDurationModifier = 0;
         }
 
-        protected override void UpdateInitialTransforms()
+        protected override void UpdateNoteVisuals()
         {
-            base.UpdateInitialTransforms();
+            base.UpdateNoteVisuals();
 
             const double baseline_spin_duration = 250;
 
             var note = (SlideTapPiece)TapVisual;
 
-            double spinDuration = baseline_spin_duration * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
+            double animStartTime = HitObject.StartTime - AnimationDuration.Value;
 
-            if (ParentHitObject is DrawableSlide slide)
-                spinDuration += slide.HitObject.SlideInfoList.FirstOrDefault()?.Duration ?? 1000;
+            float spinProgress = Interpolation.ValueAt(Time.Current, 0f, 360, HitObject.StartTime - AnimationDuration.Value, animStartTime + baseline_spin_duration + spinDurationModifier);
 
-            note.Stars.Spin(spinDuration, RotationDirection.Counterclockwise).Loop();
+            note.Stars.Rotation = spinProgress;
         }
     }
 }

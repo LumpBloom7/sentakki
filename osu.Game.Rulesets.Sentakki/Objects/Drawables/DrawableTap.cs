@@ -1,8 +1,10 @@
+using System;
 using System.Diagnostics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
@@ -59,17 +61,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
-        protected override void UpdateInitialTransforms()
+        protected override void UpdateNoteVisuals()
         {
-            base.UpdateInitialTransforms();
-            double animTime = AnimationDuration.Value / 2;
-            TapVisual.FadeInFromZero(animTime).ScaleTo(1, animTime);
+            base.UpdateNoteVisuals();
 
-            using (BeginDelayedSequence(animTime))
-            {
-                double excessDistance = (-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * HitObject.HitWindows.WindowFor(HitResult.Miss);
-                TapVisual.MoveToY((float)(-SentakkiPlayfield.INTERSECTDISTANCE + excessDistance), animTime + HitObject.HitWindows.WindowFor(HitResult.Miss));
-            }
+            double animTime = AnimationDuration.Value * 0.5f;
+
+            float entryProgress = Math.Clamp(Interpolation.ValueAt(Time.Current, 0f, 1f, HitObject.StartTime - AnimationDuration.Value, HitObject.StartTime - animTime), 0, 1);
+            TapVisual.Alpha = entryProgress;
+            TapVisual.Scale = new Vector2(entryProgress);
+
+            double start = HitObject.StartTime - animTime;
+            double end = HitObject.StartTime;
+
+            TapVisual.Y = -Interpolation.ValueAt(Math.Max(Time.Current, start), SentakkiPlayfield.NOTESTARTDISTANCE, SentakkiPlayfield.INTERSECTDISTANCE, start, end);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -105,7 +110,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    TapVisual.FadeOut();
                     Expire();
                     break;
 

@@ -4,6 +4,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Transforms;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
@@ -75,19 +76,23 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private readonly BindableInt trackedKeys = new BindableInt();
 
-        protected override void UpdateInitialTransforms()
+        protected override void UpdateNoteVisuals()
         {
-            base.UpdateInitialTransforms();
+            base.UpdateNoteVisuals();
             double animTime = AnimationDuration.Value * 0.8;
-            double fadeTime = AnimationDuration.Value * 0.2;
 
-            TouchBody.FadeIn(fadeTime);
+            float fadeProgress = Math.Clamp(Interpolation.ValueAt(Time.Current, 0f, 1f, HitObject.StartTime - AnimationDuration.Value, HitObject.StartTime - animTime), 0, 1);
 
-            using (BeginAbsoluteSequence(HitObject.StartTime - animTime))
-            {
-                TouchBody.ResizeTo(90, animTime, Easing.InCirc);
-                TouchBody.BorderContainer.Delay(animTime).FadeIn();
-            }
+            TouchBody.Alpha = fadeProgress;
+
+            float animProgress = Math.Clamp(Interpolation.ValueAt(Time.Current, 0f, 1f, HitObject.StartTime - animTime, HitObject.StartTime, Easing.InCirc), 0, 1);
+
+            // InCirc may return NaN, sanitise
+            if (animProgress is float.NaN)
+                animProgress = 1;
+
+            TouchBody.Size = new(130 - 40 * animProgress);
+            TouchBody.BorderContainer.Alpha = MathF.Floor(animProgress);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)

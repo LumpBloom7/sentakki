@@ -5,6 +5,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
@@ -77,32 +78,42 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             NoteBody.Recycle();
         }
 
-        protected override void UpdateInitialTransforms()
+        protected override void UpdateNoteVisuals()
         {
-            base.UpdateInitialTransforms();
-            double animTime = AnimationDuration.Value / 2;
-            NoteBody.FadeInFromZero(animTime).ScaleTo(1, animTime);
+            double animTime = AnimationDuration.Value * 0.5f;
 
-            using (BeginDelayedSequence(animTime))
+            float entryProgress = Math.Clamp(Interpolation.ValueAt(Time.Current, 0f, 1f, HitObject.StartTime - AnimationDuration.Value, HitObject.StartTime - animTime), 0, 1);
+            NoteBody.Alpha = entryProgress;
+            NoteBody.Scale = new Vector2(entryProgress);
+
+            if (entryProgress < 1)
             {
-                // This is the movable length (not including start position)
-                const float total_movable_distance = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
-
-                // This is the amount of stretch needed. Capped to the max stretch amount.
-                float stretchAmount = Math.Clamp((float)(total_movable_distance / animTime * (HitObject as IHasDuration).Duration), 0, total_movable_distance);
-
-                // This is the amount of time that the note spends stretching or unstretching
-                float stretchTime = (float)(stretchAmount / total_movable_distance * animTime);
-
-                NoteBody.MoveToY(-SentakkiPlayfield.INTERSECTDISTANCE, animTime) // Move the head towards the ring
-                        .ResizeHeightTo(stretchAmount, stretchTime) // While we are moving, we stretch the hold note to match desired length
-                        .Then().Delay(HitObject.Duration - stretchTime) // Wait until the end of the hold note, while considering how much time we need for shrinking
-                        .ResizeHeightTo(0, stretchTime); // We shrink the hold note as it exits
-
-                // Safety to ensure note animations remain after note speed adjustments
-                using (BeginDelayedSequence(animTime))
-                    NoteBody.TriggerHitFeedback();
+                NoteBody.Y = -SentakkiPlayfield.NOTESTARTDISTANCE;
+                NoteBody.Height = 0;
+                return;
             }
+
+            // This is the movable length (not including start position)
+            const float total_movable_distance = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
+
+            // This is the amount of stretch needed. Capped to the max stretch amount.
+            float stretchAmount = Math.Clamp((float)(total_movable_distance / animTime * (HitObject as IHasDuration).Duration), 0, total_movable_distance);
+
+            // This is the amount of time that the note spends stretching or unstretching
+            float stretchTime = (float)(stretchAmount / total_movable_distance * animTime);
+
+            double stretchStartTime = HitObject.StartTime - animTime;
+
+            NoteBody.Y = -Interpolation.ValueAt(Math.Clamp(Time.Current, stretchStartTime, HitObject.StartTime), SentakkiPlayfield.NOTESTARTDISTANCE, SentakkiPlayfield.INTERSECTDISTANCE, stretchStartTime, HitObject.StartTime);
+
+            NoteBody.Height = stretchAmount * Math.Clamp(Interpolation.ValueAt(Time.Current, 0f, 1f, HitObject.StartTime - animTime, HitObject.StartTime - animTime + stretchTime), 0, 1);
+
+            double unstretchTime = HitObject.GetEndTime() - stretchTime;
+
+            if (Time.Current < unstretchTime)
+                return;
+
+            NoteBody.Height = Math.Clamp(Interpolation.ValueAt(Time.Current, 1f, 0f, unstretchTime, HitObject.GetEndTime()), 0, 1) * stretchAmount;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)

@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using HidSharp.Reports.Units;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -186,57 +188,70 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             }
         }
 
-        public void PerformEntryAnimation(double duration)
+        public void UpdateSlideVisuals(double entryTime, double entryDuration, double exitTime, double exitDuration)
         {
             if (snakingIn.Value)
             {
-                double fadeDuration = duration / chevrons.Count;
-                double currentOffset = duration / 2;
-                double offsetIncrement = (duration - currentOffset - fadeDuration) / (chevrons.Count - 1);
+                double fadeDuration = entryDuration / chevrons.Count;
+                double currentOffset = entryDuration / 2;
+                double offsetIncrement = (entryDuration - currentOffset - fadeDuration) / (chevrons.Count - 1);
 
-                for (int j = chevrons.Count - 1; j >= 0; j--)
+                for (int i = chevrons.Count - 1; i >= 0; --i)
                 {
-                    var chevron = chevrons[j];
-                    chevron.FadeOut()
-                           .Delay(currentOffset)
-                           .FadeIn(fadeDuration)
-                           // This finally clause ensures the chevron maintains the correct visibility state after a rewind
-                           .Finally(c => UpdateProgress(c));
+                    var chevron = chevrons[i];
+
+                    double start = entryTime + currentOffset;
+                    double end = start + fadeDuration;
+
+                    chevron.Alpha = Interpolation.ValueAt(Math.Clamp(Time.Current, start, end), 0f, 1f, start, end);
 
                     currentOffset += offsetIncrement;
                 }
             }
             else
             {
-                chevrons.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
+                double start = entryTime + entryDuration / 2;
+                double end = start + entryDuration / 2;
+
+                float chevronAlpha = Interpolation.ValueAt(Math.Clamp(Time.Current, start, end), 0f, 1f, start, end);
+
+                foreach (var chevron in chevrons)
+                    chevron.Alpha = chevronAlpha;
             }
-        }
 
-        public void PerformExitAnimation(double duration)
-        {
+            if (Time.Current < entryTime + entryDuration)
+                return;
+
+
             bool found = false;
-            double fadeDuration = 0;
-            double currentOffset = 0;
+            int firstUnhiddenChevronIndex = -10;
 
-            for (int i = 0; i < chevrons.Count; ++i)
+            for (int i = chevrons.Count - 1; i >= 0; --i)
             {
                 var chevron = chevrons[i];
+                UpdateProgress(chevron);
 
-                if (chevron.DisappearThreshold <= Progress)
-                {
-                    chevron.Alpha = 0;
-                    continue;
-                }
-
-                if (!found)
+                if (chevron.DisappearThreshold > Progress && !found)
                 {
                     found = true;
-                    fadeDuration = duration / (chevrons.Count - i);
-                    currentOffset = (fadeDuration / 2) * (chevrons.Count - i);
+                    firstUnhiddenChevronIndex = i;
                 }
+            }
 
-                chevron.FadeIn().Delay(currentOffset).FadeOut(fadeDuration);
-                currentOffset -= fadeDuration / 2;
+            if (Time.Current < exitTime)
+                return;
+
+            double fadeoutOffset = 0;
+            double fadeoutDuration = exitDuration / (firstUnhiddenChevronIndex + 1);
+
+            Console.WriteLine(firstUnhiddenChevronIndex);
+
+            for (int i = firstUnhiddenChevronIndex; i >= 0; --i)
+            {
+                double start = exitTime + fadeoutOffset;
+                double end = start + fadeoutDuration;
+                chevrons[i].Alpha = Interpolation.ValueAt(Math.Clamp(Time.Current, start, end), 1f, 0f, start, end);
+                fadeoutOffset += fadeoutDuration / 2;
             }
         }
 

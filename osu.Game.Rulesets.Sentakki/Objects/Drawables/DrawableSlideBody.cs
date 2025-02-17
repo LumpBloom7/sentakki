@@ -5,6 +5,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -166,36 +167,35 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Slidepath.Colour = IsHittable ? active_color : inactive_color;
         }
 
-        protected override void UpdateInitialTransforms()
+        protected override void UpdateNoteVisuals()
         {
-            base.UpdateInitialTransforms();
-            Slidepath.PerformEntryAnimation(AnimationDuration.Value);
+            base.UpdateNoteVisuals();
+            Slidepath.UpdateSlideVisuals(HitObject.StartTime - AnimationDuration.Value, AnimationDuration.Value,
+            Result.HasResult ? Result.TimeAbsolute : double.MaxValue, 400);
 
-            using (BeginAbsoluteSequence(HitObject.StartTime))
+            // Perform slide path animation here
+            float growProgress;
+
+            if (HitObject.ShootDelay == 0)
+                growProgress = Time.Current >= HitObject.StartTime ? 1 : 0;
+            else
+                growProgress = Math.Clamp(Interpolation.ValueAt(Time.Current, 0f, 1f, HitObject.StartTime, HitObject.StartTime + HitObject.ShootDelay), 0, 1);
+
+            for (int i = 0; i < SlideStars.Count; ++i)
             {
-                SlideStars[2].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
-                SlideStars[0].FadeOut().ScaleTo(1.25f, HitObject.ShootDelay);
-                SlideStars[1].FadeOut().ScaleTo(1.25f, HitObject.ShootDelay);
+                // We don't fade in the slideFan specific stars if the slide doesn't start with a fan
+                SlideStars[i].Alpha = (i < 2 && !Slidepath.Path.StartsWithSlideFan) ? 0 : growProgress;
+                SlideStars[i].Scale = new Vector2(1.25f * growProgress);
+            }
 
-                if (Slidepath.Path.StartsWithSlideFan)
-                {
-                    SlideStars[0].FadeInFromZero(HitObject.ShootDelay);
-                    SlideStars[1].FadeInFromZero(HitObject.ShootDelay);
-                }
+            double slideStartTime = HitObject.StartTime + HitObject.ShootDelay;
 
-                using (BeginDelayedSequence(HitObject.ShootDelay))
-                {
-                    if (!Slidepath.Path.StartsWithSlideFan && Slidepath.Path.EndsWithSlideFan)
-                    {
-                        using (BeginDelayedSequence((HitObject.Duration - HitObject.ShootDelay) * Slidepath.Path.FanStartProgress))
-                        {
-                            SlideStars[0].FadeIn();
-                            SlideStars[1].FadeIn();
-                        }
-                    }
+            StarProgress = Math.Clamp(Interpolation.ValueAt(Time.Current, 0f, 1f, slideStartTime, HitObject.GetEndTime()), 0, 1);
 
-                    this.TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
-                }
+            if (!Slidepath.Path.StartsWithSlideFan && Slidepath.Path.EndsWithSlideFan)
+            {
+                double fanStartTime = slideStartTime + (HitObject.Duration - HitObject.ShootDelay) * Slidepath.Path.FanStartProgress;
+                SlideStars[0].Alpha = SlideStars[1].Alpha = Time.Current >= fanStartTime ? 1 : 0;
             }
         }
 
@@ -234,8 +234,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
             }
 
-
-
             var result = HitObject.HitWindows.ResultFor(timeOffset);
 
             // Give the player an OK for extremely early completion
@@ -263,8 +261,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 case ArmedState.Hit:
                     using (BeginAbsoluteSequence(Math.Max(Result.TimeAbsolute, HitObject.GetEndTime() - HitObject.HitWindows.WindowFor(HitResult.Good))))
                     {
-                        Slidepath.PerformExitAnimation(time_fade_hit);
-
                         foreach (var star in SlideStars)
                             star.FadeOut(time_fade_hit);
 
@@ -274,7 +270,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
 
                 case ArmedState.Miss:
-                    Slidepath.PerformExitAnimation(time_fade_miss);
                     this.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss).Expire();
                     break;
             }

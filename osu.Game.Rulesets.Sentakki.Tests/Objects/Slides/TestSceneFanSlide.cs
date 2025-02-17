@@ -48,11 +48,41 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
                 slide.Rotation = p;
             });
 
-            AddStep("Perform entry animation", () => slide.PerformEntryAnimation(1000));
+            AddStep("Perform entry animation", () => performEntryAnimation(1000));
             AddWaitStep("Wait for transforms", 5);
 
-            AddStep("Perform exit animation", () => slide.PerformExitAnimation(1000));
+            AddStep("Perform exit animation", () => performExitAnimation(1000));
             AddWaitStep("Wait for transforms", 5);
+        }
+
+        private double entryTime = double.MinValue;
+        private double entryDuration = 0;
+
+        private double exitTime = double.MaxValue;
+        private double exitDuration = 0;
+
+        protected override void Update()
+        {
+            base.Update();
+            slide.UpdateSlideVisuals(entryTime, entryDuration, exitTime, exitDuration);
+        }
+
+        private void performEntryAnimation(double duration)
+        {
+            entryTime = Time.Current;
+            entryDuration = duration;
+
+            exitTime = double.MaxValue;
+            exitDuration = 0;
+        }
+
+        private void performExitAnimation(double duration)
+        {
+            entryTime = double.MinValue;
+            entryDuration = 0;
+
+            exitTime = Time.Current;
+            exitDuration = duration;
         }
 
         protected override void LoadComplete()

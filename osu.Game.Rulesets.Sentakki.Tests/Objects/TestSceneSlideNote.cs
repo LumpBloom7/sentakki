@@ -67,16 +67,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                         SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Circle, 0, false) },
                         Duration = 1000,
                     },
-                    new SlideBodyInfo
-                    {
-                        SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false) },
-                        Duration = 1500,
-                    },
-                    new SlideBodyInfo
-                    {
-                        SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false) },
-                        Duration = 2000,
-                    }
                 },
                 StartTime = Time.Current + 1000,
             };

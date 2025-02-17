@@ -4,6 +4,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
+using osu.Framework.Utils;
 using osu.Game.Audio;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Objects;
@@ -52,7 +53,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Colour = Color4.SlateGray;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Alpha = 0;
             AddRangeInternal(new Drawable[]
             {
                 TouchHoldBody = new TouchHoldBody(),
@@ -103,26 +103,29 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             totalHoldTime = 0;
         }
 
-        protected override void UpdateInitialTransforms()
+        protected override void UpdateNoteVisuals()
         {
-            base.UpdateInitialTransforms();
+            base.UpdateNoteVisuals();
+
             double animTime = AnimationDuration.Value * 0.8;
-            double fadeTime = AnimationDuration.Value * 0.2;
 
-            this.FadeInFromZero(fadeTime).ScaleTo(1);
+            float fadeProgress = Math.Clamp(Interpolation.ValueAt(Time.Current, 0f, 1f, HitObject.StartTime - AnimationDuration.Value, HitObject.StartTime - animTime), 0, 1);
 
-            using (BeginAbsoluteSequence(HitObject.StartTime - animTime))
-            {
-                TouchHoldBody.ResizeTo(80, animTime, Easing.InCirc);
-            }
-            using (BeginDelayedSequence(fadeTime + animTime))
-            {
-                TouchHoldBody.centrePiece.FadeOut();
-                TouchHoldBody.CompletedCentre.FadeIn();
-                TouchHoldBody.ProgressPiece.TransformBindableTo(TouchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
+            TouchHoldBody.Alpha = fadeProgress;
+            float animProgress = Math.Clamp(Interpolation.ValueAt(Time.Current, 0f, 1f, HitObject.StartTime - animTime, HitObject.StartTime, Easing.InCirc), 0, 1);
 
-                TouchHoldBody.TriggerHitFeedback();
-            }
+            // InCirc may return NaN, sanitise
+            if (animProgress is float.NaN)
+                animProgress = 1;
+
+            TouchHoldBody.Size = new(130 - 50 * animProgress);
+
+            TouchHoldBody.centrePiece.Alpha = animProgress == 1 ? 0 : 1;
+
+            TouchHoldBody.CompletedCentre.Alpha = 1 - TouchHoldBody.centrePiece.Alpha;
+
+            float progressFill = Math.Clamp(Interpolation.ValueAt(Time.Current, 0f, 1f, HitObject.StartTime, HitObject.GetEndTime()), 0, 1);
+            TouchHoldBody.ProgressPiece.ProgressBindable.Value = progressFill;
         }
 
         [Cached]

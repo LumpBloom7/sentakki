@@ -1,11 +1,6 @@
-using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Game.Rulesets.Judgements;
-using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Judgements;
 using osu.Game.Rulesets.Sentakki.UI;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
@@ -40,12 +35,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         [Resolved]
         protected DrawableSentakkiRuleset? DrawableSentakkiRuleset { get; private set; }
 
-        protected override void LoadAsyncComplete()
-        {
-            base.LoadAsyncComplete();
-            AnimationDuration.BindValueChanged(_ => queueTransformReset(), true);
-        }
-
         public Bindable<bool> ExBindable = new Bindable<bool>();
 
         protected override void OnApply()
@@ -65,26 +54,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void Update()
         {
             base.Update();
-
-            if (transformResetQueued) RefreshStateTransforms();
+            UpdateNoteVisuals();
         }
 
-        // We need to make sure the current transform resets, perhaps due to animation duration being changed
-        // We don't want to reset the transform of all DHOs immediately,
-        // since repeatedly resetting transforms of non-present DHO is wasteful
-        private void queueTransformReset()
-        {
-            transformResetQueued = true;
-            //LifetimeStart = HitObject.StartTime - InitialLifetimeOffset;
-        }
-
-        protected override void UpdateInitialTransforms()
-        {
-            // The transform is reset as soon as this function begins
-            // This includes the usual LoadComplete() call, or rewind resets
-            transformResetQueued = false;
-        }
-
-        private bool transformResetQueued;
+        protected virtual void UpdateNoteVisuals() { }
     }
 }
