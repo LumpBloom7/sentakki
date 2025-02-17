@@ -57,7 +57,8 @@ public partial class SentakkiBeatmapConverter
 
         bool tailBreak = nodeSamples.Last().Any(s => s.Name == HitSampleInfo.HIT_FINISH);
         bool headBreak = nodeSamples.First().Any(s => s.Name == HitSampleInfo.HIT_FINISH);
-        bool isSoft = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
+        bool headSoft = nodeSamples.First().Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
+        bool tailSoft = nodeSamples.Last().Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
 
         int endOffset = selectedPath.Sum(p => p.EndOffset);
 
@@ -72,6 +73,7 @@ public partial class SentakkiBeatmapConverter
                     SlidePathParts = selectedPath,
                     Duration = ((IHasDuration)original).Duration,
                     Break = tailBreak,
+                    Ex = tailSoft,
                     ShootDelay = 0.5f,
                 }
             },
@@ -79,7 +81,7 @@ public partial class SentakkiBeatmapConverter
             StartTime = original.StartTime,
             Samples = nodeSamples.FirstOrDefault(),
             Break = headBreak,
-            Ex = isSoft
+            Ex = headSoft
         };
 
         return (slide, end);
