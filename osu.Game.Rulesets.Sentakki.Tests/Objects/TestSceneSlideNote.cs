@@ -44,13 +44,13 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         public TestSceneSlideNote()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
-            Add(new SentakkiRing
-            {
-                RelativeSizeAxes = Axes.None,
-                Size = new Vector2(SentakkiPlayfield.RINGSIZE),
-                Rotation = -22.5f
-            });
-
+            /*         Add(new SentakkiRing
+                    {
+                        RelativeSizeAxes = Axes.None,
+                        Size = new Vector2(SentakkiPlayfield.RINGSIZE),
+                        Rotation = -22.5f
+                    });
+         */
             Add(chevronPool = new DrawablePool<SlideChevron>(62));
         }
 
@@ -83,18 +83,21 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                         SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Circle, 0, false) },
                         Duration = 1000,
                         Break = bodyBreak,
+                        Ex = bodyEx
                     },
                     new SlideBodyInfo
                     {
                         SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false) },
                         Duration = 1500,
                         Break = bodyBreak,
+                        Ex = bodyEx
                     },
                     new SlideBodyInfo
                     {
                         SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false) },
                         Duration = 2000,
                         Break = bodyBreak,
+                        Ex = bodyEx
                     }
                 },
                 StartTime = Time.Current + 1000,
@@ -147,6 +150,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                         },
                         Duration = duration,
                         Break = bodyBreak,
+                        Ex = bodyEx
                     },
                 },
                 StartTime = Time.Current + 1000,
@@ -200,6 +204,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                         },
                         Duration = duration,
                         Break = bodyBreak,
+                        Ex = bodyEx
                     },
                 },
                 StartTime = Time.Current + 1000,

@@ -1,11 +1,11 @@
 using System;
-using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
@@ -52,6 +52,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 
         [Resolved]
         private DrawablePool<SlideChevron>? chevronPool { get; set; }
+
+        [Resolved(canBeNull: true)]
+        private DrawableHitObject? drawableHitObject { get; set; }
 
         private Container<SlideChevron> chevrons = null!;
 
@@ -121,6 +124,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                     chevron.Thickness = 6.5f;
                     chevron.Height = 60;
                     chevron.FanChevron = false;
+                    chevron.Glow = ((DrawableSentakkiHitObject?)drawableHitObject)?.ExBindable.Value ?? false;
                     chevron.Width = 80;
                     chevrons.Add(chevron);
 
@@ -181,6 +185,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 chevron.Height = h + 30;
                 chevron.Thickness = t;
                 chevron.FanChevron = true;
+                chevron.Glow = ((DrawableSentakkiHitObject?)drawableHitObject)?.ExBindable.Value ?? false;
 
                 chevrons.Add(chevron);
             }
