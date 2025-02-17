@@ -1,5 +1,6 @@
 using System;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
@@ -64,13 +65,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 NoteBody = new HoldBody(),
                 headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
             });
+
+            NoteBody.IsHitting.BindTo(isHolding);
         }
 
-        protected override void OnApply()
+        public override void OnKilled()
         {
-            base.OnApply();
-            isHolding = false;
+            base.OnKilled();
+            isHolding.Value = false;
             timeNotHeld = 0;
+            NoteBody.Recycle();
         }
 
         protected override void UpdateInitialTransforms()
@@ -78,8 +82,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.UpdateInitialTransforms();
             double animTime = AnimationDuration.Value / 2;
             NoteBody.FadeInFromZero(animTime).ScaleTo(1, animTime);
-
-            NoteBody.FadeColour(AccentColour.Value);
 
             using (BeginDelayedSequence(animTime))
             {
@@ -97,8 +99,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         .Then().Delay(HitObject.Duration - stretchTime) // Wait until the end of the hold note, while considering how much time we need for shrinking
                         .ResizeHeightTo(0, stretchTime); // We shrink the hold note as it exits
 
-                if (isHolding == false && !Auto)
-                    NoteBody.Delay(animTime).FadeColour(Color4.Gray, 100);
+                // Safety to ensure note animations remain after note speed adjustments
+                using (BeginDelayedSequence(animTime))
+                    NoteBody.TriggerHitFeedback();
             }
         }
 
@@ -108,7 +111,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 if (timeOffset >= 0 && Auto)
                     ApplyResult(HitResult.Perfect);
-                else if (timeOffset > HitObject.HitWindows.WindowFor(HitResult.Perfect) && isHolding)
+                else if (timeOffset > HitObject.HitWindows.WindowFor(HitResult.Perfect) && isHolding.Value)
                     ApplyResult(applyDeductionTo(HitResult.Great));
                 else if (!HitObject.HitWindows.CanBeHit(timeOffset: timeOffset))
                     ApplyResult(Result.Judgement.MinResult);
@@ -147,7 +150,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (!Head.AllJudged)
                 return;
 
-            if (isHolding)
+            if (Auto && Time.Current >= HitObject.StartTime)
+                isHolding.Value = true;
+
+            if (isHolding.Value)
                 return;
 
             timeNotHeld += Time.Elapsed;
@@ -228,7 +234,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        private bool isHolding = false;
+        private BindableBool isHolding = new();
 
         public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)
         {
@@ -239,7 +245,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return false;
 
             // Passthrough excess inputs to later hitobjects in the same lane
-            if (isHolding)
+            if (isHolding.Value)
                 return false;
 
             double timeOffset = Time.Current - HitObject.StartTime;
@@ -248,15 +254,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return false;
 
             Head.UpdateResult();
-            isHolding = true;
-            NoteBody.FadeColour(AccentColour.Value, 50);
+            isHolding.Value = true;
             return true;
         }
 
         public void OnReleased(KeyBindingReleaseEvent<SentakkiAction> e)
         {
             if (AllJudged) return;
-            if (!isHolding) return;
+            if (!isHolding.Value) return;
 
             if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
                 return;
@@ -267,10 +272,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
 
             UpdateResult(true);
-            isHolding = false;
-
-            if (!AllJudged)
-                NoteBody.FadeColour(Color4.Gray, 100);
+            isHolding.Value = false;
         }
     }
 }

@@ -17,6 +17,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
+    [Cached]
     public partial class DrawableTouchHold : DrawableSentakkiHitObject
     {
         public new TouchHold HitObject => (TouchHold)base.HitObject;
@@ -86,6 +87,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         [Resolved]
         private OsuColour colours { get; set; } = null!;
+        protected override void OnApply()
+        {
+            base.OnApply();
+            AccentColour.Value = getCurrentHitResult().GetColorForSentakkiResult();
+            TouchHoldBody.Recycle();
+        }
 
         protected override void OnFree()
         {
@@ -113,9 +120,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 TouchHoldBody.centrePiece.FadeOut();
                 TouchHoldBody.CompletedCentre.FadeIn();
                 TouchHoldBody.ProgressPiece.TransformBindableTo(TouchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
+
+                TouchHoldBody.TriggerHitFeedback();
             }
         }
 
+        [Cached]
         private readonly Bindable<bool> isHitting = new Bindable<bool>();
 
         private double totalHoldTime;
@@ -132,27 +142,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             holdSample.Stop();
         }
 
-        protected override void Update()
+        private HitResult getCurrentHitResult()
         {
-            base.Update();
-
-            if (isHitting.Value)
-            {
-                totalHoldTime = Math.Clamp(totalHoldTime + Time.Elapsed, 0, ((IHasDuration)HitObject).Duration);
-                holdSample.Frequency.Value = 0.5 + (totalHoldTime / ((IHasDuration)HitObject).Duration);
-            }
-
-            isHitting.Value = Time.Current >= HitObject.StartTime
-                              && Time.Current <= HitObject.GetEndTime()
-                              && (Auto || checkForTouchInput() || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
-        }
-
-        protected override void CheckForResult(bool userTriggered, double timeOffset)
-        {
-            if (Time.Current < ((IHasDuration)HitObject).EndTime) return;
-
             double result = totalHoldTime / ((IHasDuration)HitObject).Duration;
-
             HitResult resultType;
 
             if (result >= .90)
@@ -165,6 +157,31 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 resultType = HitResult.Ok;
             else
                 resultType = HitResult.Miss;
+
+            return resultType;
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (isHitting.Value)
+            {
+                totalHoldTime = Math.Clamp(totalHoldTime + Time.Elapsed, 0, ((IHasDuration)HitObject).Duration);
+                holdSample.Frequency.Value = 0.5 + (totalHoldTime / ((IHasDuration)HitObject).Duration);
+                AccentColour.Value = colours.ForHitResult(getCurrentHitResult());
+            }
+
+            isHitting.Value = Time.Current >= HitObject.StartTime
+                              && Time.Current <= HitObject.GetEndTime()
+                              && (Auto || checkForTouchInput() || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
+        }
+
+        protected override void CheckForResult(bool userTriggered, double timeOffset)
+        {
+            if (Time.Current < ((IHasDuration)HitObject).EndTime) return;
+
+            var resultType = getCurrentHitResult();
 
             // This is specifically to accommodate the threshold setting in HR
             if (!HitObject.HitWindows.IsHitResultAllowed(resultType))
