@@ -25,7 +25,7 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
         }
     }
 
-    private float shadowRadius = 15f;
+    private float shadowRadius = 7.5f;
     public float ShadowRadius
     {
         get => shadowRadius;

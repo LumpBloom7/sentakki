@@ -28,6 +28,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             set => chevron.Glow = value;
         }
 
+        public float ShadowRadius
+        {
+            get => chevron.ShadowRadius;
+            set => chevron.ShadowRadius = value;
+        }
+
         public SlideChevron()
         {
             Anchor = Anchor.Centre;
