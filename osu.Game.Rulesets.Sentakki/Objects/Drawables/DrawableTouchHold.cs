@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -33,7 +34,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private PausableSkinnableSound holdSample = null!;
 
         [Cached]
-        private Bindable<Color4[]> colourPalette = new();
+        private Bindable<ReadOnlyCollection<Color4>> colourPalette = new();
 
         public DrawableTouchHold()
             : this(null)

@@ -1,10 +1,8 @@
+using System.Collections.ObjectModel;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.UserInterface;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
 using osuTK;
@@ -18,7 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
         public Container PieceContainer;
 
         [Resolved]
-        private Bindable<Color4[]> paletteBindable { get; set; } = null!;
+        private Bindable<ReadOnlyCollection<Color4>> paletteBindable { get; set; } = null!;
 
         private Container progressParts;
 

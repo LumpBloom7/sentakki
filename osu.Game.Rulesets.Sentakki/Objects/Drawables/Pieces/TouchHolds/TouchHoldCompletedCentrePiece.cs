@@ -1,10 +1,10 @@
+using System.Collections.ObjectModel;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.UserInterface;
-using osu.Game.Graphics;
 using osuTK;
 using osuTK.Graphics;
 
@@ -15,7 +15,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
         private CircularProgress[] progressParts;
 
         [Resolved]
-        private Bindable<Color4[]> paletteBindable { get; set; } = null!;
+        private Bindable<ReadOnlyCollection<Color4>> paletteBindable { get; set; } = null!;
 
         public TouchHoldCompletedCentre()
         {

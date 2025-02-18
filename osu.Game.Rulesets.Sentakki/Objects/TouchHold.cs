@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -26,10 +27,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             set { } // TouchHold doesn't support EX note (how would that even work?!)
         }
 
-        private HitObjectProperty<Color4[]> colourPalette = new(DefaultPalette);
-        public Bindable<Color4[]> ColourPaletteBindable => colourPalette.Bindable;
+        private HitObjectProperty<ReadOnlyCollection<Color4>> colourPalette = new(DefaultPalette);
+        public Bindable<ReadOnlyCollection<Color4>> ColourPaletteBindable => colourPalette.Bindable;
 
-        public Color4[] ColourPalette
+        public ReadOnlyCollection<Color4> ColourPalette
         {
             get => colourPalette.Value;
             set => colourPalette.Value = value;
@@ -55,25 +56,25 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     // Static stuff
     public partial class TouchHold : SentakkiHitObject, IHasDuration
     {
-        public static readonly Color4[] DefaultPalette;
-        public static readonly Color4[] BreakPalette;
+        public static readonly ReadOnlyCollection<Color4> DefaultPalette;
+        public static readonly ReadOnlyCollection<Color4> BreakPalette;
 
         static TouchHold()
         {
             OsuColour colours = new OsuColour();
-            DefaultPalette = [
+            DefaultPalette = new Color4[]{
                 colours.Red,
                 colours.Yellow,
                 colours.Green,
                 colours.Blue,
-            ];
+            }.AsReadOnly();
 
-            BreakPalette = [
+            BreakPalette = new Color4[]{
                 Color4.OrangeRed,
                 Colour4.FromHex("#802200"),
                 Color4.OrangeRed,
                 Colour4.FromHex("#802200"),
-            ];
+            }.AsReadOnly();
         }
     }
 }
