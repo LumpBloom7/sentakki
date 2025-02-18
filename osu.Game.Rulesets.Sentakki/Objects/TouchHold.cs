@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Bindables;
-using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Game.Audio;
 using osu.Game.Graphics;
@@ -71,9 +70,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             BreakPalette = [
                 Color4.OrangeRed,
-                Colour4.FromHex("#5F021F").Lighten(0.5f),
+                Colour4.FromHex("#802200"),
                 Color4.OrangeRed,
-                Colour4.FromHex("#5F021F").Lighten(0.5f),
+                Colour4.FromHex("#802200"),
             ];
         }
     }
