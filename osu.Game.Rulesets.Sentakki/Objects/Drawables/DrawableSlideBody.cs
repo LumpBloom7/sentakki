@@ -234,8 +234,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
             }
 
-
-
             var result = HitObject.HitWindows.ResultFor(timeOffset);
 
             // Give the player an OK for extremely early completion

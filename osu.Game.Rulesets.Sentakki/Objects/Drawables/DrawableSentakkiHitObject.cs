@@ -108,6 +108,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected new void ApplyResult(HitResult hitResult)
         {
+            // Apply Ex results if necessary
+            if (hitResult < HitResult.Perfect && HitObject.Ex && hitResult.IsHit())
+                hitResult = HitResult.Great;
+
             // Also give Break note score padding a judgement
             for (int i = 0; i < scorePaddingObjects.Count; ++i)
                 scorePaddingObjects[^(i + 1)].ApplyResult(hitResult);
