@@ -129,7 +129,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 default:
                     return base.CreateNestedHitObject(hitObject);
-
             }
         }
 
@@ -161,6 +160,5 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             ExBindable.UnbindFrom(HitObject.ExBindable);
             breakSample.ClearSamples();
         }
-
     }
 }

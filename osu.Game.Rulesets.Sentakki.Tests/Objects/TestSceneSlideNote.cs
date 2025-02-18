@@ -57,7 +57,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         [TestCaseSource(nameof(ObjectFlagsSource))]
         public void TestSlides(bool headBreak, bool headEX, bool bodyBreak, bool bodyEx)
         {
-
             AddStep("Miss Single", () => testSingle(2000, false, headBreak, headEX, bodyBreak, bodyEx));
             AddStep("Hit Single", () => testSingle(2000, true, headBreak, headEX, bodyBreak, bodyEx));
             AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject hitObject) && hitObject.AllJudged == false));

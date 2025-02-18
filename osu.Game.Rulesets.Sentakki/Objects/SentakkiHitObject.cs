@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json;
@@ -107,7 +107,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             public BreakSample(HitSampleInfo sampleInfo)
                 : base("spinnerbonus-max", sampleInfo.Bank, sampleInfo.Suffix, sampleInfo.Volume)
-
             {
             }
         }

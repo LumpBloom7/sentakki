@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -23,7 +23,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         public TestSceneHoldNote()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
-
         }
 
         public static bool[][] ObjectFlagsSource = [
