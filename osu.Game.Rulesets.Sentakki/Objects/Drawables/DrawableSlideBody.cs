@@ -265,11 +265,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                     this.FadeOut(time_fade_hit).Expire();
 
-
                     break;
 
                 case ArmedState.Miss:
                     Slidepath.PerformExitAnimation(time_fade_miss, Result.TimeAbsolute);
+
+                    foreach (var star in SlideStars)
+                        star.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                            .MoveToOffset(SentakkiExtensions.GetCircularPosition(100, star.Rotation), time_fade_miss, Easing.OutCubic);
+
                     this.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss).Expire();
                     break;
             }
