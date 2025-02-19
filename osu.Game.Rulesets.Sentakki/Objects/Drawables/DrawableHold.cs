@@ -67,13 +67,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             });
         }
 
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            AccentColour.BindValueChanged(c => flashingColour = AccentColour.Value.LightenHSL(0.3f), true);
+        }
+
+        private Color4 flashingColour = Color4.White;
+
         protected override void OnApply()
         {
             base.OnApply();
             timeNotHeld = 0;
             lastHoldTime = null;
         }
-
 
         private double timeNotHeld = 0;
         private double? lastHoldTime = null;
@@ -85,17 +92,25 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.Update();
 
             if (AllJudged)
+            {
+                // Remove alterations to NoteBody colour
+                NoteBody.Colour = AccentColour.Value;
                 return;
+            }
 
             // Ensure that the note colour is correct prior to the start time
             if (Time.Current < HitObject.StartTime)
             {
                 Colour = Color4.White;
+                NoteBody.Colour = AccentColour.Value;
                 return;
             }
 
             if (!lastHoldTime.HasValue && !Auto)
             {
+                // Remove alterations to NoteBody colour
+                NoteBody.Colour = AccentColour.Value;
+
                 // Grey the note to indicate that it isn't being held
                 Colour = Interpolation.ValueAt(
                     Math.Clamp(Time.Current, HitObject.StartTime, HitObject.StartTime + 100),
@@ -109,8 +124,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             // Restore colour if it is being held
             Colour = Color4.White;
-        }
 
+            const double flashing_time = 80;
+
+            double flashProg = (Time.Current % (flashing_time * 2)) / (flashing_time * 2);
+
+            NoteBody.Colour = Interpolation.ValueAt(flashProg, AccentColour.Value, flashingColour, 0, 0.5, Easing.OutSine);
+        }
 
         protected override void UpdateInitialTransforms()
         {
