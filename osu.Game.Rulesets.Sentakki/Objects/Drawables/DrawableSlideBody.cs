@@ -259,18 +259,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    // We choose the later time between HitStateUpdateTime and the earliest point the good window is valid.
-                    // This is to allow the stars to continue following the path, to indicate that the slide was completed way too early.
-                    double exitTransformStartTime = Math.Max(HitStateUpdateTime, HitObject.GetEndTime() - HitObject.HitWindows.WindowFor(HitResult.Good));
+                    Slidepath.PerformExitAnimation(time_fade_hit, HitStateUpdateTime);
+                    foreach (var star in SlideStars)
+                        star.FadeOut();
 
-                    Slidepath.PerformExitAnimation(time_fade_hit, exitTransformStartTime);
-                    using (BeginAbsoluteSequence(exitTransformStartTime))
-                    {
-                        foreach (var star in SlideStars)
-                            star.FadeOut(time_fade_hit);
+                    this.FadeOut(time_fade_hit).Expire();
 
-                        this.FadeOut(time_fade_hit).Expire();
-                    }
 
                     break;
 

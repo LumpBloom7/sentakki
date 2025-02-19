@@ -167,11 +167,27 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             if (!result.IsHit) return;
 
-            // We don't need an explosion for the slide body
-            if (judgedObject is DrawableSlideBody) return;
 
             if (judgedObject.HitObject.Kiai)
                 ring.KiaiBeat();
+
+            // Slide bodies can have multiple stars that may not be aligned to the laned end due to the player being able to complete it way ahead of time
+            // We should provide an explosion for each visible star, positioned to where the star was at the time of judgement
+            if (judgedObject is DrawableSlideBody sb)
+            {
+                bool allStarsVisible = sb.StarProgress < sb.HitObject.SlideBodyInfo.SlidePath.FanStartProgress;
+
+                for (int i = allStarsVisible ? 2 : 0; i < 3; ++i)
+                {
+                    var star = sb.SlideStars[i];
+                    var extraExplosion = explosionPool.Get().Apply(sentakkiHitObject);
+
+                    extraExplosion.Position = sb.ToSpaceOfOtherDrawable(star.Position, this) - OriginPosition;
+
+                    explosionLayer.Add(extraExplosion);
+                }
+                return;
+            }
 
             var explosion = explosionPool.Get().Apply(sentakkiHitObject);
             explosionLayer.Add(explosion);
