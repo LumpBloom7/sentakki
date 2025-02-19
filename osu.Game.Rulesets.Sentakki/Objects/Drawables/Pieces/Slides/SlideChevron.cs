@@ -58,7 +58,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         {
             // This is used to ensure that the chevrons transforms are reverted to the initial state.
             // TODO: Investigate what clears the transforms without rewinding them...
-            ApplyTransformsAt(double.MinValue, propagateChildren: true);
+            if (!RemoveCompletedTransforms)
+                ApplyTransformsAt(double.MinValue, propagateChildren: true);
             ClearTransformsAfter(double.MinValue, propagateChildren: true);
 
             base.FreeAfterUse();
