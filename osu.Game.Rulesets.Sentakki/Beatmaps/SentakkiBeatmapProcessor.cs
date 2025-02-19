@@ -39,7 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             foreach (var group in hitObjectGroups)
             {
-                bool isTwin = group.Count(canBeTwin) > 1; // This determines whether the twin colour should be used for eligible objects
+                bool isTwin = group.Count(countsForTwin) > 1; // This determines whether the twin colour should be used for eligible objects
 
                 foreach (SentakkiHitObject hitObject in group)
                 {
@@ -53,7 +53,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
                     if (hitObject is SentakkiLanedHitObject laned && laned.Break)
                         noteColor = breakColor;
-                    else if (isTwin && canBeTwin(hitObject))
+                    else if (isTwin)
                         noteColor = twinColor;
 
                     hitObject.NoteColour = noteColor;
@@ -88,7 +88,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             return false;
         }
 
-        private static bool canBeTwin(HitObject hitObject) => hitObject switch
+        private static bool countsForTwin(HitObject hitObject) => hitObject switch
         {
             Hold.HoldHead => false,
             TouchHold => false,
