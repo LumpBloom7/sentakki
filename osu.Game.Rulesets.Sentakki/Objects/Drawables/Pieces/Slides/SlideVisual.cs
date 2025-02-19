@@ -71,6 +71,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             });
         }
 
+        protected override void Update()
+        {
+            base.Update();
+
+            if (Time.Current < (drawableHitObject?.StartTimeBindable.Value ?? double.MinValue))
+                return;
+
+            if (drawableHitObject?.Result.HasResult ?? false)
+                return;
+
+            UpdateChevronVisibility();
+        }
+
         private void updateVisuals()
         {
             chevrons.Clear(false);
@@ -165,7 +178,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             {
                 float progress = (i + 2f) / 12f;
 
-                float scale = progress - ((1f) / 12f);
+                float scale = progress - (1f / 12f);
                 var middlePosition = lineStart + (middleLineDelta * progress);
 
                 float t = 6.5f + (2.5f * scale);
@@ -182,7 +195,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 
                 float w = (secondPoint - one).Length;
 
-                const float safe_space_ratio = (570 / 600f);
+                const float safe_space_ratio = 570 / 600f;
 
                 float y = safe_space_ratio * scale;
 
@@ -229,9 +242,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                     var chevron = chevrons[j];
                     chevron.FadeOut()
                            .Delay(currentOffset)
-                           .FadeIn(fadeDuration)
-                           // This finally clause ensures the chevron maintains the correct visibility state after a rewind
-                           .Finally(c => UpdateProgress(c));
+                           .FadeIn(fadeDuration);
 
                     currentOffset += offsetIncrement;
                 }
@@ -242,31 +253,32 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             }
         }
 
-        public void PerformExitAnimation(double duration)
+        public void PerformExitAnimation(double duration, double hitTime)
         {
-            bool found = false;
-            double fadeDuration = 0;
-            double currentOffset = 0;
-
-            for (int i = 0; i < chevrons.Count; ++i)
+            int i;
+            // First rehide any chevrons that are part of completed segments
+            // Required because the entry animation will unconditionally fade them back in, and Update() will not change anything post judgement
+            for (i = chevrons.Count - 1; i >= 0; --i)
             {
                 var chevron = chevrons[i];
+                if (chevron.DisappearThreshold > Progress)
+                    break;
 
-                if (chevron.DisappearThreshold <= Progress)
+                chevron.FadeOut();
+            }
+
+            double fadeoutOffset = 0;
+            double fadeoutDuration = duration / (i + 1);
+
+            using (BeginAbsoluteSequence(hitTime))
+            {
+                for (; i >= 0; --i)
                 {
-                    chevron.Alpha = 0;
-                    continue;
-                }
+                    var chevron = chevrons[i];
 
-                if (!found)
-                {
-                    found = true;
-                    fadeDuration = duration / (chevrons.Count - i);
-                    currentOffset = (fadeDuration / 2) * (chevrons.Count - i);
+                    chevron.FadeIn().Delay(fadeoutOffset).FadeOut(fadeoutDuration);
+                    fadeoutOffset += fadeoutDuration / 2;
                 }
-
-                chevron.FadeIn().Delay(currentOffset).FadeOut(fadeDuration);
-                currentOffset -= fadeDuration / 2;
             }
         }
 

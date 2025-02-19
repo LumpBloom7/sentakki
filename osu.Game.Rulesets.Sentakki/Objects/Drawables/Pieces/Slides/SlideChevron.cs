@@ -53,5 +53,15 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 Thickness = 6.5f
             });
         }
+
+        protected override void FreeAfterUse()
+        {
+            // This is used to ensure that the chevrons transforms are reverted to the initial state.
+            // TODO: Investigate what clears the transforms without rewinding them...
+            ApplyTransformsAt(double.MinValue, propagateChildren: true);
+            ClearTransformsAfter(double.MinValue, propagateChildren: true);
+
+            base.FreeAfterUse();
+        }
     }
 }

@@ -46,7 +46,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
         {
             base.LoadComplete();
 
-
             paletteBindable.BindValueChanged(p =>
             {
                 for (int i = 0; i < progressParts.Count; ++i)

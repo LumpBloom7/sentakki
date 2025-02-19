@@ -83,7 +83,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             TouchBody.FadeIn(fadeTime);
 
-            using (BeginAbsoluteSequence(HitObject.StartTime - animTime))
+            using (BeginDelayedSequence(fadeTime))
             {
                 TouchBody.ResizeTo(90, animTime, Easing.InCirc);
                 TouchBody.BorderContainer.Delay(animTime).FadeIn();

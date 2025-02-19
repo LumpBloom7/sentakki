@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
@@ -69,17 +70,53 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void OnApply()
         {
             base.OnApply();
-            isHolding = false;
             timeNotHeld = 0;
+            lastHoldTime = null;
         }
+
+
+        private double timeNotHeld = 0;
+        private double? lastHoldTime = null;
+
+        private bool isHolding => lastHoldTime != null;
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (AllJudged)
+                return;
+
+            // Ensure that the note colour is correct prior to the start time
+            if (Time.Current < HitObject.StartTime)
+            {
+                Colour = Color4.White;
+                return;
+            }
+
+            if (!lastHoldTime.HasValue && !Auto)
+            {
+                // Grey the note to indicate that it isn't being held
+                Colour = Interpolation.ValueAt(
+                    Math.Clamp(Time.Current, HitObject.StartTime, HitObject.StartTime + 100),
+                    Color4.White, Color4.SlateGray,
+                    HitObject.StartTime, HitObject.StartTime + 100, Easing.OutSine);
+
+                if (Head.AllJudged)
+                    timeNotHeld = Math.Clamp(timeNotHeld + Time.Elapsed, 0, HitObject.Duration);
+                return;
+            }
+
+            // Restore colour if it is being held
+            Colour = Color4.White;
+        }
+
 
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
             double animTime = AnimationDuration.Value / 2;
             NoteBody.FadeInFromZero(animTime).ScaleTo(1, animTime);
-
-            NoteBody.FadeColour(AccentColour.Value);
 
             using (BeginDelayedSequence(animTime))
             {
@@ -96,9 +133,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         .ResizeHeightTo(stretchAmount, stretchTime) // While we are moving, we stretch the hold note to match desired length
                         .Then().Delay(HitObject.Duration - stretchTime) // Wait until the end of the hold note, while considering how much time we need for shrinking
                         .ResizeHeightTo(0, stretchTime); // We shrink the hold note as it exits
-
-                if (isHolding == false && !Auto)
-                    NoteBody.Delay(animTime).FadeColour(Color4.Gray, 100);
             }
         }
 
@@ -133,21 +167,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                 return newResult;
             }
-        }
-
-        private double timeNotHeld = 0;
-
-        protected override void Update()
-        {
-            base.Update();
-
-            if (!Head.AllJudged)
-                return;
-
-            if (isHolding)
-                return;
-
-            timeNotHeld += Time.Elapsed;
         }
 
         protected override void UpdateHitStateTransforms(ArmedState state)
@@ -225,7 +244,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        private bool isHolding = false;
 
         public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)
         {
@@ -245,7 +263,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return false;
 
             Head.UpdateResult();
-            isHolding = true;
+            lastHoldTime = Time.Current;
             NoteBody.FadeColour(AccentColour.Value, 50);
             return true;
         }
@@ -264,7 +282,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
 
             UpdateResult(true);
-            isHolding = false;
+            lastHoldTime = null;
 
             if (!AllJudged)
                 NoteBody.FadeColour(Color4.Gray, 100);
