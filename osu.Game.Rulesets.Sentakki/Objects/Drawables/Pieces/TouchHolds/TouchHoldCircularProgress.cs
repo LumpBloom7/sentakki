@@ -20,7 +20,7 @@ public partial class TouchHoldCircularProgress : CircularProgress
         set
         {
             originalColour = value;
-            flashingColour = value.LightenHSL(0.3f);
+            flashingColour = value.LightenHSL(0.4f);
         }
     }
 

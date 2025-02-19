@@ -70,7 +70,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void LoadComplete()
         {
             base.LoadComplete();
-            AccentColour.BindValueChanged(c => flashingColour = AccentColour.Value.LightenHSL(0.3f), true);
+            AccentColour.BindValueChanged(c => flashingColour = AccentColour.Value.LightenHSL(0.4f), true);
         }
 
         private Color4 flashingColour = Color4.White;
@@ -129,7 +129,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             double flashProg = (Time.Current % (flashing_time * 2)) / (flashing_time * 2);
 
-            NoteBody.Colour = Interpolation.ValueAt(flashProg, AccentColour.Value, flashingColour, 0, 0.5, Easing.OutSine);
+            if (flashProg <= 0.5)
+                NoteBody.Colour = Interpolation.ValueAt(flashProg, AccentColour.Value, flashingColour, 0, 0.5, Easing.OutSine);
+            else
+                NoteBody.Colour = Interpolation.ValueAt(flashProg, flashingColour, AccentColour.Value, 0.5, 0, Easing.InSine);
         }
 
         protected override void UpdateInitialTransforms()
