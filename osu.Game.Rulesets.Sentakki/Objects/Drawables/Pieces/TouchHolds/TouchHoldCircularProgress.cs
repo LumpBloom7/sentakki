@@ -25,12 +25,13 @@ public partial class TouchHoldCircularProgress : CircularProgress
     }
 
     [Resolved]
-    private Bindable<bool> isHitting { get; set; } = new();
+    private Bindable<bool>? isHitting { get; set; }
+
     protected override void Update()
     {
         base.Update();
 
-        if (isHitting.Value)
+        if (isHitting?.Value ?? false)
         {
             const double flashing_time = 80;
 

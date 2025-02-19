@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
         private TouchHoldCircularProgress[] progressParts;
 
         [Resolved]
-        private Bindable<IReadOnlyList<Color4>> paletteBindable { get; set; } = null!;
+        private Bindable<IReadOnlyList<Color4>>? paletteBindable { get; set; } = null!;
 
         public TouchHoldCompletedCentre()
         {
@@ -86,7 +86,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
         {
             base.LoadComplete();
 
-            paletteBindable.BindValueChanged(p =>
+            paletteBindable?.BindValueChanged(p =>
             {
                 for (int i = 0; i < progressParts.Length; ++i)
                     progressParts[i].AccentColour = paletteBindable.Value[i];
