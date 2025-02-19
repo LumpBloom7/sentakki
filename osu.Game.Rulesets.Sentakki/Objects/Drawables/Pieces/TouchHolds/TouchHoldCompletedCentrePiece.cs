@@ -4,7 +4,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
-using osu.Framework.Graphics.UserInterface;
 using osuTK;
 using osuTK.Graphics;
 
@@ -12,7 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
 {
     public partial class TouchHoldCompletedCentre : CompositeDrawable
     {
-        private CircularProgress[] progressParts;
+        private TouchHoldCircularProgress[] progressParts;
 
         [Resolved]
         private Bindable<IReadOnlyList<Color4>> paletteBindable { get; set; } = null!;
@@ -32,8 +31,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                 Colour = Color4.Black,
                 Radius = 10f,
             };
-            InternalChildren = new Drawable[]
-            {
+            InternalChildren =
+            [
                 new Container
                 {
                     Origin = Anchor.Centre,
@@ -43,45 +42,44 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                     Rotation = -45f,
                     Children = progressParts =
                     [
-                        new CircularProgress
+                        new TouchHoldCircularProgress
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             InnerRadius = 1,
-                            Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Progress = 1,
+                            Progress = 0.25,
                         },
-                        new CircularProgress
+                        new TouchHoldCircularProgress
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             InnerRadius = 1,
-                            Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Progress = 0.75 ,
+                            Progress = 0.25,
+                            Rotation = 90
                         },
-                        new CircularProgress
+                        new TouchHoldCircularProgress
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             InnerRadius = 1,
-                            Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Progress = 0.5 ,
+                            Progress = 0.25,
+                            Rotation = 180
                         },
-                        new CircularProgress
+                        new TouchHoldCircularProgress
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             InnerRadius = 1,
-                            Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
-                            Progress = 0.25 ,
+                            Progress = 0.25,
+                            Rotation = 270
                         },
                     ]
                 },
-            };
+            ];
         }
 
         protected override void LoadComplete()
@@ -91,7 +89,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
             paletteBindable.BindValueChanged(p =>
             {
                 for (int i = 0; i < progressParts.Length; ++i)
-                    progressParts[i].Colour = p.NewValue[^(i + 1)];
+                    progressParts[i].AccentColour = paletteBindable.Value[i];
             }, true);
         }
     }

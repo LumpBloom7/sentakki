@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
-using osu.Framework.Audio;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
@@ -126,6 +125,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             TouchHoldBody.ProgressPiece.TransformBindableTo(TouchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
         }
 
+        [Cached]
         private readonly Bindable<bool> isHitting = new Bindable<bool>();
 
         private double totalHoldTime;
@@ -147,6 +147,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void Update()
         {
             base.Update();
+
+            if (AllJudged) return;
 
             isHitting.Value = Time.Current >= HitObject.StartTime
                               && Time.Current <= HitObject.GetEndTime()
