@@ -1,5 +1,4 @@
 using System;
-using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -8,7 +7,6 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Transforms;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.UI;
 using osuTK;
 using osuTK.Graphics;
 
@@ -23,9 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         private const float default_explosion_size = 75;
         private const float touch_hold_explosion_size = 100;
 
-        public HitExplosion() : this(false) { }
-
-        public HitExplosion(bool forTouch = false)
+        public HitExplosion()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
@@ -34,9 +30,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             Alpha = 0;
             InternalChildren =
             [
-                visual = new HitExplosionContainer(){
-                    Circular = !forTouch
-                },
+                visual = new HitExplosionContainer()
             ];
 
             borderRatio.BindValueChanged(setBorderThiccness, true);
@@ -104,22 +98,9 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             return sequence;
         }
 
-        [Resolved(canBeNull: true)]
-        private SentakkiPlayfield? playfield { get; set; }
-
-        public void ManualExplode(double progress)
-        {
-            if (!playfield?.DisplayJudgements.Value ?? false)
-                return;
-
-            Alpha = (float)(0.8f * (1 - progress));
-            borderRatio.Value = (float)(1 * (1 - progress));
-            Scale = new Vector2((float)(1 + progress));
-        }
-
         private partial class HitExplosionContainer : Container
         {
-            public bool Circular { get; set; }
+            public bool Circular { get; set; } = true;
 
             public HitExplosionContainer()
             {

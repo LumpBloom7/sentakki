@@ -167,7 +167,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             if (!result.IsHit) return;
 
-
             if (judgedObject.HitObject.Kiai)
                 ring.KiaiBeat();
 

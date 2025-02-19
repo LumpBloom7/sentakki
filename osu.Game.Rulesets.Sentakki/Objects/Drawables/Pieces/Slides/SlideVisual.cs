@@ -270,15 +270,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             double fadeoutOffset = 0;
             double fadeoutDuration = duration / (i + 1);
 
-            using (BeginAbsoluteSequence(hitTime))
+            for (; i >= 0; --i)
             {
-                for (; i >= 0; --i)
-                {
-                    var chevron = chevrons[i];
+                var chevron = chevrons[i];
 
-                    chevron.FadeIn().Delay(fadeoutOffset).FadeOut(fadeoutDuration);
-                    fadeoutOffset += fadeoutDuration / 2;
-                }
+                chevron.FadeIn().Delay(fadeoutOffset).FadeOut(fadeoutDuration);
+                fadeoutOffset += fadeoutDuration / 2;
             }
         }
 
