@@ -49,7 +49,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
-
+                ShadowRadius = 15,
                 Thickness = 6.5f
             });
         }
