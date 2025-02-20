@@ -261,9 +261,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 case ArmedState.Hit:
                     Slidepath.PerformExitAnimation(time_fade_hit, HitStateUpdateTime);
                     foreach (var star in SlideStars)
-                        star.FadeOut();
+                        star.FadeOut(time_fade_hit);
 
-                    this.FadeOut(time_fade_hit).Expire();
+                    this.Delay(time_fade_hit).Expire();
 
                     break;
 
