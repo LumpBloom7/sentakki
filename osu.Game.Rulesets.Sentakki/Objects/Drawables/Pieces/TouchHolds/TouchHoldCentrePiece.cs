@@ -1,9 +1,8 @@
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
 using osuTK;
 using osuTK.Graphics;
@@ -12,11 +11,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
 {
     public partial class TouchHoldCentrePiece : CompositeDrawable
     {
-        private readonly OsuColour colours = new OsuColour();
         public Container PieceContainer;
 
         [Resolved]
-        private Bindable<ReadOnlyCollection<Color4>> paletteBindable { get; set; } = null!;
+        private Bindable<IReadOnlyList<Color4>> paletteBindable { get; set; } = null!;
 
         private Container progressParts;
 

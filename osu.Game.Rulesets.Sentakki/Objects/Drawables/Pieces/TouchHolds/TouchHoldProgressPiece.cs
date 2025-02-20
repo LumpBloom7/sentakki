@@ -1,5 +1,5 @@
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
         private CircularProgress[] progressParts;
 
         [Resolved]
-        private Bindable<ReadOnlyCollection<Color4>> paletteBindable { get; set; } = null!;
+        private Bindable<IReadOnlyList<Color4>> paletteBindable { get; set; } = null!;
 
         public TouchHoldProgressPiece()
         {
