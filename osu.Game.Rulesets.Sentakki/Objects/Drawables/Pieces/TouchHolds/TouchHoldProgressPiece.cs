@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
-using osu.Game.Graphics;
 using osuTK;
 using osuTK.Graphics;
 
@@ -13,14 +14,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
     {
         public BindableDouble ProgressBindable = new BindableDouble();
 
+        private CircularProgress[] progressParts;
+
+        [Resolved]
+        private Bindable<IReadOnlyList<Color4>> paletteBindable { get; set; } = null!;
+
         public TouchHoldProgressPiece()
         {
-            CircularProgress blueProgress;
-            CircularProgress greenProgress;
-            CircularProgress yellowProgress;
-            CircularProgress redProgress;
-
-            OsuColour colours = new OsuColour();
             Origin = Anchor.Centre;
             Anchor = Anchor.Centre;
             Masking = true;
@@ -30,8 +30,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
             Size = new Vector2(110);
             CornerRadius = 27.5f;
             Rotation = 45;
-            InternalChildren = new Drawable[]
-            {
+            InternalChildren =
+            [
                 new Container
                 {
                     Origin = Anchor.Centre,
@@ -39,9 +39,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                     RelativeSizeAxes = Axes.Both,
                     Size = new Vector2(2),
                     Rotation = -45f,
-                    Children = new Drawable[]
-                    {
-                        blueProgress = new CircularProgress
+                    Children = progressParts = [
+                        new CircularProgress
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
@@ -49,9 +48,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
                             Progress = 0,
-                            Colour = colours.Blue
                         },
-                        greenProgress = new CircularProgress
+                        new CircularProgress
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
@@ -59,9 +57,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
                             Progress = 0,
-                            Colour = colours.Green
                         },
-                        yellowProgress = new CircularProgress
+                        new CircularProgress
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
@@ -69,9 +66,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
                             Progress = 0,
-                            Colour = colours.Yellow,
                         },
-                        redProgress = new CircularProgress
+                        new CircularProgress
                         {
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
@@ -79,19 +75,27 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
                             Progress = 0,
-                            Colour = colours.Red,
-                        },
-                    }
+                        }
+                    ]
                 }
-            };
+            ];
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
 
             ProgressBindable.BindValueChanged(p =>
             {
-                redProgress.Progress = Math.Min(p.NewValue, .25);
-                yellowProgress.Progress = Math.Min(p.NewValue, .50);
-                greenProgress.Progress = Math.Min(p.NewValue, .75);
-                blueProgress.Progress = p.NewValue;
-            });
+                for (int i = 0; i < progressParts.Length; ++i)
+                    progressParts[^(i + 1)].Progress = Math.Min(p.NewValue, 0.25 * (i + 1));
+            }, true);
+
+            paletteBindable.BindValueChanged(p =>
+            {
+                for (int i = 0; i < progressParts.Length; ++i)
+                    progressParts[i].Colour = p.NewValue[^(i + 1)];
+            }, true);
         }
     }
 }

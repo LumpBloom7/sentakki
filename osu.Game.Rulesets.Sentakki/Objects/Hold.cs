@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Hold : SentakkiLanedHitObject, IHasDuration
     {
-        protected override bool NeedBreakSample => false;
+        protected override bool PlaysBreakSample => false;
 
         private IList<IList<HitSampleInfo>> nodeSamples = new List<IList<HitSampleInfo>>();
 
@@ -41,8 +41,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 Break = Break,
                 StartTime = StartTime,
                 Lane = Lane,
-                Samples = nodeSamples.Any() ? nodeSamples.First() : new List<HitSampleInfo>(),
-                ColourBindable = ColourBindable.GetBoundCopy(),
+                Samples = nodeSamples.Any() ? nodeSamples.First() : [],
                 Ex = Ex
             });
 

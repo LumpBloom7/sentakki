@@ -1,12 +1,11 @@
-using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Game.Rulesets.Judgements;
+using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Judgements;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Skinning;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
@@ -27,6 +26,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override float SamplePlaybackPosition => (Position.X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)) + 0.5f;
 
+        private Container<DrawableScorePaddingObject> scorePaddingObjects = null!;
+        private PausableSkinnableSound breakSample = null!;
+
         public DrawableSentakkiHitObject()
             : this(null)
         {
@@ -35,6 +37,30 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableSentakkiHitObject(SentakkiHitObject? hitObject = null)
             : base(hitObject!)
         {
+            AddRangeInternal([
+                scorePaddingObjects = new Container<DrawableScorePaddingObject>(),
+                breakSample = new PausableSkinnableSound()
+            ]);
+        }
+
+        protected override void LoadSamples()
+        {
+            base.LoadSamples();
+
+            LoadBreakSamples();
+        }
+
+        public void LoadBreakSamples()
+        {
+            breakSample.Samples = HitObject.CreateBreakSample();
+        }
+
+        public override void PlaySamples()
+        {
+            base.PlaySamples();
+
+            breakSample.Balance.Value = CalculateSamplePlaybackBalance(SamplePlaybackPosition);
+            breakSample.Play();
         }
 
         [Resolved]
@@ -55,12 +81,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             ExBindable.BindTo(HitObject.ExBindable);
         }
 
-        protected override void OnFree()
-        {
-            base.OnFree();
-            AccentColour.UnbindFrom(HitObject.ColourBindable);
-            ExBindable.UnbindFrom(HitObject.ExBindable);
-        }
+        private bool transformResetQueued;
 
         protected override void Update()
         {
@@ -85,6 +106,59 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             transformResetQueued = false;
         }
 
-        private bool transformResetQueued;
+        protected new void ApplyResult(HitResult hitResult)
+        {
+            // Apply Ex results if necessary
+            if (hitResult < HitResult.Perfect && HitObject.Ex && hitResult.IsHit())
+                hitResult = HitResult.Great;
+
+            // Also give Break note score padding a judgement
+            for (int i = 0; i < scorePaddingObjects.Count; ++i)
+                scorePaddingObjects[^(i + 1)].ApplyResult(hitResult);
+
+            base.ApplyResult(hitResult);
+        }
+
+        protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
+        {
+            switch (hitObject)
+            {
+                case ScorePaddingObject p:
+                    return new DrawableScorePaddingObject(p);
+
+
+                default:
+                    return base.CreateNestedHitObject(hitObject);
+            }
+        }
+
+        protected override void AddNestedHitObject(DrawableHitObject hitObject)
+        {
+            switch (hitObject)
+            {
+                case DrawableScorePaddingObject p:
+                    scorePaddingObjects.Add(p);
+                    break;
+
+
+                default:
+                    base.AddNestedHitObject(hitObject);
+                    break;
+            }
+        }
+
+        protected override void ClearNestedHitObjects()
+        {
+            base.ClearNestedHitObjects();
+            scorePaddingObjects.Clear(false);
+        }
+
+        protected override void OnFree()
+        {
+            base.OnFree();
+            AccentColour.UnbindFrom(HitObject.ColourBindable);
+            ExBindable.UnbindFrom(HitObject.ExBindable);
+            breakSample.ClearSamples();
+        }
     }
 }

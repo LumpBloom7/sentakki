@@ -1,8 +1,10 @@
+using System.Collections.Generic;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.UserInterface;
-using osu.Game.Graphics;
 using osuTK;
 using osuTK.Graphics;
 
@@ -10,7 +12,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
 {
     public partial class TouchHoldCompletedCentre : CompositeDrawable
     {
-        private readonly OsuColour colours = new OsuColour();
+        private CircularProgress[] progressParts;
+
+        [Resolved]
+        private Bindable<IReadOnlyList<Color4>> paletteBindable { get; set; } = null!;
 
         public TouchHoldCompletedCentre()
         {
@@ -36,8 +41,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                     RelativeSizeAxes = Axes.Both,
                     Size = new Vector2(2),
                     Rotation = -45f,
-                    Children = new Drawable[]
-                    {
+                    Children = progressParts =
+                    [
                         new CircularProgress
                         {
                             Anchor = Anchor.Centre,
@@ -46,7 +51,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
                             Progress = 1,
-                            Colour = colours.Blue
                         },
                         new CircularProgress
                         {
@@ -56,7 +60,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
                             Progress = 0.75 ,
-                            Colour = colours.Green
                         },
                         new CircularProgress
                         {
@@ -66,7 +69,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
                             Progress = 0.5 ,
-                            Colour = colours.Yellow,
                         },
                         new CircularProgress
                         {
@@ -76,11 +78,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                             Size = Vector2.One,
                             RelativeSizeAxes = Axes.Both,
                             Progress = 0.25 ,
-                            Colour = colours.Red,
                         },
-                    }
+                    ]
                 },
             };
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            paletteBindable.BindValueChanged(p =>
+            {
+                for (int i = 0; i < progressParts.Length; ++i)
+                    progressParts[i].Colour = p.NewValue[^(i + 1)];
+            }, true);
         }
     }
 }

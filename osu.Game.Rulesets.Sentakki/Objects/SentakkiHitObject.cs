@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
@@ -16,37 +17,99 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public abstract class SentakkiHitObject : HitObject
     {
+        public int ScoreWeighting => Break ? 5 : BaseScoreWeighting;
+
+        protected virtual int BaseScoreWeighting => 1;
+
+        protected virtual bool PlaysBreakSample => true;
+
+        private HitObjectProperty<bool> breakState;
+
+        public Bindable<bool> BreakBindable => breakState.Bindable;
+
+        public bool Break
+        {
+            get => breakState.Value;
+            set => breakState.Value = value;
+        }
+
         protected SentakkiHitObject()
         {
             // We initialize the note colour to the default value first for test scenes
             // The colours during gameplay will be set during beatmap post-process
-            ColourBindable.Value = DefaultNoteColour;
+            colour.Value = DefaultNoteColour;
         }
 
         public override Judgement CreateJudgement() => new SentakkiJudgement();
 
+        private HitObjectProperty<Color4> colour;
+
         [JsonIgnore]
-        public Bindable<Color4> ColourBindable = new Bindable<Color4>();
+        public Bindable<Color4> ColourBindable => colour.Bindable;
 
         [JsonIgnore]
         public Color4 NoteColour
         {
-            get => ColourBindable.Value;
-            set => ColourBindable.Value = value;
+            get => colour.Value;
+            set => colour.Value = value;
         }
 
-        public Bindable<bool> ExBindable = new Bindable<bool>();
+        private HitObjectProperty<bool> exState;
 
-        public bool Ex
+        public Bindable<bool> ExBindable => exState.Bindable;
+
+        public virtual bool Ex
         {
-            get => ExBindable.Value;
-            set => ExBindable.Value = value;
+            get => exState.Value;
+            set => exState.Value = value;
         }
 
         [JsonIgnore]
         public virtual Color4 DefaultNoteColour => Color4Extensions.FromHex("FF0064");
 
         protected override HitWindows CreateHitWindows() => new SentakkiTapHitWindows();
+
+        protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
+        {
+            base.CreateNestedHitObjects(cancellationToken);
+
+            for (int i = 1; i < ScoreWeighting; ++i)
+                AddNested(new ScorePaddingObject { StartTime = this.GetEndTime() });
+        }
+
+        public HitSampleInfo[] CreateBreakSample()
+        {
+            if (!PlaysBreakSample || !Break)
+                return Array.Empty<HitSampleInfo>();
+
+            return new[]
+            {
+                new BreakSample( CreateHitSampleInfo())
+            };
+        }
+
+        public override IList<HitSampleInfo> AuxiliarySamples =>
+            (Break && PlaysBreakSample) ? [new BreakSample(CreateHitSampleInfo())] : [];
+
+        public class BreakSample : HitSampleInfo
+        {
+            public override IEnumerable<string> LookupNames
+            {
+                get
+                {
+                    foreach (string name in base.LookupNames)
+                        yield return name;
+
+                    foreach (string name in base.LookupNames)
+                        yield return name.Replace("-max", string.Empty);
+                }
+            }
+
+            public BreakSample(HitSampleInfo sampleInfo)
+                : base("spinnerbonus-max", sampleInfo.Bank, sampleInfo.Suffix, sampleInfo.Volume)
+            {
+            }
+        }
 
         // This special hitsample is used for Sentakki specific samples, with doesn't have bank specific variants
         public class SentakkiHitSampleInfo : HitSampleInfo, IEquatable<SentakkiHitSampleInfo>

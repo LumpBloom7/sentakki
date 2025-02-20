@@ -120,9 +120,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (result == HitResult.None)
                 return;
 
-            if (result < HitResult.Perfect && HitObject.Ex && result.IsHit())
-                result = HitResult.Great;
-
             ApplyResult(applyDeductionTo(result));
 
             HitResult applyDeductionTo(HitResult originalResult)
