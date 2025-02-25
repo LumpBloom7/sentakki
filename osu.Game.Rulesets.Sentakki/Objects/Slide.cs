@@ -32,7 +32,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
                 return max;
             }
-            set => throw new NotSupportedException();
+            set
+            {
+                if (Duration == 0)
+                {
+                    foreach (var slide in SlideInfoList)
+                        slide.Duration = value;
+
+                    return;
+                }
+
+                double ratio = value / Duration;
+
+                foreach (var slide in SlideInfoList)
+                    slide.Duration *= ratio;
+            }
         }
 
         public TapTypeEnum TapType = TapTypeEnum.Star;
