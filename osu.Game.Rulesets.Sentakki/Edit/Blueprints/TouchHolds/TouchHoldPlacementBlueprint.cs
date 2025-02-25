@@ -39,7 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
 
         private double originalStartTime;
 
-        public override void UpdateTimeAndPosition(SnapResult result)
+        public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double fallbackTime)
         {
             if (PlacementActive == PlacementState.Active)
             {
@@ -54,6 +54,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
                 if (EditorClock.CurrentTime is double startTime)
                     originalStartTime = HitObject.StartTime = startTime;
             }
+
+            return new SnapResult(screenSpacePosition, fallbackTime);
         }
     }
 }

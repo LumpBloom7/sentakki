@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Pooling;
+using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
@@ -18,6 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 {
     public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
     {
+        public new SentakkiHitObjectComposer Composer => (SentakkiHitObjectComposer)base.Composer;
         public SentakkiBlueprintContainer(HitObjectComposer composer)
             : base(composer)
         {
@@ -29,18 +31,23 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
         protected override SelectionHandler<HitObject> CreateSelectionHandler() => new SentakkiSelectionHandler();
 
-        protected override bool ApplySnapResult(SelectionBlueprint<HitObject>[] blueprints, SnapResult result)
+        protected override bool TryMoveBlueprints(DragEvent e, IList<(SelectionBlueprint<HitObject> blueprint, Vector2[] originalSnapPositions)> blueprints)
         {
-            var sentakkiPlayfield = ((SentakkiHitObjectComposer)Composer).Playfield;
+            var sentakkiPlayfield = Composer.Playfield;
+            Vector2 distanceTravelled = e.ScreenSpaceMousePosition - e.ScreenSpaceMouseDownPosition;
 
-            if (!base.ApplySnapResult(blueprints, result))
-                return false;
+            // The final movement position, relative to movementBlueprintOriginalPosition.
+            Vector2 movePosition = blueprints.First().originalSnapPositions.First() + distanceTravelled;
+            SnapResult senSnapResult = Composer.FindSnappedPositionAndTime(movePosition);
 
-            if (blueprints.All(b => b.Item is SentakkiLanedHitObject))
+            var referenceBlueprint = blueprints.First().blueprint;
+            bool moved = SelectionHandler.HandleMovement(new MoveSelectionEvent<HitObject>(referenceBlueprint, senSnapResult.ScreenSpacePosition - referenceBlueprint.ScreenSpaceSelectionPoint));
+            if (moved)
+                ApplySnapResultTime(senSnapResult, referenceBlueprint.Item.StartTime);
+
+            if (blueprints.All(b => b.blueprint.Item is SentakkiLanedHitObject))
             {
-                SentakkiLanedSnapResult senSnapResult = (SentakkiLanedSnapResult)result;
-
-                int offset = senSnapResult.Lane - ((SentakkiLanedHitObject)blueprints.First().Item).Lane;
+                int offset = ((SentakkiLanedSnapResult)senSnapResult).Lane - ((SentakkiLanedHitObject)blueprints.First().blueprint.Item).Lane;
                 if (offset != 0)
                 {
                     Beatmap.PerformOnSelection(ho =>

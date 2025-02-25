@@ -28,6 +28,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         [Resolved]
         private SlideEditorToolboxGroup slidePlacementToolbox { get; set; } = null!;
 
+        [Resolved]
+        private SentakkiHitObjectComposer composer { get; set; } = null!;
+
+
         public SlidePlacementBlueprint()
         {
             AddRangeInternal(new Drawable[]
@@ -162,10 +166,12 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         private double originalStartTime;
 
-        public override void UpdateTimeAndPosition(SnapResult result)
+        public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double fallbackTime)
         {
+            var result = composer?.FindSnappedPositionAndTime(screenSpacePosition) ?? new SnapResult(screenSpacePosition, fallbackTime);
+
             if (result is not SentakkiLanedSnapResult senRes)
-                return;
+                return result;
 
             if (PlacementActive == PlacementState.Active)
             {
@@ -178,7 +184,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                 var localSpacePointerCoord = ToLocalSpace(result.ScreenSpacePosition);
 
                 if ((localSpacePointerCoord - OriginPosition).LengthSquared > 400 * 400)
-                    return;
+                    return result;
 
                 int newPo = (senRes.Lane - currentLaneOffset - HitObject.Lane).NormalizePath();
 
@@ -190,13 +196,15 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             }
             else
             {
-                base.UpdateTimeAndPosition(result);
+                base.UpdateTimeAndPosition(screenSpacePosition, fallbackTime);
 
                 HitObject.Lane = senRes.Lane;
 
                 if (result.Time is double startTime)
                     originalStartTime = HitObject.StartTime = startTime;
             }
+
+            return result;
         }
 
         private void commitCurrentPart()

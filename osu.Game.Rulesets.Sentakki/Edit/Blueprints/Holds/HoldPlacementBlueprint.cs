@@ -5,6 +5,7 @@ using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
+using osuTK;
 using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
@@ -13,6 +14,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
     {
         protected override bool IsValidForPlacement => HitObject.Duration > 0;
         private readonly HoldHighlight highlight;
+
+        [Resolved]
+        private SentakkiHitObjectComposer composer { get; set; } = null!;
 
         public HoldPlacementBlueprint()
         {
@@ -56,12 +60,14 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
 
         private double originalStartTime;
 
-        public override void UpdateTimeAndPosition(SnapResult result)
+        public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double fallbackTime)
         {
-            base.UpdateTimeAndPosition(result);
+            var result = composer?.FindSnappedPositionAndTime(screenSpacePosition) ?? new SnapResult(screenSpacePosition, fallbackTime);
+
+            base.UpdateTimeAndPosition(result.ScreenSpacePosition, result.Time ?? fallbackTime);
 
             if (result is not SentakkiLanedSnapResult senRes)
-                return;
+                return result;
 
             if (PlacementActive == PlacementState.Active)
             {
@@ -77,6 +83,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
                 if (result.Time is double startTime)
                     originalStartTime = HitObject.StartTime = startTime;
             }
+
+            return result;
         }
     }
 }

@@ -1,3 +1,4 @@
+using osu.Framework.Allocation;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -9,6 +10,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches
     public partial class TouchPlacementBlueprint : SentakkiPlacementBlueprint<Touch>
     {
         private readonly TouchHighlight highlight;
+
+        [Resolved]
+        private SentakkiHitObjectComposer composer { get; set; } = null!;
 
         public TouchPlacementBlueprint()
         {
@@ -29,9 +33,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches
             return true;
         }
 
-        public override void UpdateTimeAndPosition(SnapResult result)
+        public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double fallbackTime)
         {
-            base.UpdateTimeAndPosition(new SnapResult(Vector2.Zero, null));
+            var result = composer?.FindSnappedPositionAndTime(screenSpacePosition) ?? new SnapResult(screenSpacePosition, fallbackTime);
+
+            base.UpdateTimeAndPosition(result.ScreenSpacePosition, result.Time ?? fallbackTime);
 
             var newPosition = ToLocalSpace(result.ScreenSpacePosition) - OriginPosition;
 
@@ -42,6 +48,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches
             }
 
             HitObject.Position = newPosition;
+
+            return result;
         }
     }
 }

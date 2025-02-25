@@ -14,6 +14,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit
 {
+    [Cached]
     public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitObject>
     {
         [Cached]
@@ -47,9 +48,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                     .Concat(snapProvider.CreateTernaryButtons());
 
 
-        public override SnapResult FindSnappedPositionAndTime(Vector2 screenSpacePosition, SnapType snapType = SnapType.All)
+        public SnapResult FindSnappedPositionAndTime(Vector2 screenSpacePosition)
             => snapProvider.GetSnapResult(screenSpacePosition);
-
 
         protected override ComposeBlueprintContainer CreateBlueprintContainer() => new SentakkiBlueprintContainer(this);
 
