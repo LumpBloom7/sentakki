@@ -15,6 +15,9 @@ namespace osu.Game.Rulesets.Sentakki.Localisation.Mods
 
         public static LocalisableString RevolutionDurationDescription => new TranslatableString(getKey(@"revolution_duration_description"), @"The duration in seconds to complete a revolution.");
 
+        public static LocalisableString RevolutionDurationTooltip(int seconds)
+            => new TranslatableString(getKey(@"entry_speed_tooltip"), @"{0}s", seconds);
+
         private static string getKey(string key) => $"{prefix}:{key}";
     }
 }

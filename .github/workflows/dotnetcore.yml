@@ -13,7 +13,11 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
+    - name: Install .NET 8.0.x
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: "8.0.x"
     - name: Build with .NET
       run: dotnet build
     - name: Unit Tests

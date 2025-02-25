@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using osu.Framework.Bindables;
 using osu.Game.Audio;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
@@ -12,6 +13,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Slide : SentakkiLanedHitObject, IHasDuration
     {
+        public enum TapTypeEnum
+        {
+            Star,
+            Tap,
+            None,
+        }
+
         protected override bool NeedBreakSample => false;
 
         public double Duration
@@ -41,26 +49,31 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             }
         }
 
+        public TapTypeEnum TapType = TapTypeEnum.Star;
+
         public double EndTime => StartTime + Duration;
 
         public override Color4 DefaultNoteColour => Color4.Aqua;
-
         public List<SlideBodyInfo> SlideInfoList = new List<SlideBodyInfo>();
 
-        public SlideTap SlideTap { get; private set; } = null!;
+        public Tap SlideTap { get; private set; } = null!;
 
         public IList<SlideBody> SlideBodies { get; private set; } = null!;
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
-            AddNested(SlideTap = new SlideTap
+            if (TapType is not TapTypeEnum.None)
             {
-                LaneBindable = { BindTarget = LaneBindable },
-                StartTime = StartTime,
-                Samples = Samples,
-                Break = Break,
-                Ex = Ex
-            });
+                Tap tap = SlideTap = TapType is TapTypeEnum.Tap ? new Tap() : new SlideTap();
+                tap.LaneBindable.BindTarget = LaneBindable;
+                tap.StartTime = StartTime;
+                tap.Samples = Samples;
+                tap.Break = Break;
+                tap.Ex = Ex;
+
+                AddNested(tap);
+            }
+
             createSlideBodies();
         }
 

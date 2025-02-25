@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
@@ -9,13 +10,17 @@ using osu.Framework.Graphics.Rendering.Vertices;
 using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shaders.Types;
 using osu.Framework.Localisation;
+using osu.Game.Configuration;
 using osu.Game.Graphics.OpenGL.Vertices;
+using osu.Game.Graphics.UserInterface;
+using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
 using osuTK;
@@ -26,7 +31,24 @@ namespace osu.Game.Rulesets.Sentakki.Mods
     {
         public override LocalisableString Description => SentakkiModHiddenStrings.ModDescription;
 
-        public override double ScoreMultiplier => 1.06;
+        public override string ExtendedIconInformation => VisibleRadius.IsDefault ? string.Empty : $"{VisibleRadius.Value:P0}";
+
+        public override double ScoreMultiplier => 1 + (MathF.Pow(1 - VisibleRadius.Value, 2) * 0.2);
+
+        [SettingSource(
+        typeof(SentakkiModHiddenStrings),
+        nameof(SentakkiModHiddenStrings.VisibleRadius),
+        nameof(SentakkiModHiddenStrings.VisibleRadiusDescription),
+        SettingControlType = typeof(SettingsSlider<float, PercentageRoundedSliderBar>))]
+        public BindableFloat VisibleRadius { get; } = new BindableFloat
+        {
+            MinValue = 0f,
+            MaxValue = 1f,
+            Default = 0.6f,
+            Value = 0.6f,
+            Precision = 0.05f
+        };
+
 
         public void ApplyToDrawableRuleset(DrawableRuleset<SentakkiHitObject> drawableRuleset)
         {
@@ -36,10 +58,16 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             var lanedHitObjectArea = lanedPlayfield.LanedHitObjectArea;
             var lanedNoteProxyContainer = lanedHitObjectArea.Child;
 
+            float noteVisiblePoint = SentakkiPlayfield.NOTESTARTDISTANCE - (NoteRingPiece.DRAWABLE_SIZE / 2f);
+            float totalVisibleDistance = SentakkiPlayfield.INTERSECTDISTANCE;
+
+            float visibilityStartPoint = noteVisiblePoint / totalVisibleDistance;
+            float visibleRatio = 1 - visibilityStartPoint;
+
             lanedHitObjectArea.Remove(lanedNoteProxyContainer, false);
             lanedHitObjectArea.Add(new PlayfieldMaskingContainer(lanedNoteProxyContainer)
             {
-                CoverageRadius = 0.6f
+                CoverageRadius = visibilityStartPoint + (visibleRatio * VisibleRadius.Value)
             });
 
             lanedPlayfield.HitObjectLineRenderer.Hide();
@@ -73,6 +101,14 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                     using (sb.BeginAbsoluteSequence(sb.HitObject.StartTime - preemptTime))
                         ((Drawable)sb.Slidepath).FadeOutFromOne(fadeOutTime);
                     break;
+            }
+        }
+
+        private partial class PercentageRoundedSliderBar : RoundedSliderBar<float>
+        {
+            public PercentageRoundedSliderBar()
+            {
+                DisplayAsPercentage = true;
             }
         }
 
