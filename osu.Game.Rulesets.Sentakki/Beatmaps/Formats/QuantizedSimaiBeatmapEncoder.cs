@@ -106,19 +106,15 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
             }
         }
 
-        // Ensure all timing units are before hitObject units
-        for (int i = 0; i < maidataUnits.Count - 1; ++i)
-            if (maidataUnits[i] is HitObjectCollectionUnit
-                && maidataUnits[i + 1] is DivisorUnit or BeatTimeUnit or BPMUnit)
-                (maidataUnits[i + 1], maidataUnits[i]) = (maidataUnits[i], maidataUnits[i + 1]);
-
-        // Clean out redundant divisor units
+        List<IMaidataUnit> cleanMaiDataUnits = [];
         double currentBPM = 0;
         int currentDivisor = 0;
 
-        List<IMaidataUnit> cleanMaiDataUnits = [];
-        foreach (var unit in maidataUnits)
+        for (int i = 0; i < maidataUnits.Count; ++i)
         {
+            var unit = maidataUnits[i];
+
+            // We attempt to immediately discard redundant timing points
             switch (unit)
             {
                 case BPMUnit b:
@@ -141,6 +137,26 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                     currentDivisor = 0;
                     currentBPM = 0;
                     break;
+            }
+
+            if (i > 0 && maidataUnits[i - 1] is HitObjectCollectionUnit previousHOC)
+            {
+                // Merge hitobject collections without a beat in between
+                // This may happen due to the notes being at less 5 ms away from each other, which is beyond the precision of this encoder, and therefore the encoder doesn't generate padding beats
+                if (unit is HitObjectCollectionUnit currentHOC)
+                {
+                    cleanMaiDataUnits[^1] = new HitObjectCollectionUnit(
+                    $"{previousHOC.collectionString}/{currentHOC.collectionString}"
+                    );
+                    continue;
+                }
+                // Ensure all timing units are before hitObject units
+                else if (unit is DivisorUnit or BeatTimeUnit or BPMUnit)
+                {
+                    cleanMaiDataUnits[^1] = maidataUnits[i];
+                    cleanMaiDataUnits.Add(previousHOC);
+                    continue;
+                }
             }
 
             cleanMaiDataUnits.Add(unit);
@@ -216,7 +232,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
         public override readonly string ToString() => $"\n({tempo}){{{divisor}}}";
 
         public double tempo = 60000 / beatLength;
-        public float divisor = 4;
+        public int divisor = 4;
     }
     private record struct HitObjectCollectionUnit(string collectionString) : IMaidataUnit
     {
