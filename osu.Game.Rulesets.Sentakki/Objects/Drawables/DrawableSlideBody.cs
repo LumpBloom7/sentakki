@@ -190,7 +190,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // If the slide doesn't start with a fan, but ends with it, then we fade them in instantly at the point the fan begins on the path.
             if (!Slidepath.Path.StartsWithSlideFan && Slidepath.Path.EndsWithSlideFan)
             {
-                using (BeginDelayedSequence(HitObject.ShootDelay + (HitObject.Duration - HitObject.ShootDelay) * Slidepath.Path.FanStartProgress))
+                using (BeginDelayedSequence(HitObject.ShootDelay + ((HitObject.Duration - HitObject.ShootDelay) * Slidepath.Path.FanStartProgress)))
                 {
                     SlideStars[0].FadeIn().ScaleTo(1.25f);
                     SlideStars[1].FadeIn().ScaleTo(1.25f);

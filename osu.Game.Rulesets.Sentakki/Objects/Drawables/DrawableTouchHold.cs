@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -141,7 +141,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 holdSample.Stop();
             }
-
         }
 
         protected override void Update()

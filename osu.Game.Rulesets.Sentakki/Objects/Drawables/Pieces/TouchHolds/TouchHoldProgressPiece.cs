@@ -90,7 +90,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
             ProgressBindable?.BindValueChanged(p =>
             {
                 for (int i = 0; i < progressParts.Length; ++i)
-                    progressParts[i].Progress = Math.Clamp(p.NewValue - i * 0.25, 0, 0.25);
+                    progressParts[i].Progress = Math.Clamp(p.NewValue - (i * 0.25), 0, 0.25);
             }, true);
 
             paletteBindable?.BindValueChanged(p =>
