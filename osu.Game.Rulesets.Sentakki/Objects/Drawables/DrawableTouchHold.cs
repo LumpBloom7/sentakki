@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -32,6 +33,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private PausableSkinnableSound holdSample = null!;
 
+        [Cached]
+        private Bindable<IReadOnlyList<Color4>> colourPalette = new();
+
         public DrawableTouchHold()
             : this(null)
         {
@@ -40,6 +44,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableTouchHold(TouchHold? hitObject)
             : base(hitObject)
         {
+        }
+
+        protected override void OnApply()
+        {
+            base.OnApply();
+            colourPalette.BindTo(HitObject.ColourPaletteBindable);
         }
 
         [BackgroundDependencyLoader]
@@ -92,6 +102,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.OnFree();
 
             holdSample.ClearSamples();
+            colourPalette.UnbindFrom(HitObject.ColourPaletteBindable);
             isHitting.Value = false;
             totalHoldTime = 0;
         }

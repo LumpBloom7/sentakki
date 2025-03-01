@@ -1,11 +1,11 @@
 using System;
-using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
@@ -52,6 +52,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 
         [Resolved]
         private DrawablePool<SlideChevron>? chevronPool { get; set; }
+
+        [Resolved(canBeNull: true)]
+        private DrawableHitObject? drawableHitObject { get; set; }
 
         private Container<SlideChevron> chevrons = null!;
 
@@ -119,9 +122,23 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                     chevron.Depth = chevrons.Count;
 
                     chevron.Thickness = 6.5f;
-                    chevron.Height = 60;
+                    chevron.Height = 30;
                     chevron.FanChevron = false;
-                    chevron.Width = 80;
+                    chevron.Width = 50;
+
+                    if (((DrawableSentakkiHitObject?)drawableHitObject)?.ExBindable.Value ?? false)
+                    {
+                        chevron.Size += new Vector2(15);
+                        chevron.ShadowRadius = 7.5f;
+                        chevron.Glow = true;
+                    }
+                    else
+                    {
+                        chevron.Size += new Vector2(30);
+                        chevron.ShadowRadius = 15f;
+                        chevron.Glow = false;
+                    }
+
                     chevrons.Add(chevron);
 
                     previousPosition = position;
@@ -177,10 +194,23 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 chevron.DisappearThreshold = path.FanStartProgress + ((i + 1) / 11f * (1 - path.FanStartProgress));
                 chevron.Depth = chevrons.Count;
 
-                chevron.Width = w + 30;
-                chevron.Height = h + 30;
+                chevron.Width = w;
+                chevron.Height = h;
                 chevron.Thickness = t;
                 chevron.FanChevron = true;
+
+                if (((DrawableSentakkiHitObject?)drawableHitObject)?.ExBindable.Value ?? false)
+                {
+                    chevron.Size += new Vector2(15);
+                    chevron.ShadowRadius = 7.5f;
+                    chevron.Glow = true;
+                }
+                else
+                {
+                    chevron.Size += new Vector2(30);
+                    chevron.ShadowRadius = 15f;
+                    chevron.Glow = false;
+                }
 
                 chevrons.Add(chevron);
             }

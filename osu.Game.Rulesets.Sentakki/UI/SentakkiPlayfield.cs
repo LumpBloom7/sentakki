@@ -105,6 +105,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private void load(SkinManager skinManager, IBeatmap beatmap, BeatmapDifficultyCache difficultyCache)
         {
             RegisterPool<TouchHold, DrawableTouchHold>(2);
+            RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(8);
 
             // handle colouring of playfield elements
             beatmapDifficulty = difficultyCache.GetBindableDifficulty(beatmap.BeatmapInfo);

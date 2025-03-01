@@ -39,15 +39,21 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
             foreach (var group in hitObjectGroups)
             {
-                bool isTwin = group.Count() > 1; // This determines whether the twin colour should be used
+                bool isTwin = group.Count(canBeTwin) > 1; // This determines whether the twin colour should be used for eligible objects
 
                 foreach (SentakkiHitObject hitObject in group)
                 {
+                    if (hitObject is TouchHold th)
+                    {
+                        th.ColourPalette = th.Break ? TouchHold.BreakPalette : TouchHold.DefaultPalette;
+                        continue;
+                    }
+
                     Color4 noteColor = hitObject.DefaultNoteColour;
 
                     if (hitObject is SentakkiLanedHitObject laned && laned.Break)
                         noteColor = breakColor;
-                    else if (isTwin)
+                    else if (isTwin && canBeTwin(hitObject))
                         noteColor = twinColor;
 
                     hitObject.NoteColour = noteColor;
@@ -67,17 +73,26 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             }
         }
 
-        private bool canBeColored(HitObject hitObject)
+        private static bool canBeColored(HitObject hitObject)
         {
             switch (hitObject)
             {
                 case Tap:
                 case SlideBody:
                 case Hold:
+                case Hold.HoldHead:
                 case Touch:
+                case TouchHold:
                     return true;
             }
             return false;
         }
+
+        private static bool canBeTwin(HitObject hitObject) => hitObject switch
+        {
+            Hold.HoldHead => false,
+            TouchHold => false,
+            _ => true
+        };
     }
 }
