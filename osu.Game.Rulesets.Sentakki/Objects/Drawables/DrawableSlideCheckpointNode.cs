@@ -1,8 +1,6 @@
-using System;
 using System.Linq;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
-using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Scoring;
 using osuTK;
 

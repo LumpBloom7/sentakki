@@ -63,8 +63,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Alpha = 0;
-            AddRangeInternal(new Drawable[]
-            {
+            AddRangeInternal(
+            [
                 TouchHoldBody = new TouchHoldBody(),
                 holdSample = new PausableSkinnableSound
                 {
@@ -72,7 +72,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Looping = true,
                     Frequency = { Value = 1 }
                 }
-            });
+            ]);
 
             isHitting.BindValueChanged(updateHoldSample);
         }
@@ -198,7 +198,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            double time_fade_miss = 400 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
+            double time_fade_miss = 400;
 
             switch (state)
             {

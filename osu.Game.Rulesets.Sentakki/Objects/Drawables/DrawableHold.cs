@@ -60,11 +60,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            AddRangeInternal(new Drawable[]
-            {
+            AddRangeInternal(
+            [
                 NoteBody = new HoldBody(),
                 headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
-            });
+            ]);
         }
 
         protected override void LoadComplete()
@@ -79,13 +79,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnApply();
             timeNotHeld = 0;
-            lastHoldTime = null;
+            isHolding = false;
         }
 
         private double timeNotHeld = 0;
-        private double? lastHoldTime = null;
 
-        private bool isHolding => lastHoldTime != null;
+        private bool isHolding;
 
         protected override void Update()
         {
@@ -106,7 +105,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
             }
 
-            if (!lastHoldTime.HasValue && !Auto)
+            if (!isHolding && !Auto)
             {
                 // Remove alterations to NoteBody colour
                 NoteBody.Colour = AccentColour.Value;
@@ -181,7 +180,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             HitResult applyDeductionTo(HitResult originalResult)
             {
-                int deduction = (int)Math.Min(Math.Floor(timeNotHeld / 300), 3);
+                int deduction = (int)Math.Clamp(Math.Floor(timeNotHeld / 300), 0, 3);
 
                 var newResult = originalResult - deduction;
 
@@ -286,7 +285,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return false;
 
             Head.UpdateResult();
-            lastHoldTime = Time.Current;
+            isHolding = true;
             NoteBody.FadeColour(AccentColour.Value, 50);
             return true;
         }
@@ -305,7 +304,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
 
             UpdateResult(true);
-            lastHoldTime = null;
+            isHolding = false;
 
             if (!AllJudged)
                 NoteBody.FadeColour(Color4.Gray, 100);

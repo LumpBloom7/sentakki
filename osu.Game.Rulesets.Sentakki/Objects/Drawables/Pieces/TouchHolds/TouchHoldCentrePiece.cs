@@ -26,20 +26,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
             Rotation = 45;
             Scale = new Vector2(80 / 90f);
 
-            InternalChildren = new Drawable[]
-            {
+            InternalChildren =
+            [
                 PieceContainer = new Container
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both,
-                    Children = new Drawable[]
-                    {
+                    Children =
+                    [
                         createTouchShapeWith<TouchPieceShadow>(),
                         progressParts = createTouchShapeWith<TouchHoldPiece>(),
-                    }
+                    ]
                 },
-            };
+            ];
         }
 
         protected override void LoadComplete()
@@ -60,7 +60,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
-                Children = new Drawable[]{
+                Children = [
                     new T
                     {
                         Anchor = Anchor.TopCentre,
@@ -80,7 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                         Anchor = Anchor.CentreLeft,
                         Rotation = 270,
                     },
-                }
+                ]
             };
     }
 }
