@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using osu.Framework.Extensions.EnumExtensions;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
@@ -110,10 +111,20 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
             beatmap.BeatmapInfo.Length = (double)(chart.FinishTiming * 1000f);
         }
 
+        List<EffectControlPoint> effectControlPoints = [];
         foreach (NoteCollection noteCollection in chart.NoteCollections)
         {
+            HashSet<double> hanabiTimes = [];
             foreach (var note in noteCollection)
             {
+                if (note.styles.HasFlagFast(NoteStyles.Fireworks))
+                {
+                    if (note.type == NoteType.Touch || note.location.group != NoteGroup.Tap)
+                        hanabiTimes.Add(((note.length ?? 0) + noteCollection.time) * 1000.0);
+                    else
+                        hanabiTimes.Add(noteCollection.time * 1000.0);
+                }
+
                 var hitObject = noteToHitObject(noteCollection.time * 1000f, note, beatmap.ControlPointInfo);
 
                 if (hitObject != null)
@@ -121,6 +132,12 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                     attachSample(hitObject);
                     beatmap.HitObjects.Add(hitObject);
                 }
+            }
+
+            foreach (double time in hanabiTimes)
+            {
+                effectControlPoints.Add(new EffectControlPoint { Time = time, KiaiMode = true });
+                effectControlPoints.Add(new EffectControlPoint { Time = time + 16, KiaiMode = false });
             }
         }
 
@@ -131,6 +148,9 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
         beatmap.ControlPointInfo.Clear();
         foreach (var t in usedTimingPoints)
             beatmap.ControlPointInfo.Add(t.Time, t);
+
+        foreach (var e in effectControlPoints)
+            beatmap.ControlPointInfo.Add(e.Time, e);
 
         autoGenerateBreaks(beatmap);
     }
