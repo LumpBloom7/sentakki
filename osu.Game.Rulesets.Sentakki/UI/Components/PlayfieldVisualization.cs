@@ -1,6 +1,5 @@
 using System;
 using osu.Framework.Allocation;
-using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
@@ -10,7 +9,6 @@ using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Rendering.Vertices;
 using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Textures;
-using osu.Framework.Utils;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Sentakki.Configuration;
@@ -21,8 +19,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 {
     public partial class PlayfieldVisualisation : Drawable, IHasAccentColour
     {
-        private readonly IBindable<WorkingBeatmap> beatmap = new Bindable<WorkingBeatmap>();
-
         /// <summary>
         /// The number of bars to jump each update iteration.
         /// </summary>
@@ -81,9 +77,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
 
         [BackgroundDependencyLoader]
-        private void load(IRenderer renderer, ShaderManager shaders, IBindable<WorkingBeatmap> beatmap, SentakkiRulesetConfigManager settings)
+        private void load(IRenderer renderer, ShaderManager shaders, SentakkiRulesetConfigManager settings)
         {
-            this.beatmap.BindTo(beatmap);
             texture = renderer.WhitePixel;
             shader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, FragmentShaderDescriptor.TEXTURE);
 
@@ -102,16 +97,15 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             kiaiEffect.TriggerChange();
         }
 
+        [Resolved]
+        private IBeatSyncProvider beatSyncProvider { get; set; } = null!;
+
+        private bool wasKiai = false;
+
         // Returns true if amplitude have been updated
         private void updateAmplitudes()
         {
-            var track = beatmap.Value.TrackLoaded ? beatmap.Value.Track : null;
-            var effect = beatmap.Value.BeatmapLoaded ? beatmap.Value.Beatmap?.ControlPointInfo.EffectPointAt(track?.CurrentTime ?? Time.Current) : null;
-
-            if (!effect?.KiaiMode ?? false)
-                return;
-
-            ReadOnlySpan<float> temporalAmplitudes = (track?.CurrentAmplitudes ?? ChannelAmplitudes.Empty).FrequencyAmplitudes.Span;
+            ReadOnlySpan<float> temporalAmplitudes = beatSyncProvider.CurrentAmplitudes.FrequencyAmplitudes.Span;
 
             for (int i = 0; i < bars_per_visualiser; i++)
             {
@@ -121,9 +115,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             }
 
             indexOffset = (indexOffset + index_change) % bars_per_visualiser;
-
-            // It's kiai time, turn on the visualisation
-            ShouldDraw = true;
         }
 
         private double timeDelta;
@@ -136,18 +127,20 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
             timeDelta += Math.Abs(Time.Elapsed);
 
-            if (timeDelta >= time_between_updates)
+            bool isKiai = beatSyncProvider.CheckIsKiaiTime();
+
+            if (!wasKiai && isKiai)
+                timeDelta = time_between_updates;
+
+            wasKiai = isKiai;
+
+            if (timeDelta >= time_between_updates && isKiai)
             {
                 timeDelta %= time_between_updates;
                 updateAmplitudes();
             }
 
-            // We don't have to update further if we don't need to draw
-            if (!ShouldDraw)
-                return;
-
             float decayFactor = Math.Abs((float)Time.Elapsed) * decay_per_milisecond;
-            ShouldDraw = false;
 
             for (int i = 0; i < bars_per_visualiser; i++)
             {
