@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
 using osu.Game.Graphics;
@@ -35,25 +36,29 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
     private static void applyDivisorBasedNoteColouring(SentakkiBeatmap beatmap)
     {
         OsuColour colours = new OsuColour();
+
         foreach (var hitObject in beatmap.HitObjects)
         {
-            if (hitObject is Slide slide)
-            {
-                foreach (SentakkiHitObject nested in slide.NestedHitObjects)
-                {
-                    double startTime = getStartTime(nested);
-                    int beatDivisor = beatmap.ControlPointInfo.GetClosestBeatDivisor(startTime);
+            double startTime = getStartTime(hitObject);
+            int beatDivisor = beatmap.ControlPointInfo.GetClosestBeatDivisor(startTime);
+            Color4 colour = BindableBeatDivisor.GetColourFor(beatDivisor, colours);
 
-                    nested.NoteColour = BindableBeatDivisor.GetColourFor(beatDivisor, colours);
-                }
+            // Touch hold uses a palette instead of a single colour
+            if (hitObject is TouchHold th)
+            {
+                th.ColourPalette = [
+                    colour,
+                    colour.Darken(0.7f),
+                    colour,
+                    colour.Darken(0.7f)
+                ];
+                continue;
             }
 
-            {
-                double startTime = getStartTime(hitObject);
-                int beatDivisor = beatmap.ControlPointInfo.GetClosestBeatDivisor(startTime);
+            hitObject.NoteColour = colour;
 
-                hitObject.NoteColour = BindableBeatDivisor.GetColourFor(beatDivisor, colours);
-            }
+            foreach (SentakkiHitObject nested in hitObject.NestedHitObjects.OfType<SentakkiHitObject>())
+                nested.NoteColour = colour;
         }
     }
 
@@ -103,7 +108,21 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
             int divisor = (int)Math.Round(beatLength / smallestDelta);
             Color4 colour = BindableBeatDivisor.GetColourFor(divisor, colours);
 
+            // Touch hold uses a palette instead of a single colour
+            if (hitobjects[i] is TouchHold th)
+            {
+                th.ColourPalette = [
+                    colour,
+                    colour.Darken(0.5f),
+                    colour,
+                    colour.Darken(0.5f)
+                ];
+                continue;
+            }
+
             hitobjects[i].NoteColour = colour;
+            foreach (SentakkiHitObject nested in hitobjects[i].NestedHitObjects.OfType<SentakkiHitObject>())
+                nested.NoteColour = colour;
         }
     }
 
