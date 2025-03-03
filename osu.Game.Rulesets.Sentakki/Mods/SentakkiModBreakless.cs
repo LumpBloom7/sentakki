@@ -1,7 +1,7 @@
-using System;
 using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Mods;
@@ -13,7 +13,7 @@ public class SentakkiModBreakless : Mod, IApplicableAfterBeatmapConversion
     public override string Acronym => "BL";
     public override ModType Type => ModType.DifficultyReduction;
 
-    public override LocalisableString Description => "Removes the BREAK modifier from all hitobjects";
+    public override LocalisableString Description => SentakkiModBreaklessStrings.ModDescription;
 
     public override double ScoreMultiplier => 0.9;
 
