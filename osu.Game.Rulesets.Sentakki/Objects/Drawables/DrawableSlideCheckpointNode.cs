@@ -46,14 +46,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Position = HitObject.Position;
         }
 
+        private int pressedCount = 0;
+
         protected override void Update()
         {
             base.Update();
-            if (Judged || !checkpoint.IsHittable)
-                return;
 
-            if (checkForTouchInput() || (IsHovered && SentakkiActionInputManager.PressedActions.Any()))
+            int updatedPressedCounts = countActiveTouchPoints();
+
+            if (updatedPressedCounts > pressedCount)
                 UpdateResult(true);
+
+            pressedCount = updatedPressedCounts;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -66,21 +70,37 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
             }
 
+            if (!checkpoint.IsHittable)
+                return;
+
             ApplyResult(Result.Judgement.MaxResult);
         }
 
-        private bool checkForTouchInput()
+        private int countActiveTouchPoints()
         {
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+            int count = 0;
 
-            // Avoiding Linq to minimize allocations, since this would be called every update of this node
-            for (TouchSource t = TouchSource.Touch1; t <= TouchSource.Touch10; ++t)
+            bool isPressing = false;
+            foreach (var item in SentakkiActionInputManager.PressedActions)
             {
-                if (touchInput.GetTouchPosition(t) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
-                    return true;
+                if (item < SentakkiAction.Key1)
+                {
+                    isPressing = true;
+                    break;
+                }
             }
 
-            return false;
+            if (isPressing && ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
+                ++count;
+
+            foreach (TouchSource source in touchInput.ActiveSources)
+            {
+                if (touchInput.GetTouchPosition(source) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
+                    ++count;
+            }
+
+            return count;
         }
 
         public new void ApplyResult(HitResult result)
