@@ -1,9 +1,7 @@
-using System;
 using System.Diagnostics;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Transforms;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
@@ -83,7 +81,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             TouchBody.FadeIn(fadeTime);
 
-            using (BeginAbsoluteSequence(HitObject.StartTime - animTime))
+            using (BeginDelayedSequence(fadeTime))
             {
                 TouchBody.ResizeTo(90, animTime, Easing.InCirc);
                 TouchBody.BorderContainer.Delay(animTime).FadeIn();
@@ -121,7 +119,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            double time_fade_miss = 400 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
+            double time_fade_miss = 400;
 
             switch (state)
             {

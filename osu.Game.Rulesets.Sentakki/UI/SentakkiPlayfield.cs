@@ -168,8 +168,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             if (!result.IsHit) return;
 
-            // We don't need an explosion for the slide body
-            if (judgedObject is DrawableSlideBody) return;
+            // Slide bodies don't need explosions, they just don't work.
+            if (judgedObject is DrawableSlideBody)
+                return;
 
             if (judgedObject.HitObject.Kiai)
                 ring.KiaiBeat();

@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
+using osu.Framework.Utils;
 using osu.Game.Audio;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Objects;
@@ -62,8 +63,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Alpha = 0;
-            AddRangeInternal(new Drawable[]
-            {
+            AddRangeInternal(
+            [
                 TouchHoldBody = new TouchHoldBody(),
                 holdSample = new PausableSkinnableSound
                 {
@@ -71,13 +72,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Looping = true,
                     Frequency = { Value = 1 }
                 }
-            });
+            ]);
 
-            isHitting.BindValueChanged(b =>
-            {
-                if (b.NewValue) beginHold();
-                else endHold();
-            });
+            isHitting.BindValueChanged(updateHoldSample);
         }
 
         protected override void LoadSamples()
@@ -115,47 +112,60 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             this.FadeInFromZero(fadeTime).ScaleTo(1);
 
-            using (BeginAbsoluteSequence(HitObject.StartTime - animTime))
-            {
+            using (BeginDelayedSequence(fadeTime))
                 TouchHoldBody.ResizeTo(80, animTime, Easing.InCirc);
-            }
-            using (BeginDelayedSequence(fadeTime + animTime))
-            {
-                TouchHoldBody.centrePiece.FadeOut();
-                TouchHoldBody.CompletedCentre.FadeIn();
-                TouchHoldBody.ProgressPiece.TransformBindableTo(TouchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
-            }
         }
 
+        protected override void UpdateStartTimeStateTransforms()
+        {
+            base.UpdateStartTimeStateTransforms();
+
+            TouchHoldBody.centrePiece.FadeOut();
+            TouchHoldBody.CompletedCentre.FadeIn();
+            TouchHoldBody.ProgressPiece.TransformBindableTo(TouchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
+        }
+
+        [Cached]
         private readonly Bindable<bool> isHitting = new Bindable<bool>();
 
         private double totalHoldTime;
 
-        private void beginHold()
+        private void updateHoldSample(ValueChangedEvent<bool> holdState)
         {
-            Colour = Color4.White;
-            holdSample.Play();
-        }
-
-        private void endHold()
-        {
-            Colour = Color4.SlateGray;
-            holdSample.Stop();
+            if (holdState.NewValue)
+            {
+                if (!holdSample.RequestedPlaying)
+                    holdSample.Play();
+            }
+            else
+            {
+                holdSample.Stop();
+            }
         }
 
         protected override void Update()
         {
             base.Update();
 
-            if (isHitting.Value)
-            {
-                totalHoldTime = Math.Clamp(totalHoldTime + Time.Elapsed, 0, ((IHasDuration)HitObject).Duration);
-                holdSample.Frequency.Value = 0.5 + (totalHoldTime / ((IHasDuration)HitObject).Duration);
-            }
+            if (AllJudged) return;
 
             isHitting.Value = Time.Current >= HitObject.StartTime
                               && Time.Current <= HitObject.GetEndTime()
-                              && (Auto || checkForTouchInput() || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
+                              && (Auto || checkForTouchInput() || ((SentakkiActionInputManager?.PressedActions.Count != 0) && IsHovered));
+
+            if (!isHitting.Value)
+            {
+                // Grey the note to indicate that it isn't being held
+                Colour = Interpolation.ValueAt(
+                    Math.Clamp(Time.Current, HitObject.StartTime, HitObject.StartTime + 100),
+                    Color4.White, Color4.SlateGray,
+                    HitObject.StartTime, HitObject.StartTime + 100, Easing.OutSine);
+                return;
+            }
+
+            totalHoldTime = Math.Clamp(totalHoldTime + Time.Elapsed, 0, ((IHasDuration)HitObject).Duration);
+            holdSample.Frequency.Value = 0.5 + (totalHoldTime / ((IHasDuration)HitObject).Duration);
+            Colour = Color4.White;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -188,7 +198,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            double time_fade_miss = 400 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
+            double time_fade_miss = 400;
 
             switch (state)
             {

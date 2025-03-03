@@ -49,9 +49,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
-
+                ShadowRadius = 15,
                 Thickness = 6.5f
             });
+        }
+
+        protected override void FreeAfterUse()
+        {
+            // This is used to ensure that the chevrons transforms are reverted to the initial state.
+            // TODO: Investigate what clears the transforms without rewinding them...
+            if (!RemoveCompletedTransforms)
+                ApplyTransformsAt(double.MinValue, propagateChildren: true);
+            ClearTransformsAfter(double.MinValue, propagateChildren: true);
+
+            base.FreeAfterUse();
         }
     }
 }

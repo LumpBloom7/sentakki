@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
         public Container PieceContainer;
 
         [Resolved]
-        private Bindable<IReadOnlyList<Color4>> paletteBindable { get; set; } = null!;
+        private Bindable<IReadOnlyList<Color4>>? paletteBindable { get; set; } = null!;
 
         private Container progressParts;
 
@@ -26,28 +26,27 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
             Rotation = 45;
             Scale = new Vector2(80 / 90f);
 
-            InternalChildren = new Drawable[]
-            {
+            InternalChildren =
+            [
                 PieceContainer = new Container
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both,
-                    Children = new Drawable[]
-                    {
+                    Children =
+                    [
                         createTouchShapeWith<TouchPieceShadow>(),
                         progressParts = createTouchShapeWith<TouchHoldPiece>(),
-                    }
+                    ]
                 },
-            };
+            ];
         }
 
         protected override void LoadComplete()
         {
             base.LoadComplete();
 
-
-            paletteBindable.BindValueChanged(p =>
+            paletteBindable?.BindValueChanged(p =>
             {
                 for (int i = 0; i < progressParts.Count; ++i)
                     progressParts[i].Colour = p.NewValue[i];
@@ -61,7 +60,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
-                Children = new Drawable[]{
+                Children = [
                     new T
                     {
                         Anchor = Anchor.TopCentre,
@@ -81,7 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds
                         Anchor = Anchor.CentreLeft,
                         Rotation = 270,
                     },
-                }
+                ]
             };
     }
 }
