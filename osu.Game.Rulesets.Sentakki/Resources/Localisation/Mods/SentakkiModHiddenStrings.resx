@@ -61,4 +61,10 @@
     <data name="mod_description" xml:space="preserve">
         <value>Notes fade out just before you hit them.</value>
     </data>
+    <data name="visible_radius" xml:space="preserve">
+        <value>Visible radius</value>
+    </data>
+    <data name="visible_radius_description" xml:space="preserve">
+        <value>The visible radius of laned notes.</value>
+    </data>
 </root>

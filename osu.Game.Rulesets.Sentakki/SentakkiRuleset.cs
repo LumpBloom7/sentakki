@@ -86,7 +86,6 @@ namespace osu.Game.Rulesets.Sentakki
                     {
                         new SentakkiModRelax(),
                         new MultiMod(new SentakkiModHalfTime(), new SentakkiModDaycore()),
-                        new SentakkiModNoFail(),
                     };
 
                 case ModType.DifficultyIncrease:
@@ -121,6 +120,7 @@ namespace osu.Game.Rulesets.Sentakki
                         new SentakkiModSpin(),
                         new SentakkiModMuted(),
                         new ModAdaptiveSpeed(),
+                        new SentakkiModSynesthesia(),
                     };
 
                 case ModType.System:
@@ -130,7 +130,7 @@ namespace osu.Game.Rulesets.Sentakki
                     };
 
                 default:
-                    return Array.Empty<Mod>();
+                    return [];
             }
         }
 

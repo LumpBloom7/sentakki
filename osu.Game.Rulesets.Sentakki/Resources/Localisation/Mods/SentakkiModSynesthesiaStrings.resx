@@ -58,17 +58,10 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="mod_description" xml:space="preserve">
-        <value>Replicate the true washing machine experience.</value>
+    <data name="interval_colouring" xml:space="preserve">
+        <value>Interval colouring</value>
     </data>
-    <data name="revolution_duration" xml:space="preserve">
-        <value>Revolution duration</value>
-    </data>
-    <data name="revolution_duration_description" xml:space="preserve">
-        <value>The duration in seconds to complete a revolution.</value>
-    </data>
-    <data name="revolution_duration_tooltip" xml:space="preserve">
-        <value>{0}s</value>
-        <comment>This is used to show the exact value, along with the local seconds symbol</comment>
+    <data name="interval_colouring_description" xml:space="preserve">
+        <value>Colour hitobjects based on timing distance to the closest neighbouring hitobject.</value>
     </data>
 </root>

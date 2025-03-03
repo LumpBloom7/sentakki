@@ -128,7 +128,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void LoadSamples()
         {
-            // The slidebody object doesn't need a sample
+            LoadBreakSamples();
         }
 
         protected override void OnFree()
@@ -146,7 +146,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
 
             Slidepath.Progress = checkpoint.HitObject.Progress;
-            Slidepath.UpdateChevronVisibility();
         }
 
         private void onRevertResult(DrawableHitObject hitObject, JudgementResult result)
@@ -155,8 +154,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
 
             Slidepath.Progress = checkpoint.ThisIndex == 0 ? 0 : SlideCheckpoints[checkpoint.ThisIndex - 1].HitObject.Progress;
-
-            Slidepath.UpdateChevronVisibility();
         }
 
         protected override void Update()
@@ -170,31 +167,33 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateInitialTransforms();
             Slidepath.PerformEntryAnimation(AnimationDuration.Value);
+        }
 
-            using (BeginAbsoluteSequence(HitObject.StartTime))
+        protected override void UpdateStartTimeStateTransforms()
+        {
+            base.UpdateStartTimeStateTransforms();
+
+            // The primary star is always guaranteed to enter.
+            SlideStars[2].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
+
+            // The fan slide stars will enter with the same transforms as the primary star iff the slide starts with a fan
+            if (Slidepath.Path.StartsWithSlideFan)
             {
-                SlideStars[2].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
-                SlideStars[0].FadeOut().ScaleTo(1.25f, HitObject.ShootDelay);
-                SlideStars[1].FadeOut().ScaleTo(1.25f, HitObject.ShootDelay);
+                SlideStars[0].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
+                SlideStars[1].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
+            }
 
-                if (Slidepath.Path.StartsWithSlideFan)
+            // This indirectly controls the animation of the stars following the path
+            using (BeginDelayedSequence(HitObject.ShootDelay))
+                this.TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
+
+            // If the slide doesn't start with a fan, but ends with it, then we fade them in instantly at the point the fan begins on the path.
+            if (!Slidepath.Path.StartsWithSlideFan && Slidepath.Path.EndsWithSlideFan)
+            {
+                using (BeginDelayedSequence(HitObject.ShootDelay + ((HitObject.Duration - HitObject.ShootDelay) * Slidepath.Path.FanStartProgress)))
                 {
-                    SlideStars[0].FadeInFromZero(HitObject.ShootDelay);
-                    SlideStars[1].FadeInFromZero(HitObject.ShootDelay);
-                }
-
-                using (BeginDelayedSequence(HitObject.ShootDelay))
-                {
-                    if (!Slidepath.Path.StartsWithSlideFan && Slidepath.Path.EndsWithSlideFan)
-                    {
-                        using (BeginDelayedSequence((HitObject.Duration - HitObject.ShootDelay) * Slidepath.Path.FanStartProgress))
-                        {
-                            SlideStars[0].FadeIn();
-                            SlideStars[1].FadeIn();
-                        }
-                    }
-
-                    this.TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
+                    SlideStars[0].FadeIn().ScaleTo(1.25f);
+                    SlideStars[1].FadeIn().ScaleTo(1.25f);
                 }
             }
         }
@@ -234,8 +233,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
             }
 
-
-
             var result = HitObject.HitWindows.ResultFor(timeOffset);
 
             // Give the player an OK for extremely early completion
@@ -255,26 +252,28 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            double time_fade_miss = 400 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
-            double time_fade_hit = 200 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
+
+            const double time_fade_miss = 400;
+            const double time_fade_hit = 200;
 
             switch (state)
             {
                 case ArmedState.Hit:
-                    using (BeginAbsoluteSequence(Math.Max(Result.TimeAbsolute, HitObject.GetEndTime() - HitObject.HitWindows.WindowFor(HitResult.Good))))
-                    {
-                        Slidepath.PerformExitAnimation(time_fade_hit);
+                    Slidepath.PerformExitAnimation(time_fade_hit, HitStateUpdateTime);
+                    foreach (var star in SlideStars)
+                        star.FadeOut(time_fade_hit);
 
-                        foreach (var star in SlideStars)
-                            star.FadeOut(time_fade_hit);
-
-                        this.FadeOut(time_fade_hit).Expire();
-                    }
+                    this.Delay(time_fade_hit).Expire();
 
                     break;
 
                 case ArmedState.Miss:
-                    Slidepath.PerformExitAnimation(time_fade_miss);
+                    Slidepath.PerformExitAnimation(time_fade_miss, Result.TimeAbsolute);
+
+                    foreach (var star in SlideStars)
+                        star.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                            .MoveToOffset(SentakkiExtensions.GetCircularPosition(100, star.Rotation), time_fade_miss, Easing.OutCubic);
+
                     this.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss).Expire();
                     break;
             }

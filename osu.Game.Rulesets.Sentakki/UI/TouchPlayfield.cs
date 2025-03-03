@@ -3,7 +3,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Framework.Lists;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.UI;
 using osuTK;
@@ -31,7 +31,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [BackgroundDependencyLoader]
         private void load()
         {
-            RegisterPool<Touch, DrawableTouch>(8);
+            RegisterPool<Touch, DrawableTouch>(16);
+            RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(20);
         }
 
         protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, drawableSentakkiRuleset);

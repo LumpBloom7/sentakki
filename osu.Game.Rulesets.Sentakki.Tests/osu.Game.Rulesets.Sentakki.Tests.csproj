@@ -3,19 +3,19 @@
         <StartupObject>osu.Game.Rulesets.Sentakki.Tests.VisualTestRunner</StartupObject>
     </PropertyGroup>
     <ItemGroup Label="Service">
-        <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}"/>
+        <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
     </ItemGroup>
     <PropertyGroup>
         <GenerateProgramFile>false</GenerateProgramFile>
         <AssemblyName>osu.Game.Rulesets.Sentakki.Tests</AssemblyName>
     </PropertyGroup>
     <ItemGroup Label="Package References">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1"/>
-        <PackageReference Include="NUnit" Version="4.2.2"/>
-        <PackageReference Include="NUnit3TestAdapter" Version="4.6.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+        <PackageReference Include="NUnit" Version="4.3.2" />
+        <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\osu.Game.Rulesets.Sentakki\osu.Game.Rulesets.Sentakki.csproj"/>
+        <ProjectReference Include="..\osu.Game.Rulesets.Sentakki\osu.Game.Rulesets.Sentakki.csproj" />
     </ItemGroup>
     <PropertyGroup Label="Project">
         <OutputType>WinExe</OutputType>

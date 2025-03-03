@@ -91,16 +91,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (result == HitResult.None)
                 return;
 
-            if (result < HitResult.Perfect && HitObject.Ex && result.IsHit())
-                result = HitResult.Great;
-
             ApplyResult(result);
         }
 
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            double time_fade_miss = 400 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
+            double time_fade_miss = 400;
 
             switch (state)
             {

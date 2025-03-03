@@ -21,19 +21,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
             Origin = Anchor.Centre;
             Alpha = 0;
 
-            InternalChildren = new Drawable[]
-            {
+            InternalChildren =
+            [
                 PieceContainer = new Container
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both,
-                    Children = new Drawable[]
-                    {
+                    Children =
+                    [
                         createTouchShape<TouchPieceShadow>(),
                         createTouchShape<TouchPiece>(),
                         new DotPiece()
-                    }
+                    ]
                 },
                 BorderContainer = new Container
                 {
@@ -53,7 +53,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
                         RelativeSizeAxes = Axes.Both
                     }
                 },
-            };
+            ];
         }
 
         private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
@@ -66,13 +66,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
         }
 
         // Creates the touch shape using the provided drawable as each of the 4 quarters
-        private Drawable createTouchShape<T>(bool shadow = false) where T : Drawable, new()
+        private Drawable createTouchShape<T>() where T : Drawable, new()
             => new Container
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
-                Children = new Drawable[]{
+                Children = [
                     new T()
                     {
                         Anchor = Anchor.TopCentre,
@@ -92,7 +92,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
                         Anchor = Anchor.CentreRight,
                         Rotation = 90
                     },
-                }
+                ]
             };
     }
 }

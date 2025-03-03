@@ -105,6 +105,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private void load(SkinManager skinManager, IBeatmap beatmap, BeatmapDifficultyCache difficultyCache)
         {
             RegisterPool<TouchHold, DrawableTouchHold>(2);
+            RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(8);
 
             // handle colouring of playfield elements
             beatmapDifficulty = difficultyCache.GetBindableDifficulty(beatmap.BeatmapInfo);
@@ -167,8 +168,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             if (!result.IsHit) return;
 
-            // We don't need an explosion for the slide body
-            if (judgedObject is DrawableSlideBody) return;
+            // Slide bodies don't need explosions, they just don't work.
+            if (judgedObject is DrawableSlideBody)
+                return;
 
             if (judgedObject.HitObject.Kiai)
                 ring.KiaiBeat();

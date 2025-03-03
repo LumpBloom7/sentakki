@@ -5,6 +5,5 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 {
     public class SentakkiModNightcore : ModNightcore<SentakkiHitObject>
     {
-        public override double ScoreMultiplier => 1.12;
     }
 }

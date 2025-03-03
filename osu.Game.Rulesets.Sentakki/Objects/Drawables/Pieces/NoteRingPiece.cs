@@ -9,11 +9,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
     public partial class NoteRingPiece : CompositeDrawable
     {
         private const float base_circle_size = 75;
-        private const float drawable_size = base_circle_size + 30; // 30 units for shadow
+        public const float DRAWABLE_SIZE = base_circle_size + 30; // 30 units for shadow
 
         public NoteRingPiece(bool hex = false)
         {
-            Padding = new MarginPadding(-drawable_size / 2);
+            Padding = new MarginPadding(-DRAWABLE_SIZE / 2);
             RelativeSizeAxes = Axes.Both;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
