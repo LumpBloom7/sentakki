@@ -19,7 +19,7 @@ public class SentakkiModNoBreak : Mod, IApplicableAfterBeatmapConversion
 
     public void ApplyToBeatmap(IBeatmap beatmap)
     {
-        foreach (SentakkiLanedHitObject ho in beatmap.HitObjects)
+        foreach (SentakkiHitObject ho in beatmap.HitObjects)
         {
             ho.Break = false;
 
