@@ -79,7 +79,7 @@ namespace osu.Game.Rulesets.Sentakki
                     {
                         new SentakkiModRelax(),
                         new MultiMod(new SentakkiModHalfTime(), new SentakkiModDaycore()),
-                        new SentakkiModNoBreak()
+                        new SentakkiModBreakless()
                     };
 
                 case ModType.DifficultyIncrease:

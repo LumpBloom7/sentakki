@@ -6,7 +6,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Mods;
 
-public class SentakkiModNoBreak : Mod, IApplicableAfterBeatmapConversion
+public class SentakkiModBreakless : Mod, IApplicableAfterBeatmapConversion
 {
     public override string Name => "BREAKless";
 
