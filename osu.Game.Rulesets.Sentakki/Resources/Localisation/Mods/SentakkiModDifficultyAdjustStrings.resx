@@ -58,7 +58,13 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="mod_description" xml:space="preserve">
-        <value>Removes the EX modifier from all hitobjects.</value>
+    <data name="break_removal" xml:space="preserve">
+        <value>No BREAK notes</value>
+    </data>
+    <data name="ex_removal" xml:space="preserve">
+        <value>No EX notes</value>
+    </data>
+    <data name="all_ex" xml:space="preserve">
+        <value>All EX notes</value>
     </data>
 </root>

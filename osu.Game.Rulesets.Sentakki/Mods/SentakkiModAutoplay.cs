@@ -24,7 +24,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods
             typeof(ModNoFail),
             typeof(SentakkiModAutoTouch),
             typeof(SentakkiModChallenge),
-            typeof(SentakkiModRelax)
         };
 
         public void ApplyToDrawableHitObject(DrawableHitObject drawableHitObject)
