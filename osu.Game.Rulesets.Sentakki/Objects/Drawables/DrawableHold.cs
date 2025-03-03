@@ -110,14 +110,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     ApplyResult(HitResult.Perfect);
                 else if (timeOffset > HitObject.HitWindows.WindowFor(HitResult.Perfect) && isHolding)
                     ApplyResult(applyDeductionTo(HitResult.Great));
-                else if (timeOffset >= 0 && !isHolding)
-                {
-                    // In this particular case it is very possible that the Head is also not judged.
-                    if (!Head.AllJudged)
-                        Head.MissForcefully();
-
+                else if (Head.AllJudged && timeOffset >= 0 && !isHolding)
                     ApplyResult(Result.Judgement.MinResult);
-                }
 
                 return;
             }
