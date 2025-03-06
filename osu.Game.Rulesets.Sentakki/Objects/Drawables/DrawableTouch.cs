@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Input;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
@@ -14,12 +14,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         protected new Touch HitObject => (Touch)base.HitObject;
 
-        // IsHovered is used
-        public override bool HandlePositionalInput => true;
-
-        // Similar to IsHovered for mouse, this tracks whether a pointer (touch or mouse) is interacting with this drawable
-        // Interaction == (IsHovered && ActionPressed) || (OnTouch && TouchPointerInBounds)
-        public bool[] PointInteractionState = new bool[11];
         public TouchBody TouchBody = null!;
 
         private SentakkiInputManager sentakkiActionInputManager = null!;
@@ -48,14 +42,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 TouchBody = new TouchBody(),
             });
-
-            trackedKeys.BindValueChanged(x =>
-            {
-                if (AllJudged)
-                    return;
-
-                UpdateResult(true);
-            });
         }
 
         protected override void OnApply()
@@ -64,14 +50,46 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Position = HitObject.Position;
         }
 
-        protected override void OnFree()
+        private int pressedCount = 0;
+
+        protected override void Update()
         {
-            base.OnFree();
-            for (int i = 0; i < 11; ++i)
-                PointInteractionState[i] = false;
+            base.Update();
+
+            int updatedPressedCounts = countActiveTouchPoints();
+
+            if (updatedPressedCounts > pressedCount)
+                UpdateResult(true);
+
+            pressedCount = updatedPressedCounts;
         }
 
-        private readonly BindableInt trackedKeys = new BindableInt();
+        private int countActiveTouchPoints()
+        {
+            var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+            int count = 0;
+
+            bool isPressing = false;
+            foreach (var item in SentakkiActionInputManager.PressedActions)
+            {
+                if (item < SentakkiAction.Key1)
+                {
+                    isPressing = true;
+                    break;
+                }
+            }
+
+            if (isPressing && ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
+                ++count;
+
+            foreach (TouchSource source in touchInput.ActiveSources)
+            {
+                if (touchInput.GetTouchPosition(source) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
+                    ++count;
+            }
+
+            return count;
+        }
 
         protected override void UpdateInitialTransforms()
         {
@@ -134,7 +152,5 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     break;
             }
         }
-
-        public bool OnNewPointInteraction() => UpdateResult(true);
     }
 }

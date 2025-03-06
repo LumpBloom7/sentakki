@@ -40,7 +40,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
         public const float NOTESTARTDISTANCE = 66f;
 
         public readonly LanedPlayfield LanedPlayfield;
-        private readonly TouchPlayfield touchPlayfield;
 
         internal readonly Container AccentContainer;
 
@@ -78,15 +77,13 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 },
                 explosionLayer = new Container<HitExplosion> { RelativeSizeAxes = Axes.Both },
                 LanedPlayfield = new LanedPlayfield(),
-                HitObjectContainer, // This only contains TouchHolds, which needs to be above others types
-                touchPlayfield = new TouchPlayfield(), // This only contains Touch, which needs a custom playfield to handle their input
+                HitObjectContainer, // This only contains Touch related notes, which needs to be above others types
                 judgementLayer = new Container<DrawableSentakkiJudgement>
                 {
                     RelativeSizeAxes = Axes.Both,
                 }
             });
             AddNested(LanedPlayfield);
-            AddNested(touchPlayfield);
             NewResult += onNewResult;
         }
 
@@ -105,7 +102,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
         private void load(SkinManager skinManager, IBeatmap beatmap, BeatmapDifficultyCache difficultyCache)
         {
             RegisterPool<TouchHold, DrawableTouchHold>(2);
-            RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(8);
+            RegisterPool<Touch, DrawableTouch>(16);
+            RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(20);
 
             // handle colouring of playfield elements
             beatmapDifficulty = difficultyCache.GetBindableDifficulty(beatmap.BeatmapInfo);
@@ -134,10 +132,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     LanedPlayfield.Add(h);
                     break;
 
-                case Touch:
-                    touchPlayfield.Add(h);
-                    break;
-
                 default:
                     base.Add(h);
                     break;
@@ -151,8 +145,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 case SentakkiLanedHitObject:
                     return LanedPlayfield.Remove(h);
 
-                case Touch:
-                    return touchPlayfield.Remove(h);
                 default:
                     return base.Remove(h);
             }
