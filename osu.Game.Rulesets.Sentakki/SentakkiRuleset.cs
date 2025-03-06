@@ -77,7 +77,6 @@ namespace osu.Game.Rulesets.Sentakki
                 case ModType.DifficultyReduction:
                     return new Mod[]
                     {
-                        new SentakkiModRelax(),
                         new MultiMod(new SentakkiModHalfTime(), new SentakkiModDaycore()),
                     };
 
@@ -104,6 +103,7 @@ namespace osu.Game.Rulesets.Sentakki
                         new SentakkiModExperimental(),
                         new SentakkiModClassic(),
                         new SentakkiModMirror(),
+                        new SentakkiModDifficultyAdjust()
                     };
 
                 case ModType.Fun:
