@@ -19,11 +19,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override Type[] IncompatibleMods => new[]
         {
             typeof(ModRelax),
-            typeof(ModSuddenDeath),
-            typeof(ModPerfect),
-            typeof(ModNoFail),
+            typeof(ModFailCondition),
             typeof(SentakkiModAutoTouch),
-            typeof(SentakkiModChallenge),
         };
 
         public void ApplyToDrawableHitObject(DrawableHitObject drawableHitObject)

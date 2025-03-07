@@ -23,6 +23,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public override double ScoreMultiplier => 1.00;
 
+        public override bool Ranked => true;
+
         [SettingSource(typeof(SentakkiModExperimentalStrings), nameof(SentakkiModExperimentalStrings.FanSlides), nameof(SentakkiModExperimentalStrings.FanSlidesDescription))]
         public Bindable<bool> EnableSlideFans { get; } = new BindableBool(false);
 

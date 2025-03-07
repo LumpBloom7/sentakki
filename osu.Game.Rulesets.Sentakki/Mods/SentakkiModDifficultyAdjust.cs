@@ -36,7 +36,9 @@ public class SentakkiModDifficultyAdjust : Mod, IApplicableAfterBeatmapConversio
             return result;
         }
     }
+
     public override bool RequiresConfiguration => true;
+    public override bool Ranked => true;
 
     [SettingSource(typeof(SentakkiModDifficultyAdjustStrings), nameof(SentakkiModDifficultyAdjustStrings.BreakRemoval))]
     public BindableBool BreakRemoval { get; } = new BindableBool();

@@ -25,6 +25,8 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
     [SettingSource(typeof(SentakkiModSynesthesiaStrings), nameof(SentakkiModSynesthesiaStrings.IntervalColouring), nameof(SentakkiModSynesthesiaStrings.IntervalColouringDescription))]
     public BindableBool IntervalColouring { get; } = new BindableBool(false);
 
+    public override bool Ranked => true;
+
     public void ApplyToBeatmapProcessor(IBeatmapProcessor beatmapProcessor)
     {
         if (beatmapProcessor is not SentakkiBeatmapProcessor sbp)
