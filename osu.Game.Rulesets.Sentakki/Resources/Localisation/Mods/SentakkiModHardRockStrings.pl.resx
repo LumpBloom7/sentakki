@@ -58,13 +58,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="mod_description" xml:space="preserve">
-        <value>Ноты исчезают прямо перед нажатием.</value>
+  <data name="judgement_mode" xml:space="preserve">
+        <value>Tryb oceniania</value>
     </data>
-  <data name="visible_radius" xml:space="preserve">
-        <value>Радиус видимости</value>
+  <data name="judgement_mode_description" xml:space="preserve">
+        <value>Tryby oceniania określają ścisłość oceniania podczas gry.</value>
     </data>
-  <data name="visible_radius_description" xml:space="preserve">
-        <value>Радиус окружности, в котором видно ноты.</value>
+  <data name="minimum_result" xml:space="preserve">
+        <value>Minimalny wynik trafienia</value>
+    </data>
+  <data name="minimum_result_description" xml:space="preserve">
+        <value>Minimalny wynik trafienia, który jest przyjmowany podczas gry. Wszystko poniżej będzie oceniane jako nietrafienie.</value>
     </data>
 </root>
