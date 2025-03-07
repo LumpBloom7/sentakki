@@ -14,6 +14,7 @@ using osu.Framework.Platform;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Containers;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
@@ -169,7 +170,12 @@ namespace osu.Game.Rulesets.Sentakki
             }), true)
         };
 
-        public override Drawable CreateIcon() => new SentakkiIcon(this);
+        public override Drawable CreateIcon() =>
+        new ConstrainedIconContainer()
+        {
+            Icon = new SentakkiIcon(this),
+            Size = new Vector2(100, 100)
+        };
 
         protected override IEnumerable<HitResult> GetValidHitResults()
         {
