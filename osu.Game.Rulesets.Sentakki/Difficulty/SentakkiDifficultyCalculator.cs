@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
@@ -8,38 +9,47 @@ using osu.Game.Rulesets.Mods;
 
 namespace osu.Game.Rulesets.Sentakki.Difficulty
 {
-    public class SentakkiDifficultyCalculator : DifficultyCalculator
+    public partial class SentakkiDifficultyCalculator : DifficultyCalculator
     {
         public SentakkiDifficultyCalculator(IRulesetInfo ruleset, IWorkingBeatmap beatmap)
             : base(ruleset, beatmap)
         {
         }
 
+        [GeneratedRegex("[+?]")]
+        public static partial Regex PlusRegex();
+
         protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills, double clockRate)
         {
-            double starRating;
+            double? starRating = null;
             if (beatmap.BeatmapInfo.Ruleset.ShortName == "Sentakki")
             {
-                string diffText = beatmap.Metadata.Tags.Split(' ')[1];
-                bool isPlus = diffText[^1] == '+';
+                string[] tags = beatmap.Metadata.Tags.Split(' ');
+                foreach (string tag in tags)
+                {
+                    if (string.IsNullOrWhiteSpace(tag))
+                        continue;
 
-                if (int.TryParse(diffText.Replace('+', ' ').Trim(), out int diffNumber) && diffNumber > 0)
-                {
-                    starRating = (diffNumber + (isPlus ? 0.5 : 0)) / 15.5 * 7.699999809265137;
+                    bool isPlus = tag[^1] == '+';
+
+                    string diffText = PlusRegex().Replace(tag, "");
+
+                    if (float.TryParse(diffText.Trim(), out float diffNumber) && diffNumber > 0)
+                    {
+                        starRating = (diffNumber + (isPlus ? 0.5 : 0)) / 15.0 * 7.7;
+                        break;
+                    }
                 }
-                else
-                {
-                    starRating = 10;
-                }
+                starRating ??= 10;
             }
             else
             {
-                starRating = beatmap.BeatmapInfo.StarRating * 1.25;
+                starRating = Math.Abs(beatmap.BeatmapInfo.StarRating * 1.25);
             }
 
             return new DifficultyAttributes
             {
-                StarRating = starRating,
+                StarRating = starRating.Value,
                 Mods = mods
             };
         }

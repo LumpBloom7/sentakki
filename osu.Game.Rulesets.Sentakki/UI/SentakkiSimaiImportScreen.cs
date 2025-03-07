@@ -157,7 +157,6 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
     };
 
     private const string osu_template = @"sentakki file format - simai v1
-
 [General]
 AudioFilename: {0}
 AudioLeadIn: 0
@@ -171,16 +170,18 @@ EditorBookmarks:
 
 [Metadata]
 Title:{1}
-Artist:{2}
-ArtistUnicode:{2}
-Creator:{3}
-Version:{4}
-Source:maimai
-Tags:{5}
+TitleUnicode:{2}
+Artist:{3}
+ArtistUnicode:{4}
+Creator:{5}
+Version:{6}
+Source:{7}
+Tags:{8}
+MaiDiff:{9}
 [Events]
-{6}
+{10}
 [HitObjects]
-{7}
+{11}
 ";
 
     private void startRecursiveBatch(DirectoryInfo path)
@@ -335,10 +336,25 @@ Tags:{5}
 
                 string creator = dict.GetValueOrDefault($"des_{diffIndex}", allCreator);
                 string level = dict.GetValueOrDefault($"lv_{diffIndex}", "0");
+                string version = dict.GetValueOrDefault($"version", "maimai");
+                string genre = dict.GetValueOrDefault("genre", "");
 
-                string[] tags = { "sentakki-legacy", level, creator, isDeluxe ? "deluxe" : "standard" };
+                string[] tags = { "sentakki-legacy", level, creator, isDeluxe ? "deluxe" : "standard", genre };
 
-                string osuFile = string.Format(osu_template, trackName, title, artist, creator, diffName, string.Join(" ", tags), string.Join("\n", events), chart);
+                string osuFile = string.Format(
+                    osu_template,
+                     trackName,
+                        title,
+                        title,
+                        artist,
+                        artist,
+                        creator,
+                        diffName,
+                        version,
+                        string.Join(" ", tags),
+                        level,
+                        string.Join("\n", events),
+                        chart);
                 ZipArchiveEntry entry = zip.CreateEntry($"{diffName}.osu", CompressionLevel.Fastest);
                 using Stream entryStream = entry.Open();
                 entryStream.Write(System.Text.Encoding.UTF8.GetBytes(osuFile));
