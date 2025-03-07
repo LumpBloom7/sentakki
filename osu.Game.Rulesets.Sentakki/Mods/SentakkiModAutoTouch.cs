@@ -17,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override IconUsage? Icon => OsuIcon.PlayStyleTouch;
         public override ModType Type => ModType.Automation;
         public override LocalisableString Description => SentakkiModAutoTouchStrings.ModDescription;
-        public override double ScoreMultiplier => .5f;
+        public override double ScoreMultiplier => .2f;
         public override Type[] IncompatibleMods => base.IncompatibleMods.Append(typeof(ModAutoplay)).ToArray();
 
         public void ApplyToDrawableHitObject(DrawableHitObject drawableHitObject)

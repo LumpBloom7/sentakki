@@ -3,6 +3,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.UI;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -15,6 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         {
             Origin = Anchor.Centre,
             Texture = cursorTexture,
+            Size = new Vector2(50)
         };
 
         [BackgroundDependencyLoader]

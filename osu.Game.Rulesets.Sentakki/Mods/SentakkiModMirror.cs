@@ -19,6 +19,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         public override ModType Type => ModType.Conversion;
         public override double ScoreMultiplier => 1;
 
+        public override bool Ranked => true;
+
         public override bool RequiresConfiguration => true;
 
         [SettingSource(typeof(SentakkiModMirrorStrings), nameof(SentakkiModMirrorStrings.MirrorVertically), nameof(SentakkiModMirrorStrings.MirrorVerticallyDescription))]

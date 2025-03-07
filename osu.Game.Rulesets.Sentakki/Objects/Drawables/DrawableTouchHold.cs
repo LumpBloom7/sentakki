@@ -143,15 +143,23 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
+        private bool isHittable => Time.Current >= HitObject.StartTime - 150 && Time.Current <= HitObject.GetEndTime();
+        private bool withinActiveTime => Time.Current >= HitObject.StartTime && Time.Current <= HitObject.GetEndTime();
+
+        private int pressedCount = 0;
+
         protected override void Update()
         {
             base.Update();
 
-            if (AllJudged) return;
+            int updatedPressedCounts = countActiveTouchPoints();
 
-            isHitting.Value = Time.Current >= HitObject.StartTime
-                              && Time.Current <= HitObject.GetEndTime()
-                              && (Auto || checkForTouchInput() || ((SentakkiActionInputManager?.PressedActions.Count != 0) && IsHovered));
+            if (isHittable && (updatedPressedCounts > pressedCount || Auto))
+                isHitting.Value = true;
+            else if (!isHittable || updatedPressedCounts == 0)
+                isHitting.Value = false;
+
+            pressedCount = updatedPressedCounts;
 
             if (!isHitting.Value)
             {
@@ -162,6 +170,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     HitObject.StartTime, HitObject.StartTime + 100, Easing.OutSine);
                 return;
             }
+
+            if (!withinActiveTime)
+                return;
 
             totalHoldTime = Math.Clamp(totalHoldTime + Time.Elapsed, 0, ((IHasDuration)HitObject).Duration);
             holdSample.Frequency.Value = 0.5 + (totalHoldTime / ((IHasDuration)HitObject).Duration);
@@ -212,18 +223,31 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        private bool checkForTouchInput()
+        private int countActiveTouchPoints()
         {
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+            int count = 0;
 
-            // Avoiding Linq to minimize allocations, since this would be called every update of this node
-            for (TouchSource t = TouchSource.Touch1; t <= TouchSource.Touch10; ++t)
+            bool isPressing = false;
+            foreach (var item in SentakkiActionInputManager.PressedActions)
             {
-                if (touchInput.GetTouchPosition(t) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
-                    return true;
+                if (item < SentakkiAction.Key1)
+                {
+                    isPressing = true;
+                    break;
+                }
             }
 
-            return false;
+            if (isPressing && ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
+                ++count;
+
+            foreach (TouchSource source in touchInput.ActiveSources)
+            {
+                if (touchInput.GetTouchPosition(source) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
+                    ++count;
+            }
+
+            return count;
         }
     }
 }
