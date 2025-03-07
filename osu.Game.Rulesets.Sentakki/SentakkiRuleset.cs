@@ -166,7 +166,6 @@ namespace osu.Game.Rulesets.Sentakki
             {
                 new AverageHitError(score.HitEvents),
                 new UnstableRate(score.HitEvents),
-                new MaimaiDXAccuracy(score.HitEvents)
             }), true)
         };
 
