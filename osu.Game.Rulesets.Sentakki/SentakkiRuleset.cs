@@ -111,7 +111,7 @@ namespace osu.Game.Rulesets.Sentakki
                     return new Mod[]
                     {
                         new MultiMod(new ModWindUp(), new ModWindDown()),
-                        new SentakkiModSpin(),
+                        new SentakkiModBarrelRoll(),
                         new SentakkiModMuted(),
                         new ModAdaptiveSpeed(),
                         new SentakkiModSynesthesia(),
