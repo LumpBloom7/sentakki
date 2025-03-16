@@ -1,4 +1,5 @@
-﻿using osu.Framework.Allocation;
+﻿using osu.Framework;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Localisation;
 using osu.Framework.Screens;
@@ -71,12 +72,17 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     KeyboardStep = 0.01f,
                     DisplayAsPercentage = true
                 },
-                new SettingsButton
-                {
-                    Text = @"Import local simai chart",
-                    Action = () => performer?.PerformFromScreen(menu => menu.Push(new SentakkiSimaiImportScreen()))
-                }
+
             };
+
+            if (RuntimeInfo.IsMobile)
+                return;
+
+            Add(new SettingsButton
+            {
+                Text = @"Import local simai chart",
+                Action = () => performer?.PerformFromScreen(menu => menu.Push(new SentakkiSimaiImportScreen()))
+            });
         }
 
         private partial class NoteTimeSlider : RoundedSliderBar<float>
