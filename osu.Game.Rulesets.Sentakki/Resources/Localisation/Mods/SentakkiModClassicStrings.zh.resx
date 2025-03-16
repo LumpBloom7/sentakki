@@ -59,6 +59,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mod_description" xml:space="preserve">
-        <value>删除 maimaiDX 中引入的游戏元素，供 Finale 纯粹主义者使用。</value>
+        <value>移除 DX 代中引入的新要素，供偏好旧框（FiNALE 代）的玩家使用。</value>
     </data>
 </root>

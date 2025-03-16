@@ -103,7 +103,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 case ArmedState.Hit:
                     TapVisual.FadeOut();
-                    Expire();
+                    this.FadeOut();
                     break;
 
                 case ArmedState.Miss:
@@ -112,7 +112,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                              .MoveToOffset(new Vector2(0, -100), time_fade_miss, Easing.OutCubic)
                              .FadeOut(time_fade_miss);
 
-                    this.ScaleTo(1f, time_fade_miss).Expire();
+                    this.Delay(time_fade_miss).FadeOut();
 
                     break;
             }

@@ -40,6 +40,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
         public const float NOTESTARTDISTANCE = 66f;
 
         public readonly LanedPlayfield LanedPlayfield;
+        private readonly TouchPlayfield touchPlayfield;
 
         internal readonly Container AccentContainer;
 
@@ -77,13 +78,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 },
                 explosionLayer = new Container<HitExplosion> { RelativeSizeAxes = Axes.Both },
                 LanedPlayfield = new LanedPlayfield(),
-                HitObjectContainer, // This only contains Touch related notes, which needs to be above others types
+                HitObjectContainer, // This only contains TouchHolds
+                touchPlayfield = new TouchPlayfield(), // This only contains Touch notes, which needs to be above all other note types
                 judgementLayer = new Container<DrawableSentakkiJudgement>
                 {
                     RelativeSizeAxes = Axes.Both,
                 }
             });
             AddNested(LanedPlayfield);
+            AddNested(touchPlayfield);
             NewResult += onNewResult;
         }
 
@@ -93,17 +96,16 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [Resolved]
         private SentakkiRulesetConfigManager? sentakkiRulesetConfig { get; set; }
 
-        private IBindable<Skin> skin = null!;
+        private Bindable<Skin> skin = null!;
         private readonly Bindable<ColorOption> ringColor = new Bindable<ColorOption>();
 
-        private IBindable<StarDifficulty?>? beatmapDifficulty;
+        private IBindable<StarDifficulty> beatmapDifficulty = null!;
 
         [BackgroundDependencyLoader]
         private void load(SkinManager skinManager, IBeatmap beatmap, BeatmapDifficultyCache difficultyCache)
         {
             RegisterPool<TouchHold, DrawableTouchHold>(2);
-            RegisterPool<Touch, DrawableTouch>(16);
-            RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(20);
+            RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(8);
 
             // handle colouring of playfield elements
             beatmapDifficulty = difficultyCache.GetBindableDifficulty(beatmap.BeatmapInfo);
@@ -132,6 +134,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     LanedPlayfield.Add(h);
                     break;
 
+                case Touch:
+                    touchPlayfield.Add(h);
+                    break;
+
                 default:
                     base.Add(h);
                     break;
@@ -144,6 +150,9 @@ namespace osu.Game.Rulesets.Sentakki.UI
             {
                 case SentakkiLanedHitObject:
                     return LanedPlayfield.Remove(h);
+
+                case Touch:
+                    return touchPlayfield.Remove(h);
 
                 default:
                     return base.Remove(h);
@@ -179,7 +188,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             switch (ringColor.Value)
             {
                 case ColorOption.Difficulty:
-                    double starRating = beatmapDifficulty?.Value?.Stars ?? 0;
+                    double starRating = beatmapDifficulty.Value.Stars;
                     var colour = colours.ForStarDifficulty(starRating);
 
                     // Normalize the colors to make sure the ring is actually visible

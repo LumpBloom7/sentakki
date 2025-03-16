@@ -33,7 +33,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 new SettingsCheckbox
                 {
                     LabelText = SentakkiSettingsSubsectionStrings.ShowKiaiEffects,
-                    Current = config.GetBindable<bool>(SentakkiRulesetSettings.KiaiEffects)
+                    Current = config.GetBindable<bool>(SentakkiRulesetSettings.KiaiEffects),
+                    Keywords = ["visualiser"]
                 },
                 new SettingsCheckbox
                 {
@@ -48,12 +49,14 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 new SettingsCheckbox
                 {
                     LabelText = SentakkiSettingsSubsectionStrings.ShowDetailedJudgements,
-                    Current = config.GetBindable<bool>(SentakkiRulesetSettings.DetailedJudgements)
+                    Current = config.GetBindable<bool>(SentakkiRulesetSettings.DetailedJudgements),
+                    Keywords = ["early", "late", "indicators"]
                 },
                 new SettingsEnumDropdown<ColorOption>
                 {
                     LabelText = SentakkiSettingsSubsectionStrings.RingColor,
-                    Current = config.GetBindable<ColorOption>(SentakkiRulesetSettings.RingColor)
+                    Current = config.GetBindable<ColorOption>(SentakkiRulesetSettings.RingColor),
+                    Keywords = ["color"]
                 },
                 new SettingsSlider<float, NoteTimeSlider>
                 {

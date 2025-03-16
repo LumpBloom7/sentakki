@@ -5,7 +5,7 @@
 
 layout(std140, set = 0, binding = 0) uniform m_shapeParameters
 {
-    float thickness;
+    float borderThickness;
     vec2 size;
     float shadowRadius;
     bool glow;
@@ -13,23 +13,29 @@ layout(std140, set = 0, binding = 0) uniform m_shapeParameters
 
 void main(void) {
     vec2 resolution = v_TexRect.zw - v_TexRect.xy;
-    vec2 pixelPos = (v_TexCoord - v_TexRect.xy) / resolution;
+    vec2 origin = size * 0.5;
+    vec2 pixelPos = ((v_TexCoord - v_TexRect.xy) / resolution) * size;
 
-    vec2 p = pixelPos * size;
-    vec2 c = 0.5 * size;
+    float radius = min(size.x, size.y) / 2.0;
 
-    float shadeRadius = size.x * shadowRadius;
-    float noteW = size.x - shadeRadius * 2;
-    float borderThickness = thickness * 0.5 * noteW;
-    float paddingAmount = - borderThickness - shadeRadius;
+    // Since our edge effect is centred along the sdf path
+    //// each side of the sdf will have the same thickness
+    float strokeRadius = borderThickness * 0.5;
 
-    float radius = size.x * 0.5 + paddingAmount;
+    float sdfRadius = radius - strokeRadius - shadowRadius;
 
-    float dotSDF = circleSDF(p,c, borderThickness / 4  - 1.5);
-    float ringSDF = circleSDF(p, c, radius);
+    float sdf = circleSDF(pixelPos, origin, sdfRadius);
 
-    vec4 r = sdfToShape(ringSDF, borderThickness, shadeRadius, glow) + sdfToShape(dotSDF, borderThickness, 0, false);
-    o_Colour = r;
+    vec4 shape = strokeSDF(sdf, strokeRadius);
+
+    vec4 edgeEffect = sdfShadow(sdf, strokeRadius, shadowRadius, glow);
+
+    // We add 1 here to better match o!f's built in edge smoothing
+    float dotStrokeRadius = (strokeRadius + 1.0) / 2.0;
+
+    vec4 dotShape = fillSDF(circleSDF(pixelPos, origin, dotStrokeRadius), dotStrokeRadius);
+
+    o_Colour = (dotShape + shape + edgeEffect) * toPremultipliedAlpha(v_Colour);
 }
 
 #endif

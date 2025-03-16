@@ -66,9 +66,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                     Rotation = 0;
                     break;
 
-                case TouchHold _:
-                default:
-                    Position = Vector2.Zero;
+                case TouchHold touchHoldObject:
+                    Position = touchHoldObject.Position;
                     Size = new Vector2(touch_hold_explosion_size);
                     circular = false;
                     Rotation = 45;

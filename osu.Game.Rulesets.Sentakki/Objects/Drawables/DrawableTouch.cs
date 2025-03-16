@@ -69,18 +69,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
             int count = 0;
 
-            bool isPressing = false;
-            foreach (var item in SentakkiActionInputManager.PressedActions)
+            if (ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
             {
-                if (item < SentakkiAction.Key1)
+                foreach (var item in SentakkiActionInputManager.PressedActions)
                 {
-                    isPressing = true;
-                    break;
+                    if (item < SentakkiAction.Key1)
+                        ++count;
                 }
             }
-
-            if (isPressing && ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
-                ++count;
 
             foreach (TouchSource source in touchInput.ActiveSources)
             {
@@ -142,13 +138,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    Expire();
+                    TouchBody.FadeOut();
+                    this.FadeOut();
                     break;
 
                 case ArmedState.Miss:
-                    this.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                    TouchBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                         .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
                         .FadeOut(time_fade_miss);
+
+                    this.Delay(time_fade_miss).FadeOut();
                     break;
             }
         }

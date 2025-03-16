@@ -45,13 +45,19 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 {
                     if (hitObject is TouchHold th)
                     {
-                        th.ColourPalette = th.Break ? TouchHold.BreakPalette : TouchHold.DefaultPalette;
+                        th.ColourPalette = TouchHold.DefaultPalette;
+
+                        if (th.Break)
+                            th.ColourPalette = TouchHold.BreakPalette;
+                        else if (isTwin)
+                            th.ColourPalette = TouchHold.TwinPalette;
+
                         continue;
                     }
 
                     Color4 noteColor = hitObject.DefaultNoteColour;
 
-                    if (hitObject is SentakkiLanedHitObject laned && laned.Break)
+                    if (hitObject is SentakkiHitObject laned && laned.Break)
                         noteColor = breakColor;
                     else if (isTwin)
                         noteColor = twinColor;
@@ -68,7 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 var hitObject = hitObjects[i];
                 if (canBeColored(hitObject)) yield return hitObject;
 
-                foreach (var nested in getColorableHitObject(hitObject.NestedHitObjects).AsEnumerable())
+                foreach (var nested in getColorableHitObject(hitObject.NestedHitObjects))
                     yield return nested;
             }
         }
@@ -79,10 +85,14 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 case Tap:
                 case SlideBody:
-                case Hold:
                 case Hold.HoldHead:
                 case Touch:
                 case TouchHold:
+                    return true;
+
+                // HitObject lines take the parent colour, instead of considering the nested object's colour
+                case Slide:
+                case Hold:
                     return true;
             }
             return false;
@@ -91,7 +101,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private static bool countsForTwin(HitObject hitObject) => hitObject switch
         {
             Hold.HoldHead => false,
-            TouchHold => false,
+            Slide => false,
             _ => true
         };
     }

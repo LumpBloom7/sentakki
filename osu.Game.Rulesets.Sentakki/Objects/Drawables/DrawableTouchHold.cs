@@ -37,6 +37,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         [Cached]
         private Bindable<IReadOnlyList<Color4>> colourPalette = new();
 
+        private readonly IBindable<Vector2> positionBindable = new Bindable<Vector2>();
+
+
         public DrawableTouchHold()
             : this(null)
         {
@@ -51,6 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnApply();
             colourPalette.BindTo(HitObject.ColourPaletteBindable);
+            positionBindable.BindTo(HitObject.PositionBindable);
         }
 
         [BackgroundDependencyLoader]
@@ -62,7 +66,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Colour = Color4.SlateGray;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Alpha = 0;
             AddRangeInternal(
             [
                 TouchHoldBody = new TouchHoldBody(),
@@ -74,7 +77,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 }
             ]);
 
-            isHitting.BindValueChanged(updateHoldSample);
+            positionBindable.BindValueChanged(v => Position = v.NewValue);
         }
 
         protected override void LoadSamples()
@@ -100,6 +103,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             holdSample.ClearSamples();
             colourPalette.UnbindFrom(HitObject.ColourPaletteBindable);
+            positionBindable.UnbindFrom(HitObject.PositionBindable);
             isHitting.Value = false;
             totalHoldTime = 0;
         }
@@ -110,7 +114,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             double animTime = AnimationDuration.Value * 0.8;
             double fadeTime = AnimationDuration.Value * 0.2;
 
-            this.FadeInFromZero(fadeTime).ScaleTo(1);
+            TouchHoldBody.FadeInFromZero(fadeTime).ScaleTo(1);
 
             using (BeginDelayedSequence(fadeTime))
                 TouchHoldBody.ResizeTo(80, animTime, Easing.InCirc);
@@ -129,19 +133,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         private readonly Bindable<bool> isHitting = new Bindable<bool>();
 
         private double totalHoldTime;
-
-        private void updateHoldSample(ValueChangedEvent<bool> holdState)
-        {
-            if (holdState.NewValue)
-            {
-                if (!holdSample.RequestedPlaying)
-                    holdSample.Play();
-            }
-            else
-            {
-                holdSample.Stop();
-            }
-        }
 
         private bool isHittable => Time.Current >= HitObject.StartTime - 150 && Time.Current <= HitObject.GetEndTime();
         private bool withinActiveTime => Time.Current >= HitObject.StartTime && Time.Current <= HitObject.GetEndTime();
@@ -163,6 +154,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             if (!isHitting.Value)
             {
+                holdSample.Stop();
+
                 // Grey the note to indicate that it isn't being held
                 Colour = Interpolation.ValueAt(
                     Math.Clamp(Time.Current, HitObject.StartTime, HitObject.StartTime + 100),
@@ -173,6 +166,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             if (!withinActiveTime)
                 return;
+
+            if (!holdSample.RequestedPlaying)
+                holdSample.Play();
 
             totalHoldTime = Math.Clamp(totalHoldTime + Time.Elapsed, 0, ((IHasDuration)HitObject).Duration);
             holdSample.Frequency.Value = 0.5 + (totalHoldTime / ((IHasDuration)HitObject).Duration);
@@ -187,13 +183,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             HitResult resultType;
 
-            if (result >= .90)
+            if (result >= 0.90)
                 resultType = HitResult.Perfect;
-            else if (result >= .75)
+            else if (result >= 0.75)
                 resultType = HitResult.Great;
-            else if (result >= .5)
+            else if (result >= 0.5)
                 resultType = HitResult.Good;
-            else if (result >= .25)
+            else if (result >= 0.25)
                 resultType = HitResult.Ok;
             else
                 resultType = HitResult.Miss;
@@ -214,11 +210,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    Expire();
+                    TouchHoldBody.FadeOut();
+                    this.FadeOut();
                     break;
 
                 case ArmedState.Miss:
-                    this.ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss).Expire();
+                    TouchHoldBody.ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss);
+                    this.Delay(time_fade_miss).FadeOut();
                     break;
             }
         }
@@ -228,18 +226,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
             int count = 0;
 
-            bool isPressing = false;
-            foreach (var item in SentakkiActionInputManager.PressedActions)
+            if (ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
             {
-                if (item < SentakkiAction.Key1)
+                foreach (var item in SentakkiActionInputManager.PressedActions)
                 {
-                    isPressing = true;
-                    break;
+                    if (item < SentakkiAction.Key1)
+                        ++count;
                 }
             }
-
-            if (isPressing && ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
-                ++count;
 
             foreach (TouchSource source in touchInput.ActiveSources)
             {

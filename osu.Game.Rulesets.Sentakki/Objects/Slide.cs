@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Newtonsoft.Json;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -10,6 +11,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Slide : SentakkiLanedHitObject, IHasDuration
     {
+        public override double MaximumJudgementOffset
+        {
+            get
+            {
+                double offset = 0.0;
+                foreach (var nested in NestedHitObjects)
+                    offset = Math.Max(offset, nested.MaximumJudgementOffset);
+
+                return offset;
+            }
+        }
+
         public enum TapTypeEnum
         {
             Star,
@@ -39,8 +52,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public override Color4 DefaultNoteColour => Color4.Aqua;
         public List<SlideBodyInfo> SlideInfoList = new List<SlideBodyInfo>();
 
+        [JsonIgnore]
         public Tap SlideTap { get; private set; } = null!;
 
+        [JsonIgnore]
         public IList<SlideBody> SlideBodies { get; private set; } = null!;
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)

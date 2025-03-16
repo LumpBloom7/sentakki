@@ -1,5 +1,6 @@
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -69,7 +70,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void LoadAsyncComplete()
         {
             base.LoadAsyncComplete();
-            AnimationDuration.BindValueChanged(_ => queueTransformReset(), true);
+            AnimationDuration.BindValueChanged(_ =>
+            {
+                // We need to make sure the current transform is refreshed if the animation duration changes
+                // However, we don't want to refresh the transforms of hitobjects that isn't actively in use
+                if (IsInUse)
+                    RefreshStateTransforms();
+            }, true);
         }
 
         public Bindable<bool> ExBindable = new Bindable<bool>();
@@ -81,29 +88,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             ExBindable.BindTo(HitObject.ExBindable);
         }
 
-        private bool transformResetQueued;
-
-        protected override void Update()
+        protected override void UpdateHitStateTransforms(ArmedState state)
         {
-            base.Update();
+            base.UpdateHitStateTransforms(state);
 
-            if (transformResetQueued) RefreshStateTransforms();
-        }
+            if (state is not ArmedState.Idle)
+                return;
 
-        // We need to make sure the current transform resets, perhaps due to animation duration being changed
-        // We don't want to reset the transform of all DHOs immediately,
-        // since repeatedly resetting transforms of non-present DHO is wasteful
-        private void queueTransformReset()
-        {
-            transformResetQueued = true;
-            //LifetimeStart = HitObject.StartTime - InitialLifetimeOffset;
-        }
-
-        protected override void UpdateInitialTransforms()
-        {
-            // The transform is reset as soon as this function begins
-            // This includes the usual LoadComplete() call, or rewind resets
-            transformResetQueued = false;
+            // This is a very aggressive lifetime optimisation to ensure that lifetimes are sane even in editor contexts (or any non-frame stable contexts)
+            // The beginning of DHO.UpdateState() sets LifetimeEnd to double.MaxValue, regardless of the LifetimeEnd set in the LifetimeEntry
+            // After UpdateHitStateTransforms(), the LifetimeEnd only gets set iff the current ArmedState is not Idle.
+            // In non-frame-stable contexts, the DHO may be skipped over, so it is never hit/missed and therefore the ArmedState is Idle despite CurrentTime being past the miss window.
+            // This manual expiry aims to mitigate the problem.
+            // Possibly similar case: https://github.com/ppy/osu/blob/143593b3b90977d0a91da833eccc3efd39c39254/osu.Game.Rulesets.Osu/Objects/Drawables/DrawableHitCircle.cs#L208
+            this.Delay(HitObject.MaximumJudgementOffset + 50).FadeOut().Expire();
         }
 
         protected new void ApplyResult(HitResult hitResult)

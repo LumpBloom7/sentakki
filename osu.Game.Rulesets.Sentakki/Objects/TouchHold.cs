@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -9,16 +8,39 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Scoring;
+using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public partial class TouchHold : SentakkiHitObject, IHasDuration
+    public partial class TouchHold : SentakkiHitObject, IHasDuration, IHasPosition
     {
         public double EndTime
         {
             get => StartTime + Duration;
             set => Duration = value - StartTime;
+        }
+
+        private HitObjectProperty<Vector2> position;
+
+        public Bindable<Vector2> PositionBindable => position.Bindable;
+
+        public Vector2 Position
+        {
+            get => position.Value;
+            set => position.Value = value;
+        }
+
+        public float X
+        {
+            get => Position.X;
+            set => Position = new Vector2(value, Position.Y);
+        }
+
+        public float Y
+        {
+            get => Position.Y;
+            set => Position = new Vector2(Position.X, value);
         }
 
         public override bool Ex
@@ -58,6 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     {
         public static readonly IReadOnlyList<Color4> DefaultPalette;
         public static readonly IReadOnlyList<Color4> BreakPalette;
+        public static readonly IReadOnlyList<Color4> TwinPalette;
 
         static TouchHold()
         {
@@ -71,9 +94,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             BreakPalette = [
                 Color4.OrangeRed,
-                Colour4.FromHex("#802200"),
+                Colour4.FromHex("#802300"),
                 Color4.OrangeRed,
-                Colour4.FromHex("#802200"),
+                Colour4.FromHex("#802300"),
+            ];
+
+            TwinPalette = [
+                Color4.Gold,
+                Colour4.FromHex("#806c00"),
+                Color4.Gold,
+                Colour4.FromHex("#806c00"),
             ];
         }
     }
