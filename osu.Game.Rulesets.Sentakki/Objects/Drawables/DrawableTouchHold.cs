@@ -73,8 +73,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Frequency = { Value = 1 }
                 }
             ]);
-
-            isHitting.BindValueChanged(updateHoldSample);
         }
 
         protected override void LoadSamples()
@@ -130,19 +128,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private double totalHoldTime;
 
-        private void updateHoldSample(ValueChangedEvent<bool> holdState)
-        {
-            if (holdState.NewValue)
-            {
-                if (!holdSample.RequestedPlaying)
-                    holdSample.Play();
-            }
-            else
-            {
-                holdSample.Stop();
-            }
-        }
-
         private bool isHittable => Time.Current >= HitObject.StartTime - 150 && Time.Current <= HitObject.GetEndTime();
         private bool withinActiveTime => Time.Current >= HitObject.StartTime && Time.Current <= HitObject.GetEndTime();
 
@@ -163,6 +148,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             if (!isHitting.Value)
             {
+                holdSample.Stop();
+
                 // Grey the note to indicate that it isn't being held
                 Colour = Interpolation.ValueAt(
                     Math.Clamp(Time.Current, HitObject.StartTime, HitObject.StartTime + 100),
@@ -173,6 +160,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             if (!withinActiveTime)
                 return;
+
+            if (!holdSample.RequestedPlaying)
+                holdSample.Play();
 
             totalHoldTime = Math.Clamp(totalHoldTime + Time.Elapsed, 0, ((IHasDuration)HitObject).Duration);
             holdSample.Frequency.Value = 0.5 + (totalHoldTime / ((IHasDuration)HitObject).Duration);
@@ -187,13 +177,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             HitResult resultType;
 
-            if (result >= .90)
+            if (result >= 0.90)
                 resultType = HitResult.Perfect;
-            else if (result >= .75)
+            else if (result >= 0.75)
                 resultType = HitResult.Great;
-            else if (result >= .5)
+            else if (result >= 0.5)
                 resultType = HitResult.Good;
-            else if (result >= .25)
+            else if (result >= 0.25)
                 resultType = HitResult.Ok;
             else
                 resultType = HitResult.Miss;
