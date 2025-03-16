@@ -75,7 +75,6 @@ namespace osu.Game.Rulesets.Sentakki.UI
                     KeyboardStep = 0.01f,
                     DisplayAsPercentage = true
                 },
-
             };
 
             if (RuntimeInfo.IsMobile)
@@ -83,8 +82,15 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
             Add(new SettingsButton
             {
-                Text = @"Import local simai chart",
+                Text = @"Import simai chart",
+                TooltipText = "Import existing simai chart into the current sentakki installation.",
                 Action = () => performer?.PerformFromScreen(menu => menu.Push(new SentakkiSimaiImportScreen()))
+            });
+            Add(new SettingsButton
+            {
+                Text = @"Convert simai chart",
+                TooltipText = "Convert existing simai chart into osz files for other sentakki (dev) installations",
+                Action = () => performer?.PerformFromScreen(menu => menu.Push(new SentakkiSimaiConvertScreen()))
             });
         }
 

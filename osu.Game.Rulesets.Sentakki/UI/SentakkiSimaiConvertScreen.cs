@@ -8,8 +8,8 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Platform;
 using osu.Framework.Screens;
-using osu.Game.Database;
 using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Overlays;
@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.UI;
 
 #nullable disable
 
-public partial class SentakkiSimaiImportScreen : OsuScreen
+public partial class SentakkiSimaiConvertScreen : OsuScreen
 {
     public override bool HideOverlaysOnEnter => true;
 
@@ -38,13 +38,14 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
     private const float button_vertical_margin = 15;
 
     [Resolved]
-    private OsuGameBase game { get; set; }
+    private OsuColour colours { get; set; }
 
     [Resolved]
-    private OsuColour colours { get; set; }
+    private GameHost host { get; set; }
 
     [Cached]
     private OverlayColourProvider overlayColourProvider { get; set; } = new OverlayColourProvider(OverlayColourScheme.Pink);
+
 
     [BackgroundDependencyLoader(true)]
     private void load(INotificationOverlay notificationOverlay)
@@ -85,7 +86,7 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
                         },
                         importRecursiveButton = new RoundedButton
                         {
-                            Text = "Import recursively from subfolders",
+                            Text = "Convert recursively from subfolders",
                             Anchor = Anchor.Centre,
                             Origin = Anchor.Centre,
                             RelativeSizeAxes = Axes.X,
@@ -96,14 +97,14 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
                         },
                         importButton = new RoundedButton
                         {
-                            Text = "Import",
+                            Text = "Convert",
                             Anchor = Anchor.BottomCentre,
                             Origin = Anchor.BottomCentre,
                             RelativeSizeAxes = Axes.X,
                             Height = button_height,
                             Width = 0.9f,
                             Margin = new MarginPadding { Vertical = button_vertical_margin },
-                            Action = () => startImportTask(fileSelector.CurrentPath.Value)
+                            Action = () => startConvertTask(fileSelector.CurrentPath.Value)
                         },
                     }
                 }
@@ -164,74 +165,90 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
             recurse(directoryInfo, directories);
         }
 
-        startImportTask(directories);
-    }
-
-    private void startImportTask(DirectoryInfo path)
-    {
-        Task.Factory.StartNew(async () =>
-        {
-            string oszPath = path.Name;
-            MemoryStream memoryStream = new MemoryStream();
-
-            SimaiOsz.ConvertToOsz(path, _ => memoryStream, false);
-
-            try
-            {
-                await game.Import([new ImportTask(memoryStream, oszPath + ".osz")]).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                notificationOverlay.Post(new SimpleErrorNotification
-                {
-                    Text = $"Failed to import {path.Name}: {e.Message}"
-                });
-            }
-        }, TaskCreationOptions.LongRunning);
-    }
-
-    private void startImportTask(List<DirectoryInfo> paths)
-    {
-        if (paths.Count == 0)
-        {
+        if (directories.Count == 0)
             return;
-        }
 
-        var notification = new ProgressNotification
-        {
-            Progress = 0,
-            State = ProgressNotificationState.Active,
-            Text = "Importing simai files...",
-            CompletionText = $"Imported {paths.Count} simai beatmaps",
-        };
+        startConvertTask(directories, path);
+    }
 
-        notificationOverlay.Post(notification);
 
-        Task.Factory.StartNew(async () =>
-        {
-            foreach (var (index, item) in paths.Select((i, v) => (v, i)))
+    private void startConvertTask(DirectoryInfo path)
+    {
+        Task.Factory.StartNew(
+            () =>
             {
-                string oszPath = item.Name;
-                MemoryStream memoryStream = new MemoryStream();
+                string oszPath = path.FullName;
 
-                SimaiOsz.ConvertToOsz(item, _ => memoryStream, false);
+                FileStream createOutputStream(string filename)
+                {
+                    oszPath = $"{path.Parent.FullName}{Path.DirectorySeparatorChar}{filename}";
+                    return File.Open(oszPath, FileMode.Create);
+                }
 
                 try
                 {
-                    await game.Import([new ImportTask(memoryStream, oszPath + ".osz")]).ConfigureAwait(false);
+                    SimaiOsz.ConvertToOsz(path, createOutputStream);
                 }
                 catch (Exception e)
                 {
                     notificationOverlay.Post(new SimpleErrorNotification
                     {
-                        Text = $"Failed to import {item.Name}: {e.Message}"
+                        Text = $"Failed to convert {path.Name}: {e.Message}"
+                    });
+                    return;
+                }
+
+                notificationOverlay.Post(new SimpleNotification
+                {
+                    Text = $"Successfully converted {path.Name}. Click to view converted file.",
+                    Activated = () => host.PresentFileExternally(oszPath)
+                });
+            }, TaskCreationOptions.LongRunning);
+    }
+
+    private void startConvertTask(List<DirectoryInfo> paths, DirectoryInfo origin)
+    {
+        var notification = new ProgressNotification
+        {
+            Progress = 0,
+            State = ProgressNotificationState.Active,
+            Text = "Converting simai files...",
+            CompletionText = $"Converted {paths.Count} simai beatmaps. Click to view converted files.",
+        };
+
+        notificationOverlay.Post(notification);
+
+        string batchOutputFolder = $"{origin.FullName}{Path.DirectorySeparatorChar}osz";
+
+        Task.Factory.StartNew(() =>
+        {
+            foreach (var (index, item) in paths.Select((i, v) => (v, i)))
+            {
+                FileStream createOutputStream(string filename)
+                {
+                    string oszDir = $"{item.Parent.FullName.Replace(origin.FullName, batchOutputFolder)}{Path.DirectorySeparatorChar}";
+                    Directory.CreateDirectory(oszDir);
+                    string oszPath = $"{oszDir}{filename}";
+                    return File.Open(oszPath, FileMode.Create);
+                }
+
+                try
+                {
+                    SimaiOsz.ConvertToOsz(item, createOutputStream);
+                }
+                catch (Exception e)
+                {
+                    notificationOverlay.Post(new SimpleErrorNotification
+                    {
+                        Text = $"Failed to convert {item.Name}: {e.Message}"
                     });
                 }
 
-                notification.Text = $"Imported {index + 1}/{paths.Count} simai beatmaps";
+                notification.Text = $"Converted {index + 1}/{paths.Count} simai beatmaps.";
                 notification.Progress = (float)(index + 1) / paths.Count;
-            }
 
+            }
+            notification.CompletionClickAction = () => host.OpenFileExternally(batchOutputFolder);
             notification.State = ProgressNotificationState.Completed;
         }, TaskCreationOptions.LongRunning);
     }
