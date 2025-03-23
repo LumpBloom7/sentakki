@@ -115,7 +115,7 @@ public partial class EditorSlidePartPiece : SmoothPath, IHasTooltip, IHasContext
         contextMenuItems.Add(mirroredTernaryMenuItem);
 
         contextMenuItems.Add(new OsuMenuItem("Add segment", MenuItemType.Standard, addSegment));
-        contextMenuItems.Add(new OsuMenuItem("Delete segment", MenuItemType.Destructive, deleteSegment));
+        contextMenuItems.Add(new OsuMenuItem("Delete segment", MenuItemType.Destructive, slideBodyInfo.SlidePathParts.Length <= 1 ? null : deleteSegment));
 
         ContextMenuItems = [.. contextMenuItems];
     }
