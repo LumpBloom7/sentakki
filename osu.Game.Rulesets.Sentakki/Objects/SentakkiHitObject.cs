@@ -7,15 +7,17 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Game.Audio;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Utils;
+using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public abstract class SentakkiHitObject : HitObject
+    public abstract class SentakkiHitObject : HitObject, IHasDisplayColour
     {
         public int ScoreWeighting => Break ? 5 : BaseScoreWeighting;
 
@@ -38,6 +40,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             // We initialize the note colour to the default value first for test scenes
             // The colours during gameplay will be set during beatmap post-process
             colour.Value = DefaultNoteColour;
+
+            DisplayColour = new Bindable<Color4>(DefaultNoteColour);
         }
 
         public override Judgement CreateJudgement() => new SentakkiJudgement();
@@ -46,6 +50,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         [JsonIgnore]
         public Bindable<Color4> ColourBindable => colour.Bindable;
+
+        // This colour is used to differentiate notes in the editor timeline, and is initialized to the base colour
+        [JsonIgnore]
+        public Bindable<Color4> DisplayColour { get; private set; }
 
         [JsonIgnore]
         public Color4 NoteColour

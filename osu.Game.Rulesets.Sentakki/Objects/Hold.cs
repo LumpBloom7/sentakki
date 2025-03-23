@@ -21,6 +21,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             get => nodeSamples;
             set
             {
+                if (!value.Any())
+                    return;
+
                 Samples = value.Last();
                 nodeSamples = value;
             }

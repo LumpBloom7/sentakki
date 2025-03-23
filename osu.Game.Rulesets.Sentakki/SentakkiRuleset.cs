@@ -18,12 +18,14 @@ using osu.Game.Graphics.Containers;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
+using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Replays.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Difficulty;
+using osu.Game.Rulesets.Sentakki.Edit;
 using osu.Game.Rulesets.Sentakki.Localisation;
 using osu.Game.Rulesets.Sentakki.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -33,6 +35,7 @@ using osu.Game.Rulesets.Sentakki.Statistics;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
+using osu.Game.Screens.Edit.Setup;
 using osu.Game.Screens.Ranking.Statistics;
 using osuTK;
 using osuTK.Graphics;
@@ -68,6 +71,8 @@ namespace osu.Game.Rulesets.Sentakki
             new SentakkiDifficultyCalculator(RulesetInfo, beatmap);
 
         public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new SentakkiReplayFrame();
+
+        public override HitObjectComposer CreateHitObjectComposer() => new SentakkiHitObjectComposer(this);
 
         public override PerformanceCalculator CreatePerformanceCalculator() => new SentakkiPerformanceCalculator(this);
 
@@ -186,6 +191,20 @@ namespace osu.Game.Rulesets.Sentakki
                 HitResult.Ok,
             };
         }
+
+        public override IEnumerable<Drawable> CreateEditorSetupSections() => [
+            new MetadataSection(),
+            new FillFlowContainer
+            {
+                AutoSizeAxes = Axes.Y,
+                Direction = FillDirection.Vertical,
+                Spacing = new Vector2(25f),
+                Children = [
+                    new ResourcesSection { RelativeSizeAxes = Axes.X },
+                    new DesignSection { RelativeSizeAxes = Axes.X }
+                ]
+            },
+        ];
 
         public override LocalisableString GetDisplayNameForHitResult(HitResult result) => result.GetDisplayNameForSentakkiResult();
 
