@@ -12,6 +12,12 @@ namespace osu.Game.Rulesets.Sentakki.Edit.CompositionTools
         public SlideCompositionTool()
             : base(nameof(Slide))
         {
+            TooltipText = """
+                Left click to begin placement.
+                '[', ']' keys to change slide shape.
+                '|' to mirror shape.
+                Right click to finish.
+                """;
         }
 
         public override Drawable CreateIcon() => new SpriteIcon

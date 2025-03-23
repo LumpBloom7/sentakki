@@ -47,6 +47,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         public void UpdateFrom(DrawableSlideBody body)
         {
+            slideBody.Path = body.Slidepath.Path;
+
             for (int i = 0; i < body.SlideStars.Count; ++i)
             {
                 stars[i].Position = body.SlideStars[i].Position;

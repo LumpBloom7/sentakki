@@ -2,6 +2,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
+using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Visualiser;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
@@ -18,6 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         private readonly SlideTapHighlight tapHighlight;
 
         private readonly Container<SlideBodyHighlight> slideBodyHighlights;
+        private readonly Container<SlidePathVisualiser> slideVisualisers;
 
         public SlideSelectionBlueprint(Slide hitObject)
             : base(hitObject)
@@ -30,11 +32,21 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                     Origin = Anchor.Centre,
                     Rotation = -22.5f,
                 },
+                slideVisualisers = new Container<SlidePathVisualiser>
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    RelativeSizeAxes = Axes.Both,
+                },
                 tapHighlight = new SlideTapHighlight(),
+
             };
 
             foreach (var body in hitObject.SlideBodies)
+            {
                 slideBodyHighlights.Add(new SlideBodyHighlight(body.SlideBodyInfo));
+                slideVisualisers.Add(new SlidePathVisualiser(hitObject, body.SlideBodyInfo, hitObject.Lane));
+            }
         }
 
         protected override void OnDeselected()
