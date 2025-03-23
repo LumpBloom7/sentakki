@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using osu.Framework.Bindables;
-using osu.Game.Audio;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -20,7 +17,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             None,
         }
 
-        protected override bool NeedBreakSample => false;
+        protected override bool PlaysBreakSample => false;
 
         public double Duration
         {
@@ -88,7 +85,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 {
                     Lane = slideInfo.SlidePath.EndLane + Lane,
                     StartTime = StartTime,
-                    Samples = Samples
+                    Samples = Samples,
                 });
 
                 SlideBodies.Add(body);

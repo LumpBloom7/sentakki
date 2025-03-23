@@ -1,9 +1,11 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
+using osu.Framework.Utils;
 using osu.Game.Audio;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Objects;
@@ -32,6 +34,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private PausableSkinnableSound holdSample = null!;
 
+        [Cached]
+        private Bindable<IReadOnlyList<Color4>> colourPalette = new();
+
         public DrawableTouchHold()
             : this(null)
         {
@@ -40,6 +45,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         public DrawableTouchHold(TouchHold? hitObject)
             : base(hitObject)
         {
+        }
+
+        protected override void OnApply()
+        {
+            base.OnApply();
+            colourPalette.BindTo(HitObject.ColourPaletteBindable);
         }
 
         [BackgroundDependencyLoader]
@@ -52,8 +63,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Alpha = 0;
-            AddRangeInternal(new Drawable[]
-            {
+            AddRangeInternal(
+            [
                 TouchHoldBody = new TouchHoldBody(),
                 holdSample = new PausableSkinnableSound
                 {
@@ -61,13 +72,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Looping = true,
                     Frequency = { Value = 1 }
                 }
-            });
-
-            isHitting.BindValueChanged(b =>
-            {
-                if (b.NewValue) beginHold();
-                else endHold();
-            });
+            ]);
         }
 
         protected override void LoadSamples()
@@ -92,6 +97,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.OnFree();
 
             holdSample.ClearSamples();
+            colourPalette.UnbindFrom(HitObject.ColourPaletteBindable);
             isHitting.Value = false;
             totalHoldTime = 0;
         }
@@ -104,47 +110,63 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             this.FadeInFromZero(fadeTime).ScaleTo(1);
 
-            using (BeginAbsoluteSequence(HitObject.StartTime - animTime))
-            {
+            using (BeginDelayedSequence(fadeTime))
                 TouchHoldBody.ResizeTo(80, animTime, Easing.InCirc);
-            }
-            using (BeginDelayedSequence(fadeTime + animTime))
-            {
-                TouchHoldBody.CentrePiece.FadeOut();
-                TouchHoldBody.CompletedCentre.FadeIn();
-                TouchHoldBody.ProgressPiece.TransformBindableTo(TouchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
-            }
         }
 
+        protected override void UpdateStartTimeStateTransforms()
+        {
+            base.UpdateStartTimeStateTransforms();
+
+            TouchHoldBody.CentrePiece.FadeOut();
+            TouchHoldBody.CompletedCentre.FadeIn();
+            TouchHoldBody.ProgressPiece.TransformBindableTo(TouchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
+        }
+
+        [Cached]
         private readonly Bindable<bool> isHitting = new Bindable<bool>();
 
         private double totalHoldTime;
 
-        private void beginHold()
-        {
-            Colour = Color4.White;
-            holdSample.Play();
-        }
+        private bool isHittable => Time.Current >= HitObject.StartTime - 150 && Time.Current <= HitObject.GetEndTime();
+        private bool withinActiveTime => Time.Current >= HitObject.StartTime && Time.Current <= HitObject.GetEndTime();
 
-        private void endHold()
-        {
-            Colour = Color4.SlateGray;
-            holdSample.Stop();
-        }
+        private int pressedCount = 0;
 
         protected override void Update()
         {
             base.Update();
 
-            if (isHitting.Value)
+            int updatedPressedCounts = countActiveTouchPoints();
+
+            if (isHittable && (updatedPressedCounts > pressedCount || Auto))
+                isHitting.Value = true;
+            else if (!isHittable || updatedPressedCounts == 0)
+                isHitting.Value = false;
+
+            pressedCount = updatedPressedCounts;
+
+            if (!isHitting.Value)
             {
-                totalHoldTime = Math.Clamp(totalHoldTime + Time.Elapsed, 0, ((IHasDuration)HitObject).Duration);
-                holdSample.Frequency.Value = 0.5 + (totalHoldTime / ((IHasDuration)HitObject).Duration);
+                holdSample.Stop();
+
+                // Grey the note to indicate that it isn't being held
+                Colour = Interpolation.ValueAt(
+                    Math.Clamp(Time.Current, HitObject.StartTime, HitObject.StartTime + 100),
+                    Color4.White, Color4.SlateGray,
+                    HitObject.StartTime, HitObject.StartTime + 100, Easing.OutSine);
+                return;
             }
 
-            isHitting.Value = Time.Current >= HitObject.StartTime
-                              && Time.Current <= HitObject.GetEndTime()
-                              && (Auto || checkForTouchInput() || ((SentakkiActionInputManager?.PressedActions.Any() ?? false) && IsHovered));
+            if (!withinActiveTime)
+                return;
+
+            if (!holdSample.RequestedPlaying)
+                holdSample.Play();
+
+            totalHoldTime = Math.Clamp(totalHoldTime + Time.Elapsed, 0, ((IHasDuration)HitObject).Duration);
+            holdSample.Frequency.Value = 0.5 + (totalHoldTime / ((IHasDuration)HitObject).Duration);
+            Colour = Color4.White;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -155,13 +177,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             HitResult resultType;
 
-            if (result >= .90)
+            if (result >= 0.90)
                 resultType = HitResult.Perfect;
-            else if (result >= .75)
+            else if (result >= 0.75)
                 resultType = HitResult.Great;
-            else if (result >= .5)
+            else if (result >= 0.5)
                 resultType = HitResult.Good;
-            else if (result >= .25)
+            else if (result >= 0.25)
                 resultType = HitResult.Ok;
             else
                 resultType = HitResult.Miss;
@@ -177,7 +199,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            double time_fade_miss = 400 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
+            double time_fade_miss = 400;
 
             switch (state)
             {
@@ -191,18 +213,31 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        private bool checkForTouchInput()
+        private int countActiveTouchPoints()
         {
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+            int count = 0;
 
-            // Avoiding Linq to minimize allocations, since this would be called every update of this node
-            for (TouchSource t = TouchSource.Touch1; t <= TouchSource.Touch10; ++t)
+            bool isPressing = false;
+            foreach (var item in SentakkiActionInputManager.PressedActions)
             {
-                if (touchInput.GetTouchPosition(t) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
-                    return true;
+                if (item < SentakkiAction.Key1)
+                {
+                    isPressing = true;
+                    break;
+                }
             }
 
-            return false;
+            if (isPressing && ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
+                ++count;
+
+            foreach (TouchSource source in touchInput.ActiveSources)
+            {
+                if (touchInput.GetTouchPosition(source) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
+                    ++count;
+            }
+
+            return count;
         }
     }
 }

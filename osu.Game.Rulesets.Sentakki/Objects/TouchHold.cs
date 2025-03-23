@@ -1,19 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using osu.Framework.Bindables;
+using osu.Framework.Graphics;
 using osu.Game.Audio;
+using osu.Game.Graphics;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Scoring;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public class TouchHold : SentakkiHitObject, IHasDuration
+    public partial class TouchHold : SentakkiHitObject, IHasDuration
     {
         public double EndTime
         {
             get => StartTime + Duration;
             set => Duration = value - StartTime;
+        }
+
+        public override bool Ex
+        {
+            get => base.Ex;
+            set { } // TouchHold doesn't support EX note (how would that even work?!)
+        }
+
+        private HitObjectProperty<IReadOnlyList<Color4>> colourPalette = new(DefaultPalette);
+        public Bindable<IReadOnlyList<Color4>> ColourPaletteBindable => colourPalette.Bindable;
+
+        public IReadOnlyList<Color4> ColourPalette
+        {
+            get => colourPalette.Value;
+            set => colourPalette.Value = value;
         }
 
         public double Duration { get; set; }
@@ -27,12 +47,34 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             var referenceSample = Samples.FirstOrDefault();
 
             if (referenceSample == null)
-                return Array.Empty<HitSampleInfo>();
+                return [];
 
-            return new[]
-            {
-                referenceSample.With("spinnerspin")
-            };
+            return [referenceSample.With("spinnerspin")];
+        }
+    }
+
+    // Static stuff
+    public partial class TouchHold : SentakkiHitObject, IHasDuration
+    {
+        public static readonly IReadOnlyList<Color4> DefaultPalette;
+        public static readonly IReadOnlyList<Color4> BreakPalette;
+
+        static TouchHold()
+        {
+            OsuColour colours = new OsuColour();
+            DefaultPalette = [
+                colours.Red,
+                colours.Yellow,
+                colours.Green,
+                colours.Blue,
+            ];
+
+            BreakPalette = [
+                Color4.OrangeRed,
+                Colour4.FromHex("#802200"),
+                Color4.OrangeRed,
+                Colour4.FromHex("#802200"),
+            ];
         }
     }
 }

@@ -34,7 +34,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // Whether the slide body should have a break modifier applied to them.
         public bool Break;
 
-        public void UpdatePaths() => SlidePath = (slidePathParts.Length > 0) ? SlidePaths.CreateSlidePath(slidePathParts) : empty_path;
+        // Whether the slide body should have the EX modifier applied to them.
+        public bool Ex;
+
+        public void UpdatePaths() => SlidePath = SlidePaths.CreateSlidePath(slidePathParts);
 
         public override bool Equals(object? obj) => obj is not null && obj is SlideBodyInfo other && Equals(other);
 
@@ -47,6 +50,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 return true;
 
             if (Break != other.Break)
+                return false;
+
+            if (Ex != other.Ex)
                 return false;
 
             if (Duration != other.Duration)

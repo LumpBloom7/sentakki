@@ -103,7 +103,7 @@
         <value>Скорость появления нот Touch</value>
     </data>
   <data name="entry_speed_tooltip" xml:space="preserve">
-        <value>{0} ({1} мс)</value>
+        <value>{0} ({1}мс)</value>
         <comment>The left placeholder is the speed value between 0 - 10, or "Sonic" if too fast. The right placeholder duration value.</comment>
     </data>
   <data name="sonic" xml:space="preserve">

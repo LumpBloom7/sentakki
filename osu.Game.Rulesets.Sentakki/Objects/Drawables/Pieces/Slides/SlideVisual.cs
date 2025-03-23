@@ -1,11 +1,11 @@
 using System;
-using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
@@ -53,6 +53,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         [Resolved]
         private DrawablePool<SlideChevron>? chevronPool { get; set; }
 
+        [Resolved(canBeNull: true)]
+        private DrawableHitObject? drawableHitObject { get; set; }
+
         private Container<SlideChevron> chevrons = null!;
 
         private readonly BindableBool snakingIn = new BindableBool(true);
@@ -66,6 +69,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             {
                 chevrons = new Container<SlideChevron>()
             });
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (Time.Current < (drawableHitObject?.StartTimeBindable.Value ?? double.MinValue))
+                return;
+
+            if (drawableHitObject?.Result.HasResult ?? false)
+                return;
+
+            UpdateChevronVisibility();
         }
 
         private void updateVisuals()
@@ -119,9 +135,23 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                     chevron.Depth = chevrons.Count;
 
                     chevron.Thickness = 6.5f;
-                    chevron.Height = 60;
+                    chevron.Height = 30;
                     chevron.FanChevron = false;
-                    chevron.Width = 80;
+                    chevron.Width = 50;
+
+                    if (((DrawableSentakkiHitObject?)drawableHitObject)?.ExBindable.Value ?? false)
+                    {
+                        chevron.Size += new Vector2(15);
+                        chevron.ShadowRadius = 7.5f;
+                        chevron.Glow = true;
+                    }
+                    else
+                    {
+                        chevron.Size += new Vector2(30);
+                        chevron.ShadowRadius = 15f;
+                        chevron.Glow = false;
+                    }
+
                     chevrons.Add(chevron);
 
                     previousPosition = position;
@@ -148,7 +178,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             {
                 float progress = (i + 2f) / 12f;
 
-                float scale = progress - ((1f) / 12f);
+                float scale = progress - (1f / 12f);
                 var middlePosition = lineStart + (middleLineDelta * progress);
 
                 float t = 6.5f + (2.5f * scale);
@@ -165,7 +195,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 
                 float w = (secondPoint - one).Length;
 
-                const float safe_space_ratio = (570 / 600f);
+                const float safe_space_ratio = 570 / 600f;
 
                 float y = safe_space_ratio * scale;
 
@@ -177,10 +207,23 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 chevron.DisappearThreshold = path.FanStartProgress + ((i + 1) / 11f * (1 - path.FanStartProgress));
                 chevron.Depth = chevrons.Count;
 
-                chevron.Width = w + 30;
-                chevron.Height = h + 30;
+                chevron.Width = w;
+                chevron.Height = h;
                 chevron.Thickness = t;
                 chevron.FanChevron = true;
+
+                if (((DrawableSentakkiHitObject?)drawableHitObject)?.ExBindable.Value ?? false)
+                {
+                    chevron.Size += new Vector2(15);
+                    chevron.ShadowRadius = 7.5f;
+                    chevron.Glow = true;
+                }
+                else
+                {
+                    chevron.Size += new Vector2(30);
+                    chevron.ShadowRadius = 15f;
+                    chevron.Glow = false;
+                }
 
                 chevrons.Add(chevron);
             }
@@ -199,9 +242,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                     var chevron = chevrons[j];
                     chevron.FadeOut()
                            .Delay(currentOffset)
-                           .FadeIn(fadeDuration)
-                           // This finally clause ensures the chevron maintains the correct visibility state after a rewind
-                           .Finally(c => UpdateProgress(c));
+                           .FadeIn(fadeDuration);
 
                     currentOffset += offsetIncrement;
                 }
@@ -212,31 +253,29 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             }
         }
 
-        public void PerformExitAnimation(double duration)
+        public void PerformExitAnimation(double duration, double hitTime)
         {
-            bool found = false;
-            double fadeDuration = 0;
-            double currentOffset = 0;
+            int i;
+            // First rehide any chevrons that are part of completed segments
+            // Required because the entry animation will unconditionally fade them back in, and Update() will not change anything post judgement
+            for (i = chevrons.Count - 1; i >= 0; --i)
+            {
+                var chevron = chevrons[i];
+                if (chevron.DisappearThreshold > Progress)
+                    break;
 
-            for (int i = 0; i < chevrons.Count; ++i)
+                chevron.FadeOut();
+            }
+
+            double fadeoutOffset = 0;
+            double fadeoutDuration = duration / (i + 1);
+
+            for (; i >= 0; --i)
             {
                 var chevron = chevrons[i];
 
-                if (chevron.DisappearThreshold <= Progress)
-                {
-                    chevron.Alpha = 0;
-                    continue;
-                }
-
-                if (!found)
-                {
-                    found = true;
-                    fadeDuration = duration / (chevrons.Count - i);
-                    currentOffset = (fadeDuration / 2) * (chevrons.Count - i);
-                }
-
-                chevron.FadeIn().Delay(currentOffset).FadeOut(fadeDuration);
-                currentOffset -= fadeDuration / 2;
+                chevron.FadeIn().Delay(fadeoutOffset).FadeOut(fadeoutDuration);
+                fadeoutOffset += fadeoutDuration / 2;
             }
         }
 

@@ -30,6 +30,16 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         [Cached]
         private readonly DrawablePool<SlideChevron> chevronPool = null!;
 
+        public static bool[][] ObjectFlagsSource = [
+            [false, false, false, false],
+            [true, false, false, false],
+            [false, true, false, false],
+            [true, true, false, false],
+            [false, false, true, false],
+            [false, false, false, true],
+            [false, false, true, true],
+        ];
+
         public TestSceneSlideFan()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
@@ -47,7 +57,15 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject hitObject) && hitObject.AllJudged == false));
         }
 
-        private void testSingle(double duration, bool auto = false)
+        [TestCaseSource(nameof(ObjectFlagsSource))]
+        public void TestSlideFan(bool headBreak, bool headEX, bool bodyBreak, bool bodyEx)
+        {
+            AddStep("Miss Single", () => testSingle(2000, false, headBreak, headEX, bodyBreak, bodyEx));
+            AddStep("Hit Single", () => testSingle(2000, true, headBreak, headEX, bodyBreak, bodyEx));
+            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject hitObject) && hitObject.AllJudged == false));
+        }
+
+        private void testSingle(double duration, bool auto = false, bool headBreak = false, bool headEX = false, bool bodyBreak = false, bool bodyEx = false)
         {
             var slide = new Slide
             {
@@ -57,7 +75,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
                     new SlideBodyInfo
                     {
                         SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false) },
-                        Duration = 1000,
+                        Duration = duration,
                     },
                 },
                 StartTime = Time.Current + 1000,
