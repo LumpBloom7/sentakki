@@ -34,6 +34,7 @@ using osu.Game.Rulesets.Sentakki.Statistics;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
+using osu.Game.Screens.Edit.Setup;
 using osu.Game.Screens.Ranking.Statistics;
 using osuTK;
 using osuTK.Graphics;
@@ -185,6 +186,20 @@ namespace osu.Game.Rulesets.Sentakki
                 HitResult.Ok,
             };
         }
+
+        public override IEnumerable<Drawable> CreateEditorSetupSections() => [
+            new MetadataSection(),
+            new FillFlowContainer
+            {
+                AutoSizeAxes = Axes.Y,
+                Direction = FillDirection.Vertical,
+                Spacing = new Vector2(25f),
+                Children = [
+                    new ResourcesSection { RelativeSizeAxes = Axes.X },
+                    new DesignSection { RelativeSizeAxes = Axes.X }
+                ]
+            },
+        ];
 
         public override LocalisableString GetDisplayNameForHitResult(HitResult result) => result.GetDisplayNameForSentakkiResult();
 
