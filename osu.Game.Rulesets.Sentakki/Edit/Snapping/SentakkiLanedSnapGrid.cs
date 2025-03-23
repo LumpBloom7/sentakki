@@ -19,7 +19,7 @@ using osu.Game.Screens.Edit.Components.TernaryButtons;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Edit;
+namespace osu.Game.Rulesets.Sentakki.Edit.Snapping;
 
 public partial class SentakkiSnapGrid : CompositeDrawable
 {

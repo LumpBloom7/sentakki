@@ -10,6 +10,7 @@ using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds;
+using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Screens.Edit.Compose.Components;

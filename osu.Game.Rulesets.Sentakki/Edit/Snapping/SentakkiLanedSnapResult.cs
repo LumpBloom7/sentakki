@@ -1,7 +1,7 @@
 using osu.Game.Rulesets.Edit;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.Edit;
+namespace osu.Game.Rulesets.Sentakki.Edit.Snapping;
 
 public class SentakkiLanedSnapResult : SnapResult
 {

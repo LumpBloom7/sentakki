@@ -5,7 +5,7 @@ using osu.Game.Rulesets.Edit;
 using osu.Game.Screens.Edit.Components.TernaryButtons;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.Edit;
+namespace osu.Game.Rulesets.Sentakki.Edit.Snapping;
 
 public partial class SentakkiSnapProvider : CompositeDrawable
 {

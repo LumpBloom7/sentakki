@@ -11,7 +11,7 @@ using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Screens.Edit.Components.TernaryButtons;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.Edit;
+namespace osu.Game.Rulesets.Sentakki.Edit.Snapping;
 
 public partial class SentakkiTouchSnapGrid : CompositeDrawable
 {
