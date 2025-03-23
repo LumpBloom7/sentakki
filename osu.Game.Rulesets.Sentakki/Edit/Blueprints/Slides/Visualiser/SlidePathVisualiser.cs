@@ -51,6 +51,9 @@ public partial class SlidePathVisualiser : CompositeDrawable
         {
             var part = slideBodyInfo.SlidePathParts[i];
 
+            if (part.Shape is SlidePaths.PathShapes.Fan)
+                part = new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false);
+
             var sentakkiSlidePath = SlidePaths.CreateSlidePath(part);
 
             var segmentColour = Colour4.FromHSL(hue, 1, 0.5f);
