@@ -89,12 +89,14 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         private void updateSlideBodyHighlights()
         {
+            slideVisualisers.Rotation = DrawableObject.HitObject.Lane.GetRotationForLane() - 22.5f;
+            slideBodyHighlights.Rotation = slideVisualisers.Rotation = DrawableObject.HitObject.Lane.GetRotationForLane() - 22.5f;
+
             for (int i = 0; i < DrawableObject.SlideBodies.Count; ++i)
             {
                 var slideBody = DrawableObject.SlideBodies[i];
 
                 slideBodyHighlights[i].UpdateFrom(slideBody);
-                slideBodyHighlights[i].Rotation = DrawableObject.HitObject.Lane.GetRotationForLane();
             }
         }
 

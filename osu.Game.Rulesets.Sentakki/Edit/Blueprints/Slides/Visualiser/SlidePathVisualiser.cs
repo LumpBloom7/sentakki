@@ -40,7 +40,7 @@ public partial class SlidePathVisualiser : CompositeDrawable
     {
         paths.Clear();
 
-        int currentOffset = startLane;
+        int currentOffset = 0;
         Console.WriteLine(currentOffset);
 
         float hueInterval = 1f / slideBodyInfo.SlidePathParts.Length;
