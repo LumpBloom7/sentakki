@@ -7,7 +7,6 @@
         <PlatformTarget>AnyCPU</PlatformTarget>
         <RootNamespace>osu.Game.Rulesets.Sentakki</RootNamespace>
         <AssemblyName>osu.Game.Rulesets.Sentakki</AssemblyName>
-        <NoWarn>SYSLIB0001,IDE0130</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="ppy.osu.Game" Version="2025.321.0" />

@@ -79,10 +79,14 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 case Tap:
                 case SlideBody:
-                case Hold:
                 case Hold.HoldHead:
                 case Touch:
                 case TouchHold:
+                    return true;
+
+                // HitObject lines take the parent colour, instead of considering the nested object's colour
+                case Slide:
+                case Hold:
                     return true;
             }
             return false;
@@ -92,6 +96,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         {
             Hold.HoldHead => false,
             TouchHold => false,
+            Slide => false,
             _ => true
         };
     }
