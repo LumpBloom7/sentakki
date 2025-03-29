@@ -6,7 +6,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Lines;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Screens.Edit;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Visualiser;
@@ -15,21 +14,30 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Visualiser;
 public partial class SlidePathVisualiser : CompositeDrawable
 {
     private Container<SmoothPath> paths;
+    private Container<SmoothPath> hoverPaths;
 
     private readonly SlideBodyInfo slideBodyInfo;
-    private readonly int startLane;
     private readonly Slide slide;
+
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
+    {
+        return hoverPaths.Child.ReceivePositionalInputAt(screenSpacePos);
+    }
 
     public SlidePathVisualiser(Slide slide, SlideBodyInfo slideBodyInfo, int startLane)
     {
         this.slide = slide;
         this.slideBodyInfo = slideBodyInfo;
-        this.startLane = startLane;
         RelativeSizeAxes = Axes.Both;
 
         InternalChildren = [
-            paths = new Container<SmoothPath>{
+            paths = new Container<SmoothPath>
+            {
                 RelativeSizeAxes = Axes.Both,
+            },
+            hoverPaths = new Container<SmoothPath>
+            {
+                RelativeSizeAxes = Axes.Both
             }
         ];
 
@@ -46,6 +54,8 @@ public partial class SlidePathVisualiser : CompositeDrawable
         float hueInterval = 1f / slideBodyInfo.SlidePathParts.Length;
 
         float hue = 0;
+
+        List<Vector2> fullVertices = [];
 
         for (int i = 0; i < slideBodyInfo.SlidePathParts.Length; ++i)
         {
@@ -68,6 +78,8 @@ public partial class SlidePathVisualiser : CompositeDrawable
                 vertices.AddRange(partVertices);
             }
 
+            fullVertices.AddRange(vertices);
+
             SmoothPath smoothPath = new EditorSlidePartPiece(slide, slideBodyInfo, i)
             {
                 PathRadius = 5,
@@ -84,6 +96,17 @@ public partial class SlidePathVisualiser : CompositeDrawable
 
             paths.Add(smoothPath);
         }
+
+        var hoverPath = hoverPaths.Child = new SmoothPath()
+        {
+            PathRadius = 25,
+            Alpha = 0f,
+            Vertices = fullVertices,
+            Anchor = Anchor.Centre,
+            Position = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0),
+            Rotation = 0
+        };
+        hoverPath.OriginPosition = hoverPath.PositionInBoundingBox(hoverPath.Vertices[0]);
     }
 
     public void ReloadVisualiser()

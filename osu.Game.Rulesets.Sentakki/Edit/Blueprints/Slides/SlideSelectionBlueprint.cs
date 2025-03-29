@@ -1,3 +1,4 @@
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -39,7 +40,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                     RelativeSizeAxes = Axes.Both,
                 },
                 tapHighlight = new SlideTapHighlight(),
-
             };
 
             foreach (var body in hitObject.SlideBodies)
@@ -102,8 +102,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         public override Vector2 ScreenSpaceSelectionPoint => tapHighlight.ScreenSpaceDrawQuad.Centre;
 
-        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => tapHighlight.ReceivePositionalInputAt(screenSpacePos);
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => tapHighlight.ReceivePositionalInputAt(screenSpacePos) || slideVisualisers.Any(v => v.ReceivePositionalInputAt(screenSpacePos));
 
         public override Quad SelectionQuad => tapHighlight.ScreenSpaceDrawQuad;
+
     }
 }
