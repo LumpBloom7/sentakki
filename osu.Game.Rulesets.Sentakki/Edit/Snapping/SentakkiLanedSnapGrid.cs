@@ -140,8 +140,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
 
                 float circleRadius = GetDistanceRelativeToCurrentTime(beatTime);
 
-                BeatSnapGridLine line;
-                linesContainer.Add(line = linePool.Get());
+                BeatSnapGridLine line = linePool.Get();
 
                 int divisor = BindableBeatDivisor.GetDivisorForBeatIndex(beatIndex, beatSnapProvider.BeatDivisor);
 
@@ -150,8 +149,10 @@ public partial class SentakkiSnapGrid : CompositeDrawable
                 line.Size = new Vector2(circleRadius * 2);
                 line.BorderThickness = thickness * 2;
                 line.Colour = BindableBeatDivisor.GetColourFor(divisor, colours);
-                line.Alpha = (float)((beatTime - minimumVisibleTime) / (maximumVisibleTime - minimumVisibleTime));
+                line.Alpha = 0.1f + (float)Math.Pow(1 - Math.Abs(beatTime - time) / (animationDuration * 0.5f), 1.5f) * 0.9f;
                 line.SnappingTime = beatTime;
+
+                linesContainer.Add(line);
             }
         }
     }
@@ -164,9 +165,18 @@ public partial class SentakkiSnapGrid : CompositeDrawable
         _ => 0.6f,
     };
 
+    private double lastEditorTime = double.MinValue;
+    private int lastBeatDivisor = 0;
+
     protected override void Update()
     {
-        recreateLines();
+        if (editorClock.CurrentTime != lastEditorTime || lastBeatDivisor != beatSnapProvider.BeatDivisor)
+        {
+            recreateLines();
+            lastEditorTime = editorClock.CurrentTime;
+            lastBeatDivisor = beatSnapProvider.BeatDivisor;
+        }
+
         base.Update();
     }
 
