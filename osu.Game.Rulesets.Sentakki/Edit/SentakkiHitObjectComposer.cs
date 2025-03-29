@@ -21,6 +21,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         [Cached]
         private SentakkiSnapProvider snapProvider { get; set; } = new SentakkiSnapProvider();
 
+        protected override Drawable CreateHitObjectInspector() => new SentakkiHitObjectInspector();
+
         public SentakkiHitObjectComposer(SentakkiRuleset ruleset)
             : base(ruleset)
         {
