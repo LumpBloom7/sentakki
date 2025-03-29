@@ -72,7 +72,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
         private void setBreakState(bool state)
         {
-            var lhos = EditorBeatmap.SelectedHitObjects.OfType<SentakkiLanedHitObject>();
+            var lhos = EditorBeatmap.SelectedHitObjects.OfType<SentakkiHitObject>();
 
             EditorBeatmap.BeginChange();
 
@@ -134,14 +134,14 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         {
             base.UpdateTernaryStates();
 
-            selectionBreakState.Value = GetStateFromSelection(EditorBeatmap.SelectedHitObjects.OfType<SentakkiLanedHitObject>(), h => h.Break);
+            selectionBreakState.Value = GetStateFromSelection(EditorBeatmap.SelectedHitObjects.OfType<SentakkiHitObject>(), h => h.Break);
             selectionSlideBodyBreakState.Value = GetStateFromSelection(EditorBeatmap.SelectedHitObjects.OfType<Slide>().SelectMany(h => h.SlideInfoList), s => s.Break);
             selectionExState.Value = GetStateFromSelection(EditorBeatmap.SelectedHitObjects.OfType<SentakkiHitObject>().Where(s => s is not TouchHold), s => s.Ex);
         }
 
         protected override IEnumerable<MenuItem> GetContextMenuItemsForSelection(IEnumerable<SelectionBlueprint<HitObject>> selection)
         {
-            if (selection.Any(s => s.Item is SentakkiLanedHitObject))
+            if (selection.Any(s => s.Item is SentakkiHitObject))
                 yield return new TernaryStateToggleMenuItem("Break") { State = { BindTarget = selectionBreakState } };
 
             if (selection.Any(s => s.Item is not TouchHold))
