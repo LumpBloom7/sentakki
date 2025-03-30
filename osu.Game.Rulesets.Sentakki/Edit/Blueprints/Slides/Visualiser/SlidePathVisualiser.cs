@@ -19,6 +19,7 @@ public partial class SlidePathVisualiser : CompositeDrawable
     private readonly SlideBodyInfo slideBodyInfo;
     private readonly Slide slide;
 
+
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
     {
         return hoverPaths.Child.ReceivePositionalInputAt(screenSpacePos);
@@ -38,6 +39,14 @@ public partial class SlidePathVisualiser : CompositeDrawable
             hoverPaths = new Container<SmoothPath>
             {
                 RelativeSizeAxes = Axes.Both
+            },
+            new SlideOffsetVisualiser(slide, slideBodyInfo){
+                Anchor = Anchor.Centre,
+                Origin = Anchor.TopCentre,
+                Rotation = 22.5f,
+
+                Height = 300,
+                Width = 50
             }
         ];
 

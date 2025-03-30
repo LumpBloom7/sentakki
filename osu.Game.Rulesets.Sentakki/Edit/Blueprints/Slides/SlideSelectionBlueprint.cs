@@ -33,13 +33,13 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                     Origin = Anchor.Centre,
                     Rotation = -22.5f,
                 },
+                tapHighlight = new SlideTapHighlight(),
                 slideVisualisers = new Container<SlidePathVisualiser>
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both,
                 },
-                tapHighlight = new SlideTapHighlight(),
             };
 
             foreach (var body in hitObject.SlideBodies)

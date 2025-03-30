@@ -32,7 +32,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         [Resolved]
         private SentakkiHitObjectComposer composer { get; set; } = null!;
 
-
         public SlidePlacementBlueprint()
         {
             AddRangeInternal(new Drawable[]

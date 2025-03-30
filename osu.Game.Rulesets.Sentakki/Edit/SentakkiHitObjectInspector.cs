@@ -39,7 +39,11 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
                 AddHeader("Ex slide");
                 AddValue(slide.SlideInfoList[0].Ex.ToString());
 
+                if (slide.SlideInfoList[0].SlidePathParts is null)
+                    break;
+
                 AddHeader("Parts");
+
                 foreach (SlideBodyPart part in slide.SlideInfoList[0].SlidePathParts)
                 {
                     int simpleEndOffset = part.EndOffset;

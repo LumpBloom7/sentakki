@@ -88,17 +88,17 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
     {
         switch (e.Key)
         {
-            case Key.Plus:
+            case Key.Plus when e.AltPressed:
                 ShootDelayBindable.Value += 1f / beatSnapProvider.BeatDivisor;
-                break;
+                return true;
 
-            case Key.Minus:
+            case Key.Minus when e.AltPressed:
                 ShootDelayBindable.Value = Math.Max(0, ShootDelayBindable.Value - (1f / beatSnapProvider.BeatDivisor));
-                break;
+                return true;
 
-            case Key.Number0:
+            case Key.Number0 when e.AltPressed:
                 ShootDelayBindable.Value = 1;
-                break;
+                return true;
 
             case Key.BackSlash:
                 mirrored.Value = !mirrored.Value;
