@@ -103,6 +103,20 @@ public partial class SentakkiSnapGrid : CompositeDrawable
         };
     }
 
+    public double GetRawTime(Vector2 screenSpacePosition)
+    {
+        float maxRange = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
+
+        var localPosition = ToLocalSpace(screenSpacePosition);
+        double distance = maxRange - (Vector2.Distance(Vector2.Zero, localPosition) - SentakkiPlayfield.NOTESTARTDISTANCE);
+
+        double timeRange = DrawableSentakkiRuleset.ComputeLaneNoteEntryTime(animationSpeed.Value) * 0.5f;
+
+        double unsnappedTime = editorClock.CurrentTimeAccurate + (distance / maxRange) * timeRange;
+
+        return unsnappedTime;
+    }
+
     private void recreateLines()
     {
         linesContainer.Clear(false);

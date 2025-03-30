@@ -72,4 +72,6 @@ public partial class SentakkiSnapProvider : CompositeDrawable
     }
 
     public float GetDistanceRelativeToCurrentTime(double time, float min = float.MinValue, float max = float.MaxValue) => lanedSnapGrid.GetDistanceRelativeToCurrentTime(time, min, max);
+
+    public double GetDistanceBasedRawTime(Vector2 screenSpacePosition) => lanedSnapGrid.GetRawTime(screenSpacePosition);
 }
