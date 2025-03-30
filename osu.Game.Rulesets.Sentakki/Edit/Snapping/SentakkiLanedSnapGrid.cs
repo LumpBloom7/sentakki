@@ -112,7 +112,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
 
         double timeRange = DrawableSentakkiRuleset.ComputeLaneNoteEntryTime(animationSpeed.Value) * 0.5f;
 
-        double unsnappedTime = editorClock.CurrentTimeAccurate + (distance / maxRange) * timeRange;
+        double unsnappedTime = editorClock.CurrentTimeAccurate + ((distance / maxRange) * timeRange);
 
         return unsnappedTime;
     }
@@ -163,7 +163,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
                 line.Size = new Vector2(circleRadius * 2);
                 line.BorderThickness = thickness * 2;
                 line.Colour = BindableBeatDivisor.GetColourFor(divisor, colours);
-                line.Alpha = 0.1f + (float)Math.Pow(1 - Math.Abs(beatTime - time) / (animationDuration * 0.5f), 1.5f) * 0.9f;
+                line.Alpha = 0.1f + ((float)Math.Pow(1 - (Math.Abs(beatTime - time) / (animationDuration * 0.5f)), 1.5f) * 0.9f);
                 line.SnappingTime = beatTime;
 
                 linesContainer.Add(line);

@@ -105,6 +105,5 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => tapHighlight.ReceivePositionalInputAt(screenSpacePos) || slideVisualisers.Any(v => v.ReceivePositionalInputAt(screenSpacePos));
 
         public override Quad SelectionQuad => tapHighlight.ScreenSpaceDrawQuad;
-
     }
 }

@@ -94,9 +94,9 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
     {
         base.Update();
 
-        double bpm = editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
+        double beatLength = editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
         float dist = -snapProvider.GetDistanceRelativeToCurrentTime(slide.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
-        float distInner = -snapProvider.GetDistanceRelativeToCurrentTime(slide.StartTime + bodyInfo.ShootDelay * bpm, SentakkiPlayfield.NOTESTARTDISTANCE);
+        float distInner = -snapProvider.GetDistanceRelativeToCurrentTime(slide.StartTime + (bodyInfo.ShootDelay * beatLength), SentakkiPlayfield.NOTESTARTDISTANCE);
         Position = -SentakkiExtensions.GetPositionAlongLane(dist, 0);
         Height = Math.Abs(dist - distInner);
     }
@@ -116,11 +116,10 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
             case Key.Minus:
             case Key.KeypadMinus:
                 editorBeatmap?.BeginChange();
-                bodyInfo.ShootDelay = Math.Max(bodyInfo.ShootDelay - 1f / beatSnapProvider.BeatDivisor, 0);
+                bodyInfo.ShootDelay = Math.Max(bodyInfo.ShootDelay - (1f / beatSnapProvider.BeatDivisor), 0);
                 editorBeatmap?.Update(slide);
                 editorBeatmap?.EndChange();
                 return true;
-
         }
         return base.OnKeyDown(e);
     }

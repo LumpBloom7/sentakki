@@ -19,11 +19,7 @@ public partial class SlidePathVisualiser : CompositeDrawable
     private readonly SlideBodyInfo slideBodyInfo;
     private readonly Slide slide;
 
-
-    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
-    {
-        return hoverPaths.Child.ReceivePositionalInputAt(screenSpacePos);
-    }
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => hoverPaths.Child.ReceivePositionalInputAt(screenSpacePos);
 
     public SlidePathVisualiser(Slide slide, SlideBodyInfo slideBodyInfo, int startLane)
     {
@@ -44,9 +40,6 @@ public partial class SlidePathVisualiser : CompositeDrawable
                 Anchor = Anchor.Centre,
                 Origin = Anchor.TopCentre,
                 Rotation = 22.5f,
-
-                Height = 300,
-                Width = 50
             }
         ];
 

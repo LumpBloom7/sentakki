@@ -69,11 +69,13 @@ public partial class EditorSlidePartPiece : SmoothPath, IHasTooltip, IHasContext
     }
     protected override bool OnClick(ClickEvent e) => true;
     protected override bool OnDragStart(DragStartEvent e) => true;
+
     protected override bool OnHover(HoverEvent e)
     {
         Colour = AccentColour.LightenHSL(0.5f);
         return true;
     }
+
     protected override void OnHoverLost(HoverLostEvent e)
     {
         Colour = AccentColour;
@@ -120,7 +122,7 @@ public partial class EditorSlidePartPiece : SmoothPath, IHasTooltip, IHasContext
         ContextMenuItems = [.. contextMenuItems];
     }
 
-    private void changeShape(SlidePaths.PathShapes shape, bool findClosestMatch = true)
+    private void changeShape(SlidePaths.PathShapes shape)
     {
         if (shape == part.Shape)
             return;
@@ -130,7 +132,7 @@ public partial class EditorSlidePartPiece : SmoothPath, IHasTooltip, IHasContext
             int direction = (i % 2 == 0) ? -1 : 1;
             int changeAmount = (int)Math.Ceiling(i / 2f);
 
-            int targetOffset = part.EndOffset + changeAmount * direction;
+            int targetOffset = part.EndOffset + (changeAmount * direction);
 
             SlideBodyPart newPart = new SlideBodyPart(shape, targetOffset, part.Mirrored);
 
