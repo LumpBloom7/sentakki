@@ -2,6 +2,7 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Visualiser;
@@ -119,41 +120,32 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             }
         }
 
-        // IsSelected will become true *before* OnClick() is called, so we need to note down the selection state before that
-        private bool deselectedWhenClicked = false;
-
         protected override bool OnMouseDown(MouseDownEvent e)
         {
-            deselectedWhenClicked = !IsSelected;
-            return base.OnMouseDown(e);
-        }
-
-        protected override bool OnClick(ClickEvent e)
-        {
-            if (deselectedWhenClicked)
+            if (e.Button != osuTK.Input.MouseButton.Left)
                 return false;
 
-            deselectedWhenClicked = false;
+            if (!IsSelected)
+                return false;
 
             var currentSelection = slideVisualisers.SingleOrDefault(sv => sv.Alpha > 0);
-
             var candidates = slideVisualisers.Where(sv => sv.ReceivePositionalInputAt(e.ScreenSpaceMousePosition)).ToList();
 
-            if (candidates.Count > 0)
+            if (candidates.Count == 0)
+                return false;
+
+            currentSelection?.Deselect();
+            int skipAmount = candidates.IndexOf(currentSelection!) + 1;
+
+            bool tryDHOCycle = false;
+            if (skipAmount >= candidates.Count)
             {
-                currentSelection?.Deselect();
-
-                int skipAmount = 0;
-                if (currentSelection is not null)
-                    skipAmount = candidates.IndexOf(currentSelection) + 1;
-
-                if (skipAmount >= candidates.Count)
-                    skipAmount = 0;
-
-                candidates.Skip(skipAmount).First().Select();
+                skipAmount = 0;
+                tryDHOCycle = true;
             }
 
-            return base.OnClick(e);
+            candidates.Skip(skipAmount).First().Select();
+            return !tryDHOCycle;
         }
 
         public override Vector2 ScreenSpaceSelectionPoint => tapHighlight.ScreenSpaceDrawQuad.Centre;
