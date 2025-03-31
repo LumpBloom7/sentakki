@@ -120,7 +120,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // In non-frame-stable contexts, the DHO may be skipped over, so it is never hit/missed and therefore the ArmedState is Idle despite CurrentTime being past the miss window.
             // This manual expiry aims to mitigate the problem.
             // Possibly similar case: https://github.com/ppy/osu/blob/143593b3b90977d0a91da833eccc3efd39c39254/osu.Game.Rulesets.Osu/Objects/Drawables/DrawableHitCircle.cs#L208
-            this.Delay(HitObject.MaximumJudgementOffset).FadeOut().Expire();
+            this.Delay(HitObject.MaximumJudgementOffset + 50).FadeOut().Expire();
         }
 
         protected new void ApplyResult(HitResult hitResult)
