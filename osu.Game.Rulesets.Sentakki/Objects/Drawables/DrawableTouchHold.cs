@@ -203,10 +203,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             switch (state)
             {
-                case ArmedState.Hit:
-                    Expire();
-                    break;
-
                 case ArmedState.Miss:
                     this.ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss).Expire();
                     break;
