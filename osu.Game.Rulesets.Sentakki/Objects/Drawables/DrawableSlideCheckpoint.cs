@@ -12,10 +12,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         public new SlideCheckpoint HitObject => (SlideCheckpoint)base.HitObject;
 
-        // We need this to be alive as soon as the parent slide note is alive
-        // This is to ensure reverts are still possible during edge case situation (eg. 0 duration slide)
-        protected override bool ShouldBeAlive => Time.Current < LifetimeEnd;
-
         public override bool DisplayResult => false;
 
         private new DrawableSlideBody ParentHitObject => (DrawableSlideBody)base.ParentHitObject;

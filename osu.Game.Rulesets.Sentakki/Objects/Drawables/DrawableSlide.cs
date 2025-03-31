@@ -55,14 +55,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             // We also make sure all transforms have finished to avoid jank
+            bool allClear = true;
+
             for (int i = 0; i < NestedHitObjects.Count; i++)
             {
                 var nested = NestedHitObjects[i];
-                if (!nested.Result.HasResult || Time.Current < nested.LatestTransformEndTime)
+                if (!nested.Result.HasResult)
                     return;
+
+                allClear = allClear && nested.Result.IsHit;
             }
 
-            ApplyResult(Result.Judgement.MaxResult);
+            ApplyResult(allClear ? Result.Judgement.MaxResult : Result.Judgement.MinResult);
         }
 
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
@@ -111,6 +115,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
 
             base.AddNestedHitObject(hitObject);
+        }
+
+        protected override void UpdateHitStateTransforms(ArmedState state)
+        {
+            base.UpdateHitStateTransforms(state);
+            switch (state)
+            {
+                case ArmedState.Hit:
+                    this.Delay(200).FadeOut().Expire();
+                    break;
+                case ArmedState.Miss:
+                    this.Delay(400).FadeOut().Expire();
+                    break;
+            }
         }
 
         protected override void ClearNestedHitObjects()
