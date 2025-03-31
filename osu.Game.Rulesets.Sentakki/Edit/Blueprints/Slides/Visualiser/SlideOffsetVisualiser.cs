@@ -101,25 +101,49 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
         Height = Math.Abs(dist - distInner);
     }
 
+
+    private bool isShootDelayValid(double shootDelay)
+    {
+        double beatLength = editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
+
+        double shootOffsetMS = shootDelay * beatLength;
+
+        return shootOffsetMS >= 0 && shootOffsetMS < bodyInfo.Duration - 50;
+    }
+
+
     protected override bool OnKeyDown(KeyDownEvent e)
     {
         switch (e.Key)
         {
             case Key.Plus:
             case Key.KeypadPlus:
+            {
+                float newShootDelay = bodyInfo.ShootDelay + 1f / beatSnapProvider.BeatDivisor;
+                if (!isShootDelayValid(newShootDelay))
+                    return true;
+
                 editorBeatmap?.BeginChange();
-                bodyInfo.ShootDelay += 1f / beatSnapProvider.BeatDivisor;
+
+                bodyInfo.ShootDelay = newShootDelay;
                 editorBeatmap?.Update(slide);
                 editorBeatmap?.EndChange();
                 return true;
+            }
 
             case Key.Minus:
             case Key.KeypadMinus:
+            {
+                float newShootDelay = bodyInfo.ShootDelay - (1f / beatSnapProvider.BeatDivisor);
+                if (!isShootDelayValid(newShootDelay))
+                    return true;
+
                 editorBeatmap?.BeginChange();
-                bodyInfo.ShootDelay = Math.Max(bodyInfo.ShootDelay - (1f / beatSnapProvider.BeatDivisor), 0);
+                bodyInfo.ShootDelay = newShootDelay;
                 editorBeatmap?.Update(slide);
                 editorBeatmap?.EndChange();
                 return true;
+            }
         }
         return base.OnKeyDown(e);
     }
@@ -175,7 +199,12 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
 
             snapResult.Time ??= snapProvider.GetDistanceBasedRawTime(e.ScreenSpaceMousePosition);
 
-            double shootOffset = (snapResult.Time.Value - slide.StartTime) / editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
+            double shootOffsetMS = snapResult.Time.Value - slide.StartTime;
+
+            if (shootOffsetMS < 0 || shootOffsetMS >= slideBodyInfo.Duration - 50)
+                return;
+
+            double shootOffset = shootOffsetMS / editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
 
             editorBeatmap?.BeginChange();
             slideBodyInfo.ShootDelay = Math.Max((float)shootOffset, 0);
