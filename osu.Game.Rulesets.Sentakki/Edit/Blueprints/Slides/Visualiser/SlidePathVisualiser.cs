@@ -26,6 +26,7 @@ public partial class SlidePathVisualiser : CompositeDrawable
         this.slide = slide;
         this.slideBodyInfo = slideBodyInfo;
         RelativeSizeAxes = Axes.Both;
+        Alpha = 0;
 
         InternalChildren = [
             paths = new Container<SmoothPath>
@@ -114,5 +115,15 @@ public partial class SlidePathVisualiser : CompositeDrawable
     public void ReloadVisualiser()
     {
         loadPaths();
+    }
+
+    public void Select()
+    {
+        Alpha = 1;
+    }
+
+    public void Deselect()
+    {
+        Alpha = 0;
     }
 }
