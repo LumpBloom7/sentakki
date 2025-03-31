@@ -1,9 +1,6 @@
-using System;
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
