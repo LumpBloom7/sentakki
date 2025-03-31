@@ -62,9 +62,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             foreach (var sb in slideBodyHighlights)
                 sb.OnSelected();
 
-            if (slideVisualisers.Count > 0)
-                slideVisualisers[0].Select();
-
             base.OnSelected();
         }
 
