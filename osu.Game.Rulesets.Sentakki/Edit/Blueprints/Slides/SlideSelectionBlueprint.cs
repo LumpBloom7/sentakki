@@ -43,11 +43,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
                 },
             };
 
-            foreach (var body in hitObject.SlideBodies)
-            {
-                slideBodyHighlights.Add(new SlideBodyHighlight(body.SlideBodyInfo));
-                slideVisualisers.Add(new SlidePathVisualiser(hitObject, body.SlideBodyInfo, hitObject.Lane));
-            }
+            recreateVisualisations();
         }
 
         protected override void OnDeselected()
@@ -78,6 +74,25 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
             updateTapHighlight();
             updateSlideBodyHighlights();
+        }
+
+        private void recreateVisualisations()
+        {
+            slideBodyHighlights.Clear();
+            slideVisualisers.Clear();
+            foreach (var si in HitObject.SlideInfoList)
+            {
+                slideBodyHighlights.Add(new SlideBodyHighlight(si));
+                slideVisualisers.Add(new SlidePathVisualiser(HitObject, si, HitObject.Lane)
+                {
+                    OnDeleteSelected = recreateVisualisations
+                });
+            }
+
+            if (IsSelected && HitObject.SlideInfoList.Count > 0)
+            {
+                slideVisualisers[0].Select();
+            }
         }
 
         [Resolved]
