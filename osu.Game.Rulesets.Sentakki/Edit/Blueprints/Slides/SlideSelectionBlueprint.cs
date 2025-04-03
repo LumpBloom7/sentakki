@@ -122,16 +122,24 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         protected override bool OnMouseDown(MouseDownEvent e)
         {
-            if (e.Button != osuTK.Input.MouseButton.Left)
-                return false;
-
             if (!IsSelected)
                 return false;
+
+            if (tapHighlight.ReceivePositionalInputAt(e.ScreenSpaceMousePosition))
+            {
+                foreach (var sv in slideVisualisers)
+                    sv.Deselect();
+
+                return false;
+            }
 
             var currentSelection = slideVisualisers.SingleOrDefault(sv => sv.Alpha > 0);
             var candidates = slideVisualisers.Where(sv => sv.ReceivePositionalInputAt(e.ScreenSpaceMousePosition)).ToList();
 
             if (candidates.Count == 0)
+                return false;
+
+            if (e.Button != osuTK.Input.MouseButton.Left)
                 return false;
 
             currentSelection?.Deselect();
