@@ -62,7 +62,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Colour = Color4.SlateGray;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Alpha = 0;
             AddRangeInternal(
             [
                 TouchHoldBody = new TouchHoldBody(),
@@ -108,7 +107,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             double animTime = AnimationDuration.Value * 0.8;
             double fadeTime = AnimationDuration.Value * 0.2;
 
-            this.FadeInFromZero(fadeTime).ScaleTo(1);
+            TouchHoldBody.FadeInFromZero(fadeTime).ScaleTo(1);
 
             using (BeginDelayedSequence(fadeTime))
                 TouchHoldBody.ResizeTo(80, animTime, Easing.InCirc);
@@ -203,8 +202,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             switch (state)
             {
+                case ArmedState.Hit:
+                    TouchHoldBody.FadeOut();
+                    break;
+
                 case ArmedState.Miss:
-                    this.ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss).Expire();
+                    TouchHoldBody.ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss).Expire();
+                    this.Delay(time_fade_miss).FadeOut();
                     break;
             }
         }

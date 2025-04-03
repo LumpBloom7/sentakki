@@ -141,10 +141,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             switch (state)
             {
+                case ArmedState.Hit:
+                    TouchBody.FadeOut();
+                    break;
+
                 case ArmedState.Miss:
-                    this.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                    TouchBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                         .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
                         .FadeOut(time_fade_miss);
+
+                    this.Delay(time_fade_miss).FadeOut();
                     break;
             }
         }
