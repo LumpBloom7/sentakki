@@ -51,7 +51,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
 
                     Color4 noteColor = hitObject.DefaultNoteColour;
 
-                    if (hitObject is SentakkiLanedHitObject laned && laned.Break)
+                    if (hitObject is SentakkiHitObject laned && laned.Break)
                         noteColor = breakColor;
                     else if (isTwin)
                         noteColor = twinColor;
