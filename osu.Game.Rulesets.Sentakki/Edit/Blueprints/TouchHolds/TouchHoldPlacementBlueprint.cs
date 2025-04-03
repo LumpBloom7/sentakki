@@ -30,7 +30,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
 
         protected override void OnMouseUp(MouseUpEvent e)
         {
-            if (e.Button != MouseButton.Right)
+            if (e.Button != MouseButton.Left)
                 return;
 
             if (PlacementActive == PlacementState.Active)
