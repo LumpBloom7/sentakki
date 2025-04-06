@@ -10,6 +10,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public partial class DrawableSlideCheckpoint : DrawableSentakkiHitObject
     {
+        // Slides parts can be hit as long as the body is visible, regardless of it's intended time
+        // By setting the animation duration to an absurdly high value, the lifetimes of touch regions are bounded by the parent DrawableSlide.
+        protected override double InitialLifetimeOffset => double.MaxValue;
+
         public new SlideCheckpoint HitObject => (SlideCheckpoint)base.HitObject;
 
         public override bool DisplayResult => false;
