@@ -143,6 +143,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 case ArmedState.Hit:
                     TouchBody.FadeOut();
+                    this.FadeOut();
                     break;
 
                 case ArmedState.Miss:

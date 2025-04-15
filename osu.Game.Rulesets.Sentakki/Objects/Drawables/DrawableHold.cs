@@ -200,6 +200,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 case ArmedState.Hit:
                     NoteBody.FadeOut();
+                    this.FadeOut();
                     break;
                 case ArmedState.Miss:
                     NoteBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
