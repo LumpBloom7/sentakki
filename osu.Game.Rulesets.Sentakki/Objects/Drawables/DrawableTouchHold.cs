@@ -37,6 +37,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         [Cached]
         private Bindable<IReadOnlyList<Color4>> colourPalette = new();
 
+        private readonly IBindable<Vector2> positionBindable = new Bindable<Vector2>();
+
+
         public DrawableTouchHold()
             : this(null)
         {
@@ -51,6 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnApply();
             colourPalette.BindTo(HitObject.ColourPaletteBindable);
+            positionBindable.BindTo(HitObject.PositionBindable);
         }
 
         [BackgroundDependencyLoader]
@@ -72,6 +76,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Frequency = { Value = 1 }
                 }
             ]);
+
+            positionBindable.BindValueChanged(v => Position = v.NewValue);
         }
 
         protected override void LoadSamples()
@@ -97,6 +103,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             holdSample.ClearSamples();
             colourPalette.UnbindFrom(HitObject.ColourPaletteBindable);
+            positionBindable.UnbindFrom(HitObject.PositionBindable);
             isHitting.Value = false;
             totalHoldTime = 0;
         }
