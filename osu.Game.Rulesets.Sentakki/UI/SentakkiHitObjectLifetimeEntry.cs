@@ -15,14 +15,25 @@ namespace osu.Game.Rulesets.Sentakki.UI
             : base(hitObject)
         {
             drawableRuleset = senRuleset;
+
             bindAnimationDuration();
             AnimationDurationBindable.BindValueChanged(x => LifetimeStart = HitObject.StartTime - InitialLifetimeOffset, true);
+
+            // Prevent past objects in idles states from remaining alive as their end times are skipped in non-frame-stable contexts.
+            LifetimeEnd = HitObject.GetEndTime() + HitObject.MaximumJudgementOffset;
         }
 
         private void bindAnimationDuration()
         {
             switch (HitObject)
             {
+                // Slides parts can be hit as long as the body is visible, regardless of it's intended time
+                // By setting the animation duration to an absurdly high value, the lifetimes of touch regions are bounded by the parent DrawableSlide.
+                case SlideCheckpoint:
+                case SlideCheckpoint.CheckpointNode:
+                    AnimationDurationBindable.Value = double.MaxValue;
+                    break;
+
                 case SentakkiLanedHitObject:
                     AnimationDurationBindable.BindTo(drawableRuleset.AdjustedAnimDuration);
                     break;

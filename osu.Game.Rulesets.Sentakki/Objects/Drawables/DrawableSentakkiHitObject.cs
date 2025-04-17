@@ -1,5 +1,6 @@
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -104,6 +105,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // The transform is reset as soon as this function begins
             // This includes the usual LoadComplete() call, or rewind resets
             transformResetQueued = false;
+        }
+
+        protected override void UpdateHitStateTransforms(ArmedState state)
+        {
+            base.UpdateHitStateTransforms(state);
+
+            if (state is not ArmedState.Idle)
+                return;
+
+            // This is a very aggressive lifetime optimisation to ensure that lifetimes are sane even in editor contexts (or any non-frame stable contexts)
+            // The beginning of DHO.UpdateState() sets LifetimeEnd to double.MaxValue, regardless of the LifetimeEnd set in the LifetimeEntry
+            // After UpdateHitStateTransforms(), the LifetimeEnd only gets set iff the current ArmedState is not Idle.
+            // In non-frame-stable contexts, the DHO may be skipped over, so it is never hit/missed and therefore the ArmedState is Idle despite CurrentTime being past the miss window.
+            // This manual expiry aims to mitigate the problem.
+            // Possibly similar case: https://github.com/ppy/osu/blob/143593b3b90977d0a91da833eccc3efd39c39254/osu.Game.Rulesets.Osu/Objects/Drawables/DrawableHitCircle.cs#L208
+            this.Delay(HitObject.MaximumJudgementOffset + 50).FadeOut().Expire();
         }
 
         protected new void ApplyResult(HitResult hitResult)
