@@ -37,6 +37,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         [Cached]
         private Bindable<IReadOnlyList<Color4>> colourPalette = new();
 
+        private readonly IBindable<Vector2> positionBindable = new Bindable<Vector2>();
+
+
         public DrawableTouchHold()
             : this(null)
         {
@@ -51,6 +54,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.OnApply();
             colourPalette.BindTo(HitObject.ColourPaletteBindable);
+            positionBindable.BindTo(HitObject.PositionBindable);
         }
 
         [BackgroundDependencyLoader]
@@ -62,7 +66,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Colour = Color4.SlateGray;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Alpha = 0;
             AddRangeInternal(
             [
                 TouchHoldBody = new TouchHoldBody(),
@@ -73,6 +76,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Frequency = { Value = 1 }
                 }
             ]);
+
+            positionBindable.BindValueChanged(v => Position = v.NewValue);
         }
 
         protected override void LoadSamples()
@@ -98,6 +103,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             holdSample.ClearSamples();
             colourPalette.UnbindFrom(HitObject.ColourPaletteBindable);
+            positionBindable.UnbindFrom(HitObject.PositionBindable);
             isHitting.Value = false;
             totalHoldTime = 0;
         }
@@ -108,7 +114,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             double animTime = AnimationDuration.Value * 0.8;
             double fadeTime = AnimationDuration.Value * 0.2;
 
-            this.FadeInFromZero(fadeTime).ScaleTo(1);
+            TouchHoldBody.FadeInFromZero(fadeTime).ScaleTo(1);
 
             using (BeginDelayedSequence(fadeTime))
                 TouchHoldBody.ResizeTo(80, animTime, Easing.InCirc);
@@ -204,11 +210,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Hit:
-                    Expire();
+                    TouchHoldBody.FadeOut();
+                    this.FadeOut();
                     break;
 
                 case ArmedState.Miss:
-                    this.ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss).Expire();
+                    TouchHoldBody.ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss);
+                    this.Delay(time_fade_miss).FadeOut();
                     break;
             }
         }

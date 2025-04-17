@@ -263,7 +263,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     foreach (var star in SlideStars)
                         star.FadeOut(time_fade_hit);
 
-                    this.Delay(time_fade_hit).Expire();
+                    this.Delay(time_fade_hit).FadeOut();
 
                     break;
 
@@ -274,7 +274,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         star.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                             .MoveToOffset(SentakkiExtensions.GetCircularPosition(100, star.Rotation), time_fade_miss, Easing.OutCubic);
 
-                    this.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss).Expire();
+                    this.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss);
                     break;
             }
         }

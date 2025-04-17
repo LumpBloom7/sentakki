@@ -10,6 +10,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Slide : SentakkiLanedHitObject, IHasDuration
     {
+        public override double MaximumJudgementOffset
+        {
+            get
+            {
+                double offset = 0.0;
+                foreach (var nested in NestedHitObjects)
+                    offset = Math.Max(offset, nested.MaximumJudgementOffset);
+
+                return offset;
+            }
+        }
+
         public enum TapTypeEnum
         {
             Star,

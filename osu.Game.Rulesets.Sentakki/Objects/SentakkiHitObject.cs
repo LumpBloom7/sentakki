@@ -82,7 +82,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             base.CreateNestedHitObjects(cancellationToken);
 
             for (int i = 1; i < ScoreWeighting; ++i)
-                AddNested(new ScorePaddingObject { StartTime = this.GetEndTime() });
+                AddNested(new ScorePaddingObject { StartTime = this.GetEndTime(), ParentMaximumJudgementOffset = MaximumJudgementOffset });
         }
 
         public HitSampleInfo[] CreateBreakSample()
