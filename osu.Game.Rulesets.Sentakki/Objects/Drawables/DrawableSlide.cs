@@ -54,7 +54,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            // We also make sure all transforms have finished to avoid jank
             bool allClear = true;
 
             for (int i = 0; i < NestedHitObjects.Count; i++)
@@ -66,6 +65,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 allClear = allClear && nested.Result.IsHit;
             }
 
+            // In order to ensure all animations do not get interrupted, we update the hit state transforms to accommodate the worst result
             ApplyResult(allClear ? Result.Judgement.MaxResult : Result.Judgement.MinResult);
         }
 
