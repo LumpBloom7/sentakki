@@ -68,8 +68,8 @@ public partial class ExpandableCheckbox : CompositeDrawable, IExpandable, IHasCu
 
         Expanded.BindValueChanged(v =>
         {
-            checkbox.FadeTo(v.NewValue ? 1f : 0f, 500, Easing.OutQuint);
-            label.FadeTo(v.NewValue ? 0f : 1f, 500, Easing.OutQuint);
+            checkbox.FadeTo(v.NewValue ? 1f : 0f);
+            label.FadeTo(v.NewValue ? 0f : 1f);
             checkbox.BypassAutoSizeAxes = !v.NewValue ? Axes.Y : Axes.None;
             label.BypassAutoSizeAxes = v.NewValue ? Axes.Y : Axes.None;
         }, true);

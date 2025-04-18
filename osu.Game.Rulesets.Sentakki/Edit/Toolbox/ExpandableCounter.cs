@@ -109,7 +109,7 @@ public partial class ExpandableCounter<T> : CompositeDrawable, IExpandable, IHas
         Expanded.BindValueChanged(v =>
         {
             label.Text = v.NewValue ? labelText : unexpandedLabeltext;
-            grid.FadeTo(v.NewValue ? 1f : 0f, 500, Easing.OutQuint);
+            grid.FadeTo(v.NewValue ? 1f : 0f);
             grid.BypassAutoSizeAxes = !v.NewValue ? Axes.Y : Axes.None;
         }, true);
     }

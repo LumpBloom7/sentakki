@@ -1,16 +1,17 @@
 using System;
-using osuTK;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input.Events;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
-using osu.Framework.Allocation;
 using osu.Game.Graphics.UserInterface;
-using osu.Framework.Input.Events;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Toolbox;
+
 public partial class ExpandableMenu<T> : CompositeDrawable, IExpandable, IHasCurrentValue<T>
                                             where T : struct, Enum
 {
@@ -74,7 +75,7 @@ public partial class ExpandableMenu<T> : CompositeDrawable, IExpandable, IHasCur
         Expanded.BindValueChanged(v =>
         {
             label.Text = v.NewValue ? expandedLabelText : unexpandedLabeltext;
-            menu.FadeTo(v.NewValue ? 1f : 0f, 500, Easing.OutQuint);
+            menu.FadeTo(v.NewValue ? 1f : 0f);
             menu.BypassAutoSizeAxes = !v.NewValue ? Axes.Y : Axes.None;
         }, true);
     }
