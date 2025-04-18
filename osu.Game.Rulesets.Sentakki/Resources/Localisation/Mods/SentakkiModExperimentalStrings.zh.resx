@@ -62,18 +62,18 @@
         <value>将被添加到未来 sentakki 版本的一些实验性功能。推荐使用 Autoplay/No-Fail。不支持录制回放。</value>
     </data>
   <data name="twin_notes" xml:space="preserve">
-        <value>双音符</value>
+        <value>多重音符</value>
         <comment>Twin is an adjective.</comment>
     </data>
   <data name="twin_notes_description" xml:space="preserve">
         <value>允许多个音符同时出现。（需要多点触控）</value>
     </data>
   <data name="twin_slides" xml:space="preserve">
-        <value>双 Slide</value>
+        <value>多重 Slide</value>
         <comment>Twin is an adjective.</comment>
     </data>
   <data name="twin_slides_description" xml:space="preserve">
-        <value>允许多个 Slide 主体在同一时间/区域出现。（需要多点触控）</value>
+        <value>允许多个 Slide 主体共享起始时间和起始位置。（需要多点触控）</value>
     </data>
   <data name="fan_slides" xml:space="preserve">
         <value>扇子 Slide</value>

@@ -62,9 +62,9 @@
         <value>生命数</value>
     </data>
   <data name="mod_description" xml:space="preserve">
-        <value>减小你的错误余地。</value>
+        <value>你只有小部分容错率。</value>
     </data>
   <data name="number_of_lives_description" xml:space="preserve">
-        <value>你开始的生命数。</value>
+        <value>决定开局时的生命数。</value>
     </data>
 </root>
