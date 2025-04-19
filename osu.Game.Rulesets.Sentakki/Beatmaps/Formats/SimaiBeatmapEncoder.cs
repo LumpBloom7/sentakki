@@ -120,7 +120,7 @@ public class SimaiBeatmapEncoder
 
         // Add padding timingPoint prior to first hitobject
         if (hitObjectsGroups[0].Key > 0)
-            maidataBuilder.Append($"\n{{#{hitObjectsGroups[0].Key / 1000:F3}}},");
+            maidataBuilder.Append(Invariant($"\n{{#{hitObjectsGroups[0].Key / 1000:F3}}},"));
 
         for (int i = 0; i < hitObjectsGroups.Count; ++i)
         {
@@ -131,7 +131,7 @@ public class SimaiBeatmapEncoder
                 var nextGroup = hitObjectsGroups[i + 1];
                 double delta = nextGroup.Key - group.Key;
 
-                maidataBuilder.Append($"\n{{#{delta / 1000:F3}}}");
+                maidataBuilder.Append(Invariant($"\n{{#{delta / 1000:F3}}}"));
             }
 
             var hitobjects = group.ToList();
@@ -161,7 +161,7 @@ public class SimaiBeatmapEncoder
     }
 
     protected static string TapToString(Tap tap) => $"{tap.Lane + 1}{(tap.Break ? "b" : "")}{(tap.Ex ? "x" : "")}";
-    protected static string HoldToString(Hold hold) => $"{hold.Lane + 1}h{(hold.Break ? "b" : "")}{(hold.Ex ? "x" : "")}[#{hold.Duration / 1000:F3}]";
+    protected static string HoldToString(Hold hold) => Invariant($"{hold.Lane + 1}h{(hold.Break ? "b" : "")}{(hold.Ex ? "x" : "")}[#{hold.Duration / 1000:F3}]");
 
     protected string SlideToString(Slide slide)
     {
@@ -210,7 +210,7 @@ public class SimaiBeatmapEncoder
                     durationWithoutDelay = slideInfo.Duration;
                 }
 
-                slideBuilder.Append($"[{shootDelayMs / 1000:F3}##{durationWithoutDelay / 1000:F3}]");
+                slideBuilder.Append(Invariant($"[{shootDelayMs / 1000:F3}##{durationWithoutDelay / 1000:F3}]"));
 
                 if (slideInfo.Break)
                     slideBuilder.Append('b');
@@ -271,7 +271,7 @@ public class SimaiBeatmapEncoder
                                                         return Math.Sqrt(xDelta * xDelta + yDelta * yDelta);
                                                     }).Value;
 
-    protected static string TouchHoldToString(TouchHold touchHold) => $"Ch[#{touchHold.Duration / 1000:F3}]";
+    protected static string TouchHoldToString(TouchHold touchHold) => Invariant($"Ch[#{touchHold.Duration / 1000:F3}]");
 
     public void SerializeToFile()
     {

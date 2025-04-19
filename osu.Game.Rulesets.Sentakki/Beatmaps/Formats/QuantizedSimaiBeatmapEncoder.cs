@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.UI;
-using osuTK;
+
+using static System.FormattableString;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Formats;
 
@@ -219,17 +218,17 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
 
     private record struct BPMUnit(double bpm) : IMaidataUnit
     {
-        public override readonly string ToString() => $"\n({bpm})";
+        public override readonly string ToString() => Invariant($"\n({bpm})");
     }
 
     private record struct DivisorUnit(int divisor) : IMaidataUnit
     {
-        public override readonly string ToString() => $"\n{{{divisor}}}";
+        public override readonly string ToString() => Invariant($"\n{{{divisor}}}");
     }
 
     private record struct BeatTimeUnit(double beatLength) : IMaidataUnit
     {
-        public override readonly string ToString() => $"\n({tempo}){{{divisor}}}";
+        public override readonly string ToString() => Invariant($"\n({tempo}){{{divisor}}}");
 
         public double tempo = 60000 / beatLength;
         public int divisor = 4;
