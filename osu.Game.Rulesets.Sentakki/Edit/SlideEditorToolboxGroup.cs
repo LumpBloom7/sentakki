@@ -19,7 +19,7 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
     public readonly Bindable<int> LaneOffset = new Bindable<int>(4);
     private Bindable<bool> mirrored = new Bindable<bool>(); // This is locked
 
-    public Bindable<float> ShootDelayBindable = new Bindable<float>();
+    public Bindable<float> ShootDelayBindable = new Bindable<float>(0.5f);
 
     public readonly Bindable<SlideBodyPart> CurrentPartBindable = new Bindable<SlideBodyPart>(new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false));
 
