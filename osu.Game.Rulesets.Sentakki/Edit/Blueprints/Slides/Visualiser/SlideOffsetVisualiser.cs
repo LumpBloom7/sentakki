@@ -192,6 +192,8 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
         [Resolved]
         private EditorBeatmap editorBeatmap { get; set; } = null!;
 
+        protected override bool OnMouseDown(MouseDownEvent e) => true;
+
         protected override bool OnDragStart(DragStartEvent e) => true;
         protected override void OnDrag(DragEvent e)
         {
