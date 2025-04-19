@@ -30,6 +30,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public class CheckpointNode : SentakkiHitObject
         {
+            public readonly Vector2 Position;
             public double SlideDuration { get; set; }
             public override double MaximumJudgementOffset => SlideDuration;
 
@@ -37,8 +38,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             {
                 Position = position;
             }
-
-            public readonly Vector2 Position;
 
             protected override HitWindows CreateHitWindows() => HitWindows.Empty;
             public override Judgement CreateJudgement() => new IgnoreJudgement();
