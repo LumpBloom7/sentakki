@@ -32,7 +32,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
             if (e.Button != MouseButton.Left) return false;
 
             EndPlacement(true);
-            EditorClock.SeekSmoothlyTo(HitObject.StartTime);
             return true;
         }
 

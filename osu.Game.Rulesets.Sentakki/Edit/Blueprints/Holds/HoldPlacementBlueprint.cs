@@ -45,21 +45,20 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
                 return false;
 
             BeginPlacement(true);
-            EditorClock.SeekSmoothlyTo(HitObject.StartTime);
+            timeChanged = false;
 
             return true;
         }
 
         protected override void OnMouseUp(MouseUpEvent e)
         {
-            if (e.Button != MouseButton.Left)
-                return;
-
             if (PlacementActive == PlacementState.Active)
-                EndPlacement(HitObject.Duration > 0);
+                if ((e.Button is MouseButton.Left && timeChanged) || e.Button is MouseButton.Right)
+                    EndPlacement(HitObject.Duration > 0);
         }
 
         private double originalStartTime;
+        private bool timeChanged = false;
 
         public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double fallbackTime)
         {
@@ -76,6 +75,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
                 {
                     HitObject.StartTime = endTime < originalStartTime ? endTime : originalStartTime;
                     HitObject.Duration = Math.Abs(endTime - originalStartTime);
+
+                    if (HitObject.Duration > 0)
+                        timeChanged = true;
                 }
             }
             else
