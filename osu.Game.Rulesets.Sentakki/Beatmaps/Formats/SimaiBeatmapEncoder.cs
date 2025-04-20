@@ -203,13 +203,6 @@ public class SimaiBeatmapEncoder
                 double shootDelayMs = slideInfo.ShootDelay * millisPerBeat;
                 double durationWithoutDelay = slideInfo.Duration - shootDelayMs;
 
-                // TODO: Remove this when ShootDelay is no longer in ms and incorrect at convert time
-                if (shootDelayMs >= slideInfo.Duration - 50)
-                {
-                    shootDelayMs = 0;
-                    durationWithoutDelay = slideInfo.Duration;
-                }
-
                 slideBuilder.Append(Invariant($"[{shootDelayMs / 1000:F3}##{durationWithoutDelay / 1000:F3}]"));
 
                 if (slideInfo.Break)
