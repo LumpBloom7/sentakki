@@ -101,16 +101,14 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
         Height = Math.Abs(dist - distInner);
     }
 
-
     private bool isShootDelayValid(double shootDelay)
     {
         double beatLength = editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
 
         double shootOffsetMS = shootDelay * beatLength;
 
-        return shootOffsetMS >= 0 && shootOffsetMS < bodyInfo.Duration - 50;
+        return shootOffsetMS >= 0 && shootOffsetMS <= bodyInfo.Duration;
     }
-
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
