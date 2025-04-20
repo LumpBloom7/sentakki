@@ -15,11 +15,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit;
 public partial class SlideEditorToolboxGroup : EditorToolboxGroup
 {
     // Slide info
-    private Bindable<SlidePaths.PathShapes> shapeBindable = new Bindable<SlidePaths.PathShapes>(); // This is locked
+    private Bindable<SlidePaths.PathShapes> shapeBindable = new Bindable<SlidePaths.PathShapes>();
     public readonly Bindable<int> LaneOffset = new Bindable<int>(4);
-    private Bindable<bool> mirrored = new Bindable<bool>(); // This is locked
+    private Bindable<bool> mirrored = new Bindable<bool>();
 
-    public Bindable<float> ShootDelayBindable = new Bindable<float>(0.5f);
+    public Bindable<float> ShootDelayBindable = new Bindable<float>(1);
 
     public readonly Bindable<SlideBodyPart> CurrentPartBindable = new Bindable<SlideBodyPart>(new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false));
 
