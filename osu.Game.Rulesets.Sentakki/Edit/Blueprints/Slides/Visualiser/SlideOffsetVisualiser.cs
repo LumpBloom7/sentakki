@@ -44,28 +44,28 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
 
         InternalChildren = [
             new Box{
-                Height = 3,
+                Height = 5,
                 Y = 1.5f,
                 Width = 0.5f,
                 RelativeSizeAxes = Axes.X,
                 Anchor = Anchor.TopRight,
-                Origin = Anchor.Centre,
+                Origin = Anchor.BottomCentre,
                 EdgeSmoothness = new Vector2(1),
             },
             new Box{
-                Width = 3,
+                Width = 5,
                 RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.Centre,
                 EdgeSmoothness = new Vector2(1),
             },
             new DragBox(slide, bodyInfo){
-                Height = 3,
+                Height = 5,
                 Y = -1.5f,
                 Width = 0.5f,
                 RelativeSizeAxes = Axes.X,
                 Anchor = Anchor.BottomRight,
-                Origin = Anchor.Centre,
+                Origin = Anchor.TopCentre,
                 EdgeSmoothness = new Vector2(1),
             },
         ];
