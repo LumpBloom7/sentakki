@@ -64,27 +64,23 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
         {
             var result = composer?.FindSnappedPositionAndTime(screenSpacePosition) ?? new SnapResult(screenSpacePosition, fallbackTime);
 
-            base.UpdateTimeAndPosition(result.ScreenSpacePosition, result.Time ?? fallbackTime);
-
             if (result is not SentakkiLanedSnapResult senRes)
                 return result;
 
+            double snapTime = result.Time ?? fallbackTime;
+
             if (PlacementActive == PlacementState.Active)
             {
-                if (result.Time is double endTime)
-                {
-                    HitObject.StartTime = endTime < originalStartTime ? endTime : originalStartTime;
-                    HitObject.Duration = Math.Abs(endTime - originalStartTime);
+                HitObject.StartTime = snapTime < originalStartTime ? snapTime : originalStartTime;
+                HitObject.Duration = Math.Abs(snapTime - originalStartTime);
 
-                    if (HitObject.Duration > 0)
-                        timeChanged = true;
-                }
+                if (HitObject.Duration > 0)
+                    timeChanged = true;
             }
             else
             {
                 HitObject.Lane = senRes.Lane;
-                if (result.Time is double startTime)
-                    originalStartTime = HitObject.StartTime = startTime;
+                originalStartTime = HitObject.StartTime = snapTime;
             }
 
             return result;

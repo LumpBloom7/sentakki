@@ -176,7 +176,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             if (PlacementActive == PlacementState.Active)
             {
                 Debug.Assert(commitedSlideBodyInfo is not null);
-                double endTime = EditorClock.CurrentTime;
+                double endTime = fallbackTime;
 
                 HitObject.StartTime = endTime < originalStartTime ? endTime : originalStartTime;
                 commitedSlideBodyInfo.Duration = Math.Abs(endTime - originalStartTime);
@@ -196,12 +196,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             }
             else
             {
-                base.UpdateTimeAndPosition(screenSpacePosition, fallbackTime);
-
                 HitObject.Lane = senRes.Lane;
-
-                if (result.Time is double startTime)
-                    originalStartTime = HitObject.StartTime = startTime;
+                HitObject.StartTime = originalStartTime = result.Time ?? fallbackTime;
             }
 
             return result;
