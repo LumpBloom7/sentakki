@@ -8,6 +8,7 @@ using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit.Compose.Components;
 using osuTK;
 
@@ -206,7 +207,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
         private void moveTouchNotes(Vector2 dragDelta)
         {
-            const float boundary_radius = 250;
+            const float boundary_radius = 270;
 
             float dragDistance(Vector2 origin, Vector2 destination)
                 => MathF.Min((destination - origin).Length, circleIntersectionDistance(origin, destination - origin));
