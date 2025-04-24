@@ -138,7 +138,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                     break;
             }
 
-            if (i > 0 && maidataUnits[i - 1] is HitObjectCollectionUnit previousHOC)
+            if (cleanMaiDataUnits.Count > 0 && cleanMaiDataUnits[^1] is HitObjectCollectionUnit previousHOC)
             {
                 // Merge hitobject collections without a beat in between
                 // This may happen due to the notes being at less 5 ms away from each other, which is beyond the precision of this encoder, and therefore the encoder doesn't generate padding beats
