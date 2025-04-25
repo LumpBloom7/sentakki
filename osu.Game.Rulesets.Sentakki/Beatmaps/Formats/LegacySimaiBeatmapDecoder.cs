@@ -89,19 +89,25 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
     {
         MaiChart chart = SimaiConvert.Deserialize(chartNotes);
 
+        TimingControlPoint? lastTimingPoint = null;
+
         foreach (var timingChange in chart.TimingChanges)
         {
             double coercedTime = timingChange.time >= 0f ? timingChange.time : timingChange.time - Math.Floor(timingChange.time / timingChange.SecondsPerBar) * timingChange.SecondsPerBar;
             var controlPoint = new TimingControlPoint
             {
                 Time = coercedTime * 1000f,
-                BeatLength = timingChange.SecondsPerBar * 1000f
+                BeatLength = 60000.0 / timingChange.tempo,
+                TimeSignature = new TimeSignature(4)
             };
 
-            if (timingChange.subdivisions > 0 && timingChange.subdivisions % 1 == 0)
-            {
-                controlPoint.TimeSignature = new TimeSignature((int)timingChange.subdivisions);
-            }
+            // Strong assumption:
+            /// Since simai is inherently (sub)beat aligned, if two timing changes are adjacent with the same tempo, then the latter is likely rerdundant
+            /// The subdivision info is only used by simai, since the osu editor doesn't time their notes using that
+            if (lastTimingPoint is not null && lastTimingPoint.BeatLength == controlPoint.BeatLength)
+                continue;
+
+            lastTimingPoint = controlPoint;
 
             beatmap.ControlPointInfo.Add(controlPoint.Time, controlPoint);
         }
