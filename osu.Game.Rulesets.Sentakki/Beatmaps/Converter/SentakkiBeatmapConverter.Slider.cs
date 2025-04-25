@@ -70,7 +70,7 @@ public partial class SentakkiBeatmapConverter
         float shootDelay = 1;
 
         // This is an attempt to make shoot delays more appropriate for the slide duration
-        while (shootDelay * beatLength >= duration)
+        while (shootDelay * beatLength >= duration - 50)
         {
             shootDelay /= 2;
             // If shoot delay is below 0.25 beats, then might as well remove it
