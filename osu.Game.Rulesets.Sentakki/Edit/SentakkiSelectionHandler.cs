@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.UserInterface;
 using osu.Game.Extensions;
 using osu.Game.Graphics.UserInterface;
@@ -9,6 +11,7 @@ using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Compose.Components;
 using osuTK;
 
@@ -21,6 +24,74 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         private readonly Bindable<TernaryState> selectionSlideBodyBreakState = new Bindable<TernaryState>();
         private readonly Bindable<TernaryState> selectionSlideBodyExState = new Bindable<TernaryState>();
 
+        [Resolved]
+        private HitObjectComposer composer { get; set; } = null!;
+
+        protected override void OnSelectionChanged()
+        {
+            base.OnSelectionChanged();
+
+            var selectedObjects = SelectedItems.OfType<SentakkiHitObject>().ToArray();
+
+            bool canFlip = selectedObjects.Length > 1 && selectedObjects.Any(a => a is not TouchHold);
+
+            SelectionBox.CanFlipX = canFlip;
+            SelectionBox.CanFlipY = canFlip;
+        }
+
+        public override bool HandleFlip(Direction direction, bool flipOverOrigin)
+        {
+            var sentakkiPlayfield = ((SentakkiHitObjectComposer)composer).Playfield;
+
+            EditorBeatmap.PerformOnSelection(ho =>
+            {
+                switch (ho)
+                {
+                    case SentakkiLanedHitObject laned:
+                        sentakkiPlayfield.Remove(laned);
+                        if (direction is Direction.Horizontal)
+                            laned.Lane = 7 - laned.Lane;
+
+                        if (direction is Direction.Vertical)
+                        {
+                            laned.Lane = (3 - laned.Lane) % 8;
+                            if (laned.Lane < 0) laned.Lane += 8;
+                        }
+
+
+                        if (laned is Slide slide)
+                        {
+                            foreach (var slideInfo in slide.SlideInfoList)
+                            {
+                                for (int i = 0; i < slideInfo.SlidePathParts.Length; ++i)
+                                {
+                                    ref var part = ref slideInfo.SlidePathParts[i];
+                                    part.EndOffset = (part.EndOffset * -1).NormalizePath();
+                                    part.Mirrored = !part.Mirrored;
+                                }
+
+                                slideInfo.UpdatePaths();
+                            }
+                        }
+                        sentakkiPlayfield.Add(laned);
+                        break;
+
+                    case Touch touch:
+                        Vector2 newPosition = touch.Position;
+                        if (direction is Direction.Horizontal)
+                            newPosition.X = -touch.Position.X;
+
+                        if (direction is Direction.Vertical)
+                            newPosition.Y = -touch.Position.Y;
+
+                        touch.Position = newPosition;
+                        break;
+
+                }
+            });
+
+            return SelectedItems.Any(a => a is not TouchHold);
+        }
         public SentakkiSelectionHandler()
         {
             SelectionBreakState.ValueChanged += s =>
