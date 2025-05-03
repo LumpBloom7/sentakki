@@ -2,7 +2,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public record struct SlideBodyPart
     {
-        public SlidePaths.PathShapes Shape { get; private set; }
+        public SlidePaths.PathShapes Shape { get; set; }
         public int EndOffset { get; set; }
         public bool Mirrored { get; set; }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Newtonsoft.Json;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -65,8 +66,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public override Color4 DefaultNoteColour => Color4.Aqua;
         public List<SlideBodyInfo> SlideInfoList = new List<SlideBodyInfo>();
 
+        [JsonIgnore]
         public Tap SlideTap { get; private set; } = null!;
 
+        [JsonIgnore]
         public IList<SlideBody> SlideBodies { get; private set; } = null!;
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)

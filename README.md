@@ -6,8 +6,6 @@
 [![Crowdin](https://badges.crowdin.net/sentakki/localized.svg)](https://crowdin.com/project/sentakki)
 [![Discord Shield](https://discordapp.com/api/guilds/700619421466624050/widget.png?style=shield)](https://discord.gg/CQPNADu)
 
-[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E01N56M)
-
 sentakki is a recreation of maimaiDX for use within osu, taking advantage of the longevity and the osu ecosystem for features such as multiplayer, beatmap listing, and leaderboards.
 
 ## Status

@@ -58,13 +58,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="mod_description" xml:space="preserve">
-        <value>音符会在你击中之前淡出。</value>
+  <data name="break_removal" xml:space="preserve">
+        <value>无 BREAK 音符</value>
     </data>
-  <data name="visible_radius" xml:space="preserve">
-        <value>可见半径</value>
+  <data name="ex_removal" xml:space="preserve">
+        <value>无 EX 音符</value>
     </data>
-  <data name="visible_radius_description" xml:space="preserve">
-        <value>设置音符的从内向外出现范围半径，数值越大可见范围越大。</value>
+  <data name="all_ex" xml:space="preserve">
+        <value>全部改为 EX 音符</value>
     </data>
 </root>

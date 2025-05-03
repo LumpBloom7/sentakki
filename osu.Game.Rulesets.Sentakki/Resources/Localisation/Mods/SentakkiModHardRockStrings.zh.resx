@@ -65,7 +65,7 @@
         <value>判定模式决定游戏中判定窗口的严格程度。</value>
     </data>
   <data name="minimum_result" xml:space="preserve">
-        <value>最低判定结果</value>
+        <value>最低所需判定</value>
     </data>
   <data name="minimum_result_description" xml:space="preserve">
         <value>在游戏中被接受的最低判定结果，任何低于该结果的判定都被认为是 miss。</value>
