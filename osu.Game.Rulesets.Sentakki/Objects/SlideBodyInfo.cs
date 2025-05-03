@@ -1,12 +1,18 @@
 using System;
 using System.Collections;
+using Newtonsoft.Json;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class SlideBodyInfo : IEquatable<SlideBodyInfo>
     {
-        private SlideBodyPart[] slidePathParts = null!;
+        [JsonIgnore]
+        private static readonly SentakkiSlidePath empty_path = SlidePaths.CreateSlidePath(new[]
+        {
+            new SlideBodyPart(SlidePaths.PathShapes.Straight, endOffset: 0, false)
+        });
 
+        private SlideBodyPart[] slidePathParts = null!;
         public SlideBodyPart[] SlidePathParts
         {
             get => slidePathParts;
@@ -17,7 +23,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             }
         }
 
-        public SentakkiSlidePath SlidePath { get; private set; } = null!;
+        [JsonIgnore]
+        public SentakkiSlidePath SlidePath { get; private set; } = empty_path;
 
         // Duration of the slide
         public double Duration;
