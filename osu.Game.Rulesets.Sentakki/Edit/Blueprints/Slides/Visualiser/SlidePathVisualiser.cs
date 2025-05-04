@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Visualiser;
 public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
 {
     private Container<SmoothPath> paths;
-    private Container<SmoothPath> hoverPaths;
+    public Container<SmoothPath> HoverPaths;
 
     private readonly SlideBodyInfo slideBodyInfo;
     private readonly Slide slide;
@@ -28,7 +28,7 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
     [Resolved(CanBeNull = true)]
     private EditorBeatmap? editorBeatmap { get; set; }
 
-    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => hoverPaths.Children.Any(c => c.ReceivePositionalInputAt(screenSpacePos));
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => HoverPaths.Children.Any(c => c.ReceivePositionalInputAt(screenSpacePos));
 
     public SlidePathVisualiser(Slide slide, SlideBodyInfo slideBodyInfo, int startLane)
     {
@@ -42,7 +42,7 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
             {
                 RelativeSizeAxes = Axes.Both,
             },
-            hoverPaths = new Container<SmoothPath>
+            HoverPaths = new Container<SmoothPath>
             {
                 RelativeSizeAxes = Axes.Both
             },
@@ -184,7 +184,7 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
             hue += hueInterval;
 
             paths.Add(smoothPath);
-            hoverPaths.Add(hoverPath);
+            HoverPaths.Add(hoverPath);
         }
     }
 

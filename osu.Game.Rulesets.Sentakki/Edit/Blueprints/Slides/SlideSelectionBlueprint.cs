@@ -2,7 +2,6 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Visualiser;
@@ -158,8 +157,39 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         public override Vector2 ScreenSpaceSelectionPoint => tapHighlight.ScreenSpaceDrawQuad.Centre;
 
-        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => tapHighlight.ReceivePositionalInputAt(screenSpacePos) || slideVisualisers.Any(v => v.ReceivePositionalInputAt(screenSpacePos));
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
+        {
+            if (tapHighlight.ReceivePositionalInputAt(screenSpacePos))
+                return true;
 
-        public override Quad SelectionQuad => tapHighlight.ScreenSpaceDrawQuad;
+            foreach (var p in slideVisualisers)
+            {
+                if (p.ReceivePositionalInputAt(screenSpacePos))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public override Quad SelectionQuad
+        {
+            get
+            {
+                var result = tapHighlight.ScreenSpaceDrawQuad.AABBFloat;
+
+                foreach (var path in slideVisualisers)
+                {
+                    foreach (var hover in path.HoverPaths)
+                    {
+                        result = RectangleF.Union(hover.ScreenSpaceDrawQuad.AABBFloat, result);
+                    }
+                }
+
+                result = RectangleF.Intersect(result, ScreenSpaceDrawQuad.AABBFloat.Inflate(50));
+                result = RectangleF.Union(result, tapHighlight.ScreenSpaceDrawQuad.AABBFloat);
+
+                return result;
+            }
+        }
     }
 }
