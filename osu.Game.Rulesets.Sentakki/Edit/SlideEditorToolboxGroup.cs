@@ -105,11 +105,11 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
                 return true;
 
             case Key.BracketRight:
-                shapeBindable.Value = (SlidePaths.PathShapes)((int)(shapeBindable.Value + 1) % 8);
+                shapeBindable.Value = (SlidePaths.PathShapes)((int)(shapeBindable.Value + 1) % 7);
                 return true;
 
             case Key.BracketLeft:
-                shapeBindable.Value = (SlidePaths.PathShapes)(((int)(shapeBindable.Value + 7)) % 8);
+                shapeBindable.Value = (SlidePaths.PathShapes)(((int)(shapeBindable.Value + 6)) % 7);
                 return true;
         }
 
