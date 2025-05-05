@@ -35,11 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         protected override bool TryMoveBlueprints(DragEvent e, IList<(SelectionBlueprint<HitObject> blueprint, Vector2[] originalSnapPositions)> blueprints)
         {
             var sentakkiPlayfield = Composer.Playfield;
-            Vector2 distanceTravelled = e.ScreenSpaceMousePosition - e.ScreenSpaceMouseDownPosition;
-
-            // The final movement position, relative to movementBlueprintOriginalPosition.
-            Vector2 movePosition = blueprints.First().originalSnapPositions.First() + distanceTravelled;
-            SnapResult senSnapResult = Composer.FindSnappedPositionAndTime(movePosition);
+            SnapResult senSnapResult = Composer.FindSnappedPositionAndTime(e.ScreenSpaceMousePosition);
 
             var referenceBlueprint = blueprints.First().blueprint;
             bool moved = SelectionHandler.HandleMovement(new MoveSelectionEvent<HitObject>(referenceBlueprint, senSnapResult.ScreenSpacePosition - referenceBlueprint.ScreenSpaceSelectionPoint));
