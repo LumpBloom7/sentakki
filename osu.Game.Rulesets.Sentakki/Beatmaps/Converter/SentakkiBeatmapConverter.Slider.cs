@@ -93,7 +93,7 @@ public partial class SentakkiBeatmapConverter
         double duration = ((IHasDuration)original).Duration;
         double adjustedDuration = duration * velocity;
 
-        var candidates = SlidePaths.VALIDPATHS.AsEnumerable();
+        var candidates = SlidePaths.VALID_CONVERT_PATHS.AsEnumerable();
         if (!ConversionFlags.HasFlag(ConversionFlags.fanSlides) || !allowFans)
             candidates = candidates.Where(p => p.SlidePart.Shape != SlidePaths.PathShapes.Fan);
 
