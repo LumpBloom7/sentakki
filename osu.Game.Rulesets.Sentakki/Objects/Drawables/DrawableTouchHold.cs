@@ -124,7 +124,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             base.UpdateStartTimeStateTransforms();
 
-            TouchHoldBody.centrePiece.FadeOut();
+            TouchHoldBody.CentrePiece.FadeOut();
             TouchHoldBody.CompletedCentre.FadeIn();
             TouchHoldBody.ProgressPiece.TransformBindableTo(TouchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
         }

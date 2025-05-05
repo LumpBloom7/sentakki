@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -18,6 +19,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private SentakkiInputManager sentakkiActionInputManager = null!;
         internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
+
+        private readonly IBindable<Vector2> positionBindable = new Bindable<Vector2>();
 
         public DrawableTouch()
             : this(null)
@@ -42,12 +45,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 TouchBody = new TouchBody(),
             });
+
+            positionBindable.BindValueChanged(v => Position = v.NewValue);
         }
 
         protected override void OnApply()
         {
             base.OnApply();
-            Position = HitObject.Position;
+            positionBindable.BindTo(HitObject.PositionBindable);
+        }
+
+        protected override void OnFree()
+        {
+            base.OnFree();
+            positionBindable.UnbindFrom(HitObject.PositionBindable);
         }
 
         private int pressedCount = 0;

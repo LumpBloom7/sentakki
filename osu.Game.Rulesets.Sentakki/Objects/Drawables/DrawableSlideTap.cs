@@ -41,7 +41,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (ParentHitObject is DrawableSlide slide)
                 spinDuration += slide.HitObject.SlideInfoList.FirstOrDefault()?.Duration ?? 1000;
 
-            note.Stars.Spin(spinDuration, RotationDirection.Counterclockwise).Loop();
+            if (spinDuration != 0)
+                note.Stars.Spin(spinDuration, RotationDirection.Counterclockwise).Loop();
         }
     }
 }
