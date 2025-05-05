@@ -39,7 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             });
             Add(slide = new SlideVisual());
 
-            AddSliderStep("Path ID", 0, SlidePaths.VALIDPATHS.Count - 1, 0, p =>
+            AddSliderStep("Path ID", 0, SlidePaths.VALID_CONVERT_PATHS.Count - 1, 0, p =>
             {
                 id = p;
                 RefreshSlide();
@@ -52,7 +52,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
             });
         }
 
-        protected SentakkiSlidePath CreatePattern() => SlidePaths.CreateSlidePath(SlidePaths.VALIDPATHS[id].SlidePart);
+        protected SentakkiSlidePath CreatePattern() => SlidePaths.CreateSlidePath(SlidePaths.VALID_CONVERT_PATHS[id].SlidePart);
 
         protected override void LoadComplete()
         {
