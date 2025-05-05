@@ -14,14 +14,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     {
         protected override bool PlaysBreakSample => false;
 
-        private IList<IList<HitSampleInfo>> nodeSamples = new List<IList<HitSampleInfo>>();
+        private IList<IList<HitSampleInfo>>? nodeSamples = null;
 
-        public IList<IList<HitSampleInfo>> NodeSamples
+        public IList<IList<HitSampleInfo>>? NodeSamples
         {
             get => nodeSamples;
             set
             {
-                Samples = value.Last();
+                Samples = value?.Last();
                 nodeSamples = value;
             }
         }
@@ -36,12 +36,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
+            // Editor context doesn't provide NodeSamples, we must make sane defaults from Samples
+            // We explicitly create a new list with the same elements instead of directly using the Samples
+            // This is because assigning Samples with itself, will clear the list before adding the now empty list
+            NodeSamples ??=
+            [
+                [.. Samples],
+                [.. Samples],
+            ];
+
             AddNested(new HoldHead
             {
                 Break = Break,
                 StartTime = StartTime,
                 Lane = Lane,
-                Samples = nodeSamples.Any() ? nodeSamples.First() : [],
+                Samples = nodeSamples?.First() ?? [],
                 Ex = Ex
             });
 
