@@ -67,13 +67,11 @@ public partial class EditorSlidePartPiece : SmoothPath, IHasTooltip, IHasContext
         base.LoadComplete();
         Colour = AccentColour;
     }
-    protected override bool OnClick(ClickEvent e) => true;
-    protected override bool OnDragStart(DragStartEvent e) => true;
 
     protected override bool OnHover(HoverEvent e)
     {
         Colour = AccentColour.LightenHSL(0.5f);
-        return true;
+        return false;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
