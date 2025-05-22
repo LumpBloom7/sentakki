@@ -21,21 +21,27 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             Fan,
         }
 
-        public static readonly List<(SlideBodyPart SlidePart, double MinDuration)> VALIDPATHS;
+        public static readonly List<(SlideBodyPart SlidePart, double MinDuration)> VALID_CONVERT_PATHS;
 
         static SlidePaths()
         {
-            VALIDPATHS = new List<(SlideBodyPart, double)>();
+            VALID_CONVERT_PATHS = new List<(SlideBodyPart, double)>();
 
             for (PathShapes i = PathShapes.Straight; i <= PathShapes.Fan; ++i)
             {
                 for (int j = 0; j < 8; ++j)
                 {
+                    // Technically legal depending on the situation, but let's not allow converts to use them.
+                    if (i == PathShapes.Straight && (j <= 1 || j >= 7))
+                        continue;
+                    if (i == PathShapes.Circle && (j == 7 || j == 1))
+                        continue;
+
                     for (int k = 0; k < 2; ++k)
                     {
                         var tmp = new SlideBodyPart(i, j, k == 1);
                         if (CheckSlideValidity(tmp, true))
-                            VALIDPATHS.Add((tmp, CreateSlidePath(tmp).MinDuration));
+                            VALID_CONVERT_PATHS.Add((tmp, CreateSlidePath(tmp).MinDuration));
                     }
                 }
             }
@@ -43,30 +49,33 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         // Checks if a slide is valid given parameters
         //
-        // Discarding redundant mirrors should be used making a list of all the shapes, as to not get identical shapes
-        // Not discarding them allows leniency in the check, so that a identical path can still be placed, without needing the mapper to explicitly turn off mirroring for a part.
-        public static bool CheckSlideValidity(SlideBodyPart param, bool discardRedundantMirrors = false)
+        // For converter use, we want to ensure that redundant mirrored shapes are discarded, so as to not skew the selection process.
+        // We additionally block +-1 end offset straight/circle slides, as those do not play well when not done right.
+        public static bool CheckSlideValidity(SlideBodyPart param, bool forConverterUse = false)
         {
             int normalizedEnd = param.EndOffset.NormalizePath();
             bool mirrored = param.Mirrored;
 
             switch (param.Shape)
             {
+                // Straights always have redundant mirrors
+                // Additionally, end offset being 1 or 7 can't be used by conversion
                 case PathShapes.Straight:
-                    return (!mirrored || !discardRedundantMirrors) && normalizedEnd > 1 && normalizedEnd < 7;
+                    return normalizedEnd != 0 && (!forConverterUse || (!mirrored && normalizedEnd is not (1 or 7)));
 
+                // Circular slide end offset being 1 or 7 can't be used by conversion
                 case PathShapes.Circle:
-                    return mirrored ? normalizedEnd != 7 : normalizedEnd != 1;
+                    return !forConverterUse || (normalizedEnd is not (1 or 7));
 
                 case PathShapes.V:
-                    return (!mirrored || !discardRedundantMirrors) && normalizedEnd != 0;
+                    return (!mirrored || !forConverterUse) && normalizedEnd != 0;
 
                 case PathShapes.U:
                 case PathShapes.Cup:
                     return true;
 
                 case PathShapes.Fan:
-                    return (!mirrored || !discardRedundantMirrors) && normalizedEnd == 4;
+                    return (!mirrored || !forConverterUse) && normalizedEnd == 4;
 
                 case PathShapes.Thunder:
                     return normalizedEnd == 4;

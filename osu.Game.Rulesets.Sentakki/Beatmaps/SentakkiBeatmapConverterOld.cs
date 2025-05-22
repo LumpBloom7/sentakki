@@ -325,7 +325,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             double duration = ((IHasDuration)original).Duration;
             double adjustedDuration = duration * velocity;
 
-            var candidates = SlidePaths.VALIDPATHS;
+            var candidates = SlidePaths.VALID_CONVERT_PATHS;
             if (!ConversionFlags.HasFlag(ConversionFlags.fanSlides))
                 candidates = candidates.Where(p => p.SlidePart.Shape != SlidePaths.PathShapes.Fan).ToList();
 
