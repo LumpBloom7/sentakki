@@ -43,19 +43,15 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
         {
             if (PlacementActive == PlacementState.Active)
             {
-                if (EditorClock.CurrentTime is double endTime)
-                {
-                    HitObject.StartTime = endTime < originalStartTime ? endTime : originalStartTime;
-                    HitObject.Duration = Math.Abs(endTime - originalStartTime);
+                HitObject.StartTime = fallbackTime < originalStartTime ? fallbackTime : originalStartTime;
+                HitObject.Duration = Math.Abs(fallbackTime - originalStartTime);
 
-                    if (HitObject.Duration > 0)
-                        timeChanged = true;
-                }
+                if (HitObject.Duration > 0)
+                    timeChanged = true;
             }
             else
             {
-                if (EditorClock.CurrentTime is double startTime)
-                    originalStartTime = HitObject.StartTime = startTime;
+                originalStartTime = HitObject.StartTime = fallbackTime;
             }
 
             return new SnapResult(screenSpacePosition, fallbackTime);
