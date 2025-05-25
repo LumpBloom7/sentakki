@@ -103,11 +103,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         protected override bool OnMouseDown(MouseDownEvent e)
         {
-            if (e.Button != MouseButton.Left)
-                return false;
-
             if (PlacementActive != PlacementState.Active)
             {
+                if (e.Button != MouseButton.Left)
+                    return false;
+
                 BeginPlacement(true);
 
                 EditorClock.SeekSmoothlyTo(HitObject.StartTime);
@@ -123,7 +123,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             }
             else
             {
-                commitCurrentPart();
+                if (e.Button == MouseButton.Left)
+                    commitCurrentPart();
             }
 
             return true;
