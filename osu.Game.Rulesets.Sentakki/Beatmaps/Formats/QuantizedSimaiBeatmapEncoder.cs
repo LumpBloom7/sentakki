@@ -20,6 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps.Formats;
 /// </summary>
 public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
 {
+    private const float PRECISION = 5;
     public QuantizedSimaiBeatmapEncoder(IBeatmap<SentakkiHitObject> beatmap) : base(beatmap) { }
 
     protected override string CreateSimaiChart()
@@ -173,14 +174,14 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
     private static List<IMaidataUnit> generatePaddingBeats(double timeDelta, TimingControlPoint activeTimingPoint, out double timeRemaining)
     {
         timeRemaining = timeDelta;
-        if (timeDelta < 5)
+        if (timeDelta < PRECISION)
             return [];
 
         List<IMaidataUnit> paddingBeats = [];
 
         int currentDivisor = 1;
 
-        while (timeRemaining > 5)
+        while (timeRemaining > PRECISION)
         {
             double subBeatLength = activeTimingPoint.BeatLength / currentDivisor;
 
@@ -188,7 +189,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
 
             // Is it possible to get within 5ms if we allow timeDelta to go negative?
             // If so, we would prefer that as it is "close enough" while reducing number of subdivisions
-            if (Math.Abs(timeRemaining - subBeatLength * (numberOfSubBeats + 1)) < 5)
+            if (Math.Abs(timeRemaining - subBeatLength * (numberOfSubBeats + 1)) < PRECISION)
                 ++numberOfSubBeats;
 
             if (numberOfSubBeats > 0)
