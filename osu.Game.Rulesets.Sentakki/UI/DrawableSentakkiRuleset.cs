@@ -96,8 +96,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private void updateAnimationDurations()
         {
-            AdjustedAnimDuration.Value = Interpolation.DampContinuously(AdjustedAnimDuration.Value, currentAnimDuration * GameplaySpeed, 50, gamehost.UpdateThread.Clock.ElapsedFrameTime); ;
-            AdjustedTouchAnimDuration.Value = Interpolation.DampContinuously(AdjustedTouchAnimDuration.Value, currentTouchAnimDuration * GameplaySpeed, 50, gamehost.UpdateThread.Clock.ElapsedFrameTime); ;
+            AdjustedAnimDuration.Value = Interpolation.DampContinuously(AdjustedAnimDuration.Value, currentAnimDuration * GameplaySpeed, 50, gamehost.UpdateThread.Clock.ElapsedFrameTime);
+            AdjustedTouchAnimDuration.Value = Interpolation.DampContinuously(AdjustedTouchAnimDuration.Value, currentTouchAnimDuration * GameplaySpeed, 50, gamehost.UpdateThread.Clock.ElapsedFrameTime);
         }
 
         public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
