@@ -7,8 +7,9 @@ using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Platform;
+using osu.Framework.Utils;
 using osu.Game.Beatmaps;
-using osu.Game.Screens.Play;
 using osu.Game.Input.Bindings;
 using osu.Game.Input.Handlers;
 using osu.Game.Replays;
@@ -16,10 +17,10 @@ using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
+using osu.Game.Screens.Play;
 
 namespace osu.Game.Rulesets.Sentakki.UI
 {
@@ -33,16 +34,17 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 mod.ApplyToTrack(speedAdjustmentTrack);
         }
 
+        [Resolved]
+        private GameHost gamehost { get; set; } = null!;
+
         [BackgroundDependencyLoader]
         private void load()
         {
             Config.BindWith(SentakkiRulesetSettings.AnimationSpeed, configEntrySpeed);
             Config.BindWith(SentakkiRulesetSettings.TouchAnimationSpeed, configTouchEntrySpeed);
 
-            configEntrySpeed.BindValueChanged(v => this.TransformTo(nameof(smoothAnimDuration), ComputeLaneNoteEntryTime(v.NewValue), 200, Easing.OutQuint));
-            configTouchEntrySpeed.BindValueChanged(v => this.TransformTo(nameof(smoothTouchAnimDuration), ComputeTouchNoteEntryTime(v.NewValue), 200, Easing.OutQuint));
-            smoothAnimDuration = ComputeLaneNoteEntryTime(configEntrySpeed.Value);
-            smoothTouchAnimDuration = ComputeTouchNoteEntryTime(configTouchEntrySpeed.Value);
+            configEntrySpeed.BindValueChanged(v => currentAnimDuration = ComputeLaneNoteEntryTime(v.NewValue), true);
+            configTouchEntrySpeed.BindValueChanged(v => currentTouchAnimDuration = ComputeTouchNoteEntryTime(v.NewValue), true);
         }
 
         private readonly Bindable<float> configEntrySpeed = new BindableFloat(2.0f)
@@ -51,11 +53,11 @@ namespace osu.Game.Rulesets.Sentakki.UI
             MaxValue = 10.5f,
         };
 
-        private double smoothAnimDuration = 1000;
+        private double currentAnimDuration = 1000;
         public readonly Bindable<double> AdjustedAnimDuration = new Bindable<double>(1000);
 
         private readonly Bindable<float> configTouchEntrySpeed = new Bindable<float>(2.0f);
-        private double smoothTouchAnimDuration = 1000;
+        private double currentTouchAnimDuration = 1000;
         public readonly Bindable<double> AdjustedTouchAnimDuration = new Bindable<double>(1000);
 
         // Computes the total animation time (in ms) for lane notes from a speedValue
@@ -94,8 +96,8 @@ namespace osu.Game.Rulesets.Sentakki.UI
 
         private void updateAnimationDurations()
         {
-            AdjustedAnimDuration.Value = smoothAnimDuration * GameplaySpeed;
-            AdjustedTouchAnimDuration.Value = smoothTouchAnimDuration * GameplaySpeed;
+            AdjustedAnimDuration.Value = Interpolation.DampContinuously(AdjustedAnimDuration.Value, currentAnimDuration * GameplaySpeed, 50, gamehost.UpdateThread.Clock.ElapsedFrameTime); ;
+            AdjustedTouchAnimDuration.Value = Interpolation.DampContinuously(AdjustedTouchAnimDuration.Value, currentTouchAnimDuration * GameplaySpeed, 50, gamehost.UpdateThread.Clock.ElapsedFrameTime); ;
         }
 
         public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
