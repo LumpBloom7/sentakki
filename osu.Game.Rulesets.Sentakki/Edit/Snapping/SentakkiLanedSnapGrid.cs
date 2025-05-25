@@ -27,9 +27,12 @@ public partial class SentakkiSnapGrid : CompositeDrawable
 
     private DrawablePool<BeatSnapGridLine> linePool = null!;
 
-    private Bindable<float> animationSpeed = new Bindable<float>(2);
+    private Bindable<double> animationDuration = new Bindable<double>(1000);
 
     private Container<BeatSnapGridLine> linesContainer = null!;
+
+    [Resolved]
+    private SentakkiHitObjectComposer composer { get; set; } = null!;
 
     [Resolved]
     private EditorClock editorClock { get; set; } = null!;
@@ -54,7 +57,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
     };
 
     [BackgroundDependencyLoader]
-    private void load(SentakkiRulesetConfigManager configManager)
+    private void load()
     {
         Anchor = Origin = Anchor.Centre;
         AddRangeInternal(new Drawable[]{
@@ -65,7 +68,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
             },
         });
 
-        configManager.BindWith(SentakkiRulesetSettings.AnimationSpeed, animationSpeed);
+        animationDuration.BindTo(composer.DrawableRuleset.AdjustedAnimDuration);
     }
 
     protected override void LoadComplete()
@@ -110,7 +113,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
         var localPosition = ToLocalSpace(screenSpacePosition);
         double distance = maxRange - (Vector2.Distance(Vector2.Zero, localPosition) - SentakkiPlayfield.NOTESTARTDISTANCE);
 
-        double timeRange = DrawableSentakkiRuleset.ComputeLaneNoteEntryTime(animationSpeed.Value) * 0.5f;
+        double timeRange = animationDuration.Value * 0.5f;
 
         double unsnappedTime = editorClock.CurrentTimeAccurate + ((distance / maxRange) * timeRange);
 
@@ -121,7 +124,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
     {
         linesContainer.Clear(false);
         double time = editorClock.CurrentTime;
-        double animationDuration = DrawableSentakkiRuleset.ComputeLaneNoteEntryTime(animationSpeed.Value);
+        double animationDuration = this.animationDuration.Value;
 
         double maximumVisibleTime = editorClock.CurrentTime + (animationDuration * 0.5f);
         double minimumVisibleTime = editorClock.CurrentTime - (animationDuration * 0.5f);
@@ -181,14 +184,16 @@ public partial class SentakkiSnapGrid : CompositeDrawable
 
     private double lastEditorTime = double.MinValue;
     private int lastBeatDivisor = 0;
+    private double lastAnimationDuration = 1000;
 
     protected override void Update()
     {
-        if (editorClock.CurrentTime != lastEditorTime || lastBeatDivisor != beatSnapProvider.BeatDivisor)
+        if (editorClock.CurrentTime != lastEditorTime || lastBeatDivisor != beatSnapProvider.BeatDivisor || lastAnimationDuration != animationDuration.Value)
         {
             recreateLines();
             lastEditorTime = editorClock.CurrentTime;
             lastBeatDivisor = beatSnapProvider.BeatDivisor;
+            lastAnimationDuration = animationDuration.Value;
         }
 
         base.Update();
@@ -196,7 +201,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
 
     public float GetDistanceRelativeToCurrentTime(double time, float min = float.MinValue, float max = float.MaxValue)
     {
-        double animationDuration = DrawableSentakkiRuleset.ComputeLaneNoteEntryTime(animationSpeed.Value);
+        double animationDuration = this.animationDuration.Value;
 
         double offsetRatio = (time - editorClock.CurrentTime) / (animationDuration * 0.5f);
 

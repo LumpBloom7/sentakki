@@ -26,12 +26,13 @@ namespace osu.Game.Rulesets.Sentakki.Edit
     [Cached]
     public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitObject>
     {
-        private DrawableSentakkiEditorRuleset drawableRuleset = null!;
+        public new DrawableSentakkiEditorRuleset DrawableRuleset => (DrawableSentakkiEditorRuleset)base.DrawableRuleset;
+
         private readonly Bindable<TernaryState> showSpeedChanges = new Bindable<TernaryState>();
         private Bindable<bool> configShowSpeedChanges = null!;
 
         protected override DrawableRuleset<SentakkiHitObject> CreateDrawableRuleset(Ruleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
-            => drawableRuleset = new DrawableSentakkiEditorRuleset((SentakkiRuleset)ruleset, beatmap, mods);
+            => new DrawableSentakkiEditorRuleset((SentakkiRuleset)ruleset, beatmap, mods);
 
         [Cached]
         private SentakkiSnapProvider snapProvider { get; set; } = new SentakkiSnapProvider();
@@ -113,7 +114,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             {
                 bool enabled = state.NewValue == TernaryState.True;
 
-                drawableRuleset.ShowSpeedChanges.Value = enabled;
+                DrawableRuleset.ShowSpeedChanges.Value = enabled;
                 configShowSpeedChanges.Value = enabled;
             }, true);
         }
@@ -129,7 +130,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             }
 
             if (screenWithTimeline?.TimelineArea.Timeline != null)
-                drawableRuleset.TimelineTimeRange = EditorClock.TrackLength / screenWithTimeline.TimelineArea.Timeline.CurrentZoom.Value / 2;
+                DrawableRuleset.TimelineTimeRange = EditorClock.TrackLength / screenWithTimeline.TimelineArea.Timeline.CurrentZoom.Value / 2;
         }
         private IEnumerable<DrawableTernaryButton> createHitObjectFlagTernaries()
         {
