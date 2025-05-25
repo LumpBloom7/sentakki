@@ -66,7 +66,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                 else
                 {
                     var prevTimingPoint = timingGroups[i - 1].TimingPoint;
-                    maidataUnits.AddRange(generatePaddingBeats(timeUntilTimingPoint, prevTimingPoint, out double timeRemaining));
+                    maidataUnits.AddRange(smartGeneratePaddingBeats(timeUntilTimingPoint, prevTimingPoint, out double timeRemaining));
                     currentTime = timingPoint.Time - timeRemaining;
                 }
             }
@@ -79,7 +79,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                 // Handle time before hitObject time
                 double timeUntilCurrent = hitObjectGroups[j].Time - currentTime;
 
-                maidataUnits.AddRange(generatePaddingBeats(timeUntilCurrent, timingPoint, out double timeRemaining));
+                maidataUnits.AddRange(smartGeneratePaddingBeats(timeUntilCurrent, timingPoint, out double timeRemaining));
                 currentTime = hitObjectGroups[j].Time - timeRemaining;
 
                 StringBuilder hitObjectGroupBuilder = new();
@@ -171,7 +171,39 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
         return maichartBuilder.ToString();
     }
 
-    private static List<IMaidataUnit> generatePaddingBeats(double timeDelta, TimingControlPoint activeTimingPoint, out double timeRemaining)
+    private static List<IMaidataUnit> smartGeneratePaddingBeats(double timeDelta, TimingControlPoint activeTimingPoint, out double timeRemaining)
+    {
+        var commonDivisorPadding = generatePaddingBeats(timeDelta, activeTimingPoint, out double commonTimeRemaining, 2);
+        var tripletsDivisorPadding = generatePaddingBeats(timeDelta, activeTimingPoint, out double tripletsTimeRemaining, 3);
+
+        double absCommonTimeRemaining = Math.Abs(commonTimeRemaining);
+        double absTripletsTimeRemaining = Math.Abs(tripletsTimeRemaining);
+
+        if (absCommonTimeRemaining <= absTripletsTimeRemaining)
+        {
+            timeRemaining = commonTimeRemaining;
+            return commonDivisorPadding;
+        }
+        else
+        {
+            timeRemaining = tripletsTimeRemaining;
+            return tripletsDivisorPadding;
+        }
+    }
+
+    private static IEnumerable<int> getDivisors(int divisorBase)
+    {
+        yield return 1;
+
+        int divisorPower = 1;
+        while (true)
+        {
+            yield return divisorBase * divisorPower;
+            divisorPower <<= 1;
+        }
+    }
+
+    private static List<IMaidataUnit> generatePaddingBeats(double timeDelta, TimingControlPoint activeTimingPoint, out double timeRemaining, int divisorBase = 2)
     {
         timeRemaining = timeDelta;
         if (timeDelta < PRECISION)
@@ -179,29 +211,28 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
 
         List<IMaidataUnit> paddingBeats = [];
 
-        int currentDivisor = 1;
-
-        while (timeRemaining > PRECISION)
+        foreach (int divisor in getDivisors(divisorBase))
         {
-            double subBeatLength = activeTimingPoint.BeatLength / currentDivisor;
+            double subBeatLength = activeTimingPoint.BeatLength / divisor;
 
             int numberOfSubBeats = (int)(timeRemaining / subBeatLength);
 
-            // Is it possible to get within 5ms if we allow timeDelta to go negative?
+            // Is it possible to get within PRECISION if we allow timeDelta to go negative?
             // If so, we would prefer that as it is "close enough" while reducing number of subdivisions
             if (Math.Abs(timeRemaining - subBeatLength * (numberOfSubBeats + 1)) < PRECISION)
                 ++numberOfSubBeats;
 
             if (numberOfSubBeats > 0)
             {
-                paddingBeats.Add(new DivisorUnit(currentDivisor * 4));
+                paddingBeats.Add(new DivisorUnit(divisor * 4));
 
                 for (int i = 0; i < numberOfSubBeats; ++i)
                     paddingBeats.Add(new BeatUnit());
             }
 
             timeRemaining -= numberOfSubBeats * subBeatLength;
-            currentDivisor <<= 1;
+
+            if (timeRemaining < PRECISION) break;
         }
 
         return paddingBeats;
