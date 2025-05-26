@@ -86,6 +86,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
                 }
             });
             AddNested(LanedPlayfield);
+            AddNested(touchPlayfield);
             NewResult += onNewResult;
         }
 
