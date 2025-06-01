@@ -74,7 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 var hitObject = hitObjects[i];
                 if (canBeColored(hitObject)) yield return hitObject;
 
-                foreach (var nested in getColorableHitObject(hitObject.NestedHitObjects).AsEnumerable())
+                foreach (var nested in getColorableHitObject(hitObject.NestedHitObjects))
                     yield return nested;
             }
         }
