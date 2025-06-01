@@ -74,7 +74,7 @@ void main(void) {
 
     vec4 dots = max(dotShapeDown - dotShapeUp, vec4(0, 0, 0, 0)) + dotShapeUp;
 
-    o_Colour = (shape + dots + edgeEffect) * v_Colour;
+    o_Colour = (shape + dots + edgeEffect) * toPremultipliedAlpha(v_Colour);
 }
 
 #endif

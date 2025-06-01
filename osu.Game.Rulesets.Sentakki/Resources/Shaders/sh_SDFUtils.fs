@@ -11,7 +11,7 @@ layout(location = 0) out vec4 o_Colour;
 vec4 strokeSDF(in float dist, in float strokeRadius) {
     float base = smoothstep(strokeRadius - 1.0, strokeRadius, abs(dist));
     float inner = smoothstep(strokeRadius - 3.0, strokeRadius - 2.0, abs(dist));
-    
+
     float innerRing = 1.0 - inner;
     float basePlate = (1.0 - base) * (1.0 - innerRing);
 
@@ -41,6 +41,10 @@ vec4 sdfShadow(float dist, float strokeRadius, float shadowThickness, bool glow)
 
 float circleSDF(vec2 p, vec2 centre, float radius) {
     return length(p - centre) - radius;
+}
+
+vec4 toPremultipliedAlpha(in vec4 straightColour) {
+    return straightColour * vec4(vec3(v_Colour.w), 1.0);
 }
 
 #endif

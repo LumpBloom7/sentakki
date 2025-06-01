@@ -100,6 +100,6 @@ void main(void) {
     vec4 shape = fillSDF(sdf, strokeRadius);
     vec4 edgeEffect = sdfShadow(sdf, strokeRadius, shadowRadius, glow);
 
-    o_Colour = (shape + edgeEffect) * v_Colour;
+    o_Colour = (shape + edgeEffect) * toPremultipliedAlpha(v_Colour);
 }
 #endif

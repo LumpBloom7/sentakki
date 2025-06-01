@@ -60,6 +60,6 @@ void main(void) {
             result += strokeSDF(sdf, strokeRadius);
     }
 
-    o_Colour = result * v_Colour;
+    o_Colour = result * toPremultipliedAlpha(v_Colour);
 }
 #endif

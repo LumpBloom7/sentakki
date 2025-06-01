@@ -35,7 +35,7 @@ void main(void) {
 
     vec4 dotShape = fillSDF(circleSDF(pixelPos, origin, dotStrokeRadius), dotStrokeRadius);
 
-    o_Colour = (dotShape + shape + edgeEffect) * v_Colour;
+    o_Colour = (dotShape + shape + edgeEffect) * toPremultipliedAlpha(v_Colour);
 }
 
 #endif
