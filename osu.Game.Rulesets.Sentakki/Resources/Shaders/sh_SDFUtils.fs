@@ -10,10 +10,9 @@ layout(location = 0) out vec4 o_Colour;
 
 vec4 strokeSDF(in float dist, in float strokeRadius) {
     float base = smoothstep(strokeRadius - 1.0, strokeRadius, abs(dist));
-
     float inner = smoothstep(strokeRadius - 3.0, strokeRadius - 2.0, abs(dist));
+    
     float innerRing = 1.0 - inner;
-
     float basePlate = (1.0 - base) * (1.0 - innerRing);
 
     return basePlate * vec4(vec3(0.5), 1.0) + innerRing * vec4(vec3(1.0), 1.0);
@@ -31,7 +30,7 @@ vec4 fillSDF(in float dist, in float strokeRadius) {
 
 vec4 sdfShadow(float dist, float strokeRadius, float shadowThickness, bool glow) {
     vec3 shadowColor = glow ? vec3(0.3) : vec3(0);
-    float shadowAlpha = glow ? 0 : 0.5;
+    float shadowAlpha = glow ? 0 : 0.3;
 
     float glow_ = pow(smoothstep(shadowThickness - 1.0 + strokeRadius, strokeRadius - 1.0, dist), 1.0);
     float glowCutOut = smoothstep(strokeRadius - 1.0, strokeRadius, dist);
