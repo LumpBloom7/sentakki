@@ -15,11 +15,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
             {
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
-                Size = new Vector2(103, 75f),
-                Thickness = 8f,
-                ShadowRadius = 15,
+                Size = new Vector2(105, 75f),
+                Thickness = 15f,
+                ShadowRadius = 15f,
                 ShadowOnly = true,
-                Y = -15
+                Y = -15f
             });
         }
     }

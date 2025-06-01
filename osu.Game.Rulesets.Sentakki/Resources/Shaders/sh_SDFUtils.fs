@@ -6,61 +6,41 @@
 layout(location = 1) in lowp vec4 v_Colour;
 layout(location = 2) in highp vec2 v_TexCoord;
 layout(location = 3) in highp vec4 v_TexRect;
-
 layout(location = 0) out vec4 o_Colour;
 
-vec4 sdfToShape(in float dist, in float borderThickness, in float shadowThickness, in bool glow){
-    vec3 shadowColor =  glow ? vec3(1) : vec3(0);
-    float shadowAlpha = glow ? 0.75: 0.6;
+vec4 strokeSDF(in float dist, in float strokeRadius) {
+    float base = smoothstep(strokeRadius - 1.0, strokeRadius, abs(dist));
 
-    float base = smoothstep(borderThickness - 2.0, borderThickness - 3.0, abs(dist));
-    float outline = smoothstep(borderThickness, borderThickness - 1.0, abs(dist));
+    float inner = smoothstep(strokeRadius - 3.0, strokeRadius - 2.0, abs(dist));
+    float innerRing = 1.0 - inner;
 
-    if(shadowThickness < 1)
-        return vec4(vec3(max(outline * 0.5, base)), outline) * v_Colour;
+    float basePlate = (1.0 - base) * (1.0 - innerRing);
 
-    float shadowDist = dist - borderThickness;
-
-    float shadow =  pow((1 - clamp(((1 / shadowThickness) * shadowDist), 0.0 , 1.0)) * shadowAlpha, 2.0);
-    float exclusion = smoothstep(borderThickness, borderThickness - 1.0, dist); // Inner cutout for shadow
-
-    float innerShading = smoothstep(borderThickness -2.0, 0.0 , abs(dist));
-
-    vec4 shadowPart = vec4(shadowColor,shadow) * (1 - exclusion) * v_Colour;
-    vec4 fillPart = vec4(vec3(max(outline * 0.5, base)), outline) * v_Colour;
-
-    //vec4 stylizedFill = mix(fillPart, v_Colour * 0.85, innerShading);
-    
-    return shadowPart + fillPart;
+    return basePlate * vec4(vec3(0.5), 1.0) + innerRing * vec4(vec3(1.0), 1.0);
 }
 
-vec4 sdfFill(in float dist, in float borderThickness, in float shadowThickness, in bool glow){
-    vec3 shadowColor =  glow ? vec3(1) : vec3(0);
-    float shadowAlpha = glow ? 0.75: 0.6;
+vec4 fillSDF(in float dist, in float strokeRadius) {
+    float base = smoothstep(strokeRadius - 1.0, strokeRadius, dist);
+    float inner = smoothstep(strokeRadius - 3.0, strokeRadius - 2.0, dist);
 
-    float base = smoothstep(borderThickness - 2.0, borderThickness - 3.0, dist);
-    float outline = smoothstep(borderThickness, borderThickness - 1.0, dist);
+    float innerRing = 1.0 - inner;
+    float basePlate = (1.0 - base) * (1.0 - innerRing);
 
-    if(shadowThickness < 1)
-        return vec4(vec3(max(outline * 0.5, base)), outline) * v_Colour;
-
-    float shadowDist = dist - borderThickness;
-
-    float shadow =  pow((1 - clamp(((1 / shadowThickness) * shadowDist), 0.0 , 1.0)) * shadowAlpha, 2.0);
-    float exclusion = smoothstep(borderThickness, borderThickness - 1.0, dist); // Inner cutout for shadow
-
-    float innerShading = smoothstep(borderThickness -2.0, 0.0 , dist);
-
-    vec4 shadowPart = vec4(shadowColor,shadow) * (1 - exclusion) * v_Colour;
-    vec4 fillPart = vec4(vec3(max(outline * 0.5, base)), outline) * v_Colour;
-
-    //vec4 stylizedFill = mix(fillPart, v_Colour * 0.85, innerShading);
-    
-    return shadowPart + fillPart;
+    return basePlate * vec4(vec3(0.5), 1.0) + innerRing * vec4(vec3(1.0), 1.0);
 }
 
+vec4 sdfShadow(float dist, float strokeRadius, float shadowThickness, bool glow) {
+    vec3 shadowColor = glow ? vec3(0.3) : vec3(0);
+    float shadowAlpha = glow ? 0 : 0.5;
 
-float circleSDF(in vec2 p, in vec2 centre, in float radius){
+    float glow_ = pow(smoothstep(shadowThickness - 1.0 + strokeRadius, strokeRadius - 1.0, dist), 1.0);
+    float glowCutOut = smoothstep(strokeRadius - 1.0, strokeRadius, dist);
+
+    glow_ *= glowCutOut;
+    return glow_ * vec4(shadowColor, shadowAlpha);
+}
+
+float circleSDF(vec2 p, vec2 centre, float radius) {
     return length(p - centre) - radius;
 }
 

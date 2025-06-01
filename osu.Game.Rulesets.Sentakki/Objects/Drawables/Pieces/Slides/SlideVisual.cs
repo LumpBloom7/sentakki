@@ -134,7 +134,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                     chevron.Rotation = angle;
                     chevron.Depth = chevrons.Count;
 
-                    chevron.Thickness = 6.5f;
+                    chevron.Thickness = 14f;
                     chevron.Height = 30;
                     chevron.FanChevron = false;
                     chevron.Width = 50;
@@ -209,7 +209,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
 
                 chevron.Width = w;
                 chevron.Height = h;
-                chevron.Thickness = t;
+                chevron.Thickness = t * 2;
                 chevron.FanChevron = true;
 
                 if (((DrawableSentakkiHitObject?)drawableHitObject)?.ExBindable.Value ?? false)

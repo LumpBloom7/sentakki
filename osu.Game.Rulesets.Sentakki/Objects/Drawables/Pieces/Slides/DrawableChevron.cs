@@ -11,8 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 
 public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
 {
-    public NoteShape Shape { get; init; } = NoteShape.Ring;
-    private float thickness = 7f;
+    private float thickness = 15f;
     public float Thickness
     {
         get => thickness;
@@ -20,6 +19,7 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
         {
             if (thickness == value)
                 return;
+
             thickness = value;
             Invalidate(Invalidation.DrawNode);
         }
@@ -74,6 +74,18 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
     {
         TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "chevron");
         Texture = renderer.WhitePixel;
+
+        Blending = new BlendingParameters
+        {
+            Source = BlendingType.One,
+            Destination = BlendingType.OneMinusSrcAlpha,
+
+            SourceAlpha = BlendingType.One,
+            DestinationAlpha = BlendingType.OneMinusSrcAlpha,
+
+            RGBEquation = BlendingEquation.Add,
+            AlphaEquation = BlendingEquation.Add
+        };
     }
 
     private partial class ChevronDrawNode : SpriteDrawNode
