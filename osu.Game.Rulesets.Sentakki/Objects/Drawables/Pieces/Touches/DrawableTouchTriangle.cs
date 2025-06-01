@@ -24,7 +24,6 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
             thickness = value;
             Invalidate(Invalidation.DrawNode);
         }
-
     }
 
     private float shadowRadius = 15f;

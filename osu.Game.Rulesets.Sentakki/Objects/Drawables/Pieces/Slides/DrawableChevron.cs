@@ -11,7 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 
 public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
 {
-    private float thickness = 15f;
+    private float thickness = 13f;
     public float Thickness
     {
         get => thickness;

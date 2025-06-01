@@ -134,7 +134,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                     chevron.Rotation = angle;
                     chevron.Depth = chevrons.Count;
 
-                    chevron.Thickness = 14f;
+                    chevron.Thickness = 13f;
                     chevron.Height = 30;
                     chevron.FanChevron = false;
                     chevron.Width = 50;
