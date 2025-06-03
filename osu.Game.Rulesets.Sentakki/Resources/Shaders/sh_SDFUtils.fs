@@ -32,7 +32,7 @@ vec4 sdfShadow(float dist, float strokeRadius, float shadowThickness, bool glow)
     vec3 shadowColor = glow ? vec3(0.3) : vec3(0);
     float shadowAlpha = glow ? 0 : 0.3;
 
-    float glow_ = pow(smoothstep(shadowThickness - 1.0 + strokeRadius, strokeRadius - 1.0, dist), 1.0);
+    float glow_ = pow(smoothstep(shadowThickness + strokeRadius, strokeRadius - 1.0, dist), 1.0);
     float glowCutOut = smoothstep(strokeRadius - 1.0, strokeRadius, dist);
 
     glow_ *= glowCutOut;
