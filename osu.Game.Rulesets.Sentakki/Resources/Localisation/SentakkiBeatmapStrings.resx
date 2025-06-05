@@ -58,23 +58,23 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="tap_count" xml:space="preserve">
-        <value>Tap count</value>
+    <data name="taps" xml:space="preserve">
+        <value>Taps</value>
         <comment>Tap is a proper noun.</comment>
     </data>
-    <data name="hold_count" xml:space="preserve">
-        <value>Hold count</value>
+    <data name="holds" xml:space="preserve">
+        <value>Holds</value>
         <comment>Hold is a proper noun.</comment>
     </data>
-    <data name="touchhold_count" xml:space="preserve">
-        <value>TouchHold count</value>
+    <data name="touchholds" xml:space="preserve">
+        <value>TouchHolds</value>
         <comment>TouchHold is a proper noun.</comment>
     </data>
-    <data name="touch_count" xml:space="preserve">
-        <value>Touch count</value>
+    <data name="touches" xml:space="preserve">
+        <value>Touches</value>
         <comment>Touch is a proper noun.</comment>
     </data>
-    <data name="slide_count" xml:space="preserve">
+    <data name="slides" xml:space="preserve">
         <value>Slide count</value>
         <comment>Slide is a proper noun.</comment>
     </data>
