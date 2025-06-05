@@ -19,6 +19,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             int touchs = HitObjects.Count(h => h is Touch);
             int slides = HitObjects.OfType<Slide>().Sum(h => h.SlideInfoList.Count);
 
+            float total = taps + holds + touchHolds + touchs + slides;
+
             return new[]
             {
                 new BeatmapStatistic
@@ -26,28 +28,14 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                     Name = SentakkiBeatmapStrings.TapCount,
                     Content = taps.ToString(),
                     CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Circles),
+                    BarDisplayLength = taps / total
                 },
                 new BeatmapStatistic
                 {
                     Name = SentakkiBeatmapStrings.HoldCount,
                     Content = holds.ToString(),
                     CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Sliders),
-                },
-                new BeatmapStatistic
-                {
-                    Name = SentakkiBeatmapStrings.TouchHoldCount,
-                    Content = touchHolds.ToString(),
-                    CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Spinners),
-                },
-                new BeatmapStatistic
-                {
-                    Name = SentakkiBeatmapStrings.TouchCount,
-                    Content = touchs.ToString(),
-                    CreateIcon = () => new SpriteIcon
-                    {
-                        Icon = OsuIcon.PlayStyleTouch,
-                        Scale = new Vector2(.8f)
-                    },
+                    BarDisplayLength = holds / total
                 },
                 new BeatmapStatistic
                 {
@@ -58,6 +46,25 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                         Icon = FontAwesome.Regular.Star,
                         Scale = new Vector2(.7f)
                     },
+                    BarDisplayLength = slides / total
+                },
+                new BeatmapStatistic
+                {
+                    Name = SentakkiBeatmapStrings.TouchCount,
+                    Content = touchs.ToString(),
+                    CreateIcon = () => new SpriteIcon
+                    {
+                        Icon = OsuIcon.PlayStyleTouch,
+                        Scale = new Vector2(.8f)
+                    },
+                    BarDisplayLength = touchs / total
+                },
+                new BeatmapStatistic
+                {
+                    Name = SentakkiBeatmapStrings.TouchHoldCount,
+                    Content = touchHolds.ToString(),
+                    CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Spinners),
+                    BarDisplayLength = touchHolds / total
                 },
             };
         }
