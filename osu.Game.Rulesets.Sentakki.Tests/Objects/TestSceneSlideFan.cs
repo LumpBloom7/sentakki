@@ -14,6 +14,7 @@ using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
@@ -51,10 +52,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             });
 
             Add(chevronPool = new DrawablePool<SlideChevron>(62));
-
-            AddStep("Miss Single", () => testSingle(2000));
-            AddStep("Hit Single", () => testSingle(2000, true));
-            AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject hitObject) && hitObject.AllJudged == false));
         }
 
         [TestCaseSource(nameof(ObjectFlagsSource))]
@@ -69,19 +66,30 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         {
             var slide = new Slide
             {
-                //Break = true,
+                Break = headBreak,
+                Ex = headEX,
                 SlideInfoList = new List<SlideBodyInfo>
                 {
                     new SlideBodyInfo
                     {
                         SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false) },
                         Duration = duration,
+                        Break = bodyBreak,
+                        Ex = bodyEx
                     },
                 },
                 StartTime = Time.Current + 1000,
             };
 
             slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
+
+            if (headBreak)
+                slide.SlideTap.NoteColour = Color4.OrangeRed;
+            if (bodyBreak)
+            {
+                foreach (var body in slide.SlideBodies)
+                    body.NoteColour = Color4.OrangeRed;
+            }
 
             DrawableSlide dSlide;
 

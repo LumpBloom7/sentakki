@@ -21,7 +21,7 @@ public enum NoteShape
 public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
 {
     public NoteShape Shape { get; init; } = NoteShape.Ring;
-    private float thickness = 0.25f;
+    private float thickness = 18.75f;
     public float Thickness
     {
         get => thickness;
@@ -34,7 +34,7 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
         }
     }
 
-    private float shadowRadius = 15f / 105f;
+    private float shadowRadius = 15;
     public float ShadowRadius
     {
         get => shadowRadius;
@@ -92,6 +92,18 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
         // Bind exnote
         exBindable.BindTo(((DrawableSentakkiHitObject)hitObject).ExBindable);
         exBindable.BindValueChanged(b => Glow = b.NewValue, true);
+
+        Blending = new BlendingParameters
+        {
+            Source = BlendingType.One,
+            Destination = BlendingType.OneMinusSrcAlpha,
+
+            SourceAlpha = BlendingType.One,
+            DestinationAlpha = BlendingType.OneMinusSrcAlpha,
+
+            RGBEquation = BlendingEquation.Add,
+            AlphaEquation = BlendingEquation.Add
+        };
     }
 
     private partial class LaneNoteVisualDrawNode : SpriteDrawNode
@@ -127,7 +139,7 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
 
             shapeParameters.Data = shapeParameters.Data with
             {
-                Thickness = thickness,
+                BorderThickness = thickness,
                 Size = size,
                 ShadowRadius = shadowRadius,
                 Glow = glow,
@@ -145,7 +157,7 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private record struct ShapeParameters
         {
-            public UniformFloat Thickness;
+            public UniformFloat BorderThickness;
             public UniformPadding4 _;
             public UniformVector2 Size;
             public UniformFloat ShadowRadius;
