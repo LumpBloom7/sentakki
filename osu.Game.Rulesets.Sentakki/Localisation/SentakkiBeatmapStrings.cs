@@ -9,27 +9,27 @@ namespace osu.Game.Rulesets.Sentakki.Localisation
         /// <summary>
         /// "Tap count"
         /// </summary>
-        public static LocalisableString TapCount => new TranslatableString(getKey(@"tap_count"), @"Tap count");
+        public static LocalisableString TapCount => new TranslatableString(getKey(@"taps"), @"Taps");
 
         /// <summary>
         /// "Hold count"
         /// </summary>
-        public static LocalisableString HoldCount => new TranslatableString(getKey(@"hold_count"), @"Hold count");
+        public static LocalisableString HoldCount => new TranslatableString(getKey(@"holds"), @"Holds");
 
         /// <summary>
         /// "TouchHold count"
         /// </summary>
-        public static LocalisableString TouchHoldCount => new TranslatableString(getKey(@"touchhold_count"), @"TouchHold count");
+        public static LocalisableString TouchHoldCount => new TranslatableString(getKey(@"touchholds"), @"TouchHolds");
 
         /// <summary>
         /// "Touch count"
         /// </summary>
-        public static LocalisableString TouchCount => new TranslatableString(getKey(@"touch_count"), @"Touch count");
+        public static LocalisableString TouchCount => new TranslatableString(getKey(@"touches"), @"Touches");
 
         /// <summary>
         /// "Slide count"
         /// </summary>
-        public static LocalisableString SlideCount => new TranslatableString(getKey(@"slide_count"), @"Slide count");
+        public static LocalisableString SlideCount => new TranslatableString(getKey(@"slides"), @"Slides");
 
         private static string getKey(string key) => $"{prefix}:{key}";
     }
