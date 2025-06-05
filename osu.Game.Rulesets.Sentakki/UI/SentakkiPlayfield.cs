@@ -96,10 +96,10 @@ namespace osu.Game.Rulesets.Sentakki.UI
         [Resolved]
         private SentakkiRulesetConfigManager? sentakkiRulesetConfig { get; set; }
 
-        private IBindable<Skin> skin = null!;
+        private Bindable<Skin> skin = null!;
         private readonly Bindable<ColorOption> ringColor = new Bindable<ColorOption>();
 
-        private IBindable<StarDifficulty?>? beatmapDifficulty;
+        private IBindable<StarDifficulty> beatmapDifficulty = null!;
 
         [BackgroundDependencyLoader]
         private void load(SkinManager skinManager, IBeatmap beatmap, BeatmapDifficultyCache difficultyCache)
@@ -188,7 +188,7 @@ namespace osu.Game.Rulesets.Sentakki.UI
             switch (ringColor.Value)
             {
                 case ColorOption.Difficulty:
-                    double starRating = beatmapDifficulty?.Value?.Stars ?? 0;
+                    double starRating = beatmapDifficulty.Value.Stars;
                     var colour = colours.ForStarDifficulty(starRating);
 
                     // Normalize the colors to make sure the ring is actually visible
