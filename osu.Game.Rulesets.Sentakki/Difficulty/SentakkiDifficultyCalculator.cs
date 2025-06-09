@@ -19,9 +19,11 @@ namespace osu.Game.Rulesets.Sentakki.Difficulty
         {
             int maxCombo = beatmap.GetMaxCombo();
 
-            return new DifficultyAttributes
+            double baseSR = beatmap.BeatmapInfo.StarRating * clockRate;
+
+            return new SentakkiDifficultyAttributes
             {
-                StarRating = beatmap.BeatmapInfo.StarRating * 1.25f, // Inflate SR of converts, to encourage players to try lower diffs, without hurting their fragile ego.
+                StarRating = baseSR * 1.25f, // Inflate SR of converts, to encourage players to try lower diffs, without hurting their fragile ego.
                 Mods = mods,
                 MaxCombo = maxCombo
             };
