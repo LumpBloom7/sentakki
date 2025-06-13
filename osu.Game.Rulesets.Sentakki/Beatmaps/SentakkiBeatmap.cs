@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Beatmaps;
@@ -19,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             int touchs = HitObjects.Count(h => h is Touch);
             int slides = HitObjects.OfType<Slide>().Sum(h => h.SlideInfoList.Count);
 
-            float total = taps + holds + touchHolds + touchs + slides;
+            float total = Math.Max(1, taps + holds + touchHolds + touchs + slides);
 
             return new[]
             {
