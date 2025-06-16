@@ -18,7 +18,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps
 
         private readonly NoteRingPiece ring;
 
-
         public TapHighlight()
         {
             Anchor = Origin = Anchor.Centre;
