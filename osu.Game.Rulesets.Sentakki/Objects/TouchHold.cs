@@ -13,7 +13,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects
 {
-    public partial class TouchHold : SentakkiHitObject, IHasDuration
+    public partial class TouchHold : SentakkiHitObject, IHasDuration, IHasPosition
     {
         public double EndTime
         {
