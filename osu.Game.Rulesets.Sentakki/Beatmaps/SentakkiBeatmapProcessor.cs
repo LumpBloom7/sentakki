@@ -45,7 +45,13 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 {
                     if (hitObject is TouchHold th)
                     {
-                        th.ColourPalette = th.Break ? TouchHold.BreakPalette : TouchHold.DefaultPalette;
+                        th.ColourPalette = TouchHold.DefaultPalette;
+
+                        if (th.Break)
+                            th.ColourPalette = TouchHold.BreakPalette;
+                        else if (isTwin)
+                            th.ColourPalette = TouchHold.TwinPalette;
+
                         continue;
                     }
 
@@ -68,7 +74,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 var hitObject = hitObjects[i];
                 if (canBeColored(hitObject)) yield return hitObject;
 
-                foreach (var nested in getColorableHitObject(hitObject.NestedHitObjects).AsEnumerable())
+                foreach (var nested in getColorableHitObject(hitObject.NestedHitObjects))
                     yield return nested;
             }
         }
@@ -95,7 +101,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
         private static bool countsForTwin(HitObject hitObject) => hitObject switch
         {
             Hold.HoldHead => false,
-            TouchHold => false,
             Slide => false,
             _ => true
         };

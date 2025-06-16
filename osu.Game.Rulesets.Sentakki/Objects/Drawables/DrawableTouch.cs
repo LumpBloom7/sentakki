@@ -80,18 +80,14 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
             int count = 0;
 
-            bool isPressing = false;
-            foreach (var item in SentakkiActionInputManager.PressedActions)
+            if (ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
             {
-                if (item < SentakkiAction.Key1)
+                foreach (var item in SentakkiActionInputManager.PressedActions)
                 {
-                    isPressing = true;
-                    break;
+                    if (item < SentakkiAction.Key1)
+                        ++count;
                 }
             }
-
-            if (isPressing && ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
-                ++count;
 
             foreach (TouchSource source in touchInput.ActiveSources)
             {

@@ -70,7 +70,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         protected override void LoadAsyncComplete()
         {
             base.LoadAsyncComplete();
-            AnimationDuration.BindValueChanged(_ => queueTransformReset(), true);
+            AnimationDuration.BindValueChanged(_ =>
+            {
+                // We need to make sure the current transform is refreshed if the animation duration changes
+                // However, we don't want to refresh the transforms of hitobjects that isn't actively in use
+                if (IsInUse)
+                    RefreshStateTransforms();
+            }, true);
         }
 
         public Bindable<bool> ExBindable = new Bindable<bool>();
@@ -80,31 +86,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.OnApply();
             AccentColour.BindTo(HitObject.ColourBindable);
             ExBindable.BindTo(HitObject.ExBindable);
-        }
-
-        private bool transformResetQueued;
-
-        protected override void Update()
-        {
-            base.Update();
-
-            if (transformResetQueued) RefreshStateTransforms();
-        }
-
-        // We need to make sure the current transform resets, perhaps due to animation duration being changed
-        // We don't want to reset the transform of all DHOs immediately,
-        // since repeatedly resetting transforms of non-present DHO is wasteful
-        private void queueTransformReset()
-        {
-            transformResetQueued = true;
-            //LifetimeStart = HitObject.StartTime - InitialLifetimeOffset;
-        }
-
-        protected override void UpdateInitialTransforms()
-        {
-            // The transform is reset as soon as this function begins
-            // This includes the usual LoadComplete() call, or rewind resets
-            transformResetQueued = false;
         }
 
         protected override void UpdateHitStateTransforms(ArmedState state)

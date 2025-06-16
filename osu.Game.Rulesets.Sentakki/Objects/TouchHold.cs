@@ -80,6 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     {
         public static readonly IReadOnlyList<Color4> DefaultPalette;
         public static readonly IReadOnlyList<Color4> BreakPalette;
+        public static readonly IReadOnlyList<Color4> TwinPalette;
 
         static TouchHold()
         {
@@ -93,9 +94,16 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
             BreakPalette = [
                 Color4.OrangeRed,
-                Colour4.FromHex("#802200"),
+                Colour4.FromHex("#802300"),
                 Color4.OrangeRed,
-                Colour4.FromHex("#802200"),
+                Colour4.FromHex("#802300"),
+            ];
+
+            TwinPalette = [
+                Color4.Gold,
+                Colour4.FromHex("#806c00"),
+                Color4.Gold,
+                Colour4.FromHex("#806c00"),
             ];
         }
     }

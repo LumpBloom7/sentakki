@@ -121,8 +121,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
 
             double delay = controlPointInfo.TimingPointAt(StartTime).BeatLength * SlideBodyInfo.ShootDelay;
-            if (delay < Duration - 50)
-                ShootDelay = delay;
+
+            ShootDelay = Math.Clamp(delay, 0, Duration);
         }
 
         protected override HitWindows CreateHitWindows() => new SentakkiSlideHitWindows();

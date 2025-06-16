@@ -326,7 +326,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             double duration = ((IHasDuration)original).Duration;
             double adjustedDuration = duration * velocity;
 
-            var candidates = SlidePaths.VALIDPATHS;
+            var candidates = SlidePaths.VALID_CONVERT_PATHS;
             if (!ConversionFlags.HasFlag(ConversionFlags.fanSlides))
                 candidates = candidates.Where(p => p.SlidePart.Shape != SlidePaths.PathShapes.Fan).ToList();
 
@@ -334,7 +334,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                                            .Select(t => t.SlidePart)
                                            .ToList();
 
-            return !candidateParts.Any() ? null : candidateParts[patternGenerator.RNG.Next(candidateParts.Count)];
+            return candidateParts.Count != 0 ? null : candidateParts[patternGenerator.RNG.Next(candidateParts.Count)];
         }
 
         private IEnumerable<Tap> createTapsFromNodes(HitObject original, IList<IList<HitSampleInfo>> nodeSamples)

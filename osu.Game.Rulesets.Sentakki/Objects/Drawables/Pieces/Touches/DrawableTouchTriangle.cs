@@ -13,8 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
 
 public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
 {
-    public NoteShape Shape { get; init; } = NoteShape.Ring;
-    private float thickness = 7f;
+    private float thickness = 15f;
     public float Thickness
     {
         get => thickness;
@@ -27,9 +26,7 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
         }
     }
 
-    // Special behavior, any non-zero value will hide the main body
-    // This is because touch notes shadow should exist *under* all triangles, not just a single one
-    private float shadowRadius = 15;
+    private float shadowRadius = 15f;
     public float ShadowRadius
     {
         get => shadowRadius;
@@ -95,6 +92,18 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
 
         if (hitObject is null)
             return;
+
+        Blending = new BlendingParameters
+        {
+            Source = BlendingType.One,
+            Destination = BlendingType.OneMinusSrcAlpha,
+
+            SourceAlpha = BlendingType.One,
+            DestinationAlpha = BlendingType.OneMinusSrcAlpha,
+
+            RGBEquation = BlendingEquation.Add,
+            AlphaEquation = BlendingEquation.Add
+        };
 
         // Bind exnote
         exBindable.BindTo(((DrawableSentakkiHitObject)hitObject).ExBindable);
