@@ -73,6 +73,7 @@ namespace osu.Game.Rulesets.Sentakki
         public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new SentakkiReplayFrame();
 
         public override HitObjectComposer CreateHitObjectComposer() => new SentakkiHitObjectComposer(this);
+        public override IBeatmapVerifier CreateBeatmapVerifier() => new SentakkiBeatmapVerifier();
 
         public override PerformanceCalculator CreatePerformanceCalculator() => new SentakkiPerformanceCalculator(this);
 
