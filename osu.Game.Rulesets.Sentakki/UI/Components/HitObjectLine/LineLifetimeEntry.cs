@@ -53,7 +53,10 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         public void Clear()
         {
             foreach (var hitObject in HitObjects)
+            {
                 hitObject.BreakBindable.ValueChanged -= onBreakChanged;
+                hitObject.ColourBindable.ValueChanged -= onColorChanged;
+            }
 
             HitObjects.Clear();
             UpdateLine();
@@ -62,6 +65,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         public void Remove(SentakkiLanedHitObject hitObject)
         {
             hitObject.BreakBindable.ValueChanged -= onBreakChanged;
+            hitObject.ColourBindable.ValueChanged -= onColorChanged;
             HitObjects.Remove(hitObject);
             UpdateLine();
         }
