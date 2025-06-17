@@ -16,6 +16,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         private readonly BindableDouble animationDuration = new BindableDouble(1000);
         private double startTime = 0;
 
+        private static readonly Comparer<SentakkiLanedHitObject> comparer = Comparer<SentakkiLanedHitObject>.Create((lhs, rhs) => lhs.Lane.CompareTo(rhs.Lane));
+
         public double StartTime
         {
             get => startTime;
@@ -44,7 +46,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         {
             hitObject.BreakBindable.ValueChanged += onBreakChanged;
             hitObject.ColourBindable.ValueChanged += onColorChanged;
-            HitObjects.AddInPlace(hitObject, Comparer<SentakkiLanedHitObject>.Create((lhs, rhs) => lhs.Lane.CompareTo(rhs.Lane)));
+            HitObjects.AddInPlace(hitObject, comparer);
             UpdateLine();
         }
 
