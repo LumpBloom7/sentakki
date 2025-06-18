@@ -121,6 +121,7 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
     private void loadPaths()
     {
         paths.Clear();
+        hoverPaths.Clear();
 
         int currentOffset = 0;
 
