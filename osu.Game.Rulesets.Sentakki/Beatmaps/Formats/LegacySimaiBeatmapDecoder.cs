@@ -70,19 +70,13 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
     private void attachSample(SentakkiHitObject hitObject)
     {
-        HitSampleInfo normal = new HitSampleInfo(HitSampleInfo.HIT_NORMAL);
-        HitSampleInfo soft = new HitSampleInfo(HitSampleInfo.HIT_NORMAL, HitSampleInfo.BANK_SOFT);
+        HitSampleInfo normal = new HitSampleInfo(HitSampleInfo.HIT_NORMAL, HitSampleInfo.BANK_SOFT);
+        HitSampleInfo soft = new HitSampleInfo(HitSampleInfo.HIT_WHISTLE, HitSampleInfo.BANK_SOFT);
 
-        HitSampleInfo hitSampleInfo = hitObject.Ex ? soft : normal;
+        hitObject.Samples.Add(normal);
 
-        if (hitObject is Hold hold)
-        {
-            hold.NodeSamples = new IList<HitSampleInfo>[] { new[] { hitSampleInfo, soft } };
-        }
-        else
-        {
-            hitObject.Samples.Add(hitSampleInfo);
-        }
+        if (hitObject.Ex)
+            hitObject.Samples.Add(soft);
     }
 
     private void processNotes(Beatmap beatmap, string chartNotes)
