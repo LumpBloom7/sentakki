@@ -1,6 +1,7 @@
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
@@ -16,10 +17,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         private readonly SlideBodyInfo slideBodyInfo;
 
-        // This drawable is zero width
-        // We should use the quad of the note container
-        //public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => SlideTapPiece.ReceivePositionalInputAt(screenSpacePos);
-        //public override Quad ScreenSpaceDrawQuad => SlideTapPiece.ScreenSpaceDrawQuad;
+        // For simplicity, let's just take the quad of the slide visual
+        public override Quad ScreenSpaceDrawQuad => slideBody.ScreenSpaceDrawQuad;
 
         public SlideBodyHighlight(SlideBodyInfo slideBodyInfo)
         {

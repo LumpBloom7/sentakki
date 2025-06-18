@@ -1,5 +1,6 @@
 using System.Linq;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions.PolygonExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
@@ -156,6 +157,21 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => tapHighlight.ReceivePositionalInputAt(screenSpacePos) || slideVisualisers.Any(v => v.ReceivePositionalInputAt(screenSpacePos));
 
-        public override Quad SelectionQuad => tapHighlight.ScreenSpaceDrawQuad;
+        public override Quad SelectionQuad
+        {
+            get
+            {
+                RectangleF selectionRect = tapHighlight.ScreenSpaceDrawQuad.AABBFloat;
+
+                foreach (var sv in slideBodyHighlights)
+                {
+                    var rect = sv.ScreenSpaceDrawQuad.AABBFloat;
+
+                    selectionRect = RectangleF.Union(selectionRect, rect);
+                }
+
+                return Quad.FromRectangle(selectionRect);
+            }
+        }
     }
 }
