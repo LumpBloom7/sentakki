@@ -77,7 +77,7 @@ public class CompositeBeatmapConverter : BeatmapConverter<SentakkiHitObject>
                         Duration = hold.Duration,
                         Break = hold.Break,
                         Ex = hold.Ex,
-                        NodeSamples = hold.NodeSamples
+                        Samples = hold.Samples
                     });
                     break;
 
