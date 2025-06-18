@@ -33,7 +33,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
             var selectedObjects = SelectedItems.OfType<SentakkiHitObject>().ToArray();
 
-            bool canFlip = selectedObjects.Length > 1 && selectedObjects.Any(a => a is not TouchHold);
+            bool canFlip = selectedObjects.Any(a => a is not TouchHold);
 
             SelectionBox.CanFlipX = canFlip;
             SelectionBox.CanFlipY = canFlip;
