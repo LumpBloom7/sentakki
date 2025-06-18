@@ -2,7 +2,6 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Visualiser;
@@ -81,10 +80,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
             foreach (var si in HitObject.SlideInfoList)
             {
                 slideBodyHighlights.Add(new SlideBodyHighlight(si));
-                slideVisualisers.Add(new SlidePathVisualiser(HitObject, si, HitObject.Lane)
-                {
-                    OnDeleteSelected = recreateVisualisations
-                });
+                slideVisualisers.Add(new SlidePathVisualiser(HitObject, si, HitObject.Lane));
             }
 
             if (IsSelected && HitObject.SlideInfoList.Count > 0)

@@ -26,9 +26,6 @@ public partial class EditorSlidePartPiece : SmoothPath, IHasTooltip, IHasContext
     [Resolved(CanBeNull = true)]
     private EditorBeatmap? editorBeatmap { get; set; }
 
-    [Resolved]
-    private SlidePathVisualiser slidePathVisualiser { get; set; } = null!;
-
     public EditorSlidePartPiece(Slide slide, SlideBodyInfo info, int index)
     {
         this.slide = slide;
@@ -187,7 +184,5 @@ public partial class EditorSlidePartPiece : SmoothPath, IHasTooltip, IHasContext
         slideBodyInfo.SlidePathParts = parts;
         editorBeatmap?.Update(slide);
         editorBeatmap?.EndChange();
-
-        slidePathVisualiser.ReloadVisualiser();
     }
 }

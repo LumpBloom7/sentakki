@@ -16,7 +16,6 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Visualiser;
 
-[Cached]
 public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
 {
     private Container<SmoothPath> paths;
@@ -34,6 +33,7 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
     {
         this.slide = slide;
         this.slideBodyInfo = slideBodyInfo;
+        slideBodyInfo.OnPathUpdated += ReloadVisualiser;
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
 
@@ -93,7 +93,6 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
         slide.SlideInfoList.Remove(slideBodyInfo);
         editorBeatmap?.Update(slide);
         editorBeatmap?.EndChange();
-        OnDeleteSelected?.Invoke();
     }
 
     private void updateContextMenuItems()
@@ -119,14 +118,11 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
 
     public MenuItem[]? ContextMenuItems { get; private set; }
 
-    public Action? OnDeleteSelected;
-
     private void loadPaths()
     {
         paths.Clear();
 
         int currentOffset = 0;
-        Console.WriteLine(currentOffset);
 
         float hueInterval = 1f / slideBodyInfo.SlidePathParts.Length;
 
@@ -201,5 +197,12 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
     public void Deselect()
     {
         Alpha = 0;
+    }
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        slideBodyInfo.OnPathUpdated -= ReloadVisualiser;
     }
 }
