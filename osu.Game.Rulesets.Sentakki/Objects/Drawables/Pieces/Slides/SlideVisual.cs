@@ -4,6 +4,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
+using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
@@ -18,6 +19,21 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         public override bool RemoveWhenNotAlive => false;
 
         public double Progress { get; set; }
+
+        // SSDQ.AABBFloat may return a Rectangle far larger than the actual bounding rect when rotated
+        //  To avoid that, we manually compute a non rotated rect that fits all of the chevrons.
+        protected override Quad ComputeScreenSpaceDrawQuad()
+        {
+            if (chevrons.Count == 0)
+                return base.ComputeScreenSpaceDrawQuad();
+
+            var rect = chevrons[0].ScreenSpaceDrawQuad.AABBFloat;
+
+            for (int i = 1; i < chevrons.Count; ++i)
+                rect = RectangleF.Union(rect, chevrons[i].ScreenSpaceDrawQuad.AABBFloat);
+
+            return Quad.FromRectangle(rect);
+        }
 
         private SentakkiSlidePath path = null!;
 
@@ -48,6 +64,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
+            AutoSizeAxes = Axes.Both;
         }
 
         [Resolved]

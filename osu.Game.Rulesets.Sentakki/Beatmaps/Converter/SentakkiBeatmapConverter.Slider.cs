@@ -40,7 +40,7 @@ public partial class SentakkiBeatmapConverter
             Break = isBreak,
             StartTime = original.StartTime,
             Duration = duration,
-            NodeSamples = slider.NodeSamples,
+            Samples = slider.NodeSamples[0],
             Ex = isSoft,
         };
         return hold;

@@ -254,7 +254,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             {
                 Break = !ClassicMode && isBreak,
                 Lane = patternGenerator.GetNextLane(twin),
-                NodeSamples = samples,
                 Samples = original.Samples,
                 StartTime = original.StartTime,
                 EndTime = original.GetEndTime()
