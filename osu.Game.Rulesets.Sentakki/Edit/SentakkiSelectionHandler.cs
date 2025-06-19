@@ -58,7 +58,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                             if (laned.Lane < 0) laned.Lane += 8;
                         }
 
-
                         if (laned is Slide slide)
                         {
                             foreach (var slideInfo in slide.SlideInfoList)
@@ -73,6 +72,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                                 slideInfo.UpdatePaths();
                             }
                         }
+
                         sentakkiPlayfield.Add(laned);
                         break;
 

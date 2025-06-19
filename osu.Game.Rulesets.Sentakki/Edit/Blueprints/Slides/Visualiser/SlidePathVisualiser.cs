@@ -69,6 +69,9 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
         exStateBindable.BindValueChanged(setExState);
 
         updateContextMenuItems();
+
+        // HACK: This seems to be necessary in order for the hover paths to be validated correctly for ReceivePositionAt
+        AlwaysPresent = true;
     }
 
     private void setBreakState(ValueChangedEvent<TernaryState> value)
@@ -171,7 +174,7 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
                 Vertices = vertices,
                 Anchor = Anchor.Centre,
                 Position = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, currentOffset),
-                Rotation = currentOffset.GetRotationForLane() - 22.5f
+                Rotation = currentOffset.GetRotationForLane() - 22.5f,
             };
 
             hoverPath.OriginPosition = hoverPath.PositionInBoundingBox(hoverPath.Vertices[0]);
@@ -193,11 +196,15 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
     public void Select()
     {
         Alpha = 1;
+        paths.Alpha = 1;
+        updateContextMenuItems();
     }
 
     public void Deselect()
     {
         Alpha = 0;
+        paths.Alpha = 0;
+        ContextMenuItems = null;
     }
 
     protected override void Dispose(bool isDisposing)
