@@ -71,6 +71,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         private void load(OsuConfigManager config)
         {
             RightToolbox.Add(slideEditorToolboxGroup);
+            RightToolbox.Add(new TransformToolboxGroup
+            {
+                RotationHandler = BlueprintContainer.SelectionHandler.RotationHandler
+            });
+
             LayerBelowRuleset.Add(snapProvider);
 
             selectedHitObjects = EditorBeatmap.SelectedHitObjects.GetBoundCopy();

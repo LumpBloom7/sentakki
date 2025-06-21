@@ -10,7 +10,6 @@ using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Compose.Components;
 using osuTK;
@@ -26,6 +25,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
         [Resolved]
         private HitObjectComposer composer { get; set; } = null!;
+
+        public override SelectionRotationHandler CreateRotationHandler() => new SentakkiRotationHandler();
 
         protected override void OnSelectionChanged()
         {
