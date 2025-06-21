@@ -3,18 +3,15 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
-using osu.Game.Beatmaps;
 using osu.Game.Configuration;
-using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Edit.Tools;
-using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Edit.CompositionTools;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Components.TernaryButtons;
@@ -26,19 +23,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit
     [Cached]
     public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitObject>
     {
-        public new DrawableSentakkiEditorRuleset DrawableRuleset => (DrawableSentakkiEditorRuleset)base.DrawableRuleset;
-
-        private readonly Bindable<TernaryState> showSpeedChanges = new Bindable<TernaryState>();
-        private Bindable<bool> configShowSpeedChanges = null!;
-
-        protected override DrawableRuleset<SentakkiHitObject> CreateDrawableRuleset(Ruleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
-            => new DrawableSentakkiEditorRuleset((SentakkiRuleset)ruleset, beatmap, mods);
+        public new DrawableSentakkiRuleset DrawableRuleset => (DrawableSentakkiRuleset)base.DrawableRuleset;
 
         [Cached]
         private SentakkiSnapProvider snapProvider { get; set; } = new SentakkiSnapProvider();
-
-        [Resolved]
-        private EditorScreenWithTimeline? screenWithTimeline { get; set; }
 
         protected override Drawable CreateHitObjectInspector() => new SentakkiHitObjectInspector();
 
@@ -87,36 +75,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
             selectedHitObjects = EditorBeatmap.SelectedHitObjects.GetBoundCopy();
             selectedHitObjects.CollectionChanged += (_, _) => updateSnapProvider();
-
-            LeftToolbox.Add(new EditorToolboxGroup("playfield")
-            {
-                Child = new FillFlowContainer
-                {
-                    RelativeSizeAxes = Axes.X,
-                    AutoSizeAxes = Axes.Y,
-                    Direction = FillDirection.Vertical,
-                    Spacing = new Vector2(0, 5),
-                    Children = [
-                        new DrawableTernaryButton
-                        {
-                            Current = showSpeedChanges,
-                            Description = "Show speed changes",
-                            CreateIcon = () => new SpriteIcon { Icon = FontAwesome.Solid.TachometerAlt },
-                        }
-                    ]
-                },
-            });
-
-            configShowSpeedChanges = config.GetBindable<bool>(OsuSetting.EditorShowSpeedChanges);
-            configShowSpeedChanges.BindValueChanged(enabled => showSpeedChanges.Value = enabled.NewValue ? TernaryState.True : TernaryState.False, true);
-
-            showSpeedChanges.BindValueChanged(state =>
-            {
-                bool enabled = state.NewValue == TernaryState.True;
-
-                DrawableRuleset.ShowSpeedChanges.Value = enabled;
-                configShowSpeedChanges.Value = enabled;
-            }, true);
         }
 
         protected override void Update()
@@ -128,9 +86,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                 lastTool = BlueprintContainer.CurrentTool;
                 updateSnapProvider();
             }
-
-            if (screenWithTimeline?.TimelineArea.Timeline != null)
-                DrawableRuleset.TimelineTimeRange = EditorClock.TrackLength / screenWithTimeline.TimelineArea.Timeline.CurrentZoom.Value / 2;
         }
         private IEnumerable<DrawableTernaryButton> createHitObjectFlagTernaries()
         {
