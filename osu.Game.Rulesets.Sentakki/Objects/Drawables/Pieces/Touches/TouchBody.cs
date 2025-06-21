@@ -58,9 +58,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches
 
         private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
 
-        [BackgroundDependencyLoader]
+        [BackgroundDependencyLoader(true)]
         private void load(DrawableHitObject drawableObject)
         {
+            if (drawableObject is null) return;
+
             accentColour.BindTo(drawableObject.AccentColour);
             accentColour.BindValueChanged(colour => PieceContainer.Colour = colour.NewValue, true);
         }
