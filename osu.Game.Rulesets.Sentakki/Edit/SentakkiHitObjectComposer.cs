@@ -130,7 +130,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             snapProvider.SwitchModes(BlueprintContainer.CurrentTool switch
             {
                 TouchCompositionTool => SentakkiSnapProvider.SnapMode.Touch,
-                TouchHoldCompositionTool => SentakkiSnapProvider.SnapMode.Off,
+                TouchHoldCompositionTool => SentakkiSnapProvider.SnapMode.Touch,
                 _ => SentakkiSnapProvider.SnapMode.Laned,
             });
         }

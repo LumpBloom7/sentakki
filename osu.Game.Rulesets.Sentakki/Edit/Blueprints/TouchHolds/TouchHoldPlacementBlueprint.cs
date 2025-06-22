@@ -1,4 +1,5 @@
 using System;
+using osu.Framework.Allocation;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -11,9 +12,19 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
     {
         protected override bool IsValidForPlacement => HitObject.Duration > 0;
 
+        [Resolved]
+        private SentakkiHitObjectComposer composer { get; set; } = null!;
+
+        private readonly TouchHoldHighlight highlight;
+
         public TouchHoldPlacementBlueprint()
         {
-            InternalChild = new TouchHoldHighlight();
+            InternalChild = highlight = new TouchHoldHighlight();
+        }
+
+        protected override void Update()
+        {
+            highlight.Position = HitObject.Position;
         }
 
         protected override bool OnMouseDown(MouseDownEvent e)
@@ -41,6 +52,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
 
         public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double fallbackTime)
         {
+            var result = composer?.FindSnappedPositionAndTime(screenSpacePosition) ?? new SnapResult(screenSpacePosition, fallbackTime);
             if (PlacementActive == PlacementState.Active)
             {
                 HitObject.StartTime = fallbackTime < originalStartTime ? fallbackTime : originalStartTime;
@@ -51,10 +63,20 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
             }
             else
             {
-                originalStartTime = HitObject.StartTime = fallbackTime;
+                originalStartTime = HitObject.StartTime = result.Time ?? fallbackTime;
+
+                var newPosition = ToLocalSpace(result.ScreenSpacePosition) - OriginPosition;
+
+                if (Vector2.Distance(Vector2.Zero, newPosition) > 270)
+                {
+                    float angle = Vector2.Zero.GetDegreesFromPosition(newPosition);
+                    newPosition = SentakkiExtensions.GetCircularPosition(270, angle);
+                }
+
+                HitObject.Position = newPosition;
             }
 
-            return new SnapResult(screenSpacePosition, fallbackTime);
+            return result;
         }
     }
 }
