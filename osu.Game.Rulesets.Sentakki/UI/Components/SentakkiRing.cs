@@ -18,8 +18,6 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
             RelativeSizeAxes = Axes.Both;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            Scale = Vector2.Zero;
-            Alpha = 0;
 
             InternalChildren = new Drawable[]
             {
@@ -59,18 +57,18 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
         private void load(SentakkiRulesetConfigManager? settings)
         {
             settings?.BindWith(SentakkiRulesetSettings.RingOpacity, RingOpacity);
-            RingOpacity.BindValueChanged(opacity => Alpha = opacity.NewValue);
+            RingOpacity.BindValueChanged(opacity => Alpha = opacity.NewValue, true);
 
             settings?.BindWith(SentakkiRulesetSettings.ShowNoteStartIndicators, NoteStartIndicators);
-            NoteStartIndicators.BindValueChanged(opacity => spawnIndicator.FadeTo(Convert.ToSingle(opacity.NewValue), 200));
+            NoteStartIndicators.BindValueChanged(opacity => spawnIndicator.FadeTo(Convert.ToSingle(opacity.NewValue), 200), true);
 
             settings?.BindWith(SentakkiRulesetSettings.KiaiEffects, kiaiEffect);
         }
 
         protected override void LoadComplete()
         {
-            NoteStartIndicators.TriggerChange();
-            this.FadeTo(RingOpacity.Value, 1000, Easing.OutElasticQuarter).ScaleTo(1, 1000, Easing.OutElasticQuarter);
+            // These usually animate in, but they shouldn't if the game was started with it already on
+            spawnIndicator.FinishTransforms(true);
         }
 
         public void KiaiBeat()

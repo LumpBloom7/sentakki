@@ -1,20 +1,17 @@
 using System.Runtime.InteropServices;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shaders.Types;
 using osu.Framework.Graphics.Sprites;
-using osu.Game.Rulesets.Objects.Drawables;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 
 public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
 {
-    public NoteShape Shape { get; init; } = NoteShape.Ring;
-    private float thickness = 7f;
+    private float thickness = 13f;
     public float Thickness
     {
         get => thickness;
@@ -22,12 +19,13 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
         {
             if (thickness == value)
                 return;
+
             thickness = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
 
-    private float shadowRadius = 15f;
+    private float shadowRadius = 7.5f;
     public float ShadowRadius
     {
         get => shadowRadius;
@@ -71,20 +69,23 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
 
     protected override DrawNode CreateDrawNode() => new ChevronDrawNode(this);
 
-    private BindableBool exBindable = new BindableBool();
-
     [BackgroundDependencyLoader]
-    private void load(ShaderManager shaders, IRenderer renderer, DrawableHitObject? hitObject)
+    private void load(ShaderManager shaders, IRenderer renderer)
     {
         TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "chevron");
         Texture = renderer.WhitePixel;
 
-        if (hitObject is null)
-            return;
+        Blending = new BlendingParameters
+        {
+            Source = BlendingType.One,
+            Destination = BlendingType.OneMinusSrcAlpha,
 
-        // Bind exnote
-        exBindable.BindTo(((DrawableSentakkiHitObject)hitObject).ExBindable);
-        exBindable.BindValueChanged(b => Glow = b.NewValue, true);
+            SourceAlpha = BlendingType.One,
+            DestinationAlpha = BlendingType.OneMinusSrcAlpha,
+
+            RGBEquation = BlendingEquation.Add,
+            AlphaEquation = BlendingEquation.Add
+        };
     }
 
     private partial class ChevronDrawNode : SpriteDrawNode

@@ -1,8 +1,5 @@
-using System;
-using System.Linq;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
-using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Scoring;
 using osuTK;
 
@@ -10,13 +7,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public partial class DrawableSlideCheckpointNode : DrawableSentakkiHitObject
     {
+        // Slides parts can be hit as long as the body is visible, regardless of it's intended time
+        // By setting the animation duration to an absurdly high value, the lifetimes of touch regions are bounded by the parent DrawableSlide.
+        protected override double InitialLifetimeOffset => double.MaxValue;
+
         public new SlideCheckpoint.CheckpointNode HitObject => (SlideCheckpoint.CheckpointNode)base.HitObject;
 
         private DrawableSlideCheckpoint checkpoint => (DrawableSlideCheckpoint)ParentHitObject;
-
-        // We need this to be alive as soon as the parent slide note is alive
-        // This is to ensure reverts are still possible during edge case situation (eg. 0 duration slide)
-        protected override bool ShouldBeAlive => true;
 
         public override bool HandlePositionalInput => true;
         public override bool DisplayResult => false;
@@ -48,14 +45,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Position = HitObject.Position;
         }
 
+        private int pressedCount = 0;
+
         protected override void Update()
         {
             base.Update();
-            if (Judged || !checkpoint.IsHittable)
-                return;
 
-            if (checkForTouchInput() || (IsHovered && SentakkiActionInputManager.PressedActions.Any()))
+            int updatedPressedCounts = countActiveTouchPoints();
+
+            if (updatedPressedCounts > pressedCount)
                 UpdateResult(true);
+
+            pressedCount = updatedPressedCounts;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
@@ -68,21 +69,33 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
             }
 
+            if (!checkpoint.IsHittable)
+                return;
+
             ApplyResult(Result.Judgement.MaxResult);
         }
 
-        private bool checkForTouchInput()
+        private int countActiveTouchPoints()
         {
             var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+            int count = 0;
 
-            // Avoiding Linq to minimize allocations, since this would be called every update of this node
-            for (TouchSource t = TouchSource.Touch1; t <= TouchSource.Touch10; ++t)
+            if (ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
             {
-                if (touchInput.GetTouchPosition(t) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
-                    return true;
+                foreach (var item in SentakkiActionInputManager.PressedActions)
+                {
+                    if (item < SentakkiAction.Key1)
+                        ++count;
+                }
             }
 
-            return false;
+            foreach (TouchSource source in touchInput.ActiveSources)
+            {
+                if (touchInput.GetTouchPosition(source) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
+                    ++count;
+            }
+
+            return count;
         }
 
         public new void ApplyResult(HitResult result)

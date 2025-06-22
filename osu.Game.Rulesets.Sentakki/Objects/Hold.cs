@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using osu.Game.Audio;
+﻿using System.Threading;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -12,19 +9,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Hold : SentakkiLanedHitObject, IHasDuration
     {
-        protected override bool NeedBreakSample => false;
-
-        private IList<IList<HitSampleInfo>> nodeSamples = new List<IList<HitSampleInfo>>();
-
-        public IList<IList<HitSampleInfo>> NodeSamples
-        {
-            get => nodeSamples;
-            set
-            {
-                Samples = value.Last();
-                nodeSamples = value;
-            }
-        }
+        protected override bool PlaysBreakSample => false;
 
         public double EndTime
         {
@@ -41,8 +26,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 Break = Break,
                 StartTime = StartTime,
                 Lane = Lane,
-                Samples = nodeSamples.Any() ? nodeSamples.First() : new List<HitSampleInfo>(),
-                ColourBindable = ColourBindable.GetBoundCopy(),
+                Samples = Samples,
                 Ex = Ex
             });
 

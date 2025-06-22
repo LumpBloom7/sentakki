@@ -61,4 +61,10 @@
   <data name="mod_description" xml:space="preserve">
         <value>Ноты исчезают прямо перед нажатием.</value>
     </data>
+  <data name="visible_radius" xml:space="preserve">
+        <value>Радиус видимости</value>
+    </data>
+  <data name="visible_radius_description" xml:space="preserve">
+        <value>Радиус окружности, в котором видно ноты.</value>
+    </data>
 </root>

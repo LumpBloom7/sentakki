@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
@@ -59,18 +60,78 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            AddRangeInternal(new Drawable[]
-            {
+            AddRangeInternal(
+            [
                 NoteBody = new HoldBody(),
                 headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
-            });
+            ]);
         }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            AccentColour.BindValueChanged(c => flashingColour = AccentColour.Value.LightenHSL(0.4f), true);
+        }
+
+        private Color4 flashingColour = Color4.White;
 
         protected override void OnApply()
         {
             base.OnApply();
-            isHolding = false;
             timeNotHeld = 0;
+            isHolding = false;
+        }
+
+        private double timeNotHeld = 0;
+
+        private bool isHolding;
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (AllJudged)
+            {
+                // Remove alterations to NoteBody colour
+                NoteBody.Colour = AccentColour.Value;
+                return;
+            }
+
+            // Ensure that the note colour is correct prior to the start time
+            if (Time.Current < HitObject.StartTime)
+            {
+                Colour = Color4.White;
+                NoteBody.Colour = AccentColour.Value;
+                return;
+            }
+
+            if (!isHolding && !Auto)
+            {
+                // Remove alterations to NoteBody colour
+                NoteBody.Colour = AccentColour.Value;
+
+                // Grey the note to indicate that it isn't being held
+                Colour = Interpolation.ValueAt(
+                    Math.Clamp(Time.Current, HitObject.StartTime, HitObject.StartTime + 100),
+                    Color4.White, Color4.SlateGray,
+                    HitObject.StartTime, HitObject.StartTime + 100, Easing.OutSine);
+
+                if (Head.AllJudged)
+                    timeNotHeld = Math.Clamp(timeNotHeld + Time.Elapsed, 0, HitObject.Duration);
+                return;
+            }
+
+            // Restore colour if it is being held
+            Colour = Color4.White;
+
+            const double flashing_time = 80;
+
+            double flashProg = (Time.Current % (flashing_time * 2)) / (flashing_time * 2);
+
+            if (flashProg <= 0.5)
+                NoteBody.Colour = Interpolation.ValueAt(flashProg, AccentColour.Value, flashingColour, 0, 0.5, Easing.OutSine);
+            else
+                NoteBody.Colour = Interpolation.ValueAt(flashProg, flashingColour, AccentColour.Value, 0.5, 0, Easing.InSine);
         }
 
         protected override void UpdateInitialTransforms()
@@ -78,8 +139,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             base.UpdateInitialTransforms();
             double animTime = AnimationDuration.Value / 2;
             NoteBody.FadeInFromZero(animTime).ScaleTo(1, animTime);
-
-            NoteBody.FadeColour(AccentColour.Value);
 
             using (BeginDelayedSequence(animTime))
             {
@@ -96,9 +155,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                         .ResizeHeightTo(stretchAmount, stretchTime) // While we are moving, we stretch the hold note to match desired length
                         .Then().Delay(HitObject.Duration - stretchTime) // Wait until the end of the hold note, while considering how much time we need for shrinking
                         .ResizeHeightTo(0, stretchTime); // We shrink the hold note as it exits
-
-                if (isHolding == false && !Auto)
-                    NoteBody.Delay(animTime).FadeColour(Color4.Gray, 100);
             }
         }
 
@@ -110,7 +166,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     ApplyResult(HitResult.Perfect);
                 else if (timeOffset > HitObject.HitWindows.WindowFor(HitResult.Perfect) && isHolding)
                     ApplyResult(applyDeductionTo(HitResult.Great));
-                else if (!HitObject.HitWindows.CanBeHit(timeOffset: timeOffset))
+                else if (Head.AllJudged && timeOffset >= 0 && !isHolding)
                     ApplyResult(Result.Judgement.MinResult);
 
                 return;
@@ -120,14 +176,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (result == HitResult.None)
                 return;
 
-            if (result < HitResult.Perfect && HitObject.Ex && result.IsHit())
-                result = HitResult.Great;
-
             ApplyResult(applyDeductionTo(result));
 
             HitResult applyDeductionTo(HitResult originalResult)
             {
-                int deduction = (int)Math.Min(Math.Floor(timeNotHeld / 300), 3);
+                int deduction = (int)Math.Clamp(Math.Floor(timeNotHeld / 300), 0, 3);
 
                 var newResult = originalResult - deduction;
 
@@ -138,40 +191,24 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        private double timeNotHeld = 0;
-
-        protected override void Update()
-        {
-            base.Update();
-
-            if (!Head.AllJudged)
-                return;
-
-            if (isHolding)
-                return;
-
-            timeNotHeld += Time.Elapsed;
-        }
-
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            double time_fade_miss = 400 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
+            double time_fade_miss = 400;
 
             switch (state)
             {
                 case ArmedState.Hit:
-                    Expire();
+                    NoteBody.FadeOut();
+                    this.FadeOut();
                     break;
-
                 case ArmedState.Miss:
                     NoteBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                             .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
                             .MoveToOffset(new Vector2(0, -100), time_fade_miss, Easing.OutCubic)
                             .FadeOut(time_fade_miss);
 
-                    using (BeginDelayedSequence(time_fade_miss))
-                        this.FadeOut();
+                    this.Delay(time_fade_miss).FadeOut();
                     break;
             }
         }
@@ -228,7 +265,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             }
         }
 
-        private bool isHolding = false;
 
         public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)
         {

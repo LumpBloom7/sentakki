@@ -102,6 +102,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Graphics
                     Thickness = t,
                     Y = -y + 300 - 50,
                     FanChevron = true,
+                    ShadowRadius = 15f
                 };
 
                 fanChevContainer.Add(fanChev);

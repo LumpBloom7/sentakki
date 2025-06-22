@@ -10,7 +10,7 @@
         <Authors>Derrick Timmermans</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/LumpBloom7/sentakki</RepositoryUrl>
-        <Copyright>Copyright (c) 2024 Derrick Timmermans</Copyright>
+        <Copyright>Copyright (c) 2025 Derrick Timmermans</Copyright>
         <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     </PropertyGroup>
     <ItemGroup>

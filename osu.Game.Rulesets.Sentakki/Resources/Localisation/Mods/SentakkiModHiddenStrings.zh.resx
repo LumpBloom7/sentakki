@@ -59,6 +59,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mod_description" xml:space="preserve">
-        <value>音符在你击中它们之前淡出。</value>
+        <value>音符会在你击中之前淡出。</value>
+    </data>
+  <data name="visible_radius" xml:space="preserve">
+        <value>可见半径</value>
+    </data>
+  <data name="visible_radius_description" xml:space="preserve">
+        <value>设置音符的从内向外出现范围半径，数值越大可见范围越大。</value>
     </data>
 </root>

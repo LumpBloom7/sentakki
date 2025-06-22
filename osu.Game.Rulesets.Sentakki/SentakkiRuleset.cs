@@ -14,6 +14,7 @@ using osu.Framework.Platform;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Containers;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
@@ -77,7 +78,6 @@ namespace osu.Game.Rulesets.Sentakki
                 case ModType.DifficultyReduction:
                     return new Mod[]
                     {
-                        new SentakkiModRelax(),
                         new MultiMod(new SentakkiModHalfTime(), new SentakkiModDaycore()),
                     };
 
@@ -104,13 +104,14 @@ namespace osu.Game.Rulesets.Sentakki
                         new SentakkiModExperimental(),
                         new SentakkiModClassic(),
                         new SentakkiModMirror(),
+                        new SentakkiModDifficultyAdjust()
                     };
 
                 case ModType.Fun:
                     return new Mod[]
                     {
                         new MultiMod(new ModWindUp(), new ModWindDown()),
-                        new SentakkiModSpin(),
+                        new SentakkiModBarrelRoll(),
                         new SentakkiModMuted(),
                         new ModAdaptiveSpeed(),
                         new SentakkiModSynesthesia(),
@@ -165,11 +166,15 @@ namespace osu.Game.Rulesets.Sentakki
             {
                 new AverageHitError(score.HitEvents),
                 new UnstableRate(score.HitEvents),
-                new MaimaiDXAccuracy(score.HitEvents)
             }), true)
         };
 
-        public override Drawable CreateIcon() => new SentakkiIcon(this);
+        public override Drawable CreateIcon() =>
+        new ConstrainedIconContainer()
+        {
+            Icon = new SentakkiIcon(this),
+            Size = new Vector2(100, 100)
+        };
 
         protected override IEnumerable<HitResult> GetValidHitResults()
         {

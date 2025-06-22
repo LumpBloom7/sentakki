@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using osu.Framework.Bindables;
-using osu.Game.Audio;
+using Newtonsoft.Json;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -13,6 +11,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 {
     public class Slide : SentakkiLanedHitObject, IHasDuration
     {
+        public override double MaximumJudgementOffset
+        {
+            get
+            {
+                double offset = 0.0;
+                foreach (var nested in NestedHitObjects)
+                    offset = Math.Max(offset, nested.MaximumJudgementOffset);
+
+                return offset;
+            }
+        }
+
         public enum TapTypeEnum
         {
             Star,
@@ -20,7 +30,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             None,
         }
 
-        protected override bool NeedBreakSample => false;
+        protected override bool PlaysBreakSample => false;
 
         public double Duration
         {
@@ -42,8 +52,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public override Color4 DefaultNoteColour => Color4.Aqua;
         public List<SlideBodyInfo> SlideInfoList = new List<SlideBodyInfo>();
 
+        [JsonIgnore]
         public Tap SlideTap { get; private set; } = null!;
 
+        [JsonIgnore]
         public IList<SlideBody> SlideBodies { get; private set; } = null!;
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
@@ -74,7 +86,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 {
                     Lane = slideInfo.SlidePath.EndLane + Lane,
                     StartTime = StartTime,
-                    Samples = Samples
+                    Samples = Samples,
                 });
 
                 SlideBodies.Add(body);

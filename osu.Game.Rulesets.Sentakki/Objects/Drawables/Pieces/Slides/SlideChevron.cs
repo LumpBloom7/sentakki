@@ -22,6 +22,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
             set => chevron.Thickness = value;
         }
 
+        public bool Glow
+        {
+            get => chevron.Glow;
+            set => chevron.Glow = value;
+        }
+
+        public float ShadowRadius
+        {
+            get => chevron.ShadowRadius;
+            set => chevron.ShadowRadius = value;
+        }
+
         public SlideChevron()
         {
             Anchor = Anchor.Centre;
@@ -37,9 +49,20 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
-
-                Thickness = 6.5f
+                ShadowRadius = 7.5f,
+                Thickness = 15f
             });
+        }
+
+        protected override void FreeAfterUse()
+        {
+            // This is used to ensure that the chevrons transforms are reverted to the initial state.
+            // TODO: Investigate what clears the transforms without rewinding them...
+            if (!RemoveCompletedTransforms)
+                ApplyTransformsAt(double.MinValue, propagateChildren: true);
+            ClearTransformsAfter(double.MinValue, propagateChildren: true);
+
+            base.FreeAfterUse();
         }
     }
 }

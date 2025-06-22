@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
 
         public readonly SliderPath[] SlideSegments;
 
-        public readonly float FanStartProgress = 1;
+        public readonly float FanStartProgress = float.MaxValue;
 
         public bool EndsWithSlideFan { get; private set; }
         public bool StartsWithSlideFan { get; private set; }

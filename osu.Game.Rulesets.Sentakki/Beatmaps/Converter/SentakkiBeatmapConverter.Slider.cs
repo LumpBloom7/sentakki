@@ -40,7 +40,7 @@ public partial class SentakkiBeatmapConverter
             Break = isBreak,
             StartTime = original.StartTime,
             Duration = duration,
-            NodeSamples = slider.NodeSamples,
+            Samples = slider.NodeSamples[0],
             Ex = isSoft,
         };
         return hold;
@@ -57,11 +57,26 @@ public partial class SentakkiBeatmapConverter
 
         bool tailBreak = nodeSamples.Last().Any(s => s.Name == HitSampleInfo.HIT_FINISH);
         bool headBreak = nodeSamples.First().Any(s => s.Name == HitSampleInfo.HIT_FINISH);
-        bool isSoft = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
+        bool headSoft = nodeSamples.First().Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
+        bool tailSoft = nodeSamples.Last().Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
 
         int endOffset = selectedPath.Sum(p => p.EndOffset);
 
         int end = lane + endOffset;
+
+        double beatLength = Beatmap.ControlPointInfo.TimingPointAt(original.StartTime).BeatLength;
+        double duration = ((IHasDuration)original).Duration;
+
+        float shootDelay = 1;
+
+        // This is an attempt to make shoot delays more appropriate for the slide duration
+        while (shootDelay * beatLength >= duration - 50)
+        {
+            shootDelay /= 2;
+            // If shoot delay is below 0.25 beats, then might as well remove it
+            if (shootDelay < 0.25)
+                shootDelay = 0;
+        }
 
         var slide = new Slide
         {
@@ -72,14 +87,15 @@ public partial class SentakkiBeatmapConverter
                     SlidePathParts = selectedPath,
                     Duration = ((IHasDuration)original).Duration,
                     Break = tailBreak,
-                    ShootDelay = 0.5f,
+                    Ex = tailSoft,
+                    ShootDelay = shootDelay,
                 }
             },
             Lane = lane.NormalizePath(),
             StartTime = original.StartTime,
             Samples = nodeSamples.FirstOrDefault(),
             Break = headBreak,
-            Ex = isSoft
+            Ex = headSoft
         };
 
         return (slide, end);
@@ -91,7 +107,7 @@ public partial class SentakkiBeatmapConverter
         double duration = ((IHasDuration)original).Duration;
         double adjustedDuration = duration * velocity;
 
-        var candidates = SlidePaths.VALIDPATHS.AsEnumerable();
+        var candidates = SlidePaths.VALID_CONVERT_PATHS.AsEnumerable();
         if (!ConversionFlags.HasFlag(ConversionFlags.fanSlides) || !allowFans)
             candidates = candidates.Where(p => p.SlidePart.Shape != SlidePaths.PathShapes.Fan);
 

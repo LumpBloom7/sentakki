@@ -1,7 +1,5 @@
-using osu.Framework.Allocation;
-using osu.Framework.Bindables;
+using System;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Transforms;
@@ -16,49 +14,38 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
     {
         public override bool RemoveWhenNotAlive => true;
 
-        private readonly CircularContainer circle;
-
         private const float default_explosion_size = 75;
         private const float touch_hold_explosion_size = 100;
-
-        [Resolved]
-        private DrawableSentakkiRuleset? drawableRuleset { get; set; }
 
         public HitExplosion()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Size = new Vector2(default_explosion_size);
-            Colour = Color4.Cyan;
+            Colour = Color4.White;
+            BorderColour = Color4.White;
             Alpha = 0;
-            InternalChildren = new Drawable[]
+            Masking = true;
+            CornerExponent = 2;
+            InternalChild = new Box
             {
-                circle = new CircularContainer
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    RelativeSizeAxes = Axes.Both,
-                    Masking = true,
-                    BorderThickness = 45,
-                    BorderColour = Color4.White,
-                    Child = new Box
-                    {
-                        Alpha = 0,
-                        RelativeSizeAxes = Axes.Both,
-                        AlwaysPresent = true,
-                    }
-                },
+                Alpha = 0,
+                RelativeSizeAxes = Axes.Both,
+                AlwaysPresent = true,
             };
-
-            borderRatio.BindValueChanged(setBorderThiccness, true);
         }
 
-        private void setBorderThiccness(ValueChangedEvent<float> v)
+        private bool circular = true;
+
+        protected override void Update()
         {
-            circle.BorderThickness = Size.X / 2 * v.NewValue;
-        }
+            base.Update();
 
-        private readonly BindableFloat borderRatio = new BindableFloat(1);
+            if (circular) // We mimic whatever CircularContainer does
+                CornerRadius = Math.Min(DrawSize.X, DrawSize.Y) * 0.5f;
+            else
+                CornerRadius = 20;
+        }
 
         public HitExplosion Apply(DrawableSentakkiHitObject drawableSentakkiHitObject)
         {
@@ -69,17 +56,21 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
                 case SentakkiLanedHitObject lanedObject:
                     Position = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, lanedObject.Lane);
                     Size = new Vector2(default_explosion_size);
+                    circular = true;
                     break;
 
                 case Touch touchObject:
                     Position = touchObject.Position;
                     Size = new Vector2(default_explosion_size);
+                    circular = false;
+                    Rotation = 0;
                     break;
 
-                case TouchHold _:
-                default:
-                    Position = Vector2.Zero;
+                case TouchHold touchHoldObject:
+                    Position = touchHoldObject.Position;
                     Size = new Vector2(touch_hold_explosion_size);
+                    circular = false;
+                    Rotation = 45;
                     break;
             }
 
@@ -99,17 +90,14 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components
 
         public TransformSequence<HitExplosion> Explode()
         {
-            const double explode_duration = 100;
-
-            double adjustedExplodeDuration = explode_duration * (drawableRuleset?.GameplaySpeed ?? 1);
-
+            const double explode_duration = 80;
             var sequence = this.FadeTo(0.8f)
-                               .TransformBindableTo(borderRatio, 1)
+                               .TransformTo(nameof(BorderThickness), Size.X * 0.5f)
                                .ScaleTo(1)
                                .Then()
-                               .TransformBindableTo(borderRatio, 0f, adjustedExplodeDuration)
-                               .ScaleTo(2f, adjustedExplodeDuration)
-                               .FadeOut(adjustedExplodeDuration);
+                               .TransformTo(nameof(BorderThickness), 0f, duration: explode_duration)
+                               .ScaleTo(2f, explode_duration)
+                               .FadeOut(explode_duration);
 
             return sequence;
         }

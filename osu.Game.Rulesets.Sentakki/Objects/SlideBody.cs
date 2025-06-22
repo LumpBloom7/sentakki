@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
     {
         public override Color4 DefaultNoteColour => Color4.Aqua;
 
-        public override int ScoreWeighting => Break ? 5 : 3;
+        protected override int BaseScoreWeighting => 3;
 
         public double EndTime
         {
@@ -39,6 +39,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         {
             SlideBodyInfo = slideBodyInfo;
             Break = slideBodyInfo.Break;
+            Ex = slideBodyInfo.Ex;
         }
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
@@ -72,7 +73,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     {
                         Progress = (float)progress,
                         StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
-                        NodePositions = new List<Vector2> { SlideBodyInfo.SlidePath.PositionAt(progress) }
+                        NodePositions = new List<Vector2> { SlideBodyInfo.SlidePath.PositionAt(progress) },
+                        SlideDuration = Duration
                     };
 
                     AddNested(checkpoint);
@@ -98,6 +100,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                     Progress = progress,
                     StartTime = StartTime + ShootDelay + ((Duration - ShootDelay) * progress),
                     NodesToPass = 2,
+                    SlideDuration = Duration
                 };
 
                 for (int j = -1; j < 2; ++j)
@@ -118,8 +121,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
             base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
 
             double delay = controlPointInfo.TimingPointAt(StartTime).BeatLength * SlideBodyInfo.ShootDelay;
-            if (delay < Duration - 50)
-                ShootDelay = delay;
+
+            ShootDelay = Math.Clamp(delay, 0, Duration);
         }
 
         protected override HitWindows CreateHitWindows() => new SentakkiSlideHitWindows();

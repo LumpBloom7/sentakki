@@ -91,22 +91,19 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (result == HitResult.None)
                 return;
 
-            if (result < HitResult.Perfect && HitObject.Ex && result.IsHit())
-                result = HitResult.Great;
-
             ApplyResult(result);
         }
 
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            double time_fade_miss = 400 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
+            double time_fade_miss = 400;
 
             switch (state)
             {
                 case ArmedState.Hit:
                     TapVisual.FadeOut();
-                    Expire();
+                    this.FadeOut();
                     break;
 
                 case ArmedState.Miss:
@@ -115,7 +112,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                              .MoveToOffset(new Vector2(0, -100), time_fade_miss, Easing.OutCubic)
                              .FadeOut(time_fade_miss);
 
-                    this.ScaleTo(1f, time_fade_miss).Expire();
+                    this.Delay(time_fade_miss).FadeOut();
 
                     break;
             }

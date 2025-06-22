@@ -1,8 +1,6 @@
-using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
@@ -12,11 +10,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 {
     public partial class DrawableSlideCheckpoint : DrawableSentakkiHitObject
     {
-        public new SlideCheckpoint HitObject => (SlideCheckpoint)base.HitObject;
+        // Slides parts can be hit as long as the body is visible, regardless of it's intended time
+        // By setting the animation duration to an absurdly high value, the lifetimes of touch regions are bounded by the parent DrawableSlide.
+        protected override double InitialLifetimeOffset => double.MaxValue;
 
-        // We need this to be alive as soon as the parent slide note is alive
-        // This is to ensure reverts are still possible during edge case situation (eg. 0 duration slide)
-        protected override bool ShouldBeAlive => Time.Current < LifetimeEnd;
+        public new SlideCheckpoint HitObject => (SlideCheckpoint)base.HitObject;
 
         public override bool DisplayResult => false;
 

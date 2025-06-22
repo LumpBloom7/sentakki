@@ -14,6 +14,7 @@ using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects
 {
@@ -30,6 +31,16 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
         [Cached]
         private readonly DrawablePool<SlideChevron> chevronPool = null!;
 
+        public static bool[][] ObjectFlagsSource = [
+            [false, false, false, false],
+            [true, false, false, false],
+            [false, true, false, false],
+            [true, true, false, false],
+            [false, false, true, false],
+            [false, false, false, true],
+            [false, false, true, true],
+        ];
+
         public TestSceneSlideFan()
         {
             base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
@@ -41,29 +52,44 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects
             });
 
             Add(chevronPool = new DrawablePool<SlideChevron>(62));
+        }
 
-            AddStep("Miss Single", () => testSingle(2000));
-            AddStep("Hit Single", () => testSingle(2000, true));
+        [TestCaseSource(nameof(ObjectFlagsSource))]
+        public void TestSlideFan(bool headBreak, bool headEX, bool bodyBreak, bool bodyEx)
+        {
+            AddStep("Miss Single", () => testSingle(2000, false, headBreak, headEX, bodyBreak, bodyEx));
+            AddStep("Hit Single", () => testSingle(2000, true, headBreak, headEX, bodyBreak, bodyEx));
             AddUntilStep("Wait for object despawn", () => !Children.Any(h => (h is DrawableSentakkiHitObject hitObject) && hitObject.AllJudged == false));
         }
 
-        private void testSingle(double duration, bool auto = false)
+        private void testSingle(double duration, bool auto = false, bool headBreak = false, bool headEX = false, bool bodyBreak = false, bool bodyEx = false)
         {
             var slide = new Slide
             {
-                //Break = true,
+                Break = headBreak,
+                Ex = headEX,
                 SlideInfoList = new List<SlideBodyInfo>
                 {
                     new SlideBodyInfo
                     {
                         SlidePathParts = new[] { new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false) },
-                        Duration = 1000,
+                        Duration = duration,
+                        Break = bodyBreak,
+                        Ex = bodyEx
                     },
                 },
                 StartTime = Time.Current + 1000,
             };
 
             slide.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
+
+            if (headBreak)
+                slide.SlideTap.NoteColour = Color4.OrangeRed;
+            if (bodyBreak)
+            {
+                foreach (var body in slide.SlideBodies)
+                    body.NoteColour = Color4.OrangeRed;
+            }
 
             DrawableSlide dSlide;
 

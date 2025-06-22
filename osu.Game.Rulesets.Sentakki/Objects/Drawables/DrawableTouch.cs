@@ -1,9 +1,7 @@
-using System;
 using System.Diagnostics;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Transforms;
+using osu.Framework.Input;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
@@ -16,12 +14,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
     {
         protected new Touch HitObject => (Touch)base.HitObject;
 
-        // IsHovered is used
-        public override bool HandlePositionalInput => true;
-
-        // Similar to IsHovered for mouse, this tracks whether a pointer (touch or mouse) is interacting with this drawable
-        // Interaction == (IsHovered && ActionPressed) || (OnTouch && TouchPointerInBounds)
-        public bool[] PointInteractionState = new bool[11];
         public TouchBody TouchBody = null!;
 
         private SentakkiInputManager sentakkiActionInputManager = null!;
@@ -50,14 +42,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 TouchBody = new TouchBody(),
             });
-
-            trackedKeys.BindValueChanged(x =>
-            {
-                if (AllJudged)
-                    return;
-
-                UpdateResult(true);
-            });
         }
 
         protected override void OnApply()
@@ -66,14 +50,42 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             Position = HitObject.Position;
         }
 
-        protected override void OnFree()
+        private int pressedCount = 0;
+
+        protected override void Update()
         {
-            base.OnFree();
-            for (int i = 0; i < 11; ++i)
-                PointInteractionState[i] = false;
+            base.Update();
+
+            int updatedPressedCounts = countActiveTouchPoints();
+
+            if (updatedPressedCounts > pressedCount)
+                UpdateResult(true);
+
+            pressedCount = updatedPressedCounts;
         }
 
-        private readonly BindableInt trackedKeys = new BindableInt();
+        private int countActiveTouchPoints()
+        {
+            var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+            int count = 0;
+
+            if (ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
+            {
+                foreach (var item in SentakkiActionInputManager.PressedActions)
+                {
+                    if (item < SentakkiAction.Key1)
+                        ++count;
+                }
+            }
+
+            foreach (TouchSource source in touchInput.ActiveSources)
+            {
+                if (touchInput.GetTouchPosition(source) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
+                    ++count;
+            }
+
+            return count;
+        }
 
         protected override void UpdateInitialTransforms()
         {
@@ -83,7 +95,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             TouchBody.FadeIn(fadeTime);
 
-            using (BeginAbsoluteSequence(HitObject.StartTime - animTime))
+            using (BeginDelayedSequence(fadeTime))
             {
                 TouchBody.ResizeTo(90, animTime, Easing.InCirc);
                 TouchBody.BorderContainer.Delay(animTime).FadeIn();
@@ -115,31 +127,29 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (timeOffset < 0 && result is not HitResult.Perfect)
                 return;
 
-            if (result < HitResult.Perfect && HitObject.Ex && result.IsHit())
-                result = HitResult.Great;
-
             ApplyResult(result);
         }
 
         protected override void UpdateHitStateTransforms(ArmedState state)
         {
             base.UpdateHitStateTransforms(state);
-            double time_fade_miss = 400 * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
+            double time_fade_miss = 400;
 
             switch (state)
             {
                 case ArmedState.Hit:
-                    Expire();
+                    TouchBody.FadeOut();
+                    this.FadeOut();
                     break;
 
                 case ArmedState.Miss:
-                    this.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                    TouchBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
                         .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
                         .FadeOut(time_fade_miss);
+
+                    this.Delay(time_fade_miss).FadeOut();
                     break;
             }
         }
-
-        public bool OnNewPointInteraction() => UpdateResult(true);
     }
 }

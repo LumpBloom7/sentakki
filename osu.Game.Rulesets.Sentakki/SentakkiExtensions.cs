@@ -127,5 +127,14 @@ namespace osu.Game.Rulesets.Sentakki
                     return result.GetDescription();
             }
         }
+
+        public static Color4 LightenHSL(this Color4 colour, float ratio)
+        {
+            float r = colour.R + ((1 - colour.R) * ratio);
+            float g = colour.G + ((1 - colour.G) * ratio);
+            float b = colour.B + ((1 - colour.B) * ratio);
+
+            return new Color4(r, g, b, colour.A);
+        }
     }
 }
