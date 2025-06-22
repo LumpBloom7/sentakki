@@ -118,7 +118,9 @@ public class CompositeBeatmapConverter : BeatmapConverter<SentakkiHitObject>
                     {
                         StartTime = th.StartTime,
                         Samples = th.Samples,
-                        Duration = th.Duration
+                        Duration = th.Duration,
+                        Position = th.Position,
+                        Break = th.Break,
                     });
                     break;
 
@@ -128,7 +130,8 @@ public class CompositeBeatmapConverter : BeatmapConverter<SentakkiHitObject>
                         Position = touch.Position,
                         Samples = touch.Samples,
                         StartTime = touch.StartTime,
-                        Ex = touch.Ex
+                        Ex = touch.Ex,
+                        Break = touch.Break,
                     });
                     break;
 

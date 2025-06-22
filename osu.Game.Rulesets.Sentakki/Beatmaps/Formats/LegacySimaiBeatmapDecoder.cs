@@ -212,6 +212,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                     {
                         StartTime = time,
                         Duration = note.length.Value * 1000f,
+                        Position = locationToPosition(note.location),
                     };
                 }
 
