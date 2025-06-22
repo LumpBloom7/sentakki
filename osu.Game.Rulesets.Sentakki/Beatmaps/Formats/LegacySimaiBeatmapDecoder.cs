@@ -213,6 +213,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                         StartTime = time,
                         Duration = note.length.Value * 1000f,
                         Position = locationToPosition(note.location),
+                        Break = isBreak,
                     };
                 }
 
@@ -220,6 +221,8 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                 {
                     Position = locationToPosition(note.location),
                     StartTime = time,
+                    Break = isBreak,
+                    Ex = note.IsEx,
                 };
 
             case NoteType.Slide:
