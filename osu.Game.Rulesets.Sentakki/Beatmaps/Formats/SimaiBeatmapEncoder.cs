@@ -257,14 +257,12 @@ public class SimaiBeatmapEncoder
         }
     }
 
-    protected static string TouchToString(Touch touch) => TouchPositionMapping.MinBy(kv =>
-                                                    {
-                                                        double xDelta = Math.Abs(kv.Key.X - touch.Position.X);
-                                                        double yDelta = Math.Abs(kv.Key.Y - touch.Position.Y);
-                                                        return Math.Sqrt(xDelta * xDelta + yDelta * yDelta);
-                                                    }).Value;
+    protected static string TouchToString(Touch touch) => PositionMappingFor(touch.Position);
 
-    protected static string TouchHoldToString(TouchHold touchHold) => Invariant($"Ch[#{touchHold.Duration / 1000:F3}]");
+    protected static string PositionMappingFor(Vector2 position) => TouchPositionMapping.MinBy(kv => Vector2.DistanceSquared(position, kv.Key)).Value;
+
+    protected static string TouchHoldToString(TouchHold touchHold) =>
+        Invariant($"{PositionMappingFor(touchHold.Position)}h[#{touchHold.Duration / 1000:F3}]");
 
     public void SerializeToFile()
     {
