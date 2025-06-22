@@ -18,13 +18,13 @@ public partial class SentakkiSnapProvider : CompositeDrawable
 
     private SnapMode activeMode = SnapMode.Off;
 
-    private SentakkiSnapGrid lanedSnapGrid = null!;
-    private SentakkiTouchSnapGrid touchSnapGrid = null!;
+    private readonly SentakkiSnapGrid lanedSnapGrid = null!;
+    public readonly SentakkiTouchSnapGrid TouchSnapGrid = null!;
 
     public IEnumerable<DrawableTernaryButton> CreateTernaryButtons()
     {
         yield return lanedSnapGrid.CreateTernaryButton();
-        yield return touchSnapGrid.CreateTernaryButton();
+        yield return TouchSnapGrid.CreateTernaryButton();
     }
 
     public SentakkiSnapProvider()
@@ -33,7 +33,7 @@ public partial class SentakkiSnapProvider : CompositeDrawable
 
         AddRangeInternal(new Drawable[]{
             lanedSnapGrid = new SentakkiSnapGrid(),
-            touchSnapGrid = new SentakkiTouchSnapGrid(),
+            TouchSnapGrid = new SentakkiTouchSnapGrid(),
         });
 
         SwitchModes(SnapMode.Off);
@@ -44,7 +44,7 @@ public partial class SentakkiSnapProvider : CompositeDrawable
         return activeMode switch
         {
             SnapMode.Laned => lanedSnapGrid.GetSnapResult(screenSpacePosition),
-            SnapMode.Touch => touchSnapGrid.GetSnapResult(screenSpacePosition),
+            SnapMode.Touch => TouchSnapGrid.GetSnapResult(screenSpacePosition),
             _ => new SnapResult(screenSpacePosition, null),
         };
     }
@@ -56,17 +56,17 @@ public partial class SentakkiSnapProvider : CompositeDrawable
         {
             case SnapMode.Off:
                 lanedSnapGrid.Hide();
-                touchSnapGrid.Hide();
+                TouchSnapGrid.Hide();
                 break;
 
             case SnapMode.Laned:
                 lanedSnapGrid.Show();
-                touchSnapGrid.Hide();
+                TouchSnapGrid.Hide();
                 break;
 
             case SnapMode.Touch:
                 lanedSnapGrid.Hide();
-                touchSnapGrid.Show();
+                TouchSnapGrid.Show();
                 break;
         }
     }

@@ -73,7 +73,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             RightToolbox.Add(slideEditorToolboxGroup);
             RightToolbox.Add(new TransformToolboxGroup
             {
-                RotationHandler = BlueprintContainer.SelectionHandler.RotationHandler
+                RotationHandler = BlueprintContainer.SelectionHandler.RotationHandler,
             });
 
             LayerBelowRuleset.Add(snapProvider);

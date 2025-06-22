@@ -6,6 +6,8 @@ using osu.Framework.Bindables;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Sentakki.Beatmaps;
+using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Types;
 using osu.Game.Screens.Edit;
@@ -17,6 +19,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit;
 
 public partial class SentakkiRotationHandler : SelectionRotationHandler
 {
+
+    [Resolved]
+    private SentakkiSnapProvider snapProvider { get; set; } = null!;
 
     [Resolved]
     private HitObjectComposer composer { get; set; } = null!;
@@ -77,15 +82,7 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
 
     public override void Update(float rotation, Vector2? origin = null)
     {
-        int rotationSteps = 0;
-        float roundedRotation = rotation;
-
-        if (origin is not null)
-        {
-            // Get nearest 45 degrees
-            rotationSteps = (int)MathF.Round(rotation / 45f);
-            roundedRotation = rotationSteps * 45f;
-        }
+        int lanedRotationSteps = (int)MathF.Round(rotation / 45f);
 
         origin ??= GeometryUtils.MinimumEnclosingCircle(selectedItems.Where(h => h is IHasPosition)
                                                                             .Select(h => ((OriginalState<Vector2>)originalPositions[h]).Value)).Item1;
@@ -100,7 +97,7 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
             {
                 case SentakkiLanedHitObject lanedHitObject:
                     int originalLane = ((OriginalState<int>)originalState).Value;
-                    int newLane = (originalLane + rotationSteps).NormalizePath();
+                    int newLane = (originalLane + lanedRotationSteps).NormalizePath();
 
                     if (lanedHitObject.Lane == newLane)
                         continue;
@@ -113,9 +110,13 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
                 {
                     Vector2 originalPosition = ((OriginalState<Vector2>)originalState).Value - origin.Value;
                     float originalAngle = Vector2.Zero.GetDegreesFromPosition(originalPosition);
-                    float newAngle = originalAngle + roundedRotation;
+                    float newAngle = originalAngle + rotation;
 
                     Vector2 newPosition = origin.Value + SentakkiExtensions.GetCircularPosition(originalPosition.Length, newAngle);
+
+                    // If the snap provider is on, we assume they prefer to snap to a nearby snap point
+                    if (snapProvider.TouchSnapGrid.Enabled)
+                        newPosition = SentakkiBeatmapConverterOld.VALID_TOUCH_POSITIONS.MinBy(v => Vector2.DistanceSquared(v, newPosition));
 
                     touchNote.Position = newPosition;
                 }
@@ -124,10 +125,14 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
                 case TouchHold touchHold:
                 {
                     Vector2 originalPosition = ((OriginalState<Vector2>)originalState).Value - origin.Value;
-                    float originalAngle = origin.Value.GetDegreesFromPosition(originalPosition);
-                    float newAngle = originalAngle + roundedRotation;
+                    float originalAngle = Vector2.Zero.GetDegreesFromPosition(originalPosition);
+                    float newAngle = originalAngle + rotation;
 
                     Vector2 newPosition = origin.Value + SentakkiExtensions.GetCircularPosition(originalPosition.Length, newAngle);
+
+                    // If the snap provider is on, we assume they prefer to snap to a nearby snap point
+                    if (snapProvider.TouchSnapGrid.Enabled)
+                        newPosition = SentakkiBeatmapConverterOld.VALID_TOUCH_POSITIONS.MinBy(v => Vector2.DistanceSquared(v, newPosition));
 
                     touchHold.Position = newPosition;
                 }

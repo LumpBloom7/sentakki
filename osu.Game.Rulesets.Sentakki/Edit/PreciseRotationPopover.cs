@@ -13,7 +13,6 @@ using osu.Framework.Input.Events;
 using osu.Game.Configuration;
 using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Input.Bindings;
-using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit.Components.RadioButtons;
 using osu.Game.Screens.Edit.Compose.Components;
 using osuTK;
@@ -106,8 +105,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                     case EditorOrigin.PlayfieldCentre:
                         if (!playfieldCentreButton.Selected.Disabled)
                         {
-                            angleInput.KeyboardStep = 45;
-                            ((BindableNumber<float>)angleInput.Current).Precision = 45;
                             playfieldCentreButton.Select();
                             didSelect = true;
                         }
@@ -117,9 +114,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                     case EditorOrigin.SelectionCentre:
                         if (!selectionCentreButton.Selected.Disabled)
                         {
-                            angleInput.KeyboardStep = 1;
-                            ((BindableNumber<float>)angleInput.Current).Precision = 1;
-
                             selectionCentreButton.Select();
                             didSelect = true;
                         }

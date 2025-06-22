@@ -17,6 +17,8 @@ public partial class SentakkiTouchSnapGrid : CompositeDrawable
 {
     private Bindable<TernaryState> enabled = new Bindable<TernaryState>(TernaryState.True);
 
+    public bool Enabled => enabled.Value == TernaryState.True;
+
     public DrawableTernaryButton CreateTernaryButton() => new DrawableTernaryButton
     {
         Current = enabled,
