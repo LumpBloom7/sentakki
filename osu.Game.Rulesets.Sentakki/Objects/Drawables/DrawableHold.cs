@@ -105,7 +105,23 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                 return;
             }
 
-            if (!isHolding && !Auto)
+            if (Auto)
+            {
+                if (Time.Current >= HitObject.GetEndTime())
+                {
+                    if (isHolding)
+                        UpdateResult(true);
+                }
+                else if (Time.Current >= HitObject.StartTime)
+                {
+                    if (!isHolding)
+                        Head.UpdateResult();
+
+                    isHolding = true;
+                }
+            }
+
+            if (!isHolding)
             {
                 // Remove alterations to NoteBody colour
                 NoteBody.Colour = AccentColour.Value;
@@ -162,9 +178,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
         {
             if (!userTriggered)
             {
-                if (timeOffset >= 0 && Auto)
-                    ApplyResult(HitResult.Perfect);
-                else if (timeOffset > HitObject.HitWindows.WindowFor(HitResult.Perfect) && isHolding)
+                if (timeOffset > HitObject.HitWindows.WindowFor(HitResult.Perfect) && isHolding)
                     ApplyResult(applyDeductionTo(HitResult.Great));
                 else if (Head.AllJudged && timeOffset >= 0 && !isHolding)
                     ApplyResult(Result.Judgement.MinResult);
