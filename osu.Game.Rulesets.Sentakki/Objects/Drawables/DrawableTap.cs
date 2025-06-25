@@ -116,6 +116,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
                     break;
             }
+            Expire();
         }
 
         public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)

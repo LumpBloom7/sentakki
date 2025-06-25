@@ -219,6 +219,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     this.Delay(time_fade_miss).FadeOut();
                     break;
             }
+            Expire();
         }
 
         private int countActiveTouchPoints()
