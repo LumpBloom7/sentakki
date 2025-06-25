@@ -180,7 +180,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             {
                 if (timeOffset > HitObject.HitWindows.WindowFor(HitResult.Perfect) && isHolding)
                     ApplyResult(applyDeductionTo(HitResult.Great));
-                else if (Head.AllJudged && timeOffset >= 0 && !isHolding)
+                else if (Head.AllJudged && timeOffset > 0 && !isHolding)
                     ApplyResult(Result.Judgement.MinResult);
 
                 return;
