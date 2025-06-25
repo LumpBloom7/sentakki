@@ -118,7 +118,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             {
                 if (selectedHitObjects.Count == 0)
                     snapProvider.SwitchModes(SentakkiSnapProvider.SnapMode.Off);
-                else if (selectedHitObjects.All(h => h is Touch))
+                else if (selectedHitObjects.All(h => h is Touch or TouchHold))
                     snapProvider.SwitchModes(SentakkiSnapProvider.SnapMode.Touch);
                 else if (selectedHitObjects.All(h => h is SentakkiLanedHitObject))
                     snapProvider.SwitchModes(SentakkiSnapProvider.SnapMode.Laned);

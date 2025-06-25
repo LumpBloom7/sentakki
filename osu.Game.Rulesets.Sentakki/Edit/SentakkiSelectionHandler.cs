@@ -9,6 +9,7 @@ using osu.Game.Extensions;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Compose.Components;
@@ -145,7 +146,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             if (SelectedBlueprints.All(bp => bp.Item is SentakkiLanedHitObject))
                 return true;
 
-            if (SelectedBlueprints.All(bp => bp.Item is Touch))
+            if (SelectedBlueprints.All(bp => bp.Item is IHasPosition))
             {
                 // Special movement handling to ensure that all touch notes are within 250 units from the playfield centre
                 moveTouchNotes(this.ScreenSpaceDeltaToParentSpace(moveEvent.ScreenSpaceDelta));
@@ -292,14 +293,26 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                 return MathF.Sqrt((b * b) - c) - b;
             }
 
-            var touches = SelectedBlueprints.Select(bp => (Touch)bp.Item).ToList();
+            var touches = SelectedBlueprints.Select(bp => (IHasPosition)bp.Item).ToList();
             Vector2 centre = touches.Aggregate(Vector2.Zero, (a, b) => a + b.Position) / touches.Count;
             float cappedDragDelta = touches.Min(t => dragDistance(t.Position - centre, t.Position + dragDelta));
 
             if (!(cappedDragDelta >= 0)) return; // No movement or invalid movement occurred
 
+            var movementAmount = -centre + (cappedDragDelta * (dragDelta + centre).Normalized());
             foreach (var touch in touches)
-                touch.Position = touch.Position - centre + (cappedDragDelta * (dragDelta + centre).Normalized());
+            {
+                switch (touch)
+                {
+                    case Touch t:
+                        t.Position += movementAmount;
+                        break;
+
+                    case TouchHold th:
+                        th.Position += movementAmount;
+                        break;
+                }
+            }
         }
 
         private bool canMergeSlides(List<Slide> slides) => slides.Count > 1 && slides.GroupBy(s => s.Lane).Count() == 1;
