@@ -106,7 +106,7 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
                     composer.Playfield.Add(lanedHitObject);
                     break;
 
-                case Touch touchNote:
+                case IHasPosition:
                 {
                     Vector2 originalPosition = ((OriginalState<Vector2>)originalState).Value - origin.Value;
                     float originalAngle = Vector2.Zero.GetDegreesFromPosition(originalPosition);
@@ -118,23 +118,15 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
                     if (snapProvider.TouchSnapGrid.Enabled)
                         newPosition = SentakkiBeatmapConverterOld.VALID_TOUCH_POSITIONS.MinBy(v => Vector2.DistanceSquared(v, newPosition));
 
-                    touchNote.Position = newPosition;
-                }
-                break;
-
-                case TouchHold touchHold:
-                {
-                    Vector2 originalPosition = ((OriginalState<Vector2>)originalState).Value - origin.Value;
-                    float originalAngle = Vector2.Zero.GetDegreesFromPosition(originalPosition);
-                    float newAngle = originalAngle + rotation;
-
-                    Vector2 newPosition = origin.Value + SentakkiExtensions.GetCircularPosition(originalPosition.Length, newAngle);
-
-                    // If the snap provider is on, we assume they prefer to snap to a nearby snap point
-                    if (snapProvider.TouchSnapGrid.Enabled)
-                        newPosition = SentakkiBeatmapConverterOld.VALID_TOUCH_POSITIONS.MinBy(v => Vector2.DistanceSquared(v, newPosition));
-
-                    touchHold.Position = newPosition;
+                    switch (item)
+                    {
+                        case Touch touchNote:
+                            touchNote.Position = newPosition;
+                            break;
+                        case TouchHold touchHold:
+                            touchHold.Position = newPosition;
+                            break;
+                    }
                 }
                 break;
             }
