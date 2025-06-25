@@ -120,10 +120,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             // Don't allow for user input if auto is enabled for touch based objects (AutoTouch mod)
             if (!userTriggered || Auto)
             {
-                if (Auto && timeOffset > 0)
-                    ApplyResult(HitResult.Perfect);
-                else if (!HitObject.HitWindows.CanBeHit(timeOffset))
+                if (!HitObject.HitWindows.CanBeHit(timeOffset))
                     ApplyResult(Result.Judgement.MinResult);
+                else if (Auto && timeOffset >= 0)
+                    ApplyResult(Result.Judgement.MaxResult);
 
                 return;
             }
@@ -161,6 +161,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     this.Delay(time_fade_miss).FadeOut();
                     break;
             }
+            Expire();
         }
     }
 }

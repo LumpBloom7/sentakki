@@ -129,6 +129,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     this.Delay(400).FadeOut().Expire();
                     break;
             }
+            Expire();
         }
 
         protected override void ClearNestedHitObjects()
