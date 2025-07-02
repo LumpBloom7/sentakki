@@ -69,7 +69,7 @@ namespace osu.Game.Rulesets.Sentakki
 
         public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new SentakkiReplayFrame();
 
-        public override PerformanceCalculator CreatePerformanceCalculator() => new SentakkiPerformanceCalculator(this);
+        public override PerformanceCalculator CreatePerformanceCalculator() => new SentakkiPerformanceCalculator();
 
         public override IEnumerable<Mod> GetModsFor(ModType type)
         {
