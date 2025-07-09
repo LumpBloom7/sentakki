@@ -6,19 +6,18 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Performance;
 using osu.Framework.Graphics.Pooling;
-using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 {
     public partial class LineRenderer : CompositeDrawable
     {
-        private readonly Dictionary<double, LineLifetimeEntry> lineEntries = new Dictionary<double, LineLifetimeEntry>();
-        private readonly Dictionary<HitObject, IBindable> startTimeMap = new Dictionary<HitObject, IBindable>();
-
+        private readonly List<LineLifetimeEntry> lineLifetimeEntries = [];
+        private readonly Dictionary<SentakkiLanedHitObject, IBindable> startTimeMap = new Dictionary<SentakkiLanedHitObject, IBindable>();
         private readonly Dictionary<LifetimeEntry, DrawableLine> linesInUse = new Dictionary<LifetimeEntry, DrawableLine>();
         private readonly LifetimeEntryManager lifetimeManager = new LifetimeEntryManager();
+
+        private readonly Stack<LineLifetimeEntry> lifetimeEntryPool = [];
 
         private DrawablePool<DrawableLine> linePool = null!;
 
@@ -62,15 +61,67 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             linesInUse.Remove(entry);
         }
 
-        private void onEntryUpdated(LifetimeEntry entry)
+        public static IEnumerable<List<SentakkiLanedHitObject>> createTimingGroup(IEnumerable<SentakkiLanedHitObject> hitObjects)
         {
-            // We only want to update the drawable when the entry is actually in use
-            // This ensures that the drawable gets swapped out with one that uses the correct texture
-            // This also resets the colour and rotation if needed
-            if (linesInUse.ContainsKey(entry))
+            var hitObjectsCategory = hitObjects.OrderBy(ho => ho.StartTime).GroupBy(h => new { isSlide = h is SlideBody });
+
+            foreach (var hitobjectCategory in hitObjectsCategory)
             {
-                onEntryBecameDead(entry);
-                onEntryBecameAlive(entry);
+                List<SentakkiLanedHitObject> timedGroup = [];
+                double lastTime = double.MinValue;
+
+                foreach (var ho in hitobjectCategory)
+                {
+                    double time = ho.StartTime;
+
+                    if ((time - lastTime) >= 1 && timedGroup.Count > 0)
+                    {
+                        yield return timedGroup;
+                        timedGroup = [];
+                    }
+
+                    timedGroup.Add(ho);
+                    lastTime = time;
+                }
+
+                if (timedGroup.Count > 0)
+                    yield return timedGroup;
+            }
+        }
+
+        private double medianTime(List<SentakkiLanedHitObject> lanedHitObjects)
+        {
+            int midpoint = lanedHitObjects.Count / 2;
+            if (lanedHitObjects.Count > 2 && lanedHitObjects.Count % 2 == 0)
+                return (lanedHitObjects[midpoint].StartTime + lanedHitObjects[midpoint - 1].StartTime) / 2;
+
+            return lanedHitObjects[midpoint].StartTime;
+        }
+
+        private void refreshLifetimeEntries()
+        {
+            lifetimeManager.ClearEntries();
+
+            foreach (var existingLifetimeEntry in lineLifetimeEntries)
+            {
+                existingLifetimeEntry.Clear();
+                lifetimeEntryPool.Push(existingLifetimeEntry);
+            }
+
+            lineLifetimeEntries.Clear();
+
+            foreach (var group in createTimingGroup(startTimeMap.Keys))
+            {
+                if (!lifetimeEntryPool.TryPop(out var newEntry))
+                    newEntry = new LineLifetimeEntry(drawableRuleset);
+
+                lineLifetimeEntries.Add(newEntry);
+                newEntry.StartTime = medianTime(group);
+
+                foreach (var ho in group)
+                    newEntry.Add(ho);
+
+                lifetimeManager.AddEntry(newEntry);
             }
         }
 
@@ -80,55 +131,22 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
             startTimeBindable.ValueChanged += v => onStartTimeChanged(v, hitObject);
             startTimeMap[hitObject] = startTimeBindable;
 
-            addHitObjectToEntry(hitObject.StartTime, hitObject);
+            refreshLifetimeEntries();
         }
 
         public void RemoveHitObject(SentakkiLanedHitObject hitObject)
         {
-            // Ensure that we don't continue to receive time changes
-            startTimeMap[hitObject].UnbindAll();
+            if (!startTimeMap.TryGetValue(hitObject, out var bindable))
+                return;
 
+            // Ensure that we don't continue to receive time changes
+            bindable.UnbindAll();
             startTimeMap.Remove(hitObject);
 
-            removeHitObjectFromEntry(hitObject.StartTime, hitObject);
+            refreshLifetimeEntries();
         }
 
         private void onStartTimeChanged(ValueChangedEvent<double> valueChangedEvent, SentakkiLanedHitObject hitObject)
-        {
-            removeHitObjectFromEntry(valueChangedEvent.OldValue, hitObject);
-            addHitObjectToEntry(valueChangedEvent.NewValue, hitObject);
-        }
-
-        private void removeHitObjectFromEntry(double entryTime, SentakkiLanedHitObject hitObject)
-        {
-            // Safety check to ensure the a line entry actually exists
-            if (lineEntries.TryGetValue(entryTime, out var line))
-            {
-                line.Remove(hitObject);
-
-                // Remove this entry completely if there aren't any hitObjects using it
-                if (!line.HitObjects.Any())
-                {
-                    lifetimeManager.RemoveEntry(lineEntries[entryTime]);
-                    lineEntries.Remove(entryTime);
-                }
-            }
-        }
-
-        private void addHitObjectToEntry(double entryTime, SentakkiLanedHitObject hitObject)
-        {
-            // Create new line entry for this entryTime if none exists
-            if (!lineEntries.ContainsKey(entryTime))
-            {
-                var newEntry = new LineLifetimeEntry(drawableRuleset, entryTime);
-                lineEntries[entryTime] = newEntry;
-                lifetimeManager.AddEntry(newEntry);
-
-                // We want to listen in on line changes in case we need to swap out colours/drawables
-                newEntry.OnLineUpdated += onEntryUpdated;
-            }
-
-            lineEntries[entryTime].Add(hitObject);
-        }
+            => refreshLifetimeEntries();
     }
 }

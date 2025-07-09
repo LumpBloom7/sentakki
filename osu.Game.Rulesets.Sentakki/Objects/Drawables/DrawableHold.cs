@@ -107,18 +107,22 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             if (Auto)
             {
-                if (Time.Current >= HitObject.GetEndTime())
-                {
-                    if (isHolding)
-                        UpdateResult(true);
-                }
-                else if (Time.Current >= HitObject.StartTime)
+                // Auto can never hit prior to start time
+                if (Time.Current < HitObject.StartTime)
+                    isHolding = false;
+
+                // If auto is within the hittable time, attempt to hit it
+                if (Time.Current >= HitObject.StartTime && Time.Current <= HitObject.GetEndTime())
                 {
                     if (!isHolding)
                         Head.UpdateResult();
 
                     isHolding = true;
                 }
+
+                // Pretend that a release was made if auto is holding the note beyond end time
+                if (isHolding && Time.Current >= HitObject.GetEndTime())
+                    UpdateResult(true);
             }
 
             if (!isHolding)
