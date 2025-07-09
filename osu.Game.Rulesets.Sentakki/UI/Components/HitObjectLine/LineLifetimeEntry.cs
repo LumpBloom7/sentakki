@@ -14,13 +14,24 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
     public class LineLifetimeEntry : LifetimeEntry
     {
         private readonly BindableDouble animationDuration = new BindableDouble(1000);
+        private double startTime = 0;
 
-        public double StartTime { get; private set; }
+        private static readonly Comparer<SentakkiLanedHitObject> comparer = Comparer<SentakkiLanedHitObject>.Create((lhs, rhs) => lhs.Lane.CompareTo(rhs.Lane));
 
-        public LineLifetimeEntry(DrawableSentakkiRuleset? drawableSentakkiRuleset, double startTime)
+        public double StartTime
         {
-            StartTime = startTime;
+            get => startTime;
+            set
+            {
+                if (startTime == value)
+                    return;
+                startTime = value;
+                animationDuration.TriggerChange();
+            }
+        }
 
+        public LineLifetimeEntry(DrawableSentakkiRuleset? drawableSentakkiRuleset)
+        {
             animationDuration.TryBindTo(drawableSentakkiRuleset?.AdjustedAnimDuration);
             animationDuration.BindValueChanged(refreshLifetime, true);
         }
@@ -35,13 +46,26 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
         {
             hitObject.BreakBindable.ValueChanged += onBreakChanged;
             hitObject.ColourBindable.ValueChanged += onColorChanged;
-            HitObjects.AddInPlace(hitObject, Comparer<SentakkiLanedHitObject>.Create((lhs, rhs) => lhs.Lane.CompareTo(rhs.Lane)));
+            HitObjects.AddInPlace(hitObject, comparer);
+            UpdateLine();
+        }
+
+        public void Clear()
+        {
+            foreach (var hitObject in HitObjects)
+            {
+                hitObject.BreakBindable.ValueChanged -= onBreakChanged;
+                hitObject.ColourBindable.ValueChanged -= onColorChanged;
+            }
+
+            HitObjects.Clear();
             UpdateLine();
         }
 
         public void Remove(SentakkiLanedHitObject hitObject)
         {
             hitObject.BreakBindable.ValueChanged -= onBreakChanged;
+            hitObject.ColourBindable.ValueChanged -= onColorChanged;
             HitObjects.Remove(hitObject);
             UpdateLine();
         }
