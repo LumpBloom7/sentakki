@@ -5,6 +5,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Input.Events;
+using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Visualiser;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -23,6 +24,10 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         private readonly Container<SlideBodyHighlight> slideBodyHighlights;
         private readonly Container<SlidePathVisualiser> slideVisualisers;
+
+        // The slide stays longer due to fade out transforms, let's make sure that it is only selectable prior to hit
+        // Yes. DrawableObject.Result can be null when this blueprint is being transferred, so we do a null check anyways.
+        protected override bool ShouldBeAlive => base.ShouldBeAlive && !(DrawableObject.Result?.HasResult ?? true);
 
         public SlideSelectionBlueprint(Slide hitObject)
             : base(hitObject)
@@ -95,11 +100,19 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides
 
         private void updateTapHighlight()
         {
-            var slideTap = DrawableObject.SlideTaps.Child;
+            var slideTap = DrawableObject.SlideTaps.SingleOrDefault();
 
-            tapHighlight.SlideTapPiece.Scale = slideTap.TapVisual.Scale;
-            tapHighlight.SlideTapPiece.Stars.Rotation = ((SlideTapPiece)slideTap.TapVisual).Stars.Rotation;
-            tapHighlight.SlideTapPiece.SecondStar.Alpha = ((SlideTapPiece)slideTap.TapVisual).SecondStar.Alpha;
+            if (slideTap is null)
+            {
+                tapHighlight.SlideTapPiece.Scale = Vector2.Zero;
+            }
+            else
+            {
+                tapHighlight.SlideTapPiece.Scale = slideTap.TapVisual.Scale;
+                tapHighlight.SlideTapPiece.Stars.Rotation = ((SlideTapPiece)slideTap.TapVisual).Stars.Rotation;
+                tapHighlight.SlideTapPiece.SecondStar.Alpha = ((SlideTapPiece)slideTap.TapVisual).SecondStar.Alpha;
+            }
+
             tapHighlight.Rotation = DrawableObject.HitObject.Lane.GetRotationForLane();
             tapHighlight.SlideTapPiece.Y = -snapProvider.GetDistanceRelativeToCurrentTime(DrawableObject.HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
         }
