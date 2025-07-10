@@ -1,24 +1,14 @@
+using System;
 using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Scoring;
 
-// A special case of EmptyHitWindows which also considers Gori, used by HOLD and TOUCHHOLD
+// A special case of EmptyHitWindows which also considers Gori, used by TOUCHHOLD
 public class SentakkiEmptyHitWindows : SentakkiHitWindows
 {
-    private static readonly DifficultyRange[] empty_ranges =
+    protected override double DefaultWindowFor(HitResult result) => result switch
     {
-        SimpleDifficultyRange(HitResult.Perfect, 0),
-        SimpleDifficultyRange(HitResult.Miss, 0),
+        HitResult.Miss or HitResult.Perfect => 0,
+        _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
     };
-
-    public override bool IsHitResultAllowed(HitResult result)
-    {
-        // We additionally allow HitResult.Great because we don't acknowledge crits for those objects
-        if (result is HitResult.Great or HitResult.Miss)
-            return true;
-
-        return base.IsHitResultAllowed(result);
-    }
-
-    protected override DifficultyRange[] GetDefaultRanges() => empty_ranges;
 }

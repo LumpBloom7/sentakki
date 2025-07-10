@@ -8,19 +8,12 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
 
         public HitResult MinimumHitResult = HitResult.Miss;
 
-        private SentakkiJudgementMode judgementMode = SentakkiJudgementMode.Normal;
-        public SentakkiJudgementMode JudgementMode
-        {
-            get => judgementMode;
-            set
-            {
-                if (value == judgementMode)
-                    return;
+        public SentakkiJudgementMode JudgementMode { get; set; }
 
-                judgementMode = value;
-                SetDifficulty(0);
-            }
-        }
+        public double SpeedMultiplier { get; set; } = 1;
+
+        // Sentakki doesn't have variable difficulty
+        public override void SetDifficulty(double difficulty) { }
 
         public override bool IsHitResultAllowed(HitResult result)
         {
@@ -35,28 +28,27 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
                 case HitResult.Great:
                 case HitResult.Good:
                 case HitResult.Ok:
-                    if (result < MinimumHitResult)
-                        return false;
-
-                    return true;
+                    return result >= MinimumHitResult;
 
                 default:
                     return false;
             }
         }
 
-        protected abstract DifficultyRange[] GetDefaultRanges();
-        protected virtual DifficultyRange[] GetMajiRanges() => GetDefaultRanges();
-        protected virtual DifficultyRange[] GetGachiRanges() => GetMajiRanges();
-
-        protected sealed override DifficultyRange[] GetRanges() => JudgementMode switch
+        public sealed override double WindowFor(HitResult result)
         {
-            SentakkiJudgementMode.Maji => GetMajiRanges(),
-            SentakkiJudgementMode.Gati => GetGachiRanges(),
-            _ => GetDefaultRanges(),
-        };
+            double window = JudgementMode switch
+            {
+                SentakkiJudgementMode.Maji => MajiWindowFor(result),
+                SentakkiJudgementMode.Gati => GachiWindowFor(result),
+                _ => DefaultWindowFor(result),
+            };
 
-        protected static DifficultyRange SimpleDifficultyRange(HitResult result, double range)
-            => new DifficultyRange(result, range, range, range);
+            return window * SpeedMultiplier;
+        }
+
+        protected abstract double DefaultWindowFor(HitResult result);
+        protected virtual double MajiWindowFor(HitResult result) => DefaultWindowFor(result);
+        protected virtual double GachiWindowFor(HitResult result) => MajiWindowFor(result);
     }
 }

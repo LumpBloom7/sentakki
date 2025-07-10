@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Scoring;
+
 namespace osu.Game.Rulesets.Sentakki.Scoring
 {
     public partial class SentakkiScoreProcessor : ScoreProcessor
@@ -15,16 +15,13 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
         protected override double ComputeTotalScore(double comboProgress, double accuracyProgress, double bonusPortion)
         {
             return (150000 * comboProgress)
-                + (850000 * Math.Pow(Accuracy.Value, 2 + (2 * Accuracy.Value)) * accuracyProgress)
-                + bonusPortion;
+                   + (850000 * Math.Pow(Accuracy.Value, 2 + (2 * Accuracy.Value)) * accuracyProgress)
+                   + bonusPortion;
         }
 
         public override int GetBaseScoreForResult(HitResult result)
         {
-            if (result == HitResult.Perfect)
-                return 305;
-
-            return base.GetBaseScoreForResult(result);
+            return result == HitResult.Perfect ? 305 : base.GetBaseScoreForResult(result);
         }
 
         public override ScoreRank RankFromScore(double accuracy, IReadOnlyDictionary<HitResult, int> results)
