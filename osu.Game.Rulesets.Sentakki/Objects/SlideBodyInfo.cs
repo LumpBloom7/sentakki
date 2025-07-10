@@ -22,6 +22,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects
                 UpdatePaths();
             }
         }
+        [JsonIgnore]
+        public Action? OnPathUpdated = null;
 
         [JsonIgnore]
         public SentakkiSlidePath SlidePath { get; private set; } = empty_path;
@@ -39,7 +41,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         // Whether the slide body should have the EX modifier applied to them.
         public bool Ex;
 
-        public void UpdatePaths() => SlidePath = SlidePaths.CreateSlidePath(slidePathParts);
+        public void UpdatePaths()
+        {
+            SlidePath = SlidePaths.CreateSlidePath(slidePathParts);
+            OnPathUpdated?.Invoke();
+        }
 
         public override bool Equals(object? obj) => obj is not null && obj is SlideBodyInfo other && Equals(other);
 
