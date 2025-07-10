@@ -1,25 +1,25 @@
+using System;
 using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Scoring;
 
 public class SentakkiSlideHitWindows : SentakkiHitWindows
 {
-    private static readonly DifficultyRange[] default_ranges = {
-        SimpleDifficultyRange(HitResult.Miss, 36 * timing_unit),
-        SimpleDifficultyRange(HitResult.Ok, 36 * timing_unit),
-        SimpleDifficultyRange(HitResult.Good, 26 * timing_unit),
-        SimpleDifficultyRange(HitResult.Great, 14 * timing_unit),
-        SimpleDifficultyRange(HitResult.Perfect, 14 * timing_unit),
+    protected override double DefaultWindowFor(HitResult result) => result switch
+    {
+        HitResult.Miss or HitResult.Ok => 36 * timing_unit,
+        HitResult.Good => 26 * timing_unit,
+        HitResult.Great => 14 * timing_unit,
+        HitResult.Perfect => 14 * timing_unit,
+        _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
     };
 
-    private static readonly DifficultyRange[] maji_ranges = {
-        SimpleDifficultyRange(HitResult.Miss, 26 * timing_unit),
-        SimpleDifficultyRange(HitResult.Ok, 26 * timing_unit),
-        SimpleDifficultyRange(HitResult.Good, 14 * timing_unit),
-        SimpleDifficultyRange(HitResult.Great, 14 * timing_unit),
-        SimpleDifficultyRange(HitResult.Perfect, 14 * timing_unit),
+    protected override double MajiWindowFor(HitResult result) => result switch
+    {
+        HitResult.Miss or HitResult.Ok => 26 * timing_unit,
+        HitResult.Good => 26 * timing_unit,
+        HitResult.Great => 14 * timing_unit,
+        HitResult.Perfect => 14 * timing_unit,
+        _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
     };
-
-    protected override DifficultyRange[] GetDefaultRanges() => default_ranges;
-    protected override DifficultyRange[] GetMajiRanges() => maji_ranges;
 }
