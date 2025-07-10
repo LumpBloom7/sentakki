@@ -1,5 +1,4 @@
-﻿using osu.Game.Beatmaps;
-using osu.Game.Rulesets.Scoring;
+﻿using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Scoring
 {
@@ -9,20 +8,9 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
 
         public HitResult MinimumHitResult = HitResult.Miss;
 
-        private SentakkiJudgementMode judgementMode = SentakkiJudgementMode.Normal;
+        public SentakkiJudgementMode JudgementMode { get; set; }
 
-        public SentakkiJudgementMode JudgementMode
-        {
-            get => judgementMode;
-            set
-            {
-                if (value == judgementMode)
-                    return;
-
-                judgementMode = value;
-                SetDifficulty(0);
-            }
-        }
+        public double SpeedMultiplier { get; set; } = 1;
 
         // Sentakki doesn't have variable difficulty
         public override void SetDifficulty(double difficulty) { }
@@ -47,7 +35,7 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
             }
         }
 
-        public override double WindowFor(HitResult result)
+        public sealed override double WindowFor(HitResult result)
         {
             double window = JudgementMode switch
             {
@@ -56,7 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.Scoring
                 _ => DefaultWindowFor(result),
             };
 
-            return window;
+            return window * SpeedMultiplier;
         }
 
         protected abstract double DefaultWindowFor(HitResult result);
