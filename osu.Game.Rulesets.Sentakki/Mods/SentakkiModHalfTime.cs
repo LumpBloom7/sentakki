@@ -2,7 +2,7 @@
 
 namespace osu.Game.Rulesets.Sentakki.Mods
 {
-    public class SentakkiModHalfTime : ModHalfTime
+    public class SentakkiModHalfTime : ModHalfTime, ISentakkiRateAdjustMod
     {
     }
 }

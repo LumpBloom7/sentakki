@@ -21,10 +21,10 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
             if (!userTriggered)
             {
-                if (Auto && timeOffset > 0)
-                    ApplyResult(HitResult.Perfect);
-                else if (!HitObject.HitWindows.CanBeHit(timeOffset))
+                if (!HitObject.HitWindows.CanBeHit(timeOffset))
                     ApplyResult(Result.Judgement.MinResult);
+                else if (Auto && timeOffset > 0) // Hack: this is chosen to be "strictly larger" so that it remains visible
+                    ApplyResult(Result.Judgement.MaxResult);
 
                 return;
             }
