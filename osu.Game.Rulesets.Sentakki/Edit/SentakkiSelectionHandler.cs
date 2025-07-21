@@ -36,12 +36,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         {
             base.OnSelectionChanged();
 
-            var selectedObjects = SelectedItems.OfType<SentakkiHitObject>().ToArray();
-
-            bool canFlip = selectedObjects.Any(a => a is not TouchHold);
-
-            SelectionBox.CanFlipX = canFlip;
-            SelectionBox.CanFlipY = canFlip;
+            SelectionBox.CanFlipX = true;
+            SelectionBox.CanFlipY = true;
         }
 
         public override bool HandleFlip(Direction direction, bool flipOverOrigin)
@@ -81,7 +77,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                         sentakkiPlayfield.Add(laned);
                         break;
 
-                    case Touch touch:
+                    case IHasPosition touch:
                         Vector2 newPosition = touch.Position;
                         if (direction is Direction.Horizontal)
                             newPosition.X = -touch.Position.X;
