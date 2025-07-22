@@ -201,8 +201,7 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
 
             double shootOffsetMS = snapResult.Time.Value - slide.StartTime;
 
-            if (shootOffsetMS < 0 || shootOffsetMS > slideBodyInfo.Duration)
-                return;
+            shootOffsetMS = Math.Clamp(shootOffsetMS, 0, slideBodyInfo.Duration);
 
             double shootOffset = shootOffsetMS / editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
 
