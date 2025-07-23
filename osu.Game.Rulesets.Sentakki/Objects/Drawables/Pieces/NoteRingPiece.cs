@@ -1,5 +1,7 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Primitives;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
 {
@@ -11,6 +13,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
         private const float base_circle_size = 75;
         public const float DRAWABLE_SIZE = base_circle_size + 30; // 30 units for shadow
 
+        private LaneNoteVisual visual;
+
+        // We don't want to include the area where the shadow would be
+        public override Quad ScreenSpaceDrawQuad => visual.ConservativeScreenSpaceDrawQuad;
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => ScreenSpaceDrawQuad.Contains(screenSpacePos);
+
         public NoteRingPiece(bool hex = false)
         {
             Padding = new MarginPadding(-DRAWABLE_SIZE / 2);
@@ -19,7 +27,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
             Origin = Anchor.Centre;
             InternalChildren = new Drawable[]
             {
-                new LaneNoteVisual(){
+                visual = new LaneNoteVisual(){
                     RelativeSizeAxes = Axes.Both,
                     Shape = hex ? NoteShape.Hex : NoteShape.Ring,
                     Anchor = Anchor.Centre,
