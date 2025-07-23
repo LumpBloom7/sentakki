@@ -176,11 +176,11 @@ namespace osu.Game.Rulesets.Sentakki
         };
 
         public override Drawable CreateIcon() =>
-        new ConstrainedIconContainer()
-        {
-            Icon = new SentakkiIcon(this),
-            Size = new Vector2(100, 100)
-        };
+            new ConstrainedIconContainer()
+            {
+                Icon = new SentakkiIcon(this),
+                Size = new Vector2(100, 100)
+            };
 
         protected override IEnumerable<HitResult> GetValidHitResults()
         {
@@ -193,14 +193,16 @@ namespace osu.Game.Rulesets.Sentakki
             };
         }
 
-        public override IEnumerable<Drawable> CreateEditorSetupSections() => [
+        public override IEnumerable<Drawable> CreateEditorSetupSections() =>
+        [
             new MetadataSection(),
             new FillFlowContainer
             {
                 AutoSizeAxes = Axes.Y,
                 Direction = FillDirection.Vertical,
                 Spacing = new Vector2(25f),
-                Children = [
+                Children =
+                [
                     new ResourcesSection { RelativeSizeAxes = Axes.X },
                     new DesignSection { RelativeSizeAxes = Axes.X }
                 ]
@@ -208,6 +210,8 @@ namespace osu.Game.Rulesets.Sentakki
         ];
 
         public override LocalisableString GetDisplayNameForHitResult(HitResult result) => result.GetDisplayNameForSentakkiResult();
+
+        public override bool EditorShowScrollSpeed => false;
 
         public partial class SentakkiIcon : CompositeDrawable
         {
