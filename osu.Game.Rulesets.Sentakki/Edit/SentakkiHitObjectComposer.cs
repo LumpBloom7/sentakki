@@ -30,6 +30,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
         protected override Drawable CreateHitObjectInspector() => new SentakkiHitObjectInspector();
 
+        public SentakkiSelectionHandler SelectionHandler => (SentakkiSelectionHandler)BlueprintContainer.SelectionHandler;
+
         public SentakkiHitObjectComposer(SentakkiRuleset ruleset)
             : base(ruleset)
         {
@@ -54,10 +56,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit
 
         protected override IEnumerable<Drawable> CreateTernaryButtons()
             => base.CreateTernaryButtons()
-                    .Skip(1)
-                    .Concat(createHitObjectFlagTernaries())
-                    .Concat(snapProvider.CreateTernaryButtons());
-
+                   .Skip(1)
+                   .Concat(createHitObjectFlagTernaries())
+                   .Concat(snapProvider.CreateTernaryButtons());
 
         public SnapResult FindSnappedPositionAndTime(Vector2 screenSpacePosition)
             => snapProvider.GetSnapResult(screenSpacePosition);
@@ -65,7 +66,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         protected override ComposeBlueprintContainer CreateBlueprintContainer() => new SentakkiBlueprintContainer(this);
 
         private BindableList<HitObject> selectedHitObjects = null!;
-
 
         [BackgroundDependencyLoader]
         private void load(OsuConfigManager config)
@@ -92,6 +92,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
                 updateSnapProvider();
             }
         }
+
         private IEnumerable<DrawableTernaryButton> createHitObjectFlagTernaries()
         {
             var selectionHandler = (SentakkiSelectionHandler)BlueprintContainer.SelectionHandler;
@@ -114,6 +115,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
         public void updateSnapProvider()
         {
             lastTool = BlueprintContainer.CurrentTool;
+
             if (BlueprintContainer.CurrentTool is SelectTool)
             {
                 if (selectedHitObjects.Count == 0)

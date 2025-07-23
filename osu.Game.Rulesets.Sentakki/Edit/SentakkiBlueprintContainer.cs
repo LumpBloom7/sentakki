@@ -3,6 +3,7 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Input.Events;
+using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
@@ -21,6 +22,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
     public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
     {
         public new SentakkiHitObjectComposer Composer => (SentakkiHitObjectComposer)base.Composer;
+
         public SentakkiBlueprintContainer(HitObjectComposer composer)
             : base(composer)
         {
@@ -49,6 +51,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             if (blueprints.All(b => b.blueprint.Item is SentakkiLanedHitObject))
             {
                 int offset = ((SentakkiLanedSnapResult)senSnapResult).Lane - ((SentakkiLanedHitObject)blueprints.First().blueprint.Item).Lane;
+
                 if (offset != 0)
                 {
                     Beatmap.PerformOnSelection(ho =>
@@ -64,6 +67,37 @@ namespace osu.Game.Rulesets.Sentakki.Edit
             }
 
             return true;
+        }
+
+        protected override void LoadComplete()
+        {
+            var selectionHandler = (SentakkiSelectionHandler)SelectionHandler;
+
+            selectionHandler.SelectionBreakState.BindValueChanged(_ => updatePlacementBreakState());
+            selectionHandler.SelectionExState.BindValueChanged(_ => updatePlacementExState());
+            base.LoadComplete();
+        }
+
+        private void updatePlacementBreakState()
+        {
+            if (CurrentHitObjectPlacement?.HitObject is not SentakkiHitObject sho)
+                return;
+
+            var selectionHandler = (SentakkiSelectionHandler)SelectionHandler;
+
+            sho.Break = selectionHandler.SelectionBreakState.Value is TernaryState.True;
+        }
+
+        private void updatePlacementExState()
+        {
+            if (CurrentHitObjectPlacement?.HitObject is not SentakkiHitObject sho)
+                return;
+
+            if (sho is TouchHold)
+                return;
+
+            var selectionHandler = (SentakkiSelectionHandler)SelectionHandler;
+            sho.Ex = selectionHandler.SelectionExState.Value is TernaryState.True;
         }
 
         public override HitObjectSelectionBlueprint CreateHitObjectBlueprintFor(HitObject hitObject)
