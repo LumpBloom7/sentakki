@@ -12,7 +12,6 @@ using osu.Game.Beatmaps;
 using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Edit;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Components.TernaryButtons;
@@ -21,7 +20,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Snapping;
 
-public partial class SentakkiSnapGrid : CompositeDrawable
+public partial class SentakkiLanedSnapGrid : CompositeDrawable
 {
     private Bindable<TernaryState> enabled = new Bindable<TernaryState>(TernaryState.True);
 
@@ -60,7 +59,8 @@ public partial class SentakkiSnapGrid : CompositeDrawable
     private void load()
     {
         Anchor = Origin = Anchor.Centre;
-        AddRangeInternal(new Drawable[]{
+        AddRangeInternal(new Drawable[]
+        {
             linePool = new DrawablePool<BeatSnapGridLine>(10),
             linesContainer = new Container<BeatSnapGridLine>
             {
@@ -106,18 +106,20 @@ public partial class SentakkiSnapGrid : CompositeDrawable
         };
     }
 
-    public double GetRawTime(Vector2 screenSpacePosition)
+    public double SnappedDistanceTime(Vector2 screenSpacePosition)
     {
-        float maxRange = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
+        const float min = SentakkiPlayfield.NOTESTARTDISTANCE;
+        const float max = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
 
         var localPosition = ToLocalSpace(screenSpacePosition);
-        double distance = maxRange - (Vector2.Distance(Vector2.Zero, localPosition) - SentakkiPlayfield.NOTESTARTDISTANCE);
 
+        // the distance to intersect distance, as a ratio of the max travel distance.
+        float distanceRatioToIntersect = 1 - Math.Clamp((localPosition.Length - min) / max, 0, 1);
         double timeRange = animationDuration.Value * 0.5f;
 
-        double unsnappedTime = editorClock.CurrentTimeAccurate + ((distance / maxRange) * timeRange);
+        double unsnappedTime = editorClock.CurrentTimeAccurate + distanceRatioToIntersect * timeRange;
 
-        return unsnappedTime;
+        return beatSnapProvider.SnapTime(unsnappedTime);
     }
 
     private void recreateLines()
@@ -207,7 +209,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
 
         float distance = (float)Interpolation.Lerp(SentakkiPlayfield.INTERSECTDISTANCE, SentakkiPlayfield.NOTESTARTDISTANCE, offsetRatio);
 
-        return (float)Math.Clamp(distance, min, max);
+        return Math.Clamp(distance, min, max);
     }
 
     private partial class BeatSnapGridLine : PoolableDrawable
@@ -215,6 +217,7 @@ public partial class SentakkiSnapGrid : CompositeDrawable
         public override bool RemoveCompletedTransforms => false;
 
         public double SnappingTime { get; set; }
+
         public new float BorderThickness
         {
             get => ring.BorderThickness;

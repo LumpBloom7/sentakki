@@ -18,8 +18,8 @@ public partial class SentakkiSnapProvider : CompositeDrawable
 
     private SnapMode activeMode = SnapMode.Off;
 
-    private readonly SentakkiSnapGrid lanedSnapGrid = null!;
-    public readonly SentakkiTouchSnapGrid TouchSnapGrid = null!;
+    private readonly SentakkiLanedSnapGrid lanedSnapGrid;
+    public readonly SentakkiTouchSnapGrid TouchSnapGrid;
 
     public IEnumerable<DrawableTernaryButton> CreateTernaryButtons()
     {
@@ -31,10 +31,10 @@ public partial class SentakkiSnapProvider : CompositeDrawable
     {
         Anchor = Origin = Anchor.Centre;
 
-        AddRangeInternal(new Drawable[]{
-            lanedSnapGrid = new SentakkiSnapGrid(),
-            TouchSnapGrid = new SentakkiTouchSnapGrid(),
-        });
+        AddRangeInternal([
+            lanedSnapGrid = new SentakkiLanedSnapGrid(),
+            TouchSnapGrid = new SentakkiTouchSnapGrid()
+        ]);
 
         SwitchModes(SnapMode.Off);
     }
@@ -52,6 +52,7 @@ public partial class SentakkiSnapProvider : CompositeDrawable
     public void SwitchModes(SnapMode mode)
     {
         activeMode = mode;
+
         switch (mode)
         {
             case SnapMode.Off:
@@ -73,5 +74,5 @@ public partial class SentakkiSnapProvider : CompositeDrawable
 
     public float GetDistanceRelativeToCurrentTime(double time, float min = float.MinValue, float max = float.MaxValue) => lanedSnapGrid.GetDistanceRelativeToCurrentTime(time, min, max);
 
-    public double GetDistanceBasedRawTime(Vector2 screenSpacePosition) => lanedSnapGrid.GetRawTime(screenSpacePosition);
+    public double GetDistanceBasedSnapTime(Vector2 screenSpacePosition) => lanedSnapGrid.SnappedDistanceTime(screenSpacePosition);
 }

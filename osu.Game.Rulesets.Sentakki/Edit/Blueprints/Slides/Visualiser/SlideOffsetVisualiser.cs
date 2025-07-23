@@ -42,8 +42,10 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
         this.bodyInfo = bodyInfo;
         Width = 50;
 
-        InternalChildren = [
-            new Box{
+        InternalChildren =
+        [
+            new Box
+            {
                 Height = 5,
                 Y = 1.5f,
                 Width = 0.5f,
@@ -52,14 +54,16 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
                 Origin = Anchor.BottomCentre,
                 EdgeSmoothness = new Vector2(1),
             },
-            new Box{
+            new Box
+            {
                 Width = 5,
                 RelativeSizeAxes = Axes.Y,
                 Anchor = Anchor.CentreRight,
                 Origin = Anchor.Centre,
                 EdgeSmoothness = new Vector2(1),
             },
-            new DragBox(slide, bodyInfo){
+            new DragBox(slide, bodyInfo)
+            {
                 Height = 5,
                 Y = -1.5f,
                 Width = 0.5f,
@@ -143,6 +147,7 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
                 return true;
             }
         }
+
         return base.OnKeyDown(e);
     }
 
@@ -193,17 +198,19 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
         protected override bool OnMouseDown(MouseDownEvent e) => true;
 
         protected override bool OnDragStart(DragStartEvent e) => true;
+
         protected override void OnDrag(DragEvent e)
         {
-            var snapResult = snapProvider.GetSnapResult(e.ScreenSpaceMousePosition) ?? new SnapResult(e.ScreenSpaceMousePosition, null);
+            double snappedTime = snapProvider.GetDistanceBasedSnapTime(e.ScreenSpaceMousePosition);
 
-            snapResult.Time ??= snapProvider.GetDistanceBasedRawTime(e.ScreenSpaceMousePosition);
-
-            double shootOffsetMS = snapResult.Time.Value - slide.StartTime;
+            double shootOffsetMS = snappedTime - slide.StartTime;
 
             shootOffsetMS = Math.Clamp(shootOffsetMS, 0, slideBodyInfo.Duration);
 
             double shootOffset = shootOffsetMS / editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
+
+            if (shootOffset == slideBodyInfo.ShootDelay)
+                return;
 
             editorBeatmap?.BeginChange();
             slideBodyInfo.ShootDelay = Math.Max((float)shootOffset, 0);
