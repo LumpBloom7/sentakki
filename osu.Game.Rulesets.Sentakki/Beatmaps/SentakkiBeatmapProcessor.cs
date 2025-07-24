@@ -30,40 +30,12 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 applyDefaultNoteColouring();
         }
 
-        private IEnumerable<List<HitObject>> createTwinGroups()
-        {
-            var hitObjectsCategory = getColorableHitObject(Beatmap.HitObjects).OrderBy(ho => ho.StartTime + (ho is SlideBody s ? s.ShootDelay : 0)).GroupBy(h => new { isSlide = h is SlideBody });
-
-            foreach (var hitobjectCategory in hitObjectsCategory)
-            {
-                List<HitObject> timedGroup = [];
-                double lastTime = double.MinValue;
-
-                foreach (var ho in hitobjectCategory)
-                {
-                    double time = ho.StartTime + (ho is SlideBody s ? s.ShootDelay : 0);
-
-                    if ((time - lastTime) >= 1 && timedGroup.Count > 0)
-                    {
-                        yield return timedGroup;
-                        timedGroup = [];
-                    }
-
-                    timedGroup.Add(ho);
-                    lastTime = time;
-                }
-
-                if (timedGroup.Count > 0)
-                    yield return timedGroup;
-            }
-        }
-
         private void applyDefaultNoteColouring()
         {
             Color4 twinColor = Color4.Gold;
             Color4 breakColor = Color4.OrangeRed;
 
-            var hitObjectGroups = createTwinGroups();
+            var hitObjectGroups = getColorableHitObject(Beatmap.HitObjects).GroupBy(h => new { isSlide = h is SlideBody, time = h.StartTime + (h is SlideBody s ? s.ShootDelay : 0) });
 
             foreach (var group in hitObjectGroups)
             {
