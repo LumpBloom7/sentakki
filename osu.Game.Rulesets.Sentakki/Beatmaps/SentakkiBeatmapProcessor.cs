@@ -35,7 +35,8 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
             Color4 twinColor = Color4.Gold;
             Color4 breakColor = Color4.OrangeRed;
 
-            var hitObjectGroups = getColorableHitObject(Beatmap.HitObjects).GroupBy(h => new { isSlide = h is SlideBody, time = h.StartTime + (h is SlideBody s ? s.ShootDelay : 0) });
+            var hitObjectGroups = getColorableHitObject(Beatmap.HitObjects)
+                .GroupBy(h => new { _ = h is SlideBody, Time = Math.Round(h.StartTime + (h is SlideBody s ? s.ShootDelay : 0)) });
 
             foreach (var group in hitObjectGroups)
             {
@@ -95,6 +96,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps
                 case Hold:
                     return true;
             }
+
             return false;
         }
 

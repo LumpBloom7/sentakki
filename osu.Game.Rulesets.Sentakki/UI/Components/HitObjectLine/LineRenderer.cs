@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -104,6 +105,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private void removeHitObjectFromEntry(double entryTime, SentakkiLanedHitObject hitObject)
         {
+            entryTime = Math.Round(entryTime);
+
             // Safety check to ensure the a line entry actually exists
             if (lineEntries.TryGetValue(entryTime, out var line))
             {
@@ -120,6 +123,8 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
         private void addHitObjectToEntry(double entryTime, SentakkiLanedHitObject hitObject)
         {
+            entryTime = Math.Round(entryTime);
+
             // Create new line entry for this entryTime if none exists
             if (!lineEntries.ContainsKey(entryTime))
             {
