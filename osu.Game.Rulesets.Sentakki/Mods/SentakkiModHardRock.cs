@@ -44,7 +44,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods
         [SettingSource(typeof(SentakkiModHardRockStrings), nameof(SentakkiModHardRockStrings.MinimumResult), nameof(SentakkiModHardRockStrings.MinimumResultDescription))]
         public Bindable<SentakkiHitResult> MinimumValidResult { get; } = new Bindable<SentakkiHitResult>(SentakkiHitResult.Good);
 
-        [SettingSource("Enable strict slider tracking")]
+        [SettingSource("Enable strict slide tracking")]
         public Bindable<bool> StrictSliderTracking { get; } = new Bindable<bool>(false);
 
         public void ApplyToHitObject(HitObject hitObject)
