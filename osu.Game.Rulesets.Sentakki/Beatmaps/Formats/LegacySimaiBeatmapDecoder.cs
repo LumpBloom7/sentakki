@@ -87,10 +87,14 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
         foreach (var timingChange in chart.TimingChanges)
         {
-            double coercedTime = timingChange.time >= 0f ? timingChange.time : timingChange.time - Math.Floor(timingChange.time / timingChange.SecondsPerBar) * timingChange.SecondsPerBar;
+            double coercedTime = timingChange.time >= 0f
+                ? timingChange.time
+                : timingChange.time - Math.Floor(timingChange.time / timingChange.SecondsPerBar) * timingChange.SecondsPerBar;
+
+
             var controlPoint = new TimingControlPoint
             {
-                Time = coercedTime * 1000f,
+                Time = Math.Round(coercedTime * 1000f),
                 BeatLength = 60000.0 / timingChange.tempo,
                 TimeSignature = new TimeSignature(4)
             };
@@ -112,20 +116,19 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
         }
 
         List<EffectControlPoint> effectControlPoints = [];
+
         foreach (NoteCollection noteCollection in chart.NoteCollections)
         {
+            double roundedStartTime = Math.Round(noteCollection.time * 1000);
+
             HashSet<double> hanabiTimes = [];
+
             foreach (var note in noteCollection)
             {
                 if (note.styles.HasFlagFast(NoteStyles.Fireworks))
-                {
-                    if (note.type == NoteType.Touch || note.location.group != NoteGroup.Tap)
-                        hanabiTimes.Add(((note.length ?? 0) + noteCollection.time) * 1000.0);
-                    else
-                        hanabiTimes.Add(noteCollection.time * 1000.0);
-                }
+                    hanabiTimes.Add(roundedStartTime + Math.Round((note.length ?? 0) * 1000.0));
 
-                var hitObject = noteToHitObject(noteCollection.time * 1000f, note, beatmap.ControlPointInfo);
+                var hitObject = noteToHitObject(roundedStartTime, note, beatmap.ControlPointInfo);
 
                 if (hitObject != null)
                 {
@@ -142,8 +145,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
         }
 
         // Remove useless timingpoints
-        var usedTimingPoints = beatmap.ControlPointInfo.TimingPoints.Where(
-            t => beatmap.HitObjects.Any(h => beatmap.ControlPointInfo.TimingPointAt(h.StartTime) == t)).ToList();
+        var usedTimingPoints = beatmap.ControlPointInfo.TimingPoints.Where(t => beatmap.HitObjects.Any(h => beatmap.ControlPointInfo.TimingPointAt(h.StartTime) == t)).ToList();
 
         beatmap.ControlPointInfo.Clear();
         foreach (var t in usedTimingPoints)
