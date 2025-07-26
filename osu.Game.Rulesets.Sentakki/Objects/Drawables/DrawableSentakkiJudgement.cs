@@ -27,6 +27,9 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
 
         private readonly BindableBool detailedJudgements = new BindableBool();
 
+        [Resolved]
+        private OsuColour colours { get; set; } = null!;
+
         [BackgroundDependencyLoader]
         private void load(SentakkiRulesetConfigManager sentakkiConfigs)
         {
@@ -40,8 +43,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     Scale = new Vector2(0.9f),
-                    Children = new Drawable[]
-                    {
+                    Children =
+                    [
                         timingPiece = new OsuSpriteText
                         {
                             Y = -15,
@@ -51,42 +54,43 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
                             ShadowColour = Color4.Black
                         },
                         judgementPiece = new SentakkiJudgementPiece(HitResult.Great)
-                    }
+                    ]
                 }
             );
         }
 
         public DrawableSentakkiJudgement Apply(JudgementResult result, DrawableHitObject hitObject)
         {
-            if (result.Type == HitResult.Perfect && detailedJudgements.Value)
-                judgementPiece.JudgementText.Text = HitResult.Great.GetDisplayNameForSentakkiResult().ToUpperInvariant();
-            else
-                judgementPiece.JudgementText.Text = result.Type.GetDisplayNameForSentakkiResult().ToUpperInvariant();
-
-            judgementPiece.JudgementText.Colour = result.Type.GetColorForSentakkiResult();
-
             if (result.HitObject.HitWindows is SentakkiEmptyHitWindows || result.Type == HitResult.Miss || !detailedJudgements.Value)
-            {
                 timingPiece.Alpha = 0;
+            else
+                timingPiece.Alpha = 1;
+
+            judgementPiece.JudgementText.Colour = colours.ForSentakkiResult(result.Type);
+
+            if (result.Type == HitResult.Perfect)
+            {
+                timingPiece.Text = "CRITICAL";
+                timingPiece.Colour = colours.ForSentakkiResult(result.Type);
+                judgementPiece.JudgementText.Text =
+                    (detailedJudgements.Value ? HitResult.Great : result.Type).GetDisplayNameForSentakkiResult().ToUpperInvariant();
             }
             else
             {
-                timingPiece.Alpha = 1;
+                judgementPiece.JudgementText.Text =
+                    result.Type.GetDisplayNameForSentakkiResult().ToUpperInvariant();
 
-                if (result.Type == HitResult.Perfect)
+                switch (result.TimeOffset)
                 {
-                    timingPiece.Text = "CRITICAL";
-                    timingPiece.Colour = result.Type.GetColorForSentakkiResult();
-                }
-                else if (result.TimeOffset > 0)
-                {
-                    timingPiece.Text = "LATE";
-                    timingPiece.Colour = Color4.OrangeRed;
-                }
-                else if (result.TimeOffset < 0)
-                {
-                    timingPiece.Text = "EARLY";
-                    timingPiece.Colour = Color4.GreenYellow;
+                    case > 0:
+                        timingPiece.Text = "LATE";
+                        timingPiece.Colour = Color4.OrangeRed;
+                        break;
+
+                    case < 0:
+                        timingPiece.Text = "EARLY";
+                        timingPiece.Colour = Color4.GreenYellow;
+                        break;
                 }
             }
 
