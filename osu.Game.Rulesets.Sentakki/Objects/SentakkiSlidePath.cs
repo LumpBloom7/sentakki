@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects
         public readonly int EndLane;
 
         // The minimum duration that this pattern can have, used in converts
-        public double MinDuration => TotalDistance / 2;
+        public double MinDuration => TotalDistance / 5;
 
         // The maximum duration that this pattern can have, used in converts.
         // While it is completely playable even beyond this value, it would look awkward for shorter slides
