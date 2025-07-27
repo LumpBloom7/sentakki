@@ -9,10 +9,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit;
 public class SentakkiBeatmapVerifier : IBeatmapVerifier
 {
     private readonly List<ICheck> checks =
-        [
-            // Compose
-            new CheckSentakkiConcurrentObjects(),
-        ];
+    [
+        // Compose
+        new CheckSentakkiConcurrentObjects(),
+        new CheckSlideTapOmission()
+    ];
 
     public IEnumerable<Issue> Run(BeatmapVerifierContext context) => checks.SelectMany(c => c.Run(context));
 }
