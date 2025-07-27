@@ -30,7 +30,8 @@ public class CheckSentakkiConcurrentObjects : ICheck
     // We guarantee that the objects are either treated as concurrent or unsnapped when near the same beat divisor.
     private const double ms_leniency = CheckUnsnappedObjects.UNSNAP_MS_THRESHOLD;
 
-    private bool areConcurrent(HitObject hitobject, HitObject nextHitobject) => nextHitobject.StartTime <= hitobject.GetEndTime() + ms_leniency;
+    private static bool areConcurrent(HitObject hitobject, HitObject nextHitobject) =>
+        nextHitobject.StartTime <= (hitobject is Slide ? hitobject.StartTime : hitobject.GetEndTime()) + ms_leniency;
 
     public IEnumerable<Issue> Run(BeatmapVerifierContext context) => checkLaneNotes(context).Concat(checkTouchNotes(context));
 
