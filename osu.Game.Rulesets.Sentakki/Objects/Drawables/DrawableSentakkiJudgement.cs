@@ -1,6 +1,8 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Sprites;
@@ -71,7 +73,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
             if (result.Type == HitResult.Perfect)
             {
                 timingPiece.Text = "CRITICAL";
-                timingPiece.Colour = colours.ForSentakkiResult(result.Type);
+                timingPiece.Colour = ColourInfo.GradientVertical(Color4Extensions.FromHex("#00FFAA"), Color4Extensions.FromHex("7CF6FF"));
                 judgementPiece.JudgementText.Text =
                     (detailedJudgements.Value ? HitResult.Great : result.Type).GetDisplayNameForSentakkiResult().ToUpperInvariant();
             }
