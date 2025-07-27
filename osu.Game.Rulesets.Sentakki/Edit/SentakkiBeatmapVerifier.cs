@@ -12,7 +12,8 @@ public class SentakkiBeatmapVerifier : IBeatmapVerifier
     [
         // Compose
         new CheckSentakkiConcurrentObjects(),
-        new CheckSlideTapOmission()
+        new CheckSlideTapOmission(),
+        new CheckSentakkiSlideBodyLength()
     ];
 
     public IEnumerable<Issue> Run(BeatmapVerifierContext context) => checks.SelectMany(c => c.Run(context));
