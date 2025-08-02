@@ -39,7 +39,8 @@ namespace osu.Game.Rulesets.Sentakki.Mods
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
-            var sentakkiBeatmapConverter = (CompositeBeatmapConverter)beatmapConverter;
+            if (beatmapConverter is not CompositeBeatmapConverter sentakkiBeatmapConverter)
+                return;
 
             if (EnableSlideFans.Value)
                 sentakkiBeatmapConverter.flags |= ConversionFlags.fanSlides;
