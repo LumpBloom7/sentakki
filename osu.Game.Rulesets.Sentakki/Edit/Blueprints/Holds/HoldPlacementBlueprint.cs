@@ -64,6 +64,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
         {
             var result = composer?.FindSnappedPositionAndTime(screenSpacePosition) ?? new SnapResult(screenSpacePosition, fallbackTime);
 
+            base.UpdateTimeAndPosition(result.ScreenSpacePosition, result.Time ?? fallbackTime);
+
             if (result is not SentakkiLanedSnapResult senRes)
                 return result;
 

@@ -53,6 +53,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds
         public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double fallbackTime)
         {
             var result = composer?.FindSnappedPositionAndTime(screenSpacePosition) ?? new SnapResult(screenSpacePosition, fallbackTime);
+
+            base.UpdateTimeAndPosition(result.ScreenSpacePosition, result.Time ?? fallbackTime);
+
             if (PlacementActive == PlacementState.Active)
             {
                 HitObject.StartTime = fallbackTime < originalStartTime ? fallbackTime : originalStartTime;
