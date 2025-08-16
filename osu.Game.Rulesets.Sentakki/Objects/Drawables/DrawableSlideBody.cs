@@ -9,6 +9,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osuTK;
 using osuTK.Graphics;
@@ -52,7 +53,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
                 int laneOffset = (i * 2 - 1) % 3;
 
                 SlideStars[i].Position = Slidepath.Path.PositionAt(value, laneOffset);
-                SlideStars[i].Rotation = Slidepath.Path.PositionAt(value - .01f, laneOffset).GetDegreesFromPosition(Slidepath.Path.PositionAt(value + .01f, laneOffset));
+                SlideStars[i].Rotation = Slidepath.Path.PositionAt(value - .01f, laneOffset).AngleTo(Slidepath.Path.PositionAt(value + .01f, laneOffset));
 
                 if (i != 2 && value < Slidepath.Path.FanStartProgress)
                     break;
@@ -103,7 +104,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
                 Scale = Vector2.Zero,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Position = SentakkiExtensions.GetCircularPosition(296.5f, 22.5f),
+                Position = MathExtensions.PointOnCircle(296.5f, 22.5f),
                 RelativeSizeAxes = Axes.None,
             });
         }
@@ -270,7 +271,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
                 foreach (var star in SlideStars)
                 {
                     star.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
-                        .MoveToOffset(SentakkiExtensions.GetCircularPosition(100, star.Rotation), time_fade_miss, Easing.OutCubic);
+                        .MoveToOffset(MathExtensions.PointOnCircle(100, star.Rotation), time_fade_miss, Easing.OutCubic);
                 }
 
                 this.FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint).FadeOut(time_fade_miss);

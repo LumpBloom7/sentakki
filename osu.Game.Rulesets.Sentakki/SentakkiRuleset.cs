@@ -24,6 +24,7 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Difficulty;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Localisation;
 using osu.Game.Rulesets.Sentakki.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;

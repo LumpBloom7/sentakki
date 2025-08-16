@@ -31,11 +31,11 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
 
         foreach (float angle in SentakkiPlayfield.LANEANGLES)
         {
-            tmp.Add(SentakkiExtensions.GetCircularPosition(190, angle - 22.5f));
-            tmp.Add(SentakkiExtensions.GetCircularPosition(130, angle));
+            tmp.Add(MathExtensions.PointOnCircle(190, angle - 22.5f));
+            tmp.Add(MathExtensions.PointOnCircle(130, angle));
 
-            tmp.Add(SentakkiExtensions.GetCircularPosition(270, angle - 22.5f));
-            tmp.Add(SentakkiExtensions.GetCircularPosition(270, angle));
+            tmp.Add(MathExtensions.PointOnCircle(270, angle - 22.5f));
+            tmp.Add(MathExtensions.PointOnCircle(270, angle));
         }
 
         VALID_TOUCH_POSITIONS = tmp;

@@ -55,7 +55,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
             return;
 
         currentPattern = new TwinPattern(rng);
-        float angle = standard_playfield_center.GetDegreesFromPosition(beatmap.HitObjects[0].GetPosition());
+        float angle = standard_playfield_center.AngleTo(beatmap.HitObjects[0].GetPosition());
         currentLane = getClosestLaneFor(angle);
     }
 
@@ -67,7 +67,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         newComboSinceLastTwin = false;
         lastTwinTime = targetTime;
 
-        twinLane = currentPattern.GetNextLane(currentLane).NormalizePath();
+        twinLane = currentPattern.GetNextLane(currentLane).NormalizeLane();
         return currentLane != twinLane;
     }
 
@@ -175,8 +175,8 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         // If the next note is far off, we start from a fresh slate
         if (!isChronologicallyClose(original, next))
         {
-            float nextAngle = standard_playfield_center.GetDegreesFromPosition(next.GetPosition());
-            currentLane = getClosestLaneFor(nextAngle).NormalizePath();
+            float nextAngle = standard_playfield_center.AngleTo(next.GetPosition());
+            currentLane = getClosestLaneFor(nextAngle).NormalizeLane();
             activeStreamDirection = StreamDirection.None;
             return;
         }
@@ -187,7 +187,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         if (isJump(original, next))
         {
             activeStreamDirection = StreamDirection.None;
-            currentLane = (currentLane + jumpLaneOffset(original, previous, next)).NormalizePath();
+            currentLane = (currentLane + jumpLaneOffset(original, previous, next)).NormalizeLane();
             return;
         }
 
@@ -229,7 +229,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         if (!isOverlappingEnd)
             currentLane += streamOffset == 0 ? 1 : streamOffset;
 
-        currentLane = currentLane.NormalizePath();
+        currentLane = currentLane.NormalizeLane();
     }
 
     private bool isOverlapping(Vector2 a, Vector2 b)
@@ -249,8 +249,8 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
     {
         Vector2 midpoint = midpointOf(original, previous, next);
 
-        float angle1 = midpoint.GetDegreesFromPosition(original.GetEndPosition());
-        float angle2 = midpoint.GetDegreesFromPosition(next.GetPosition());
+        float angle1 = midpoint.AngleTo(original.GetEndPosition());
+        float angle2 = midpoint.AngleTo(next.GetPosition());
 
         return getClosestLaneFor(angle2) - getClosestLaneFor(angle1);
     }
@@ -262,10 +262,10 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
 
         var midpoint = midpointOf(original, previous, next);
 
-        float currAngle = midpoint.GetDegreesFromPosition(original.GetEndPosition());
-        float nextAngle = midpoint.GetDegreesFromPosition(next.GetPosition());
+        float currAngle = midpoint.AngleTo(original.GetEndPosition());
+        float nextAngle = midpoint.AngleTo(next.GetPosition());
 
-        float angleDelta = SentakkiExtensions.GetDeltaAngle(currAngle, nextAngle);
+        float angleDelta = MathExtensions.AngleDelta(currAngle, nextAngle);
 
         float absAngDelta = MathF.Abs(angleDelta);
 
@@ -316,7 +316,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
 
         for (int i = 0; i < 8; ++i)
         {
-            float delta = Math.Abs(SentakkiExtensions.GetDeltaAngle(i.GetRotationForLane(), angle));
+            float delta = Math.Abs(MathExtensions.AngleDelta(i.GetRotationForLane(), angle));
 
             if (!(delta < minDelta)) continue;
 

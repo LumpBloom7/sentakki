@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
@@ -74,10 +75,10 @@ public class SentakkiSlidePath
         }
 
         // Here starts the fan slide fallback
-        float originAngle = Vector2.Zero.GetDegreesFromPosition(FanOrigin);
+        float originAngle = Vector2.Zero.AngleTo(FanOrigin);
         float destAngle = originAngle + 180 + laneOffset * 45;
 
-        var destPosition = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, destAngle);
+        var destPosition = MathExtensions.PointOnCircle(SentakkiPlayfield.INTERSECTDISTANCE, destAngle);
 
         return Vector2.Lerp(FanOrigin, destPosition, Math.Clamp((float)((progress - FanStartProgress) / (1 - FanStartProgress)), 0, 1));
     }

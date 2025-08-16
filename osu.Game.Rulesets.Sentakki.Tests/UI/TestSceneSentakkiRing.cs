@@ -35,7 +35,7 @@ public partial class TestSceneSentakkiRing : OsuTestScene
         AddRepeatStep("Trigger Kiai Beat", () => ring.KiaiBeat(), 5);
         AddSliderStep<float>("Test opacity", 0, 1, 1, f =>
         {
-            ring.RingOpacity.Value = f;
+            if (ring != null) ring.RingOpacity.Value = f;
         });
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using osu.Framework.Extensions.EnumExtensions;
+using osu.Game.Rulesets.Sentakki.Extensions;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 
@@ -88,6 +89,6 @@ public class TwinPattern
         if (flags.HasFlagFast(TwinFlags.Mirror))
             result = 7 - result;
 
-        return result.NormalizePath();
+        return result.NormalizeLane();
     }
 }

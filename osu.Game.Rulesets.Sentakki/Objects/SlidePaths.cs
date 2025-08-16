@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
@@ -18,7 +19,7 @@ public static class SlidePaths
         U,
         Cup,
         Thunder,
-        Fan,
+        Fan
     }
 
     public static readonly List<(SlideBodyPart SlidePart, double MinDuration)> VALID_CONVERT_PATHS;
@@ -53,7 +54,7 @@ public static class SlidePaths
     // We additionally block +-1 end offset straight/circle slides, as those do not play well when not done right.
     public static bool CheckSlideValidity(SlideBodyPart param, bool forConverterUse = false)
     {
-        int normalizedEnd = param.EndOffset.NormalizePath();
+        int normalizedEnd = param.EndOffset.NormalizeLane();
         bool mirrored = param.Mirrored;
 
         switch (param.Shape)
@@ -235,7 +236,7 @@ public static class SlidePaths
     // DX Circle Pattern
     private static SliderPath generateCirclePattern(int offset, int end, RotationDirection direction = RotationDirection.Clockwise)
     {
-        bool isFullCircle = end.NormalizePath() == 0;
+        bool isFullCircle = end.NormalizeLane() == 0;
         bool isCounterClockwise = direction == RotationDirection.Counterclockwise;
 
         float startAngle = offset.GetRotationForLane();
@@ -261,9 +262,9 @@ public static class SlidePaths
         // This is a slight angle tweak to help SliderPath determine which direction the path goes
         float angleTweak = 0.1f * (isCounterClockwise ? -1 : 1);
 
-        Vector2 node0Pos = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, startAngle + angleTweak);
-        Vector2 node1Pos = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, centreAngle);
-        Vector2 node2Pos = SentakkiExtensions.GetCircularPosition(SentakkiPlayfield.INTERSECTDISTANCE, endAngle);
+        Vector2 node0Pos = MathExtensions.PointOnCircle(SentakkiPlayfield.INTERSECTDISTANCE, startAngle + angleTweak);
+        Vector2 node1Pos = MathExtensions.PointOnCircle(SentakkiPlayfield.INTERSECTDISTANCE, centreAngle);
+        Vector2 node2Pos = MathExtensions.PointOnCircle(SentakkiPlayfield.INTERSECTDISTANCE, endAngle);
 
         return new SliderPath([
             new PathControlPoint(node0Pos, PathType.PERFECT_CURVE),
@@ -278,7 +279,7 @@ public static class SlidePaths
         Vector2 node1Pos = getPositionInBetween(node0Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, (reversed ? 3 : 5) + offset), .51f);
 
         float angleDiff = ((end + offset).GetRotationForLane() + offset.GetRotationForLane()) / 2 + (Math.Abs(end) > (reversed ? 3 : 4) ? 0 : 180);
-        Vector2 node2Pos = SentakkiExtensions.GetCircularPosition(115, angleDiff);
+        Vector2 node2Pos = MathExtensions.PointOnCircle(115, angleDiff);
 
         Vector2 node4Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end + offset);
         Vector2 node3Pos = getPositionInBetween(node4Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end + (reversed ? -3 : 3) + offset), .51f);
@@ -296,7 +297,7 @@ public static class SlidePaths
     {
         const float r = 270 / 2f;
 
-        int x = mirrored ? (-end).NormalizePath() : end;
+        int x = mirrored ? (-end).NormalizeLane() : end;
 
         float originAngle = 90;
         float angle1 = 300;
@@ -327,14 +328,14 @@ public static class SlidePaths
             loopEndAngle = -loopEndAngle + 45;
         }
 
-        Vector2 loopOrigin = SentakkiExtensions.GetCircularPosition(r, originAngle + offsetAdjustment);
+        Vector2 loopOrigin = MathExtensions.PointOnCircle(r, originAngle + offsetAdjustment);
 
         Vector2 node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, offset);
-        Vector2 node1Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, angle1 + offsetAdjustment);
-        Vector2 node2Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, angle2 + offsetAdjustment);
-        Vector2 node3Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, angle3 + offsetAdjustment);
-        Vector2 node4Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, (angle3 + loopEndAngle) / 2 + (x >= 3 ? 180 : 0) + offsetAdjustment);
-        Vector2 node5Pos = loopOrigin + SentakkiExtensions.GetCircularPosition(r, loopEndAngle + offsetAdjustment);
+        Vector2 node1Pos = loopOrigin + MathExtensions.PointOnCircle(r, angle1 + offsetAdjustment);
+        Vector2 node2Pos = loopOrigin + MathExtensions.PointOnCircle(r, angle2 + offsetAdjustment);
+        Vector2 node3Pos = loopOrigin + MathExtensions.PointOnCircle(r, angle3 + offsetAdjustment);
+        Vector2 node4Pos = loopOrigin + MathExtensions.PointOnCircle(r, (angle3 + loopEndAngle) / 2 + (x >= 3 ? 180 : 0) + offsetAdjustment);
+        Vector2 node5Pos = loopOrigin + MathExtensions.PointOnCircle(r, loopEndAngle + offsetAdjustment);
         Vector2 node6Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, end + offset);
 
         return new SliderPath([

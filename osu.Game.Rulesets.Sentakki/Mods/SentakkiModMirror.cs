@@ -5,6 +5,7 @@ using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK;
@@ -61,7 +62,7 @@ public class SentakkiModMirror : Mod, IApplicableAfterBeatmapConversion
                 for (int i = 0; i < slideInfo.SlidePathParts.Length; ++i)
                 {
                     ref var part = ref slideInfo.SlidePathParts[i];
-                    part.EndOffset = (part.EndOffset * -1).NormalizePath();
+                    part.EndOffset = (part.EndOffset * -1).NormalizeLane();
                     part.Mirrored ^= mirrored;
                 }
 

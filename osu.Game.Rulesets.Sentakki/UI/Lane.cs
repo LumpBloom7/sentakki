@@ -5,6 +5,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.UI;
@@ -80,7 +81,7 @@ public partial class Lane : Playfield
 
         float targetAngleRangeMid = distance > 400 ? receptor_angle_range_mid : receptor_angle_range_inner_mid;
 
-        float angleDelta = SentakkiExtensions.GetDeltaAngle(0, Vector2.Zero.GetDegreesFromPosition(localPos));
+        float angleDelta = MathExtensions.AngleDelta(0, Vector2.Zero.AngleTo(localPos));
 
         return !(Math.Abs(angleDelta) > targetAngleRangeMid);
     }

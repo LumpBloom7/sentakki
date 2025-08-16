@@ -8,6 +8,7 @@ using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
@@ -142,7 +143,7 @@ public partial class SlideVisual : CompositeDrawable
                 double distance = progress * safeDistance + endpoint_distance;
                 progress = distance / totalDistance;
                 var position = segment.PositionAt(progress);
-                float angle = previousPosition.GetDegreesFromPosition(position);
+                float angle = previousPosition.AngleTo(position);
 
                 var chevron = chevronPool.Get();
                 chevron.Position = position;
@@ -218,7 +219,7 @@ public partial class SlideVisual : CompositeDrawable
             var chevron = chevronPool.Get();
 
             chevron.Position = path.FanOrigin + delta * y;
-            chevron.Rotation = chevron.Position.GetDegreesFromPosition(path.PositionAt(1));
+            chevron.Rotation = chevron.Position.AngleTo(path.PositionAt(1));
 
             chevron.DisappearThreshold = path.FanStartProgress + (i + 1) / 11f * (1 - path.FanStartProgress);
             chevron.Depth = chevrons.Count;

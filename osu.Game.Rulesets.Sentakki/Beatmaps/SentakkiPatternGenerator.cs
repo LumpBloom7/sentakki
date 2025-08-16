@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Sentakki.Extensions;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps;
 
@@ -19,7 +20,7 @@ public class SentakkiPatternGenerator
         RNG = new Random(seed);
     }
 
-    public int GetNextLane(bool isTwin = false) => patternlist[currentPattern].Invoke(isTwin).NormalizePath();
+    public int GetNextLane(bool isTwin = false) => patternlist[currentPattern].Invoke(isTwin).NormalizeLane();
 
     public void StartNextPattern()
     {

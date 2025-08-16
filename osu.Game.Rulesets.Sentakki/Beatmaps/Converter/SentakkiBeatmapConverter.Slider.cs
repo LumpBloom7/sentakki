@@ -89,7 +89,7 @@ public partial class SentakkiBeatmapConverter
                     ShootDelay = shootDelay,
                 }
             ],
-            Lane = lane.NormalizePath(),
+            Lane = lane.NormalizeLane(),
             StartTime = original.StartTime,
             Samples = nodeSamples.FirstOrDefault(),
             Break = headBreak,
