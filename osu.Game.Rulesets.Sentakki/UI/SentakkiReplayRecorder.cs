@@ -5,19 +5,15 @@ using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.UI
+namespace osu.Game.Rulesets.Sentakki.UI;
+
+public partial class SentakkiReplayRecorder : ReplayRecorder<SentakkiAction>
 {
-    public partial class SentakkiReplayRecorder : ReplayRecorder<SentakkiAction>
+    public SentakkiReplayRecorder(Score score, DrawableSentakkiRuleset ruleset)
+        : base(score)
     {
-        private readonly DrawableSentakkiRuleset drawableRuleset;
-
-        public SentakkiReplayRecorder(Score score, DrawableSentakkiRuleset ruleset)
-            : base(score)
-        {
-            drawableRuleset = ruleset;
-        }
-
-        protected override ReplayFrame HandleFrame(Vector2 mousePosition, List<SentakkiAction> actions, ReplayFrame previousFrame)
-            => new SentakkiReplayFrame(Time.Current, mousePosition, actions);
     }
+
+    protected override ReplayFrame HandleFrame(Vector2 mousePosition, List<SentakkiAction> actions, ReplayFrame previousFrame)
+        => new SentakkiReplayFrame(Time.Current, mousePosition, actions);
 }

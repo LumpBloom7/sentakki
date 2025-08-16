@@ -5,26 +5,25 @@ using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.UI;
 
-namespace osu.Game.Rulesets.Sentakki.UI
+namespace osu.Game.Rulesets.Sentakki.UI;
+
+public partial class TouchPlayfield : Playfield
 {
-    public partial class TouchPlayfield : Playfield
+    public TouchPlayfield()
     {
-        public TouchPlayfield()
-        {
-            RelativeSizeAxes = Axes.Both;
-            Anchor = Origin = Anchor.Centre;
-        }
+        RelativeSizeAxes = Axes.Both;
+        Anchor = Origin = Anchor.Centre;
+    }
 
-        [Resolved]
-        private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; } = null!;
+    [Resolved]
+    private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; } = null!;
 
-        protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, drawableSentakkiRuleset);
+    protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, drawableSentakkiRuleset);
 
-        [BackgroundDependencyLoader]
-        private void load()
-        {
-            RegisterPool<Touch, DrawableTouch>(8);
-            RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(32);
-        }
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        RegisterPool<Touch, DrawableTouch>(8);
+        RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(32);
     }
 }

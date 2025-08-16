@@ -1,9 +1,8 @@
 using osu.Game.Rulesets.Sentakki.Objects;
 
-namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
+namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides;
+
+public partial class TestSceneCircleSlide : TestSceneSlide
 {
-    public partial class TestSceneCircleSlide : TestSceneSlide
-    {
-        protected override SlidePaths.PathShapes PathShape => SlidePaths.PathShapes.Circle;
-    }
+    protected override SlidePaths.PathShapes PathShape => SlidePaths.PathShapes.Circle;
 }

@@ -27,26 +27,28 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
     public ConversionFlags ConversionFlags;
 
     private readonly IBeatmap beatmap;
+
     // Current converter state
     private StreamDirection activeStreamDirection;
     private int currentLane;
     private readonly Random rng;
 
-    private TwinPattern currentPattern = null!;
+    private readonly TwinPattern currentPattern = null!;
 
-    private double lastTwinTime = 0;
+    private double lastTwinTime;
     private bool newComboSinceLastTwin = true;
 
-    public SentakkiBeatmapConverter(IBeatmap beatmap, Ruleset ruleset) : base(beatmap, ruleset)
+    public SentakkiBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
+        : base(beatmap, ruleset)
     {
         this.beatmap = beatmap;
 
         // Taking this from osu specific information that we need
-        circleRadius = 54.4f - (4.48f * beatmap.Difficulty.CircleSize);
+        circleRadius = 54.4f - 4.48f * beatmap.Difficulty.CircleSize;
 
         // Prep an RNG with a seed generated from beatmap diff
         var difficulty = beatmap.BeatmapInfo.Difficulty;
-        int seed = ((int)MathF.Round(difficulty.DrainRate + difficulty.CircleSize) * 20) + (int)(difficulty.OverallDifficulty * 41.2) + (int)MathF.Round(difficulty.ApproachRate);
+        int seed = (int)MathF.Round(difficulty.DrainRate + difficulty.CircleSize) * 20 + (int)(difficulty.OverallDifficulty * 41.2) + (int)MathF.Round(difficulty.ApproachRate);
         rng = new Random(seed);
 
         if (beatmap.HitObjects.Count == 0)
@@ -65,28 +67,31 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         newComboSinceLastTwin = false;
         lastTwinTime = targetTime;
 
-        twinLane = currentPattern.getNextLane(currentLane).NormalizePath();
+        twinLane = currentPattern.GetNextLane(currentLane).NormalizePath();
         return currentLane != twinLane;
     }
 
     protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap, CancellationToken cancellationToken)
     {
         SentakkiHitObject result;
+
         switch (original)
         {
-            case IHasPathWithRepeats s:
+            case IHasPathWithRepeats:
                 result = convertSlider(original);
                 break;
+
             case IHasDuration:
                 result = convertSpinner(original);
                 break;
+
             default:
                 result = convertHitCircle(original);
                 break;
         }
 
         // Twin note generation section
-        if (ConversionFlags.HasFlagFast(ConversionFlags.twinNotes))
+        if (ConversionFlags.HasFlagFast(ConversionFlags.TwinNotes))
         {
             switch (original)
             {
@@ -94,17 +99,19 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
                     bool allClaps = s.NodeSamples.All(ns => ns.Any(h => h.Name == HitSampleInfo.HIT_CLAP));
 
                     double fanStartTime = double.MaxValue;
+
                     if (result is Slide slide)
                     {
                         var slidePath = slide.SlideInfoList[0].SlidePath;
                         if (slidePath.EndsWithSlideFan)
-                            fanStartTime = slide.StartTime + (slide.Duration * slidePath.FanStartProgress);
+                            fanStartTime = slide.StartTime + slide.Duration * slidePath.FanStartProgress;
                     }
 
                     if (allClaps && fanStartTime == double.MaxValue)
                     {
                         if (tryGetLaneForTwinNote(original.StartTime, out int twinLane))
-                            yield return convertSlider(original, twinLane, !ConversionFlags.HasFlagFast(ConversionFlags.twinSlides), false);
+                            yield return convertSlider(original, twinLane, !ConversionFlags.HasFlagFast(ConversionFlags.TwinSlides), false);
+
                         break;
                     }
 
@@ -117,7 +124,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
                         if (samples.All(h => h.Name != HitSampleInfo.HIT_CLAP))
                             continue;
 
-                        double targetTime = original.StartTime + (spansDuration * i);
+                        double targetTime = original.StartTime + spansDuration * i;
 
                         if (targetTime >= fanStartTime)
                             break;
@@ -125,24 +132,25 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
                         bool isBreak = samples.Any(h => h.Name == HitSampleInfo.HIT_FINISH);
                         bool isSoft = samples.Any(h => h.Name == HitSampleInfo.HIT_WHISTLE);
 
-                        if (tryGetLaneForTwinNote(targetTime, out int twinLane))
-                        {
-                            var sho = (SentakkiLanedHitObject)convertHitCircle(original, twinLane, targetTime);
-                            sho.Break = isBreak;
-                            sho.Samples = samples;
-                            sho.Ex = isSoft;
+                        if (!tryGetLaneForTwinNote(targetTime, out int twinLane)) continue;
 
-                            yield return sho;
-                        }
+                        SentakkiLanedHitObject sho = convertHitCircle(original, twinLane, targetTime);
+                        sho.Break = isBreak;
+                        sho.Samples = samples;
+                        sho.Ex = isSoft;
+
+                        yield return sho;
                     }
 
                     break;
+
                 default:
                     if (original.Samples.Any(h => h.Name == HitSampleInfo.HIT_CLAP))
                     {
                         if (tryGetLaneForTwinNote(original.StartTime, out int twinLane))
                             yield return convertHitCircle(original, twinLane, original.StartTime);
                     }
+
                     break;
             }
         }
@@ -227,7 +235,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
     private bool isOverlapping(Vector2 a, Vector2 b)
         => (b - a).LengthSquared <= Math.Pow(circleRadius * 2, 2);
 
-    private bool isJump(HitObject original, HitObject next)
+    private static bool isJump(HitObject original, HitObject next)
     {
         // If two notes are this distance apart, consider it a jump
         const float jump_distance_threshold_squared = 128 * 128;
@@ -326,6 +334,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
 
         return timeDelta <= beatLength;
     }
+
     private bool isChronologicallyClose(HitObject a, HitObject b)
     {
         return isChronologicallyClose(a.GetEndTime(), b.StartTime);

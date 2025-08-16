@@ -5,27 +5,26 @@ using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.UI;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.UI
+namespace osu.Game.Rulesets.Sentakki.UI;
+
+public partial class SentakkiCursorContainer : GameplayCursorContainer
 {
-    public partial class SentakkiCursorContainer : GameplayCursorContainer
+    private Sprite? cursorSprite;
+    private Texture? cursorTexture;
+
+    protected override Drawable CreateCursor() => cursorSprite = new Sprite
     {
-        private Sprite? cursorSprite;
-        private Texture? cursorTexture;
+        Origin = Anchor.Centre,
+        Texture = cursorTexture,
+        Size = new Vector2(50)
+    };
 
-        protected override Drawable CreateCursor() => cursorSprite = new Sprite
-        {
-            Origin = Anchor.Centre,
-            Texture = cursorTexture,
-            Size = new Vector2(50)
-        };
+    [BackgroundDependencyLoader]
+    private void load(TextureStore textures)
+    {
+        cursorTexture = textures.Get("SentakkiIcon.png");
 
-        [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
-        {
-            cursorTexture = textures.Get("SentakkiIcon.png");
-
-            if (cursorSprite != null)
-                cursorSprite.Texture = cursorTexture;
-        }
+        if (cursorSprite != null)
+            cursorSprite.Texture = cursorTexture;
     }
 }

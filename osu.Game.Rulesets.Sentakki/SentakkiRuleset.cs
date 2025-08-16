@@ -37,221 +37,211 @@ using osu.Game.Screens.Ranking.Statistics;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki
+namespace osu.Game.Rulesets.Sentakki;
+
+public partial class SentakkiRuleset : Ruleset
 {
-    public partial class SentakkiRuleset : Ruleset
+    public override string RulesetAPIVersionSupported => CURRENT_RULESET_API_VERSION;
+
+    private static readonly Lazy<bool> is_development_build
+        = new Lazy<bool>(() => typeof(SentakkiRuleset).Assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled));
+
+    public static bool IsDevelopmentBuild => is_development_build.Value;
+
+    public override string Description => IsDevelopmentBuild ? "sentakki (Dev build)" : "sentakki";
+    public override string PlayingVerb => "Washing laundry";
+    public override string ShortName => "Sentakki";
+
+    public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor(this);
+    public override HealthProcessor CreateHealthProcessor(double drainStartTime) => new SentakkiHealthProcessor();
+
+    public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod>? mods = null) =>
+        new DrawableSentakkiRuleset(this, beatmap, mods);
+
+    public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) =>
+        new CompositeBeatmapConverter(beatmap, this);
+
+    public override IBeatmapProcessor CreateBeatmapProcessor(IBeatmap beatmap) =>
+        new SentakkiBeatmapProcessor(beatmap);
+
+    public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) =>
+        new SentakkiDifficultyCalculator(RulesetInfo, beatmap);
+
+    public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new SentakkiReplayFrame();
+
+    public override PerformanceCalculator CreatePerformanceCalculator() => new SentakkiPerformanceCalculator(this);
+
+    public override IEnumerable<Mod> GetModsFor(ModType type)
     {
-        public override string RulesetAPIVersionSupported => CURRENT_RULESET_API_VERSION;
-
-        private static readonly Lazy<bool> is_development_build
-            = new Lazy<bool>(() => typeof(SentakkiRuleset).Assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled));
-
-        public static bool IsDevelopmentBuild => is_development_build.Value;
-
-        public override string Description => IsDevelopmentBuild ? "sentakki (Dev build)" : "sentakki";
-        public override string PlayingVerb => "Washing laundry";
-        public override string ShortName => "Sentakki";
-
-        public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor(this);
-        public override HealthProcessor CreateHealthProcessor(double drainStartTime) => new SentakkiHealthProcessor();
-
-        public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod>? mods = null) =>
-            new DrawableSentakkiRuleset(this, beatmap, mods);
-
-        public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) =>
-            new CompositeBeatmapConverter(beatmap, this);
-
-        public override IBeatmapProcessor CreateBeatmapProcessor(IBeatmap beatmap) =>
-            new SentakkiBeatmapProcessor(beatmap);
-
-        public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) =>
-            new SentakkiDifficultyCalculator(RulesetInfo, beatmap);
-
-        public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new SentakkiReplayFrame();
-
-        public override PerformanceCalculator CreatePerformanceCalculator() => new SentakkiPerformanceCalculator(this);
-
-        public override IEnumerable<Mod> GetModsFor(ModType type)
+        switch (type)
         {
-            switch (type)
-            {
-                case ModType.DifficultyReduction:
-                    return new Mod[]
-                    {
-                        new MultiMod(new SentakkiModHalfTime(), new SentakkiModDaycore()),
-                    };
+            case ModType.DifficultyReduction:
+                return
+                [
+                    new MultiMod(new SentakkiModHalfTime(), new SentakkiModDaycore())
+                ];
 
-                case ModType.DifficultyIncrease:
-                    return new Mod[]
-                    {
-                        new SentakkiModHardRock(),
-                        new MultiMod(new SentakkiModSuddenDeath(), new SentakkiModPerfect()),
-                        new MultiMod(new SentakkiModChallenge(), new SentakkiModAccuracyChallenge()),
-                        new MultiMod(new SentakkiModDoubleTime(), new SentakkiModNightcore()),
-                        new SentakkiModHidden(),
-                    };
+            case ModType.DifficultyIncrease:
+                return
+                [
+                    new SentakkiModHardRock(),
+                    new MultiMod(new SentakkiModSuddenDeath(), new SentakkiModPerfect()),
+                    new MultiMod(new SentakkiModChallenge(), new SentakkiModAccuracyChallenge()),
+                    new MultiMod(new SentakkiModDoubleTime(), new SentakkiModNightcore()),
+                    new SentakkiModHidden()
+                ];
 
-                case ModType.Automation:
-                    return new Mod[]
-                    {
-                        new SentakkiModAutoplay(),
-                        new SentakkiModAutoTouch()
-                    };
+            case ModType.Automation:
+                return
+                [
+                    new SentakkiModAutoplay(),
+                    new SentakkiModAutoTouch()
+                ];
 
-                case ModType.Conversion:
-                    return new Mod[]
-                    {
-                        new SentakkiModExperimental(),
-                        new SentakkiModClassic(),
-                        new SentakkiModMirror(),
-                        new SentakkiModDifficultyAdjust()
-                    };
+            case ModType.Conversion:
+                return
+                [
+                    new SentakkiModExperimental(),
+                    new SentakkiModClassic(),
+                    new SentakkiModMirror(),
+                    new SentakkiModDifficultyAdjust()
+                ];
 
-                case ModType.Fun:
-                    return new Mod[]
-                    {
-                        new MultiMod(new ModWindUp(), new ModWindDown()),
-                        new SentakkiModBarrelRoll(),
-                        new SentakkiModMuted(),
-                        new ModAdaptiveSpeed(),
-                        new SentakkiModSynesthesia(),
-                    };
+            case ModType.Fun:
+                return
+                [
+                    new MultiMod(new ModWindUp(), new ModWindDown()),
+                    new SentakkiModBarrelRoll(),
+                    new SentakkiModMuted(),
+                    new ModAdaptiveSpeed(),
+                    new SentakkiModSynesthesia()
+                ];
 
-                case ModType.System:
-                    return new Mod[]
-                    {
-                        new SentakkiModTouchDevice()
-                    };
+            case ModType.System:
+                return
+                [
+                    new SentakkiModTouchDevice()
+                ];
 
-                default:
-                    return [];
-            }
+            default:
+                return [];
         }
+    }
 
-        public override RulesetSettingsSubsection CreateSettings() => new SentakkiSettingsSubsection(this);
+    public override RulesetSettingsSubsection CreateSettings() => new SentakkiSettingsSubsection(this);
 
-        public override IRulesetConfigManager CreateConfig(SettingsStore? settings) => new SentakkiRulesetConfigManager(settings, RulesetInfo);
+    public override IRulesetConfigManager CreateConfig(SettingsStore? settings) => new SentakkiRulesetConfigManager(settings, RulesetInfo);
 
-        public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) => new[]
+    public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) =>
+    [
+        new KeyBinding(InputKey.Z, SentakkiAction.Button1),
+        new KeyBinding(InputKey.X, SentakkiAction.Button2),
+        new KeyBinding(InputKey.MouseLeft, SentakkiAction.Button1),
+        new KeyBinding(InputKey.MouseRight, SentakkiAction.Button2),
+        new KeyBinding(InputKey.Number1, SentakkiAction.Key1),
+        new KeyBinding(InputKey.Number2, SentakkiAction.Key2),
+        new KeyBinding(InputKey.Number3, SentakkiAction.Key3),
+        new KeyBinding(InputKey.Number4, SentakkiAction.Key4),
+        new KeyBinding(InputKey.Number5, SentakkiAction.Key5),
+        new KeyBinding(InputKey.Number6, SentakkiAction.Key6),
+        new KeyBinding(InputKey.Number7, SentakkiAction.Key7),
+        new KeyBinding(InputKey.Number8, SentakkiAction.Key8)
+    ];
+
+    public override StatisticItem[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap) =>
+    [
+        new StatisticItem(SentakkiStatisticsStrings.TimingDistribution, () => new HitEventTimingDistributionGraph(score.HitEvents)
         {
-            new KeyBinding(InputKey.Z, SentakkiAction.Button1),
-            new KeyBinding(InputKey.X, SentakkiAction.Button2),
-            new KeyBinding(InputKey.MouseLeft, SentakkiAction.Button1),
-            new KeyBinding(InputKey.MouseRight, SentakkiAction.Button2),
-            new KeyBinding(InputKey.Number1, SentakkiAction.Key1),
-            new KeyBinding(InputKey.Number2, SentakkiAction.Key2),
-            new KeyBinding(InputKey.Number3, SentakkiAction.Key3),
-            new KeyBinding(InputKey.Number4, SentakkiAction.Key4),
-            new KeyBinding(InputKey.Number5, SentakkiAction.Key5),
-            new KeyBinding(InputKey.Number6, SentakkiAction.Key6),
-            new KeyBinding(InputKey.Number7, SentakkiAction.Key7),
-            new KeyBinding(InputKey.Number8, SentakkiAction.Key8),
-        };
+            RelativeSizeAxes = Axes.X,
+            Height = 250
+        }, true),
 
-        public override StatisticItem[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap) => new[]
+        new StatisticItem(SentakkiStatisticsStrings.JudgementChart, () => new JudgementChart([.. score.HitEvents.Where(e => e.HitObject is SentakkiHitObject)])
         {
-            new StatisticItem(SentakkiStatisticsStrings.TimingDistribution, () => new HitEventTimingDistributionGraph(score.HitEvents)
-            {
-                RelativeSizeAxes = Axes.X,
-                Height = 250
-            }, true),
+            RelativeSizeAxes = Axes.X,
+            Size = new Vector2(1, 250)
+        }, true),
 
-            new StatisticItem(SentakkiStatisticsStrings.JudgementChart, () => new JudgementChart(score.HitEvents.Where(e => e.HitObject is SentakkiHitObject).ToList())
-            {
-                RelativeSizeAxes = Axes.X,
-                Size = new Vector2(1, 250)
-            }, true),
+        new StatisticItem(string.Empty, () => new SimpleStatisticTable(2, [
+            new AverageHitError(score.HitEvents),
+            new UnstableRate(score.HitEvents)
+        ]), true)
+    ];
 
-            new StatisticItem(string.Empty, () => new SimpleStatisticTable(2, new SimpleStatisticItem[]
-            {
-                new AverageHitError(score.HitEvents),
-                new UnstableRate(score.HitEvents),
-            }), true)
-        };
-
-        public override Drawable CreateIcon() =>
-        new ConstrainedIconContainer()
+    public override Drawable CreateIcon() =>
+        new ConstrainedIconContainer
         {
             Icon = new SentakkiIcon(this),
             Size = new Vector2(100, 100)
         };
 
-        protected override IEnumerable<HitResult> GetValidHitResults()
+    protected override IEnumerable<HitResult> GetValidHitResults()
+        => [HitResult.Perfect, HitResult.Great, HitResult.Good, HitResult.Ok];
+
+    public override LocalisableString GetDisplayNameForHitResult(HitResult result) => result.GetDisplayNameForSentakkiResult();
+
+    public partial class SentakkiIcon : CompositeDrawable
+    {
+        private readonly Ruleset ruleset;
+
+        public SentakkiIcon(Ruleset ruleset)
         {
-            return new[]
-            {
-                HitResult.Perfect,
-                HitResult.Great,
-                HitResult.Good,
-                HitResult.Ok,
-            };
+            Anchor = Origin = Anchor.Centre;
+            this.ruleset = ruleset;
+            FillAspectRatio = 1;
+            FillMode = FillMode.Fit;
+            Size = new Vector2(100, 100);
         }
 
-        public override LocalisableString GetDisplayNameForHitResult(HitResult result) => result.GetDisplayNameForSentakkiResult();
+        // We don't want to generate a new texture store everytime this used, so we create a single texture store for all usages of this icon.
+        private static LargeTextureStore? textureStore;
 
-        public partial class SentakkiIcon : CompositeDrawable
+        [BackgroundDependencyLoader]
+        private void load(GameHost host)
         {
-            private readonly Ruleset ruleset;
+            textureStore ??= new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
 
-            public SentakkiIcon(Ruleset ruleset)
+            AddInternal(new Sprite
             {
-                Anchor = Origin = Anchor.Centre;
-                this.ruleset = ruleset;
-                FillAspectRatio = 1;
-                FillMode = FillMode.Fit;
-                Size = new Vector2(100, 100);
-            }
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                RelativeSizeAxes = Axes.Both,
+                Texture = textureStore.Get("Textures/SentakkiIcon.png"),
+            });
 
-            // We don't want to generate a new texture store everytime this used, so we create a single texture store for all usages of this icon.
-            private static LargeTextureStore? textureStore = null!;
-
-            [BackgroundDependencyLoader]
-            private void load(GameHost host)
+            if (IsDevelopmentBuild)
             {
-                textureStore ??= new LargeTextureStore(host.Renderer, host.CreateTextureLoaderStore(ruleset.CreateResourceStore()));
-
-                AddInternal(new Sprite
+                AddInternal(new Container
                 {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    RelativeSizeAxes = Axes.Both,
-                    Texture = textureStore.Get("Textures/SentakkiIcon.png"),
-                });
-
-                if (IsDevelopmentBuild)
-                {
-                    AddInternal(new Container
-                    {
-                        Anchor = Anchor.BottomRight,
-                        Origin = Anchor.BottomRight,
-                        Size = new Vector2(60, 35),
-                        Children = new Drawable[]
+                    Anchor = Anchor.BottomRight,
+                    Origin = Anchor.BottomRight,
+                    Size = new Vector2(60, 35),
+                    Children =
+                    [
+                        // Used to offset the fonts being misaligned
+                        new Container
                         {
-                            // Used to offset the fonts being misaligned
-                            new Container
+                            Anchor = Anchor.BottomCentre,
+                            Origin = Anchor.BottomCentre,
+                            Size = new Vector2(60, 32),
+                            CornerRadius = 8f,
+                            CornerExponent = 2.5f,
+                            Masking = true,
+                            Child = new Box
                             {
-                                Anchor = Anchor.BottomCentre,
-                                Origin = Anchor.BottomCentre,
-                                Size = new Vector2(60, 32),
-                                CornerRadius = 8f,
-                                CornerExponent = 2.5f,
-                                Masking = true,
-                                Child = new Box
-                                {
-                                    RelativeSizeAxes = Axes.Both,
-                                },
+                                RelativeSizeAxes = Axes.Both,
                             },
-                            new SpriteText
-                            {
-                                Text = "DEV",
-                                Colour = Color4.Gray,
-                                Font = OsuFont.Torus.With(size: 32, weight: FontWeight.Bold),
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                            }
+                        },
+                        new SpriteText
+                        {
+                            Text = "DEV",
+                            Colour = Color4.Gray,
+                            Font = OsuFont.Torus.With(size: 32, weight: FontWeight.Bold),
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
                         }
-                    });
-                }
+                    ]
+                });
             }
         }
     }

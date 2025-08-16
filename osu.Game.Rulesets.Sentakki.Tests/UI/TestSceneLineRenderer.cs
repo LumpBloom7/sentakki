@@ -8,46 +8,45 @@ using osu.Game.Tests.Visual;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Tests.UI
+namespace osu.Game.Rulesets.Sentakki.Tests.UI;
+
+[TestFixture]
+public partial class TestSceneLineRenderer : OsuTestScene
 {
-    [TestFixture]
-    public partial class TestSceneLineRenderer : OsuTestScene
+    private readonly LineRenderer lineRenderer;
+
+    protected override Ruleset CreateRuleset() => new SentakkiRuleset();
+
+    public TestSceneLineRenderer()
     {
-        private readonly LineRenderer lineRenderer;
+        Add(lineRenderer = new LineRenderer());
+        AddStep("Create HitObject", () => createHitObjects());
+        AddStep("Create twins", () => createHitObjects(2));
+        AddStep("Create triplets", () => createHitObjects(3));
+        AddStep("Create quadruplets", () => createHitObjects(4));
+    }
 
-        protected override Ruleset CreateRuleset() => new SentakkiRuleset();
-
-        public TestSceneLineRenderer()
+    private void createHitObjects(int amount = 1)
+    {
+        for (int i = 0; i < amount; ++i)
         {
-            Add(lineRenderer = new LineRenderer());
-            AddStep("Create HitObject", () => createHitObjects());
-            AddStep("Create twins", () => createHitObjects(2));
-            AddStep("Create triplets", () => createHitObjects(3));
-            AddStep("Create quadruplets", () => createHitObjects(4));
-        }
-
-        private void createHitObjects(int amount = 1)
-        {
-            for (int i = 0; i < amount; ++i)
+            int lane = RNG.Next(0, 8);
+            var ho = new Tap
             {
-                int lane = RNG.Next(0, 8);
-                var ho = new Tap
-                {
-                    StartTime = Time.Current + 1000,
-                    Lane = lane
-                };
-                lineRenderer.AddHitObject(ho);
+                StartTime = Time.Current + 1000,
+                Lane = lane
+            };
+            lineRenderer.AddHitObject(ho);
 
-                Add(new Circle
-                {
-                    Size = new Vector2(20),
-                    Colour = Color4.White,
-                    LifetimeEnd = Time.Current + 1000,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Position = SentakkiExtensions.GetPositionAlongLane(300, lane)
-                });
-            }
+            Add(new Circle
+            {
+                Size = new Vector2(20),
+                Colour = Color4.White,
+                LifetimeEnd = Time.Current + 1000,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Position = SentakkiExtensions.GetPositionAlongLane(300, lane)
+            });
         }
     }
 }

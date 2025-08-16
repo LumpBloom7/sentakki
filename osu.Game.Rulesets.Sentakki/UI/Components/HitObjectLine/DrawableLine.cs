@@ -6,62 +6,61 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
+namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine;
+
+public partial class DrawableLine : PoolableDrawable
 {
-    public partial class DrawableLine : PoolableDrawable
+    public override bool RemoveCompletedTransforms => false;
+
+    public LineLifetimeEntry Entry = null!;
+
+    private CircularProgress line = null!;
+
+    public DrawableLine()
     {
-        public override bool RemoveCompletedTransforms => false;
+        RelativeSizeAxes = Axes.Both;
+        Anchor = Origin = Anchor.Centre;
+        Scale = new Vector2(.22f);
+        Alpha = 0;
+    }
 
-        public LineLifetimeEntry Entry = null!;
+    private readonly BindableDouble animationDuration = new BindableDouble(1000);
 
-        private CircularProgress line = null!;
+    [BackgroundDependencyLoader]
+    private void load(DrawableSentakkiRuleset? drawableRuleset)
+    {
+        animationDuration.TryBindTo(drawableRuleset?.AdjustedAnimDuration);
+        animationDuration.BindValueChanged(_ => resetAnimation());
 
-        public DrawableLine()
+        AddInternal(line = new CircularProgress
         {
-            RelativeSizeAxes = Axes.Both;
-            Anchor = Origin = Anchor.Centre;
-            Scale = new Vector2(.22f);
-            Alpha = 0;
-        }
+            RelativeSizeAxes = Axes.Both,
+            FillMode = FillMode.Fit,
+            Anchor = Anchor.TopCentre,
+            Origin = Anchor.TopCentre,
+            InnerRadius = 0.026f,
+            RoundedCaps = true,
+            Alpha = 0.8f,
+        });
+    }
 
-        private readonly BindableDouble animationDuration = new BindableDouble(1000);
+    protected override void PrepareForUse()
+    {
+        base.PrepareForUse();
 
-        [BackgroundDependencyLoader]
-        private void load(DrawableSentakkiRuleset? drawableRuleset)
-        {
-            animationDuration.TryBindTo(drawableRuleset?.AdjustedAnimDuration);
-            animationDuration.BindValueChanged(_ => resetAnimation());
+        Colour = Entry.Colour;
+        Rotation = Entry.Rotation;
+        line.Progress = Entry.AngleRange;
+        resetAnimation();
+    }
 
-            AddInternal(line = new CircularProgress
-            {
-                RelativeSizeAxes = Axes.Both,
-                FillMode = FillMode.Fit,
-                Anchor = Anchor.TopCentre,
-                Origin = Anchor.TopCentre,
-                InnerRadius = 0.026f,
-                RoundedCaps = true,
-                Alpha = 0.8f,
-            });
-        }
+    private void resetAnimation()
+    {
+        if (!IsInUse) return;
 
-        protected override void PrepareForUse()
-        {
-            base.PrepareForUse();
-
-            Colour = Entry.Colour;
-            Rotation = Entry.Rotation;
-            line.Progress = Entry.AngleRange;
-            resetAnimation();
-        }
-
-        private void resetAnimation()
-        {
-            if (!IsInUse) return;
-
-            ApplyTransformsAt(double.MinValue);
-            ClearTransforms();
-            using (BeginAbsoluteSequence(Entry.StartTime - animationDuration.Value))
-                this.FadeIn(animationDuration.Value / 2).Then().ScaleTo(1, animationDuration.Value / 2).Then().FadeOut();
-        }
+        ApplyTransformsAt(double.MinValue);
+        ClearTransforms();
+        using (BeginAbsoluteSequence(Entry.StartTime - animationDuration.Value))
+            this.FadeIn(animationDuration.Value / 2).Then().ScaleTo(1, animationDuration.Value / 2).Then().FadeOut();
     }
 }

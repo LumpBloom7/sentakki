@@ -25,7 +25,7 @@ public class LineLifetimeEntry : LifetimeEntry
         animationDuration.BindValueChanged(refreshLifetime, true);
     }
 
-    public List<SentakkiLanedHitObject> HitObjects = new List<SentakkiLanedHitObject>();
+    public List<SentakkiLanedHitObject> HitObjects = [];
 
     public float AngleRange { get; private set; }
     public ColourInfo Colour { get; private set; }
@@ -75,11 +75,11 @@ public class LineLifetimeEntry : LifetimeEntry
 
                 Colour = Color4.Gold;
 
-                int angleRange = delta == 4 ? 360 : (90 + (45 * delta));
+                int angleRange = delta == 4 ? 360 : 90 + 45 * delta;
 
                 AngleRange = angleRange / 360f;
 
-                Rotation = anchor.Lane.GetRotationForLane() + (delta * 22.5f) - (angleRange / 2f);
+                Rotation = anchor.Lane.GetRotationForLane() + delta * 22.5f - angleRange / 2f;
                 break;
             }
         }
