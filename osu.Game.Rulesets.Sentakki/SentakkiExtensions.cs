@@ -1,6 +1,8 @@
 using System;
 using osu.Framework.Extensions;
 using osu.Framework.Extensions.Color4Extensions;
+using osu.Framework.Graphics.Colour;
+using osu.Game.Graphics;
 using osu.Game.Rulesets.Scoring;
 using osuTK;
 using osuTK.Graphics;
@@ -87,23 +89,15 @@ namespace osu.Game.Rulesets.Sentakki
         public static float Mod(this float a, float b)
             => (a %= b) < 0 ? a + b : a;
 
-        public static Color4 GetColorForSentakkiResult(this HitResult result)
+        public static ColourInfo ForSentakkiResult(this OsuColour osuColour, HitResult result)
         {
             switch (result)
             {
                 case HitResult.Perfect:
-                    return Color4.Orange.Lighten(0.3f);
-                case HitResult.Great:
-                    return Color4.Orange;
-
-                case HitResult.Good:
-                    return Color4.DeepPink;
-
-                case HitResult.Ok:
-                    return Color4.Green;
+                    return ColourInfo.GradientVertical(Color4Extensions.FromHex("#7CF6FF"), Color4Extensions.FromHex("#FF9AD7"));
 
                 default:
-                    return Color4.LightGray;
+                    return osuColour.ForHitResult(result);
             }
         }
 
