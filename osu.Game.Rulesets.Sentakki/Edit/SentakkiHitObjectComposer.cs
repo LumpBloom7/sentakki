@@ -74,6 +74,7 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
         {
             RotationHandler = BlueprintContainer.SelectionHandler.RotationHandler,
         });
+        RightToolbox.Add(new SimaiEditorToolboxGroup());
 
         LayerBelowRuleset.Add(snapProvider);
 
