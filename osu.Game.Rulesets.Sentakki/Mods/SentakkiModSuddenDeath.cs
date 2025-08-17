@@ -1,17 +1,16 @@
 ﻿using System;
 using osu.Game.Rulesets.Mods;
 
-namespace osu.Game.Rulesets.Sentakki.Mods
+namespace osu.Game.Rulesets.Sentakki.Mods;
+
+public class SentakkiModSuddenDeath : ModSuddenDeath
 {
-    public class SentakkiModSuddenDeath : ModSuddenDeath
-    {
-        public override Type[] IncompatibleMods => new[]
-        {
-            typeof(ModNoFail),
-            typeof(ModRelax),
-            typeof(ModAutoplay),
-            typeof(SentakkiModChallenge),
-            typeof(ModPerfect)
-        };
-    }
+    public override Type[] IncompatibleMods =>
+    [
+        typeof(ModNoFail),
+        typeof(ModRelax),
+        typeof(ModAutoplay),
+        typeof(SentakkiModChallenge),
+        typeof(ModPerfect)
+    ];
 }

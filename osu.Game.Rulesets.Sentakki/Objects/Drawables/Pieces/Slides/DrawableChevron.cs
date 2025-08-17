@@ -12,6 +12,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
 {
     private float thickness = 13f;
+
     public float Thickness
     {
         get => thickness;
@@ -26,6 +27,7 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
     }
 
     private float shadowRadius = 7.5f;
+
     public float ShadowRadius
     {
         get => shadowRadius;
@@ -33,12 +35,14 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
         {
             if (shadowRadius == value)
                 return;
+
             shadowRadius = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
 
     private bool glow;
+
     public bool Glow
     {
         get => glow;
@@ -46,12 +50,14 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
         {
             if (glow == value)
                 return;
+
             glow = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
 
     private bool fanChevron;
+
     public bool FanChevron
     {
         get => fanChevron;

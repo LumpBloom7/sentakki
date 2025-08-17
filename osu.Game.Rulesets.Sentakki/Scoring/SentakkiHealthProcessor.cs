@@ -6,20 +6,21 @@ namespace osu.Game.Rulesets.Sentakki.Scoring;
 
 public partial class SentakkiHealthProcessor : AccumulatingHealthProcessor
 {
-    public SentakkiHealthProcessor() : base(0)
+    public SentakkiHealthProcessor()
+        : base(0)
     {
     }
 
-    private float healthMultiplier = 0;
+    private float healthMultiplier;
 
     public override void ApplyBeatmap(IBeatmap beatmap)
     {
         base.ApplyBeatmap(beatmap);
-        float maxHP = 0;
+        float maxHp = 0;
         foreach (var ho in EnumerateHitObjects(beatmap))
-            maxHP += healthForResult(ho.CreateJudgement().MaxResult);
+            maxHp += healthForResult(ho.CreateJudgement().MaxResult);
 
-        healthMultiplier = 1 / maxHP;
+        healthMultiplier = 1 / maxHp;
     }
 
     protected override double GetHealthIncreaseFor(JudgementResult result) => healthForResult(result.Type) * healthMultiplier;

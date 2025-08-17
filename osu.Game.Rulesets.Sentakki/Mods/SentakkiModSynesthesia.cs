@@ -7,11 +7,9 @@ using osu.Game.Configuration;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Screens.Edit;
 using osuTK.Graphics;
 
@@ -23,7 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods;
 public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProcessor
 {
     [SettingSource(typeof(SentakkiModSynesthesiaStrings), nameof(SentakkiModSynesthesiaStrings.IntervalColouring), nameof(SentakkiModSynesthesiaStrings.IntervalColouringDescription))]
-    public BindableBool IntervalColouring { get; } = new BindableBool(false);
+    public BindableBool IntervalColouring { get; } = new BindableBool();
 
     public override bool Ranked => true;
 
@@ -48,7 +46,8 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
             // Touch hold uses a palette instead of a single colour
             if (hitObject is TouchHold th)
             {
-                th.ColourPalette = [
+                th.ColourPalette =
+                [
                     colour,
                     colour.Darken(0.7f),
                     colour,
@@ -78,6 +77,7 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
 
             // check the back
             double prevDelta = double.MaxValue;
+
             for (int j = i - 1; j >= 0; --j)
             {
                 double delta = currentTime - getStartTime(hitobjects[j]);
@@ -91,6 +91,7 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
 
             // check the front
             double frontDelta = double.MaxValue;
+
             for (int j = i + 1; j < hitobjects.Count; ++j)
             {
                 double delta = getStartTime(hitobjects[j]) - currentTime;
@@ -113,7 +114,8 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
             // Touch hold uses a palette instead of a single colour
             if (hitobjects[i] is TouchHold th)
             {
-                th.ColourPalette = [
+                th.ColourPalette =
+                [
                     colour,
                     colour.Darken(0.5f),
                     colour,
@@ -136,4 +138,3 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
         return ho.StartTime;
     }
 }
-

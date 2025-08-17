@@ -1,37 +1,34 @@
+using System;
 using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Scoring;
 
 public class SentakkiTapHitWindows : SentakkiHitWindows
 {
-    private static readonly DifficultyRange[] default_ranges =
+    protected override double DefaultWindowFor(HitResult result) => result switch
     {
-        SimpleDifficultyRange(HitResult.Miss, 9 * timing_unit),
-        SimpleDifficultyRange(HitResult.Ok, 9 * timing_unit),
-        SimpleDifficultyRange(HitResult.Good, 6 * timing_unit),
-        SimpleDifficultyRange(HitResult.Great, 3 * timing_unit),
-        SimpleDifficultyRange(HitResult.Perfect, 1 * timing_unit),
+        HitResult.Miss or HitResult.Ok => 9 * TIMING_UNIT,
+        HitResult.Good => 6 * TIMING_UNIT,
+        HitResult.Great => 3 * TIMING_UNIT,
+        HitResult.Perfect => 1 * TIMING_UNIT,
+        _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
     };
 
-    private static readonly DifficultyRange[] maji_ranges =
+    protected override double MajiWindowFor(HitResult result) => result switch
     {
-        SimpleDifficultyRange(HitResult.Miss, 6 * timing_unit),
-        SimpleDifficultyRange(HitResult.Ok, 6 * timing_unit),
-        SimpleDifficultyRange(HitResult.Good, 3 * timing_unit),
-        SimpleDifficultyRange(HitResult.Great, 2 * timing_unit),
-        SimpleDifficultyRange(HitResult.Perfect, 1 * timing_unit),
+        HitResult.Miss or HitResult.Ok => 6 * TIMING_UNIT,
+        HitResult.Good => 3 * TIMING_UNIT,
+        HitResult.Great => 2 * TIMING_UNIT,
+        HitResult.Perfect => 1 * TIMING_UNIT,
+        _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
     };
 
-    private static readonly DifficultyRange[] gachi_ranges =
+    protected override double GachiWindowFor(HitResult result) => result switch
     {
-        SimpleDifficultyRange(HitResult.Miss, 6 * timing_unit),
-        SimpleDifficultyRange(HitResult.Ok, 6 * timing_unit),
-        SimpleDifficultyRange(HitResult.Good, 3 * timing_unit),
-        SimpleDifficultyRange(HitResult.Great, 1 * timing_unit),
-        SimpleDifficultyRange(HitResult.Perfect, 1 * timing_unit),
+        HitResult.Miss or HitResult.Ok => 6 * TIMING_UNIT,
+        HitResult.Good => 3 * TIMING_UNIT,
+        HitResult.Great => 1 * TIMING_UNIT,
+        HitResult.Perfect => 1 * TIMING_UNIT,
+        _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
     };
-
-    protected override DifficultyRange[] GetDefaultRanges() => default_ranges;
-    protected override DifficultyRange[] GetMajiRanges() => maji_ranges;
-    protected override DifficultyRange[] GetGachiRanges() => gachi_ranges;
 }

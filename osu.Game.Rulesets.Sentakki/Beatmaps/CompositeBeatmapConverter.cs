@@ -13,11 +13,12 @@ public class CompositeBeatmapConverter : BeatmapConverter<SentakkiHitObject>
 {
     public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition) || Beatmap.BeatmapInfo.Ruleset.ShortName == "Sentakki";
 
-    public ConversionFlags flags;
+    public ConversionFlags Flags;
 
-    private Ruleset ruleset;
+    private readonly Ruleset ruleset;
 
-    public CompositeBeatmapConverter(IBeatmap beatmap, Ruleset ruleset) : base(beatmap, ruleset)
+    public CompositeBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
+        : base(beatmap, ruleset)
     {
         this.ruleset = ruleset;
     }
@@ -31,12 +32,12 @@ public class CompositeBeatmapConverter : BeatmapConverter<SentakkiHitObject>
 
         BeatmapConverter<SentakkiHitObject> converter;
 
-        if (flags.HasFlag(ConversionFlags.oldConverter))
-            converter = new SentakkiBeatmapConverterOld(original, ruleset) { ConversionFlags = flags };
+        if (Flags.HasFlag(ConversionFlags.OldConverter))
+            converter = new SentakkiBeatmapConverterOld(original, ruleset) { ConversionFlags = Flags };
         else
-            converter = new SentakkiBeatmapConverter(original, ruleset) { ConversionFlags = flags };
+            converter = new SentakkiBeatmapConverter(original, ruleset) { ConversionFlags = Flags };
 
-        return ((SentakkiBeatmap)converter.Convert(cancellationToken)) ?? base.ConvertBeatmap(original, cancellationToken);
+        return (SentakkiBeatmap)converter.Convert(cancellationToken);
     }
 
     private Beatmap<SentakkiHitObject> cloneBeatmap(IBeatmap original)

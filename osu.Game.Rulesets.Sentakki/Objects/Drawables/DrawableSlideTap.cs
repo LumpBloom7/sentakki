@@ -2,46 +2,45 @@
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
+namespace osu.Game.Rulesets.Sentakki.Objects.Drawables;
+
+public partial class DrawableSlideTap : DrawableTap
 {
-    public partial class DrawableSlideTap : DrawableTap
+    protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
+
+    protected new DrawableSlide ParentHitObject => (DrawableSlide)base.ParentHitObject;
+
+    public DrawableSlideTap()
+        : this(null)
     {
-        protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
+    }
 
-        protected new DrawableSlide ParentHitObject => (DrawableSlide)base.ParentHitObject;
+    public DrawableSlideTap(SlideTap? hitObject)
+        : base(hitObject)
+    {
+    }
 
-        public DrawableSlideTap()
-            : this(null)
-        {
-        }
+    protected override void OnApply()
+    {
+        base.OnApply();
 
-        public DrawableSlideTap(SlideTap? hitObject)
-            : base(hitObject)
-        {
-        }
+        if (TapVisual is SlideTapPiece note)
+            note.SecondStar.Alpha = ParentHitObject.HitObject.SlideInfoList.Count > 1 ? 1 : 0;
+    }
 
-        protected override void OnApply()
-        {
-            base.OnApply();
+    protected override void UpdateInitialTransforms()
+    {
+        base.UpdateInitialTransforms();
 
-            if (TapVisual is SlideTapPiece note)
-                note.SecondStar.Alpha = ParentHitObject.HitObject.SlideInfoList.Count > 1 ? 1 : 0;
-        }
+        const double baseline_spin_duration = 250;
 
-        protected override void UpdateInitialTransforms()
-        {
-            base.UpdateInitialTransforms();
+        var note = (SlideTapPiece)TapVisual;
 
-            const double baseline_spin_duration = 250;
+        double spinDuration = baseline_spin_duration * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
 
-            var note = (SlideTapPiece)TapVisual;
+        if (ParentHitObject is DrawableSlide slide)
+            spinDuration += slide.HitObject.SlideInfoList.FirstOrDefault()?.Duration ?? 1000;
 
-            double spinDuration = baseline_spin_duration * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
-
-            if (ParentHitObject is DrawableSlide slide)
-                spinDuration += slide.HitObject.SlideInfoList.FirstOrDefault()?.Duration ?? 1000;
-
-            note.Stars.Spin(spinDuration, RotationDirection.Counterclockwise).Loop();
-        }
+        note.Stars.Spin(spinDuration, RotationDirection.Counterclockwise).Loop();
     }
 }

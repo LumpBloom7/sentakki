@@ -15,6 +15,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 public partial class SentakkiBeatmapConverter
 {
     private SentakkiHitObject convertSlider(HitObject original) => convertSlider(original, currentLane, false, true);
+
     private SentakkiHitObject convertSlider(HitObject original, int lane, bool forceHoldNote, bool allowFans)
     {
         double duration = ((IHasDuration)original).Duration;
@@ -28,7 +29,7 @@ public partial class SentakkiBeatmapConverter
             var slide = tryConvertToSlide(original, lane, allowFans);
 
             if (slide is not null)
-                return slide.Value.Item1;
+                return slide;
         }
 
         bool isBreak = slider.NodeSamples[0].Any(s => s.Name == HitSampleInfo.HIT_FINISH);
@@ -43,26 +44,18 @@ public partial class SentakkiBeatmapConverter
             Samples = slider.NodeSamples[0],
             Ex = isSoft,
         };
+
         return hold;
     }
 
-    private (Slide, int endLane)? tryConvertToSlide(HitObject original, int lane, bool allowFans)
+    private Slide? tryConvertToSlide(HitObject original, int lane, bool allowFans)
     {
         var nodeSamples = ((IHasPathWithRepeats)original).NodeSamples;
-
-        var selectedPath = chooseSlidePartFor(original, allowFans);
-
-        if (selectedPath is null)
-            return null;
 
         bool tailBreak = nodeSamples.Last().Any(s => s.Name == HitSampleInfo.HIT_FINISH);
         bool headBreak = nodeSamples.First().Any(s => s.Name == HitSampleInfo.HIT_FINISH);
         bool headSoft = nodeSamples.First().Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
         bool tailSoft = nodeSamples.Last().Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
-
-        int endOffset = selectedPath.Sum(p => p.EndOffset);
-
-        int end = lane + endOffset;
 
         double beatLength = Beatmap.ControlPointInfo.TimingPointAt(original.StartTime).BeatLength;
         double duration = ((IHasDuration)original).Duration;
@@ -73,15 +66,20 @@ public partial class SentakkiBeatmapConverter
         while (shootDelay * beatLength >= duration - 50)
         {
             shootDelay /= 2;
-            // If shoot delay is below 0.25 beats, then might as well remove it
+            // If shoot delay is below 0.25 beats, then this cannot ever be a slide
             if (shootDelay < 0.25)
-                shootDelay = 0;
+                return null;
         }
+
+        var selectedPath = chooseSlidePartFor(original, allowFans, duration - shootDelay * beatLength);
+
+        if (selectedPath is null)
+            return null;
 
         var slide = new Slide
         {
-            SlideInfoList = new List<SlideBodyInfo>()
-            {
+            SlideInfoList =
+            [
                 new SlideBodyInfo
                 {
                     SlidePathParts = selectedPath,
@@ -90,42 +88,41 @@ public partial class SentakkiBeatmapConverter
                     Ex = tailSoft,
                     ShootDelay = shootDelay,
                 }
-            },
-            Lane = lane.NormalizePath(),
+            ],
+            Lane = lane.NormalizeLane(),
             StartTime = original.StartTime,
             Samples = nodeSamples.FirstOrDefault(),
             Break = headBreak,
             Ex = headSoft
         };
 
-        return (slide, end);
+        return slide;
     }
 
-    private SlideBodyPart[]? chooseSlidePartFor(HitObject original, bool allowFans)
+    private SlideBodyPart[]? chooseSlidePartFor(HitObject original, bool allowFans, double duration)
     {
-        double velocity = original is IHasSliderVelocity slider ? (slider.SliderVelocityMultiplier * beatmap.Difficulty.SliderMultiplier) : 1;
-        double duration = ((IHasDuration)original).Duration;
+        double velocity = original is IHasSliderVelocity slider ? slider.SliderVelocityMultiplier * beatmap.Difficulty.SliderMultiplier : 1;
         double adjustedDuration = duration * velocity;
 
         var candidates = SlidePaths.VALID_CONVERT_PATHS.AsEnumerable();
-        if (!ConversionFlags.HasFlag(ConversionFlags.fanSlides) || !allowFans)
+        if (!ConversionFlags.HasFlag(ConversionFlags.FanSlides) || !allowFans)
             candidates = candidates.Where(p => p.SlidePart.Shape != SlidePaths.PathShapes.Fan);
 
-        if (!ConversionFlags.HasFlag(ConversionFlags.disableCompositeSlides))
+        if (!ConversionFlags.HasFlag(ConversionFlags.DisableCompositeSlides))
         {
-            List<SlideBodyPart> parts = new List<SlideBodyPart>();
+            List<SlideBodyPart> parts = [];
 
             double durationLeft = duration;
 
             SlideBodyPart? lastPart = null;
 
-            double velocityAdjustmentFactor = 1 + (0.5 / velocity);
+            double velocityAdjustmentFactor = 1 + 0.5 / velocity;
 
             while (true)
             {
                 var nextChoices = candidates.Where(p => p.MinDuration * velocityAdjustmentFactor < durationLeft)
-                    .Shuffle(rng)
-                    .SkipWhile(p => p.SlidePart.Shape == SlidePaths.PathShapes.Circle && !isValidCircleComposition(p.SlidePart, lastPart));
+                                            .Shuffle(rng)
+                                            .SkipWhile(p => p.SlidePart.Shape == SlidePaths.PathShapes.Circle && !isValidCircleComposition(p.SlidePart, lastPart));
 
                 if (!nextChoices.Any())
                     break;
@@ -136,16 +133,16 @@ public partial class SentakkiBeatmapConverter
                 parts.Add((lastPart = chosen.SlidePart).Value);
             }
 
-            if (!parts.Any())
+            if (parts.Count == 0)
                 return null;
 
-            return parts.ToArray();
+            return [.. parts];
         }
         else
         {
             // Find the part that is the closest
-            return new[]
-            {
+            return
+            [
                 candidates.GroupBy(t => getDelta(t.MinDuration))
                           .OrderBy(g => g.Key)
                           .Take(5)
@@ -153,12 +150,12 @@ public partial class SentakkiBeatmapConverter
                           .Shuffle(rng)
                           .First()
                           .SlidePart
-            };
+            ];
         }
 
         double getDelta(double d)
         {
-            double diff = adjustedDuration - (d * 2);
+            double diff = adjustedDuration - d * 2;
             if (diff > 0) diff *= 3; // We don't want to overly favor longer slides when a shorter one is available
 
             return Math.Round(Math.Abs(diff) * 0.02) * 100; // Round to nearest 100ms
@@ -196,7 +193,7 @@ public partial class SentakkiBeatmapConverter
 
         TimingControlPoint timingPoint = controlPointInfo.TimingPointAt(hitObject.StartTime);
 
-        double sliderVelocity = (hitObject is IHasSliderVelocity sv) ? sv.SliderVelocityMultiplier : DifficultyControlPoint.DEFAULT.SliderVelocity;
+        double sliderVelocity = hitObject is IHasSliderVelocity sv ? sv.SliderVelocityMultiplier : DifficultyControlPoint.DEFAULT.SliderVelocity;
         double scoringDistance = 100 * difficulty.SliderMultiplier * sliderVelocity;
         double velocity = scoringDistance / timingPoint.BeatLength;
         double tickDistance = scoringDistance / difficulty.SliderTickRate;

@@ -10,7 +10,7 @@ using osu.Game.Beatmaps.Formats;
 using osu.Game.Beatmaps.Timing;
 using osu.Game.IO;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
@@ -35,15 +35,15 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
         foreach ((float angle, int index) in SentakkiPlayfield.LANEANGLES.Select((angle, index) => (angle, index)))
         {
-            locationPositionMap.Add(new Location { group = NoteGroup.BSensor, index = index }, SentakkiExtensions.GetCircularPosition(130, angle));
-            locationPositionMap.Add(new Location { group = NoteGroup.ESensor, index = index }, SentakkiExtensions.GetCircularPosition(190, angle - 22.5f));
-            locationPositionMap.Add(new Location { group = NoteGroup.ASensor, index = index }, SentakkiExtensions.GetCircularPosition(270, angle));
-            locationPositionMap.Add(new Location { group = NoteGroup.DSensor, index = index }, SentakkiExtensions.GetCircularPosition(270, angle - 22.5f));
+            locationPositionMap.Add(new Location { group = NoteGroup.BSensor, index = index }, MathExtensions.PointOnCircle(130, angle));
+            locationPositionMap.Add(new Location { group = NoteGroup.ESensor, index = index }, MathExtensions.PointOnCircle(190, angle - 22.5f));
+            locationPositionMap.Add(new Location { group = NoteGroup.ASensor, index = index }, MathExtensions.PointOnCircle(270, angle));
+            locationPositionMap.Add(new Location { group = NoteGroup.DSensor, index = index }, MathExtensions.PointOnCircle(270, angle - 22.5f));
         }
     }
 
-    private readonly IList<string> noteLines = new List<string>();
-    private readonly IDictionary<Location, Vector2> locationPositionMap = new Dictionary<Location, Vector2>();
+    private readonly List<string> noteLines = [];
+    private readonly Dictionary<Location, Vector2> locationPositionMap = [];
 
     protected override void ParseLine(Beatmap beatmap, Section section, string line)
     {
@@ -90,7 +90,6 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
             double coercedTime = timingChange.time >= 0f
                 ? timingChange.time
                 : timingChange.time - Math.Floor(timingChange.time / timingChange.SecondsPerBar) * timingChange.SecondsPerBar;
-
 
             var controlPoint = new TimingControlPoint
             {
@@ -270,7 +269,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                     {
                         endLane = locationToLane(nextLocation);
                         slideBodyParts.Add(new SlideBodyPart(SlidePaths.PathShapes.Straight,
-                            (endLane - startLane).NormalizePath(),
+                            (endLane - startLane).NormalizeLane(),
                             false
                         ));
                         startLane = endLane;
@@ -319,7 +318,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
                 endLane = locationToLane(slideSegment.vertices.Last());
                 slideBodyParts.Add(new SlideBodyPart(shape,
-                    (endLane - startLane).NormalizePath(),
+                    (endLane - startLane).NormalizeLane(),
                     mirrored
                 ));
                 startLane = endLane;
@@ -358,10 +357,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
             double breakEndTime = nextObject.StartTime;
 
-            if (nextObject is IHasTimePreempt hasTimePreempt)
-                breakEndTime -= hasTimePreempt.TimePreempt;
-            else
-                breakEndTime -= Math.Max(BreakPeriod.GAP_AFTER_BREAK, beatmap.ControlPointInfo.TimingPointAt(nextObject.StartTime).BeatLength * 2);
+            breakEndTime -= Math.Max(BreakPeriod.GAP_AFTER_BREAK, beatmap.ControlPointInfo.TimingPointAt(nextObject.StartTime).BeatLength * 2);
 
             if (breakEndTime - breakStartTime < BreakPeriod.MIN_BREAK_DURATION)
                 continue;

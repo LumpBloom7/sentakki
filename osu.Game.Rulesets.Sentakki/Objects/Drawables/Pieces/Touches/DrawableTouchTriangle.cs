@@ -14,6 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
 public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
 {
     private float thickness = 15f;
+
     public float Thickness
     {
         get => thickness;
@@ -21,12 +22,14 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
         {
             if (thickness == value)
                 return;
+
             thickness = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
 
     private float shadowRadius = 15f;
+
     public float ShadowRadius
     {
         get => shadowRadius;
@@ -34,12 +37,14 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
         {
             if (shadowRadius == value)
                 return;
+
             shadowRadius = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
 
     private bool glow;
+
     public bool Glow
     {
         get => glow;
@@ -47,12 +52,14 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
         {
             if (glow == value)
                 return;
+
             glow = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
 
     private bool fillTriangle;
+
     public bool FillTriangle
     {
         get => fillTriangle;
@@ -60,12 +67,14 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
         {
             if (fillTriangle == value)
                 return;
+
             fillTriangle = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
 
     private bool shadowOnly;
+
     public bool ShadowOnly
     {
         get => shadowOnly;
@@ -73,6 +82,7 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
         {
             if (shadowOnly == value)
                 return;
+
             shadowOnly = value;
             Invalidate(Invalidation.DrawNode);
         }
@@ -82,7 +92,7 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
 
     protected override DrawNode CreateDrawNode() => new TouchTriangleDrawNode(this);
 
-    private BindableBool exBindable = new BindableBool();
+    private readonly BindableBool exBindable = new BindableBool();
 
     [BackgroundDependencyLoader]
     private void load(ShaderManager shaders, IRenderer renderer, DrawableHitObject? hitObject)

@@ -4,50 +4,48 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects.Drawables;
 
-namespace osu.Game.Rulesets.Sentakki.UI
+namespace osu.Game.Rulesets.Sentakki.UI;
+
+public partial class SortedDrawableProxyContainer : LifetimeManagementContainer
 {
-    public partial class SortedDrawableProxyContainer : LifetimeManagementContainer
+    public SortedDrawableProxyContainer()
     {
-        public SortedDrawableProxyContainer()
-        {
-            RelativeSizeAxes = Axes.Both;
-        }
+        RelativeSizeAxes = Axes.Both;
+    }
 
-        private readonly Dictionary<Drawable, IBindable<double>> startTimeMap = new Dictionary<Drawable, IBindable<double>>();
+    private readonly Dictionary<Drawable, IBindable<double>> startTimeMap = [];
 
-        // We use this to batch changes
-        private bool sortQueued = true;
+    // We use this to batch changes
+    private bool sortQueued = true;
 
-        public void Add(Drawable proxy, DrawableHitObject hitObject)
-        {
-            var startTimeBindable = hitObject.StartTimeBindable.GetBoundCopy();
-            startTimeBindable.BindValueChanged(onStartTimeChange);
-            startTimeMap.Add(proxy, startTimeBindable);
-            AddInternal(proxy);
-        }
+    public void Add(Drawable proxy, DrawableHitObject hitObject)
+    {
+        var startTimeBindable = hitObject.StartTimeBindable.GetBoundCopy();
+        startTimeBindable.BindValueChanged(onStartTimeChange);
+        startTimeMap.Add(proxy, startTimeBindable);
+        AddInternal(proxy);
+    }
 
-        private void onStartTimeChange(ValueChangedEvent<double> v)
-        {
-            if (LoadState >= LoadState.Ready)
-                sortQueued = true;
-        }
+    private void onStartTimeChange(ValueChangedEvent<double> v)
+    {
+        if (LoadState >= LoadState.Ready)
+            sortQueued = true;
+    }
 
-        protected override void Update()
-        {
-            base.Update();
+    protected override void Update()
+    {
+        base.Update();
 
-            if (sortQueued)
-            {
-                SortInternal();
-                sortQueued = false;
-            }
-        }
+        if (!sortQueued) return;
 
-        protected override int Compare(Drawable x, Drawable y)
-        {
-            // Put earlier hitobjects towards the end of the list, so they show above the rest
-            int i = startTimeMap[y].Value.CompareTo(startTimeMap[x].Value);
-            return i == 0 ? base.Compare(x, y) : i;
-        }
+        SortInternal();
+        sortQueued = false;
+    }
+
+    protected override int Compare(Drawable x, Drawable y)
+    {
+        // Put earlier hitobjects towards the end of the list, so they show above the rest
+        int i = startTimeMap[y].Value.CompareTo(startTimeMap[x].Value);
+        return i == 0 ? base.Compare(x, y) : i;
     }
 }
