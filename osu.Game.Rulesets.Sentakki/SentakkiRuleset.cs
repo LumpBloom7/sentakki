@@ -234,7 +234,7 @@ public partial class SentakkiRuleset : Ruleset
                 Texture = textureStore.Get("Textures/SentakkiIcon.png"),
             });
 
-            if (IsDevelopmentBuild) return;
+            if (!IsDevelopmentBuild) return;
 
             AddInternal(new Container
             {
