@@ -7,32 +7,31 @@ using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces
+namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+
+public partial class TapPiece : CompositeDrawable
 {
-    public partial class TapPiece : CompositeDrawable
+    // This will be proxied, so a must.
+    public override bool RemoveWhenNotAlive => false;
+
+    public TapPiece()
     {
-        // This will be proxied, so a must.
-        public override bool RemoveWhenNotAlive => false;
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
+        Scale = new Vector2(0f);
+        Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE);
+        InternalChildren =
+        [
+            new NoteRingPiece()
+        ];
+    }
 
-        public TapPiece()
-        {
-            Anchor = Anchor.Centre;
-            Origin = Anchor.Centre;
-            Scale = new Vector2(0f);
-            Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE);
-            InternalChildren = new Drawable[]
-            {
-                new NoteRingPiece()
-            };
-        }
+    private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
 
-        private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
-
-        [BackgroundDependencyLoader]
-        private void load(DrawableHitObject drawableObject)
-        {
-            accentColour.BindTo(drawableObject.AccentColour);
-            accentColour.BindValueChanged(colour => Colour = colour.NewValue, true);
-        }
+    [BackgroundDependencyLoader]
+    private void load(DrawableHitObject drawableObject)
+    {
+        accentColour.BindTo(drawableObject.AccentColour);
+        accentColour.BindValueChanged(colour => Colour = colour.NewValue, true);
     }
 }

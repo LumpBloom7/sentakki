@@ -25,6 +25,7 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
 
     public NoteShape Shape { get; init; } = NoteShape.Ring;
     private float thickness = 18.75f;
+
     public float Thickness
     {
         get => thickness;
@@ -32,12 +33,14 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
         {
             if (thickness == value)
                 return;
+
             thickness = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
 
     private float shadowRadius = 15;
+
     public float ShadowRadius
     {
         get => shadowRadius;
@@ -45,12 +48,14 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
         {
             if (shadowRadius == value)
                 return;
+
             shadowRadius = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
 
     private bool glow;
+
     public bool Glow
     {
         get => glow;
@@ -58,6 +63,7 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
         {
             if (glow == value)
                 return;
+
             glow = value;
             Invalidate(Invalidation.DrawNode);
         }
@@ -67,7 +73,7 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
 
     protected override DrawNode CreateDrawNode() => new LaneNoteVisualDrawNode(this);
 
-    private BindableBool exBindable = new BindableBool();
+    private readonly BindableBool exBindable = new BindableBool();
 
     private string fragmentShaderFor(NoteShape shape)
     {
@@ -76,8 +82,10 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
             case NoteShape.Ring:
             default:
                 return "ringNote";
+
             case NoteShape.Hex:
                 return "hexNote";
+
             case NoteShape.Star:
                 return "starNote";
         }

@@ -9,6 +9,7 @@ using osu.Framework.Allocation;
 using osu.Game.Graphics.UserInterface;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Toolbox;
+
 public partial class ExpandableCheckbox : CompositeDrawable, IExpandable, IHasCurrentValue<bool>
 {
     public override bool HandlePositionalInput => true;
@@ -17,11 +18,11 @@ public partial class ExpandableCheckbox : CompositeDrawable, IExpandable, IHasCu
 
     public Bindable<bool> Current { get; set; } = new Bindable<bool>();
 
-    private string expandedLabelText;
+    private readonly string expandedLabelText;
     private string unexpandedLabeltext = "";
 
-    private OsuSpriteText label;
-    private OsuCheckbox checkbox;
+    private readonly OsuSpriteText label;
+    private readonly OsuCheckbox checkbox;
 
     public ExpandableCheckbox(string labelText)
     {
@@ -34,15 +35,17 @@ public partial class ExpandableCheckbox : CompositeDrawable, IExpandable, IHasCu
             RelativeSizeAxes = Axes.X,
             AutoSizeAxes = Axes.Y,
             Spacing = new Vector2(0f, 10f),
-            Children = new Drawable[]
-            {
-                checkbox = new OsuCheckbox(){
+            Children =
+            [
+                checkbox = new OsuCheckbox
+                {
                     LabelText = labelText
                 },
-                label = new OsuSpriteText(){
+                label = new OsuSpriteText
+                {
                     Text = labelText
-                },
-            }
+                }
+            ]
         };
     }
 

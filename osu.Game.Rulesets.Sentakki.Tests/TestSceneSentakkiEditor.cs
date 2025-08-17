@@ -1,11 +1,10 @@
 using NUnit.Framework;
 using osu.Game.Tests.Visual;
 
-namespace osu.Game.Rulesets.Sentakki.Tests
+namespace osu.Game.Rulesets.Sentakki.Tests;
+
+[TestFixture]
+public partial class TestSceneSentakkiEditor : EditorTestScene
 {
-    [TestFixture]
-    public partial class TestSceneSentakkiEditor : EditorTestScene
-    {
-        protected override Ruleset CreateEditorRuleset() => new SentakkiRuleset();
-    }
+    protected override Ruleset CreateEditorRuleset() => new SentakkiRuleset();
 }

@@ -9,6 +9,7 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osu.Game.Graphics.UserInterface;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Screens.Edit;
 using osuTK.Graphics;
@@ -39,7 +40,7 @@ public partial class EditorSlidePartPiece : SmoothPath, IHasTooltip, IHasContext
     {
         get
         {
-            StringBuilder builder = new();
+            StringBuilder builder = new StringBuilder();
 
             builder.AppendLine($"Shape: {part.Shape}");
 
@@ -57,7 +58,7 @@ public partial class EditorSlidePartPiece : SmoothPath, IHasTooltip, IHasContext
 
     public MenuItem[]? ContextMenuItems { get; private set; }
 
-    private static readonly int[] validEndOffsets = [0, 1, 2, 3, 4, 5, 6, 7];
+    private static readonly int[] valid_end_offsets = [0, 1, 2, 3, 4, 5, 6, 7];
 
     protected override void LoadComplete()
     {
@@ -67,7 +68,7 @@ public partial class EditorSlidePartPiece : SmoothPath, IHasTooltip, IHasContext
 
     protected override bool OnHover(HoverEvent e)
     {
-        Colour = AccentColour.LightenHSL(0.5f);
+        Colour = AccentColour.LightenHsl(0.5f);
         return false;
     }
 
@@ -94,20 +95,24 @@ public partial class EditorSlidePartPiece : SmoothPath, IHasTooltip, IHasContext
 
         contextMenuItems.Add(new OsuMenuItem("End offset", MenuItemType.Standard)
         {
-            Items = validEndOffsets
-                        .Where(o => SlidePaths.CheckSlideValidity(part with { EndOffset = o }))
-                        .Select(s =>
-                        {
-                            var menuItem = new TernaryStateRadioMenuItem($"{s}", action: _ => changeEndOffset(s));
-                            menuItem.State.Value = part.EndOffset.NormalizePath() == s ? TernaryState.True : TernaryState.False;
+            Items = valid_end_offsets
+                    .Where(o => SlidePaths.CheckSlideValidity(part with { EndOffset = o }))
+                    .Select(s =>
+                    {
+                        var menuItem = new TernaryStateRadioMenuItem($"{s}", action: _ => changeEndOffset(s));
+                        menuItem.State.Value = part.EndOffset.NormalizeLane() == s ? TernaryState.True : TernaryState.False;
 
-                            return menuItem;
-                        }).ToArray()
+                        return menuItem;
+                    }).ToArray()
         });
 
-        var mirroredTernaryMenuItem = new TernaryStateToggleMenuItem("Mirrored", MenuItemType.Standard, t => changeMirrored(t is TernaryState.True));
-
-        mirroredTernaryMenuItem.State.Value = part.Mirrored ? TernaryState.True : TernaryState.False;
+        var mirroredTernaryMenuItem = new TernaryStateToggleMenuItem("Mirrored", MenuItemType.Standard, t => changeMirrored(t is TernaryState.True))
+        {
+            State =
+            {
+                Value = part.Mirrored ? TernaryState.True : TernaryState.False
+            }
+        };
 
         contextMenuItems.Add(mirroredTernaryMenuItem);
 
@@ -131,14 +136,13 @@ public partial class EditorSlidePartPiece : SmoothPath, IHasTooltip, IHasContext
 
             SlideBodyPart newPart = new SlideBodyPart(shape, targetOffset, part.Mirrored);
 
-            if (SlidePaths.CheckSlideValidity(newPart))
-            {
-                SlideBodyPart[] newList = [.. slideBodyInfo.SlidePathParts];
-                newList[index] = newPart;
+            if (!SlidePaths.CheckSlideValidity(newPart)) continue;
 
-                submitChange(newList);
-                break;
-            }
+            SlideBodyPart[] newList = [.. slideBodyInfo.SlidePathParts];
+            newList[index] = newPart;
+
+            submitChange(newList);
+            break;
         }
     }
 

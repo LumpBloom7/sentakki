@@ -13,74 +13,73 @@ using osu.Game.Tests.Visual;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
+namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides;
+
+[TestFixture]
+public partial class TestSceneAllSlides : OsuTestScene
 {
-    [TestFixture]
-    public partial class TestSceneAllSlides : OsuTestScene
+    protected override Ruleset CreateRuleset() => new SentakkiRuleset();
+
+    private int id;
+
+    private readonly SlideVisual slide;
+    private readonly Container nodes;
+
+    [Cached]
+    private readonly DrawablePool<SlideChevron> chevronPool;
+
+    public TestSceneAllSlides()
     {
-        protected override Ruleset CreateRuleset() => new SentakkiRuleset();
+        Add(chevronPool = new DrawablePool<SlideChevron>(62));
 
-        private int id;
-
-        private readonly SlideVisual slide;
-        private readonly Container nodes;
-
-        [Cached]
-        private readonly DrawablePool<SlideChevron> chevronPool;
-
-        public TestSceneAllSlides()
+        Add(new SentakkiRing
         {
-            Add(chevronPool = new DrawablePool<SlideChevron>(62));
+            RelativeSizeAxes = Axes.None,
+            Size = new Vector2(SentakkiPlayfield.RINGSIZE)
+        });
+        Add(slide = new SlideVisual());
 
-            Add(new SentakkiRing
-            {
-                RelativeSizeAxes = Axes.None,
-                Size = new Vector2(SentakkiPlayfield.RINGSIZE)
-            });
-            Add(slide = new SlideVisual());
+        AddSliderStep("Path ID", 0, SlidePaths.VALID_CONVERT_PATHS.Count - 1, 0, p =>
+        {
+            id = p;
+            RefreshSlide();
+        });
 
-            AddSliderStep("Path ID", 0, SlidePaths.VALID_CONVERT_PATHS.Count - 1, 0, p =>
-            {
-                id = p;
-                RefreshSlide();
-            });
+        Add(nodes = new Container
+        {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+        });
+    }
 
-            Add(nodes = new Container
+    protected SentakkiSlidePath CreatePattern() => SlidePaths.CreateSlidePath(SlidePaths.VALID_CONVERT_PATHS[id].SlidePart);
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        RefreshSlide();
+    }
+
+    protected void RefreshSlide()
+    {
+        slide.Path = CreatePattern();
+        nodes.Clear();
+
+        foreach (var node in slide.Path.SlideSegments.SelectMany(s => s.ControlPoints))
+        {
+            nodes.Add(new CircularContainer
             {
+                Size = new Vector2(10),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-            });
-        }
-
-        protected SentakkiSlidePath CreatePattern() => SlidePaths.CreateSlidePath(SlidePaths.VALID_CONVERT_PATHS[id].SlidePart);
-
-        protected override void LoadComplete()
-        {
-            base.LoadComplete();
-            RefreshSlide();
-        }
-
-        protected void RefreshSlide()
-        {
-            slide.Path = CreatePattern();
-            nodes.Clear();
-
-            foreach (var node in slide.Path.SlideSegments.SelectMany(s => s.ControlPoints))
-            {
-                nodes.Add(new CircularContainer
+                Position = node.Position,
+                Masking = true,
+                Child = new Box
                 {
-                    Size = new Vector2(10),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Position = node.Position,
-                    Masking = true,
-                    Child = new Box
-                    {
-                        Colour = Color4.Green,
-                        RelativeSizeAxes = Axes.Both
-                    }
-                });
-            }
+                    Colour = Color4.Green,
+                    RelativeSizeAxes = Axes.Both
+                }
+            });
         }
     }
 }

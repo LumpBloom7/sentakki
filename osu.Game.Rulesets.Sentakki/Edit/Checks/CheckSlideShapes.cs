@@ -3,6 +3,7 @@ using System.Linq;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Edit.Checks.Components;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Checks;
@@ -53,13 +54,13 @@ public class CheckSlideShapes : ICheck
         }
     }
 
-    private bool hasStraightVSlide(SlideBodyInfo sbi)
-        => sbi.SlidePathParts.Any(part => part.Shape is SlidePaths.PathShapes.V && part.EndOffset.NormalizePath() == 4);
+    private static bool hasStraightVSlide(SlideBodyInfo sbi)
+        => sbi.SlidePathParts.Any(part => part.Shape is SlidePaths.PathShapes.V && part.EndOffset.NormalizeLane() == 4);
 
-    private bool hasStraight1Slide(SlideBodyInfo sbi)
-        => sbi.SlidePathParts.Any(part => part.Shape is SlidePaths.PathShapes.Straight && part.EndOffset.NormalizePath() == 1);
+    private static bool hasStraight1Slide(SlideBodyInfo sbi)
+        => sbi.SlidePathParts.Any(part => part.Shape is SlidePaths.PathShapes.Straight && part.EndOffset.NormalizeLane() == 1);
 
-    private bool hasOnlyShort1Slide(SlideBodyInfo sbi)
+    private static bool hasOnlyShort1Slide(SlideBodyInfo sbi)
     {
         if (sbi.SlidePathParts.Length > 1)
             return false;
@@ -69,7 +70,7 @@ public class CheckSlideShapes : ICheck
         if (part.Shape is not (SlidePaths.PathShapes.Straight or SlidePaths.PathShapes.Circle))
             return false;
 
-        int endOffset = part.EndOffset.NormalizePath();
+        int endOffset = part.EndOffset.NormalizeLane();
 
         if (part.Shape is SlidePaths.PathShapes.Circle && part.Mirrored)
             endOffset = 8 - endOffset;
@@ -77,7 +78,7 @@ public class CheckSlideShapes : ICheck
         return endOffset == 1;
     }
 
-    private bool hasSequentialCircularSlides(SlideBodyInfo sbi)
+    private static bool hasSequentialCircularSlides(SlideBodyInfo sbi)
     {
         for (int i = 1; i < sbi.SlidePathParts.Length; ++i)
         {
@@ -91,7 +92,7 @@ public class CheckSlideShapes : ICheck
                 continue;
 
             // We ignore full circles.
-            if (previousPart.EndOffset.NormalizePath() == 0 || currentPart.EndOffset.NormalizePath() == 0)
+            if (previousPart.EndOffset.NormalizeLane() == 0 || currentPart.EndOffset.NormalizeLane() == 0)
                 continue;
 
             if (currentPart.Mirrored == previousPart.Mirrored)
@@ -101,7 +102,7 @@ public class CheckSlideShapes : ICheck
         return false;
     }
 
-    private bool hasHiddenCircularReversal(SlideBodyInfo sbi)
+    private static bool hasHiddenCircularReversal(SlideBodyInfo sbi)
     {
         int reversals = 0;
 

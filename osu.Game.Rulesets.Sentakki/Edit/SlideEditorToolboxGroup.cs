@@ -6,6 +6,7 @@ using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 using osu.Game.Rulesets.Sentakki.Edit.Toolbox;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK.Input;
 
@@ -15,9 +16,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit;
 public partial class SlideEditorToolboxGroup : EditorToolboxGroup
 {
     // Slide info
-    private Bindable<SlidePaths.PathShapes> shapeBindable = new Bindable<SlidePaths.PathShapes>();
+    private readonly Bindable<SlidePaths.PathShapes> shapeBindable = new Bindable<SlidePaths.PathShapes>();
     public readonly Bindable<int> LaneOffset = new Bindable<int>(4);
-    private Bindable<bool> mirrored = new Bindable<bool>();
+    private readonly Bindable<bool> mirrored = new Bindable<bool>();
 
     public Bindable<float> ShootDelayBindable = new Bindable<float>(1);
 
@@ -26,19 +27,25 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
     public SlideBodyPart CurrentPart => CurrentPartBindable.Value;
     public float CurrentShootDelay => ShootDelayBindable.Value;
 
-    public SlideEditorToolboxGroup() : base("slide")
+    public SlideEditorToolboxGroup()
+        : base("slide")
     {
-        Children = new Drawable[]{
-            new ExpandableMenu<SlidePaths.PathShapes>("Shape"){
+        Children = new Drawable[]
+        {
+            new ExpandableMenu<SlidePaths.PathShapes>("Shape")
+            {
                 Current = shapeBindable
             },
-            new LaneOffsetCounter{
+            new LaneOffsetCounter
+            {
                 Current = LaneOffset
             },
-            new ShootDelayCounter(){
+            new ShootDelayCounter()
+            {
                 Current = ShootDelayBindable
             },
-            new ExpandableCheckbox("Mirrored"){
+            new ExpandableCheckbox("Mirrored")
+            {
                 Current = mirrored
             }
         };
@@ -71,7 +78,7 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
 
         for (int i = 0; i < 8; ++i)
         {
-            var newPart = new SlideBodyPart(shapeBindable.Value, (newLane + (i * rotationFactor)).NormalizePath(), mirrored.Value);
+            var newPart = new SlideBodyPart(shapeBindable.Value, (newLane + (i * rotationFactor)).NormalizeLane(), mirrored.Value);
 
             if (SlidePaths.CheckSlideValidity(newPart))
             {
@@ -79,6 +86,7 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
                 LaneOffset.Value = newPart.EndOffset;
                 return;
             }
+
             if (findClosestMatch)
                 rotationFactor *= -1;
         }
@@ -118,7 +126,8 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
 
     private partial class LaneOffsetCounter : ExpandableCounter<int>
     {
-        public LaneOffsetCounter() : base("Lane offset")
+        public LaneOffsetCounter()
+            : base("Lane offset")
         {
         }
 
@@ -134,7 +143,8 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
         [Resolved]
         private IBeatSnapProvider beatSnapProvider { get; set; } = null!;
 
-        public ShootDelayCounter() : base("Shoot delay", @"{0:0.##} beats")
+        public ShootDelayCounter()
+            : base("Shoot delay", @"{0:0.##} beats")
         {
         }
 

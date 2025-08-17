@@ -8,6 +8,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Types;
 using osu.Game.Screens.Edit;
@@ -19,7 +20,6 @@ namespace osu.Game.Rulesets.Sentakki.Edit;
 
 public partial class SentakkiRotationHandler : SelectionRotationHandler
 {
-
     [Resolved]
     private SentakkiSnapProvider snapProvider { get; set; } = null!;
 
@@ -29,9 +29,9 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
     [Resolved]
     private IEditorChangeHandler? changeHandler { get; set; }
 
-    private BindableList<HitObject> selectedItems { get; } = new();
+    private BindableList<HitObject> selectedItems { get; } = new BindableList<HitObject>();
 
-    private Dictionary<HitObject, OriginalState> originalPositions = [];
+    private readonly Dictionary<HitObject, IOriginalState> originalPositions = [];
 
     [BackgroundDependencyLoader]
     private void load(EditorBeatmap editorBeatmap)
@@ -51,7 +51,7 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
         CanRotateAroundSelectionOrigin.Value = selectedItems.All(h => h is Touch or TouchHold) && selectedItems.Count > 1;
 
         var origin = GeometryUtils.MinimumEnclosingCircle(selectedItems.Where(h => h is IHasPosition)
-                                                                            .Select(h => ((IHasPosition)h).Position)).Item1;
+                                                                       .Select(h => ((IHasPosition)h).Position)).Item1;
         DefaultOrigin = origin;
     }
 
@@ -71,6 +71,7 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
                 case IHasLane laned:
                     originalPositions[item] = new OriginalState<int>(laned.Lane);
                     break;
+
                 case IHasPosition positional:
                     originalPositions[item] = new OriginalState<Vector2>(positional.Position);
                     break;
@@ -85,7 +86,7 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
         int lanedRotationSteps = (int)MathF.Round(rotation / 45f);
 
         origin ??= GeometryUtils.MinimumEnclosingCircle(selectedItems.Where(h => h is IHasPosition)
-                                                                            .Select(h => ((OriginalState<Vector2>)originalPositions[h]).Value)).Item1;
+                                                                     .Select(h => ((OriginalState<Vector2>)originalPositions[h]).Value)).Item1;
 
         // Let's rotate laned notes first
         foreach (var item in selectedItems)
@@ -97,7 +98,7 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
             {
                 case SentakkiLanedHitObject lanedHitObject:
                     int originalLane = ((OriginalState<int>)originalState).Value;
-                    int newLane = (originalLane + lanedRotationSteps).NormalizePath();
+                    int newLane = (originalLane + lanedRotationSteps).NormalizeLane();
 
                     if (lanedHitObject.Lane == newLane)
                         continue;
@@ -107,12 +108,11 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
                     break;
 
                 case IHasPosition:
-                {
                     Vector2 originalPosition = ((OriginalState<Vector2>)originalState).Value - origin.Value;
-                    float originalAngle = Vector2.Zero.GetDegreesFromPosition(originalPosition);
+                    float originalAngle = Vector2.Zero.AngleTo(originalPosition);
                     float newAngle = originalAngle + rotation;
 
-                    Vector2 newPosition = origin.Value + SentakkiExtensions.GetCircularPosition(originalPosition.Length, newAngle);
+                    Vector2 newPosition = origin.Value + MathExtensions.PointOnCircle(originalPosition.Length, newAngle);
 
                     // If the snap provider is on, we assume they prefer to snap to a nearby snap point
                     if (snapProvider.TouchSnapGrid.Enabled)
@@ -123,12 +123,13 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
                         case Touch touchNote:
                             touchNote.Position = newPosition;
                             break;
+
                         case TouchHold touchHold:
                             touchHold.Position = newPosition;
                             break;
                     }
-                }
-                break;
+
+                    break;
             }
         }
     }
@@ -140,7 +141,9 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
         originalPositions.Clear();
     }
 
-    private interface OriginalState
-    { }
-    private readonly record struct OriginalState<T>(T Value) : OriginalState;
+    private interface IOriginalState
+    {
+    }
+
+    private readonly record struct OriginalState<T>(T Value) : IOriginalState;
 }

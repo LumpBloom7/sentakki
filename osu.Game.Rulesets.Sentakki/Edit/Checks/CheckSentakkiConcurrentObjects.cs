@@ -13,8 +13,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Checks;
 // But we use slightly different issue templates.
 public class CheckSentakkiConcurrentObjects : ICheck
 {
-    private SentakkiIssueTemplateConcurrentSame concurrentSameTemplate;
-    private SentakkiIssueTemplateConcurrentDifferent concurrentDifferentTemplate;
+    private readonly SentakkiIssueTemplateConcurrentSame concurrentSameTemplate;
+    private readonly SentakkiIssueTemplateConcurrentDifferent concurrentDifferentTemplate;
 
     public CheckMetadata Metadata { get; } = new CheckMetadata(CheckCategory.Compose, "Concurrent hitobjects");
 

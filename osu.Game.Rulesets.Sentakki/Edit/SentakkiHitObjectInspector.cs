@@ -39,9 +39,6 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
                 AddHeader("Ex slide");
                 AddValue(slide.SlideInfoList[0].Ex.ToString());
 
-                if (slide.SlideInfoList[0].SlidePathParts is null)
-                    break;
-
                 AddHeader("Parts");
 
                 foreach (SlideBodyPart part in slide.SlideInfoList[0].SlidePathParts)
@@ -57,6 +54,7 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
                         case SlidePaths.PathShapes.Circle:
                             mirrored = part.Mirrored ? "CCW" : "CW";
                             break;
+
                         case SlidePaths.PathShapes.U:
                         case SlidePaths.PathShapes.Cup:
                         case SlidePaths.PathShapes.Thunder:
@@ -66,6 +64,7 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
 
                     AddValue($"{part.Shape}({simpleEndOffset}){mirrored}");
                 }
+
                 break;
 
             default:

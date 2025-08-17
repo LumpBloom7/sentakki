@@ -13,7 +13,7 @@ using osuTK;
 namespace osu.Game.Rulesets.Sentakki.Edit.Toolbox;
 
 public partial class ExpandableMenu<T> : CompositeDrawable, IExpandable, IHasCurrentValue<T>
-                                            where T : struct, Enum
+    where T : struct, Enum
 {
     public override bool HandlePositionalInput => true;
 
@@ -21,12 +21,12 @@ public partial class ExpandableMenu<T> : CompositeDrawable, IExpandable, IHasCur
 
     public Bindable<T> Current { get; set; } = new Bindable<T>();
 
-    private OsuDropdown<T> menu;
+    private readonly OsuDropdown<T> menu;
 
-    private string expandedLabelText;
+    private readonly string expandedLabelText;
     private string unexpandedLabeltext = "";
 
-    private OsuSpriteText label;
+    private readonly OsuSpriteText label;
 
     public ExpandableMenu(string labelText)
     {
@@ -39,16 +39,17 @@ public partial class ExpandableMenu<T> : CompositeDrawable, IExpandable, IHasCur
             RelativeSizeAxes = Axes.X,
             AutoSizeAxes = Axes.Y,
             Spacing = new Vector2(0f, 10f),
-            Children = new Drawable[]
-            {
-                label = new OsuSpriteText(){
+            Children =
+            [
+                label = new OsuSpriteText()
+                {
                     Text = labelText
                 },
                 menu = new NonBlockingDropdown
                 {
                     RelativeSizeAxes = Axes.X,
-                },
-            }
+                }
+            ]
         };
     }
 

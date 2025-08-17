@@ -12,6 +12,7 @@ using osu.Game.Beatmaps;
 using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Edit;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Components.TernaryButtons;
@@ -22,11 +23,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Snapping;
 
 public partial class SentakkiLanedSnapGrid : CompositeDrawable
 {
-    private Bindable<TernaryState> enabled = new Bindable<TernaryState>(TernaryState.True);
+    private readonly Bindable<TernaryState> enabled = new Bindable<TernaryState>(TernaryState.True);
 
     private DrawablePool<BeatSnapGridLine> linePool = null!;
 
-    private Bindable<double> animationDuration = new Bindable<double>(1000);
+    private readonly Bindable<double> animationDuration = new Bindable<double>(1000);
 
     private Container<BeatSnapGridLine> linesContainer = null!;
 
@@ -59,14 +60,13 @@ public partial class SentakkiLanedSnapGrid : CompositeDrawable
     private void load()
     {
         Anchor = Origin = Anchor.Centre;
-        AddRangeInternal(new Drawable[]
-        {
+        AddRangeInternal([
             linePool = new DrawablePool<BeatSnapGridLine>(10),
             linesContainer = new Container<BeatSnapGridLine>
             {
                 RelativeSizeAxes = Axes.Both,
-            },
-        });
+            }
+        ]);
 
         animationDuration.BindTo(composer.DrawableRuleset.AdjustedAnimDuration);
     }
@@ -91,7 +91,7 @@ public partial class SentakkiLanedSnapGrid : CompositeDrawable
     public SnapResult GetSnapResult(Vector2 screenSpacePosition)
     {
         var localPosition = ToLocalSpace(screenSpacePosition);
-        int lane = Vector2.Zero.GetDegreesFromPosition(localPosition).GetNoteLaneFromDegrees();
+        int lane = Vector2.Zero.AngleTo(localPosition).GetNoteLaneFromDegrees();
 
         if (enabled.Value is not TernaryState.True)
             return new SentakkiLanedSnapResult(screenSpacePosition, lane, null) { YPos = SentakkiPlayfield.INTERSECTDISTANCE };
@@ -176,7 +176,7 @@ public partial class SentakkiLanedSnapGrid : CompositeDrawable
         }
     }
 
-    private float getWidthForDivisor(int divisor) => divisor switch
+    private static float getWidthForDivisor(int divisor) => divisor switch
     {
         1 or 2 => 1,
         3 or 4 => 0.8f,

@@ -5,7 +5,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Snapping;
 
 public class SentakkiLanedSnapResult : SnapResult
 {
-    public SentakkiLanedSnapResult(Vector2 screenSpacePosition, int lane, double? time) : base(screenSpacePosition, time, null)
+    public SentakkiLanedSnapResult(Vector2 screenSpacePosition, int lane, double? time)
+        : base(screenSpacePosition, time, null)
     {
         Lane = lane;
     }

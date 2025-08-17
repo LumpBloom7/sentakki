@@ -1,4 +1,3 @@
-using osuTK;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -11,10 +10,10 @@ using osu.Framework.Graphics.Sprites;
 using System;
 using System.Globalization;
 using System.Numerics;
-
 using Vector2 = osuTK.Vector2;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Toolbox;
+
 public partial class ExpandableCounter<T> : CompositeDrawable, IExpandable, IHasCurrentValue<T>
     where T : struct, IComparable<T>, IConvertible, IEquatable<T>, INumber<T>, IMinMaxValue<T>
 {
@@ -24,14 +23,14 @@ public partial class ExpandableCounter<T> : CompositeDrawable, IExpandable, IHas
 
     public Bindable<T> Current { get; set; } = new BindableNumber<T>(default);
 
-    private OsuSpriteText label;
-    private OsuSpriteText counter;
+    private readonly OsuSpriteText label;
+    private readonly OsuSpriteText counter;
 
-    private string labelText;
+    private readonly string labelText;
     private string unexpandedLabeltext = "";
-    private GridContainer grid;
+    private readonly GridContainer grid;
 
-    private string labelFormat;
+    private readonly string labelFormat;
 
     public ExpandableCounter(string label, string format = @"{0:0.##}")
     {
@@ -45,21 +44,23 @@ public partial class ExpandableCounter<T> : CompositeDrawable, IExpandable, IHas
             RelativeSizeAxes = Axes.X,
             AutoSizeAxes = Axes.Y,
             Spacing = new Vector2(0f, 10f),
-            Children = new Drawable[]
-            {
-                this.label = new OsuSpriteText(){
+            Children =
+            [
+                this.label = new OsuSpriteText
+                {
                     Text = label
                 },
-                grid = new GridContainer()
+                grid = new GridContainer
                 {
                     RelativeSizeAxes = Axes.X,
                     AutoSizeAxes = Axes.Y,
-                    RowDimensions = new[] { new Dimension(GridSizeMode.AutoSize)},
-                    ColumnDimensions = new[]{ new Dimension(GridSizeMode.Distributed), new Dimension(GridSizeMode.Distributed), new Dimension(GridSizeMode.Distributed) },
+                    RowDimensions = [new Dimension(GridSizeMode.AutoSize)],
+                    ColumnDimensions = [new Dimension(GridSizeMode.Distributed), new Dimension(GridSizeMode.Distributed), new Dimension(GridSizeMode.Distributed)],
                     Content = new Drawable[][]
                     {
-                        new Drawable[]{
-                            new IconButton(){
+                        [
+                            new IconButton
+                            {
                                 RelativeSizeAxes = Axes.X,
                                 Width = 1,
                                 Icon = FontAwesome.Solid.ChevronLeft,
@@ -67,22 +68,24 @@ public partial class ExpandableCounter<T> : CompositeDrawable, IExpandable, IHas
                                 Origin = Anchor.Centre,
                                 Action = OnLeftButtonPressed
                             },
-                            counter = new OsuSpriteText(){
+                            counter = new OsuSpriteText
+                            {
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
                             },
-                            new IconButton(){
+                            new IconButton
+                            {
                                 RelativeSizeAxes = Axes.X,
                                 Width = 1,
                                 Icon = FontAwesome.Solid.ChevronRight,
                                 Anchor = Anchor.Centre,
                                 Origin = Anchor.Centre,
                                 Action = OnRightButtonPressed
-                            },
-                        }
+                            }
+                        ]
                     }
                 }
-            }
+            ]
         };
     }
 

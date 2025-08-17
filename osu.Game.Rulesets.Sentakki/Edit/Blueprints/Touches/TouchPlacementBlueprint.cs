@@ -1,55 +1,55 @@
 using osu.Framework.Allocation;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK;
 using osuTK.Input;
 
-namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches
+namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches;
+
+public partial class TouchPlacementBlueprint : SentakkiPlacementBlueprint<Touch>
 {
-    public partial class TouchPlacementBlueprint : SentakkiPlacementBlueprint<Touch>
+    private readonly TouchHighlight highlight;
+
+    [Resolved]
+    private SentakkiHitObjectComposer composer { get; set; } = null!;
+
+    public TouchPlacementBlueprint()
     {
-        private readonly TouchHighlight highlight;
+        InternalChild = highlight = new TouchHighlight();
+    }
 
-        [Resolved]
-        private SentakkiHitObjectComposer composer { get; set; } = null!;
+    protected override void Update()
+    {
+        highlight.Position = HitObject.Position;
+    }
 
-        public TouchPlacementBlueprint()
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        if (e.Button != MouseButton.Left)
+            return false;
+
+        EndPlacement(true);
+        return true;
+    }
+
+    public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double fallbackTime)
+    {
+        var result = composer?.FindSnappedPositionAndTime(screenSpacePosition) ?? new SnapResult(screenSpacePosition, fallbackTime);
+
+        base.UpdateTimeAndPosition(result.ScreenSpacePosition, result.Time ?? fallbackTime);
+
+        var newPosition = ToLocalSpace(result.ScreenSpacePosition) - OriginPosition;
+
+        if (Vector2.Distance(Vector2.Zero, newPosition) > 270)
         {
-            InternalChild = highlight = new TouchHighlight();
+            float angle = Vector2.Zero.AngleTo(newPosition);
+            newPosition = MathExtensions.PointOnCircle(270, angle);
         }
 
-        protected override void Update()
-        {
-            highlight.Position = HitObject.Position;
-        }
+        HitObject.Position = newPosition;
 
-        protected override bool OnMouseDown(MouseDownEvent e)
-        {
-            if (e.Button != MouseButton.Left)
-                return false;
-
-            EndPlacement(true);
-            return true;
-        }
-
-        public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double fallbackTime)
-        {
-            var result = composer?.FindSnappedPositionAndTime(screenSpacePosition) ?? new SnapResult(screenSpacePosition, fallbackTime);
-
-            base.UpdateTimeAndPosition(result.ScreenSpacePosition, result.Time ?? fallbackTime);
-
-            var newPosition = ToLocalSpace(result.ScreenSpacePosition) - OriginPosition;
-
-            if (Vector2.Distance(Vector2.Zero, newPosition) > 270)
-            {
-                float angle = Vector2.Zero.GetDegreesFromPosition(newPosition);
-                newPosition = SentakkiExtensions.GetCircularPosition(270, angle);
-            }
-
-            HitObject.Position = newPosition;
-
-            return result;
-        }
+        return result;
     }
 }

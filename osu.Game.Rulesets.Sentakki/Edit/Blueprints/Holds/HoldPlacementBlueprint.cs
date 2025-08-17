@@ -3,89 +3,89 @@ using osu.Framework.Allocation;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Screens.Edit;
 using osuTK;
 using osuTK.Input;
 
-namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds
+namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
+
+public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
 {
-    public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
+    protected override bool IsValidForPlacement => HitObject.Duration > 0;
+    private readonly HoldHighlight highlight;
+
+    [Resolved]
+    private SentakkiHitObjectComposer composer { get; set; } = null!;
+
+    public HoldPlacementBlueprint()
     {
-        protected override bool IsValidForPlacement => HitObject.Duration > 0;
-        private readonly HoldHighlight highlight;
+        InternalChild = highlight = new HoldHighlight();
+        highlight.Note.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
+    }
 
-        [Resolved]
-        private SentakkiHitObjectComposer composer { get; set; } = null!;
+    [Resolved]
+    private SentakkiSnapProvider snapProvider { get; set; } = null!;
 
-        public HoldPlacementBlueprint()
-        {
-            InternalChild = highlight = new HoldHighlight();
-            highlight.Note.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
-        }
+    protected override void Update()
+    {
+        base.Update();
+        highlight.Rotation = HitObject.Lane.GetRotationForLane();
+        highlight.Note.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
+        highlight.Note.Height = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.EndTime, SentakkiPlayfield.NOTESTARTDISTANCE) - highlight.Note.Y;
+    }
 
-        [Resolved]
-        private SentakkiSnapProvider snapProvider { get; set; } = null!;
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        if (e.Button != MouseButton.Left)
+            return false;
 
-        protected override void Update()
-        {
-            base.Update();
-            highlight.Rotation = HitObject.Lane.GetRotationForLane();
-            highlight.Note.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
-            highlight.Note.Height = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.EndTime, SentakkiPlayfield.NOTESTARTDISTANCE) - highlight.Note.Y;
-        }
+        if (PlacementActive == PlacementState.Active)
+            return false;
 
-        protected override bool OnMouseDown(MouseDownEvent e)
-        {
-            if (e.Button != MouseButton.Left)
-                return false;
+        BeginPlacement(true);
+        timeChanged = false;
 
-            if (PlacementActive == PlacementState.Active)
-                return false;
+        return true;
+    }
 
-            BeginPlacement(true);
-            timeChanged = false;
+    protected override void OnMouseUp(MouseUpEvent e)
+    {
+        if (PlacementActive != PlacementState.Active) return;
 
-            return true;
-        }
+        if ((e.Button is MouseButton.Left && timeChanged) || e.Button is MouseButton.Right)
+            EndPlacement(HitObject.Duration > 0);
+    }
 
-        protected override void OnMouseUp(MouseUpEvent e)
-        {
-            if (PlacementActive == PlacementState.Active)
-                if ((e.Button is MouseButton.Left && timeChanged) || e.Button is MouseButton.Right)
-                    EndPlacement(HitObject.Duration > 0);
-        }
+    private double originalStartTime;
+    private bool timeChanged = false;
 
-        private double originalStartTime;
-        private bool timeChanged = false;
+    public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double fallbackTime)
+    {
+        var result = composer?.FindSnappedPositionAndTime(screenSpacePosition) ?? new SnapResult(screenSpacePosition, fallbackTime);
 
-        public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double fallbackTime)
-        {
-            var result = composer?.FindSnappedPositionAndTime(screenSpacePosition) ?? new SnapResult(screenSpacePosition, fallbackTime);
+        base.UpdateTimeAndPosition(result.ScreenSpacePosition, result.Time ?? fallbackTime);
 
-            base.UpdateTimeAndPosition(result.ScreenSpacePosition, result.Time ?? fallbackTime);
-
-            if (result is not SentakkiLanedSnapResult senRes)
-                return result;
-
-            double snapTime = result.Time ?? fallbackTime;
-
-            if (PlacementActive == PlacementState.Active)
-            {
-                HitObject.StartTime = snapTime < originalStartTime ? snapTime : originalStartTime;
-                HitObject.Duration = Math.Abs(snapTime - originalStartTime);
-
-                if (HitObject.Duration > 0)
-                    timeChanged = true;
-            }
-            else
-            {
-                HitObject.Lane = senRes.Lane;
-                originalStartTime = HitObject.StartTime = snapTime;
-            }
-
+        if (result is not SentakkiLanedSnapResult senRes)
             return result;
+
+        double snapTime = result.Time ?? fallbackTime;
+
+        if (PlacementActive == PlacementState.Active)
+        {
+            HitObject.StartTime = snapTime < originalStartTime ? snapTime : originalStartTime;
+            HitObject.Duration = Math.Abs(snapTime - originalStartTime);
+
+            if (HitObject.Duration > 0)
+                timeChanged = true;
         }
+        else
+        {
+            HitObject.Lane = senRes.Lane;
+            originalStartTime = HitObject.StartTime = snapTime;
+        }
+
+        return result;
     }
 }

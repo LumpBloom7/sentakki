@@ -10,6 +10,7 @@ using osu.Framework.Localisation;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
@@ -30,9 +31,9 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
     {
         get
         {
-            double shootOffsetMS = bodyInfo.ShootDelay * editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
+            double shootOffsetMs = bodyInfo.ShootDelay * editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
 
-            return $"Shoot offset: {shootOffsetMS:0.##}ms ({bodyInfo.ShootDelay:0.##} beats)";
+            return $"Shoot offset: {shootOffsetMs:0.##}ms ({bodyInfo.ShootDelay:0.##} beats)";
         }
     }
 
@@ -82,7 +83,7 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
     private void load(OsuColour colours)
     {
         accentColour = Colour = colours.YellowDark;
-        hoverAccentColour = accentColour.LightenHSL(0.5f);
+        hoverAccentColour = accentColour.LightenHsl(0.5f);
     }
 
     [Resolved]
@@ -168,8 +169,8 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
 
     private partial class DragBox : Box
     {
-        public readonly Slide slide;
-        public readonly SlideBodyInfo slideBodyInfo;
+        private readonly Slide slide;
+        private readonly SlideBodyInfo slideBodyInfo;
 
         public DragBox(Slide slide, SlideBodyInfo slideBodyInfo)
         {
@@ -203,11 +204,11 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
         {
             double snappedTime = snapProvider.GetDistanceBasedSnapTime(e.ScreenSpaceMousePosition);
 
-            double shootOffsetMS = snappedTime - slide.StartTime;
+            double shootOffsetMs = snappedTime - slide.StartTime;
 
-            shootOffsetMS = Math.Clamp(shootOffsetMS, 0, slideBodyInfo.Duration);
+            shootOffsetMs = Math.Clamp(shootOffsetMs, 0, slideBodyInfo.Duration);
 
-            double shootOffset = shootOffsetMS / editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
+            double shootOffset = shootOffsetMs / editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
 
             if (shootOffset == slideBodyInfo.ShootDelay)
                 return;

@@ -5,14 +5,15 @@ using osu.Game.Screens.Ranking.Statistics;
 
 namespace osu.Game.Rulesets.Sentakki.Statistics;
 
-public partial class MaimaiDXAccuracy : SimpleStatisticItem<double>
+public partial class MaimaiDxAccuracy : SimpleStatisticItem<double>
 {
-    public MaimaiDXAccuracy(IEnumerable<HitEvent> hitEvents) : base("MaimaiDX accuracy (approximated)")
+    public MaimaiDxAccuracy(IEnumerable<HitEvent> hitEvents)
+        : base("MaimaiDX accuracy (approximated)")
     {
-        Value = calculateDXAcc(hitEvents);
+        Value = calculateDxAcc(hitEvents);
     }
 
-    private static double calculateDXAcc(IEnumerable<HitEvent> hitEvents)
+    private static double calculateDxAcc(IEnumerable<HitEvent> hitEvents)
     {
         double maximum = 0;
         double actual = 0;
@@ -22,32 +23,30 @@ public partial class MaimaiDXAccuracy : SimpleStatisticItem<double>
 
         foreach (HitEvent hitEvent in hitEvents)
         {
-            if (hitEvent.Result == HitResult.IgnoreMiss || hitEvent.Result == HitResult.IgnoreHit)
+            if (hitEvent.Result is HitResult.IgnoreMiss or HitResult.IgnoreHit)
                 continue;
 
             maximum += ratioForHit(hitEvent.HitObject.Judgement.MaxResult);
             actual += ratioForHit(hitEvent.Result);
 
-            if (hitEvent.HitObject is SentakkiLanedHitObject sho)
-            {
-                if (sho.Break)
-                {
-                    maxBonus += 1 * sho.ScoreWeighting;
-                    if (hitEvent.Result == HitResult.Perfect)
-                        actualBonuses += 1 * sho.ScoreWeighting;
-                }
-            }
+            if (hitEvent.HitObject is not SentakkiLanedHitObject sho) continue;
+
+            if (!sho.Break) continue;
+
+            maxBonus += 1 * sho.ScoreWeighting;
+            if (hitEvent.Result == HitResult.Perfect)
+                actualBonuses += 1 * sho.ScoreWeighting;
         }
 
-        // If there are no regular notes, then a perfect play is vacuosly true
+        // If there are no regular notes, then a perfect play is vacuously true
         if (maximum == 0)
             actual = maximum = 1;
 
-        // If there are no break notes, then the player vacuosly hit all the breaks perfectly
+        // If there are no break notes, then the player vacuously hit all the breaks perfectly
         if (maxBonus == 0)
             actualBonuses = maxBonus = 1;
 
-        return ((actual / maximum) * 100) + (actualBonuses / maxBonus);
+        return actual / maximum * 100 + actualBonuses / maxBonus;
     }
 
     private static float ratioForHit(HitResult result) => result switch

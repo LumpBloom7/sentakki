@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -9,6 +8,7 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Lines;
 using osu.Framework.Graphics.UserInterface;
 using osu.Game.Graphics.UserInterface;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
@@ -18,8 +18,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Visualiser;
 
 public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
 {
-    private Container<SmoothPath> paths;
-    private Container<SmoothPath> hoverPaths;
+    private readonly Container<SmoothPath> paths;
+    private readonly Container<SmoothPath> hoverPaths;
 
     private readonly SlideBodyInfo slideBodyInfo;
     private readonly Slide slide;
@@ -33,11 +33,12 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
     {
         this.slide = slide;
         this.slideBodyInfo = slideBodyInfo;
-        slideBodyInfo.OnPathUpdated += ReloadVisualiser;
+        slideBodyInfo.OnPathUpdated += reloadVisualiser;
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
 
-        InternalChildren = [
+        InternalChildren =
+        [
             paths = new Container<SmoothPath>
             {
                 RelativeSizeAxes = Axes.Both,
@@ -46,7 +47,8 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
             {
                 RelativeSizeAxes = Axes.Both
             },
-            new SlideOffsetVisualiser(slide, slideBodyInfo){
+            new SlideOffsetVisualiser(slide, slideBodyInfo)
+            {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.TopCentre,
                 Rotation = 22.5f,
@@ -100,7 +102,8 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
 
     private void updateContextMenuItems()
     {
-        List<MenuItem> cmItems = [
+        List<MenuItem> cmItems =
+        [
             new TernaryStateToggleMenuItem("Break", MenuItemType.Standard)
             {
                 State = { BindTarget = breakStateBindable }
@@ -116,8 +119,8 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
         ContextMenuItems = [.. cmItems];
     }
 
-    private Bindable<TernaryState> breakStateBindable;
-    private Bindable<TernaryState> exStateBindable;
+    private readonly Bindable<TernaryState> breakStateBindable;
+    private readonly Bindable<TernaryState> exStateBindable;
 
     public MenuItem[]? ContextMenuItems { get; private set; }
 
@@ -188,7 +191,7 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
         }
     }
 
-    public void ReloadVisualiser()
+    private void reloadVisualiser()
     {
         loadPaths();
     }
@@ -211,6 +214,6 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
     {
         base.Dispose(isDisposing);
 
-        slideBodyInfo.OnPathUpdated -= ReloadVisualiser;
+        slideBodyInfo.OnPathUpdated -= reloadVisualiser;
     }
 }

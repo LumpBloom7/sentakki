@@ -15,7 +15,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Snapping;
 
 public partial class SentakkiTouchSnapGrid : CompositeDrawable
 {
-    private Bindable<TernaryState> enabled = new Bindable<TernaryState>(TernaryState.True);
+    private readonly Bindable<TernaryState> enabled = new Bindable<TernaryState>(TernaryState.True);
 
     public bool Enabled => enabled.Value == TernaryState.True;
 

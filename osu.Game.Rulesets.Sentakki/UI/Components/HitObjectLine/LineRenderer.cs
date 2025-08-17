@@ -1,152 +1,137 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Performance;
 using osu.Framework.Graphics.Pooling;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
 
-namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
+namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine;
+
+public partial class LineRenderer : CompositeDrawable
 {
-    public partial class LineRenderer : CompositeDrawable
+    private readonly Dictionary<double, LineLifetimeEntry> lineEntries = [];
+    private readonly Dictionary<HitObject, IBindable> startTimeMap = [];
+
+    private readonly Dictionary<LifetimeEntry, DrawableLine> linesInUse = [];
+    private readonly LifetimeEntryManager lifetimeManager = new LifetimeEntryManager();
+
+    private DrawablePool<DrawableLine> linePool = null!;
+
+    public LineRenderer()
     {
-        private readonly List<LineLifetimeEntry> lineLifetimeEntries = [];
-        private readonly Dictionary<SentakkiLanedHitObject, IBindable> startTimeMap = new Dictionary<SentakkiLanedHitObject, IBindable>();
-        private readonly Dictionary<LifetimeEntry, DrawableLine> linesInUse = new Dictionary<LifetimeEntry, DrawableLine>();
-        private readonly LifetimeEntryManager lifetimeManager = new LifetimeEntryManager();
+        RelativeSizeAxes = Axes.Both;
+        Anchor = Origin = Anchor.Centre;
+        lifetimeManager.EntryBecameAlive += onEntryBecameAlive;
+        lifetimeManager.EntryBecameDead += onEntryBecameDead;
+    }
 
-        private readonly Stack<LineLifetimeEntry> lifetimeEntryPool = [];
+    [Resolved]
+    private DrawableSentakkiRuleset? drawableRuleset { get; set; }
 
-        private DrawablePool<DrawableLine> linePool = null!;
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        AddInternal(linePool = new DrawablePool<DrawableLine>(5));
+    }
 
-        public LineRenderer()
+    protected override bool CheckChildrenLife()
+    {
+        bool anyAliveChanged = base.CheckChildrenLife();
+        anyAliveChanged |= lifetimeManager.Update(Time.Current);
+        return anyAliveChanged;
+    }
+
+    private void onEntryBecameAlive(LifetimeEntry entry)
+    {
+        var laneLifetimeEntry = (LineLifetimeEntry)entry;
+        var line = linePool.Get();
+        line.Entry = laneLifetimeEntry;
+
+        linesInUse[entry] = line;
+        AddInternal(line);
+    }
+
+    private void onEntryBecameDead(LifetimeEntry entry)
+    {
+        RemoveInternal(linesInUse[entry], false);
+        linesInUse.Remove(entry);
+    }
+
+    private void onEntryUpdated(LifetimeEntry entry)
+    {
+        // We only want to update the drawable when the entry is actually in use
+        // This ensures that the drawable gets swapped out with one that uses the correct texture
+        // This also resets the colour and rotation if needed
+        if (!linesInUse.ContainsKey(entry)) return;
+
+        onEntryBecameDead(entry);
+        onEntryBecameAlive(entry);
+    }
+
+    public void AddHitObject(SentakkiLanedHitObject hitObject)
+    {
+        var startTimeBindable = hitObject.StartTimeBindable.GetBoundCopy();
+        startTimeBindable.ValueChanged += v => onStartTimeChanged(v, hitObject);
+        startTimeMap[hitObject] = startTimeBindable;
+
+        addHitObjectToEntry(hitObject.StartTime, hitObject);
+    }
+
+    public void RemoveHitObject(SentakkiLanedHitObject hitObject)
+    {
+        if (!startTimeMap.TryGetValue(hitObject, out var bindable))
+            return;
+
+        // Ensure that we don't continue to receive time changes
+        bindable.UnbindAll();
+
+        startTimeMap.Remove(hitObject);
+
+        removeHitObjectFromEntry(hitObject.StartTime, hitObject);
+    }
+
+    private void onStartTimeChanged(ValueChangedEvent<double> valueChangedEvent, SentakkiLanedHitObject hitObject)
+    {
+        removeHitObjectFromEntry(valueChangedEvent.OldValue, hitObject);
+        addHitObjectToEntry(valueChangedEvent.NewValue, hitObject);
+    }
+
+    private void removeHitObjectFromEntry(double entryTime, SentakkiLanedHitObject hitObject)
+    {
+        entryTime = Math.Round(entryTime);
+
+        // Safety check to ensure the line entry actually exists
+        if (!lineEntries.TryGetValue(entryTime, out var line)) return;
+
+        line.Remove(hitObject);
+
+        // Remove this entry completely if there aren't any hitObjects using it
+        if (line.HitObjects.Count != 0) return;
+
+        lifetimeManager.RemoveEntry(lineEntries[entryTime]);
+        lineEntries.Remove(entryTime);
+    }
+
+    private void addHitObjectToEntry(double entryTime, SentakkiLanedHitObject hitObject)
+    {
+        entryTime = Math.Round(entryTime);
+
+        // Create new line entry for this entryTime if none exists
+        if (!lineEntries.TryGetValue(entryTime, out var value))
         {
-            RelativeSizeAxes = Axes.Both;
-            Anchor = Origin = Anchor.Centre;
-            lifetimeManager.EntryBecameAlive += onEntryBecameAlive;
-            lifetimeManager.EntryBecameDead += onEntryBecameDead;
+            var newEntry = new LineLifetimeEntry(drawableRuleset, entryTime);
+            value = newEntry;
+            lineEntries[entryTime] = value;
+            lifetimeManager.AddEntry(newEntry);
+
+            // We want to listen in to line changes in case we need to swap out colours/drawables
+            newEntry.OnLineUpdated += onEntryUpdated;
         }
 
-        [Resolved]
-        private DrawableSentakkiRuleset? drawableRuleset { get; set; }
-
-        [BackgroundDependencyLoader]
-        private void load()
-        {
-            AddInternal(linePool = new DrawablePool<DrawableLine>(5));
-        }
-
-        protected override bool CheckChildrenLife()
-        {
-            bool anyAliveChanged = base.CheckChildrenLife();
-            anyAliveChanged |= lifetimeManager.Update(Time.Current);
-            return anyAliveChanged;
-        }
-
-        private void onEntryBecameAlive(LifetimeEntry entry)
-        {
-            var laneLifetimeEntry = (LineLifetimeEntry)entry;
-            var line = linePool.Get();
-            line.Entry = laneLifetimeEntry;
-
-            linesInUse[entry] = line;
-            AddInternal(line);
-        }
-
-        private void onEntryBecameDead(LifetimeEntry entry)
-        {
-            RemoveInternal(linesInUse[entry], false);
-            linesInUse.Remove(entry);
-        }
-
-        public static IEnumerable<List<SentakkiLanedHitObject>> createTimingGroup(IEnumerable<SentakkiLanedHitObject> hitObjects)
-        {
-            var hitObjectsCategory = hitObjects.OrderBy(ho => ho.StartTime).GroupBy(h => new { isSlide = h is SlideBody });
-
-            foreach (var hitobjectCategory in hitObjectsCategory)
-            {
-                List<SentakkiLanedHitObject> timedGroup = [];
-                double lastTime = double.MinValue;
-
-                foreach (var ho in hitobjectCategory)
-                {
-                    double time = ho.StartTime;
-
-                    if ((time - lastTime) >= 1 && timedGroup.Count > 0)
-                    {
-                        yield return timedGroup;
-                        timedGroup = [];
-                    }
-
-                    timedGroup.Add(ho);
-                    lastTime = time;
-                }
-
-                if (timedGroup.Count > 0)
-                    yield return timedGroup;
-            }
-        }
-
-        private double medianTime(List<SentakkiLanedHitObject> lanedHitObjects)
-        {
-            int midpoint = lanedHitObjects.Count / 2;
-            if (lanedHitObjects.Count > 2 && lanedHitObjects.Count % 2 == 0)
-                return (lanedHitObjects[midpoint].StartTime + lanedHitObjects[midpoint - 1].StartTime) / 2;
-
-            return lanedHitObjects[midpoint].StartTime;
-        }
-
-        private void refreshLifetimeEntries()
-        {
-            lifetimeManager.ClearEntries();
-
-            foreach (var existingLifetimeEntry in lineLifetimeEntries)
-            {
-                existingLifetimeEntry.Clear();
-                lifetimeEntryPool.Push(existingLifetimeEntry);
-            }
-
-            lineLifetimeEntries.Clear();
-
-            foreach (var group in createTimingGroup(startTimeMap.Keys))
-            {
-                if (!lifetimeEntryPool.TryPop(out var newEntry))
-                    newEntry = new LineLifetimeEntry(drawableRuleset);
-
-                lineLifetimeEntries.Add(newEntry);
-                newEntry.StartTime = medianTime(group);
-
-                foreach (var ho in group)
-                    newEntry.Add(ho);
-
-                lifetimeManager.AddEntry(newEntry);
-            }
-        }
-
-        public void AddHitObject(SentakkiLanedHitObject hitObject)
-        {
-            var startTimeBindable = hitObject.StartTimeBindable.GetBoundCopy();
-            startTimeBindable.ValueChanged += v => onStartTimeChanged(v, hitObject);
-            startTimeMap[hitObject] = startTimeBindable;
-
-            refreshLifetimeEntries();
-        }
-
-        public void RemoveHitObject(SentakkiLanedHitObject hitObject)
-        {
-            if (!startTimeMap.TryGetValue(hitObject, out var bindable))
-                return;
-
-            // Ensure that we don't continue to receive time changes
-            bindable.UnbindAll();
-            startTimeMap.Remove(hitObject);
-
-            refreshLifetimeEntries();
-        }
-
-        private void onStartTimeChanged(ValueChangedEvent<double> valueChangedEvent, SentakkiLanedHitObject hitObject)
-            => refreshLifetimeEntries();
+        value.Add(hitObject);
     }
 }

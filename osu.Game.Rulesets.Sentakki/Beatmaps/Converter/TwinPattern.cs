@@ -1,37 +1,35 @@
 using System;
 using System.Collections.Generic;
-using Markdig.Extensions.Yaml;
 using osu.Framework.Extensions.EnumExtensions;
-using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Sentakki.Extensions;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 
 public class TwinPattern
 {
-    private static readonly TwinFlags[] allowedFlags = new TwinFlags[]{
+    private static readonly TwinFlags[] allowed_flags =
+    [
         TwinFlags.None,
-        TwinFlags.SpinCW,
-        TwinFlags.SpinCCW,
+        TwinFlags.SpinCw,
+        TwinFlags.SpinCcw,
         TwinFlags.Cycle,
         TwinFlags.Copy,
         TwinFlags.Mirror,
         TwinFlags.Copy | TwinFlags.Mirror
-    };
+    ];
 
     private TwinFlags flags;
 
-    private List<int> cycleLanes = new List<int>();
-    private int cycleIndex = 0;
+    private readonly List<int> cycleLanes = [];
+    private int cycleIndex;
 
-    private int originLane = 0;
+    private int originLane;
 
-    private int spinIncrement = 0;
+    private int spinIncrement;
 
     private int copyOffset = 1;
 
-    private Random rng;
+    private readonly Random rng;
 
     public TwinPattern(Random rng)
     {
@@ -42,7 +40,7 @@ public class TwinPattern
 
     public void NewPattern()
     {
-        flags = allowedFlags[rng.Next(0, allowedFlags.Length)];
+        flags = allowed_flags[rng.Next(0, allowed_flags.Length)];
         originLane = rng.Next(0, 8);
 
         if (flags.HasFlagFast(TwinFlags.Cycle))
@@ -68,7 +66,7 @@ public class TwinPattern
         }
     }
 
-    public int getNextLane(int currentLane)
+    public int GetNextLane(int currentLane)
     {
         if (flags.HasFlagFast(TwinFlags.Cycle))
         {
@@ -78,12 +76,11 @@ public class TwinPattern
             return tmp;
         }
 
-        if (flags.HasFlagFast(TwinFlags.SpinCW))
-            return originLane + (++spinIncrement);
+        if (flags.HasFlagFast(TwinFlags.SpinCw))
+            return originLane + ++spinIncrement;
 
-        if (flags.HasFlagFast(TwinFlags.SpinCCW))
-            return originLane + (--spinIncrement);
-
+        if (flags.HasFlagFast(TwinFlags.SpinCcw))
+            return originLane + --spinIncrement;
 
         int result = currentLane;
         if (flags.HasFlagFast(TwinFlags.Copy))
@@ -92,6 +89,6 @@ public class TwinPattern
         if (flags.HasFlagFast(TwinFlags.Mirror))
             result = 7 - result;
 
-        return result.NormalizePath();
+        return result.NormalizeLane();
     }
 }
