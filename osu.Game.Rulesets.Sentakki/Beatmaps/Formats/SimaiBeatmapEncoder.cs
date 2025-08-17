@@ -1,9 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
@@ -18,37 +18,36 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps.Formats;
 /// </summary>
 public class SimaiBeatmapEncoder
 {
-    private static Dictionary<Vector2, string> TouchPositionMapping = SentakkiPlayfield
-        .LANEANGLES.SelectMany<float, KeyValuePair<Vector2, string>>(
-            (angle, index) =>
+    private static readonly Dictionary<Vector2, string> touch_position_mapping
+        = SentakkiPlayfield
+          .LANEANGLES.SelectMany<float, KeyValuePair<Vector2, string>>((angle, index) =>
+              [
+                  new KeyValuePair<Vector2, string>(
+                      MathExtensions.PointOnCircle(130, angle),
+                      $"B{index + 1}"
+                  ),
+                  new KeyValuePair<Vector2, string>(
+                      MathExtensions.PointOnCircle(190, angle - 22.5f),
+                      $"E{index + 1}"
+                  ),
+                  new KeyValuePair<Vector2, string>(
+                      MathExtensions.PointOnCircle(270, angle),
+                      $"A{index + 1}"
+                  ),
+                  new KeyValuePair<Vector2, string>(
+                      MathExtensions.PointOnCircle(270, angle - 22.5f),
+                      $"D{index + 1}"
+                  ),
+              ]
+          )
+          .Append(new KeyValuePair<Vector2, string>(Vector2.Zero, "C"))
+          .ToDictionary();
 
-                [
-                    new(
-                        SentakkiExtensions.GetCircularPosition(130, angle),
-                        $"B{index+1}"
-                    ),
-                    new(
-                        SentakkiExtensions.GetCircularPosition(190, angle - 22.5f),
-                        $"E{index+1}"
-                    ),
-                    new(
-                        SentakkiExtensions.GetCircularPosition(270, angle),
-                        $"A{index+1}"
-                    ),
-                    new(
-                        SentakkiExtensions.GetCircularPosition(270, angle - 22.5f),
-                        $"D{index+1}"
-                    ),
-                ]
-        )
-        .Append(new(new(0, 0), "C"))
-        .ToDictionary();
-
-    protected IBeatmap<SentakkiHitObject> beatmap;
+    protected IBeatmap<SentakkiHitObject> Beatmap;
 
     public SimaiBeatmapEncoder(IBeatmap<SentakkiHitObject> beatmap)
     {
-        this.beatmap = beatmap;
+        Beatmap = beatmap;
     }
 
     public void Encode(TextWriter writer)
@@ -62,7 +61,8 @@ public class SimaiBeatmapEncoder
 
     private void handleMetadata(TextWriter writer)
     {
-        var metadata = beatmap.Metadata;
+        var metadata = Beatmap.Metadata;
+
         // No unicode title, title will be forced to romanised title (which is guaranteed to exist)
         if (string.IsNullOrEmpty(metadata.TitleUnicode))
         {
@@ -88,15 +88,14 @@ public class SimaiBeatmapEncoder
         if (!string.IsNullOrEmpty(metadata.Source))
             writer.WriteLine(Invariant($"&source={metadata.Source}"));
 
-
         // We repeat the author field, the description is used by simai to include additional info. Chart author is one of them.
         writer.WriteLine(Invariant($"&author={metadata.Author.Username}"));
         writer.WriteLine(Invariant($"&des={metadata.Author.Username}"));
 
         // Encode tags in-case someone decides to import  a simai chart encoded by sentakki
-        if (!string.IsNullOrEmpty(beatmap.Metadata.Tags)) writer.WriteLine(Invariant($"&tags={beatmap.Metadata.Tags}"));
+        if (!string.IsNullOrEmpty(Beatmap.Metadata.Tags)) writer.WriteLine(Invariant($"&tags={Beatmap.Metadata.Tags}"));
 
-        writer.WriteLine(Invariant($"&wholebpm={(int)double.Round(beatmap.BeatmapInfo.BPM)}"));
+        writer.WriteLine(Invariant($"&wholebpm={(int)double.Round(Beatmap.BeatmapInfo.BPM)}"));
 
         // This is astroDX specific I believe
         writer.WriteLine(Invariant($"&demoseek={metadata.PreviewTime / 1000}"));
@@ -111,12 +110,12 @@ public class SimaiBeatmapEncoder
 
     protected virtual string CreateSimaiChart()
     {
-        var hitObjectsGroups = beatmap.HitObjects.GroupBy(h => h.StartTime).OrderBy(g => g.Key).ToList();
+        var hitObjectsGroups = Beatmap.HitObjects.GroupBy(h => h.StartTime).OrderBy(g => g.Key).ToList();
 
         if (hitObjectsGroups.Count == 0)
             return "E";
 
-        StringBuilder maidataBuilder = new();
+        StringBuilder maidataBuilder = new StringBuilder();
 
         // Add padding timingPoint prior to first hitobject
         if (hitObjectsGroups[0].Key > 0)
@@ -135,6 +134,7 @@ public class SimaiBeatmapEncoder
             }
 
             var hitobjects = group.ToList();
+
             for (int j = 0; j < hitobjects.Count; ++j)
             {
                 var hitobject = hitobjects[j];
@@ -191,15 +191,16 @@ public class SimaiBeatmapEncoder
             {
                 var slideInfo = slide.SlideInfoList[i];
                 int currentLane = slide.Lane;
+
                 foreach (var part in slideInfo.SlidePathParts)
                 {
-                    int endLane = (currentLane + part.EndOffset).NormalizePath();
+                    int endLane = (currentLane + part.EndOffset).NormalizeLane();
                     slideBuilder.Append(shapeForSlidePart(currentLane, part, slideInfo.SlidePathParts.Length > 1));
                     slideBuilder.Append(endLane + 1);
                     currentLane = endLane;
                 }
 
-                double millisPerBeat = beatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
+                double millisPerBeat = Beatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
                 double shootDelayMs = slideInfo.ShootDelay * millisPerBeat;
                 double durationWithoutDelay = slideInfo.Duration - shootDelayMs;
 
@@ -233,6 +234,7 @@ public class SimaiBeatmapEncoder
                 // Majdata(view/play) shits itself because it is not robust enough to handle slide equivalences
                 if (part.EndOffset == 4)
                     return "-";
+
                 return "v";
 
             case SlidePaths.PathShapes.U:
@@ -257,17 +259,17 @@ public class SimaiBeatmapEncoder
         }
     }
 
-    protected static string TouchToString(Touch touch) => $"{PositionMappingFor(touch.Position)}{(touch.Break ? "b" : "")}{(touch.Ex ? "x" : "")}";
+    protected static string TouchToString(Touch touch) => $"{positionMappingFor(touch.Position)}{(touch.Break ? "b" : "")}{(touch.Ex ? "x" : "")}";
 
-    protected static string PositionMappingFor(Vector2 position) => TouchPositionMapping.MinBy(kv => Vector2.DistanceSquared(position, kv.Key)).Value;
+    private static string positionMappingFor(Vector2 position) => touch_position_mapping.MinBy(kv => Vector2.DistanceSquared(position, kv.Key)).Value;
 
     protected static string TouchHoldToString(TouchHold touchHold) =>
-        Invariant($"{PositionMappingFor(touchHold.Position)}h{(touchHold.Break ? "b" : "")}[#{touchHold.Duration / 1000:F3}]");
+        Invariant($"{positionMappingFor(touchHold.Position)}h{(touchHold.Break ? "b" : "")}[#{touchHold.Duration / 1000:F3}]");
 
     public void SerializeToFile()
     {
-        var metadata = beatmap.BeatmapInfo.Metadata;
-        string path = $"(sen) {metadata.ArtistUnicode} - {metadata.TitleUnicode} ({beatmap.BeatmapInfo.DifficultyName}).txt";
+        var metadata = Beatmap.BeatmapInfo.Metadata;
+        string path = $"(sen) {metadata.ArtistUnicode} - {metadata.TitleUnicode} ({Beatmap.BeatmapInfo.DifficultyName}).txt";
         var file = File.CreateText(path);
         Encode(file);
         file.Close();

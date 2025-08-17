@@ -5,13 +5,12 @@ using System.Text;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
-
 using static System.FormattableString;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Formats;
 
 /// <summary>
-/// Alternativee simai encoder that encodes the chart in idiomatic simai, using the beats and divisor notation of simai.
+/// Alternative simai encoder that encodes the chart in idiomatic simai, using the beats and divisor notation of simai.
 ///
 /// This encoder lossy due to osu/sentakki hitobjects not necessarily lining up to subbeats perfectly due to mapper error or floating-point error.
 /// In practice this is not noticable as all notes will have at most 5ms deviation from their true timing.
@@ -20,30 +19,36 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps.Formats;
 /// </summary>
 public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
 {
-    private const float PRECISION = 5;
-    public QuantizedSimaiBeatmapEncoder(IBeatmap<SentakkiHitObject> beatmap) : base(beatmap) { }
+    // Precision in terms of ms
+    private const float precision = 5;
+
+    public QuantizedSimaiBeatmapEncoder(IBeatmap<SentakkiHitObject> beatmap)
+        : base(beatmap)
+    {
+    }
 
     protected override string CreateSimaiChart()
     {
-        if (beatmap.HitObjects.Count == 0)
+        if (Beatmap.HitObjects.Count == 0)
             return "E";
 
         List<IMaidataUnit> maidataUnits = [];
 
         var timingGroups =
-            beatmap.HitObjects.GroupBy(h => h.StartTime)
-                .Select(g => new
-                {
-                    Time = g.Key,
-                    HitObjects = g.ToList()
-                })
-                .GroupBy(g => beatmap.ControlPointInfo.TimingPointAt(g.Time)).Select(g => new
-                {
-                    TimingPoint = g.Key,
-                    HitObjectGroups = g.ToList()
-                }).OrderBy(g => g.TimingPoint.Time).ToList();
+            Beatmap.HitObjects.GroupBy(h => h.StartTime)
+                   .Select(g => new
+                   {
+                       Time = g.Key,
+                       HitObjects = g.ToList()
+                   })
+                   .GroupBy(g => Beatmap.ControlPointInfo.TimingPointAt(g.Time)).Select(g => new
+                   {
+                       TimingPoint = g.Key,
+                       HitObjectGroups = g.ToList()
+                   }).OrderBy(g => g.TimingPoint.Time).ToList();
 
         double currentTime = 0;
+
         for (int i = 0; i < timingGroups.Count; ++i)
         {
             TimingControlPoint timingPoint = timingGroups[i].TimingPoint;
@@ -54,6 +59,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
             double beatLength = timingPoint.BeatLength;
 
             double timeUntilTimingPoint = timingPoint.Time - currentTime;
+
             if (timeUntilTimingPoint > 0)
             {
                 // First timing point, any time before this is lead in time
@@ -82,7 +88,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                 maidataUnits.AddRange(smartGeneratePaddingBeats(timeUntilCurrent, timingPoint, out double timeRemaining));
                 currentTime = hitObjectGroups[j].Time - timeRemaining;
 
-                StringBuilder hitObjectGroupBuilder = new();
+                StringBuilder hitObjectGroupBuilder = new StringBuilder();
 
                 // This is locked in
                 for (int k = 0; k < hitObjectGroup.HitObjects.Count; ++k)
@@ -102,6 +108,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                     if (k < hitObjectGroup.HitObjects.Count - 1)
                         hitObjectGroupBuilder.Append('/');
                 }
+
                 maidataUnits.Add(new HitObjectCollectionUnit(hitObjectGroupBuilder.ToString()));
             }
         }
@@ -118,19 +125,19 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
             switch (unit)
             {
                 case BPMUnit b:
-                    if (currentBPM == b.bpm)
+                    if (currentBPM == b.BPM)
                         continue;
 
-                    currentBPM = b.bpm;
+                    currentBPM = b.BPM;
                     currentDivisor = 1;
 
                     break;
 
                 case DivisorUnit d:
-                    if (currentDivisor == d.divisor)
+                    if (currentDivisor == d.Divisor)
                         continue;
 
-                    currentDivisor = d.divisor;
+                    currentDivisor = d.Divisor;
                     break;
 
                 case BeatTimeUnit bt:
@@ -139,30 +146,30 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                     break;
             }
 
-            if (cleanMaiDataUnits.Count > 0 && cleanMaiDataUnits[^1] is HitObjectCollectionUnit previousHOC)
+            if (cleanMaiDataUnits.Count > 0 && cleanMaiDataUnits[^1] is HitObjectCollectionUnit previousHoc)
             {
-                // Merge hitobject collections without a beat in between
-                // This may happen due to the notes being at less 5 ms away from each other, which is beyond the precision of this encoder, and therefore the encoder doesn't generate padding beats
-                if (unit is HitObjectCollectionUnit currentHOC)
+                switch (unit)
                 {
-                    cleanMaiDataUnits[^1] = new HitObjectCollectionUnit(
-                    $"{previousHOC.collectionString}/{currentHOC.collectionString}"
-                    );
-                    continue;
-                }
-                // Ensure all timing units are before hitObject units
-                else if (unit is DivisorUnit or BeatTimeUnit or BPMUnit)
-                {
-                    cleanMaiDataUnits[^1] = maidataUnits[i];
-                    cleanMaiDataUnits.Add(previousHOC);
-                    continue;
+                    // Merge hitobject collections without a beat in between
+                    // This may happen due to the notes being at less 5 ms away from each other, which is beyond the precision of this encoder, and therefore the encoder doesn't generate padding beats
+                    case HitObjectCollectionUnit currentHoc:
+                        cleanMaiDataUnits[^1] = new HitObjectCollectionUnit(
+                            $"{previousHoc.CollectionString}/{currentHoc.CollectionString}"
+                        );
+                        continue;
+
+                    // Ensure all timing units are before hitObject units
+                    case DivisorUnit or BeatTimeUnit or BPMUnit:
+                        cleanMaiDataUnits[^1] = maidataUnits[i];
+                        cleanMaiDataUnits.Add(previousHoc);
+                        continue;
                 }
             }
 
             cleanMaiDataUnits.Add(unit);
         }
 
-        StringBuilder maichartBuilder = new();
+        StringBuilder maichartBuilder = new StringBuilder();
         foreach (var item in cleanMaiDataUnits)
             maichartBuilder.Append(item);
 
@@ -196,9 +203,11 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
         yield return 1;
 
         int divisorPower = 1;
+
         while (true)
         {
             yield return divisorBase * divisorPower;
+
             divisorPower <<= 1;
         }
     }
@@ -206,7 +215,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
     private static List<IMaidataUnit> generatePaddingBeats(double timeDelta, TimingControlPoint activeTimingPoint, out double timeRemaining, int divisorBase = 2)
     {
         timeRemaining = timeDelta;
-        if (timeDelta < PRECISION)
+        if (timeDelta < precision)
             return [];
 
         List<IMaidataUnit> paddingBeats = [];
@@ -219,7 +228,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
 
             // Is it possible to get within PRECISION if we allow timeDelta to go negative?
             // If so, we would prefer that as it is "close enough" while reducing number of subdivisions
-            if (Math.Abs(timeRemaining - subBeatLength * (numberOfSubBeats + 1)) < PRECISION)
+            if (Math.Abs(timeRemaining - subBeatLength * (numberOfSubBeats + 1)) < precision)
                 ++numberOfSubBeats;
 
             if (numberOfSubBeats > 0)
@@ -232,7 +241,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
 
             timeRemaining -= numberOfSubBeats * subBeatLength;
 
-            if (timeRemaining < PRECISION) break;
+            if (timeRemaining < precision) break;
         }
 
         return paddingBeats;
@@ -248,25 +257,26 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
         public override readonly string ToString() => ",";
     }
 
-    private record struct BPMUnit(double bpm) : IMaidataUnit
+    private readonly record struct BPMUnit(double BPM) : IMaidataUnit
     {
-        public override readonly string ToString() => Invariant($"\n({bpm})");
+        public override readonly string ToString() => Invariant($"\n({BPM})");
     }
 
-    private record struct DivisorUnit(int divisor) : IMaidataUnit
+    private readonly record struct DivisorUnit(int Divisor) : IMaidataUnit
     {
-        public override readonly string ToString() => Invariant($"\n{{{divisor}}}");
+        public override readonly string ToString() => Invariant($"\n{{{Divisor}}}");
     }
 
-    private record struct BeatTimeUnit(double beatLength) : IMaidataUnit
+    private readonly record struct BeatTimeUnit(double BeatLength) : IMaidataUnit
     {
-        public override readonly string ToString() => Invariant($"\n({tempo}){{{divisor}}}");
+        public override readonly string ToString() => Invariant($"\n({Tempo}){{{DIVISOR}}}");
 
-        public double tempo = 60000 / beatLength;
-        public int divisor = 4;
+        public readonly double Tempo = 60000 / BeatLength;
+        public const int DIVISOR = 4;
     }
-    private record struct HitObjectCollectionUnit(string collectionString) : IMaidataUnit
+
+    private readonly record struct HitObjectCollectionUnit(string CollectionString) : IMaidataUnit
     {
-        public override readonly string ToString() => collectionString;
+        public override readonly string ToString() => CollectionString;
     }
 }

@@ -3,107 +3,106 @@ using osu.Framework.Input;
 using osu.Game.Rulesets.Scoring;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables
+namespace osu.Game.Rulesets.Sentakki.Objects.Drawables;
+
+public partial class DrawableSlideCheckpointNode : DrawableSentakkiHitObject
 {
-    public partial class DrawableSlideCheckpointNode : DrawableSentakkiHitObject
+    // Slides parts can be hit as long as the body is visible, regardless of it's intended time
+    // By setting the animation duration to an absurdly high value, the lifetimes of touch regions are bounded by the parent DrawableSlide.
+    protected override double InitialLifetimeOffset => double.MaxValue;
+
+    public new SlideCheckpoint.CheckpointNode HitObject => (SlideCheckpoint.CheckpointNode)base.HitObject;
+
+    private DrawableSlideCheckpoint checkpoint => (DrawableSlideCheckpoint)ParentHitObject;
+
+    public override bool HandlePositionalInput => true;
+    public override bool DisplayResult => false;
+
+    private SentakkiInputManager? sentakkiActionInputManager;
+    internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
+
+    public const float DETECTION_RADIUS = 100;
+
+    public DrawableSlideCheckpointNode()
+        : this(null)
     {
-        // Slides parts can be hit as long as the body is visible, regardless of it's intended time
-        // By setting the animation duration to an absurdly high value, the lifetimes of touch regions are bounded by the parent DrawableSlide.
-        protected override double InitialLifetimeOffset => double.MaxValue;
+    }
 
-        public new SlideCheckpoint.CheckpointNode HitObject => (SlideCheckpoint.CheckpointNode)base.HitObject;
+    public DrawableSlideCheckpointNode(SlideCheckpoint.CheckpointNode? node)
+        : base(node)
+    {
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
+        RelativeSizeAxes = Axes.None;
+        Size = new Vector2(DETECTION_RADIUS * 2);
+        CornerExponent = 2f;
+        CornerRadius = DETECTION_RADIUS;
+    }
 
-        private DrawableSlideCheckpoint checkpoint => (DrawableSlideCheckpoint)ParentHitObject;
+    protected override void OnApply()
+    {
+        base.OnApply();
+        Position = HitObject.Position;
+    }
 
-        public override bool HandlePositionalInput => true;
-        public override bool DisplayResult => false;
+    private int pressedCount;
 
-        private SentakkiInputManager sentakkiActionInputManager = null!;
-        internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= ((SentakkiInputManager)GetContainingInputManager());
+    protected override void Update()
+    {
+        base.Update();
 
-        public const float DETECTION_RADIUS = 100;
+        int updatedPressedCounts = countActiveTouchPoints();
 
-        public DrawableSlideCheckpointNode()
-            : this(null)
+        if (updatedPressedCounts > pressedCount)
+            UpdateResult(true);
+
+        pressedCount = updatedPressedCounts;
+    }
+
+    protected override void CheckForResult(bool userTriggered, double timeOffset)
+    {
+        // Don't allow for user input if auto is enabled for touch based objects (AutoTouch mod)
+        if (!userTriggered || Auto)
         {
+            if (timeOffset > 0 && Auto)
+                ApplyResult(Result.Judgement.MaxResult);
+            return;
         }
 
-        public DrawableSlideCheckpointNode(SlideCheckpoint.CheckpointNode? node)
-            : base(node)
+        if (!checkpoint.IsHittable)
+            return;
+
+        ApplyResult(Result.Judgement.MaxResult);
+    }
+
+    private int countActiveTouchPoints()
+    {
+        var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+        int count = 0;
+
+        if (ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
         {
-            Anchor = Anchor.Centre;
-            Origin = Anchor.Centre;
-            RelativeSizeAxes = Axes.None;
-            Size = new Vector2(DETECTION_RADIUS * 2);
-            CornerExponent = 2f;
-            CornerRadius = DETECTION_RADIUS;
-        }
-
-        protected override void OnApply()
-        {
-            base.OnApply();
-            Position = HitObject.Position;
-        }
-
-        private int pressedCount = 0;
-
-        protected override void Update()
-        {
-            base.Update();
-
-            int updatedPressedCounts = countActiveTouchPoints();
-
-            if (updatedPressedCounts > pressedCount)
-                UpdateResult(true);
-
-            pressedCount = updatedPressedCounts;
-        }
-
-        protected override void CheckForResult(bool userTriggered, double timeOffset)
-        {
-            // Don't allow for user input if auto is enabled for touch based objects (AutoTouch mod)
-            if (!userTriggered || Auto)
+            foreach (var item in SentakkiActionInputManager.PressedActions)
             {
-                if (timeOffset > 0 && Auto)
-                    ApplyResult(Result.Judgement.MaxResult);
-                return;
-            }
-
-            if (!checkpoint.IsHittable)
-                return;
-
-            ApplyResult(Result.Judgement.MaxResult);
-        }
-
-        private int countActiveTouchPoints()
-        {
-            var touchInput = SentakkiActionInputManager.CurrentState.Touch;
-            int count = 0;
-
-            if (ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
-            {
-                foreach (var item in SentakkiActionInputManager.PressedActions)
-                {
-                    if (item < SentakkiAction.Key1)
-                        ++count;
-                }
-            }
-
-            foreach (TouchSource source in touchInput.ActiveSources)
-            {
-                if (touchInput.GetTouchPosition(source) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
+                if (item < SentakkiAction.Key1)
                     ++count;
             }
-
-            return count;
         }
 
-        public new void ApplyResult(HitResult result)
+        foreach (TouchSource source in touchInput.ActiveSources)
         {
-            if (Judged)
-                return;
-
-            base.ApplyResult(result);
+            if (touchInput.GetTouchPosition(source) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
+                ++count;
         }
+
+        return count;
+    }
+
+    public new void ApplyResult(HitResult result)
+    {
+        if (Judged)
+            return;
+
+        base.ApplyResult(result);
     }
 }

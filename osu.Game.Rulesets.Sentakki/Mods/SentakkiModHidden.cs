@@ -25,222 +25,244 @@ using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.Mods
+namespace osu.Game.Rulesets.Sentakki.Mods;
+
+public partial class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset<SentakkiHitObject>
 {
-    public partial class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset<SentakkiHitObject>
-    {
-        public override LocalisableString Description => SentakkiModHiddenStrings.ModDescription;
+    public override LocalisableString Description => SentakkiModHiddenStrings.ModDescription;
 
-        public override string ExtendedIconInformation => VisibleRadius.IsDefault ? string.Empty : $"{VisibleRadius.Value:P0}";
+    public override string ExtendedIconInformation => VisibleRadius.IsDefault ? string.Empty : $"{VisibleRadius.Value:P0}";
 
-        public override double ScoreMultiplier => 1 + (MathF.Pow(1 - VisibleRadius.Value, 2) * 0.2);
+    public override double ScoreMultiplier => 1 + MathF.Pow(1 - VisibleRadius.Value, 2) * 0.2;
 
-        [SettingSource(
+    [SettingSource(
         typeof(SentakkiModHiddenStrings),
         nameof(SentakkiModHiddenStrings.VisibleRadius),
         nameof(SentakkiModHiddenStrings.VisibleRadiusDescription),
         SettingControlType = typeof(SettingsSlider<float, PercentageRoundedSliderBar>))]
-        public BindableFloat VisibleRadius { get; } = new BindableFloat
+    public BindableFloat VisibleRadius { get; } = new BindableFloat
+    {
+        MinValue = 0f,
+        MaxValue = 1f,
+        Default = 0.6f,
+        Value = 0.6f,
+        Precision = 0.05f
+    };
+
+    public void ApplyToDrawableRuleset(DrawableRuleset<SentakkiHitObject> drawableRuleset)
+    {
+        SentakkiPlayfield sentakkiPlayfield = (SentakkiPlayfield)drawableRuleset.Playfield;
+        LanedPlayfield lanedPlayfield = sentakkiPlayfield.LanedPlayfield;
+
+        var lanedHitObjectArea = lanedPlayfield.LanedHitObjectArea;
+        var lanedNoteProxyContainer = lanedHitObjectArea.Child;
+
+        const float note_visible_point = SentakkiPlayfield.NOTESTARTDISTANCE - NoteRingPiece.DRAWABLE_SIZE / 2f;
+        const float total_visible_distance = SentakkiPlayfield.INTERSECTDISTANCE;
+
+        const float visibility_start_point = note_visible_point / total_visible_distance;
+        const float visible_ratio = 1 - visibility_start_point;
+
+        lanedHitObjectArea.Remove(lanedNoteProxyContainer, false);
+        lanedHitObjectArea.Add(new PlayfieldMaskingContainer(lanedNoteProxyContainer)
         {
-            MinValue = 0f,
-            MaxValue = 1f,
-            Default = 0.6f,
-            Value = 0.6f,
-            Precision = 0.05f
-        };
+            CoverageRadius = visibility_start_point + visible_ratio * VisibleRadius.Value
+        });
 
+        lanedPlayfield.HitObjectLineRenderer.Hide();
+    }
 
-        public void ApplyToDrawableRuleset(DrawableRuleset<SentakkiHitObject> drawableRuleset)
+    protected override void ApplyIncreasedVisibilityState(DrawableHitObject hitObject, ArmedState state) => ApplyNormalVisibilityState(hitObject, state);
+
+    protected override void ApplyNormalVisibilityState(DrawableHitObject hitObject, ArmedState state)
+    {
+        double preemptTime;
+        double fadeOutTime;
+
+        switch (hitObject)
         {
-            SentakkiPlayfield sentakkiPlayfield = (SentakkiPlayfield)drawableRuleset.Playfield;
-            LanedPlayfield lanedPlayfield = sentakkiPlayfield.LanedPlayfield;
+            case DrawableTouch t:
+                preemptTime = t.HitObject.HitWindows.WindowFor(HitResult.Ok);
+                fadeOutTime = preemptTime * 0.3f;
+                using (t.BeginAbsoluteSequence(t.HitObject.StartTime - preemptTime))
+                    t.TouchBody.FadeOut(fadeOutTime);
+                break;
 
-            var lanedHitObjectArea = lanedPlayfield.LanedHitObjectArea;
-            var lanedNoteProxyContainer = lanedHitObjectArea.Child;
+            case DrawableTouchHold th:
+                th.TouchHoldBody.ProgressPiece.Hide();
+                break;
 
-            float noteVisiblePoint = SentakkiPlayfield.NOTESTARTDISTANCE - (NoteRingPiece.DRAWABLE_SIZE / 2f);
-            float totalVisibleDistance = SentakkiPlayfield.INTERSECTDISTANCE;
+            case DrawableSlideBody sb:
+                sb.SlideStars.Hide();
 
-            float visibilityStartPoint = noteVisiblePoint / totalVisibleDistance;
-            float visibleRatio = 1 - visibilityStartPoint;
+                preemptTime = sb.HitObject.StartTime - sb.LifetimeStart;
+                fadeOutTime = sb.HitObject.Duration + preemptTime;
+                using (sb.BeginAbsoluteSequence(sb.HitObject.StartTime - preemptTime))
+                    ((Drawable)sb.Slidepath).FadeOutFromOne(fadeOutTime);
+                break;
+        }
+    }
 
-            lanedHitObjectArea.Remove(lanedNoteProxyContainer, false);
-            lanedHitObjectArea.Add(new PlayfieldMaskingContainer(lanedNoteProxyContainer)
+    private partial class PercentageRoundedSliderBar : RoundedSliderBar<float>
+    {
+        public PercentageRoundedSliderBar()
+        {
+            DisplayAsPercentage = true;
+        }
+    }
+
+    private partial class PlayfieldMaskingContainer : CircularContainer
+    {
+        private readonly PlayfieldMask cover;
+
+        public PlayfieldMaskingContainer(Drawable content)
+        {
+            RelativeSizeAxes = Axes.Both;
+            Anchor = Origin = Anchor.Centre;
+
+            // We still enable masking to avoid BufferedContainer visual jank when it rotates
+            Masking = true;
+
+            Child = new FixedSizeBufferedContainer
             {
-                CoverageRadius = visibilityStartPoint + (visibleRatio * VisibleRadius.Value)
-            });
+                RelativeSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
 
-            lanedPlayfield.HitObjectLineRenderer.Hide();
+                Children =
+                [
+                    new Container
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Child = content
+                    },
+                    cover = new PlayfieldMask
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        RelativeSizeAxes = Axes.Both,
+                        Blending = new BlendingParameters
+                        {
+                            // Don't change the destination colour.
+                            RGBEquation = BlendingEquation.Add,
+                            Source = BlendingType.Zero,
+                            Destination = BlendingType.One,
+                            // Subtract the cover's alpha from the destination (points with alpha 1 should make the destination completely transparent).
+                            AlphaEquation = BlendingEquation.Add,
+                            SourceAlpha = BlendingType.Zero,
+                            DestinationAlpha = BlendingType.OneMinusSrcAlpha
+                        },
+                    }
+                ]
+            };
         }
 
-        protected override void ApplyIncreasedVisibilityState(DrawableHitObject hitObject, ArmedState state) => ApplyNormalVisibilityState(hitObject, state);
-
-        protected override void ApplyNormalVisibilityState(DrawableHitObject hitObject, ArmedState state)
+        /// <summary>
+        /// The relative visible area of the playfield, half of the distance is used as a fade out.
+        /// </summary>
+        public float CoverageRadius
         {
-            double preemptTime;
-            double fadeOutTime;
-
-            switch (hitObject)
+            set
             {
-                case DrawableTouch t:
-                    preemptTime = t.HitObject.HitWindows.WindowFor(HitResult.Ok);
-                    fadeOutTime = preemptTime * 0.3f;
-                    using (t.BeginAbsoluteSequence(t.HitObject.StartTime - preemptTime))
-                        t.TouchBody.FadeOut(fadeOutTime);
-                    break;
+                cover.MaskRadius = new Vector2(0, SentakkiPlayfield.RINGSIZE * value / 4);
 
-                case DrawableTouchHold th:
-                    th.TouchHoldBody.ProgressPiece.Hide();
-                    break;
-
-                case DrawableSlideBody sb:
-                    sb.SlideStars.Hide();
-
-                    preemptTime = sb.HitObject.StartTime - sb.LifetimeStart;
-                    fadeOutTime = sb.HitObject.Duration + preemptTime;
-                    using (sb.BeginAbsoluteSequence(sb.HitObject.StartTime - preemptTime))
-                        ((Drawable)sb.Slidepath).FadeOutFromOne(fadeOutTime);
-                    break;
+                // We set the buffered container's size to be around the same width of the visible area
+                // This is so that we don't have a buffer bigger than what is needed
+                // If we plan to change the coverage radius often, this will instead be an anti-optimization
+                Size = new Vector2(value);
             }
         }
 
-        private partial class PercentageRoundedSliderBar : RoundedSliderBar<float>
+        // This buffered container maintains a SSDQ unaffected by rotation, so that the backing texture isn't being reallocated due to resizes
+        private partial class FixedSizeBufferedContainer : BufferedContainer
         {
-            public PercentageRoundedSliderBar()
+            [Resolved]
+            private SentakkiPlayfield sentakkiPlayfield { get; set; } = null!;
+
+            protected override Quad ComputeScreenSpaceDrawQuad()
             {
-                DisplayAsPercentage = true;
+                var ssdqDrawinfo = DrawInfo;
+
+                // We apply a counter rotation so that the SSDQ retains the non-rotated Quad
+                ssdqDrawinfo.ApplyTransform(AnchorPosition, Vector2.One, -sentakkiPlayfield.Rotation, Vector2.Zero, OriginPosition);
+
+                return Quad.FromRectangle(DrawRectangle) * ssdqDrawinfo.Matrix;
             }
         }
 
-        private partial class PlayfieldMaskingContainer : CircularContainer
+        private partial class PlayfieldMask : Drawable
         {
-            private readonly PlayfieldMask cover;
+            private IShader shader = null!;
 
-            public PlayfieldMaskingContainer(Drawable content)
+            protected override DrawNode CreateDrawNode() => new PlayfieldMaskDrawNode(this);
+
+            [BackgroundDependencyLoader]
+            private void load(ShaderManager shaderManager)
             {
                 RelativeSizeAxes = Axes.Both;
                 Anchor = Origin = Anchor.Centre;
-
-                // We still enable masking to avoid BufferedContainer visual jank when it rotates
-                Masking = true;
-
-                Child = new FixedSizeBufferedContainer
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-
-                    Children = new Drawable[]
-                    {
-                        new Container
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Child = content
-                        },
-                        cover = new PlayfieldMask
-                        {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            RelativeSizeAxes = Axes.Both,
-                            Blending = new BlendingParameters
-                            {
-                                // Don't change the destination colour.
-                                RGBEquation = BlendingEquation.Add,
-                                Source = BlendingType.Zero,
-                                Destination = BlendingType.One,
-                                // Subtract the cover's alpha from the destination (points with alpha 1 should make the destination completely transparent).
-                                AlphaEquation = BlendingEquation.Add,
-                                SourceAlpha = BlendingType.Zero,
-                                DestinationAlpha = BlendingType.OneMinusSrcAlpha
-                            },
-                        }
-                    }
-                };
+                shader = shaderManager.Load("PositionAndColour", "PlayfieldMask");
             }
 
-            /// <summary>
-            /// The relative visible area of the playfield, half of the distance is used as a fade out.
-            /// </summary>
-            public float CoverageRadius
+            private Vector2 maskRadius;
+
+            public Vector2 MaskRadius
             {
+                get => maskRadius;
                 set
                 {
-                    cover.MaskRadius = new Vector2(0, SentakkiPlayfield.RINGSIZE * value / 4);
+                    if (maskRadius == value) return;
 
-                    // We set the buffered container's size to be around the same width of the visible area
-                    // This is so that we don't have a buffer bigger than what is needed
-                    // If we plan to change the coverage radius often, this will instead be an anti-optimization
-                    Size = new Vector2(value);
+                    maskRadius = value;
+                    Invalidate(Invalidation.DrawNode);
                 }
             }
 
-            // This buffered container maintains a SSDQ unaffected by rotation, so that the backing texture isn't being reallocated due to resizes
-            private partial class FixedSizeBufferedContainer : BufferedContainer
+            public Vector2 MaskPosition => OriginPosition;
+
+            private class PlayfieldMaskDrawNode : DrawNode
             {
-                [Resolved]
-                private SentakkiPlayfield sentakkiPlayfield { get; set; } = null!;
+                protected new PlayfieldMask Source => (PlayfieldMask)base.Source;
 
-                protected override Quad ComputeScreenSpaceDrawQuad()
-                {
-                    var ssdqDrawinfo = DrawInfo;
-
-                    // We apply a counter rotation so that the SSDQ retains the non-rotated Quad
-                    ssdqDrawinfo.ApplyTransform(AnchorPosition, Vector2.One, -sentakkiPlayfield.Rotation, Vector2.Zero, OriginPosition);
-
-                    return Quad.FromRectangle(DrawRectangle) * ssdqDrawinfo.Matrix;
-                }
-            }
-
-            private partial class PlayfieldMask : Drawable
-            {
                 private IShader shader = null!;
+                private Quad screenSpaceDrawQuad;
 
-                protected override DrawNode CreateDrawNode() => new PlayfieldMaskDrawNode(this);
+                private IUniformBuffer<MaskParameters>? maskParameters;
 
-                [BackgroundDependencyLoader]
-                private void load(ShaderManager shaderManager)
-                {
-                    RelativeSizeAxes = Axes.Both;
-                    Anchor = Origin = Anchor.Centre;
-                    shader = shaderManager.Load("PositionAndColour", "PlayfieldMask");
-                }
-
+                private Vector2 maskPosition;
                 private Vector2 maskRadius;
 
-                public Vector2 MaskRadius
-                {
-                    get => maskRadius;
-                    set
-                    {
-                        if (maskRadius == value) return;
+                private IVertexBatch<PositionAndColourVertex>? quadBatch;
+                private Action<TexturedVertex2D>? addAction;
 
-                        maskRadius = value;
-                        Invalidate(Invalidation.DrawNode);
-                    }
+                public PlayfieldMaskDrawNode(PlayfieldMask source)
+                    : base(source)
+                {
                 }
 
-                public Vector2 MaskPosition => OriginPosition;
-
-                private class PlayfieldMaskDrawNode : DrawNode
+                public override void ApplyState()
                 {
-                    protected new PlayfieldMask Source => (PlayfieldMask)base.Source;
+                    base.ApplyState();
 
-                    private IShader shader = null!;
-                    private Quad screenSpaceDrawQuad;
+                    shader = Source.shader;
+                    screenSpaceDrawQuad = Source.ScreenSpaceDrawQuad;
+                    maskPosition = Vector2Extensions.Transform(Source.MaskPosition, DrawInfo.Matrix);
+                    maskRadius = Source.MaskRadius * DrawInfo.Matrix.ExtractScale().Xy;
+                }
 
-                    private IUniformBuffer<MaskParameters>? maskParameters;
+                protected override void Draw(IRenderer renderer)
+                {
+                    base.Draw(renderer);
 
-                    private Vector2 maskPosition;
-                    private Vector2 maskRadius;
+                    maskParameters = renderer.CreateUniformBuffer<MaskParameters>();
 
-                    private IVertexBatch<PositionAndColourVertex> quadBatch = null!;
-                    private Action<TexturedVertex2D> addAction;
+                    maskParameters.Data = new MaskParameters { MaskPosition = maskPosition, MaskRadius = maskRadius };
 
-                    public PlayfieldMaskDrawNode(PlayfieldMask source)
-                        : base(source)
+                    if (quadBatch is null)
                     {
+                        quadBatch = renderer.CreateQuadBatch<PositionAndColourVertex>(1, 1);
                         addAction = v => quadBatch.Add(new PositionAndColourVertex
                         {
                             Position = v.Position,
@@ -248,60 +270,26 @@ namespace osu.Game.Rulesets.Sentakki.Mods
                         });
                     }
 
-                    public override void ApplyState()
-                    {
-                        base.ApplyState();
+                    shader.Bind();
+                    shader.BindUniformBlock("m_maskParameters", maskParameters);
 
-                        shader = Source.shader;
-                        screenSpaceDrawQuad = Source.ScreenSpaceDrawQuad;
-                        maskPosition = Vector2Extensions.Transform(Source.MaskPosition, DrawInfo.Matrix);
-                        maskRadius = Source.MaskRadius * DrawInfo.Matrix.ExtractScale().Xy;
-                    }
+                    renderer.DrawQuad(renderer.WhitePixel, screenSpaceDrawQuad, DrawColourInfo.Colour, vertexAction: addAction);
 
-                    protected override void Draw(IRenderer renderer)
-                    {
-                        base.Draw(renderer);
+                    shader.Unbind();
+                }
 
-                        maskParameters = renderer.CreateUniformBuffer<MaskParameters>();
+                protected override void Dispose(bool isDisposing)
+                {
+                    base.Dispose(isDisposing);
+                    maskParameters?.Dispose();
+                    quadBatch?.Dispose();
+                }
 
-                        maskParameters.Data = maskParameters.Data with
-                        {
-                            MaskPosition = maskPosition,
-                            MaskRadius = maskRadius
-                        };
-
-                        if (quadBatch == null)
-                        {
-                            quadBatch = renderer.CreateQuadBatch<PositionAndColourVertex>(1, 1);
-                            addAction = v => quadBatch.Add(new PositionAndColourVertex
-                            {
-                                Position = v.Position,
-                                Colour = v.Colour
-                            });
-                        }
-
-                        shader.Bind();
-                        shader.BindUniformBlock("m_maskParameters", maskParameters);
-
-                        renderer.DrawQuad(renderer.WhitePixel, screenSpaceDrawQuad, DrawColourInfo.Colour, vertexAction: addAction);
-
-                        shader.Unbind();
-                    }
-
-                    protected override void Dispose(bool isDisposing)
-                    {
-                        base.Dispose(isDisposing);
-                        maskParameters?.Dispose();
-                        quadBatch?.Dispose();
-                    }
-
-
-                    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-                    private record struct MaskParameters
-                    {
-                        public UniformVector2 MaskPosition;
-                        public UniformVector2 MaskRadius;
-                    }
+                [StructLayout(LayoutKind.Sequential, Pack = 1)]
+                private record struct MaskParameters
+                {
+                    public UniformVector2 MaskPosition;
+                    public UniformVector2 MaskRadius;
                 }
             }
         }

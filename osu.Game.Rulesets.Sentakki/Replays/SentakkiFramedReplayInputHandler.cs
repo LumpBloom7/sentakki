@@ -5,40 +5,39 @@ using osu.Game.Replays;
 using osu.Game.Rulesets.Replays;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.Replays
+namespace osu.Game.Rulesets.Sentakki.Replays;
+
+public class SentakkiFramedReplayInputHandler : FramedReplayInputHandler<SentakkiReplayFrame>
 {
-    public class SentakkiFramedReplayInputHandler : FramedReplayInputHandler<SentakkiReplayFrame>
+    public SentakkiFramedReplayInputHandler(Replay replay)
+        : base(replay)
     {
-        public SentakkiFramedReplayInputHandler(Replay replay)
-            : base(replay)
+    }
+
+    protected override bool IsImportant(SentakkiReplayFrame frame) => true;
+
+    protected Vector2 Position
+    {
+        get
         {
+            var frame = CurrentFrame;
+
+            if (frame == null)
+                return Vector2.Zero;
+
+            return NextFrame != null ? Interpolation.ValueAt(CurrentTime, frame.Position, NextFrame.Position, frame.Time, NextFrame.Time) : frame.Position;
         }
+    }
 
-        protected override bool IsImportant(SentakkiReplayFrame frame) => true;
-
-        protected Vector2 Position
+    protected override void CollectReplayInputs(List<IInput> inputs)
+    {
+        inputs.Add(new MousePositionAbsoluteInput
         {
-            get
-            {
-                var frame = CurrentFrame;
-
-                if (frame == null)
-                    return Vector2.Zero;
-
-                return NextFrame != null ? Interpolation.ValueAt(CurrentTime, frame.Position, NextFrame.Position, frame.Time, NextFrame.Time) : frame.Position;
-            }
-        }
-
-        protected override void CollectReplayInputs(List<IInput> inputs)
+            Position = GamefieldToScreenSpace(Position),
+        });
+        inputs.Add(new ReplayState<SentakkiAction>
         {
-            inputs.Add(new MousePositionAbsoluteInput
-            {
-                Position = GamefieldToScreenSpace(Position),
-            });
-            inputs.Add(new ReplayState<SentakkiAction>
-            {
-                PressedActions = CurrentFrame?.Actions ?? new List<SentakkiAction>(),
-            });
-        }
+            PressedActions = CurrentFrame?.Actions ?? [],
+        });
     }
 }

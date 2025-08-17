@@ -13,88 +13,89 @@ using osu.Game.Tests.Visual;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides
+namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides;
+
+[TestFixture]
+public partial class TestSceneCircleChaining : OsuTestScene
 {
-    [TestFixture]
-    public partial class TestSceneCircleChaining : OsuTestScene
+    protected override Ruleset CreateRuleset() => new SentakkiRuleset();
+
+    private bool mirrored;
+
+    private readonly SlideVisual slide;
+    private readonly Container nodes;
+
+    [Cached]
+    private readonly DrawablePool<SlideChevron> chevronPool = null!;
+
+    public TestSceneCircleChaining()
     {
-        protected override Ruleset CreateRuleset() => new SentakkiRuleset();
+        Add(chevronPool = new DrawablePool<SlideChevron>(62));
 
-        private bool mirrored;
-
-        private readonly SlideVisual slide;
-        private readonly Container nodes;
-
-        [Cached]
-        private readonly DrawablePool<SlideChevron> chevronPool = null!;
-
-        public TestSceneCircleChaining()
+        Add(new SentakkiRing
         {
-            Add(chevronPool = new DrawablePool<SlideChevron>(62));
+            RelativeSizeAxes = Axes.None,
+            Size = new Vector2(SentakkiPlayfield.RINGSIZE)
+        });
 
-            Add(new SentakkiRing
+        Add(slide = new SlideVisual());
+
+        AddToggleStep("Mirrored second part", b =>
+        {
+            mirrored = b;
+            RefreshSlide();
+        });
+
+        AddStep("Perform entry animation", () => slide.PerformEntryAnimation(1000));
+        AddWaitStep("Wait for transforms", 5);
+
+        AddStep("Perform exit animation", () => slide.PerformExitAnimation(1000, Time.Current));
+        AddWaitStep("Wait for transforms", 5);
+
+        Add(nodes = new Container
+        {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+        });
+    }
+
+    protected SentakkiSlidePath CreatePattern()
+    {
+        var pathParameters = new[]
+        {
+            new SlideBodyPart(SlidePaths.PathShapes.Circle, endOffset: 4, false),
+            new SlideBodyPart(SlidePaths.PathShapes.Circle, endOffset: 4, mirrored),
+        };
+
+        return SlidePaths.CreateSlidePath(pathParameters);
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        RefreshSlide();
+    }
+
+    protected void RefreshSlide()
+    {
+        slide.Path = CreatePattern();
+        nodes.Clear();
+
+        foreach (var node in slide.Path.SlideSegments.SelectMany(s => s.ControlPoints))
+        {
+            nodes.Add(new CircularContainer
             {
-                RelativeSizeAxes = Axes.None,
-                Size = new Vector2(SentakkiPlayfield.RINGSIZE)
-            });
-
-            Add(slide = new SlideVisual());
-
-            AddToggleStep("Mirrored second part", b =>
-            {
-                mirrored = b;
-                RefreshSlide();
-            });
-
-            AddStep("Perform entry animation", () => slide.PerformEntryAnimation(1000));
-            AddWaitStep("Wait for transforms", 5);
-
-            AddStep("Perform exit animation", () => slide.PerformExitAnimation(1000, Time.Current));
-            AddWaitStep("Wait for transforms", 5);
-
-            Add(nodes = new Container
-            {
+                Size = new Vector2(10),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-            });
-        }
-
-        protected SentakkiSlidePath CreatePattern()
-        {
-            var pathParameters = new[]{
-                new SlideBodyPart(SlidePaths.PathShapes.Circle, endOffset: 4, false),
-                new SlideBodyPart(SlidePaths.PathShapes.Circle, endOffset: 4, mirrored),
-            };
-
-            return SlidePaths.CreateSlidePath(pathParameters);
-        }
-        protected override void LoadComplete()
-        {
-            base.LoadComplete();
-            RefreshSlide();
-        }
-
-        protected void RefreshSlide()
-        {
-            slide.Path = CreatePattern();
-            nodes.Clear();
-
-            foreach (var node in slide.Path.SlideSegments.SelectMany(s => s.ControlPoints))
-            {
-                nodes.Add(new CircularContainer
+                Position = node.Position,
+                Masking = true,
+                Child = new Box
                 {
-                    Size = new Vector2(10),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Position = node.Position,
-                    Masking = true,
-                    Child = new Box
-                    {
-                        Colour = Color4.Green,
-                        RelativeSizeAxes = Axes.Both
-                    }
-                });
-            }
+                    Colour = Color4.Green,
+                    RelativeSizeAxes = Axes.Both
+                }
+            });
         }
     }
 }

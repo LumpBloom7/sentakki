@@ -9,51 +9,53 @@ using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
+namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine;
+
+public class LineLifetimeEntry : LifetimeEntry
 {
-    public class LineLifetimeEntry : LifetimeEntry
+    private readonly BindableDouble animationDuration = new BindableDouble(1000);
+
+    public double StartTime { get; }
+
+    public LineLifetimeEntry(DrawableSentakkiRuleset? drawableSentakkiRuleset, double startTime)
     {
-        private readonly BindableDouble animationDuration = new BindableDouble(1000);
+        StartTime = startTime;
 
-        public double StartTime { get; private set; }
+        animationDuration.TryBindTo(drawableSentakkiRuleset?.AdjustedAnimDuration);
+        animationDuration.BindValueChanged(refreshLifetime, true);
+    }
 
-        public LineLifetimeEntry(DrawableSentakkiRuleset? drawableSentakkiRuleset, double startTime)
+    public List<SentakkiLanedHitObject> HitObjects = [];
+
+    public float AngleRange { get; private set; }
+    public ColourInfo Colour { get; private set; }
+    public float Rotation { get; private set; }
+
+    public void Add(SentakkiLanedHitObject hitObject)
+    {
+        hitObject.BreakBindable.ValueChanged += onBreakChanged;
+        hitObject.ColourBindable.ValueChanged += onColorChanged;
+        HitObjects.AddInPlace(hitObject, Comparer<SentakkiLanedHitObject>.Create((lhs, rhs) => lhs.Lane.CompareTo(rhs.Lane)));
+        updateLine();
+    }
+
+    public void Remove(SentakkiLanedHitObject hitObject)
+    {
+        hitObject.BreakBindable.ValueChanged -= onBreakChanged;
+        HitObjects.Remove(hitObject);
+        updateLine();
+    }
+
+    private void onBreakChanged(ValueChangedEvent<bool> obj) => updateLine();
+    private void onColorChanged(ValueChangedEvent<Color4> obj) => updateLine();
+
+    public Action<LineLifetimeEntry>? OnLineUpdated = null!;
+
+    private void updateLine()
+    {
+        switch (HitObjects.Count)
         {
-            StartTime = startTime;
-
-            animationDuration.TryBindTo(drawableSentakkiRuleset?.AdjustedAnimDuration);
-            animationDuration.BindValueChanged(refreshLifetime, true);
-        }
-
-        public List<SentakkiLanedHitObject> HitObjects = new List<SentakkiLanedHitObject>();
-
-        public float AngleRange { get; private set; }
-        public ColourInfo Colour { get; private set; }
-        public float Rotation { get; private set; }
-
-        public void Add(SentakkiLanedHitObject hitObject)
-        {
-            hitObject.BreakBindable.ValueChanged += onBreakChanged;
-            hitObject.ColourBindable.ValueChanged += onColorChanged;
-            HitObjects.AddInPlace(hitObject, Comparer<SentakkiLanedHitObject>.Create((lhs, rhs) => lhs.Lane.CompareTo(rhs.Lane)));
-            UpdateLine();
-        }
-
-        public void Remove(SentakkiLanedHitObject hitObject)
-        {
-            hitObject.BreakBindable.ValueChanged -= onBreakChanged;
-            HitObjects.Remove(hitObject);
-            UpdateLine();
-        }
-
-        private void onBreakChanged(ValueChangedEvent<bool> obj) => UpdateLine();
-        private void onColorChanged(ValueChangedEvent<Color4> obj) => UpdateLine();
-
-        public Action<LineLifetimeEntry> OnLineUpdated = null!;
-
-        public void UpdateLine()
-        {
-            if (HitObjects.Count == 1)
+            case 1:
             {
                 AngleRange = 0.25f;
 
@@ -61,8 +63,10 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
                 Colour = hitObject.NoteColour;
                 Rotation = hitObject.Lane.GetRotationForLane() - 45;
+                break;
             }
-            else if (HitObjects.Count > 1)
+
+            case > 1:
             {
                 int maxDelta = HitObjects.Max(h => getDelta(HitObjects[0], h));
                 int minDelta = HitObjects.Min(h => getDelta(HitObjects[0], h));
@@ -71,28 +75,29 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine
 
                 Colour = Color4.Gold;
 
-                int angleRange = delta == 4 ? 360 : (90 + (45 * delta));
+                int angleRange = delta == 4 ? 360 : 90 + 45 * delta;
 
                 AngleRange = angleRange / 360f;
 
-                Rotation = anchor.Lane.GetRotationForLane() + (delta * 22.5f) - (angleRange / 2f);
+                Rotation = anchor.Lane.GetRotationForLane() + delta * 22.5f - angleRange / 2f;
+                break;
             }
-
-            // Notify the renderer that the line may be updated
-            OnLineUpdated?.Invoke(this);
         }
 
-        private void refreshLifetime(ValueChangedEvent<double> valueChangedEvent)
-        {
-            LifetimeStart = StartTime - valueChangedEvent.NewValue;
-            LifetimeEnd = StartTime;
-        }
+        // Notify the renderer that the line may be updated
+        OnLineUpdated?.Invoke(this);
+    }
 
-        private static int getDelta(SentakkiLanedHitObject a, SentakkiLanedHitObject b)
-        {
-            int delta = b.Lane - a.Lane;
-            if (delta > 4) delta -= 8;
-            return delta;
-        }
+    private void refreshLifetime(ValueChangedEvent<double> valueChangedEvent)
+    {
+        LifetimeStart = StartTime - valueChangedEvent.NewValue;
+        LifetimeEnd = StartTime;
+    }
+
+    private static int getDelta(SentakkiLanedHitObject a, SentakkiLanedHitObject b)
+    {
+        int delta = b.Lane - a.Lane;
+        if (delta > 4) delta -= 8;
+        return delta;
     }
 }
