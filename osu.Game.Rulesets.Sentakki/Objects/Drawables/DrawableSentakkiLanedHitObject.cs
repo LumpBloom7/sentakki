@@ -1,4 +1,5 @@
-﻿using osu.Framework.Allocation;
+﻿using System;
+using osu.Framework.Allocation;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.UI;
 
@@ -21,5 +22,18 @@ public partial class DrawableSentakkiLanedHitObject : DrawableSentakkiHitObject
     {
         if (DrawableSentakkiRuleset is not null)
             AnimationDuration.BindTo(DrawableSentakkiRuleset?.AdjustedAnimDuration);
+    }
+
+    protected bool IsValidLaneAction(SentakkiAction action)
+    {
+        int laneNumber = HitObject.Lane;
+
+        Console.WriteLine(action);
+
+        return
+            action == (SentakkiAction.B1Lane1 + laneNumber)
+            || action == (SentakkiAction.B2Lane1 + laneNumber)
+            || action == (SentakkiAction.SensorLane1 + laneNumber)
+            || action == (SentakkiAction.Key1 + laneNumber);
     }
 }

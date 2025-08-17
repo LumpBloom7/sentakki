@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Objects;
@@ -25,8 +25,6 @@ public partial class Lane : Playfield
         Origin = Anchor.Centre;
         RelativeSizeAxes = Axes.None;
         AddInternal(HitObjectContainer);
-
-        currentKeys.ValueChanged += handleKeyPress;
     }
 
     protected override void Update()
@@ -86,48 +84,60 @@ public partial class Lane : Playfield
         return !(Math.Abs(angleDelta) > targetAngleRangeMid);
     }
 
-    private readonly BindableInt currentKeys = new BindableInt();
-
     private void updateInputState()
     {
-        int count = 0;
+        updateTouchInputState();
+        updateMouseInputState();
+    }
 
+    private readonly Dictionary<TouchSource, bool> touchInputState = [];
+
+    private void updateTouchInputState()
+    {
         var touchInput = SentakkiActionInputManager.CurrentState.Touch;
 
         for (TouchSource t = TouchSource.Touch1; t <= TouchSource.Touch10; ++t)
         {
-            if (touchInput.GetTouchPosition(t) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
-                ++count;
-        }
+            bool wasDetected = touchInputState.GetValueOrDefault(t);
+            bool isDetected = touchInput.GetTouchPosition(t) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition);
 
-        // We don't attempt to check mouse input if touch input is used
-        if (count == 0 && IsHovered)
-        {
-            foreach (var a in SentakkiActionInputManager.PressedActions)
+            touchInputState[t] = isDetected;
+
+            switch (isDetected)
             {
-                if (a < SentakkiAction.Key1)
-                    ++count;
+                case false when wasDetected:
+                    SentakkiActionInputManager.TriggerReleased(SentakkiAction.SensorLane1 + LaneNumber);
+                    break;
+
+                case true when !wasDetected:
+                    SentakkiActionInputManager.TriggerPressed(SentakkiAction.SensorLane1 + LaneNumber);
+                    break;
             }
         }
-
-        currentKeys.Value = count;
     }
 
-    private void handleKeyPress(ValueChangedEvent<int> keys)
-    {
-        if (keys.NewValue < keys.OldValue)
-        {
-            for (int i = 0; i < keys.OldValue - keys.NewValue; ++i)
-            {
-                SentakkiActionInputManager.TriggerReleased(SentakkiAction.Key1 + LaneNumber);
-            }
-        }
+    private readonly Dictionary<SentakkiAction, bool> buttonInputState = [];
 
-        if (keys.NewValue > keys.OldValue)
+    private void updateMouseInputState()
+    {
+        for (SentakkiAction a = SentakkiAction.Button1; a <= SentakkiAction.Button2; ++a)
         {
-            for (int i = 0; i < keys.NewValue - keys.OldValue; ++i)
+            bool wasDetected = buttonInputState.GetValueOrDefault(a);
+            bool isDetected = IsHovered && SentakkiActionInputManager.PressedActions.Contains(a);
+
+            buttonInputState[a] = isDetected;
+
+            SentakkiAction action = (a is SentakkiAction.Button1 ? SentakkiAction.B1Lane1 : SentakkiAction.B2Lane1) + LaneNumber;
+
+            switch (isDetected)
             {
-                SentakkiActionInputManager.TriggerPressed(SentakkiAction.Key1 + LaneNumber);
+                case false when wasDetected:
+                    SentakkiActionInputManager.TriggerReleased(action);
+                    break;
+
+                case true when !wasDetected:
+                    SentakkiActionInputManager.TriggerPressed(action);
+                    break;
             }
         }
     }
