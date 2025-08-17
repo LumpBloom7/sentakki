@@ -1,9 +1,12 @@
-﻿using osu.Framework.Allocation;
+﻿using osu.Framework;
+using osu.Framework.Allocation;
 using osu.Framework.Localisation;
+using osu.Framework.Screens;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Localisation;
+using osu.Game.Screens;
 
 namespace osu.Game.Rulesets.Sentakki.UI;
 
@@ -20,7 +23,7 @@ public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(IPerformFromScreenRunner? performer)
     {
         var config = (SentakkiRulesetConfigManager)Config;
 
@@ -72,6 +75,22 @@ public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
                 DisplayAsPercentage = true
             }
         ];
+
+        if (RuntimeInfo.IsMobile)
+            return;
+
+        Add(new SettingsButton
+        {
+            Text = @"Import simai chart",
+            TooltipText = "Import existing simai chart into the current sentakki installation.",
+            Action = () => performer?.PerformFromScreen(menu => menu.Push(new SentakkiSimaiImportScreen()))
+        });
+        Add(new SettingsButton
+        {
+            Text = @"Convert simai chart",
+            TooltipText = "Convert existing simai chart into osz files for other sentakki (dev) installations",
+            Action = () => performer?.PerformFromScreen(menu => menu.Push(new SentakkiSimaiConvertScreen()))
+        });
     }
 
     private partial class NoteTimeSlider : RoundedSliderBar<float>

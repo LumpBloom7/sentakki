@@ -11,6 +11,9 @@
     <ItemGroup>
         <PackageReference Include="ppy.osu.Game" Version="2025.710.0-lazer"/>
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\SimaiSharp\SimaiSharp\SimaiSharp.csproj" />
+    </ItemGroup>
 
     <!--Since we aren't changing the assembly name, we use the assembly title to indicate whether it is a dev build-->
     <PropertyGroup Condition="!('$(Configuration)' == 'Release')">
