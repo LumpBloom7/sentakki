@@ -62,9 +62,6 @@ public partial class Lane : Playfield
     private const float receptor_angle_range = 45;
     private const float receptor_angle_range_mid = receptor_angle_range / 2;
 
-    private const float receptor_angle_range_inner = receptor_angle_range * 1.4f;
-    private const float receptor_angle_range_inner_mid = receptor_angle_range_inner / 2;
-
     private SentakkiInputManager? sentakkiActionInputManager;
     internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
 
@@ -77,11 +74,9 @@ public partial class Lane : Playfield
         float distance = Vector2.DistanceSquared(Vector2.Zero, localPos);
         if (distance is < 200 * 200 or > 600 * 600) return false;
 
-        float targetAngleRangeMid = distance > 400 ? receptor_angle_range_mid : receptor_angle_range_inner_mid;
-
         float angleDelta = MathExtensions.AngleDelta(0, Vector2.Zero.AngleTo(localPos));
 
-        return !(Math.Abs(angleDelta) > targetAngleRangeMid);
+        return !(Math.Abs(angleDelta) > receptor_angle_range_mid);
     }
 
     private void updateInputState()
