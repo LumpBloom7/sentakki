@@ -21,7 +21,19 @@ public static class MathExtensions
     /// GetDeltaAngle(a,b) = -20
     /// </code>
     /// </example>
-    public static float AngleDelta(float a, float b) => (b - a).Mod(360);
+    public static float AngleDelta(float a, float b)
+    {
+        float delta = b - a;
+
+        delta %= 360;
+
+        if (delta < -180)
+            delta += 360;
+        else if (delta > 180)
+            delta -= 360;
+
+        return delta;
+    }
 
     /// <summary>
     /// Computes the angle (in degrees) of <c>target</c> around <c>origin</c>
