@@ -37,7 +37,7 @@ public class CheckSentakkiConcurrentObjects : ICheck
 
     private IEnumerable<Issue> checkTouchNotes(BeatmapVerifierContext context)
     {
-        var hitObjects = context.Beatmap.HitObjects.Where(h => h is Touch or TouchHold).ToList();
+        var hitObjects = context.CurrentDifficulty.Playable.HitObjects.Where(h => h is Touch or TouchHold).ToList();
 
         for (int i = 0; i < hitObjects.Count - 1; ++i)
         {
@@ -67,7 +67,7 @@ public class CheckSentakkiConcurrentObjects : ICheck
 
     private IEnumerable<Issue> checkLaneNotes(BeatmapVerifierContext context)
     {
-        var hitObjects = context.Beatmap.HitObjects.Where(isLanedObject).Cast<SentakkiLanedHitObject>().ToList();
+        var hitObjects = context.CurrentDifficulty.Playable.HitObjects.Where(isLanedObject).Cast<SentakkiLanedHitObject>().ToList();
 
         for (int i = 0; i < hitObjects.Count - 1; ++i)
         {
