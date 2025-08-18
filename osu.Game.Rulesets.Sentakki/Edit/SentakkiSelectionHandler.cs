@@ -28,7 +28,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
     private readonly Bindable<TernaryState> selectionSlideBodyExState = new Bindable<TernaryState>();
 
     [Resolved]
-    private HitObjectComposer composer { get; set; } = null!;
+    private SentakkiHitObjectComposer composer { get; set; } = null!;
 
     public override SelectionRotationHandler CreateRotationHandler() => new SentakkiRotationHandler();
 
@@ -42,7 +42,9 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
 
     public override bool HandleFlip(Direction direction, bool flipOverOrigin)
     {
-        var sentakkiPlayfield = ((SentakkiHitObjectComposer)composer).Playfield;
+        var sentakkiPlayfield = composer.Playfield;
+
+        var selectedObjects = EditorBeatmap.SelectedHitObjects.ToArray();
 
         EditorBeatmap.PerformOnSelection(ho =>
         {
@@ -50,13 +52,19 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
             {
                 case SentakkiLanedHitObject laned:
                     sentakkiPlayfield.Remove(laned);
-                    if (direction is Direction.Horizontal)
-                        laned.Lane = 7 - laned.Lane;
 
-                    if (direction is Direction.Vertical)
+                    switch (direction)
                     {
-                        laned.Lane = (3 - laned.Lane) % 8;
-                        if (laned.Lane < 0) laned.Lane += 8;
+                        case Direction.Horizontal:
+                            laned.Lane = 7 - laned.Lane;
+                            break;
+
+                        case Direction.Vertical:
+                        {
+                            laned.Lane = (3 - laned.Lane) % 8;
+                            if (laned.Lane < 0) laned.Lane += 8;
+                            break;
+                        }
                     }
 
                     if (laned is Slide slide)
@@ -95,6 +103,9 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
                     break;
             }
         });
+
+        EditorBeatmap.SelectedHitObjects.Clear();
+        EditorBeatmap.SelectedHitObjects.AddRange(selectedObjects);
 
         return SelectedItems.Any(a => a is not TouchHold);
     }
@@ -241,7 +252,9 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
 
     private void setSlideNoTapState(bool state)
     {
-        var sentakkiPlayfield = ((SentakkiHitObjectComposer)composer).Playfield;
+        var sentakkiPlayfield = composer.Playfield;
+
+        var selectedObjects = EditorBeatmap.SelectedHitObjects.ToArray();
 
         var lhos = EditorBeatmap.SelectedHitObjects.OfType<Slide>();
 
@@ -263,6 +276,9 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
         }
 
         EditorBeatmap.EndChange();
+
+        SelectedItems.Clear();
+        SelectedItems.AddRange(selectedObjects);
     }
 
     private void setExState(bool state)
