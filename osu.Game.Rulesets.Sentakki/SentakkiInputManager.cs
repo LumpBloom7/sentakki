@@ -91,6 +91,15 @@ public enum SentakkiAction
     SensorLane7,
     SensorLane8,
 
+    SensorLane1Alt,
+    SensorLane2Alt,
+    SensorLane3Alt,
+    SensorLane4Alt,
+    SensorLane5Alt,
+    SensorLane6Alt,
+    SensorLane7Alt,
+    SensorLane8Alt,
+
     // These are auxiliary actions for mouse + Keyboard users
     B1Lane1,
     B1Lane2,

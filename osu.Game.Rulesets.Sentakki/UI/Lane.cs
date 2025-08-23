@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
+using osu.Framework.Input.Events;
+using osu.Game.Overlays;
+using osu.Game.Overlays.Notifications;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Extensions;
@@ -79,6 +83,28 @@ public partial class Lane : Playfield
         return !(Math.Abs(angleDelta) > receptor_angle_range_mid);
     }
 
+    private TouchSource? blockingTouchSource;
+    private double blockingTouchTime;
+
+    // This method handles direct touches to the centre, and not touches carried from a slide
+    // This has logic to block subsequent touches made in close succession.
+    protected override bool OnTouchDown(TouchDownEvent e)
+    {
+        const double blocking_time = 10;
+
+        // Mark the touch point as seen, unconditionally.
+        touchInputState[e.Touch.Source] = true;
+
+        if (blockingTouchSource is not null && Time.Current - blockingTouchTime < blocking_time)
+            return false;
+
+        blockingTouchTime = Time.Current;
+        blockingTouchSource = e.Touch.Source;
+        triggerTouchDown();
+
+        return true;
+    }
+
     private void updateInputState()
     {
         updateTouchInputState();
@@ -86,6 +112,8 @@ public partial class Lane : Playfield
     }
 
     private readonly Dictionary<TouchSource, bool> touchInputState = [];
+
+    private uint touchCount;
 
     private void updateTouchInputState()
     {
@@ -101,14 +129,60 @@ public partial class Lane : Playfield
             switch (isDetected)
             {
                 case false when wasDetected:
-                    SentakkiActionInputManager.TriggerReleased(SentakkiAction.SensorLane1 + LaneNumber);
+                    // If this was the point that triggered a direct touch block, unblock.
+                    if (blockingTouchSource == t)
+                        blockingTouchSource = null;
+
+                    triggerTouchRelease();
+
                     break;
 
                 case true when !wasDetected:
-                    SentakkiActionInputManager.TriggerPressed(SentakkiAction.SensorLane1 + LaneNumber);
+                    triggerTouchDown();
                     break;
             }
         }
+    }
+
+    private void triggerTouchDown()
+    {
+        if (touchCount >= 2)
+            return;
+
+        SentakkiAction baseAction = SentakkiAction.SensorLane1 + (int)(touchCount * 8);
+        ++touchCount;
+
+        SentakkiActionInputManager.TriggerPressed(baseAction + LaneNumber);
+    }
+
+    private void triggerTouchRelease()
+    {
+        switch (touchCount)
+        {
+            case <= 0:
+                return;
+
+            case 1:
+            {
+                int remainingFingers = 0;
+
+                foreach (var t in touchInputState)
+                {
+                    if (t.Value)
+                        ++remainingFingers;
+                }
+
+                if (remainingFingers >= 1)
+                    return;
+
+                break;
+            }
+        }
+
+        --touchCount;
+        SentakkiAction baseAction = SentakkiAction.SensorLane1 + (int)(touchCount * 8);
+
+        SentakkiActionInputManager.TriggerReleased(baseAction + LaneNumber);
     }
 
     private readonly Dictionary<SentakkiAction, bool> buttonInputState = [];
