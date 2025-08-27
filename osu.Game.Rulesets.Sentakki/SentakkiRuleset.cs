@@ -211,6 +211,9 @@ public partial class SentakkiRuleset : Ruleset
         },
     ];
 
+    public override IBeatmapVerifier? CreateBeatmapVerifier()
+        => new SentakkiBeatmapVerifier();
+
     public override bool EditorShowScrollSpeed => false;
 
     public partial class SentakkiIcon : CompositeDrawable

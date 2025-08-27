@@ -49,23 +49,25 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
         if (moved)
             ApplySnapResultTime(senSnapResult, referenceBlueprint.Item.StartTime);
 
-        if (blueprints.All(b => b.blueprint.Item is SentakkiLanedHitObject))
+        if (!blueprints.All(b => b.blueprint.Item is SentakkiLanedHitObject)) return true;
+
+        int offset = ((SentakkiLanedSnapResult)senSnapResult).Lane - ((SentakkiLanedHitObject)blueprints.First().blueprint.Item).Lane;
+
+        if (offset == 0) return true;
+
+        var selectedObjects = Beatmap.SelectedHitObjects.ToArray();
+
+        Beatmap.PerformOnSelection(ho =>
         {
-            int offset = ((SentakkiLanedSnapResult)senSnapResult).Lane - ((SentakkiLanedHitObject)blueprints.First().blueprint.Item).Lane;
+            var lho = (SentakkiLanedHitObject)ho;
 
-            if (offset != 0)
-            {
-                Beatmap.PerformOnSelection(ho =>
-                {
-                    var lho = (SentakkiLanedHitObject)ho;
+            sentakkiPlayfield.Remove(lho);
+            lho.Lane = (lho.Lane + offset).NormalizeLane();
+            sentakkiPlayfield.Add(lho);
+        });
 
-                    sentakkiPlayfield.Remove(lho);
-                    lho.Lane = (lho.Lane + offset).NormalizeLane();
-                    sentakkiPlayfield.Add(lho);
-                    Beatmap.Update(ho);
-                });
-            }
-        }
+        Beatmap.SelectedHitObjects.Clear();
+        Beatmap.SelectedHitObjects.AddRange(selectedObjects);
 
         return true;
     }

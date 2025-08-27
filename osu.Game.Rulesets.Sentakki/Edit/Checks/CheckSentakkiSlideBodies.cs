@@ -25,11 +25,11 @@ public class CheckSentakkiSlideBodyLength : ICheck
 
     public IEnumerable<Issue> Run(BeatmapVerifierContext context)
     {
-        var slides = context.Beatmap.HitObjects.OfType<Slide>();
+        var slides = context.CurrentDifficulty.Playable.HitObjects.OfType<Slide>();
 
         foreach (var slide in slides)
         {
-            var timingPoint = context.Beatmap.ControlPointInfo.TimingPointAt(slide.StartTime);
+            var timingPoint = context.CurrentDifficulty.Playable.ControlPointInfo.TimingPointAt(slide.StartTime);
 
             foreach (var slideBodyInfo in slide.SlideInfoList)
             {

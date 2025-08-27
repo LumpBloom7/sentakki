@@ -88,7 +88,10 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
         origin ??= GeometryUtils.MinimumEnclosingCircle(selectedItems.Where(h => h is IHasPosition)
                                                                      .Select(h => ((OriginalState<Vector2>)originalPositions[h]).Value)).Item1;
 
-        // Let's rotate laned notes first
+        var selectedObjects = selectedItems.ToArray();
+
+        bool anyLanedUpdates = false;
+
         foreach (var item in selectedItems)
         {
             if (!originalPositions.TryGetValue(item, out var originalState))
@@ -102,6 +105,8 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
 
                     if (lanedHitObject.Lane == newLane)
                         continue;
+
+                    anyLanedUpdates = true;
                     composer.Playfield.Remove(lanedHitObject);
                     lanedHitObject.Lane = newLane;
                     composer.Playfield.Add(lanedHitObject);
@@ -131,6 +136,12 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
 
                     break;
             }
+        }
+
+        if (anyLanedUpdates)
+        {
+            selectedItems.Clear();
+            selectedItems.AddRange(selectedObjects);
         }
     }
 

@@ -30,7 +30,7 @@ public class CheckSlideShapes : ICheck
 
     public IEnumerable<Issue> Run(BeatmapVerifierContext context)
     {
-        var slides = context.Beatmap.HitObjects.OfType<Slide>();
+        var slides = context.CurrentDifficulty.Playable.HitObjects.OfType<Slide>();
 
         foreach (var slide in slides)
         {

@@ -33,7 +33,7 @@ public class CheckSlideTapOmission : ICheck
 
     public IEnumerable<Issue> Run(BeatmapVerifierContext context)
     {
-        var hitObjects = context.Beatmap.HitObjects.Where(h => h is Slide or Tap).Cast<SentakkiLanedHitObject>().ToList();
+        var hitObjects = context.CurrentDifficulty.Playable.HitObjects.Where(h => h is Slide or Tap).Cast<SentakkiLanedHitObject>().ToList();
 
         for (int i = 0; i < hitObjects.Count; ++i)
         {

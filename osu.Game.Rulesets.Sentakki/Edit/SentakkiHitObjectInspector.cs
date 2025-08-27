@@ -41,6 +41,9 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
 
                 AddHeader("Parts");
 
+                if (slide.SlideInfoList[0].SlidePathParts is null)
+                    break;
+
                 foreach (SlideBodyPart part in slide.SlideInfoList[0].SlidePathParts)
                 {
                     int simpleEndOffset = part.EndOffset;
