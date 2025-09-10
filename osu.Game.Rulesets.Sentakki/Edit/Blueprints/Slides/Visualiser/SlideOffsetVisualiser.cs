@@ -48,11 +48,10 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
             new Box
             {
                 Height = 5,
-                Y = 1.5f,
                 Width = 0.5f,
                 RelativeSizeAxes = Axes.X,
                 Anchor = Anchor.TopRight,
-                Origin = Anchor.BottomCentre,
+                Origin = Anchor.Centre,
                 EdgeSmoothness = new Vector2(1),
             },
             new Box
@@ -63,15 +62,13 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
                 Origin = Anchor.Centre,
                 EdgeSmoothness = new Vector2(1),
             },
-            new DragBox(slide, bodyInfo)
+            new DragHandle(slide, bodyInfo)
             {
-                Height = 5,
-                Y = -1.5f,
-                Width = 0.5f,
+                Height = 20,
+                Width = 2 / 5f,
                 RelativeSizeAxes = Axes.X,
                 Anchor = Anchor.BottomRight,
-                Origin = Anchor.TopCentre,
-                EdgeSmoothness = new Vector2(1),
+                Origin = Anchor.Centre,
             },
         ];
     }
@@ -167,12 +164,12 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
     protected override bool OnClick(ClickEvent e) => true;
     protected override bool OnDragStart(DragStartEvent e) => true;
 
-    private partial class DragBox : Box
+    private partial class DragHandle : FastCircle
     {
         private readonly Slide slide;
         private readonly SlideBodyInfo slideBodyInfo;
 
-        public DragBox(Slide slide, SlideBodyInfo slideBodyInfo)
+        public DragHandle(Slide slide, SlideBodyInfo slideBodyInfo)
         {
             this.slide = slide;
             this.slideBodyInfo = slideBodyInfo;
