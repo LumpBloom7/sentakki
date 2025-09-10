@@ -129,11 +129,10 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
                 var hitObject = noteToHitObject(roundedStartTime, note, beatmap.ControlPointInfo);
 
-                if (hitObject != null)
-                {
-                    attachSample(hitObject);
-                    beatmap.HitObjects.Add(hitObject);
-                }
+                if (hitObject == null) continue;
+
+                attachSample(hitObject);
+                beatmap.HitObjects.Add(hitObject);
             }
 
             foreach (double time in hanabiTimes)
