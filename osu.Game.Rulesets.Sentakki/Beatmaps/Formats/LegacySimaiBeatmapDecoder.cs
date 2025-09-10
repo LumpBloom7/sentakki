@@ -146,6 +146,9 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
         // Remove useless timingpoints
         var usedTimingPoints = beatmap.ControlPointInfo.TimingPoints.Where(t => beatmap.HitObjects.Any(h => beatmap.ControlPointInfo.TimingPointAt(h.StartTime) == t)).ToList();
 
+        // Include any effect control points already read from osu format
+        effectControlPoints.AddRange(beatmap.ControlPointInfo.EffectPoints);
+
         beatmap.ControlPointInfo.Clear();
         foreach (var t in usedTimingPoints)
             beatmap.ControlPointInfo.Add(t.Time, t);
