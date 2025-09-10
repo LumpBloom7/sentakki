@@ -114,7 +114,7 @@ public partial class SentakkiLanedSnapGrid : CompositeDrawable
         var localPosition = ToLocalSpace(screenSpacePosition);
 
         // the distance to intersect distance, as a ratio of the max travel distance.
-        float distanceRatioToIntersect = 1 - Math.Clamp((localPosition.Length - min) / max, 0, 1);
+        float distanceRatioToIntersect = 1 - Math.Max((localPosition.Length - min) / max, 0);
         double timeRange = animationDuration.Value * 0.5f;
 
         double unsnappedTime = editorClock.CurrentTimeAccurate + distanceRatioToIntersect * timeRange;
