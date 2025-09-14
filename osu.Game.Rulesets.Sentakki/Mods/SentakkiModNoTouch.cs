@@ -7,12 +7,12 @@ using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Sentakki.Mods;
 
-public class SentakkiModAutoTouch : Mod, IApplicableToDrawableHitObject
+public class SentakkiModNoTouch : Mod, IApplicableToDrawableHitObject
 {
-    public override string Name => "Auto Touch";
-    public override string Acronym => "AT";
+    public override string Name => "No Touch";
+    public override string Acronym => "NT";
     public override ModType Type => ModType.Automation;
-    public override LocalisableString Description => SentakkiModAutoTouchStrings.ModDescription;
+    public override LocalisableString Description => SentakkiModNoTouchStrings.ModDescription;
     public override double ScoreMultiplier => .2f;
     public override Type[] IncompatibleMods => [.. base.IncompatibleMods, typeof(ModAutoplay)];
 
