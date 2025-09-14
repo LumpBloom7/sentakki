@@ -1,7 +1,5 @@
 using System;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
-using osu.Game.Graphics;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Localisation.Mods;
@@ -13,7 +11,6 @@ public class SentakkiModAutoTouch : Mod, IApplicableToDrawableHitObject
 {
     public override string Name => "Auto Touch";
     public override string Acronym => "AT";
-    public override IconUsage? Icon => OsuIcon.PlayStyleTouch;
     public override ModType Type => ModType.Automation;
     public override LocalisableString Description => SentakkiModAutoTouchStrings.ModDescription;
     public override double ScoreMultiplier => .2f;
