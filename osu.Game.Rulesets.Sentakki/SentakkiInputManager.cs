@@ -1,3 +1,4 @@
+using osu.Framework.Allocation;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Lists;
@@ -7,6 +8,7 @@ using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Sentakki;
 
+[Cached]
 public partial class SentakkiInputManager : RulesetInputManager<SentakkiAction>
 {
     protected override bool MapMouseToLatestTouch => false;

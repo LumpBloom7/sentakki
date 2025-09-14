@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Framework.Input.Events;
-using osu.Game.Overlays;
-using osu.Game.Overlays.Notifications;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Extensions;
@@ -66,8 +63,8 @@ public partial class Lane : Playfield
     private const float receptor_angle_range = 45;
     private const float receptor_angle_range_mid = receptor_angle_range / 2;
 
-    private SentakkiInputManager? sentakkiActionInputManager;
-    internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
+    [Resolved]
+    private SentakkiInputManager sentakkiInputManager { get; set; } = null!;
 
     public override bool HandlePositionalInput => true;
 
@@ -117,7 +114,7 @@ public partial class Lane : Playfield
 
     private void updateTouchInputState()
     {
-        var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+        var touchInput = sentakkiInputManager.CurrentState.Touch;
 
         for (TouchSource t = TouchSource.Touch1; t <= TouchSource.Touch10; ++t)
         {
@@ -152,7 +149,7 @@ public partial class Lane : Playfield
         SentakkiAction baseAction = SentakkiAction.SensorLane1 + (int)(touchCount * 8);
         ++touchCount;
 
-        SentakkiActionInputManager.TriggerPressed(baseAction + LaneNumber);
+        sentakkiInputManager.TriggerPressed(baseAction + LaneNumber);
     }
 
     private void triggerTouchRelease()
@@ -182,7 +179,7 @@ public partial class Lane : Playfield
         --touchCount;
         SentakkiAction baseAction = SentakkiAction.SensorLane1 + (int)(touchCount * 8);
 
-        SentakkiActionInputManager.TriggerReleased(baseAction + LaneNumber);
+        sentakkiInputManager.TriggerReleased(baseAction + LaneNumber);
     }
 
     private readonly Dictionary<SentakkiAction, bool> buttonInputState = [];
@@ -192,7 +189,7 @@ public partial class Lane : Playfield
         for (SentakkiAction a = SentakkiAction.Button1; a <= SentakkiAction.Button2; ++a)
         {
             bool wasDetected = buttonInputState.GetValueOrDefault(a);
-            bool isDetected = IsHovered && SentakkiActionInputManager.PressedActions.Contains(a);
+            bool isDetected = IsHovered && sentakkiInputManager.PressedActions.Contains(a);
 
             buttonInputState[a] = isDetected;
 
@@ -201,11 +198,11 @@ public partial class Lane : Playfield
             switch (isDetected)
             {
                 case false when wasDetected:
-                    SentakkiActionInputManager.TriggerReleased(action);
+                    sentakkiInputManager.TriggerReleased(action);
                     break;
 
                 case true when !wasDetected:
-                    SentakkiActionInputManager.TriggerPressed(action);
+                    sentakkiInputManager.TriggerPressed(action);
                     break;
             }
         }

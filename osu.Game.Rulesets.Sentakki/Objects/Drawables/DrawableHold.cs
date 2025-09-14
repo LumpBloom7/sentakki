@@ -268,8 +268,8 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         headContainer.Clear(false);
     }
 
-    private SentakkiInputManager? sentakkiActionInputManager;
-    internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
+    [Resolved]
+    private SentakkiInputManager sentakkiInputManager { get; set; } = null!;
 
     private int pressedCount
     {
@@ -277,7 +277,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         {
             int count = 0;
 
-            foreach (var pressedAction in SentakkiActionInputManager.PressedActions)
+            foreach (var pressedAction in sentakkiInputManager.PressedActions)
             {
                 if (IsValidLaneAction(pressedAction))
                     ++count;

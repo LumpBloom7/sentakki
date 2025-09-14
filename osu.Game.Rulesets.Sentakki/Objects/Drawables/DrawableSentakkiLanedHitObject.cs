@@ -1,5 +1,4 @@
-﻿using System;
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.UI;
 

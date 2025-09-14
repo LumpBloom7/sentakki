@@ -1,3 +1,4 @@
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Scoring;
@@ -17,9 +18,6 @@ public partial class DrawableSlideCheckpointNode : DrawableSentakkiHitObject
 
     public override bool HandlePositionalInput => true;
     public override bool DisplayResult => false;
-
-    private SentakkiInputManager? sentakkiActionInputManager;
-    internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
 
     public const float DETECTION_RADIUS = 100;
 
@@ -75,14 +73,17 @@ public partial class DrawableSlideCheckpointNode : DrawableSentakkiHitObject
         ApplyResult(Result.Judgement.MaxResult);
     }
 
+    [Resolved]
+    private SentakkiInputManager sentakkiInputManager { get; set; } = null!;
+
     private int countActiveTouchPoints()
     {
-        var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+        var touchInput = sentakkiInputManager.CurrentState.Touch;
         int count = 0;
 
-        if (ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
+        if (ReceivePositionalInputAt(sentakkiInputManager.CurrentState.Mouse.Position))
         {
-            foreach (var item in SentakkiActionInputManager.PressedActions)
+            foreach (var item in sentakkiInputManager.PressedActions)
             {
                 if (item < SentakkiAction.Key1)
                     ++count;
