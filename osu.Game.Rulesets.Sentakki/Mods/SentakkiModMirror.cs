@@ -1,9 +1,11 @@
 using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.IEnumerableExtensions;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
+using osu.Game.Graphics;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Localisation.Mods;
@@ -16,6 +18,8 @@ public class SentakkiModMirror : Mod, IApplicableAfterBeatmapConversion
 {
     public override string Name => "Mirror";
     public override LocalisableString Description => SentakkiModMirrorStrings.ModDescription;
+
+    public override IconUsage? Icon => OsuIcon.ModMirror;
     public override string Acronym => "MR";
     public override ModType Type => ModType.Conversion;
     public override double ScoreMultiplier => 1;
