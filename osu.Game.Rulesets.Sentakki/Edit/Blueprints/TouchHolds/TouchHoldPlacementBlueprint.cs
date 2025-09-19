@@ -30,10 +30,10 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
 
     protected override bool OnMouseDown(MouseDownEvent e)
     {
-        if (e.Button != MouseButton.Left)
-            return false;
-
         if (PlacementActive == PlacementState.Active)
+            return true;
+
+        if (e.Button != MouseButton.Left)
             return false;
 
         BeginPlacement(true);
