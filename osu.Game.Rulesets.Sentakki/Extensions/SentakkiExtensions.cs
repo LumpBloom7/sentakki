@@ -1,3 +1,4 @@
+using System;
 using osu.Framework.Extensions;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics.Colour;
@@ -15,6 +16,13 @@ public static class SentakkiExtensions
     /// </summary>
     public static int NormalizeLane(this int laneNumber)
         => laneNumber.Mod(8);
+
+    public static int GetNoteLaneFromDegrees(this float degrees)
+    {
+        degrees = degrees.Mod(360);
+
+        return (int)MathF.Round((degrees - 22.5f) / 45f);
+    }
 
     /// <summary>
     /// Gives the playfield rotation of the lane matching the corresponding laneNumber

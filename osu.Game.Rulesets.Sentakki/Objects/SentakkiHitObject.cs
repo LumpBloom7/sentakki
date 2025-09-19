@@ -7,6 +7,7 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Game.Audio;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
@@ -15,7 +16,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects;
 
-public abstract class SentakkiHitObject : HitObject
+public abstract class SentakkiHitObject : HitObject, IHasDisplayColour
 {
     public int ScoreWeighting => Break ? 5 : BaseScoreWeighting;
 
@@ -38,7 +39,12 @@ public abstract class SentakkiHitObject : HitObject
         // We initialize the note colour to the default value first for test scenes
         // The colours during gameplay will be set during beatmap post-process
         colour.Value = DefaultNoteColour;
+
+        // For now, let's not consider breaks and twin colours in the editor timeline.
+        DisplayColour = new Bindable<Color4>(DefaultNoteColour);
     }
+
+    public Bindable<Color4> DisplayColour { get; }
 
     public override Judgement CreateJudgement() => new SentakkiJudgement();
 
