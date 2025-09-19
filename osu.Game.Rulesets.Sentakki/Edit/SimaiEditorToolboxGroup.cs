@@ -47,8 +47,8 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
                 Colour = colourProvider.Content2,
                 ExpandedLabel = "Simai export is experimental. Use at your own risk."
             },
-            new EditorToolButton("Export simai", () => new SpriteIcon { Icon = FontAwesome.Solid.FileExport }, () => new SimaiExportPopover()),
-            new EditorToolButton("Import simai", () => new SpriteIcon { Icon = FontAwesome.Solid.FileImport }, () => new SimaiImportPopover())
+            new EditorToolButton("Export", () => new SpriteIcon { Icon = FontAwesome.Solid.FileExport }, () => new SimaiExportPopover()),
+            new EditorToolButton("Import", () => new SpriteIcon { Icon = FontAwesome.Solid.FileImport }, () => new SimaiImportPopover())
         ];
     }
 
