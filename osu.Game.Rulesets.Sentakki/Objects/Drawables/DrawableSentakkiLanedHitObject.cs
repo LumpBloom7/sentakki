@@ -22,4 +22,16 @@ public partial class DrawableSentakkiLanedHitObject : DrawableSentakkiHitObject
         if (DrawableSentakkiRuleset is not null)
             AnimationDuration.BindTo(DrawableSentakkiRuleset?.AdjustedAnimDuration);
     }
+
+    protected bool IsValidLaneAction(SentakkiAction action)
+    {
+        int laneNumber = HitObject.Lane;
+
+        return
+            action == (SentakkiAction.B1Lane1 + laneNumber)
+            || action == (SentakkiAction.B2Lane1 + laneNumber)
+            || action == (SentakkiAction.SensorLane1 + laneNumber)
+            || action == (SentakkiAction.SensorLane1Alt + laneNumber)
+            || action == (SentakkiAction.Key1 + laneNumber);
+    }
 }

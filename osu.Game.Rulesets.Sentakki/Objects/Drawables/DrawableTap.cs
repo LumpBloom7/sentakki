@@ -121,7 +121,7 @@ public partial class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHa
 
     public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)
     {
-        if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
+        if (!IsValidLaneAction(e.Action))
             return false;
 
         return UpdateResult(true);

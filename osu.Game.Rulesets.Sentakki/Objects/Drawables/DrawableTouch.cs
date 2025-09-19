@@ -16,9 +16,6 @@ public partial class DrawableTouch : DrawableSentakkiHitObject
 
     public TouchBody TouchBody = null!;
 
-    private SentakkiInputManager? sentakkiActionInputManager;
-    internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
-
     public DrawableTouch()
         : this(null)
     {
@@ -63,14 +60,17 @@ public partial class DrawableTouch : DrawableSentakkiHitObject
         pressedCount = updatedPressedCounts;
     }
 
+    [Resolved]
+    private SentakkiInputManager sentakkiInputManager { get; set; } = null!;
+
     private int countActiveTouchPoints()
     {
-        var touchInput = SentakkiActionInputManager.CurrentState.Touch;
+        var touchInput = sentakkiInputManager.CurrentState.Touch;
         int count = 0;
 
-        if (ReceivePositionalInputAt(SentakkiActionInputManager.CurrentState.Mouse.Position))
+        if (ReceivePositionalInputAt(sentakkiInputManager.CurrentState.Mouse.Position))
         {
-            foreach (var item in SentakkiActionInputManager.PressedActions)
+            foreach (var item in sentakkiInputManager.PressedActions)
             {
                 if (item < SentakkiAction.Key1)
                     ++count;
