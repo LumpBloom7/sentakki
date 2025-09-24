@@ -119,9 +119,7 @@ public class SlideBody : SentakkiLanedHitObject, IHasDuration
     {
         base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
 
-        double delay = controlPointInfo.TimingPointAt(StartTime).BeatLength * SlideBodyInfo.ShootDelay;
-
-        ShootDelay = Math.Clamp(delay, 0, Duration);
+        ShootDelay = Math.Clamp(SlideBodyInfo.ShootDelay, 0, Duration);
     }
 
     protected override HitWindows CreateHitWindows() => new SentakkiSlideHitWindows();

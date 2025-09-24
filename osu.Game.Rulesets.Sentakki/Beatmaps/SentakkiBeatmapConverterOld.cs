@@ -312,7 +312,7 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
                     SlidePathParts = [selectedPath.Value],
                     Duration = ((IHasDuration)original).Duration,
                     Break = hasBreakTail,
-                    ShootDelay = 0.5f,
+                    ShootDelay = 0.5f * Beatmap.ControlPointInfo.TimingPointAt(original.StartTime).BeatLength,
                 }
             ],
             Lane = noteLane,
