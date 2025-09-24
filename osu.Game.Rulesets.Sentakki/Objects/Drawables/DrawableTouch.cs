@@ -39,7 +39,7 @@ public partial class DrawableTouch : DrawableSentakkiHitObject
         Origin = Anchor.Centre;
         Anchor = Anchor.Centre;
         AddRangeInternal([
-            TouchBody = []
+            TouchBody = new TouchBody()
         ]);
     }
 

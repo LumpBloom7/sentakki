@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using Newtonsoft.Json;
 using osu.Framework.Bindables;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Judgements;
@@ -25,7 +24,6 @@ public class SentakkiModChallenge : ModFailCondition, IApplicableToDrawableRules
 
     public override string ExtendedIconInformation => $"{(int)LiveSetting.Value}♥";
 
-    public override IconUsage? Icon => FontAwesome.Solid.HeartBroken;
     public override ModType Type => ModType.DifficultyIncrease;
 
     public override bool RequiresConfiguration => true;

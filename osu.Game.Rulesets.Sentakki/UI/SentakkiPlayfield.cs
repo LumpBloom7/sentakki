@@ -73,7 +73,7 @@ public partial class SentakkiPlayfield : Playfield
                 Children =
                 [
                     new PlayfieldVisualisation(),
-                    ring = []
+                    ring = new SentakkiRing()
                 ]
             },
             explosionLayer = new Container<HitExplosion> { RelativeSizeAxes = Axes.Both },

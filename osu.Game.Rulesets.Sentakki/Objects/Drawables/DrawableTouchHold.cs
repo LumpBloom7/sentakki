@@ -67,7 +67,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         Origin = Anchor.Centre;
         AddRangeInternal(
         [
-            TouchHoldBody = [],
+            TouchHoldBody = new TouchHoldBody(),
             holdSample = new PausableSkinnableSound
             {
                 Volume = { Value = 1 },

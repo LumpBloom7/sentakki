@@ -9,7 +9,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components;
 
-public partial class SentakkiRing : Container
+public partial class SentakkiRing : CompositeDrawable
 {
     private readonly Container spawnIndicator;
 

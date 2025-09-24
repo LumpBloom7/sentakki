@@ -20,7 +20,7 @@ public class SentakkiModAutoplay : ModAutoplay, IApplicableToDrawableHitObject
     [
         typeof(ModRelax),
         typeof(ModFailCondition),
-        typeof(SentakkiModAutoTouch)
+        typeof(SentakkiModNoTouch)
     ];
 
     public void ApplyToDrawableHitObject(DrawableHitObject drawableHitObject)
