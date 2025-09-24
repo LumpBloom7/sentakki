@@ -200,11 +200,9 @@ public class SimaiBeatmapEncoder
                     currentLane = endLane;
                 }
 
-                double millisPerBeat = Beatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
-                double shootDelayMs = slideInfo.ShootDelay * millisPerBeat;
-                double durationWithoutDelay = slideInfo.Duration - shootDelayMs;
+                double durationWithoutDelay = slideInfo.Duration - slideInfo.ShootDelay;
 
-                slideBuilder.Append(Invariant($"[{shootDelayMs / 1000:F3}##{durationWithoutDelay / 1000:F3}]"));
+                slideBuilder.Append(Invariant($"[{slideInfo.ShootDelay / 1000:F3}##{durationWithoutDelay / 1000:F3}]"));
 
                 if (slideInfo.Break)
                     slideBuilder.Append('b');
