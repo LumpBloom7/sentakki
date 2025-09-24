@@ -111,6 +111,9 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
             simaiTimingPoints.Add(controlPoint);
         }
 
+        // Order them so that binary searches work.
+        simaiTimingPoints = [.. simaiTimingPoints.OrderBy(s => s.Time)];
+
         if (chart.FinishTiming != null)
         {
             beatmap.BeatmapInfo.Length = (double)(chart.FinishTiming * 1000f);
@@ -118,9 +121,15 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
         List<EffectControlPoint> effectControlPoints = [];
 
+        HashSet<TimingControlPoint> usedTimingPoints = [];
+
         foreach (NoteCollection noteCollection in chart.NoteCollections)
         {
             double roundedStartTime = Math.Round(noteCollection.time * 1000);
+
+            var timingPoint = ControlPointInfo.BinarySearchWithFallback(simaiTimingPoints, roundedStartTime, null);
+            if (timingPoint is not null)
+                usedTimingPoints.Add(timingPoint);
 
             HashSet<double> hanabiTimes = [];
 
@@ -129,7 +138,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                 if (note.styles.HasFlagFast(NoteStyles.Fireworks))
                     hanabiTimes.Add(roundedStartTime + Math.Round((note.length ?? 0) * 1000.0));
 
-                var hitObject = noteToHitObject(roundedStartTime, note, beatmap.ControlPointInfo);
+                var hitObject = noteToHitObject(roundedStartTime, note, timingPoint);
 
                 if (hitObject == null) continue;
 
@@ -143,10 +152,6 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                 effectControlPoints.Add(new EffectControlPoint { Time = time + 16, KiaiMode = false });
             }
         }
-
-        simaiTimingPoints = [.. simaiTimingPoints.OrderBy(s => s.Time)];
-        var usedTimingPoints = beatmap.HitObjects.Select(h => ControlPointInfo.BinarySearchWithFallback(simaiTimingPoints, h.StartTime, null)).ToHashSet();
-        usedTimingPoints.Remove(null);
 
         simaiTimingPoints.RemoveAll(s => usedTimingPoints.Contains(s));
 
@@ -169,7 +174,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
         return locationPositionMap[location];
     }
 
-    private SentakkiHitObject? noteToHitObject(double time, Note note, ControlPointInfo controlPointInfo)
+    private SentakkiHitObject? noteToHitObject(double time, Note note, TimingControlPoint? timingPoint)
     {
         bool isBreak = note.type == NoteType.Break;
         NoteType senNoteType;
@@ -244,14 +249,14 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                 if (note.appearance is NoteAppearance.ForceNormal)
                     slide.TapType = Slide.TapTypeEnum.Tap;
 
-                attachSlideBodies(slide, note, controlPointInfo);
+                attachSlideBodies(slide, note, timingPoint);
                 return slide;
         }
 
         return null;
     }
 
-    private void attachSlideBodies(Slide slide, Note note, ControlPointInfo controlPointInfo)
+    private void attachSlideBodies(Slide slide, Note note, TimingControlPoint? timingPoint)
     {
         foreach (SlidePath path in note.slidePaths)
         {
@@ -327,13 +332,20 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                 startLane = endLane;
             }
 
-            double millisPerBeat = controlPointInfo.TimingPointAt(note.parentCollection.time * 1000f).BeatLength;
+            float shootDelayBeats = 1;
+
+            if (timingPoint is not null)
+            {
+                double millisPerBeat = timingPoint.BeatLength;
+                shootDelayBeats = (float)(path.delay * 1000f / millisPerBeat);
+            }
+
             slide.SlideInfoList.Add(new SlideBodyInfo
             {
                 SlidePathParts = slideBodyParts.ToArray(),
                 Duration = (path.delay + path.duration) * 1000f,
                 Break = path.type == NoteType.Break,
-                ShootDelay = (float)(path.delay * 1000f / millisPerBeat),
+                ShootDelay = shootDelayBeats
             });
         }
     }
