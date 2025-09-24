@@ -223,8 +223,9 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
 
             var encoder = new QuantizedSimaiBeatmapEncoder(senBeatmap);
 
-            var metadata = senBeatmap.BeatmapInfo.Metadata;
-            string filename = SimaiOsz.CleanFileName($"(sen) {metadata.ArtistUnicode} - {metadata.TitleUnicode} ({senBeatmap.BeatmapInfo.DifficultyName}).txt");
+            string filename = SimaiOsz.CleanFileName(
+                $"(sen) {editorBeatmap.BeatmapInfo.Metadata.ArtistUnicode} - {editorBeatmap.BeatmapInfo.Metadata.TitleUnicode} ({editorBeatmap.BeatmapInfo.DifficultyName}).txt");
+
             string path = $"{directorySelector.CurrentPath}/{filename}";
             var file = File.CreateText(path);
 
