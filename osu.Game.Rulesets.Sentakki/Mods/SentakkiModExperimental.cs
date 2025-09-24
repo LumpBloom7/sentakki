@@ -1,5 +1,4 @@
 ﻿using osu.Framework.Bindables;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
@@ -15,8 +14,6 @@ public class SentakkiModExperimental : Mod, IApplicableToBeatmapConverter
     public override string Name => "Experimental";
     public override LocalisableString Description => SentakkiModExperimentalStrings.ModDescription;
     public override string Acronym => "Ex";
-
-    public override IconUsage? Icon => FontAwesome.Solid.Flask;
     public override ModType Type => ModType.Conversion;
 
     public override bool RequiresConfiguration => true;

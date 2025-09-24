@@ -28,8 +28,7 @@ public class SlideBodyInfo : IEquatable<SlideBodyInfo>
     public double Duration;
 
     // Delay before the star on the slide starts moving to the end
-    // Measured in beats
-    public float ShootDelay = 1;
+    public double ShootDelay;
 
     // Whether the slide body should have a break modifier applied to them.
     public bool Break;
