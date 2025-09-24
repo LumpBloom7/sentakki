@@ -92,36 +92,56 @@ public partial class SlideEditorToolboxGroup : EditorToolboxGroup
         }
     }
 
-    protected override bool OnKeyDown(KeyDownEvent e)
+    public bool HandleKeyDown(KeyDownEvent e)
     {
         switch (e.Key)
         {
-            case Key.Plus when e.AltPressed:
+            // Dedicated keybinds for shapes
+            case Key.Number1:
+            case Key.Number2:
+            case Key.Number3:
+            case Key.Number4:
+            case Key.Number5:
+            case Key.Number6:
+            case Key.Number7:
+                if (!e.AltPressed)
+                    break;
+
+                int index = e.Key - Key.Number1;
+
+                SlidePaths.PathShapes targetShape = (SlidePaths.PathShapes)index;
+
+                if (shapeBindable.Value == targetShape)
+                    mirrored.Value = !mirrored.Value;
+
+                shapeBindable.Value = targetShape;
+
+                return true;
+
+            case Key.D:
                 ShootDelayBindable.Value += 1f / beatSnapProvider.BeatDivisor;
                 return true;
 
-            case Key.Minus when e.AltPressed:
+            case Key.A:
                 ShootDelayBindable.Value = Math.Max(0, ShootDelayBindable.Value - (1f / beatSnapProvider.BeatDivisor));
                 return true;
 
-            case Key.Number0 when e.AltPressed:
+            case Key.S:
                 ShootDelayBindable.Value = 1;
                 return true;
 
-            case Key.BackSlash:
-                mirrored.Value = !mirrored.Value;
-                return true;
+            case Key.Tab:
+                if (e.ControlPressed)
+                    mirrored.Value = !mirrored.Value;
+                else if (e.ShiftPressed)
+                    shapeBindable.Value = (SlidePaths.PathShapes)((int)(shapeBindable.Value + 6) % 7);
+                else
+                    shapeBindable.Value = (SlidePaths.PathShapes)((int)(shapeBindable.Value + 1) % 7);
 
-            case Key.BracketRight:
-                shapeBindable.Value = (SlidePaths.PathShapes)((int)(shapeBindable.Value + 1) % 7);
-                return true;
-
-            case Key.BracketLeft:
-                shapeBindable.Value = (SlidePaths.PathShapes)(((int)(shapeBindable.Value + 6)) % 7);
                 return true;
         }
 
-        return base.OnKeyDown(e);
+        return false;
     }
 
     private partial class LaneOffsetCounter : ExpandableCounter<int>

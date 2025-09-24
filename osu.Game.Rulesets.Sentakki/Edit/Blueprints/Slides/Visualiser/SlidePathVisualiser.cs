@@ -20,6 +20,7 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
 {
     private readonly Container<SmoothPath> paths;
     private readonly Container<SmoothPath> hoverPaths;
+    private readonly SlideOffsetVisualiser offsetVisualiser;
 
     private readonly SlideBodyInfo slideBodyInfo;
     private readonly Slide slide;
@@ -47,7 +48,7 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
             {
                 RelativeSizeAxes = Axes.Both
             },
-            new SlideOffsetVisualiser(slide, slideBodyInfo)
+            offsetVisualiser = new SlideOffsetVisualiser(slide, slideBodyInfo)
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.TopCentre,
@@ -199,14 +200,16 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
     public void Select()
     {
         Alpha = 1;
-        paths.Alpha = 1;
+        //paths.Alpha = 1;
+        offsetVisualiser.Show();
         updateContextMenuItems();
     }
 
     public void Deselect()
     {
         Alpha = 0;
-        paths.Alpha = 0;
+        //paths.Alpha = 0;
+        offsetVisualiser.Hide();
         ContextMenuItems = null;
     }
 

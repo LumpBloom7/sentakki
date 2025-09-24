@@ -151,6 +151,12 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
             case Key.BackSpace:
                 uncommitLastPart();
                 break;
+
+            default:
+                if (slidePlacementToolbox.HandleKeyDown(e))
+                    return true;
+
+                break;
         }
 
         return base.OnKeyDown(e);

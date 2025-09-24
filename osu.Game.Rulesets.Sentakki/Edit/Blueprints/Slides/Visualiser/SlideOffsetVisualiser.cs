@@ -20,7 +20,7 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Visualiser;
 
-public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
+public partial class SlideOffsetVisualiser : VisibilityContainer, IHasTooltip
 {
     private readonly Slide slide;
     private readonly SlideBodyInfo bodyInfo;
@@ -114,10 +114,12 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
+        if (State.Value is Visibility.Hidden)
+            return false;
+
         switch (e.Key)
         {
-            case Key.Plus:
-            case Key.KeypadPlus:
+            case Key.D:
             {
                 float newShootDelay = bodyInfo.ShootDelay + 1f / beatSnapProvider.BeatDivisor;
                 if (!isShootDelayValid(newShootDelay))
@@ -131,8 +133,7 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
                 return true;
             }
 
-            case Key.Minus:
-            case Key.KeypadMinus:
+            case Key.A:
             {
                 float newShootDelay = bodyInfo.ShootDelay - (1f / beatSnapProvider.BeatDivisor);
                 if (!isShootDelayValid(newShootDelay))
@@ -215,5 +216,15 @@ public partial class SlideOffsetVisualiser : CompositeDrawable, IHasTooltip
             editorBeatmap?.Update(slide);
             editorBeatmap?.EndChange();
         }
+    }
+
+    protected override void PopIn()
+    {
+        Alpha = 1;
+    }
+
+    protected override void PopOut()
+    {
+        Alpha = 0;
     }
 }
