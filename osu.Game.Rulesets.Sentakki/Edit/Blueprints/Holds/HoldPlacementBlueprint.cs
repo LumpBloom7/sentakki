@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
 
 public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
 {
-    protected override bool IsValidForPlacement => HitObject.Duration > 0;
+    protected override bool IsValidForPlacement => HitObject.Duration >= 0;
     private readonly HoldHighlight highlight;
 
     [Resolved]
@@ -55,11 +55,11 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
         if (PlacementActive != PlacementState.Active) return;
 
         if ((e.Button is MouseButton.Left && timeChanged) || e.Button is MouseButton.Right)
-            EndPlacement(HitObject.Duration > 0);
+            EndPlacement(true);
     }
 
     private double originalStartTime;
-    private bool timeChanged = false;
+    private bool timeChanged;
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double fallbackTime)
     {
