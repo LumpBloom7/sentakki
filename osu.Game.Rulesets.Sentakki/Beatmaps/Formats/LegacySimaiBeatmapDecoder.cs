@@ -83,6 +83,8 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
     {
         MaiChart chart = SimaiConvert.Deserialize(chartNotes);
 
+        List<TimingControlPoint> simaiTimingPoints = [];
+
         TimingControlPoint? lastTimingPoint = null;
 
         foreach (var timingChange in chart.TimingChanges)
@@ -106,7 +108,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
             lastTimingPoint = controlPoint;
 
-            beatmap.ControlPointInfo.Add(controlPoint.Time, controlPoint);
+            simaiTimingPoints.Add(controlPoint);
         }
 
         if (chart.FinishTiming != null)
@@ -142,15 +144,14 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
             }
         }
 
-        // Remove useless timingpoints
-        var usedTimingPoints = beatmap.ControlPointInfo.TimingPoints.Where(t => beatmap.HitObjects.Any(h => beatmap.ControlPointInfo.TimingPointAt(h.StartTime) == t)).ToList();
+        simaiTimingPoints = [.. simaiTimingPoints.OrderBy(s => s.Time)];
+        var usedTimingPoints = beatmap.HitObjects.Select(h => ControlPointInfo.BinarySearchWithFallback(simaiTimingPoints, h.StartTime, null)).ToHashSet();
+        usedTimingPoints.Remove(null);
 
-        // Include any effect control points already read from osu format
-        effectControlPoints.AddRange(beatmap.ControlPointInfo.EffectPoints);
+        simaiTimingPoints.RemoveAll(s => usedTimingPoints.Contains(s));
 
-        beatmap.ControlPointInfo.Clear();
         foreach (var t in usedTimingPoints)
-            beatmap.ControlPointInfo.Add(t.Time, t);
+            beatmap.ControlPointInfo.Add(t!.Time, t);
 
         foreach (var e in effectControlPoints)
             beatmap.ControlPointInfo.Add(e.Time, e);
