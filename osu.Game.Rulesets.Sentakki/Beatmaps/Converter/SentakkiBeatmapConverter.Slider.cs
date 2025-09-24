@@ -60,18 +60,20 @@ public partial class SentakkiBeatmapConverter
         double beatLength = Beatmap.ControlPointInfo.TimingPointAt(original.StartTime).BeatLength;
         double duration = ((IHasDuration)original).Duration;
 
-        float shootDelay = 1;
+        float shootDelayBeats = 1;
 
         // This is an attempt to make shoot delays more appropriate for the slide duration
-        while (shootDelay * beatLength >= duration - 50)
+        while (shootDelayBeats * beatLength >= duration - 50)
         {
-            shootDelay /= 2;
+            shootDelayBeats /= 2;
             // If shoot delay is below 0.25 beats, then this cannot ever be a slide
-            if (shootDelay < 0.25)
+            if (shootDelayBeats < 0.25)
                 return null;
         }
 
-        var selectedPath = chooseSlidePartFor(original, allowFans, duration - shootDelay * beatLength);
+        double shootDelay = shootDelayBeats * beatLength;
+
+        var selectedPath = chooseSlidePartFor(original, allowFans, duration - shootDelay);
 
         if (selectedPath is null)
             return null;
