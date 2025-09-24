@@ -38,9 +38,6 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
 
     private DrawableRulesetDependencies dependencies = null!;
 
-    [Cached]
-    private SlideEditorToolboxGroup slideEditorToolboxGroup = new SlideEditorToolboxGroup();
-
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DrawableRulesetDependencies(Ruleset, base.CreateChildDependencies(parent));
 
@@ -69,7 +66,6 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
     [BackgroundDependencyLoader]
     private void load(OsuConfigManager config)
     {
-        RightToolbox.Add(slideEditorToolboxGroup);
         RightToolbox.Add(new TransformToolboxGroup
         {
             RotationHandler = BlueprintContainer.SelectionHandler.RotationHandler,

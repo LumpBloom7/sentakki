@@ -41,7 +41,7 @@ public class SlideBodyInfo : IEquatable<SlideBodyInfo>
 
     public void UpdatePaths()
     {
-        SlidePath = SlidePaths.CreateSlidePath(slidePathParts);
+        SlidePath = slidePathParts.Length == 0 ? empty_path : SlidePaths.CreateSlidePath(slidePathParts);
         OnPathUpdated?.Invoke();
     }
 

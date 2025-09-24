@@ -15,6 +15,7 @@ public class SlideCompositionTool : CompositionTool
         TooltipText =
             """
             Left click to place segment.
+            Middle click or Backspace to remove segment.
             Tab, Shift-Tab, or Alt-1~7 to change current segment type.
             Ctrl-Tab, or repeat Alt-1~7 to mirror segment (if applicable).
             A/S/D to decrease/reset/increase shoot offset.

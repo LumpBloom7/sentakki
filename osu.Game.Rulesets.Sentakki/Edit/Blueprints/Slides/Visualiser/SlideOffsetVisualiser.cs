@@ -96,21 +96,13 @@ public partial class SlideOffsetVisualiser : VisibilityContainer, IHasTooltip
     {
         base.Update();
 
-        double beatLength = editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
         float dist = -snapProvider.GetDistanceRelativeToCurrentTime(slide.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
-        float distInner = -snapProvider.GetDistanceRelativeToCurrentTime(slide.StartTime + (bodyInfo.ShootDelay * beatLength), SentakkiPlayfield.NOTESTARTDISTANCE);
+        float distInner = -snapProvider.GetDistanceRelativeToCurrentTime(slide.StartTime + bodyInfo.ShootDelay, SentakkiPlayfield.NOTESTARTDISTANCE);
         Position = -SentakkiExtensions.GetPositionAlongLane(dist, 0);
         Height = Math.Abs(dist - distInner);
     }
 
-    private bool isShootDelayValid(double shootDelay)
-    {
-        double beatLength = editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
-
-        double shootOffsetMS = shootDelay * beatLength;
-
-        return shootOffsetMS >= 0 && shootOffsetMS <= bodyInfo.Duration;
-    }
+    private bool isShootDelayValid(double shootDelay) => shootDelay >= 0 && shootDelay <= bodyInfo.Duration;
 
     protected override bool OnKeyDown(KeyDownEvent e)
     {
@@ -121,7 +113,8 @@ public partial class SlideOffsetVisualiser : VisibilityContainer, IHasTooltip
         {
             case Key.D:
             {
-                float newShootDelay = bodyInfo.ShootDelay + 1f / beatSnapProvider.BeatDivisor;
+                double newShootDelay = bodyInfo.ShootDelay + beatSnapProvider.GetBeatLengthAtTime(slide.StartTime);
+
                 if (!isShootDelayValid(newShootDelay))
                     return true;
 
@@ -129,19 +122,23 @@ public partial class SlideOffsetVisualiser : VisibilityContainer, IHasTooltip
 
                 bodyInfo.ShootDelay = newShootDelay;
                 editorBeatmap?.Update(slide);
+
                 editorBeatmap?.EndChange();
                 return true;
             }
 
             case Key.A:
             {
-                float newShootDelay = bodyInfo.ShootDelay - (1f / beatSnapProvider.BeatDivisor);
+                double newShootDelay = bodyInfo.ShootDelay - beatSnapProvider.GetBeatLengthAtTime(slide.StartTime);
+
                 if (!isShootDelayValid(newShootDelay))
                     return true;
 
                 editorBeatmap?.BeginChange();
+
                 bodyInfo.ShootDelay = newShootDelay;
                 editorBeatmap?.Update(slide);
+
                 editorBeatmap?.EndChange();
                 return true;
             }
@@ -201,19 +198,18 @@ public partial class SlideOffsetVisualiser : VisibilityContainer, IHasTooltip
         protected override void OnDrag(DragEvent e)
         {
             double snappedTime = snapProvider.GetDistanceBasedSnapTime(e.ScreenSpaceMousePosition);
+            double shootDelay = snappedTime - slide.StartTime;
 
-            double shootOffsetMs = snappedTime - slide.StartTime;
+            shootDelay = Math.Clamp(shootDelay, 0, slideBodyInfo.Duration);
 
-            shootOffsetMs = Math.Clamp(shootOffsetMs, 0, slideBodyInfo.Duration);
-
-            double shootOffset = shootOffsetMs / editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
-
-            if (shootOffset == slideBodyInfo.ShootDelay)
+            if (shootDelay == slideBodyInfo.ShootDelay)
                 return;
 
             editorBeatmap?.BeginChange();
-            slideBodyInfo.ShootDelay = Math.Max((float)shootOffset, 0);
+
+            slideBodyInfo.ShootDelay = shootDelay;
             editorBeatmap?.Update(slide);
+
             editorBeatmap?.EndChange();
         }
     }

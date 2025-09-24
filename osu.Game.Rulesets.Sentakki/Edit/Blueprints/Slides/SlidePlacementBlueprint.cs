@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
@@ -12,6 +12,7 @@ using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Screens.Edit;
 using osuTK;
 using osuTK.Graphics;
 using osuTK.Input;
@@ -27,10 +28,19 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
     protected override bool IsValidForPlacement => HitObject.Duration > 0 && commitedSlideBodyInfo?.SlidePathParts?.Length > 0;
 
     [Resolved]
-    private SlideEditorToolboxGroup slidePlacementToolbox { get; set; } = null!;
+    private EditorBeatmap beatmap { get; set; } = null!;
 
     [Resolved]
     private SentakkiHitObjectComposer composer { get; set; } = null!;
+
+    [Resolved]
+    private IBeatSnapProvider beatSnapProvider { get; set; } = null!;
+
+    // Placement state
+    private SlideBodyPart currentPart = new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false);
+    private int currentLaneOffset;
+
+    private double preferredShootDelay;
 
     public SlidePlacementBlueprint()
     {
@@ -64,40 +74,28 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
     [Resolved]
     private SentakkiSnapProvider snapProvider { get; set; } = null!;
 
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        updatePreview();
+    }
+
     protected override void Update()
     {
         base.Update();
         highlight.Rotation = HitObject.Lane.GetRotationForLane();
         highlight.SlideTapPiece.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
+        tryUpdateShootDelay();
     }
 
-    private SlideBodyInfo? commitedSlideBodyInfo = null!;
-    private SlideBodyInfo previewSlideBodyInfo = null!;
-    private int currentLaneOffset;
+    private readonly SlideBodyInfo commitedSlideBodyInfo = new SlideBodyInfo();
+    private readonly SlideBodyInfo previewSlideBodyInfo = new SlideBodyInfo();
 
-    private readonly Bindable<SlideBodyPart> currentPart = new Bindable<SlideBodyPart>();
-    private readonly Bindable<float> shootDelay = new Bindable<float>();
-
-    protected override void LoadComplete()
+    private void updatePreview()
     {
-        base.LoadComplete();
-
-        currentPart.BindTo(slidePlacementToolbox.CurrentPartBindable);
-        currentPart.BindValueChanged(v =>
-        {
-            previewSlideBodyInfo = new SlideBodyInfo
-            {
-                SlidePathParts = [v.NewValue]
-            };
-            bodyHighlight.Path = previewSlideBodyInfo.SlidePath;
-        }, true);
-
-        shootDelay.BindTo(slidePlacementToolbox.ShootDelayBindable);
-        shootDelay.BindValueChanged(v =>
-        {
-            if (commitedSlideBodyInfo is not null)
-                commitedSlideBodyInfo.ShootDelay = v.NewValue;
-        });
+        previewSlideBodyInfo.SlidePathParts = [currentPart];
+        bodyHighlight.Path = previewSlideBodyInfo.SlidePath;
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)
@@ -111,10 +109,8 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
             EditorClock.SeekSmoothlyTo(HitObject.StartTime);
 
-            HitObject.SlideInfoList.Add(commitedSlideBodyInfo = new SlideBodyInfo()
-            {
-                ShootDelay = shootDelay.Value
-            });
+            HitObject.SlideInfoList.Add(commitedSlideBodyInfo);
+            tryUpdateShootDelay();
 
             commited.Rotation = HitObject.Lane.GetRotationForLane();
             bodyHighlight.Rotation = HitObject.Lane.GetRotationForLane();
@@ -122,8 +118,16 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         }
         else
         {
-            if (e.Button == MouseButton.Left)
-                commitCurrentPart();
+            switch (e.Button)
+            {
+                case MouseButton.Left:
+                    commitCurrentPart();
+                    break;
+
+                case MouseButton.Middle:
+                    uncommitLastPart();
+                    break;
+            }
         }
 
         return true;
@@ -152,11 +156,56 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                 uncommitLastPart();
                 break;
 
-            default:
-                if (slidePlacementToolbox.HandleKeyDown(e))
-                    return true;
+            // Dedicated keybinds for shapes
+            case Key.Number1:
+            case Key.Number2:
+            case Key.Number3:
+            case Key.Number4:
+            case Key.Number5:
+            case Key.Number6:
+            case Key.Number7:
+                if (!e.AltPressed)
+                    break;
 
-                break;
+                int index = e.Key - Key.Number1;
+
+                SlidePaths.PathShapes targetShape = (SlidePaths.PathShapes)index;
+
+                if (currentPart.Shape == targetShape)
+                    currentPart.Mirrored = !currentPart.Mirrored;
+
+                currentPart.Shape = targetShape;
+                performLaneChange(currentLaneOffset);
+                updatePreview();
+
+                return true;
+
+            case Key.D:
+                preferredShootDelay += beatSnapProvider.GetBeatLengthAtTime(HitObject.StartTime);
+                tryUpdateShootDelay();
+                return true;
+
+            case Key.A:
+                preferredShootDelay -= beatSnapProvider.GetBeatLengthAtTime(HitObject.StartTime);
+                tryUpdateShootDelay();
+                return true;
+
+            case Key.S:
+                preferredShootDelay = beatSnapProvider.GetBeatLengthAtTime(HitObject.StartTime) * beatSnapProvider.BeatDivisor;
+                tryUpdateShootDelay();
+                return true;
+
+            case Key.Tab:
+                if (e.ControlPressed)
+                    currentPart.Mirrored = !currentPart.Mirrored;
+                else if (e.ShiftPressed)
+                    currentPart.Shape = (SlidePaths.PathShapes)((int)(currentPart.Shape + 6) % 7);
+                else
+                    currentPart.Shape = (SlidePaths.PathShapes)((int)(currentPart.Shape + 1) % 7);
+
+                performLaneChange(currentLaneOffset);
+                updatePreview();
+                return true;
         }
 
         return base.OnKeyDown(e);
@@ -183,7 +232,6 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
         if (PlacementActive == PlacementState.Active)
         {
-            Debug.Assert(commitedSlideBodyInfo is not null);
             double endTime = fallbackTime;
 
             HitObject.StartTime = endTime < originalStartTime ? endTime : originalStartTime;
@@ -198,7 +246,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
             if (targetPathOffset != newPo)
             {
-                slidePlacementToolbox.RequestLaneChange(newPo, true);
+                performLaneChange(newPo, true);
                 targetPathOffset = newPo;
             }
         }
@@ -206,6 +254,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         {
             HitObject.Lane = senRes.Lane;
             HitObject.StartTime = originalStartTime = result.Time ?? fallbackTime;
+            updateCurrentSegmentParameters();
         }
 
         return result;
@@ -213,11 +262,10 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
     private void commitCurrentPart()
     {
-        Debug.Assert(commitedSlideBodyInfo is not null);
-        laneOffsets.Push(slidePlacementToolbox.CurrentPart.EndOffset);
-        bodyParts.Add(slidePlacementToolbox.CurrentPart);
+        laneOffsets.Push(currentPart.EndOffset);
+        bodyParts.Add(currentPart);
 
-        currentLaneOffset += slidePlacementToolbox.CurrentPart.EndOffset;
+        currentLaneOffset += currentPart.EndOffset;
         commitedSlideBodyInfo.SlidePathParts = bodyParts.ToArray();
         commited.Path = commitedSlideBodyInfo.SlidePath;
 
@@ -226,7 +274,6 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
     private void uncommitLastPart()
     {
-        Debug.Assert(commitedSlideBodyInfo is not null);
         if (laneOffsets.Count == 0)
             return;
 
@@ -237,5 +284,47 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         commited.Path = commitedSlideBodyInfo.SlidePath;
 
         bodyHighlight.Rotation = (HitObject.Lane + currentLaneOffset).GetRotationForLane();
+    }
+
+    private void performLaneChange(int newLane, bool findClosestMatch = false)
+    {
+        int oldOffset = currentPart.EndOffset;
+
+        int rotationFactor = newLane - oldOffset >= 0 ? 1 : -1;
+
+        for (int i = 0; i < 8; ++i)
+        {
+            var newPart = currentPart with { EndOffset = (newLane + (i * rotationFactor)).NormalizeLane() };
+
+            if (SlidePaths.CheckSlideValidity(newPart))
+            {
+                currentPart.EndOffset = newPart.EndOffset;
+                updatePreview();
+                return;
+            }
+
+            if (findClosestMatch)
+                rotationFactor *= -1;
+        }
+    }
+
+    private void updateCurrentSegmentParameters()
+    {
+        preferredShootDelay = beatSnapProvider.GetBeatLengthAtTime(HitObject.StartTime) * beatSnapProvider.BeatDivisor;
+
+        var lastSlidePart = beatmap.HitObjects.OfType<Slide>().TakeWhile(h => h.StartTime <= HitObject.StartTime).LastOrDefault()?.SlideInfoList?.LastOrDefault()?.SlidePathParts.LastOrDefault();
+
+        if (lastSlidePart is null)
+        {
+            currentPart = new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false);
+            return;
+        }
+
+        currentPart = lastSlidePart.Value;
+    }
+
+    private void tryUpdateShootDelay()
+    {
+        commitedSlideBodyInfo.ShootDelay = Math.Clamp(preferredShootDelay, 0, Math.Max(HitObject.Duration - 50, 0));
     }
 }

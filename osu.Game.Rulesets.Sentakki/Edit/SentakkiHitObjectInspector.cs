@@ -31,7 +31,7 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
         {
             case 1:
                 AddHeader("Shoot offset");
-                AddValue($"{slide.SlideInfoList[0].ShootDelay:0.##} beats");
+                AddValue($"{slide.SlideInfoList[0].ShootDelay}ms");
 
                 AddHeader("Break slide");
                 AddValue(slide.SlideInfoList[0].Break.ToString());
