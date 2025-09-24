@@ -138,7 +138,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                 if (note.styles.HasFlagFast(NoteStyles.Fireworks))
                     hanabiTimes.Add(roundedStartTime + Math.Round((note.length ?? 0) * 1000.0));
 
-                var hitObject = noteToHitObject(roundedStartTime, note, timingPoint);
+                var hitObject = noteToHitObject(roundedStartTime, note);
 
                 if (hitObject == null) continue;
 
@@ -174,7 +174,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
         return locationPositionMap[location];
     }
 
-    private SentakkiHitObject? noteToHitObject(double time, Note note, TimingControlPoint? timingPoint)
+    private SentakkiHitObject? noteToHitObject(double time, Note note)
     {
         bool isBreak = note.type == NoteType.Break;
         NoteType senNoteType;
@@ -249,14 +249,14 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                 if (note.appearance is NoteAppearance.ForceNormal)
                     slide.TapType = Slide.TapTypeEnum.Tap;
 
-                attachSlideBodies(slide, note, timingPoint);
+                attachSlideBodies(slide, note);
                 return slide;
         }
 
         return null;
     }
 
-    private void attachSlideBodies(Slide slide, Note note, TimingControlPoint? timingPoint)
+    private void attachSlideBodies(Slide slide, Note note)
     {
         foreach (SlidePath path in note.slidePaths)
         {
@@ -332,20 +332,12 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                 startLane = endLane;
             }
 
-            float shootDelayBeats = 1;
-
-            if (timingPoint is not null)
-            {
-                double millisPerBeat = timingPoint.BeatLength;
-                shootDelayBeats = (float)(path.delay * 1000f / millisPerBeat);
-            }
-
             slide.SlideInfoList.Add(new SlideBodyInfo
             {
                 SlidePathParts = slideBodyParts.ToArray(),
                 Duration = (path.delay + path.duration) * 1000f,
                 Break = path.type == NoteType.Break,
-                ShootDelay = shootDelayBeats
+                ShootDelay = path.delay * 1000f
             });
         }
     }
