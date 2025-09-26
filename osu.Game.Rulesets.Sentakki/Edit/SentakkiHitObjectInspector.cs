@@ -1,3 +1,5 @@
+using osu.Framework.Allocation;
+using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Screens.Edit.Compose.Components;
@@ -6,6 +8,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit;
 
 public partial class SentakkiHitObjectInspector : HitObjectInspector
 {
+    [Resolved]
+    private IBeatSnapProvider beatSnapProvider { get; set; } = null!;
+
     protected override void AddInspectorValues(HitObject[] objects)
     {
         base.AddInspectorValues(objects);
@@ -31,7 +36,10 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
         {
             case 1:
                 AddHeader("Shoot offset");
-                AddValue($"{slide.SlideInfoList[0].ShootDelay}ms");
+                AddValue($"{slide.SlideInfoList[0].ShootDelay:0.##}ms");
+
+                double shootDelayBeats = slide.SlideInfoList[0].ShootDelay / (beatSnapProvider.GetBeatLengthAtTime(slide.StartTime) * beatSnapProvider.BeatDivisor);
+                AddValue($"{shootDelayBeats:0.##} beats");
 
                 AddHeader("Break slide");
                 AddValue(slide.SlideInfoList[0].Break.ToString());
