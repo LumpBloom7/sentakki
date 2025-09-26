@@ -31,9 +31,9 @@ public partial class SlideOffsetVisualiser : VisibilityContainer, IHasTooltip
     {
         get
         {
-            double shootOffsetMs = bodyInfo.ShootDelay * editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
+            double shootDelayBeats = bodyInfo.ShootDelay / editorBeatmap.ControlPointInfo.TimingPointAt(slide.StartTime).BeatLength;
 
-            return $"Shoot offset: {shootOffsetMs:0.##}ms ({bodyInfo.ShootDelay:0.##} beats)";
+            return $"Shoot offset: {bodyInfo.ShootDelay:0.##}ms ({shootDelayBeats:0.##} beats)";
         }
     }
 
