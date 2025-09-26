@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -7,12 +8,15 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Lines;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input.Events;
 using osu.Game.Graphics.UserInterface;
+using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
 using osuTK;
+using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Visualiser;
 
@@ -20,13 +24,16 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
 {
     private readonly Container<SmoothPath> paths;
     private readonly Container<SmoothPath> hoverPaths;
-    private readonly SlideOffsetVisualiser offsetVisualiser;
+    private readonly SlideOffsetTool slideOffsetTool;
 
     private readonly SlideBodyInfo slideBodyInfo;
     private readonly Slide slide;
 
     [Resolved(CanBeNull = true)]
     private EditorBeatmap? editorBeatmap { get; set; }
+
+    [Resolved]
+    private IBeatSnapProvider beatSnapProvider { get; set; } = null!;
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => hoverPaths.Children.Any(c => c.ReceivePositionalInputAt(screenSpacePos));
 
@@ -48,11 +55,12 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
             {
                 RelativeSizeAxes = Axes.Both
             },
-            offsetVisualiser = new SlideOffsetVisualiser(slide, slideBodyInfo)
+            slideOffsetTool = new SlideOffsetTool(slide, slideBodyInfo)
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.TopCentre,
                 Rotation = 22.5f,
+                ShootDelayAdjusted = adjustShootDelay
             }
         ];
 
@@ -75,6 +83,19 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
 
         // HACK: This seems to be necessary in order for the hover paths to be validated correctly for ReceivePositionAt
         AlwaysPresent = true;
+    }
+
+    private void adjustShootDelay(double shootDelay)
+    {
+        shootDelay = Math.Clamp(shootDelay, 0, slideBodyInfo.Duration);
+
+        if (shootDelay == slideBodyInfo.ShootDelay)
+            return;
+
+        editorBeatmap?.BeginChange();
+        slideBodyInfo.ShootDelay = shootDelay;
+        editorBeatmap?.Update(slide);
+        editorBeatmap?.EndChange();
     }
 
     private void setBreakState(ValueChangedEvent<TernaryState> value)
@@ -105,17 +126,17 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
     {
         List<MenuItem> cmItems =
         [
-            new TernaryStateToggleMenuItem("Break", MenuItemType.Standard)
+            new TernaryStateToggleMenuItem("Break")
             {
                 State = { BindTarget = breakStateBindable }
             },
-            new TernaryStateToggleMenuItem("Ex", MenuItemType.Standard)
+
+            new TernaryStateToggleMenuItem("Ex")
             {
                 State = { BindTarget = exStateBindable }
             },
+            new OsuMenuItem("Delete", MenuItemType.Destructive, slide.SlideInfoList.Count > 1 ? removeSlideBody : null)
         ];
-
-        cmItems.Add(new OsuMenuItem("Delete", MenuItemType.Destructive, slide.SlideInfoList.Count > 1 ? removeSlideBody : null));
 
         ContextMenuItems = [.. cmItems];
     }
@@ -201,7 +222,7 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
     {
         Alpha = 1;
         //paths.Alpha = 1;
-        offsetVisualiser.Show();
+        slideOffsetTool.Show();
         updateContextMenuItems();
     }
 
@@ -209,8 +230,34 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
     {
         Alpha = 0;
         //paths.Alpha = 0;
-        offsetVisualiser.Hide();
+        slideOffsetTool.Hide();
         ContextMenuItems = null;
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (Alpha == 0)
+            return false;
+
+        switch (e.Key)
+        {
+            case Key.D:
+            {
+                double newShootDelay = slideBodyInfo.ShootDelay + beatSnapProvider.GetBeatLengthAtTime(slide.StartTime);
+
+                adjustShootDelay(newShootDelay);
+                return true;
+            }
+
+            case Key.A:
+            {
+                double newShootDelay = slideBodyInfo.ShootDelay - beatSnapProvider.GetBeatLengthAtTime(slide.StartTime);
+                adjustShootDelay(newShootDelay);
+                return true;
+            }
+        }
+
+        return base.OnKeyDown(e);
     }
 
     protected override void Dispose(bool isDisposing)

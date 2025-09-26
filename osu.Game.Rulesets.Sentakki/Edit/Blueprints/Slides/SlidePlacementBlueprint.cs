@@ -42,6 +42,8 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
     private double preferredShootDelay;
 
+    private SlideOffsetTool offsetTool;
+
     public SlidePlacementBlueprint()
     {
         AddRangeInternal([
@@ -64,6 +66,14 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                         Alpha = 0f,
                     }
                 ]
+            },
+            offsetTool = new SlideOffsetTool(HitObject, commitedSlideBodyInfo)
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.TopCentre,
+                Rotation = 22.5f,
+                ShootDelayAdjusted = shootDelay => preferredShootDelay = shootDelay,
+                State = { Value = Visibility.Hidden }
             }
         ]);
 
@@ -110,7 +120,6 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
             EditorClock.SeekSmoothlyTo(HitObject.StartTime);
 
             HitObject.SlideInfoList.Add(commitedSlideBodyInfo);
-            tryUpdateShootDelay();
 
             commited.Rotation = HitObject.Lane.GetRotationForLane();
             bodyHighlight.Rotation = HitObject.Lane.GetRotationForLane();
@@ -182,17 +191,14 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
             case Key.D:
                 preferredShootDelay += beatSnapProvider.GetBeatLengthAtTime(HitObject.StartTime);
-                tryUpdateShootDelay();
                 return true;
 
             case Key.A:
                 preferredShootDelay -= beatSnapProvider.GetBeatLengthAtTime(HitObject.StartTime);
-                tryUpdateShootDelay();
                 return true;
 
             case Key.S:
                 preferredShootDelay = beatSnapProvider.GetBeatLengthAtTime(HitObject.StartTime) * beatSnapProvider.BeatDivisor;
-                tryUpdateShootDelay();
                 return true;
 
             case Key.Tab:
@@ -232,6 +238,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
         if (PlacementActive == PlacementState.Active)
         {
+            offsetTool.State.Value = Visibility.Visible;
             double endTime = fallbackTime;
 
             HitObject.StartTime = endTime < originalStartTime ? endTime : originalStartTime;
