@@ -59,8 +59,12 @@ MaiDiff:{9}
         SimaiFile simaiFile = new SimaiFile(path.EnumerateFileSystemInfos().First(f => f.Name is "maidata.txt"));
         Dictionary<string, string> dict = simaiFile.ToKeyValuePairs().ToDictionary(x => x.Key, x => x.Value);
 
-        string title = dict.GetValueOrDefault("title", "Unknown Title");
-        string artist = dict.GetValueOrDefault("artist", "Unknown Artist");
+        string titleUnicode = dict.GetValueOrDefault("title", "Unknown Title");
+        string title = dict.GetValueOrDefault("titleRomanised", titleUnicode);
+
+        string artistUnicode = dict.GetValueOrDefault("artist", "Unknown Artist");
+        string artist = dict.GetValueOrDefault("artistRomanised", artistUnicode);
+
         string allCreator = dict.GetValueOrDefault("des", "-");
         string first = dict.GetValueOrDefault("first", "0");
 
@@ -139,18 +143,18 @@ MaiDiff:{9}
 
                 string osuFile = string.Format(
                     osu_template,
-                     trackName,
-                        title,
-                        title,
-                        artist,
-                        artist,
-                        creator,
-                        diffName,
-                        version,
-                        string.Join(" ", tags),
-                        level,
-                        string.Join("\n", events),
-                        chart);
+                    trackName,
+                    title,
+                    titleUnicode,
+                    artist,
+                    artistUnicode,
+                    creator,
+                    diffName,
+                    version,
+                    string.Join(" ", tags),
+                    level,
+                    string.Join("\n", events),
+                    chart);
                 ZipArchiveEntry entry = zip.CreateEntry($"{diffName}.osu", CompressionLevel.Fastest);
                 using Stream entryStream = entry.Open();
                 entryStream.Write(System.Text.Encoding.UTF8.GetBytes(osuFile));
