@@ -55,12 +55,17 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
             {
                 RelativeSizeAxes = Axes.Both
             },
-            slideOffsetTool = new SlideOffsetTool(slide, slideBodyInfo)
+            new Container
             {
                 Anchor = Anchor.Centre,
-                Origin = Anchor.TopCentre,
+                Origin = Anchor.Centre,
                 Rotation = 22.5f,
-                ShootDelayAdjusted = adjustShootDelay
+                Child = slideOffsetTool = new SlideOffsetTool(slide, slideBodyInfo)
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.TopCentre,
+                    ShootDelayAdjusted = adjustShootDelay
+                }
             }
         ];
 

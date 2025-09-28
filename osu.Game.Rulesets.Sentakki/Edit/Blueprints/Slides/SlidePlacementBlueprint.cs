@@ -42,7 +42,8 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
     private double preferredShootDelay;
 
-    private SlideOffsetTool offsetTool;
+    private readonly SlideOffsetTool offsetTool;
+    private readonly Container offsetToolContainer;
 
     public SlidePlacementBlueprint()
     {
@@ -67,13 +68,22 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                     }
                 ]
             },
-            offsetTool = new SlideOffsetTool(HitObject, commitedSlideBodyInfo)
+            offsetToolContainer = new Container
             {
                 Anchor = Anchor.Centre,
-                Origin = Anchor.TopCentre,
-                Rotation = 22.5f,
-                ShootDelayAdjusted = shootDelay => preferredShootDelay = shootDelay,
-                State = { Value = Visibility.Hidden }
+                Origin = Anchor.Centre,
+                Child = new Container
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Child = offsetTool = new SlideOffsetTool(HitObject, commitedSlideBodyInfo)
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.TopCentre,
+                        ShootDelayAdjusted = shootDelay => preferredShootDelay = shootDelay,
+                        State = { Value = Visibility.Hidden }
+                    }
+                }
             }
         ]);
 
@@ -94,7 +104,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
     protected override void Update()
     {
         base.Update();
-        highlight.Rotation = HitObject.Lane.GetRotationForLane();
+        offsetToolContainer.Rotation = highlight.Rotation = HitObject.Lane.GetRotationForLane();
         highlight.SlideTapPiece.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
         tryUpdateShootDelay();
     }

@@ -95,7 +95,7 @@ public partial class SlideOffsetTool : VisibilityContainer, IHasTooltip
 
         float dist = -snapProvider.GetDistanceRelativeToCurrentTime(slide.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
         float distInner = -snapProvider.GetDistanceRelativeToCurrentTime(slide.StartTime + slideBodyInfo.ShootDelay, SentakkiPlayfield.NOTESTARTDISTANCE);
-        Position = -SentakkiExtensions.GetPositionAlongLane(dist, 0);
+        Y = -SentakkiPlayfield.INTERSECTDISTANCE;
         Height = Math.Abs(dist - distInner);
     }
 
