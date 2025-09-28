@@ -29,12 +29,9 @@ public class CheckSentakkiSlideBodyLength : ICheck
 
         foreach (var slide in slides)
         {
-            var timingPoint = context.CurrentDifficulty.Playable.ControlPointInfo.TimingPointAt(slide.StartTime);
-
             foreach (var slideBodyInfo in slide.SlideInfoList)
             {
-                double shootDelayMS = slideBodyInfo.ShootDelay * timingPoint.BeatLength;
-                double travelTime = Math.Max(slideBodyInfo.Duration - shootDelayMS, 0);
+                double travelTime = Math.Max(slideBodyInfo.Duration - slideBodyInfo.ShootDelay, 0);
 
                 if (travelTime <= slideBodyInfo.SlidePath.MinDuration / 2)
                     yield return tooFastSlideTemplate.Create(slide, travelTime, slideBodyInfo.SlidePath.MinDuration);
