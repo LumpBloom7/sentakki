@@ -35,6 +35,8 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
     [Resolved]
     private IBeatSnapProvider beatSnapProvider { get; set; } = null!;
 
+    private readonly Bindable<double> shootDelayBindable = new Bindable<double>();
+
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => hoverPaths.Children.Any(c => c.ReceivePositionalInputAt(screenSpacePos));
 
     public SlidePathVisualiser(Slide slide, SlideBodyInfo slideBodyInfo, int startLane)
@@ -44,6 +46,8 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
         slideBodyInfo.OnPathUpdated += reloadVisualiser;
         RelativeSizeAxes = Axes.Both;
         Alpha = 0;
+
+        shootDelayBindable.Value = slideBodyInfo.ShootDelay;
 
         InternalChildren =
         [
@@ -60,11 +64,11 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Rotation = 22.5f,
-                Child = slideOffsetTool = new SlideOffsetTool(slide, slideBodyInfo)
+                Child = slideOffsetTool = new SlideOffsetTool(slide)
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.TopCentre,
-                    ShootDelayAdjusted = adjustShootDelay
+                    ShootDelayBindable = { BindTarget = shootDelayBindable }
                 }
             }
         ];
@@ -88,11 +92,19 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
 
         // HACK: This seems to be necessary in order for the hover paths to be validated correctly for ReceivePositionAt
         AlwaysPresent = true;
+
+        shootDelayBindable.ValueChanged += v => adjustShootDelay(v.NewValue);
     }
 
     private void adjustShootDelay(double shootDelay)
     {
-        shootDelay = Math.Clamp(shootDelay, 0, slideBodyInfo.Duration);
+        double clampedShootDelay = Math.Clamp(shootDelay, 0, slideBodyInfo.Duration);
+
+        if (clampedShootDelay != shootDelay)
+        {
+            shootDelayBindable.Value = clampedShootDelay;
+            return;
+        }
 
         if (shootDelay == slideBodyInfo.ShootDelay)
             return;
@@ -249,7 +261,6 @@ public partial class SlidePathVisualiser : CompositeDrawable, IHasContextMenu
             case Key.D:
             {
                 double newShootDelay = slideBodyInfo.ShootDelay + beatSnapProvider.GetBeatLengthAtTime(slide.StartTime);
-
                 adjustShootDelay(newShootDelay);
                 return true;
             }

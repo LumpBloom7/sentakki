@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
@@ -40,7 +41,8 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
     private SlideBodyPart currentPart = new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false);
     private int currentLaneOffset;
 
-    private double preferredShootDelay;
+    private readonly Bindable<double> preferredShootDelay = new Bindable<double>();
+    private readonly Bindable<bool> manualShootDelay = new Bindable<bool>();
 
     private readonly SlideOffsetTool offsetTool;
     private readonly Container offsetToolContainer;
@@ -76,12 +78,16 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Child = offsetTool = new SlideOffsetTool(HitObject, commitedSlideBodyInfo)
+                    Child = offsetTool = new SlideOffsetTool(HitObject)
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.TopCentre,
-                        ShootDelayAdjusted = shootDelay => preferredShootDelay = shootDelay,
-                        State = { Value = Visibility.Hidden }
+                        ShootDelayBindable = { BindTarget = preferredShootDelay },
+                        ManualAdjustmentsMade = { BindTarget = manualShootDelay },
+                        State =
+                        {
+                            Value = Visibility.Hidden
+                        }
                     }
                 }
             }
@@ -200,15 +206,15 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                 return true;
 
             case Key.D:
-                preferredShootDelay += beatSnapProvider.GetBeatLengthAtTime(HitObject.StartTime);
+                preferredShootDelay.Value += beatSnapProvider.GetBeatLengthAtTime(HitObject.StartTime);
                 return true;
 
             case Key.A:
-                preferredShootDelay -= beatSnapProvider.GetBeatLengthAtTime(HitObject.StartTime);
+                preferredShootDelay.Value -= beatSnapProvider.GetBeatLengthAtTime(HitObject.StartTime);
                 return true;
 
             case Key.S:
-                preferredShootDelay = beatSnapProvider.GetBeatLengthAtTime(HitObject.StartTime) * beatSnapProvider.BeatDivisor;
+                preferredShootDelay.Value = beatSnapProvider.GetBeatLengthAtTime(HitObject.StartTime) * beatSnapProvider.BeatDivisor;
                 return true;
 
             case Key.Tab:
@@ -327,7 +333,8 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
     private void updateCurrentSegmentParameters()
     {
-        preferredShootDelay = beatSnapProvider.GetBeatLengthAtTime(HitObject.StartTime) * beatSnapProvider.BeatDivisor;
+        if (!manualShootDelay.Value)
+            preferredShootDelay.Value = beatSnapProvider.GetBeatLengthAtTime(HitObject.StartTime) * beatSnapProvider.BeatDivisor;
 
         var lastSlidePart = beatmap.HitObjects.OfType<Slide>().TakeWhile(h => h.StartTime <= HitObject.StartTime).LastOrDefault()?.SlideInfoList?.LastOrDefault()?.SlidePathParts.LastOrDefault();
 
@@ -342,6 +349,6 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
     private void tryUpdateShootDelay()
     {
-        commitedSlideBodyInfo.ShootDelay = Math.Clamp(preferredShootDelay, 0, Math.Max(HitObject.Duration - 50, 0));
+        commitedSlideBodyInfo.ShootDelay = Math.Clamp(preferredShootDelay.Value, 0, Math.Max(HitObject.Duration - 50, 0));
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
@@ -21,11 +22,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 public partial class SlideOffsetTool : VisibilityContainer, IHasTooltip
 {
     private readonly Slide slide;
-    private readonly SlideBodyInfo slideBodyInfo;
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => InternalChildren.Any(c => c.ReceivePositionalInputAt(screenSpacePos));
 
-    public Action<double>? ShootDelayAdjusted = null;
+    public Bindable<double> ShootDelayBindable { get; set; } = new Bindable<double>();
+    public Bindable<bool> ManualAdjustmentsMade { get; } = new Bindable<bool>();
 
     [Resolved]
     private IBeatSnapProvider beatSnapProvider { get; set; } = null!;
@@ -37,16 +38,15 @@ public partial class SlideOffsetTool : VisibilityContainer, IHasTooltip
     {
         get
         {
-            double shootDelayBeats = slideBodyInfo.ShootDelay / (beatSnapProvider.GetBeatLengthAtTime(slide.StartTime) * beatSnapProvider.BeatDivisor);
+            double shootDelayBeats = ShootDelayBindable.Value / (beatSnapProvider.GetBeatLengthAtTime(slide.StartTime) * beatSnapProvider.BeatDivisor);
 
-            return $"Shoot offset: {slideBodyInfo.ShootDelay:0.##}ms ({shootDelayBeats:0.##} beats)";
+            return $"Shoot offset: {ShootDelayBindable.Value:0.##}ms ({shootDelayBeats:0.##} beats)";
         }
     }
 
-    public SlideOffsetTool(Slide slide, SlideBodyInfo slideBodyInfo)
+    public SlideOffsetTool(Slide slide)
     {
         this.slide = slide;
-        this.slideBodyInfo = slideBodyInfo;
         Width = 50;
 
         InternalChildren =
@@ -94,8 +94,8 @@ public partial class SlideOffsetTool : VisibilityContainer, IHasTooltip
         base.Update();
 
         float dist = -snapProvider.GetDistanceRelativeToCurrentTime(slide.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
-        float distInner = -snapProvider.GetDistanceRelativeToCurrentTime(slide.StartTime + slideBodyInfo.ShootDelay, SentakkiPlayfield.NOTESTARTDISTANCE);
-        Y = -SentakkiPlayfield.INTERSECTDISTANCE;
+        float distInner = -snapProvider.GetDistanceRelativeToCurrentTime(slide.StartTime + ShootDelayBindable.Value, SentakkiPlayfield.NOTESTARTDISTANCE);
+        Y = dist;
         Height = Math.Abs(dist - distInner);
     }
 
@@ -124,21 +124,9 @@ public partial class SlideOffsetTool : VisibilityContainer, IHasTooltip
     protected override bool OnClick(ClickEvent e) => true;
     protected override bool OnDragStart(DragStartEvent e) => true;
 
-    private void adjustShootDelay(double shootDelay)
-    {
-        shootDelay = Math.Clamp(shootDelay, 0, slideBodyInfo.Duration);
-
-        if (shootDelay == slideBodyInfo.ShootDelay)
-            return;
-
-        ShootDelayAdjusted?.Invoke(shootDelay);
-    }
-
     private partial class DragHandle : FastCircle
     {
         private readonly SlideOffsetTool slideOffsetTool;
-
-        public override bool HandlePositionalInput => slideOffsetTool.ShootDelayAdjusted is not null;
 
         public DragHandle(SlideOffsetTool offsetTool)
         {
@@ -169,7 +157,8 @@ public partial class SlideOffsetTool : VisibilityContainer, IHasTooltip
             double snappedTime = snapProvider.GetDistanceBasedSnapTime(e.ScreenSpaceMousePosition);
             double shootDelay = snappedTime - slideOffsetTool.slide.StartTime;
 
-            slideOffsetTool.adjustShootDelay(shootDelay);
+            slideOffsetTool.ShootDelayBindable.Value = shootDelay;
+            slideOffsetTool.ManualAdjustmentsMade.Value = true;
         }
     }
 }
