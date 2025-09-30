@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Input.Events;
+using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides.Visualiser;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Extensions;
@@ -26,7 +27,8 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide>
 
     // The slide stays longer due to fade out transforms, let's make sure that it is only selectable prior to hit
     // Yes. DrawableObject.Result can be null when this blueprint is being transferred, so we do a null check anyways.
-    protected override bool ShouldBeAlive => base.ShouldBeAlive && !(DrawableObject.Result?.HasResult ?? true);
+    protected override bool ShouldBeAlive => (AlwaysShowWhenSelected && State == SelectionState.Selected)
+                                             || (DrawableObject?.IsAlive == true && DrawableObject.IsPresent && !(DrawableObject.Result?.HasResult ?? true));
 
     public SlideSelectionBlueprint(Slide hitObject)
         : base(hitObject)

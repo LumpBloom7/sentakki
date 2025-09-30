@@ -86,7 +86,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                         ManualAdjustmentsMade = { BindTarget = manualShootDelay },
                         State =
                         {
-                            Value = Visibility.Hidden
+                            Value = Visibility.Visible
                         }
                     }
                 }
@@ -254,7 +254,6 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
         if (PlacementActive == PlacementState.Active)
         {
-            offsetTool.State.Value = Visibility.Visible;
             double endTime = fallbackTime;
 
             HitObject.StartTime = endTime < originalStartTime ? endTime : originalStartTime;
