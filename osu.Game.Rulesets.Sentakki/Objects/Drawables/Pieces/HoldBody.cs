@@ -27,7 +27,7 @@ public partial class HoldBody : CompositeDrawable
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Child = new NoteRingPiece(true)
+                Child = new NoteRingPiece(true, false)
             }
         ];
     }

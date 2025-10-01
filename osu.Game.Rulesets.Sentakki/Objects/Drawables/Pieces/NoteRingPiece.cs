@@ -11,7 +11,7 @@ public partial class NoteRingPiece : CompositeDrawable
     private const float base_circle_size = 75;
     public const float DRAWABLE_SIZE = base_circle_size + 30; // 30 units for shadow
 
-    public NoteRingPiece(bool hex = false)
+    public NoteRingPiece(bool hex = false, bool sharedUniformBlock = true)
     {
         Padding = new MarginPadding(-DRAWABLE_SIZE / 2);
         RelativeSizeAxes = Axes.Both;
@@ -25,6 +25,7 @@ public partial class NoteRingPiece : CompositeDrawable
                 Shape = hex ? NoteShape.Hex : NoteShape.Ring,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
+                UseSharedUniform = sharedUniformBlock
             }
         ];
     }

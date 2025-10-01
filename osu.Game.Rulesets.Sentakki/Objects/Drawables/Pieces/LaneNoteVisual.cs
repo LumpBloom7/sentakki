@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -20,6 +22,7 @@ public enum NoteShape
 
 public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
 {
+    public bool UseSharedUniform { get; init; } = true;
     public NoteShape Shape { get; init; } = NoteShape.Ring;
     private float thickness = 18.75f;
 
@@ -118,7 +121,9 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
     {
         protected new LaneNoteVisual Source => (LaneNoteVisual)base.Source;
         protected override bool CanDrawOpaqueInterior => false;
+
         private IUniformBuffer<ShapeParameters>? shapeParameters;
+        private static readonly List<IUniformBuffer<ShapeParameters>> shared_shape_parameters = [];
 
         private float thickness;
         private Vector2 size;
@@ -143,7 +148,15 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
         {
             base.BindUniformResources(shader, renderer);
 
-            shapeParameters ??= renderer.CreateUniformBuffer<ShapeParameters>();
+            if (Source.UseSharedUniform)
+                shapeParameters ??= shared_shape_parameters.FirstOrDefault(isMatchingUniformBlock);
+
+            if (shapeParameters is null)
+            {
+                shapeParameters = renderer.CreateUniformBuffer<ShapeParameters>();
+                if (Source.UseSharedUniform)
+                    shared_shape_parameters.Add(shapeParameters);
+            }
 
             shapeParameters.Data = shapeParameters.Data with
             {
@@ -158,8 +171,10 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
 
         protected override void Dispose(bool isDisposing)
         {
+            if (!Source.UseSharedUniform)
+                shapeParameters?.Dispose();
+
             base.Dispose(isDisposing);
-            shapeParameters?.Dispose();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -172,6 +187,12 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
             public UniformBool Glow;
 
             public UniformPadding8 __;
+        }
+
+        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> shapeParameters)
+        {
+            ShapeParameters data = shapeParameters.Data;
+            return data.BorderThickness == thickness && data.Size == (UniformVector2)size && data.ShadowRadius == shadowRadius && data.Glow == glow;
         }
     }
 }
