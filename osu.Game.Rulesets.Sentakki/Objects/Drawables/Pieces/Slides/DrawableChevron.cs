@@ -100,6 +100,7 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
     {
         protected new DrawableChevron Source => (DrawableChevron)base.Source;
         protected override bool CanDrawOpaqueInterior => false;
+
         private IUniformBuffer<ShapeParameters>? shapeParameters;
         private static readonly List<IUniformBuffer<ShapeParameters>> shared_shape_parameters = [];
 

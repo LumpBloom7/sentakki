@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -126,6 +128,8 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
         protected override bool CanDrawOpaqueInterior => false;
         private IUniformBuffer<ShapeParameters>? shapeParameters;
 
+        private static readonly List<IUniformBuffer<ShapeParameters>> shared_shape_parameters = [];
+
         private float thickness;
         private Vector2 size;
         private bool glow;
@@ -153,7 +157,13 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
         {
             base.BindUniformResources(shader, renderer);
 
-            shapeParameters ??= renderer.CreateUniformBuffer<ShapeParameters>();
+            shapeParameters ??= shared_shape_parameters.FirstOrDefault(isMatchingUniformBlock);
+
+            if (shapeParameters is null)
+            {
+                shapeParameters = renderer.CreateUniformBuffer<ShapeParameters>();
+                shared_shape_parameters.Add(shapeParameters);
+            }
 
             shapeParameters.Data = shapeParameters.Data with
             {
@@ -171,7 +181,9 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
         protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
-            shapeParameters?.Dispose();
+
+            // For now we always share the parameters, so no need to dispose
+            //shapeParameters?.Dispose();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -184,6 +196,13 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
             public UniformBool Glow;
             public UniformBool fillTriangle;
             public UniformBool shadowOnly;
+        }
+
+        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> shapeParameters)
+        {
+            ShapeParameters data = shapeParameters.Data;
+            return data.Thickness == thickness && data.Size == (UniformVector2)size && data.ShadowRadius == shadowRadius && data.Glow == glow && data.fillTriangle == fillTriangle
+                   && data.shadowOnly == shadowOnly;
         }
     }
 }
