@@ -9,7 +9,6 @@ using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shaders.Types;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Rulesets.Objects.Drawables;
-using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 
@@ -22,7 +21,8 @@ public enum NoteShape
 
 public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
 {
-    public bool UseSharedUniform { get; init; } = true;
+    // Expectation: The shape will never change once set;
+    private bool useSharedUniformBuffer => Shape is not NoteShape.Hex;
     public NoteShape Shape { get; init; } = NoteShape.Ring;
     private float thickness = 18.75f;
 
@@ -122,13 +122,10 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
         protected new LaneNoteVisual Source => (LaneNoteVisual)base.Source;
         protected override bool CanDrawOpaqueInterior => false;
 
-        private IUniformBuffer<ShapeParameters>? shapeParameters;
-        private static readonly List<IUniformBuffer<ShapeParameters>> shared_shape_parameters = [];
+        private IUniformBuffer<ShapeParameters>? uniformBuffer;
+        private static readonly List<IUniformBuffer<ShapeParameters>> shared_uniform_buffers = [];
 
-        private float thickness;
-        private Vector2 size;
-        private bool glow;
-        private float shadowRadius;
+        private ShapeParameters parameters;
 
         public LaneNoteVisualDrawNode(LaneNoteVisual source)
             : base(source)
@@ -138,41 +135,50 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
         public override void ApplyState()
         {
             base.ApplyState();
-            thickness = Source.Thickness;
-            size = Source.DrawSize;
-            shadowRadius = Source.shadowRadius;
-            glow = Source.Glow;
+
+            var newParameters = new ShapeParameters()
+            {
+                BorderThickness = Source.Thickness,
+                Size = Source.DrawSize,
+                ShadowRadius = Source.ShadowRadius,
+                Glow = Source.Glow,
+            };
+
+            // If the uniform properties have changed, then we definitely want to null this out so that we get a more appropriate uniform block
+            // We don't care about disposal since these uniform blocks are shared
+            if (newParameters == parameters) return;
+
+            // If the uniform properties have changed, then we definitely want to null this out so that we get a more appropriate uniform block
+            // We don't care about disposal since these uniform blocks are shared
+            parameters = newParameters;
+
+            if (Source.useSharedUniformBuffer)
+                uniformBuffer = null;
         }
 
         protected override void BindUniformResources(IShader shader, IRenderer renderer)
         {
             base.BindUniformResources(shader, renderer);
 
-            if (Source.UseSharedUniform)
-                shapeParameters ??= shared_shape_parameters.FirstOrDefault(isMatchingUniformBlock);
+            if (Source.useSharedUniformBuffer)
+                uniformBuffer ??= shared_uniform_buffers.FirstOrDefault(isMatchingUniformBlock);
 
-            if (shapeParameters is null)
+            if (uniformBuffer is null)
             {
-                shapeParameters = renderer.CreateUniformBuffer<ShapeParameters>();
-                if (Source.UseSharedUniform)
-                    shared_shape_parameters.Add(shapeParameters);
+                uniformBuffer = renderer.CreateUniformBuffer<ShapeParameters>();
+                if (Source.useSharedUniformBuffer)
+                    shared_uniform_buffers.Add(uniformBuffer);
             }
 
-            shapeParameters.Data = shapeParameters.Data with
-            {
-                BorderThickness = thickness,
-                Size = size,
-                ShadowRadius = shadowRadius,
-                Glow = glow,
-            };
+            uniformBuffer.Data = parameters;
 
-            shader.BindUniformBlock("m_shapeParameters", shapeParameters);
+            shader.BindUniformBlock("m_shapeParameters", uniformBuffer);
         }
 
         protected override void Dispose(bool isDisposing)
         {
-            if (!Source.UseSharedUniform)
-                shapeParameters?.Dispose();
+            if (!Source.useSharedUniformBuffer)
+                uniformBuffer?.Dispose();
 
             base.Dispose(isDisposing);
         }
@@ -189,10 +195,9 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
             public UniformPadding8 __;
         }
 
-        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> shapeParameters)
+        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> uniformBuffer)
         {
-            ShapeParameters data = shapeParameters.Data;
-            return data.BorderThickness == thickness && data.Size == (UniformVector2)size && data.ShadowRadius == shadowRadius && data.Glow == glow;
+            return uniformBuffer.Data == parameters;
         }
     }
 }

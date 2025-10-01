@@ -7,7 +7,6 @@ using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shaders.Types;
 using osu.Framework.Graphics.Sprites;
-using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 
@@ -101,14 +100,10 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
         protected new DrawableChevron Source => (DrawableChevron)base.Source;
         protected override bool CanDrawOpaqueInterior => false;
 
-        private IUniformBuffer<ShapeParameters>? shapeParameters;
-        private static readonly List<IUniformBuffer<ShapeParameters>> shared_shape_parameters = [];
+        private IUniformBuffer<ShapeParameters>? uniformBuffer;
+        private static readonly List<IUniformBuffer<ShapeParameters>> shared_uniform_buffers = [];
 
-        private float thickness;
-        private Vector2 size;
-        private bool glow;
-        private float shadowRadius;
-        private bool fanChev;
+        private ShapeParameters parameters;
 
         public ChevronDrawNode(DrawableChevron source)
             : base(source)
@@ -118,35 +113,40 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
         public override void ApplyState()
         {
             base.ApplyState();
-            thickness = Source.Thickness;
-            size = Source.DrawSize;
-            shadowRadius = Source.shadowRadius;
-            glow = Source.Glow;
-            fanChev = Source.FanChevron;
+            var newParameters = new ShapeParameters()
+            {
+                Thickness = Source.thickness,
+                Size = Source.DrawSize,
+                ShadowRadius = Source.ShadowRadius,
+                Glow = Source.glow,
+                FanChevron = Source.FanChevron,
+            };
+
+            // If the uniform properties have changed, then we definitely want to null this out so that we get a more appropriate uniform block
+            // We don't care about disposal since these uniform blocks are shared
+            if (newParameters == parameters) return;
+
+            // If the uniform properties have changed, then we definitely want to null this out so that we get a more appropriate uniform block
+            // We don't care about disposal since these uniform blocks are shared
+            parameters = newParameters;
+            uniformBuffer = null;
         }
 
         protected override void BindUniformResources(IShader shader, IRenderer renderer)
         {
             base.BindUniformResources(shader, renderer);
 
-            shapeParameters ??= shared_shape_parameters.FirstOrDefault(isMatchingUniformBlock);
+            uniformBuffer ??= shared_uniform_buffers.FirstOrDefault(isMatchingUniformBlock);
 
-            if (shapeParameters is null)
+            if (uniformBuffer is null)
             {
-                shapeParameters = renderer.CreateUniformBuffer<ShapeParameters>();
-                shared_shape_parameters.Add(shapeParameters);
+                uniformBuffer = renderer.CreateUniformBuffer<ShapeParameters>();
+                shared_uniform_buffers.Add(uniformBuffer);
             }
 
-            shapeParameters.Data = shapeParameters.Data with
-            {
-                Thickness = thickness,
-                Size = size,
-                ShadowRadius = shadowRadius,
-                Glow = glow,
-                FanChevron = fanChev
-            };
+            uniformBuffer.Data = parameters;
 
-            shader.BindUniformBlock("m_shapeParameters", shapeParameters);
+            shader.BindUniformBlock("m_shapeParameters", uniformBuffer);
         }
 
         protected override void Dispose(bool isDisposing)
@@ -170,10 +170,9 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
             public UniformPadding4 __;
         }
 
-        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> shapeParameters)
+        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> uniformBuffer)
         {
-            ShapeParameters data = shapeParameters.Data;
-            return data.Thickness == thickness && data.Size == (UniformVector2)size && data.ShadowRadius == shadowRadius && data.Glow == glow && data.FanChevron == fanChev;
+            return uniformBuffer.Data == parameters;
         }
     }
 }

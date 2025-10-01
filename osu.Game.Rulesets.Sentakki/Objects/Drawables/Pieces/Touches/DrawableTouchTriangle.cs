@@ -9,7 +9,6 @@ using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shaders.Types;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Rulesets.Objects.Drawables;
-using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
 
@@ -126,16 +125,11 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
     {
         protected new DrawableTouchTriangle Source => (DrawableTouchTriangle)base.Source;
         protected override bool CanDrawOpaqueInterior => false;
-        private IUniformBuffer<ShapeParameters>? shapeParameters;
 
-        private static readonly List<IUniformBuffer<ShapeParameters>> shared_shape_parameters = [];
+        private IUniformBuffer<ShapeParameters>? uniformBuffer;
+        private static readonly List<IUniformBuffer<ShapeParameters>> shared_uniform_buffers = [];
 
-        private float thickness;
-        private Vector2 size;
-        private bool glow;
-        private float shadowRadius;
-        private bool fillTriangle;
-        private bool shadowOnly;
+        private ShapeParameters parameters;
 
         public TouchTriangleDrawNode(DrawableTouchTriangle source)
             : base(source)
@@ -145,37 +139,40 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
         public override void ApplyState()
         {
             base.ApplyState();
-            thickness = Source.Thickness;
-            size = Source.DrawSize;
-            shadowRadius = Source.shadowRadius;
-            glow = Source.Glow;
-            fillTriangle = Source.FillTriangle;
-            shadowOnly = Source.ShadowOnly;
+
+            var newParameters = new ShapeParameters
+            {
+                Thickness = Source.thickness,
+                Size = Source.DrawSize,
+                ShadowRadius = Source.ShadowRadius,
+                Glow = Source.glow,
+                fillTriangle = Source.FillTriangle,
+                shadowOnly = Source.shadowOnly
+            };
+
+            if (newParameters == parameters) return;
+
+            // If the uniform properties have changed, then we definitely want to null this out so that we get a more appropriate uniform block
+            // We don't care about disposal since these uniform blocks are shared
+            parameters = newParameters;
+            uniformBuffer = null;
         }
 
         protected override void BindUniformResources(IShader shader, IRenderer renderer)
         {
             base.BindUniformResources(shader, renderer);
 
-            shapeParameters ??= shared_shape_parameters.FirstOrDefault(isMatchingUniformBlock);
+            uniformBuffer ??= shared_uniform_buffers.FirstOrDefault(isMatchingUniformBlock);
 
-            if (shapeParameters is null)
+            if (uniformBuffer is null)
             {
-                shapeParameters = renderer.CreateUniformBuffer<ShapeParameters>();
-                shared_shape_parameters.Add(shapeParameters);
+                uniformBuffer = renderer.CreateUniformBuffer<ShapeParameters>();
+                shared_uniform_buffers.Add(uniformBuffer);
             }
 
-            shapeParameters.Data = shapeParameters.Data with
-            {
-                Thickness = thickness,
-                Size = size,
-                ShadowRadius = shadowRadius,
-                Glow = glow,
-                fillTriangle = fillTriangle,
-                shadowOnly = shadowOnly
-            };
+            uniformBuffer.Data = parameters;
 
-            shader.BindUniformBlock("m_shapeParameters", shapeParameters);
+            shader.BindUniformBlock("m_shapeParameters", uniformBuffer);
         }
 
         protected override void Dispose(bool isDisposing)
@@ -198,11 +195,7 @@ public partial class DrawableTouchTriangle : Sprite, ITexturedShaderDrawable
             public UniformBool shadowOnly;
         }
 
-        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> shapeParameters)
-        {
-            ShapeParameters data = shapeParameters.Data;
-            return data.Thickness == thickness && data.Size == (UniformVector2)size && data.ShadowRadius == shadowRadius && data.Glow == glow && data.fillTriangle == fillTriangle
-                   && data.shadowOnly == shadowOnly;
-        }
+        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> uniformBuffer)
+            => uniformBuffer.Data == parameters;
     }
 }
