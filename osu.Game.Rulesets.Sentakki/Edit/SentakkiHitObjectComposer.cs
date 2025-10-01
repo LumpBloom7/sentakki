@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -74,7 +75,9 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
         {
             RotationHandler = BlueprintContainer.SelectionHandler.RotationHandler,
         });
-        RightToolbox.Add(new SimaiEditorToolboxGroup());
+
+        if (!RuntimeInfo.IsMobile)
+            RightToolbox.Add(new SimaiEditorToolboxGroup());
 
         LayerBelowRuleset.Add(snapProvider);
 
