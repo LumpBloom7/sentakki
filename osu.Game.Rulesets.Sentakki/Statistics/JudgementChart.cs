@@ -4,12 +4,14 @@ using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Localisation;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osuTK.Graphics;
 
@@ -17,52 +19,55 @@ namespace osu.Game.Rulesets.Sentakki.Statistics;
 
 public partial class JudgementChart : TableContainer
 {
-    private static readonly Color4 accent_color = Color4Extensions.FromHex("#66FFCC");
+    private static readonly Color4 accent_color = Color4Extensions.FromHex("#00FFAA");
 
-    private static readonly (string, Func<HitEvent, bool>)[] hitObjectTypes =
-    {
-            ("Tap", e => e.HitObject is Tap x && !x.Break),
-            ("Hold", e => (e.HitObject is Hold.HoldHead || e.HitObject is Hold) && !((SentakkiLanedHitObject)e.HitObject).Break),
-            ("Slide", e => e.HitObject is SlideBody x && !x.Break),
-            ("Touch", e => e.HitObject is Touch),
-            ("Touch Hold", e => e.HitObject is TouchHold),
-            // Note Hold and Slide breaks are applied to child objects, not itself.
-            ("Break", e => e.HitObject is SentakkiLanedHitObject x && (x is not Slide) && x.Break),
-    };
+    private static readonly (string, Func<HitEvent, bool>)[] hit_object_types =
+    [
+        ("Tap", e => e.HitObject is Tap x && !x.Break),
+        ("Hold", e => e.HitObject is Hold.HoldHead or Hold && !((SentakkiLanedHitObject)e.HitObject).Break),
+        ("Slide", e => e.HitObject is SlideBody x && !x.Break),
+        ("Touch", e => e.HitObject is Touch),
+        ("Touch Hold", e => e.HitObject is TouchHold),
+        // Note Hold and Slide breaks are applied to child objects, not itself.
+        ("Break", e => e.HitObject is SentakkiLanedHitObject x && x is not Slide && x.Break)
+    ];
 
-    private static readonly HitResult[] valid_results = new HitResult[]{
+    private OsuColour colours { get; set; } = new OsuColour();
+
+    private static readonly HitResult[] valid_results =
+    [
         HitResult.Perfect,
         HitResult.Great,
         HitResult.Good,
         HitResult.Ok,
         HitResult.Miss
-    };
+    ];
 
     public JudgementChart(IReadOnlyList<HitEvent> hitEvents)
     {
         var columns = new TableColumn[7];
-        Array.Fill(columns, new TableColumn(null, Anchor.Centre, new Dimension(GridSizeMode.Distributed)));
+        Array.Fill(columns, new TableColumn(null, Anchor.Centre, new Dimension()));
         Columns = columns;
 
-        RowSize = new Dimension(GridSizeMode.Distributed);
+        RowSize = new Dimension();
 
         var content = new Drawable[6, 7];
 
-        for (int i = 0; i < hitObjectTypes.Length; ++i)
+        for (int i = 0; i < hit_object_types.Length; ++i)
         {
-            var entry = hitObjectTypes[i];
+            var entry = hit_object_types[i];
 
             Dictionary<HitResult, int> results = collectHitResultsFor(hitEvents.Where(entry.Item2));
 
             int sum = results.Sum(kvp => kvp.Value);
 
             HitResult minResult = sum == 0 ? HitResult.Perfect : results.MinBy(kvp => kvp.Key).Key;
-            Color4 specialColor = minResult.GetColorForSentakkiResult();
+            ColourInfo specialColor = minResult is HitResult.Miss ? Color4.LightGray : colours.ForSentakkiResult(minResult);
 
             // The alpha will be used to "disable" an hitobject entry if they don't exist
             float commonAlpha = sum == 0 ? 0.1f : 1;
 
-            content[i, 0] = new OsuSpriteText()
+            content[i, 0] = new OsuSpriteText
             {
                 Origin = Anchor.Centre,
                 Anchor = Anchor.Centre,
@@ -85,7 +90,7 @@ public partial class JudgementChart : TableContainer
                 {
                     Origin = Anchor.Centre,
                     Anchor = Anchor.Centre,
-                    Colour = valid_results[j].GetColorForSentakkiResult(),
+                    Colour = colours.ForSentakkiResult(valid_results[j]),
                     Alpha = commonAlpha
                 };
             }
@@ -100,15 +105,15 @@ public partial class JudgementChart : TableContainer
             return null!;
 
         string text = index == 1 ? "TOTAL" : valid_results[index - 2].GetDisplayNameForSentakkiResult();
-        var Colour = index == 1 ? accent_color : valid_results[index - 2].GetColorForSentakkiResult();
+        ColourInfo colour = index == 1 ? accent_color : colours.ForSentakkiResult(valid_results[index - 2]);
 
-        return new OsuSpriteText()
+        return new OsuSpriteText
         {
             Origin = Anchor.Centre,
             Anchor = Anchor.Centre,
             Font = OsuFont.Torus.With(size: 20, weight: FontWeight.Bold),
             Text = text,
-            Colour = Colour
+            Colour = colour
         };
     }
 
@@ -116,7 +121,7 @@ public partial class JudgementChart : TableContainer
     {
         var resultGroups = hitEvents.GroupBy(h => h.Result);
 
-        Dictionary<HitResult, int> counts = new();
+        Dictionary<HitResult, int> counts = [];
 
         foreach (var he in resultGroups)
             counts[he.Key] = he.Count();

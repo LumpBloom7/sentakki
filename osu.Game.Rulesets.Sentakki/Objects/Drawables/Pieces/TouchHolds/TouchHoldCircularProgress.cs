@@ -3,6 +3,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Utils;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
@@ -18,7 +19,7 @@ public partial class TouchHoldCircularProgress : CircularProgress
         set
         {
             originalColour = value;
-            flashingColour = value.LightenHSL(0.4f);
+            flashingColour = value.LightenHsl(0.4f);
         }
     }
 
@@ -33,7 +34,7 @@ public partial class TouchHoldCircularProgress : CircularProgress
         {
             const double flashing_time = 80;
 
-            double flashProg = (Time.Current % (flashing_time * 2)) / (flashing_time * 2);
+            double flashProg = Time.Current % (flashing_time * 2) / (flashing_time * 2);
 
             if (flashProg <= 0.5)
                 Colour = Interpolation.ValueAt(flashProg, originalColour, flashingColour, 0, 0.5, Easing.OutSine);

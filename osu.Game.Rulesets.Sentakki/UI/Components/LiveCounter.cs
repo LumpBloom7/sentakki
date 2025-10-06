@@ -9,106 +9,108 @@ using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.UI.Components
+namespace osu.Game.Rulesets.Sentakki.UI.Components;
+
+public partial class LiveCounter : BeatSyncedContainer
 {
-    public partial class LiveCounter : BeatSyncedContainer
+    public BindableInt LivesLeft = new BindableInt();
+
+    private readonly LiveRollingCounter livesText;
+
+    public LiveCounter(BindableInt livesBindable)
     {
-        public BindableInt LivesLeft = new BindableInt();
+        LivesLeft.BindTo(livesBindable);
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
 
-        private readonly LiveRollingCounter livesText;
+        InternalChild = livesText = new LiveRollingCounter();
 
-        public LiveCounter(BindableInt livesBindable)
+        LivesLeft.BindValueChanged(v =>
         {
-            LivesLeft.BindTo(livesBindable);
+            this.FadeColour(Color4.Red, 160).Then().FadeColour(Color4.White, 320);
+            shake();
+        }, true);
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        livesText.Current.BindTo(LivesLeft);
+    }
+
+    private void shake(double? maximumLength = null)
+    {
+        const float shake_amount = 8;
+        const double shake_duration = 80;
+
+        // if we don't have enough time, don't bother shaking.
+        if (maximumLength < shake_duration * 2)
+            return;
+
+        var sequence = this.MoveToX(shake_amount, shake_duration / 2, Easing.OutSine).Then()
+                           .MoveToX(-shake_amount, shake_duration, Easing.InOutSine).Then();
+
+        // if we don't have enough time for the second shake, skip it.
+        if (maximumLength is null or >= shake_duration * 4)
+        {
+            sequence = sequence
+                       .MoveToX(shake_amount, shake_duration, Easing.InOutSine).Then()
+                       .MoveToX(-shake_amount, shake_duration, Easing.InOutSine).Then();
+        }
+
+        sequence.MoveToX(0, shake_duration / 2, Easing.InSine);
+    }
+
+    protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, ChannelAmplitudes amplitudes)
+    {
+        float livesPercentage = LivesLeft.Value / (float)LivesLeft.MaxValue;
+
+        int panicLevel = livesPercentage switch
+        {
+            <= 0.1f => 3,
+            <= 0.25f => 2,
+            <= 0.5f => 1,
+            _ => 0
+        };
+
+        // Heart Rate increases when panicking (lives <= 20% MaxLives)
+        // It also beats harder
+        float panicDurationMultiplier = 1 * MathF.Pow(0.75f, panicLevel);
+        float beatMagnitude = 0.1f + 0.05f * panicLevel;
+
+        int heartbeatFreq = (int)(timingPoint.TimeSignature.Numerator * Math.Max(panicDurationMultiplier, 0.5f));
+
+        if (heartbeatFreq == 0)
+            return;
+
+        if (beatIndex % heartbeatFreq == 0)
+        {
+            this.ScaleTo(1 + beatMagnitude, 200 * panicDurationMultiplier)
+                .Then().ScaleTo(1, 120 * panicDurationMultiplier)
+                .Then().ScaleTo(1 + beatMagnitude, 160 * panicDurationMultiplier)
+                .Then().ScaleTo(1, 320 * panicDurationMultiplier);
+        }
+    }
+
+    private partial class LiveRollingCounter : RollingCounter<int>
+    {
+        protected override double RollingDuration => 1000;
+
+        public LiveRollingCounter()
+        {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-
-            InternalChild = livesText = new LiveRollingCounter();
-
-            LivesLeft.BindValueChanged(v =>
-            {
-                this.FadeColour(Color4.Red, 160).Then().FadeColour(Color4.White, 320);
-                Shake();
-            }, true);
         }
 
-        protected override void LoadComplete()
+        protected override OsuSpriteText CreateSpriteText()
         {
-            base.LoadComplete();
-            livesText.Current.BindTo(LivesLeft);
-        }
-
-        public void Shake(double? maximumLength = null)
-        {
-            const float shake_amount = 8;
-            const double shake_duration = 80;
-
-            // if we don't have enough time, don't bother shaking.
-            if (maximumLength < shake_duration * 2)
-                return;
-
-            var sequence = this.MoveToX(shake_amount, shake_duration / 2, Easing.OutSine).Then()
-                               .MoveToX(-shake_amount, shake_duration, Easing.InOutSine).Then();
-
-            // if we don't have enough time for the second shake, skip it.
-            if (!maximumLength.HasValue || maximumLength >= shake_duration * 4)
+            return new OsuSpriteText
             {
-                sequence = sequence
-                           .MoveToX(shake_amount, shake_duration, Easing.InOutSine).Then()
-                           .MoveToX(-shake_amount, shake_duration, Easing.InOutSine).Then();
-            }
-
-            sequence.MoveToX(0, shake_duration / 2, Easing.InSine);
-        }
-
-        protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, ChannelAmplitudes amplitudes)
-        {
-            float livesPercentage = LivesLeft.Value / (float)LivesLeft.MaxValue;
-
-            int panicLevel = 0;
-            if (livesPercentage <= 0.1f) panicLevel = 3;
-            else if (livesPercentage <= 0.25f) panicLevel = 2;
-            else if (livesPercentage <= 0.5f) panicLevel = 1;
-
-            // Heart Rate increases when panicking (lives <= 20% MaxLives)
-            // It also beats harder
-            float panicDurationMultiplier = 1 * MathF.Pow(0.75f, panicLevel);
-            float beatMagnitude = 0.1f + (0.05f * panicLevel);
-
-            int heartbeatFreq = (int)(timingPoint.TimeSignature.Numerator * Math.Max(panicDurationMultiplier, 0.5f));
-
-            if (heartbeatFreq == 0)
-                return;
-
-            if (beatIndex % heartbeatFreq == 0)
-            {
-                this.ScaleTo(1 + beatMagnitude, 200 * panicDurationMultiplier)
-                    .Then().ScaleTo(1, 120 * panicDurationMultiplier)
-                    .Then().ScaleTo(1 + beatMagnitude, 160 * panicDurationMultiplier)
-                    .Then().ScaleTo(1, 320 * panicDurationMultiplier);
-            }
-        }
-
-        private partial class LiveRollingCounter : RollingCounter<int>
-        {
-            protected override double RollingDuration => 1000;
-
-            public LiveRollingCounter()
-            {
-                Anchor = Anchor.Centre;
-                Origin = Anchor.Centre;
-            }
-
-            protected override OsuSpriteText CreateSpriteText()
-            {
-                return new OsuSpriteText
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Font = OsuFont.Torus.With(size: 40, weight: FontWeight.SemiBold),
-                    ShadowColour = Color4.Gray,
-                };
-            }
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Font = OsuFont.Torus.With(size: 40, weight: FontWeight.SemiBold),
+                ShadowColour = Color4.Gray,
+            };
         }
     }
 }

@@ -5,10 +5,10 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 [Flags]
 public enum ConversionFlags
 {
-    none = 0,
-    twinNotes = 1,
-    twinSlides = 2,
-    fanSlides = 4,
-    oldConverter = 8,
-    disableCompositeSlides = 16
+    None = 0,
+    TwinNotes = 1,
+    TwinSlides = 2,
+    FanSlides = 4,
+    OldConverter = 8,
+    DisableCompositeSlides = 16
 }

@@ -1,4 +1,3 @@
-using System;
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects;
