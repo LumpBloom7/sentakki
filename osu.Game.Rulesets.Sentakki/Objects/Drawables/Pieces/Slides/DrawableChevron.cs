@@ -3,14 +3,15 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shaders.Types;
-using osu.Framework.Graphics.Sprites;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 
-public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
+public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
 {
     private float thickness = 13f;
 
@@ -72,7 +73,7 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
         }
     }
 
-    public new IShader TextureShader { get; private set; } = null!;
+    public IShader TextureShader { get; private set; } = null!;
 
     protected override DrawNode CreateDrawNode() => new ChevronDrawNode(this);
 
@@ -80,7 +81,6 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
     private void load(ShaderManager shaders, IRenderer renderer)
     {
         TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "chevron");
-        Texture = renderer.WhitePixel;
 
         Blending = new BlendingParameters
         {
@@ -95,7 +95,7 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
         };
     }
 
-    private partial class ChevronDrawNode : SpriteDrawNode
+    private partial class ChevronDrawNode : TexturedShaderDrawNode
     {
         protected new DrawableChevron Source => (DrawableChevron)base.Source;
         protected override bool CanDrawOpaqueInterior => false;
@@ -110,20 +110,24 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
         {
         }
 
+        private Quad screenSpaceDrawQuad;
+        private Vector2 drawSize;
+
         public override void ApplyState()
         {
             base.ApplyState();
+
+            screenSpaceDrawQuad = Source.ScreenSpaceDrawQuad;
+            drawSize = Source.DrawSize;
+
             var newParameters = new ShapeParameters()
             {
                 Thickness = Source.thickness,
-                Size = Source.DrawSize,
                 ShadowRadius = Source.ShadowRadius,
                 Glow = Source.glow,
                 FanChevron = Source.FanChevron,
             };
 
-            // If the uniform properties have changed, then we definitely want to null this out so that we get a more appropriate uniform block
-            // We don't care about disposal since these uniform blocks are shared
             if (newParameters == parameters) return;
 
             // If the uniform properties have changed, then we definitely want to null this out so that we get a more appropriate uniform block
@@ -149,25 +153,31 @@ public partial class DrawableChevron : Sprite, ITexturedShaderDrawable
             shader.BindUniformBlock("m_shapeParameters", uniformBuffer);
         }
 
-        protected override void Dispose(bool isDisposing)
+        protected override void Draw(IRenderer renderer)
         {
-            base.Dispose(isDisposing);
+            if (drawSize.X == 0 || drawSize.Y == 0)
+                return;
 
-            // For now we always share the parameters, so no need to dispose
-            //shapeParameters?.Dispose();
+            base.Draw(renderer);
+
+            BindTextureShader(renderer);
+
+            renderer.DrawQuad(renderer.WhitePixel, screenSpaceDrawQuad, DrawColourInfo.Colour,
+                null,
+                null,
+                Vector2.Zero,
+                drawSize); // HACK: I use blendRangeOverride to pass in the actual size of the drawable, to avoid using a uniform for it.
+
+            UnbindTextureShader(renderer);
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private record struct ShapeParameters
         {
             public UniformFloat Thickness;
-            public UniformPadding4 _;
-            public UniformVector2 Size;
             public UniformFloat ShadowRadius;
             public UniformBool Glow;
             public UniformBool FanChevron;
-
-            public UniformPadding4 __;
         }
 
         private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> uniformBuffer)

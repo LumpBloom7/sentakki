@@ -6,6 +6,10 @@
 layout(location = 1) in lowp vec4 v_Colour;
 layout(location = 2) in highp vec2 v_TexCoord;
 layout(location = 3) in highp vec4 v_TexRect;
+
+// HACK: I use blendRangeOverride to pass in the actual size of the drawable, to avoid using a uniform for it.
+layout(location = 4) in mediump vec2 v_DrawSize;
+
 layout(location = 0) out vec4 o_Colour;
 
 vec4 strokeSDF(in float dist, in float strokeRadius) {

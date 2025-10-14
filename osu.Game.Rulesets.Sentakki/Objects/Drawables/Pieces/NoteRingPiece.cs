@@ -1,5 +1,7 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Primitives;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 
@@ -10,6 +12,9 @@ public partial class NoteRingPiece : CompositeDrawable
 {
     private const float base_circle_size = 75;
     public const float DRAWABLE_SIZE = base_circle_size + 30; // 30 units for shadow
+
+    public override Quad ScreenSpaceDrawQuad => InternalChild.ScreenSpaceDrawQuad;
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => InternalChild.ReceivePositionalInputAt(screenSpacePos);
 
     public NoteRingPiece(bool hex = false)
     {
