@@ -25,6 +25,7 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Difficulty;
+using osu.Game.Rulesets.Sentakki.Edit;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Localisation;
 using osu.Game.Rulesets.Sentakki.Mods;
@@ -60,9 +61,7 @@ public partial class SentakkiRuleset : Ruleset
     public override bool EditorShowScrollSpeed => false;
 
     public override HitObjectComposer? CreateHitObjectComposer()
-    {
-        return base.CreateHitObjectComposer();
-    }
+        => new SentakkiHitObjectComposer(this);
 
     public override IEnumerable<Drawable> CreateEditorSetupSections()
     {
