@@ -241,7 +241,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
 
             timeRemaining -= numberOfSubBeats * subBeatLength;
 
-            if (timeRemaining < precision) break;
+            if (Math.Abs(timeRemaining) < precision) break;
         }
 
         return paddingBeats;
