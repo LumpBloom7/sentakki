@@ -16,6 +16,8 @@ public partial class SlideBodyHighlight : CompositeDrawable
 
     private readonly SlideBodyInfo slideBodyInfo;
 
+    private bool selected;
+
     // For simplicity, let's just take the quad of the slide visual
     public override Quad ScreenSpaceDrawQuad => slideBody.ScreenSpaceDrawQuad;
 
@@ -39,12 +41,23 @@ public partial class SlideBodyHighlight : CompositeDrawable
         this.slideBodyInfo = slideBodyInfo;
     }
 
-    public void OnSelected() => slideBody.Path = slideBodyInfo.SlidePath;
+    public void OnSelected()
+    {
+        selected = true;
+        slideBody.Path = slideBodyInfo.SlidePath;
+    }
 
-    public void OnDeselected() => slideBody.Free();
+    public void OnDeselected()
+    {
+        selected = false;
+        slideBody.Free();
+    }
 
     public void UpdateFrom(DrawableSlideBody body)
     {
+        if (!selected)
+            return;
+
         slideBody.Path = body.Slidepath.Path;
 
         for (int i = 0; i < body.SlideStars.Count; ++i)
