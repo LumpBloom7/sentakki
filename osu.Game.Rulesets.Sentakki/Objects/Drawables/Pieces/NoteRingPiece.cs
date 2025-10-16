@@ -13,8 +13,11 @@ public partial class NoteRingPiece : CompositeDrawable
     private const float base_circle_size = 75;
     public const float DRAWABLE_SIZE = base_circle_size + 30; // 30 units for shadow
 
-    public override Quad ScreenSpaceDrawQuad => InternalChild.ScreenSpaceDrawQuad;
-    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => InternalChild.ReceivePositionalInputAt(screenSpacePos);
+    private readonly LaneNoteVisual visual;
+
+    // We don't want to include the area where the shadow would be
+    public override Quad ScreenSpaceDrawQuad => visual.ConservativeScreenSpaceDrawQuad;
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => ScreenSpaceDrawQuad.Contains(screenSpacePos);
 
     public NoteRingPiece(bool hex = false)
     {
@@ -24,7 +27,7 @@ public partial class NoteRingPiece : CompositeDrawable
         Origin = Anchor.Centre;
         InternalChildren =
         [
-            new LaneNoteVisual
+            visual = new LaneNoteVisual
             {
                 RelativeSizeAxes = Axes.Both,
                 Shape = hex ? NoteShape.Hex : NoteShape.Ring,
