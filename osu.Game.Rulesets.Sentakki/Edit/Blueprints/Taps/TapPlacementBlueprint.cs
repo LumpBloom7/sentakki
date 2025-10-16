@@ -17,6 +17,9 @@ public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
     [Resolved]
     private SentakkiHitObjectComposer composer { get; set; } = null!;
 
+    [Resolved]
+    private SentakkiSnapProvider snapProvider { get; set; } = null!;
+
     public TapPlacementBlueprint()
     {
         InternalChild = highlight = new TapHighlight();
@@ -26,6 +29,7 @@ public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
     protected override void Update()
     {
         highlight.Rotation = HitObject.Lane.GetRotationForLane();
+        highlight.Note.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)
