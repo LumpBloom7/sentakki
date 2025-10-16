@@ -6,7 +6,6 @@
 layout(std140, set = 0, binding = 0) uniform m_shapeParameters
 {
     float thickness;
-    vec2 size;
     float shadowRadius;
     bool glow;
     bool fanChevron;
@@ -86,16 +85,16 @@ float fanChev(in vec2 p, in vec2 centre, in vec2 chevSize, in float thickness) {
 
 void main(void) {
     vec2 resolution = v_TexRect.zw - v_TexRect.xy;
-    vec2 pixelPos = (v_TexCoord - v_TexRect.xy) / resolution * size;
-    vec2 origin = 0.5 * size;
+    vec2 origin = v_DrawSize * 0.5;
+    vec2 pixelPos = ((v_TexCoord - v_TexRect.xy) / resolution) * v_DrawSize;
 
     float strokeRadius = thickness * 0.5;
 
     float sdf = 0;
     if (fanChevron)
-        sdf = fanChev(pixelPos, origin, size - vec2(shadowRadius + strokeRadius) * 2, strokeRadius);
+        sdf = fanChev(pixelPos, origin, v_DrawSize - vec2(shadowRadius + strokeRadius) * 2, strokeRadius);
     else
-        sdf = chev(pixelPos, origin, size - vec2(shadowRadius + strokeRadius) * 2, strokeRadius);
+        sdf = chev(pixelPos, origin, v_DrawSize - vec2(shadowRadius + strokeRadius) * 2, strokeRadius);
 
     vec4 shape = fillSDF(sdf, strokeRadius);
     vec4 edgeEffect = sdfShadow(sdf, strokeRadius, shadowRadius, glow);

@@ -1,11 +1,13 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shaders.Types;
-using osu.Framework.Graphics.Sprites;
 using osu.Game.Rulesets.Objects.Drawables;
 using osuTK;
 
@@ -18,7 +20,7 @@ public enum NoteShape
     Star
 }
 
-public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
+public partial class LaneNoteVisual : Drawable, ITexturedShaderDrawable
 {
     public NoteShape Shape { get; init; } = NoteShape.Ring;
     private float thickness = 18.75f;
@@ -66,7 +68,7 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
         }
     }
 
-    public new IShader TextureShader { get; private set; } = null!;
+    public IShader TextureShader { get; private set; } = null!;
 
     protected override DrawNode CreateDrawNode() => new LaneNoteVisualDrawNode(this);
 
@@ -89,10 +91,9 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
     }
 
     [BackgroundDependencyLoader]
-    private void load(ShaderManager shaders, IRenderer renderer, DrawableHitObject? hitObject)
+    private void load(ShaderManager shaders, DrawableHitObject? hitObject)
     {
         TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, fragmentShaderFor(Shape));
-        Texture = renderer.WhitePixel;
 
         if (hitObject is null)
             return;
@@ -114,16 +115,19 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
         };
     }
 
-    private partial class LaneNoteVisualDrawNode : SpriteDrawNode
+    private partial class LaneNoteVisualDrawNode : TexturedShaderDrawNode
     {
-        protected new LaneNoteVisual Source => (LaneNoteVisual)base.Source;
-        protected override bool CanDrawOpaqueInterior => false;
-        private IUniformBuffer<ShapeParameters>? shapeParameters;
+        private Quad screenSpaceDrawQuad { get; set; }
+        private Vector2 size { get; set; }
 
-        private float thickness;
-        private Vector2 size;
-        private bool glow;
-        private float shadowRadius;
+        protected new LaneNoteVisual Source => (LaneNoteVisual)base.Source;
+
+        protected override bool CanDrawOpaqueInterior => false;
+
+        private IUniformBuffer<ShapeParameters>? uniformBuffer;
+        private static readonly List<IUniformBuffer<ShapeParameters>> shared_uniform_buffers = [];
+
+        private ShapeParameters parameters;
 
         public LaneNoteVisualDrawNode(LaneNoteVisual source)
             : base(source)
@@ -133,45 +137,71 @@ public partial class LaneNoteVisual : Sprite, ITexturedShaderDrawable
         public override void ApplyState()
         {
             base.ApplyState();
-            thickness = Source.Thickness;
+            screenSpaceDrawQuad = Source.ScreenSpaceDrawQuad;
             size = Source.DrawSize;
-            shadowRadius = Source.shadowRadius;
-            glow = Source.Glow;
+
+            var newParameters = new ShapeParameters()
+            {
+                BorderThickness = Source.Thickness,
+                ShadowRadius = Source.ShadowRadius,
+                Glow = Source.Glow,
+            };
+
+            // If the uniform properties have changed, then we definitely want to null this out so that we get a more appropriate uniform block
+            // We don't care about disposal since these uniform blocks are shared
+            if (newParameters == parameters) return;
+
+            uniformBuffer = null;
+            parameters = newParameters;
         }
 
         protected override void BindUniformResources(IShader shader, IRenderer renderer)
         {
             base.BindUniformResources(shader, renderer);
 
-            shapeParameters ??= renderer.CreateUniformBuffer<ShapeParameters>();
+            uniformBuffer ??= shared_uniform_buffers.FirstOrDefault(isMatchingUniformBlock);
 
-            shapeParameters.Data = shapeParameters.Data with
+            if (uniformBuffer is null)
             {
-                BorderThickness = thickness,
-                Size = size,
-                ShadowRadius = shadowRadius,
-                Glow = glow,
-            };
+                uniformBuffer = renderer.CreateUniformBuffer<ShapeParameters>();
+                shared_uniform_buffers.Add(uniformBuffer);
+            }
 
-            shader.BindUniformBlock("m_shapeParameters", shapeParameters);
+            uniformBuffer.Data = parameters;
+
+            shader.BindUniformBlock("m_shapeParameters", uniformBuffer);
         }
 
-        protected override void Dispose(bool isDisposing)
+        protected override void Draw(IRenderer renderer)
         {
-            base.Dispose(isDisposing);
-            shapeParameters?.Dispose();
+            if (size.X == 0 || size.Y == 0)
+                return;
+
+            base.Draw(renderer);
+
+            BindTextureShader(renderer);
+
+            renderer.DrawQuad(renderer.WhitePixel, screenSpaceDrawQuad, DrawColourInfo.Colour,
+                null,
+                null,
+                Vector2.Zero,
+                size); // HACK: I use blendRangeOverride to pass in the actual size of the drawable, to avoid using a uniform for it.
+
+            UnbindTextureShader(renderer);
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private record struct ShapeParameters
         {
             public UniformFloat BorderThickness;
-            public UniformPadding4 _;
-            public UniformVector2 Size;
             public UniformFloat ShadowRadius;
             public UniformBool Glow;
+            public UniformPadding4 _;
+        }
 
-            public UniformPadding8 __;
+        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> uniformBuffer)
+        {
+            return uniformBuffer.Data == parameters;
         }
     }
 }
