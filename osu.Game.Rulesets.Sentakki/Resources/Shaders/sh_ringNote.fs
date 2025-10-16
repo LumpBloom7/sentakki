@@ -6,17 +6,16 @@
 layout(std140, set = 0, binding = 0) uniform m_shapeParameters
 {
     float borderThickness;
-    vec2 size;
     float shadowRadius;
     bool glow;
 };
 
 void main(void) {
     vec2 resolution = v_TexRect.zw - v_TexRect.xy;
-    vec2 origin = size * 0.5;
-    vec2 pixelPos = ((v_TexCoord - v_TexRect.xy) / resolution) * size;
+    vec2 origin = v_DrawSize * 0.5;
+    vec2 pixelPos = ((v_TexCoord - v_TexRect.xy) / resolution) * v_DrawSize;
 
-    float radius = min(size.x, size.y) / 2.0;
+    float radius = min(v_DrawSize.x, v_DrawSize.y) / 2.0;
 
     // Since our edge effect is centred along the sdf path
     //// each side of the sdf will have the same thickness

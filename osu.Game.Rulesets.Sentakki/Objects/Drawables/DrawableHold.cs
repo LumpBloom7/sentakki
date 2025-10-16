@@ -113,7 +113,11 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
                 isHolding = false;
 
             // If auto is within the hittable time, attempt to hit it
-            if (Time.Current >= HitObject.StartTime && Time.Current <= HitObject.GetEndTime())
+            // HACK: In editor context, frame stability is not enforced, this could potentially lead to 0 duration slides being missed as we never ever visit the window.
+            // We resolve this by giving autoplay a bit more leniency. In practice nothing should change for regular autoplay.
+            double missWindow = HitObject.HitWindows.WindowFor(HitResult.Miss);
+
+            if (Time.Current >= HitObject.StartTime && Time.Current < HitObject.EndTime + missWindow)
             {
                 if (!isHolding)
                     Head.UpdateResult();

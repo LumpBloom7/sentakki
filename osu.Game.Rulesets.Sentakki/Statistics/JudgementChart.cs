@@ -62,7 +62,7 @@ public partial class JudgementChart : TableContainer
             int sum = results.Sum(kvp => kvp.Value);
 
             HitResult minResult = sum == 0 ? HitResult.Perfect : results.MinBy(kvp => kvp.Key).Key;
-            ColourInfo specialColor = colours.ForSentakkiResult(minResult);
+            ColourInfo specialColor = minResult is HitResult.Miss ? Color4.LightGray : colours.ForSentakkiResult(minResult);
 
             // The alpha will be used to "disable" an hitobject entry if they don't exist
             float commonAlpha = sum == 0 ? 0.1f : 1;

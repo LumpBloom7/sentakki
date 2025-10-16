@@ -6,7 +6,6 @@
 layout(std140, set = 0, binding = 0) uniform m_shapeParameters
 {
     float borderThickness;
-    vec2 size;
     float shadowRadius;
     bool glow;
     bool fillTriangle;
@@ -42,12 +41,12 @@ float triangle(in vec2 p, in vec2 centre, in vec2 size) {
 
 void main(void) {
     vec2 resolution = v_TexRect.zw - v_TexRect.xy;
-    vec2 origin = size * 0.5;
-    vec2 pixelPos = ((v_TexCoord - v_TexRect.xy) / resolution) * size;
+    vec2 origin = v_DrawSize * 0.5;
+    vec2 pixelPos = ((v_TexCoord - v_TexRect.xy) / resolution) * v_DrawSize;
 
     float strokeRadius = borderThickness * 0.5;
 
-    vec2 sdfSize = size - borderThickness - shadowRadius * 2.0;
+    vec2 sdfSize = v_DrawSize - borderThickness - shadowRadius * 2.0;
 
     float sdf = triangle(pixelPos, origin, sdfSize);
 

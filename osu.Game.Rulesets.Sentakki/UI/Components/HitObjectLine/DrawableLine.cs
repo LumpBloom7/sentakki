@@ -20,7 +20,7 @@ public partial class DrawableLine : PoolableDrawable
     {
         RelativeSizeAxes = Axes.Both;
         Anchor = Origin = Anchor.Centre;
-        Scale = new Vector2(.22f);
+        Scale = new Vector2(.224f);
         Alpha = 0;
     }
 
