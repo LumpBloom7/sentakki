@@ -41,6 +41,7 @@ public partial class DrawableLine : PoolableDrawable
             InnerRadius = 0.026f,
             RoundedCaps = true,
             Alpha = 0.8f,
+            Progress = 0,
         });
     }
 
@@ -49,8 +50,6 @@ public partial class DrawableLine : PoolableDrawable
         base.PrepareForUse();
 
         Colour = Entry.Colour;
-        Rotation = Entry.Rotation;
-        line.Progress = Entry.AngleRange;
         resetAnimation();
     }
 
@@ -58,9 +57,15 @@ public partial class DrawableLine : PoolableDrawable
     {
         if (!IsInUse) return;
 
-        ApplyTransformsAt(double.MinValue);
-        ClearTransforms();
+        ApplyTransformsAt(double.MinValue, true);
+        ClearTransforms(true);
+
         using (BeginAbsoluteSequence(Entry.StartTime - animationDuration.Value))
-            this.FadeIn(animationDuration.Value / 2).Then().ScaleTo(1, animationDuration.Value / 2).Then().FadeOut();
+        {
+            double entryDuration = animationDuration.Value / 2;
+            line.TransformTo(nameof(line.Progress), (double)Entry.AngleRange, entryDuration);
+            this.RotateTo(Entry.Rotation + Entry.AngleRange * 180).Then().RotateTo(Entry.Rotation, entryDuration);
+            this.FadeIn(entryDuration).Then().ScaleTo(1, entryDuration).Then().FadeOut();
+        }
     }
 }
