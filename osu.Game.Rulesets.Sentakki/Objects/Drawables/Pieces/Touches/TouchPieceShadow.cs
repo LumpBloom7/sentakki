@@ -15,11 +15,10 @@ public partial class TouchPieceShadow : CompositeDrawable
         {
             Anchor = Anchor.TopCentre,
             Origin = Anchor.TopCentre,
-            Size = new Vector2(105, 75f),
+            Size = new Vector2(75, 45f),
             Thickness = 15f,
             ShadowRadius = 15f,
             ShadowOnly = true,
-            Y = -15f
         });
     }
 }

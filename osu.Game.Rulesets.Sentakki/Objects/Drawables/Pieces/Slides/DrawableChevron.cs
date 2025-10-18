@@ -117,8 +117,9 @@ public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
         {
             base.ApplyState();
 
-            screenSpaceDrawQuad = Source.ScreenSpaceDrawQuad;
-            drawSize = Source.DrawSize;
+            var drawRect = Source.DrawRectangle.Normalize().Inflate(Source.ShadowRadius);
+            screenSpaceDrawQuad = Quad.FromRectangle(drawRect) * DrawInfo.Matrix;
+            drawSize = drawRect.Size;
 
             var newParameters = new ShapeParameters()
             {

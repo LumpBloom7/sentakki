@@ -7,7 +7,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 public partial class StarPiece : CompositeDrawable
 {
     private const float base_circle_size = 75;
-    private const float drawable_size = base_circle_size + 30; // 30 units for shadow
+    private const float drawable_size = base_circle_size; // 30 units for shadow
 
     public StarPiece()
     {
