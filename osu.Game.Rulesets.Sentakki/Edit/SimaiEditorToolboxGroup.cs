@@ -6,6 +6,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Events;
 using osu.Framework.Platform;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics.UserInterface;
@@ -21,6 +22,7 @@ using osu.Game.Rulesets.Sentakki.SimaiUtils;
 using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Components;
 using osuTK;
+using osuTK.Input;
 using SimaiSharp;
 
 namespace osu.Game.Rulesets.Sentakki.Edit;
@@ -98,6 +100,16 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
     {
         base.LoadComplete();
         currentDirectory.Value = new DirectoryInfo(gamehost.InitialFileSelectorPath);
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (e.Key is not Key.S || !e.ControlPressed)
+            return false;
+
+        exportToSimai();
+
+        return base.OnKeyDown(e);
     }
 
     private partial class SimaiImportPopover : OsuPopover
