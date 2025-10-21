@@ -70,7 +70,7 @@ MaiDiff:{9}
 
         string trackName = "track.mp3";
 
-        string filename = $"{CleanFileName($"{artist} - {title}")}].osz";
+        string filename = $"{CleanFileName($"{artist} - {title}")}.osz";
         Stream zipStream = createOutputStream(filename);
 
         var events = new List<string>();
