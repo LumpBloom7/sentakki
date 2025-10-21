@@ -2,6 +2,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
@@ -35,7 +36,15 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
     private OverlayColourProvider colourProvider { get; set; } = null!;
 
     [Resolved]
-    private Editor editor { get; set; } = null!;
+    private GameHost gamehost { get; set; } = null!;
+
+    [Resolved]
+    private EditorBeatmap editorBeatmap { get; set; } = null!;
+
+    [Resolved]
+    private INotificationOverlay? notifications { get; set; }
+
+    private readonly Bindable<DirectoryInfo> currentDirectory = new Bindable<DirectoryInfo>();
 
     [BackgroundDependencyLoader]
     private void load()
@@ -47,16 +56,58 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
                 Colour = colourProvider.Content2,
                 ExpandedLabel = "Simai export is experimental. Use at your own risk."
             },
-            new EditorToolButton("Export", () => new SpriteIcon { Icon = FontAwesome.Solid.FileExport }, () => new SimaiExportPopover()),
-            new EditorToolButton("Import", () => new SpriteIcon { Icon = FontAwesome.Solid.FileImport }, () => new SimaiImportPopover())
+            new EditorToolButton("Export", () => new SpriteIcon { Icon = FontAwesome.Solid.FileExport }, () => new SimaiExportPopover(this)),
+            new EditorToolButton("Import", () => new SpriteIcon { Icon = FontAwesome.Solid.FileImport }, () => new SimaiImportPopover(this))
         ];
+    }
+
+    private void exportToSimai()
+    {
+        if (editorBeatmap.PlayableBeatmap is not IBeatmap<SentakkiHitObject> senBeatmap)
+            return;
+
+        var encoder = new QuantizedSimaiBeatmapEncoder(senBeatmap);
+
+        string filename = SimaiOsz.CleanFileName(
+            $"(sen) {editorBeatmap.BeatmapInfo.Metadata.ArtistUnicode} - {editorBeatmap.BeatmapInfo.Metadata.TitleUnicode} ({editorBeatmap.BeatmapInfo.DifficultyName}).txt");
+
+        string path = $"{currentDirectory.Value}/{filename}";
+        var file = File.CreateText(path);
+
+        try
+        {
+            encoder.Encode(file);
+            notifications?.Post(new ProgressCompletionNotification()
+            {
+                Text = "Successfully exported to simai.",
+                Activated = () => gamehost.PresentFileExternally(path)
+            });
+        }
+        catch
+        {
+            notifications?.Post(new SimpleErrorNotification()
+            {
+                Text = "Error encoding beatmap to simai"
+            });
+        }
+
+        file.Close();
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+        currentDirectory.Value = new DirectoryInfo(gamehost.InitialFileSelectorPath);
     }
 
     private partial class SimaiImportPopover : OsuPopover
     {
-        public SimaiImportPopover()
+        private readonly SimaiEditorToolboxGroup simaiToolboxGroup;
+
+        public SimaiImportPopover(SimaiEditorToolboxGroup toolboxGroup)
         {
             AllowableAnchors = [Anchor.CentreLeft, Anchor.CentreRight];
+            simaiToolboxGroup = toolboxGroup;
         }
 
         [Resolved]
@@ -83,7 +134,7 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
                 Content = new Drawable[][]
                 {
                     [
-                        fileSelector = new OsuFileSelector(validFileExtensions: [".txt"])
+                        fileSelector = new OsuFileSelector(simaiToolboxGroup.currentDirectory.ToString(), validFileExtensions: [".txt"])
                         {
                             RelativeSizeAxes = Axes.Both
                         },
@@ -108,7 +159,7 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
                     ]
                 }
             };
-
+            fileSelector.CurrentPath.BindTo(simaiToolboxGroup.currentDirectory);
             fileSelector.CurrentFile.BindValueChanged(v => button.Enabled.Value = v.NewValue?.Extension == ".txt", true);
         }
 
@@ -158,9 +209,12 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
 
     private partial class SimaiExportPopover : OsuPopover
     {
-        public SimaiExportPopover()
+        private readonly SimaiEditorToolboxGroup simaiToolboxGroup;
+
+        public SimaiExportPopover(SimaiEditorToolboxGroup simaiEditorToolboxGroup)
         {
             AllowableAnchors = [Anchor.CentreLeft, Anchor.CentreRight];
+            simaiToolboxGroup = simaiEditorToolboxGroup;
         }
 
         [Resolved]
@@ -189,7 +243,7 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
                 Content = new Drawable[][]
                 {
                     [
-                        directorySelector = new OsuDirectorySelector
+                        directorySelector = new OsuDirectorySelector(simaiToolboxGroup.currentDirectory.ToString())
                         {
                             RelativeSizeAxes = Axes.Both
                         },
@@ -207,46 +261,15 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
                                     Width = 150f,
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight,
-                                    Action = exportToSimai
+                                    Action = simaiToolboxGroup.exportToSimai
                                 }
                             ]
                         }
                     ]
                 }
             };
-        }
 
-        private void exportToSimai()
-        {
-            if (editorBeatmap.PlayableBeatmap is not IBeatmap<SentakkiHitObject> senBeatmap)
-                return;
-
-            var encoder = new QuantizedSimaiBeatmapEncoder(senBeatmap);
-
-            string filename = SimaiOsz.CleanFileName(
-                $"(sen) {editorBeatmap.BeatmapInfo.Metadata.ArtistUnicode} - {editorBeatmap.BeatmapInfo.Metadata.TitleUnicode} ({editorBeatmap.BeatmapInfo.DifficultyName}).txt");
-
-            string path = $"{directorySelector.CurrentPath}/{filename}";
-            var file = File.CreateText(path);
-
-            try
-            {
-                encoder.Encode(file);
-                notifications?.Post(new ProgressCompletionNotification()
-                {
-                    Text = "Encoding successful",
-                    Activated = () => gameHost.PresentFileExternally(path)
-                });
-            }
-            catch
-            {
-                notifications?.Post(new SimpleErrorNotification()
-                {
-                    Text = "Error encoding beatmap to simai"
-                });
-            }
-
-            file.Close();
+            directorySelector.CurrentPath.BindTo(simaiToolboxGroup.currentDirectory);
         }
     }
 }
