@@ -137,8 +137,9 @@ public partial class LaneNoteVisual : Drawable, ITexturedShaderDrawable
         public override void ApplyState()
         {
             base.ApplyState();
-            screenSpaceDrawQuad = Source.ScreenSpaceDrawQuad;
-            size = Source.DrawSize;
+            var drawRect = Source.DrawRectangle.Normalize().Inflate(Source.ShadowRadius);
+            screenSpaceDrawQuad = Quad.FromRectangle(drawRect) * DrawInfo.Matrix;
+            size = drawRect.Size;
 
             var newParameters = new ShapeParameters()
             {

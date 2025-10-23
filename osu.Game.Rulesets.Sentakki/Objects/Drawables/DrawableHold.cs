@@ -63,7 +63,11 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         Origin = Anchor.Centre;
         AddRangeInternal(
         [
-            NoteBody = new HoldBody(),
+            NoteBody = new HoldBody
+            {
+                Scale = Vector2.Zero,
+                Y = -SentakkiPlayfield.NOTESTARTDISTANCE
+            },
             headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
         ]);
     }

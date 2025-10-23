@@ -158,13 +158,11 @@ public partial class SlideVisual : CompositeDrawable
 
                 if (((DrawableSentakkiHitObject?)drawableHitObject)?.ExBindable.Value ?? false)
                 {
-                    chevron.Size += new Vector2(15);
                     chevron.ShadowRadius = 7.5f;
                     chevron.Glow = true;
                 }
                 else
                 {
-                    chevron.Size += new Vector2(30);
                     chevron.ShadowRadius = 15f;
                     chevron.Glow = false;
                 }
@@ -231,13 +229,11 @@ public partial class SlideVisual : CompositeDrawable
 
             if (((DrawableSentakkiHitObject?)drawableHitObject)?.ExBindable.Value ?? false)
             {
-                chevron.Size += new Vector2(15);
                 chevron.ShadowRadius = 7.5f;
                 chevron.Glow = true;
             }
             else
             {
-                chevron.Size += new Vector2(30);
                 chevron.ShadowRadius = 15f;
                 chevron.Glow = false;
             }

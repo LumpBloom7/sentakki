@@ -14,7 +14,11 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables;
 
 public partial class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHandler<SentakkiAction>
 {
-    protected virtual Drawable CreateTapRepresentation() => new TapPiece();
+    protected virtual Drawable CreateTapRepresentation() => new TapPiece
+    {
+        Y = -SentakkiPlayfield.NOTESTARTDISTANCE,
+        Scale = Vector2.Zero
+    };
 
     public override double LifetimeStart
     {
@@ -62,6 +66,7 @@ public partial class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHa
     {
         base.UpdateInitialTransforms();
         double animTime = AnimationDuration.Value / 2;
+
         TapVisual.FadeInFromZero(animTime).ScaleTo(1, animTime);
 
         using (BeginDelayedSequence(animTime))

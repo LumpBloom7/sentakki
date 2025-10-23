@@ -38,7 +38,7 @@ public partial class SlideChevron : PoolableDrawable
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        Size = new Vector2(80, 60);
+        Size = new Vector2(65, 45);
     }
 
     [BackgroundDependencyLoader]
