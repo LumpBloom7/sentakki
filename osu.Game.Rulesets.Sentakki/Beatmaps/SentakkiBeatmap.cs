@@ -55,7 +55,7 @@ public class SentakkiBeatmap : Beatmap<SentakkiHitObject>
                 Content = touchs.ToString(),
                 CreateIcon = () => new SpriteIcon
                 {
-                    Icon = OsuIcon.PlayStyleTouch,
+                    Icon = OsuIcon.ModSingleTap,
                     Scale = new Vector2(.8f)
                 },
                 BarDisplayLength = touchs / total
