@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "osu.Game.Rulesets.Sentakki"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "osu.Game.Rulesets.Sentakki.Tests", "osu.Game.Rulesets.Sentakki.Tests\osu.Game.Rulesets.Sentakki.Tests.csproj", "{B4577C85-CB83-462A-BCE3-22FFEB16311D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimaiSharp", "..\SimaiSharp\SimaiSharp\SimaiSharp.csproj", "{D133F26F-ADAD-4C21-8319-DA959E4599DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +24,10 @@ Global
 		{B4577C85-CB83-462A-BCE3-22FFEB16311D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4577C85-CB83-462A-BCE3-22FFEB16311D}.Release|Any CPU.Build.0 = Release|Any CPU
 
+		{D133F26F-ADAD-4C21-8319-DA959E4599DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D133F26F-ADAD-4C21-8319-DA959E4599DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D133F26F-ADAD-4C21-8319-DA959E4599DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D133F26F-ADAD-4C21-8319-DA959E4599DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
