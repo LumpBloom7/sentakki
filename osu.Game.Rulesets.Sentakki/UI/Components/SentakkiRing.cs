@@ -3,9 +3,11 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.UserInterface;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI.Components;
 
@@ -21,10 +23,27 @@ public partial class SentakkiRing : CompositeDrawable
 
         InternalChildren =
         [
-            new RingPiece(thickness: 8),
+            new CircularProgress
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Size = new Vector2(600),
+                InnerRadius = 8f / 300f,
+                Progress = 1,
+                Colour = Color4.Gray
+            },
+            new CircularProgress
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Size = new Vector2(596),
+                InnerRadius = 4f / 298f,
+                Progress = 1,
+                Colour = Color4.White
+            },
             spawnIndicator = new Container
             {
-                Name = "Spawn indicatiors",
+                Name = "Spawn indicators",
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Alpha = 0
