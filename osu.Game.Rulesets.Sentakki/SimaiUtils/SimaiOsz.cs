@@ -54,6 +54,67 @@ MaiDiff:{9}
         return Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty));
     }
 
+    public static IEnumerable<string> OsuFromSimai(SimaiFile file)
+    {
+        Dictionary<string, string> dict = file.ToKeyValuePairs().ToDictionary(x => x.Key, x => x.Value);
+
+        string title = dict.GetValueOrDefault("title", "Unknown Title");
+        string artist = dict.GetValueOrDefault("artist", "Unknown Artist");
+        string allCreator = dict.GetValueOrDefault("des", "-");
+        string first = dict.GetValueOrDefault("first", "0");
+
+        foreach (var (k, v) in dict)
+        {
+            if (!k.StartsWith("inote", StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            string diffIndex = k.Split("_")[1];
+            string diffName = diff_index_to_dict.GetValueOrDefault(diffIndex, $"Extra - {diffIndex}");
+
+            if (v.Length == 0) continue;
+
+            string chart = string.Join('\n', v.Split('\n').Select(x => x.TrimStart()));
+
+            if (first != "0")
+            {
+                chart = $"{{#{first}}}," + chart;
+            }
+
+            MaiChart maiChart = SimaiConvert.Deserialize(chart);
+
+            bool isDeluxe = maiChart.NoteCollections.Any(noteCollection => noteCollection.Any(note =>
+                    note.IsEx // Ex note
+                    || note.slidePaths.Any(slidePath => slidePath.segments.Count > 1 || slidePath.type == NoteType.Break) // Chain slide | Break slide
+                    || note.location.group != NoteGroup.Tap // TOUCH
+            ));
+
+            string creator = dict.GetValueOrDefault($"des_{diffIndex}", allCreator);
+            string level = dict.GetValueOrDefault($"lv_{diffIndex}", "0");
+            string version = dict.GetValueOrDefault($"version", "maimai");
+            string genre = dict.GetValueOrDefault("genre", "");
+
+            string[] tags = { "sentakki-legacy", level, creator, isDeluxe ? "deluxe" : "standard", genre };
+
+            string osuFile = string.Format(
+                osu_template,
+                "",
+                title,
+                title,
+                artist,
+                artist,
+                creator,
+                diffName,
+                version,
+                string.Join(" ", tags),
+                level,
+                "",
+                chart);
+            yield return osuFile;
+        }
+    }
+
     public static void ConvertToOsz(DirectoryInfo path, Func<string, Stream> createOutputStream, bool closeStream = true)
     {
         SimaiFile simaiFile = new SimaiFile(path.EnumerateFileSystemInfos().First(f => f.Name is "maidata.txt"));
