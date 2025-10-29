@@ -33,7 +33,6 @@ public partial class SentakkiBeatmapConverter
         }
 
         bool isBreak = slider.NodeSamples[0].Any(s => s.Name == HitSampleInfo.HIT_FINISH);
-        bool isSoft = slider.NodeSamples[0].Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
 
         var hold = new Hold
         {
@@ -42,7 +41,6 @@ public partial class SentakkiBeatmapConverter
             StartTime = original.StartTime,
             Duration = duration,
             Samples = slider.NodeSamples[0],
-            Ex = isSoft,
         };
 
         return hold;
@@ -54,8 +52,6 @@ public partial class SentakkiBeatmapConverter
 
         bool tailBreak = nodeSamples.Last().Any(s => s.Name == HitSampleInfo.HIT_FINISH);
         bool headBreak = nodeSamples.First().Any(s => s.Name == HitSampleInfo.HIT_FINISH);
-        bool headSoft = nodeSamples.First().Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
-        bool tailSoft = nodeSamples.Last().Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
 
         double beatLength = Beatmap.ControlPointInfo.TimingPointAt(original.StartTime).BeatLength;
         double duration = ((IHasDuration)original).Duration;
@@ -87,7 +83,6 @@ public partial class SentakkiBeatmapConverter
                     SlidePathParts = selectedPath,
                     Duration = ((IHasDuration)original).Duration,
                     Break = tailBreak,
-                    Ex = tailSoft,
                     ShootDelay = shootDelay,
                 }
             ],
@@ -95,7 +90,6 @@ public partial class SentakkiBeatmapConverter
             StartTime = original.StartTime,
             Samples = nodeSamples.FirstOrDefault(),
             Break = headBreak,
-            Ex = headSoft
         };
 
         return slide;
