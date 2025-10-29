@@ -276,8 +276,8 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         headContainer.Clear(false);
     }
 
-    private SentakkiInputManager? sentakkiActionInputManager;
-    internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
+    [Resolved]
+    private SentakkiInputManager sentakkiInputManager { get; set; } = null!;
 
     private int pressedCount
     {
@@ -285,9 +285,9 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         {
             int count = 0;
 
-            foreach (var pressedAction in SentakkiActionInputManager.PressedActions)
+            foreach (var pressedAction in sentakkiInputManager.PressedActions)
             {
-                if (pressedAction == SentakkiAction.Key1 + HitObject.Lane)
+                if (IsValidLaneAction(pressedAction))
                     ++count;
             }
 
@@ -300,7 +300,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         if (AllJudged)
             return false;
 
-        if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
+        if (!IsValidLaneAction(e.Action))
             return false;
 
         // Passthrough excess inputs to later hitobjects in the same lane
@@ -323,7 +323,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         if (AllJudged) return;
         if (!isHolding) return;
 
-        if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
+        if (!IsValidLaneAction(e.Action))
             return;
 
         // We only release the hold once ALL inputs are released
