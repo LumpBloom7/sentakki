@@ -36,7 +36,14 @@ public class SlideBodyInfo : IEquatable<SlideBodyInfo>
     // Whether the slide body should have the EX modifier applied to them.
     public bool Ex;
 
-    public void UpdatePaths() => SlidePath = SlidePaths.CreateSlidePath(slidePathParts);
+    [JsonIgnore]
+    public Action? OnPathUpdated = null;
+
+    public void UpdatePaths()
+    {
+        SlidePath = slidePathParts.Length == 0 ? empty_path : SlidePaths.CreateSlidePath(slidePathParts);
+        OnPathUpdated?.Invoke();
+    }
 
     public override bool Equals(object? obj) => obj is SlideBodyInfo other && Equals(other);
 
