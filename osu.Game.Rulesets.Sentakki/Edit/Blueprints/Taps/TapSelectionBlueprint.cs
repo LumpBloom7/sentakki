@@ -1,4 +1,5 @@
 using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Extensions;
@@ -6,6 +7,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
 
@@ -18,7 +20,13 @@ public partial class TapSelectionBlueprint : SentakkiSelectionBlueprint<Tap>
     public TapSelectionBlueprint(Tap hitObject)
         : base(hitObject)
     {
-        InternalChild = highlight = new TapHighlight();
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
+        InternalChild = highlight = new TapHighlight()
+        {
+            Colour = Color4.YellowGreen,
+            Alpha = 0.5f,
+        };
     }
 
     [Resolved]
@@ -28,9 +36,9 @@ public partial class TapSelectionBlueprint : SentakkiSelectionBlueprint<Tap>
     {
         base.Update();
 
-        highlight.Rotation = DrawableObject.HitObject.Lane.GetRotationForLane();
-        highlight.Note.Y = -snapProvider.GetDistanceRelativeToCurrentTime(DrawableObject.HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
-        highlight.Note.Scale = DrawableObject.TapVisual.Scale;
+        Rotation = DrawableObject.HitObject.Lane.GetRotationForLane();
+        highlight.Y = -snapProvider.GetDistanceRelativeToCurrentTime(DrawableObject.HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
+        highlight.Scale = DrawableObject.TapVisual.Scale;
     }
 
     public override Vector2 ScreenSpaceSelectionPoint => highlight.ScreenSpaceDrawQuad.Centre;

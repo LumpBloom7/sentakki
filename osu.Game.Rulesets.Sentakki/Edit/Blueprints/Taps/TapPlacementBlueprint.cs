@@ -23,13 +23,13 @@ public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
     public TapPlacementBlueprint()
     {
         InternalChild = highlight = new TapHighlight();
-        highlight.Note.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
+        highlight.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
     }
 
     protected override void Update()
     {
-        highlight.Rotation = HitObject.Lane.GetRotationForLane();
-        highlight.Note.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
+        Rotation = HitObject.Lane.GetRotationForLane();
+        highlight.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)
@@ -50,7 +50,7 @@ public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
             return result;
 
         HitObject.Lane = senRes.Lane;
-        highlight.Note.Y = -senRes.YPos;
+        highlight.Y = -senRes.YPos;
 
         return result;
     }

@@ -1,4 +1,5 @@
 using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Extensions;
@@ -18,6 +19,8 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold>
     public HoldSelectionBlueprint(Hold hitObject)
         : base(hitObject)
     {
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
         InternalChild = highlight = new HoldHighlight();
     }
 
@@ -28,13 +31,13 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold>
     {
         base.Update();
 
-        highlight.Rotation = DrawableObject.HitObject.Lane.GetRotationForLane();
-        highlight.Note.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
-        highlight.Note.Height = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.EndTime, SentakkiPlayfield.NOTESTARTDISTANCE) - highlight.Note.Y;
-        highlight.Note.Scale = DrawableObject.NoteBody.Scale;
+        Rotation = DrawableObject.HitObject.Lane.GetRotationForLane();
+        highlight.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
+        highlight.Height = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.EndTime, SentakkiPlayfield.NOTESTARTDISTANCE) - highlight.Y;
+        highlight.Scale = DrawableObject.NoteBody.Scale;
     }
 
-    public override Vector2 ScreenSpaceSelectionPoint => highlight.ScreenSpaceDrawQuad.Centre;
+    public override Vector2 ScreenSpaceSelectionPoint => DrawableObject.NoteBody.ScreenSpaceDrawQuad.Centre;
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => highlight.ReceivePositionalInputAt(screenSpacePos);
 

@@ -134,7 +134,7 @@ public abstract class SentakkiHitObject : HitObject, IHasDisplayColour
         }
 
         public override HitSampleInfo With(Optional<string> newName = default, Optional<string> newBank = default, Optional<string?> newSuffix = default, Optional<int> newVolume = default,
-                                           Optional<bool> newEditorAutoBank = default)
+                                           Optional<bool> newEditorAutoBank = default, Optional<bool> newUseBeatmapSamples = default)
         {
             return new SentakkiHitSampleInfo(newName.GetOr(Name), newVolume.GetOr(Volume));
         }

@@ -1,3 +1,4 @@
+using osu.Framework.Allocation;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Lists;
@@ -7,6 +8,7 @@ using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Sentakki;
 
+[Cached]
 public partial class SentakkiInputManager : RulesetInputManager<SentakkiAction>
 {
     protected override bool MapMouseToLatestTouch => false;
@@ -43,7 +45,7 @@ public partial class SentakkiInputManager : RulesetInputManager<SentakkiAction>
     public void TriggerReleased(SentakkiAction action) => KeyBindingContainer.TriggerReleased(action);
 
     public SentakkiInputManager(RulesetInfo ruleset)
-        : base(ruleset, 0, SimultaneousBindingMode.All)
+        : base(ruleset, 0, SimultaneousBindingMode.Unique)
     {
     }
 }
@@ -56,6 +58,7 @@ public enum SentakkiAction
     [LocalisableDescription(typeof(SentakkiActionStrings), nameof(SentakkiActionStrings.Button2))]
     Button2,
 
+    // These represent potential ring buttons
     [LocalisableDescription(typeof(SentakkiActionStrings), nameof(SentakkiActionStrings.Key1))]
     Key1,
 
@@ -79,4 +82,42 @@ public enum SentakkiAction
 
     [LocalisableDescription(typeof(SentakkiActionStrings), nameof(SentakkiActionStrings.Key8))]
     Key8,
+
+    // These are meant for touch screen usage
+    SensorLane1,
+    SensorLane2,
+    SensorLane3,
+    SensorLane4,
+    SensorLane5,
+    SensorLane6,
+    SensorLane7,
+    SensorLane8,
+
+    SensorLane1Alt,
+    SensorLane2Alt,
+    SensorLane3Alt,
+    SensorLane4Alt,
+    SensorLane5Alt,
+    SensorLane6Alt,
+    SensorLane7Alt,
+    SensorLane8Alt,
+
+    // These are auxiliary actions for mouse + Keyboard users
+    B1Lane1,
+    B1Lane2,
+    B1Lane3,
+    B1Lane4,
+    B1Lane5,
+    B1Lane6,
+    B1Lane7,
+    B1Lane8,
+
+    B2Lane1,
+    B2Lane2,
+    B2Lane3,
+    B2Lane4,
+    B2Lane5,
+    B2Lane6,
+    B2Lane7,
+    B2Lane8,
 }

@@ -1,5 +1,6 @@
 using System;
 using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
@@ -21,8 +22,10 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
 
     public HoldPlacementBlueprint()
     {
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
         InternalChild = highlight = new HoldHighlight();
-        highlight.Note.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
+        highlight.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
     }
 
     [Resolved]
@@ -31,9 +34,9 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
     protected override void Update()
     {
         base.Update();
-        highlight.Rotation = HitObject.Lane.GetRotationForLane();
-        highlight.Note.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
-        highlight.Note.Height = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.EndTime, SentakkiPlayfield.NOTESTARTDISTANCE) - highlight.Note.Y;
+        Rotation = HitObject.Lane.GetRotationForLane();
+        highlight.Y = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.StartTime, SentakkiPlayfield.NOTESTARTDISTANCE);
+        highlight.Height = -snapProvider.GetDistanceRelativeToCurrentTime(HitObject.EndTime, SentakkiPlayfield.NOTESTARTDISTANCE) - highlight.Y;
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)

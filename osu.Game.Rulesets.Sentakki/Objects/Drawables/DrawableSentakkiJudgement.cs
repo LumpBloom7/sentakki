@@ -65,7 +65,12 @@ public partial class DrawableSentakkiJudgement : PoolableDrawable
 
     public DrawableSentakkiJudgement Apply(JudgementResult result, DrawableHitObject hitObject)
     {
-        if (result.HitObject.HitWindows is SentakkiEmptyHitWindows || result.Type == HitResult.Miss || !detailedJudgements.Value)
+        if (result.Type == HitResult.Miss || !detailedJudgements.Value)
+            timingPiece.Alpha = 0;
+        // While TouchHolds don't have hit windows, we display the timing text anyways when a crit is obtained
+        else if (result.HitObject is TouchHold && result.Type is HitResult.Perfect)
+            timingPiece.Alpha = 1;
+        else if (result.HitObject.HitWindows is SentakkiEmptyHitWindows)
             timingPiece.Alpha = 0;
         else
             timingPiece.Alpha = 1;

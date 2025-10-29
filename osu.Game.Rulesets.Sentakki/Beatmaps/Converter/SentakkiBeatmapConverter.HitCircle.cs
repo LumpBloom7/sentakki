@@ -12,7 +12,6 @@ public partial class SentakkiBeatmapConverter
     private static Tap convertHitCircle(HitObject original, int lane, double startTime)
     {
         bool isBreak = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
-        bool isSoft = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_WHISTLE);
 
         Tap result = new Tap
         {
@@ -20,7 +19,6 @@ public partial class SentakkiBeatmapConverter
             Samples = original.Samples,
             StartTime = startTime,
             Break = isBreak,
-            Ex = isSoft
         };
 
         return result;
