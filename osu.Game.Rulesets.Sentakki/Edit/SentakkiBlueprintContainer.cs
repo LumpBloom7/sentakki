@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
@@ -14,6 +15,8 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
     public SentakkiBlueprintContainer(HitObjectComposer composer)
         : base(composer)
     {
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
     }
 
     public override HitObjectSelectionBlueprint CreateHitObjectBlueprintFor(HitObject hitObject)

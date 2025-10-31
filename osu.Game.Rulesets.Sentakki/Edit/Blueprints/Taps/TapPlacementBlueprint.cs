@@ -1,0 +1,54 @@
+using System;
+using osu.Framework.Graphics;
+using osu.Framework.Input.Events;
+using osu.Game.Rulesets.Edit;
+using osu.Game.Rulesets.Sentakki.Extensions;
+using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.UI;
+using osuTK;
+using osuTK.Graphics;
+using osuTK.Input;
+
+namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
+
+public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
+{
+    private readonly TapPiece highlight;
+
+    public TapPlacementBlueprint()
+    {
+        Anchor = Anchor.Centre;
+        Origin = Anchor.Centre;
+
+        InternalChild = highlight = new TapPiece()
+        {
+            Alpha = 0.5f,
+            Colour = Color4.YellowGreen
+        };
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        Rotation = HitObject.Lane.GetRotationForLane();
+        highlight.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
+    }
+
+    public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
+    {
+        float angle = ToScreenSpace(OriginPosition).AngleTo(screenSpacePosition);
+
+        HitObject.Lane = (int)Math.Round((angle - 22.5f) / 45);
+
+        return base.UpdateTimeAndPosition(screenSpacePosition, time);
+    }
+
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        if (e.Button != MouseButton.Left) return false;
+
+        EndPlacement(true);
+        return true;
+    }
+}
