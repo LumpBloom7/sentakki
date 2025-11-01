@@ -3,6 +3,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Screens.Edit.Compose.Components;
@@ -25,6 +26,9 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
         {
             case Tap t:
                 return new TapSelectionBlueprint(t);
+
+            case Hold h:
+                return new HoldSelectionBlueprint(h);
 
             default:
                 return base.CreateHitObjectBlueprintFor(hitObject);

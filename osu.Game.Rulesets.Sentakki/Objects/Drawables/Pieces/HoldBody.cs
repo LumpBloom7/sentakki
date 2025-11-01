@@ -2,6 +2,7 @@
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Objects.Drawables;
 using osuTK.Graphics;
 
@@ -11,6 +12,10 @@ public partial class HoldBody : CompositeDrawable
 {
     // This will be proxied, so a must.
     public override bool RemoveWhenNotAlive => false;
+
+    public override Quad ScreenSpaceDrawQuad => noteVisuals.ScreenSpaceDrawQuad;
+
+    private readonly LaneNoteVisual noteVisuals;
 
     public HoldBody()
     {
@@ -26,7 +31,7 @@ public partial class HoldBody : CompositeDrawable
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Child = new LaneNoteVisual
+                Child = noteVisuals = new LaneNoteVisual
                 {
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
@@ -40,8 +45,11 @@ public partial class HoldBody : CompositeDrawable
     private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
 
     [BackgroundDependencyLoader]
-    private void load(DrawableHitObject drawableObject)
+    private void load(DrawableHitObject? drawableObject)
     {
+        if (drawableObject is null)
+            return;
+
         accentColour.BindTo(drawableObject.AccentColour);
         accentColour.BindValueChanged(colour => Colour = colour.NewValue, true);
     }
