@@ -17,5 +17,9 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
     protected override ComposeBlueprintContainer CreateBlueprintContainer()
         => new SentakkiBlueprintContainer(this);
 
-    protected override IReadOnlyList<CompositionTool> CompositionTools { get; } = [new TapCompositionTool()];
+    protected override IReadOnlyList<CompositionTool> CompositionTools { get; } =
+    [
+        new TapCompositionTool(),
+        new HoldCompositionTool(),
+    ];
 }
