@@ -5,6 +5,7 @@ using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
+using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Screens.Edit.Compose.Components;
 using osuTK;
@@ -20,15 +21,18 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
         Origin = Anchor.Centre;
     }
 
-    public override HitObjectSelectionBlueprint CreateHitObjectBlueprintFor(HitObject hitObject)
+    public override HitObjectSelectionBlueprint? CreateHitObjectBlueprintFor(HitObject hitObject)
     {
         switch (hitObject)
         {
-            case Tap t:
-                return new TapSelectionBlueprint(t);
+            case Tap tap:
+                return new TapSelectionBlueprint(tap);
 
-            case Hold h:
-                return new HoldSelectionBlueprint(h);
+            case Hold hold:
+                return new HoldSelectionBlueprint(hold);
+
+            case Touch touch:
+                return new TouchSelectionBlueprint(touch);
 
             default:
                 return base.CreateHitObjectBlueprintFor(hitObject);
