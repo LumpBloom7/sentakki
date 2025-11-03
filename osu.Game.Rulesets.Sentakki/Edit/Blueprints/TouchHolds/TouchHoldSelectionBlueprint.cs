@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds;
 
 public partial class TouchHoldSelectionBlueprint : SentakkiSelectionBlueprint<TouchHold, DrawableTouchHold>
 {
-    private static readonly IReadOnlyList<Color4> palette =
+    public static readonly IReadOnlyList<Color4> SELECTION_PALETTE =
     [
         Color4.YellowGreen,
         Color4.YellowGreen.Darken(0.5f),
@@ -23,7 +23,7 @@ public partial class TouchHoldSelectionBlueprint : SentakkiSelectionBlueprint<To
 
     // TouchHoldBody typically relies on colour provided by DrawableTouchHold to set its colour. Since the highlight is not tied to a DHO, we provide that dependency here.
     [Cached]
-    private Bindable<IReadOnlyList<Color4>>? paletteBindable { get; set; } = new Bindable<IReadOnlyList<Color4>>(palette);
+    private Bindable<IReadOnlyList<Color4>>? paletteBindable { get; set; } = new Bindable<IReadOnlyList<Color4>>(SELECTION_PALETTE);
 
     private readonly TouchHoldBody highlight;
 

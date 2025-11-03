@@ -13,6 +13,6 @@ public class TapCompositionTool : CompositionTool
     {
     }
 
-    public override Drawable? CreateIcon() => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Circles);
-    public override PlacementBlueprint? CreatePlacementBlueprint() => new TapPlacementBlueprint();
+    public override Drawable CreateIcon() => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Circles);
+    public override PlacementBlueprint CreatePlacementBlueprint() => new TapPlacementBlueprint();
 }
