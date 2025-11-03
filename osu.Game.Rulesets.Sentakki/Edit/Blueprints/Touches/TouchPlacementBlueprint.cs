@@ -1,3 +1,4 @@
+using System;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
@@ -34,9 +35,13 @@ public partial class TouchPlacementBlueprint : SentakkiPlacementBlueprint<Touch>
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {
-        Vector2 localPos = ToLocalSpace(screenSpacePosition);
+        Vector2 localPos = ToLocalSpace(screenSpacePosition) - OriginPosition;
 
-        HitObject.Position = localPos - OriginPosition;
+        // Touch notes cannot be placed more than 270 units away from the centre
+        float distance = Math.Min(localPos.Length, 270);
+
+        Vector2 clampedPosition = localPos.Normalized() * distance;
+        HitObject.Position = clampedPosition;
 
         return base.UpdateTimeAndPosition(screenSpacePosition, time);
     }

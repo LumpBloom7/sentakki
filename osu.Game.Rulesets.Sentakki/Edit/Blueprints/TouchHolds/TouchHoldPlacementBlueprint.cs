@@ -46,8 +46,14 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
         switch (PlacementActive)
         {
             case PlacementState.Waiting:
-                Vector2 localPos = ToLocalSpace(screenSpacePosition);
-                HitObject.Position = localPos - OriginPosition;
+                Vector2 localPos = ToLocalSpace(screenSpacePosition) - OriginPosition;
+
+                // Touch notes cannot be placed more than 270 units away from the centre
+                float distance = Math.Min(localPos.Length, 270);
+
+                Vector2 clampedPosition = localPos.Normalized() * distance;
+                HitObject.Position = clampedPosition;
+
                 break;
 
             case PlacementState.Active:
