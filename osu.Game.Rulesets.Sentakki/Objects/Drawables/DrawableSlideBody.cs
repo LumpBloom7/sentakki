@@ -132,6 +132,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
     {
         base.OnApply();
         Slidepath.Path = HitObject.SlideBodyInfo;
+        Slidepath.Progress = 0;
         StarProgress = 0;
     }
 
