@@ -5,8 +5,8 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
-using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
@@ -25,9 +25,10 @@ public abstract partial class TestSceneSlide : OsuTestScene
 
     private bool mirrored;
 
-    protected abstract SlidePaths.PathShapes PathShape { get; }
+    protected abstract PathShapes PathShape { get; }
 
     private readonly SlideVisual slide;
+    private readonly SlideBodyInfo slideBodyInfo = new SlideBodyInfo();
     private readonly Container nodes;
 
     [Cached]
@@ -43,7 +44,10 @@ public abstract partial class TestSceneSlide : OsuTestScene
             Size = new Vector2(SentakkiPlayfield.RINGSIZE)
         });
 
-        Add(slide = new SlideVisual());
+        Add(slide = new SlideVisual()
+        {
+            Path = slideBodyInfo
+        });
 
         AddSliderStep("Start lane", 0, 7, 0, p =>
         {
@@ -80,8 +84,6 @@ public abstract partial class TestSceneSlide : OsuTestScene
         });
     }
 
-    protected SentakkiSlidePath CreatePattern() => SlidePaths.CreateSlidePath(startPath, new SlideBodyPart(PathShape, endPath, mirrored));
-
     protected override void LoadComplete()
     {
         base.LoadComplete();
@@ -90,10 +92,10 @@ public abstract partial class TestSceneSlide : OsuTestScene
 
     protected void RefreshSlide()
     {
-        slide.Path = CreatePattern();
+        slideBodyInfo.Segments = [new SlideSegment(PathShape, endPath, mirrored)];
         nodes.Clear();
 
-        foreach (var node in slide.Path.SlideSegments.SelectMany(s => s.ControlPoints))
+        foreach (var node in slideBodyInfo.SegmentPaths.SelectMany(s => s.ControlPoints))
         {
             nodes.Add(new CircularContainer
             {

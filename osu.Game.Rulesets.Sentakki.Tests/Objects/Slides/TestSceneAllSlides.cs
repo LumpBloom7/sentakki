@@ -7,6 +7,7 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
@@ -22,7 +23,7 @@ public partial class TestSceneAllSlides : OsuTestScene
 
     private int id;
 
-    private readonly SlideVisual slide;
+    private readonly SlideBodyInfo slideBodyInfo = new SlideBodyInfo();
     private readonly Container nodes;
 
     [Cached]
@@ -37,7 +38,10 @@ public partial class TestSceneAllSlides : OsuTestScene
             RelativeSizeAxes = Axes.None,
             Size = new Vector2(SentakkiPlayfield.RINGSIZE)
         });
-        Add(slide = new SlideVisual());
+        Add(new SlideVisual
+        {
+            Path = slideBodyInfo
+        });
 
         AddSliderStep("Path ID", 0, SlidePaths.VALID_CONVERT_PATHS.Count - 1, 0, p =>
         {
@@ -52,8 +56,6 @@ public partial class TestSceneAllSlides : OsuTestScene
         });
     }
 
-    protected SentakkiSlidePath CreatePattern() => SlidePaths.CreateSlidePath(SlidePaths.VALID_CONVERT_PATHS[id].SlidePart);
-
     protected override void LoadComplete()
     {
         base.LoadComplete();
@@ -62,10 +64,10 @@ public partial class TestSceneAllSlides : OsuTestScene
 
     protected void RefreshSlide()
     {
-        slide.Path = CreatePattern();
+        slideBodyInfo.Segments = [SlidePaths.VALID_CONVERT_PATHS[id].Segment];
         nodes.Clear();
 
-        foreach (var node in slide.Path.SlideSegments.SelectMany(s => s.ControlPoints))
+        foreach (var node in slideBodyInfo.SegmentPaths.SelectMany(s => s.ControlPoints))
         {
             nodes.Add(new CircularContainer
             {
