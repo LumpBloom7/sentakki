@@ -124,8 +124,6 @@ public partial class SlideVisual : CompositeDrawable
 
         if (drawableHitObject?.Result.HasResult ?? false)
             return;
-
-        UpdateChevronVisibility();
     }
 
     private void updateVisuals()
@@ -140,6 +138,8 @@ public partial class SlideVisual : CompositeDrawable
 
         // Create fan slide chevrons if needed
         tryCreateFanChevrons();
+
+        UpdateChevronVisibility();
     }
 
     private const int chevrons_per_eith = 9;
@@ -313,14 +313,16 @@ public partial class SlideVisual : CompositeDrawable
                 var chevron = chevrons[j];
                 chevron.FadeOut()
                        .Delay(currentOffset)
-                       .FadeIn(fadeDuration);
+                       .FadeIn(fadeDuration)
+                       .Finally(UpdateProgress);
 
                 currentOffset += offsetIncrement;
             }
         }
         else
         {
-            chevrons.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
+            foreach (var slideChevron in chevrons)
+                slideChevron.FadeOut().Delay(duration / 2).FadeIn(duration / 2).Finally(UpdateProgress);
         }
     }
 
