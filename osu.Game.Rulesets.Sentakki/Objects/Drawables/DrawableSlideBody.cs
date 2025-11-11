@@ -67,7 +67,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
             var startPos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, startLane);
 
             var endLeft = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideBodyInfo.EndLane - 1);
-            var endRight = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideBodyInfo.EndLane - 1);
+            var endRight = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideBodyInfo.EndLane + 1);
 
             SlideStars[0].Position = Interpolation.ValueAt(starProgress, startPos, endLeft, fanStartProgress, 1);
             SlideStars[1].Position = Interpolation.ValueAt(starProgress, startPos, endRight, fanStartProgress, 1);
