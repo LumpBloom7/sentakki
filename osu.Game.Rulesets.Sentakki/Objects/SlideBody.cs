@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Newtonsoft.Json;
@@ -8,6 +9,7 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Judgements;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using osuTK;
 using osuTK.Graphics;
@@ -43,7 +45,7 @@ public class SlideBody : SentakkiLanedHitObject, IHasDuration
 
     protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
     {
-        CreateSlideCheckpoints();
+        createSlideCheckpoints();
 
         if (NestedHitObjects.Count != 0)
             NestedHitObjects.First().Samples.Add(new SentakkiHitSampleInfo("slide", CreateHitSampleInfo().Volume));
@@ -51,64 +53,47 @@ public class SlideBody : SentakkiLanedHitObject, IHasDuration
         base.CreateNestedHitObjects(cancellationToken);
     }
 
-    protected void CreateSlideCheckpoints()
+    private void createSlideCheckpoints()
     {
-        double totalDistance = SlideBodyInfo.SlidePath.TotalDistance;
-        double runningDistance = 0;
+        double progress = 0;
+        double totalDistance = SlideBodyInfo.SlideLength;
 
-        foreach (var segment in SlideBodyInfo.SlidePath.SlideSegments)
+        double shootTime = StartTime + SlideBodyInfo.HoldDuration;
+
+        for (int i = 0; i < SlideBodyInfo.Segments.Count; ++i)
         {
-            double distance = segment.Distance;
-            int nodeCount = (int)Math.Floor(distance / 130);
+            var segment = SlideBodyInfo.Segments[i];
+            var segmentPath = SlideBodyInfo.SegmentPaths[i];
 
-            double nodeDelta = distance / nodeCount;
+            bool isFanSegment = segment.Shape is PathShapes.Fan && i == SlideBodyInfo.Segments.Count - 1;
 
-            for (int i = 0; i < nodeCount; i++)
+            double segmentDistance = segmentPath.CalculatedDistance;
+
+            int numberOfCheckpoints = isFanSegment ? 5 : (int)Math.Floor(segmentDistance / 130);
+            double progressDelta = (segmentDistance / totalDistance) / numberOfCheckpoints;
+
+            int nodesToPass = isFanSegment ? 2 : 1;
+
+            for (int j = 0; j < numberOfCheckpoints; ++j)
             {
-                runningDistance += nodeDelta;
-                double progress = runningDistance / totalDistance;
+                progress += progressDelta;
 
-                SlideCheckpoint checkpoint = new SlideCheckpoint
+                List<Vector2> nodePositions = [SlideBodyInfo.PositionAt((float)progress)];
+
+                if (isFanSegment)
+                {
+                    nodePositions.Add(SlideBodyInfo.PositionAt((float)progress, -1));
+                    nodePositions.Add(SlideBodyInfo.PositionAt((float)progress, 1));
+                }
+
+                AddNested(new SlideCheckpoint
                 {
                     Progress = (float)progress,
-                    StartTime = StartTime + ShootDelay + (Duration - ShootDelay) * progress,
-                    NodePositions = [SlideBodyInfo.SlidePath.PositionAt(progress)],
-                    SlideDuration = Duration
-                };
-
-                AddNested(checkpoint);
+                    StartTime = shootTime + progress * SlideBodyInfo.MovementDuration,
+                    NodePositions = nodePositions,
+                    NodesToPass = nodesToPass,
+                });
             }
-        }
-
-        CreateSlideFanCheckpoints();
-    }
-
-    protected void CreateSlideFanCheckpoints()
-    {
-        if (!SlideBodyInfo.SlidePath.EndsWithSlideFan)
-            return;
-
-        // Add body nodes (should be two major sets)
-        Vector2 originpoint = SlideBodyInfo.SlidePath.FanOrigin;
-
-        for (int i = 1; i < 5; ++i)
-        {
-            float progress = SlideBodyInfo.SlidePath.FanStartProgress + 0.25f * i * (1 - SlideBodyInfo.SlidePath.FanStartProgress);
-            SlideCheckpoint checkpoint = new SlideCheckpoint
-            {
-                Progress = progress,
-                StartTime = StartTime + ShootDelay + (Duration - ShootDelay) * progress,
-                NodesToPass = 2,
-                SlideDuration = Duration
-            };
-
-            for (int j = -1; j < 2; ++j)
-            {
-                Vector2 dest = SlideBodyInfo.SlidePath.PositionAt(1, j);
-                checkpoint.NodePositions.Add(Vector2.Lerp(originpoint, dest, 0.25f * i));
-            }
-
-            AddNested(checkpoint);
         }
     }
 
@@ -119,7 +104,7 @@ public class SlideBody : SentakkiLanedHitObject, IHasDuration
     {
         base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
 
-        ShootDelay = Math.Clamp(SlideBodyInfo.ShootDelay, 0, Duration);
+        ShootDelay = Math.Clamp(SlideBodyInfo.HoldDuration, 0, Duration);
     }
 
     protected override HitWindows CreateHitWindows() => new SentakkiSlideHitWindows();

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -9,6 +10,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Extensions;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
@@ -18,8 +20,6 @@ public partial class SlideVisual : CompositeDrawable
 {
     // This will be proxied, so a must.
     public override bool RemoveWhenNotAlive => false;
-
-    public double Progress { get; set; }
 
     // SSDQ.AABBFloat may return a Rectangle far larger than the actual bounding rect when rotated
     //  To avoid that, we manually compute a non rotated rect that fits all the chevrons.
@@ -36,16 +36,39 @@ public partial class SlideVisual : CompositeDrawable
         return Quad.FromRectangle(rect);
     }
 
-    private SentakkiSlidePath path = null!;
+    private SlideBodyInfo? path = null!;
 
-    public SentakkiSlidePath Path
+    private readonly IBindable<int> pathVersion = new Bindable<int>();
+
+    public SlideBodyInfo? Path
     {
         get => path;
         set
         {
+            pathVersion.UnbindAll();
             path = value;
-            Progress = 0;
+
+            if (path is not null)
+                pathVersion.BindTo(path.Version);
+
+            if (LoadState < LoadState.Ready)
+                return;
+
             updateVisuals();
+        }
+    }
+
+    private double progress;
+
+    public double Progress
+    {
+        get => progress;
+        set
+        {
+            if (progress == value)
+                return;
+
+            progress = value;
             UpdateChevronVisibility();
         }
     }
@@ -86,6 +109,10 @@ public partial class SlideVisual : CompositeDrawable
         AddRangeInternal([
             chevrons = []
         ]);
+
+        updateVisuals();
+
+        pathVersion.BindValueChanged(_ => updateVisuals());
     }
 
     protected override void Update()
@@ -104,6 +131,9 @@ public partial class SlideVisual : CompositeDrawable
     private void updateVisuals()
     {
         chevrons.Clear(false);
+
+        if (path is null)
+            return;
 
         // Create regular slide chevrons if needed
         tryCreateRegularChevrons();
@@ -124,22 +154,33 @@ public partial class SlideVisual : CompositeDrawable
 
     private void tryCreateRegularChevrons()
     {
-        if (chevronPool is null)
-            return;
+        Debug.Assert(chevronPool is not null);
+        Debug.Assert(path is not null);
 
         double runningDistance = 0;
 
-        foreach (var segment in path.SlideSegments)
+        int regularSegments = path.SegmentPaths.Count;
+
+        if (regularSegments == 0)
+            return;
+
+        if (path.Segments[^1].Shape is PathShapes.Fan)
+            regularSegments -= 1;
+
+        for (int i = 0; i < regularSegments; ++i)
         {
+            var segment = path.SegmentPaths[i];
+
             int chevronCount = chevronsInContinuousPath(segment);
             double totalDistance = segment.Distance;
             double safeDistance = totalDistance - endpoint_distance * 2;
 
             var previousPosition = segment.PositionAt(0);
+            SlideChevron? lastChevron = null;
 
-            for (int i = 0; i < chevronCount; i++)
+            for (int j = 0; j < chevronCount; j++)
             {
-                double progress = (double)i / (chevronCount - 1); // from 0 to 1, both inclusive
+                double progress = (double)j / (chevronCount - 1); // from 0 to 1, both inclusive
                 double distance = progress * safeDistance + endpoint_distance;
                 progress = distance / totalDistance;
                 var position = segment.PositionAt(progress);
@@ -147,7 +188,8 @@ public partial class SlideVisual : CompositeDrawable
 
                 var chevron = chevronPool.Get();
                 chevron.Position = position;
-                chevron.DisappearThreshold = (runningDistance + distance) / path.TotalDistance;
+
+                chevron.DisappearThreshold = (runningDistance + distance) / path.SlideLength;
                 chevron.Rotation = angle;
                 chevron.Depth = chevrons.Count;
 
@@ -167,7 +209,17 @@ public partial class SlideVisual : CompositeDrawable
                     chevron.Glow = false;
                 }
 
+                // If we find that the chevrons are a bit too bunched up, we remove the previous
+                if (lastChevron is not null)
+                {
+                    float angleDelta = Math.Abs(MathExtensions.AngleDelta(lastChevron.Rotation, chevron.Rotation));
+
+                    if (angleDelta >= 90)
+                        chevrons.Remove(lastChevron, false);
+                }
+
                 chevrons.Add(chevron);
+                lastChevron = chevron;
 
                 previousPosition = position;
             }
@@ -178,13 +230,19 @@ public partial class SlideVisual : CompositeDrawable
 
     private void tryCreateFanChevrons()
     {
-        if (chevronPool is null)
+        Debug.Assert(chevronPool is not null);
+        Debug.Assert(path is not null);
+
+        if (path.Segments.Count == 0)
             return;
 
-        if (!path.EndsWithSlideFan)
+        if (path.Segments[^1].Shape is not PathShapes.Fan)
             return;
 
-        var delta = path.PositionAt(1) - path.FanOrigin;
+        var fanOrigin = path.SegmentPaths[^1].PositionAt(0);
+        double fanStartProgress = path.SegmentStartProgressFor(^1);
+
+        var delta = path.PositionAt(1) - fanOrigin;
         Vector2 lineStart = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0);
         Vector2 middleLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 4);
         Vector2 middleLineDelta = middleLineEnd - lineStart;
@@ -216,10 +274,10 @@ public partial class SlideVisual : CompositeDrawable
 
             var chevron = chevronPool.Get();
 
-            chevron.Position = path.FanOrigin + delta * y;
+            chevron.Position = fanOrigin + delta * y;
             chevron.Rotation = chevron.Position.AngleTo(path.PositionAt(1));
 
-            chevron.DisappearThreshold = path.FanStartProgress + (i + 1) / 11f * (1 - path.FanStartProgress);
+            chevron.DisappearThreshold = fanStartProgress + (i + 1) / 11f * (1 - fanStartProgress);
             chevron.Depth = chevrons.Count;
 
             chevron.Width = w;
