@@ -63,15 +63,4 @@ public partial class SlideChevron : PoolableDrawable
     {
         chevron.Alpha = 1;
     }
-
-    protected override void FreeAfterUse()
-    {
-        // This is used to ensure that the chevrons transforms are reverted to the initial state.
-        // TODO: Investigate what clears the transforms without rewinding them...
-        if (!RemoveCompletedTransforms)
-            ApplyTransformsAt(double.MinValue, propagateChildren: true);
-        ClearTransformsAfter(double.MinValue, propagateChildren: true);
-
-        base.FreeAfterUse();
-    }
 }
