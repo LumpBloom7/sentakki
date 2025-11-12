@@ -54,6 +54,16 @@ public partial class SlideChevron : PoolableDrawable
         });
     }
 
+    public override void Hide()
+    {
+        chevron.Alpha = 0;
+    }
+
+    public override void Show()
+    {
+        chevron.Alpha = 1;
+    }
+
     protected override void FreeAfterUse()
     {
         // This is used to ensure that the chevrons transforms are reverted to the initial state.

@@ -75,7 +75,10 @@ public partial class SlideVisual : CompositeDrawable
 
     public void UpdateProgress(SlideChevron chevron)
     {
-        chevron.Alpha = Progress >= chevron.DisappearThreshold ? 0 : 1;
+        if (chevron.DisappearThreshold <= Progress)
+            chevron.Hide();
+        else
+            chevron.Show();
     }
 
     public void UpdateChevronVisibility()
@@ -110,20 +113,7 @@ public partial class SlideVisual : CompositeDrawable
             chevrons = []
         ]);
 
-        updateVisuals();
-
-        pathVersion.BindValueChanged(_ => updateVisuals());
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-
-        if (Time.Current < (drawableHitObject?.StartTimeBindable.Value ?? double.MinValue))
-            return;
-
-        if (drawableHitObject?.Result.HasResult ?? false)
-            return;
+        pathVersion.BindValueChanged(_ => updateVisuals(), true);
     }
 
     private void updateVisuals()
@@ -313,8 +303,7 @@ public partial class SlideVisual : CompositeDrawable
                 var chevron = chevrons[j];
                 chevron.FadeOut()
                        .Delay(currentOffset)
-                       .FadeIn(fadeDuration)
-                       .Finally(UpdateProgress);
+                       .FadeIn(fadeDuration);
 
                 currentOffset += offsetIncrement;
             }
@@ -322,7 +311,7 @@ public partial class SlideVisual : CompositeDrawable
         else
         {
             foreach (var slideChevron in chevrons)
-                slideChevron.FadeOut().Delay(duration / 2).FadeIn(duration / 2).Finally(UpdateProgress);
+                slideChevron.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
         }
     }
 
@@ -337,8 +326,6 @@ public partial class SlideVisual : CompositeDrawable
             var chevron = chevrons[i];
             if (chevron.DisappearThreshold > Progress)
                 break;
-
-            chevron.FadeOut();
         }
 
         double fadeoutOffset = 0;
