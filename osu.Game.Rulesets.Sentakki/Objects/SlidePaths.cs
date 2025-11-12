@@ -97,22 +97,7 @@ public static class SlidePaths
                     break;
 
                 case PathShapes.Circle:
-
-                    var newSegment = generateCirclePattern(startOffset, path.EndOffset, path.Mirrored ? RotationDirection.Counterclockwise : RotationDirection.Clockwise);
-
-                    // Combine Circle paths in the same direction
-                    if (i > 0)
-                    {
-                        var prevPath = pathParameters[i - 1];
-
-                        if (prevPath.Shape == PathShapes.Circle && prevPath.Mirrored == path.Mirrored)
-                        {
-                            slideSegments[^1].ControlPoints.AddRange(newSegment.ControlPoints);
-                            break;
-                        }
-                    }
-
-                    slideSegments.Add(newSegment);
+                    slideSegments.Add(generateCirclePattern(startOffset, path.EndOffset, path.Mirrored ? RotationDirection.Counterclockwise : RotationDirection.Clockwise));
                     break;
 
                 case PathShapes.V:
