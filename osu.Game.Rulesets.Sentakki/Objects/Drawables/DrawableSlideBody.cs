@@ -4,7 +4,6 @@ using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Utils;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -13,7 +12,6 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
-using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
 
@@ -54,23 +52,17 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
             starProgress = value;
 
             SlideStars[2].Position = slideBodyInfo.PositionAt(value);
-            SlideStars[2].Rotation = slideBodyInfo.PositionAt(value - .01f).AngleTo(slideBodyInfo.PositionAt(value + .01f));
+            SlideStars[2].Rotation = slideBodyInfo.PositionAt(value - .01f).AngleTo(SlideStars[2].Position);
 
             if (slideBodyInfo.Segments[^1].Shape is not PathShapes.Fan) return;
 
             double fanStartProgress = slideBodyInfo.SegmentStartProgressFor(^1);
 
-            if (!(starProgress >= fanStartProgress)) return;
+            if (value < fanStartProgress)
+                return;
 
-            int startLane = slideBodyInfo.EndLane - 4;
-
-            var startPos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, startLane);
-
-            var endLeft = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideBodyInfo.EndLane - 1);
-            var endRight = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideBodyInfo.EndLane + 1);
-
-            SlideStars[0].Position = Interpolation.ValueAt(starProgress, startPos, endLeft, fanStartProgress, 1);
-            SlideStars[1].Position = Interpolation.ValueAt(starProgress, startPos, endRight, fanStartProgress, 1);
+            SlideStars[0].Position = slideBodyInfo.PositionAt(value, -1);
+            SlideStars[1].Position = slideBodyInfo.PositionAt(value, 1);
         }
     }
 
