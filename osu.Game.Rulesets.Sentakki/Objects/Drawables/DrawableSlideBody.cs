@@ -271,7 +271,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         switch (state)
         {
             case ArmedState.Hit:
-                Slidepath.PerformExitAnimation(time_fade_hit, HitStateUpdateTime);
+                Slidepath.PerformExitAnimation(time_fade_hit);
                 foreach (var star in SlideStars)
                     star.FadeOut(time_fade_hit);
 
@@ -280,7 +280,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
                 break;
 
             case ArmedState.Miss:
-                Slidepath.PerformExitAnimation(time_fade_miss, Result.TimeAbsolute);
+                Slidepath.PerformExitAnimation(time_fade_miss);
 
                 foreach (var star in SlideStars)
                 {

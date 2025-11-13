@@ -54,7 +54,7 @@ public partial class TestSceneCircleChaining : OsuTestScene
         AddStep("Perform entry animation", () => slide.PerformEntryAnimation(1000));
         AddWaitStep("Wait for transforms", 5);
 
-        AddStep("Perform exit animation", () => slide.PerformExitAnimation(1000, Time.Current));
+        AddStep("Perform exit animation", () => slide.PerformExitAnimation(1000));
         AddWaitStep("Wait for transforms", 5);
 
         Add(nodes = new Container

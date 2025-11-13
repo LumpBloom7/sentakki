@@ -275,7 +275,7 @@ public partial class SlideVisual : CompositeDrawable
             chevron.Thickness = t * 2;
             chevron.FanChevron = true;
 
-            if (((DrawableSentakkiHitObject?)drawableHitObject)?.ExBindable.Value ?? false)
+            if (drawableHitObject?.ExBindable.Value ?? false)
             {
                 chevron.ShadowRadius = 7.5f;
                 chevron.Glow = true;
@@ -310,12 +310,11 @@ public partial class SlideVisual : CompositeDrawable
         }
         else
         {
-            foreach (var slideChevron in chevrons)
-                slideChevron.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
+            chevrons.FadeOut().Delay(duration / 2).FadeIn(duration / 2);
         }
     }
 
-    public void PerformExitAnimation(double duration, double hitTime)
+    public void PerformExitAnimation(double duration)
     {
         int i;
 
