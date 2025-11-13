@@ -29,7 +29,7 @@ public class SlideBodyInfo
 
     public double MovementDuration => Duration - HoldDuration;
 
-    private readonly List<SlideSegment> segments = new List<SlideSegment>();
+    private readonly List<SlideSegment> segments = [];
 
     [JsonIgnore]
     public int EndLane { get; private set; }
@@ -114,40 +114,39 @@ public class SlideBodyInfo
 
     #region Methods
 
-    public Vector2 PositionAt(float progress, int offset = 0)
+    public Vector2 PositionAt(float progress, int starLaneOffset = 0)
     {
         validatePath();
 
         progress = Math.Clamp(progress, 0, 1);
 
-        double distance = progress * totalLength;
+        // First get the current segment based on `progress`
+        int segmentIndex = 0;
 
-        int startLane = 0;
-
-        for (int i = 0; i < segments.Count; ++i)
+        for (; segmentIndex < segments.Count; ++segmentIndex)
         {
-            var segmentPath = segmentPaths[i];
-
-            if (distance > segmentPath.CalculatedDistance)
-            {
-                distance -= segmentPath.CalculatedDistance;
-                startLane += segments[i].EndOffset;
-                continue;
-            }
-
-            double progressInSegment = distance / segmentPath.CalculatedDistance;
-
-            if (segments[i].Shape is not PathShapes.Fan || i != segments.Count - 1) return segmentPath.PositionAt(progressInSegment);
-
-            // Special case for slide fans
-
-            var startPos = segmentPath.PositionAt(0);
-            var endPos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, startLane + segments[i].EndOffset + offset);
-
-            return Vector2.Lerp(startPos, endPos, (float)progressInSegment);
+            if (segmentStartProgress[segmentIndex] > progress)
+                break;
         }
 
-        return Vector2.Zero;
+        // Get the start progress of the next segment, or 1 if the current segment is the last
+        double segmentEnd = (segmentIndex == segments.Count) ? 1 : segmentStartProgress[segmentIndex];
+
+        --segmentIndex;
+        double segmentStart = segmentStartProgress[segmentIndex];
+
+        // We transform the progress so that it is in relation to the current segment.
+        progress = (float)((progress - segmentStart) / (segmentEnd - segmentStart));
+
+        if (segments[segmentIndex].Shape is not PathShapes.Fan || segmentIndex != segments.Count - 1)
+            return segmentPaths[segmentIndex].PositionAt(progress);
+
+        // Special case for slide fans
+        // When travelling along the slide path, the stars can be at three different positions, one of them will follow the main line, the others will go to adjacent lanes.
+        var startPos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, EndLane - 4);
+        var endPos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, EndLane + starLaneOffset);
+
+        return Vector2.Lerp(startPos, endPos, progress);
     }
 
     public double SegmentStartProgressFor(Index index)
