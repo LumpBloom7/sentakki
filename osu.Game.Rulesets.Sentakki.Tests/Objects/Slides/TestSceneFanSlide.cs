@@ -42,10 +42,9 @@ public partial class TestSceneFanSlide : OsuTestScene
         AddSliderStep("Progress", 0.0f, 1.0f, 0.0f, p =>
         {
             slide.Progress = p;
-            slide.UpdateChevronVisibility();
         });
 
-        AddSliderStep("Rotation", 0.0f, 360f, 22.5f, p =>
+        AddSliderStep("Rotation", 0.0f, 360f, 0.0f, p =>
         {
             slide.Rotation = p;
         });

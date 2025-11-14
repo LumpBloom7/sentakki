@@ -25,20 +25,18 @@ public partial class SlideChevron : PoolableDrawable
     public bool Glow
     {
         get => chevron.Glow;
-        set => chevron.Glow = value;
-    }
-
-    public float ShadowRadius
-    {
-        get => chevron.ShadowRadius;
-        set => chevron.ShadowRadius = value;
+        set
+        {
+            chevron.Glow = value;
+            chevron.ShadowRadius = value ? 15 : 7.5f;
+        }
     }
 
     public SlideChevron()
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        Size = new Vector2(65, 45);
+        Size = new Vector2(50, 30);
     }
 
     [BackgroundDependencyLoader]
@@ -48,9 +46,7 @@ public partial class SlideChevron : PoolableDrawable
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            RelativeSizeAxes = Axes.Both,
-            ShadowRadius = 7.5f,
-            Thickness = 15f
+            RelativeSizeAxes = Axes.Both
         });
     }
 

@@ -62,7 +62,6 @@ public abstract partial class TestSceneSlide : OsuTestScene
         AddSliderStep("Progress", 0.0f, 1.0f, 0.0f, p =>
         {
             slide.Progress = p;
-            slide.UpdateChevronVisibility();
         });
 
         AddToggleStep("Mirrored", b =>

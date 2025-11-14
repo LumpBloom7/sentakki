@@ -6,8 +6,8 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Primitives;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
@@ -97,8 +97,8 @@ public partial class SlideVisual : CompositeDrawable
     [Resolved]
     private DrawablePool<SlideChevron>? chevronPool { get; set; }
 
-    [Resolved(canBeNull: true)]
-    private DrawableHitObject? drawableHitObject { get; set; }
+    [Resolved]
+    private DrawableSentakkiHitObject? drawableHitObject { get; set; }
 
     private Container<SlideChevron> chevrons = null!;
 
@@ -124,7 +124,7 @@ public partial class SlideVisual : CompositeDrawable
             return;
 
         // Create regular slide chevrons if needed
-        tryCreateRegularChevrons();
+        createRegularChevrons();
 
         // Create fan slide chevrons if needed
         tryCreateFanChevrons();
@@ -133,88 +133,75 @@ public partial class SlideVisual : CompositeDrawable
     }
 
     private const int chevrons_per_eith = 9;
-    private const double ring_radius = 297;
+    private const double ring_radius = SentakkiPlayfield.INTERSECTDISTANCE;
     private const double chevrons_per_distance = chevrons_per_eith * 8 / (2 * Math.PI * ring_radius);
     private const double endpoint_distance = 30; // margin for each end
 
     private static int chevronsInContinuousPath(SliderPath path)
     {
-        return (int)Math.Ceiling((path.Distance - 2 * endpoint_distance) * chevrons_per_distance);
+        return (int)Math.Ceiling((path.CalculatedDistance - 2 * endpoint_distance) * chevrons_per_distance);
     }
 
-    private void tryCreateRegularChevrons()
+    private void createRegularChevrons()
     {
         Debug.Assert(chevronPool is not null);
         Debug.Assert(path is not null);
 
-        double runningDistance = 0;
-
-        int regularSegments = path.SegmentPaths.Count;
-
-        if (regularSegments == 0)
-            return;
-
-        if (path.Segments[^1].Shape is PathShapes.Fan)
-            regularSegments -= 1;
-
-        for (int i = 0; i < regularSegments; ++i)
+        for (int i = 0; i < path.Segments.Count; ++i)
         {
-            var segment = path.SegmentPaths[i];
+            var segment = path.Segments[i];
 
-            int chevronCount = chevronsInContinuousPath(segment);
-            double totalDistance = segment.Distance;
-            double safeDistance = totalDistance - endpoint_distance * 2;
+            // We don't handle fan slides here
+            if (i == path.Segments.Count - 1 && segment.Shape is PathShapes.Fan)
+                return;
 
-            var previousPosition = segment.PositionAt(0);
+            var segmentPath = path.SegmentPaths[i];
+            double segmentStartProgress = path.SegmentStartProgressFor(i);
+
+            // First we get the number of chevrons that is part of this segment
+            int nChevrons = chevronsInContinuousPath(segmentPath);
+
+            // Get the origin point of the segment, this is used to calculate the rotation of future chevrons
+            Vector2 previousPosition = segmentPath.PositionAt(0);
+
+            double margin = endpoint_distance / segmentPath.CalculatedDistance;
+            double spacing = (1 - 2 * margin) / (nChevrons - 1);
+
+            double segmentRatio = segmentPath.CalculatedDistance / path.SlideLength;
+
             SlideChevron? lastChevron = null;
 
-            for (int j = 0; j < chevronCount; j++)
+            for (int j = 0; j < nChevrons; ++j)
             {
-                double progress = (double)j / (chevronCount - 1); // from 0 to 1, both inclusive
-                double distance = progress * safeDistance + endpoint_distance;
-                progress = distance / totalDistance;
-                var position = segment.PositionAt(progress);
-                float angle = previousPosition.AngleTo(position);
+                double segmentProgress = margin + spacing * j;
 
-                var chevron = chevronPool.Get();
-                chevron.Position = position;
+                Vector2 position = segmentPath.PositionAt(segmentProgress);
 
-                chevron.DisappearThreshold = (runningDistance + distance) / path.SlideLength;
-                chevron.Rotation = angle;
-                chevron.Depth = chevrons.Count;
+                float rotation = previousPosition.AngleTo(position);
+                previousPosition = position;
 
-                chevron.Thickness = 13f;
-                chevron.Height = 30;
-                chevron.FanChevron = false;
-                chevron.Width = 50;
-
-                if (((DrawableSentakkiHitObject?)drawableHitObject)?.ExBindable.Value ?? false)
-                {
-                    chevron.ShadowRadius = 7.5f;
-                    chevron.Glow = true;
-                }
-                else
-                {
-                    chevron.ShadowRadius = 15f;
-                    chevron.Glow = false;
-                }
-
-                // If we find that the chevrons are a bit too bunched up, we remove the previous
+                // If there is a sudden change in angle like a right angle, the previous chevron may be not make any attempt to "turn the corner"
+                // In such a case, we simply remove the previous chevron, and introduce a break in the slide path.
                 if (lastChevron is not null)
                 {
-                    float angleDelta = Math.Abs(MathExtensions.AngleDelta(lastChevron.Rotation, chevron.Rotation));
+                    float angleDelta = Math.Abs(MathExtensions.AngleDelta(lastChevron.Rotation, rotation));
 
                     if (angleDelta >= 90)
                         chevrons.Remove(lastChevron, false);
                 }
 
+                // Prepare the chevron visual
+                var chevron = lastChevron = chevronPool.Get();
+                chevron.Position = position;
+                chevron.Rotation = rotation;
+                chevron.DisappearThreshold = segmentStartProgress + segmentProgress * segmentRatio;
+                chevron.Size = new Vector2(50, 30);
+                chevron.FanChevron = false;
+                chevron.Glow = drawableHitObject?.ExBindable.Value ?? false;
+                chevron.Depth = chevrons.Count; // Earlier chevrons should be drawn above later chevrons
+
                 chevrons.Add(chevron);
-                lastChevron = chevron;
-
-                previousPosition = position;
             }
-
-            runningDistance += totalDistance;
         }
     }
 
@@ -223,68 +210,63 @@ public partial class SlideVisual : CompositeDrawable
         Debug.Assert(chevronPool is not null);
         Debug.Assert(path is not null);
 
-        if (path.Segments.Count == 0)
+        if (path.Segments.Count == 0 || path.Segments[^1].Shape is not PathShapes.Fan)
             return;
 
-        if (path.Segments[^1].Shape is not PathShapes.Fan)
-            return;
+        // All fans have 11 chevrons, this is exactly half the number of chevrons used by straight slides
+        const int n_chevrons = 11;
 
-        var fanOrigin = path.SegmentPaths[^1].PositionAt(0);
         double fanStartProgress = path.SegmentStartProgressFor(^1);
 
-        var delta = path.PositionAt(1) - fanOrigin;
-        Vector2 lineStart = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 0);
-        Vector2 middleLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 4);
-        Vector2 middleLineDelta = middleLineEnd - lineStart;
+        Vector2 fanOrigin = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.EndLane - 4);
+        Vector2 middleLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.EndLane);
+        Vector2 leftLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.EndLane - 1);
+        Vector2 rightLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.EndLane + 1);
 
-        for (int i = 0; i < 11; ++i)
+        Vector2 middleVector = middleLineEnd - fanOrigin;
+        Vector2 middleDirection = middleVector.Normalized();
+
+        float margin = (float)endpoint_distance / middleVector.Length;
+        float spacing = (1 - 2 * margin) / (n_chevrons - 1);
+
+        // These are the endpoints of each line, with the margin taken into account
+        var leftVecSafeEnd = fanOrigin + (leftLineEnd - fanOrigin) * (1 - margin);
+        var rightVecSafeEnd = fanOrigin + (rightLineEnd - fanOrigin) * (1 - margin);
+        var middleVecSafeEnd = fanOrigin + middleVector * (1 - margin);
+
+        // The maximum width and height is derived using the largest possible chevron
+        // We add (50,30) to the size because in order to take into account our desired minimum size.
+        float maxW = Vector2.Distance(leftVecSafeEnd, rightVecSafeEnd) + 50;
+        var maxIntersect = Interpolation.ValueAt(0.5, leftVecSafeEnd, rightVecSafeEnd, 0, 1);
+        float maxH = Vector2.Distance(maxIntersect, middleVecSafeEnd) + 30;
+
+        double segmentRatio = (1 - fanStartProgress);
+
+        // All fan chevrons are guaranteed to point the same way
+        float rotation = fanOrigin.AngleTo(middleLineEnd);
+
+        for (int i = 0; i < n_chevrons; ++i)
         {
-            float progress = (i + 2f) / 12f;
+            float segmentProgress = (float)i / n_chevrons;
+            Vector2 position = fanOrigin + middleVector * (margin + i * spacing);
 
-            float scale = progress - 1f / 12f;
-            var middlePosition = lineStart + middleLineDelta * progress;
+            float width = Interpolation.ValueAt(segmentProgress, 50, maxW, 0, 1);
+            float height = Interpolation.ValueAt(segmentProgress, 30, maxH, 0, 1);
 
-            float t = 6.5f + 2.5f * scale;
+            // The position is based on the original bounding box of the chevron,
+            // When we expand the bounding box to make larger chevrons, we apply a positional offset to account for the difference.
+            float yOffset = (height - 30) / 2;
 
-            float chevWidth = MathF.Abs(lineStart.X - middlePosition.X) - t;
-
-            (float sin, float cos) = MathF.SinCos((-135 + 90f) / 180f * MathF.PI);
-
-            Vector2 secondPoint = new Vector2(sin, -cos) * chevWidth;
-            Vector2 one = new Vector2(chevWidth, 0);
-
-            var middle = (one + secondPoint) * 0.5f;
-            float h = (middle - Vector2.Zero).Length + t * 3;
-
-            float w = (secondPoint - one).Length;
-
-            const float safe_space_ratio = 570 / 600f;
-
-            float y = safe_space_ratio * scale;
-
+            // Prepare the chevron visual
             var chevron = chevronPool.Get();
-
-            chevron.Position = fanOrigin + delta * y;
-            chevron.Rotation = chevron.Position.AngleTo(path.PositionAt(1));
-
-            chevron.DisappearThreshold = fanStartProgress + (i + 1) / 11f * (1 - fanStartProgress);
-            chevron.Depth = chevrons.Count;
-
-            chevron.Width = w;
-            chevron.Height = h;
-            chevron.Thickness = t * 2;
+            chevron.Position = position - yOffset * middleDirection;
+            chevron.Rotation = rotation;
+            chevron.Size = new Vector2(width, height);
             chevron.FanChevron = true;
+            chevron.Glow = drawableHitObject?.ExBindable.Value ?? false;
 
-            if (drawableHitObject?.ExBindable.Value ?? false)
-            {
-                chevron.ShadowRadius = 7.5f;
-                chevron.Glow = true;
-            }
-            else
-            {
-                chevron.ShadowRadius = 15f;
-                chevron.Glow = false;
-            }
+            chevron.DisappearThreshold = fanStartProgress + (margin + segmentProgress) * segmentRatio;
+            chevron.Depth = chevrons.Count; // Earlier chevrons should be drawn above later chevrons
 
             chevrons.Add(chevron);
         }

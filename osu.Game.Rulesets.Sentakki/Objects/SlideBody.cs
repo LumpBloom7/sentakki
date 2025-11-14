@@ -55,8 +55,8 @@ public class SlideBody : SentakkiLanedHitObject, IHasDuration
 
     private void createSlideCheckpoints()
     {
-        double progress = 0;
-        double totalDistance = SlideBodyInfo.SlideLength;
+        float progress = 0;
+        float totalDistance = (float)SlideBodyInfo.SlideLength;
 
         double shootTime = StartTime + SlideBodyInfo.HoldDuration;
 
@@ -67,28 +67,29 @@ public class SlideBody : SentakkiLanedHitObject, IHasDuration
 
             bool isFanSegment = segment.Shape is PathShapes.Fan && i == SlideBodyInfo.Segments.Count - 1;
 
-            double segmentDistance = segmentPath.CalculatedDistance;
+            float segmentDistance = (float)segmentPath.CalculatedDistance;
+            float segmentRatio = segmentDistance / totalDistance;
 
             int numberOfCheckpoints = isFanSegment ? 5 : (int)Math.Floor(segmentDistance / 130);
-            double progressDelta = (segmentDistance / totalDistance) / numberOfCheckpoints;
+            float progressDelta = 1f / numberOfCheckpoints;
 
             int nodesToPass = isFanSegment ? 2 : 1;
 
             for (int j = 0; j < numberOfCheckpoints; ++j)
             {
-                progress += progressDelta;
+                progress += progressDelta * segmentRatio;
 
-                List<Vector2> nodePositions = [SlideBodyInfo.PositionAt((float)progress)];
+                List<Vector2> nodePositions = [SlideBodyInfo.PositionAt(progress)];
 
                 if (isFanSegment)
                 {
-                    nodePositions.Add(SlideBodyInfo.PositionAt((float)progress, -1));
-                    nodePositions.Add(SlideBodyInfo.PositionAt((float)progress, 1));
+                    nodePositions.Add(SlideBodyInfo.PositionAt(progress, -1));
+                    nodePositions.Add(SlideBodyInfo.PositionAt(progress, 1));
                 }
 
                 AddNested(new SlideCheckpoint
                 {
-                    Progress = (float)progress,
+                    Progress = progress,
                     StartTime = shootTime + progress * SlideBodyInfo.MovementDuration,
                     NodePositions = nodePositions,
                     NodesToPass = nodesToPass,
