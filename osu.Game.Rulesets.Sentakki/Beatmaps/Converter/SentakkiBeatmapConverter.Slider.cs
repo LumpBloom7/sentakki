@@ -9,6 +9,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 
@@ -80,10 +81,10 @@ public partial class SentakkiBeatmapConverter
             [
                 new SlideBodyInfo
                 {
-                    SlidePathParts = selectedPath,
+                    Segments = selectedPath,
                     Duration = ((IHasDuration)original).Duration,
                     Break = tailBreak,
-                    ShootDelay = shootDelay,
+                    HoldDuration = shootDelay,
                 }
             ],
             Lane = lane.NormalizeLane(),
@@ -95,22 +96,22 @@ public partial class SentakkiBeatmapConverter
         return slide;
     }
 
-    private SlideBodyPart[]? chooseSlidePartFor(HitObject original, bool allowFans, double duration)
+    private IReadOnlyList<SlideSegment>? chooseSlidePartFor(HitObject original, bool allowFans, double duration)
     {
         double velocity = original is IHasSliderVelocity slider ? slider.SliderVelocityMultiplier * beatmap.Difficulty.SliderMultiplier : 1;
         double adjustedDuration = duration * velocity;
 
         var candidates = SlidePaths.VALID_CONVERT_PATHS.AsEnumerable();
         if (!ConversionFlags.HasFlag(ConversionFlags.FanSlides) || !allowFans)
-            candidates = candidates.Where(p => p.SlidePart.Shape != SlidePaths.PathShapes.Fan);
+            candidates = candidates.Where(p => p.Segment.Shape != PathShapes.Fan);
 
         if (!ConversionFlags.HasFlag(ConversionFlags.DisableCompositeSlides))
         {
-            List<SlideBodyPart> parts = [];
+            List<SlideSegment> parts = [];
 
             double durationLeft = duration;
 
-            SlideBodyPart? lastPart = null;
+            SlideSegment? lastPart = null;
 
             double velocityAdjustmentFactor = 1 + 0.5 / velocity;
 
@@ -118,7 +119,7 @@ public partial class SentakkiBeatmapConverter
             {
                 var nextChoices = candidates.Where(p => p.MinDuration * velocityAdjustmentFactor < durationLeft)
                                             .Shuffle(rng)
-                                            .SkipWhile(p => p.SlidePart.Shape == SlidePaths.PathShapes.Circle && !isValidCircleComposition(p.SlidePart, lastPart));
+                                            .SkipWhile(p => p.Segment.Shape == PathShapes.Circle && !isValidCircleComposition(p.Segment, lastPart));
 
                 if (!nextChoices.Any())
                     break;
@@ -126,7 +127,7 @@ public partial class SentakkiBeatmapConverter
                 var chosen = nextChoices.First();
 
                 durationLeft -= chosen.MinDuration * velocityAdjustmentFactor;
-                parts.Add((lastPart = chosen.SlidePart).Value);
+                parts.Add((lastPart = chosen.Segment).Value);
             }
 
             if (parts.Count == 0)
@@ -145,7 +146,7 @@ public partial class SentakkiBeatmapConverter
                           .ProbabilityPick(t => t.Key, rng)
                           .Shuffle(rng)
                           .First()
-                          .SlidePart
+                          .Segment
             ];
         }
 
@@ -158,12 +159,12 @@ public partial class SentakkiBeatmapConverter
         }
     }
 
-    private static bool isValidCircleComposition(SlideBodyPart part, SlideBodyPart? previousPart)
+    private static bool isValidCircleComposition(SlideSegment part, SlideSegment? previousPart)
     {
         if (previousPart is null)
             return true;
 
-        if (previousPart.Value.Shape != SlidePaths.PathShapes.Circle)
+        if (previousPart.Value.Shape != PathShapes.Circle)
             return true;
 
         if (part.Mirrored != previousPart.Value.Mirrored)

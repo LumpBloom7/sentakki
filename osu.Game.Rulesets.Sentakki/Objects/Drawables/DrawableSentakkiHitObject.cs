@@ -10,6 +10,7 @@ using osu.Game.Skinning;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables;
 
+[Cached]
 public abstract partial class DrawableSentakkiHitObject : DrawableHitObject<SentakkiHitObject>
 {
     protected override double InitialLifetimeOffset => AnimationDuration.Value;
