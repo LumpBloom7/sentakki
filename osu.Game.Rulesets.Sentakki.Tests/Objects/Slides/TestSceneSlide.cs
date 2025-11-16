@@ -5,6 +5,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -91,6 +92,7 @@ public abstract partial class TestSceneSlide : OsuTestScene
 
     protected void RefreshSlide()
     {
+        slide.Rotation = startPath.GetRotationForLane() - 22.5f;
         slideBodyInfo.Segments = [new SlideSegment(PathShape, endPath, mirrored)];
         nodes.Clear();
 
