@@ -36,7 +36,7 @@ public partial class SlideVisual : CompositeDrawable
         return Quad.FromRectangle(rect);
     }
 
-    private SlideBodyInfo? path = null!;
+    private SlideBodyInfo? path;
 
     private readonly IBindable<int> pathVersion = new Bindable<int>();
 
@@ -50,9 +50,6 @@ public partial class SlideVisual : CompositeDrawable
 
             if (path is not null)
                 pathVersion.BindTo(path.Version);
-
-            if (LoadState < LoadState.Ready)
-                return;
 
             updateVisuals();
         }
@@ -91,7 +88,8 @@ public partial class SlideVisual : CompositeDrawable
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        AutoSizeAxes = Axes.Both;
+
+        AddInternal(chevrons = new Container<SlideChevron>());
     }
 
     [Resolved]
@@ -100,7 +98,7 @@ public partial class SlideVisual : CompositeDrawable
     [Resolved]
     private DrawableSentakkiHitObject? drawableHitObject { get; set; }
 
-    private Container<SlideChevron> chevrons = null!;
+    private readonly Container<SlideChevron> chevrons;
 
     private readonly BindableBool snakingIn = new BindableBool(true);
 
@@ -108,11 +106,6 @@ public partial class SlideVisual : CompositeDrawable
     private void load(SentakkiRulesetConfigManager? sentakkiConfig)
     {
         sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
-
-        AddRangeInternal([
-            chevrons = []
-        ]);
-
         pathVersion.BindValueChanged(_ => updateVisuals(), true);
     }
 
@@ -123,11 +116,16 @@ public partial class SlideVisual : CompositeDrawable
         if (path is null)
             return;
 
+        // There is a possibility that dependencies aren't injected yet
+        // Defer the update of visuals until `load` is called
+        if (chevronPool is null)
+            return;
+
         // Create regular slide chevrons if needed
         createRegularChevrons();
 
         // Create fan slide chevrons if needed
-        tryCreateFanChevrons();
+        createFanChevrons();
 
         UpdateChevronVisibility();
     }
@@ -205,7 +203,7 @@ public partial class SlideVisual : CompositeDrawable
         }
     }
 
-    private void tryCreateFanChevrons()
+    private void createFanChevrons()
     {
         Debug.Assert(chevronPool is not null);
         Debug.Assert(path is not null);
@@ -236,11 +234,12 @@ public partial class SlideVisual : CompositeDrawable
 
         // The maximum width and height is derived using the largest possible chevron
         // We add (50,30) to the size because in order to take into account our desired minimum size.
-        float maxW = Vector2.Distance(leftVecSafeEnd, rightVecSafeEnd) + 50;
+        // The default thickness of 13 is subtracted from the maxW so that the edges of the fan perfectly point to lane 3 and 5
+        float maxW = Vector2.Distance(leftVecSafeEnd, rightVecSafeEnd) + 50 - 13;
         var maxIntersect = Interpolation.ValueAt(0.5, leftVecSafeEnd, rightVecSafeEnd, 0, 1);
         float maxH = Vector2.Distance(maxIntersect, middleVecSafeEnd) + 30;
 
-        double segmentRatio = (1 - fanStartProgress);
+        double segmentRatio = 1 - fanStartProgress;
 
         // All fan chevrons are guaranteed to point the same way
         float rotation = fanOrigin.AngleTo(middleLineEnd);
@@ -300,8 +299,6 @@ public partial class SlideVisual : CompositeDrawable
     {
         int i;
 
-        // First rehide any chevrons that are part of completed segments
-        // Required because the entry animation will unconditionally fade them back in, and Update() will not change anything post judgement
         for (i = chevrons.Count - 1; i >= 0; --i)
         {
             var chevron = chevrons[i];

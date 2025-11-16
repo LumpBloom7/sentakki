@@ -216,27 +216,25 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         // If any of the checkpoints aren't complete, we consider the slide to be incomplete
         for (int i = 0; i < SlideCheckpoints.Count; ++i)
         {
-            if (!SlideCheckpoints[i].Result.HasResult)
-            {
-                userTriggered = false;
-                break;
-            }
+            if (SlideCheckpoints[i].Result.HasResult) continue;
+
+            userTriggered = false;
+            break;
         }
 
         if (!userTriggered)
         {
-            if (!HitObject.HitWindows.CanBeHit(timeOffset))
-            {
-                // Ensure that all of them have results
-                foreach (var checkpoint in SlideCheckpoints)
-                    checkpoint.ForcefullyMiss();
+            if (HitObject.HitWindows.CanBeHit(timeOffset)) return;
 
-                // Apply a leniency if the player almost completed the slide
-                if (SlideCheckpoints.Count(node => !node.Result.IsHit) <= 2 && SlideCheckpoints.Count > 2)
-                    ApplyResult(hitResult: HitResult.Ok);
-                else
-                    ApplyResult(Result.Judgement.MinResult);
-            }
+            // Ensure that all of them have results
+            foreach (var checkpoint in SlideCheckpoints)
+                checkpoint.ForcefullyMiss();
+
+            // Apply a leniency if the player almost completed the slide
+            if (SlideCheckpoints.Count(node => !node.Result.IsHit) <= 2 && SlideCheckpoints.Count > 2)
+                ApplyResult(hitResult: HitResult.Ok);
+            else
+                ApplyResult(Result.Judgement.MinResult);
 
             return;
         }
