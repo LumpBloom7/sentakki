@@ -21,13 +21,26 @@ public class SlideBodyInfo
     public bool Break;
     public bool Ex;
 
-    // The amount of milliseconds before the star launches
+    /// <summary>
+    /// The amount of milliseconds before the star launches as set by the user.
+    /// </summary>
+    /// <remarks>
+    /// This may not be an appropriate wait duration, and can exceed the duration of the slide. Use <see cref="EffectiveWaitDuration"/> instead for gameplay purposes.
+    /// </remarks>
     public double WaitDuration;
 
     // The total duration of the slide body.
     public double Duration;
 
-    public double MovementDuration => Duration - WaitDuration;
+    /// <summary>
+    /// The amount of milliseconds before the star launches.
+    /// </summary>
+    /// <remarks>
+    /// Unlike <see cref="WaitDuration"/>, this is corrected to fit within the slide's duration. This should be used for gameplay purposes.
+    /// </remarks>
+    public double EffectiveWaitDuration => Math.Clamp(WaitDuration, 0, Duration);
+
+    public double EffectiveMovementDuration => Duration - EffectiveWaitDuration;
 
     private readonly List<SlideSegment> segments = [];
 

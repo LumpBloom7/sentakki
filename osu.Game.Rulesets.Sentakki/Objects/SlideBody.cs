@@ -2,9 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Newtonsoft.Json;
-using osu.Game.Beatmaps;
-using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -90,22 +87,12 @@ public class SlideBody : SentakkiLanedHitObject, IHasDuration
                 AddNested(new SlideCheckpoint
                 {
                     Progress = progress,
-                    StartTime = shootTime + progress * SlideBodyInfo.MovementDuration,
+                    StartTime = shootTime + progress * SlideBodyInfo.EffectiveMovementDuration,
                     NodePositions = nodePositions,
                     NodesToPass = nodesToPass,
                 });
             }
         }
-    }
-
-    [JsonIgnore]
-    public double WaitDuration { get; private set; }
-
-    protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, IBeatmapDifficultyInfo difficulty)
-    {
-        base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
-
-        WaitDuration = Math.Clamp(SlideBodyInfo.WaitDuration, 0, Duration);
     }
 
     protected override HitWindows CreateHitWindows() => new SentakkiSlideHitWindows();

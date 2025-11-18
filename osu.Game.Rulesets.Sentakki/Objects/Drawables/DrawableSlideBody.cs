@@ -7,7 +7,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
@@ -176,11 +175,11 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         base.UpdateStartTimeStateTransforms();
 
         // The primary star is always guaranteed to enter.
-        SlideStars[2].FadeInFromZero(HitObject.WaitDuration).ScaleTo(1.25f, HitObject.WaitDuration);
+        SlideStars[2].FadeInFromZero(slideBodyInfo.EffectiveWaitDuration).ScaleTo(1.25f, slideBodyInfo.EffectiveWaitDuration);
 
         // This indirectly controls the animation of the stars following the path
-        using (BeginDelayedSequence(HitObject.WaitDuration))
-            this.TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.WaitDuration);
+        using (BeginDelayedSequence(slideBodyInfo.EffectiveWaitDuration))
+            this.TransformTo(nameof(StarProgress), 1f, slideBodyInfo.EffectiveMovementDuration);
 
         if (slideBodyInfo.Segments[^1].Shape is not PathShapes.Fan) return;
 
@@ -194,12 +193,12 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         // If the only segment is a fan, we fade the extra stars in the same way as the main star.
         if (slideBodyInfo.Segments.Count == 1)
         {
-            SlideStars[0].FadeInFromZero(HitObject.WaitDuration).ScaleTo(1.25f, HitObject.WaitDuration);
-            SlideStars[1].FadeInFromZero(HitObject.WaitDuration).ScaleTo(1.25f, HitObject.WaitDuration);
+            SlideStars[0].FadeInFromZero(slideBodyInfo.EffectiveWaitDuration).ScaleTo(1.25f, slideBodyInfo.EffectiveWaitDuration);
+            SlideStars[1].FadeInFromZero(slideBodyInfo.EffectiveWaitDuration).ScaleTo(1.25f, slideBodyInfo.EffectiveWaitDuration);
         }
         else // Otherwise, the suddenly pop-in.
         {
-            using (BeginDelayedSequence(HitObject.WaitDuration + slideBodyInfo.MovementDuration * slideBodyInfo.SegmentStartProgressFor(^1)))
+            using (BeginDelayedSequence(slideBodyInfo.EffectiveWaitDuration + slideBodyInfo.EffectiveMovementDuration * slideBodyInfo.SegmentStartProgressFor(^1)))
             {
                 SlideStars[0].FadeIn().ScaleTo(1.25f);
                 SlideStars[1].FadeIn().ScaleTo(1.25f);
