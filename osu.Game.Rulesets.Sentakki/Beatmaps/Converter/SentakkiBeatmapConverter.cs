@@ -105,7 +105,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
                     {
                         var slideBodyInfo = slide.SlideInfoList[0];
                         if (slideBodyInfo.Segments[^1].Shape is PathShapes.Fan)
-                            fanStartTime = slide.StartTime + slideBodyInfo.WaitDuration + slide.Duration * slideBodyInfo.SegmentStartProgressFor(^1);
+                            fanStartTime = slide.StartTime + slideBodyInfo.EffectiveWaitDuration + slideBodyInfo.EffectiveMovementDuration * slideBodyInfo.SegmentStartProgressFor(^1);
                     }
 
                     if (allClaps && fanStartTime == double.MaxValue)
@@ -222,7 +222,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
             if (isOverlappingStart)
                 return;
 
-            currentLane = slide.SlideInfoList[0].RelativeEndLane;
+            currentLane += slide.SlideInfoList[0].RelativeEndLane;
         }
         else
             currentLane += streamOffset;

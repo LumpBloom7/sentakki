@@ -33,7 +33,7 @@ public static class SlidePaths
                 {
                     var tmp = new SlideSegment(i, j, k == 1);
                     if (CheckSlideValidity(tmp, true))
-                        VALID_CONVERT_PATHS.Add((tmp, CreateSlidePath([tmp]).Sum(p => p.CalculatedDistance) / 10));
+                        VALID_CONVERT_PATHS.Add((tmp, CreateSlidePath([tmp]).Sum(p => p.CalculatedDistance) / 5));
                 }
             }
         }
