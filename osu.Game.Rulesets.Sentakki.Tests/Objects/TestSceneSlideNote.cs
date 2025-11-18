@@ -42,13 +42,6 @@ public partial class TestSceneSlideNote : OsuTestScene
     public TestSceneSlideNote()
     {
         base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
-        /*         Add(new SentakkiRing
-                {
-                    RelativeSizeAxes = Axes.None,
-                    Size = new Vector2(SentakkiPlayfield.RINGSIZE),
-                    Rotation = -22.5f
-                });
-     */
         Add(chevronPool = new DrawablePool<SlideChevron>(62));
     }
 
