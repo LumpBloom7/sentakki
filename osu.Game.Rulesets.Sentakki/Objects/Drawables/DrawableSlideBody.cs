@@ -176,11 +176,11 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         base.UpdateStartTimeStateTransforms();
 
         // The primary star is always guaranteed to enter.
-        SlideStars[2].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
+        SlideStars[2].FadeInFromZero(HitObject.WaitDuration).ScaleTo(1.25f, HitObject.WaitDuration);
 
         // This indirectly controls the animation of the stars following the path
-        using (BeginDelayedSequence(HitObject.ShootDelay))
-            this.TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
+        using (BeginDelayedSequence(HitObject.WaitDuration))
+            this.TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.WaitDuration);
 
         if (slideBodyInfo.Segments[^1].Shape is not PathShapes.Fan) return;
 
@@ -194,12 +194,12 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         // If the only segment is a fan, we fade the extra stars in the same way as the main star.
         if (slideBodyInfo.Segments.Count == 1)
         {
-            SlideStars[0].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
-            SlideStars[1].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
+            SlideStars[0].FadeInFromZero(HitObject.WaitDuration).ScaleTo(1.25f, HitObject.WaitDuration);
+            SlideStars[1].FadeInFromZero(HitObject.WaitDuration).ScaleTo(1.25f, HitObject.WaitDuration);
         }
         else // Otherwise, the suddenly pop-in.
         {
-            using (BeginDelayedSequence(HitObject.ShootDelay + slideBodyInfo.MovementDuration * slideBodyInfo.SegmentStartProgressFor(^1)))
+            using (BeginDelayedSequence(HitObject.WaitDuration + slideBodyInfo.MovementDuration * slideBodyInfo.SegmentStartProgressFor(^1)))
             {
                 SlideStars[0].FadeIn().ScaleTo(1.25f);
                 SlideStars[1].FadeIn().ScaleTo(1.25f);

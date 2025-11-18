@@ -58,7 +58,7 @@ public class SlideBody : SentakkiLanedHitObject, IHasDuration
         float progress = 0;
         float totalDistance = (float)SlideBodyInfo.SlideLength;
 
-        double shootTime = StartTime + SlideBodyInfo.HoldDuration;
+        double shootTime = StartTime + SlideBodyInfo.WaitDuration;
 
         for (int i = 0; i < SlideBodyInfo.Segments.Count; ++i)
         {
@@ -99,13 +99,13 @@ public class SlideBody : SentakkiLanedHitObject, IHasDuration
     }
 
     [JsonIgnore]
-    public double ShootDelay { get; private set; }
+    public double WaitDuration { get; private set; }
 
     protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, IBeatmapDifficultyInfo difficulty)
     {
         base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
 
-        ShootDelay = Math.Clamp(SlideBodyInfo.HoldDuration, 0, Duration);
+        WaitDuration = Math.Clamp(SlideBodyInfo.WaitDuration, 0, Duration);
     }
 
     protected override HitWindows CreateHitWindows() => new SentakkiSlideHitWindows();

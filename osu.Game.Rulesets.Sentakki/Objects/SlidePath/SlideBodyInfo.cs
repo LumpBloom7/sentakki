@@ -22,12 +22,12 @@ public class SlideBodyInfo
     public bool Ex;
 
     // The amount of milliseconds before the star launches
-    public double HoldDuration;
+    public double WaitDuration;
 
     // The total duration of the slide body.
     public double Duration;
 
-    public double MovementDuration => Duration - HoldDuration;
+    public double MovementDuration => Duration - WaitDuration;
 
     private readonly List<SlideSegment> segments = [];
 

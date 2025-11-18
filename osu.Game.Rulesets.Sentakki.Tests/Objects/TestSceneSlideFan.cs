@@ -74,7 +74,7 @@ public partial class TestSceneSlideFan : OsuTestScene
                 new SlideBodyInfo
                 {
                     Segments = [new SlideSegment(PathShapes.Fan, 4, false)],
-                    HoldDuration = 1000,
+                    WaitDuration = 1000,
                     Duration = duration,
                     Break = bodyBreak,
                     Ex = bodyEx

@@ -36,7 +36,7 @@ public class SentakkiBeatmapProcessor : BeatmapProcessor
         Color4 breakColor = Color4.OrangeRed;
 
         var hitObjectGroups = getColorableHitObject(Beatmap.HitObjects)
-            .GroupBy(h => new { _ = h is SlideBody, Time = Math.Round(h.StartTime + (h is SlideBody s ? s.ShootDelay : 0)) });
+            .GroupBy(h => new { _ = h is SlideBody, Time = Math.Round(h.StartTime + (h is SlideBody s ? s.WaitDuration : 0)) });
 
         foreach (var group in hitObjectGroups)
         {

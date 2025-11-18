@@ -313,7 +313,7 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
                     Segments = [selectedPath.Value],
                     Duration = ((IHasDuration)original).Duration,
                     Break = hasBreakTail,
-                    HoldDuration = 0.5f * Beatmap.ControlPointInfo.TimingPointAt(original.StartTime).BeatLength,
+                    WaitDuration = 0.5f * Beatmap.ControlPointInfo.TimingPointAt(original.StartTime).BeatLength,
                 }
             ],
             Lane = noteLane,

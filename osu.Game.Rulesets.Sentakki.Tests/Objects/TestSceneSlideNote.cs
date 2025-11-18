@@ -77,7 +77,7 @@ public partial class TestSceneSlideNote : OsuTestScene
             [
                 new SlideBodyInfo
                 {
-                    HoldDuration = 100,
+                    WaitDuration = 100,
                     Segments = [new SlideSegment(PathShapes.Circle, 0, false)],
                     Duration = 1000,
                     Break = bodyBreak,
@@ -86,7 +86,7 @@ public partial class TestSceneSlideNote : OsuTestScene
 
                 new SlideBodyInfo
                 {
-                    HoldDuration = 100,
+                    WaitDuration = 100,
                     Segments = [new SlideSegment(PathShapes.Straight, 4, false)],
                     Duration = 1500,
                     Break = bodyBreak,
@@ -95,7 +95,7 @@ public partial class TestSceneSlideNote : OsuTestScene
 
                 new SlideBodyInfo
                 {
-                    HoldDuration = 100,
+                    WaitDuration = 100,
                     Segments = [new SlideSegment(PathShapes.Cup, 2, false)],
                     Duration = 2000,
                     Break = bodyBreak,
@@ -151,7 +151,7 @@ public partial class TestSceneSlideNote : OsuTestScene
                         new SlideSegment(PathShapes.Cup, 2, false),
                         new SlideSegment(PathShapes.Cup, 2, false)
                     ],
-                    HoldDuration = 100,
+                    WaitDuration = 100,
                     Duration = duration,
                     Break = bodyBreak,
                     Ex = bodyEx
@@ -207,7 +207,7 @@ public partial class TestSceneSlideNote : OsuTestScene
                         new SlideSegment(PathShapes.Cup, 2, false),
                         new SlideSegment(PathShapes.Fan, 4, false)
                     ],
-                    HoldDuration = 100,
+                    WaitDuration = 100,
                     Duration = duration,
                     Break = bodyBreak,
                     Ex = bodyEx
