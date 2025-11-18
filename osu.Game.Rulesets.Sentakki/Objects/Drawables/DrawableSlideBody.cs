@@ -196,7 +196,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
             SlideStars[0].FadeInFromZero(slideBodyInfo.EffectiveWaitDuration).ScaleTo(1.25f, slideBodyInfo.EffectiveWaitDuration);
             SlideStars[1].FadeInFromZero(slideBodyInfo.EffectiveWaitDuration).ScaleTo(1.25f, slideBodyInfo.EffectiveWaitDuration);
         }
-        else // Otherwise, the suddenly pop-in.
+        else // Otherwise, they suddenly pop-in.
         {
             using (BeginDelayedSequence(slideBodyInfo.EffectiveWaitDuration + slideBodyInfo.EffectiveMovementDuration * slideBodyInfo.SegmentStartProgressFor(^1)))
             {
