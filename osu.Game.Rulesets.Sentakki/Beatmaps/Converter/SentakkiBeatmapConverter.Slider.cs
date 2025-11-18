@@ -170,7 +170,7 @@ public partial class SentakkiBeatmapConverter
         if (part.Mirrored != previousPart.Value.Mirrored)
             return true;
 
-        return previousPart.Value.EndOffset == 0;
+        return previousPart.Value.RelativeEndLane == 0;
     }
 
     // This checks whether a slider can be completed without moving the mouse at all.

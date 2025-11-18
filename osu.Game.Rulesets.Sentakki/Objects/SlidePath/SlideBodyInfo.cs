@@ -44,8 +44,13 @@ public class SlideBodyInfo
 
     private readonly List<SlideSegment> segments = [];
 
+    /// <summary>
+    /// The end lane of the slide body is relative to the lane of the slide itself.
+    /// Essentially, it means that slide body info is built with the assumption that they start from lane 0.
+    /// Changing the lane of the parenting slide object will simply apply a rotation, and the slide body info doesn't need to be rebuilt.
+    /// </summary>
     [JsonIgnore]
-    public int EndLane { get; private set; }
+    public int RelativeEndLane { get; private set; }
 
     public IReadOnlyList<SlideSegment> Segments
     {
@@ -58,7 +63,7 @@ public class SlideBodyInfo
             segments.Clear();
             segments.AddRange(value);
 
-            EndLane = value.Sum(s => s.EndOffset);
+            RelativeEndLane = value.Sum(s => s.RelativeEndLane);
             invalidatePath();
         }
     }
@@ -159,8 +164,8 @@ public class SlideBodyInfo
 
         // Special case for slide fans
         // When travelling along the slide path, the stars can be at three different positions, one of them will follow the main line, the others will go to adjacent lanes.
-        var startPos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, EndLane - 4);
-        var endPos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, EndLane + starLaneOffset);
+        var startPos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, RelativeEndLane - 4);
+        var endPos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, RelativeEndLane + starLaneOffset);
 
         return Vector2.Lerp(startPos, endPos, progress);
     }

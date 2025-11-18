@@ -216,10 +216,10 @@ public partial class SlideVisual : CompositeDrawable
 
         double fanStartProgress = path.SegmentStartProgressFor(^1);
 
-        Vector2 fanOrigin = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.EndLane - 4);
-        Vector2 middleLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.EndLane);
-        Vector2 leftLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.EndLane - 1);
-        Vector2 rightLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.EndLane + 1);
+        Vector2 fanOrigin = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.RelativeEndLane - 4);
+        Vector2 middleLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.RelativeEndLane);
+        Vector2 leftLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.RelativeEndLane - 1);
+        Vector2 rightLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.RelativeEndLane + 1);
 
         Vector2 middleVector = middleLineEnd - fanOrigin;
         Vector2 middleDirection = middleVector.Normalized();

@@ -222,7 +222,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
             if (isOverlappingStart)
                 return;
 
-            currentLane = slide.SlideInfoList[0].EndLane;
+            currentLane = slide.SlideInfoList[0].RelativeEndLane;
         }
         else
             currentLane += streamOffset;

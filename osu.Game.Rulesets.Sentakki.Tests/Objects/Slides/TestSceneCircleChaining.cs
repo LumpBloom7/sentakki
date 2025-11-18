@@ -74,8 +74,8 @@ public partial class TestSceneCircleChaining : OsuTestScene
     {
         slideBodyInfo.Segments =
         [
-            new SlideSegment(PathShapes.Circle, endOffset: 4, false),
-            new SlideSegment(PathShapes.Circle, endOffset: 4, mirrored),
+            new SlideSegment(PathShapes.Circle, relativeEndLane: 4, false),
+            new SlideSegment(PathShapes.Circle, relativeEndLane: 4, mirrored),
         ];
         nodes.Clear();
 

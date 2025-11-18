@@ -85,7 +85,7 @@ public class Slide : SentakkiLanedHitObject, IHasDuration
             SlideBody body;
             AddNested(body = new SlideBody(slideInfo)
             {
-                Lane = slideInfo.EndLane + Lane,
+                Lane = slideInfo.RelativeEndLane + Lane,
                 StartTime = StartTime,
                 Samples = Samples,
             });
