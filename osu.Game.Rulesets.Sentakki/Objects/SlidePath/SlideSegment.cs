@@ -2,7 +2,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 
 public record struct SlideSegment
 {
-    public PathShapes Shape { get; set; }
+    public PathShape Shape { get; set; }
 
     /// <summary>
     /// The end lane of the slide segment is relative to the segment itself
@@ -12,7 +12,7 @@ public record struct SlideSegment
 
     public bool Mirrored { get; set; }
 
-    public SlideSegment(PathShapes shape, int relativeEndLane, bool mirrored)
+    public SlideSegment(PathShape shape, int relativeEndLane, bool mirrored)
     {
         Shape = shape;
         RelativeEndLane = relativeEndLane;

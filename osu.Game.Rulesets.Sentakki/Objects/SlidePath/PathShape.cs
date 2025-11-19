@@ -1,6 +1,6 @@
 namespace osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 
-public enum PathShapes
+public enum PathShape
 {
     Straight,
     Circle,

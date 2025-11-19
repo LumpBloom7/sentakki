@@ -53,7 +53,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
             SlideStars[2].Position = slideBodyInfo.PositionAt(value);
             SlideStars[2].Rotation = slideBodyInfo.PositionAt(value - .01f).AngleTo(SlideStars[2].Position);
 
-            if (slideBodyInfo.Segments[^1].Shape is not PathShapes.Fan) return;
+            if (slideBodyInfo.Segments[^1].Shape is not PathShape.Fan) return;
 
             double fanStartProgress = slideBodyInfo.SegmentStartProgressFor(^1);
 
@@ -181,7 +181,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         using (BeginDelayedSequence(slideBodyInfo.EffectiveWaitDuration))
             this.TransformTo(nameof(StarProgress), 1f, slideBodyInfo.EffectiveMovementDuration);
 
-        if (slideBodyInfo.Segments[^1].Shape is not PathShapes.Fan) return;
+        if (slideBodyInfo.Segments[^1].Shape is not PathShape.Fan) return;
 
         int fanStartLane = slideBodyInfo.RelativeEndLane - 4;
         float fanStartLaneAngle = fanStartLane.GetRotationForLane();

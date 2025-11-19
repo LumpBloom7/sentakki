@@ -145,7 +145,7 @@ public partial class SlideVisual : CompositeDrawable
             var segment = path.Segments[i];
 
             // We don't handle fan slides here
-            if (i == path.Segments.Count - 1 && segment.Shape is PathShapes.Fan)
+            if (i == path.Segments.Count - 1 && segment.Shape is PathShape.Fan)
                 return;
 
             var segmentPath = path.SegmentPaths[i];
@@ -203,7 +203,7 @@ public partial class SlideVisual : CompositeDrawable
         Debug.Assert(chevronPool is not null);
         Debug.Assert(path is not null);
 
-        if (path.Segments.Count == 0 || path.Segments[^1].Shape is not PathShapes.Fan)
+        if (path.Segments.Count == 0 || path.Segments[^1].Shape is not PathShape.Fan)
             return;
 
         // All fans have 11 chevrons, this is exactly half the number of chevrons used by straight slides

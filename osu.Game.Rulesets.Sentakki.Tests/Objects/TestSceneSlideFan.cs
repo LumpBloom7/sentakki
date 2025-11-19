@@ -73,7 +73,7 @@ public partial class TestSceneSlideFan : OsuTestScene
             [
                 new SlideBodyInfo
                 {
-                    Segments = [new SlideSegment(PathShapes.Fan, 4, false)],
+                    Segments = [new SlideSegment(PathShape.Fan, 4, false)],
                     WaitDuration = 1000,
                     Duration = duration,
                     Break = bodyBreak,

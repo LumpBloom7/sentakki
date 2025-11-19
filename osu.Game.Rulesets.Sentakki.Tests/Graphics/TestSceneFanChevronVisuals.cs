@@ -43,7 +43,7 @@ public partial class TestSceneFanChevronVisual : OsuGridTestScene
         {
             Path = new SlideBodyInfo
             {
-                Segments = [new SlideSegment(PathShapes.Fan, 4, false)]
+                Segments = [new SlideSegment(PathShape.Fan, 4, false)]
             }
         });
         Cell(0).Add(new SentakkiRing

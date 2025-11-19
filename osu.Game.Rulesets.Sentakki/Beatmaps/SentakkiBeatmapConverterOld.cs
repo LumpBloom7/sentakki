@@ -218,7 +218,7 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
         // If there is a SlideFan, we always prioritize that, and ignore the rest
         foreach (var slide in slides)
         {
-            if (slide.SlideInfoList[0].Segments[0].Shape != PathShapes.Fan) continue;
+            if (slide.SlideInfoList[0].Segments[0].Shape != PathShape.Fan) continue;
 
             yield return slide;
 
@@ -329,7 +329,7 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
 
         var candidates = SlidePaths.VALID_CONVERT_PATHS;
         if (!ConversionFlags.HasFlag(ConversionFlags.FanSlides))
-            candidates = [.. candidates.Where(p => p.Segment.Shape != PathShapes.Fan)];
+            candidates = [.. candidates.Where(p => p.Segment.Shape != PathShape.Fan)];
 
         var candidateParts = candidates.Where(t => duration >= t.MinDuration && duration <= t.MinDuration * 10)
                                        .Select(t => t.Segment)

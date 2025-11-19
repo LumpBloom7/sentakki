@@ -71,7 +71,7 @@ public partial class TestSceneSlideNote : OsuTestScene
                 new SlideBodyInfo
                 {
                     WaitDuration = 100,
-                    Segments = [new SlideSegment(PathShapes.Circle, 0, false)],
+                    Segments = [new SlideSegment(PathShape.Circle, 0, false)],
                     Duration = 1000,
                     Break = bodyBreak,
                     Ex = bodyEx
@@ -80,7 +80,7 @@ public partial class TestSceneSlideNote : OsuTestScene
                 new SlideBodyInfo
                 {
                     WaitDuration = 100,
-                    Segments = [new SlideSegment(PathShapes.Straight, 4, false)],
+                    Segments = [new SlideSegment(PathShape.Straight, 4, false)],
                     Duration = 1500,
                     Break = bodyBreak,
                     Ex = bodyEx
@@ -89,7 +89,7 @@ public partial class TestSceneSlideNote : OsuTestScene
                 new SlideBodyInfo
                 {
                     WaitDuration = 100,
-                    Segments = [new SlideSegment(PathShapes.Cup, 2, false)],
+                    Segments = [new SlideSegment(PathShape.Cup, 2, false)],
                     Duration = 2000,
                     Break = bodyBreak,
                     Ex = bodyEx
@@ -139,10 +139,10 @@ public partial class TestSceneSlideNote : OsuTestScene
                 {
                     Segments =
                     [
-                        new SlideSegment(PathShapes.Cup, 2, false),
-                        new SlideSegment(PathShapes.Cup, 2, false),
-                        new SlideSegment(PathShapes.Cup, 2, false),
-                        new SlideSegment(PathShapes.Cup, 2, false)
+                        new SlideSegment(PathShape.Cup, 2, false),
+                        new SlideSegment(PathShape.Cup, 2, false),
+                        new SlideSegment(PathShape.Cup, 2, false),
+                        new SlideSegment(PathShape.Cup, 2, false)
                     ],
                     WaitDuration = 100,
                     Duration = duration,
@@ -194,11 +194,11 @@ public partial class TestSceneSlideNote : OsuTestScene
                 {
                     Segments =
                     [
-                        new SlideSegment(PathShapes.Cup, 2, false),
-                        new SlideSegment(PathShapes.Cup, 2, false),
-                        new SlideSegment(PathShapes.Cup, 2, false),
-                        new SlideSegment(PathShapes.Cup, 2, false),
-                        new SlideSegment(PathShapes.Fan, 4, false)
+                        new SlideSegment(PathShape.Cup, 2, false),
+                        new SlideSegment(PathShape.Cup, 2, false),
+                        new SlideSegment(PathShape.Cup, 2, false),
+                        new SlideSegment(PathShape.Cup, 2, false),
+                        new SlideSegment(PathShape.Fan, 4, false)
                     ],
                     WaitDuration = 100,
                     Duration = duration,

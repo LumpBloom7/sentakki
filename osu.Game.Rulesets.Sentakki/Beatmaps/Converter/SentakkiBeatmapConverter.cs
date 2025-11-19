@@ -104,7 +104,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
                     if (result is Slide slide)
                     {
                         var slideBodyInfo = slide.SlideInfoList[0];
-                        if (slideBodyInfo.Segments[^1].Shape is PathShapes.Fan)
+                        if (slideBodyInfo.Segments[^1].Shape is PathShape.Fan)
                             fanStartTime = slide.StartTime + slideBodyInfo.EffectiveWaitDuration + slideBodyInfo.EffectiveMovementDuration * slideBodyInfo.SegmentStartProgressFor(^1);
                     }
 

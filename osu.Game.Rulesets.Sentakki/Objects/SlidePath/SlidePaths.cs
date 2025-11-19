@@ -17,14 +17,14 @@ public static class SlidePaths
     {
         VALID_CONVERT_PATHS = [];
 
-        for (PathShapes i = PathShapes.Straight; i <= PathShapes.Fan; ++i)
+        for (PathShape i = PathShape.Straight; i <= PathShape.Fan; ++i)
         {
             for (int j = 0; j < 8; ++j)
             {
                 // Technically legal depending on the situation, but let's not allow converts to use them.
-                if (i == PathShapes.Straight && j is <= 1 or >= 7)
+                if (i == PathShape.Straight && j is <= 1 or >= 7)
                     continue;
-                if (i == PathShapes.Circle && j is 7 or 1)
+                if (i == PathShape.Circle && j is 7 or 1)
                     continue;
 
                 for (int k = 0; k < 2; ++k)
@@ -50,24 +50,24 @@ public static class SlidePaths
         {
             // Straights always have redundant mirrors
             // Additionally, end offset being 1 or 7 can't be used by conversion
-            case PathShapes.Straight:
+            case PathShape.Straight:
                 return normalizedEnd != 0 && (!forConverterUse || (!mirrored && normalizedEnd is not (1 or 7)));
 
             // Circular slide end offset being 1 or 7 can't be used by conversion
-            case PathShapes.Circle:
+            case PathShape.Circle:
                 return !forConverterUse || normalizedEnd is not (1 or 7);
 
-            case PathShapes.V:
+            case PathShape.V:
                 return (!mirrored || !forConverterUse) && normalizedEnd != 0;
 
-            case PathShapes.U:
-            case PathShapes.Cup:
+            case PathShape.U:
+            case PathShape.Cup:
                 return true;
 
-            case PathShapes.Fan:
+            case PathShape.Fan:
                 return (!mirrored || !forConverterUse) && normalizedEnd == 4;
 
-            case PathShapes.Thunder:
+            case PathShape.Thunder:
                 return normalizedEnd == 4;
         }
 
@@ -78,13 +78,13 @@ public static class SlidePaths
     {
         return segment.Shape switch
         {
-            PathShapes.Straight => generateStraightPattern(startLane, segment.RelativeEndLane),
-            PathShapes.Fan => generateStraightPattern(startLane, 4),
-            PathShapes.Circle => generateCirclePattern(startLane, segment.RelativeEndLane, segment.Mirrored ? RotationDirection.Counterclockwise : RotationDirection.Clockwise),
-            PathShapes.V => generateVPattern(startLane, segment.RelativeEndLane),
-            PathShapes.U => generateUPattern(startLane, segment.RelativeEndLane, segment.Mirrored),
-            PathShapes.Cup => generateCupPattern(startLane, segment.RelativeEndLane, segment.Mirrored),
-            PathShapes.Thunder => generateThunderPattern(startLane, segment.Mirrored),
+            PathShape.Straight => generateStraightPattern(startLane, segment.RelativeEndLane),
+            PathShape.Fan => generateStraightPattern(startLane, 4),
+            PathShape.Circle => generateCirclePattern(startLane, segment.RelativeEndLane, segment.Mirrored ? RotationDirection.Counterclockwise : RotationDirection.Clockwise),
+            PathShape.V => generateVPattern(startLane, segment.RelativeEndLane),
+            PathShape.U => generateUPattern(startLane, segment.RelativeEndLane, segment.Mirrored),
+            PathShape.Cup => generateCupPattern(startLane, segment.RelativeEndLane, segment.Mirrored),
+            PathShape.Thunder => generateThunderPattern(startLane, segment.Mirrored),
             _ => throw new ArgumentOutOfRangeException(nameof(segment.Shape))
         };
     }

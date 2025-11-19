@@ -62,7 +62,7 @@ public class SlideBody : SentakkiLanedHitObject, IHasDuration
             var segment = SlideBodyInfo.Segments[i];
             var segmentPath = SlideBodyInfo.SegmentPaths[i];
 
-            bool isFanSegment = segment.Shape is PathShapes.Fan && i == SlideBodyInfo.Segments.Count - 1;
+            bool isFanSegment = segment.Shape is PathShape.Fan && i == SlideBodyInfo.Segments.Count - 1;
 
             float segmentDistance = (float)segmentPath.CalculatedDistance;
             float segmentRatio = segmentDistance / totalDistance;

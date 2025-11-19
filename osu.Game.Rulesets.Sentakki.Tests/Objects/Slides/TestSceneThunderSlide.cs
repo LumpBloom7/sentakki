@@ -4,5 +4,5 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides;
 
 public partial class TestSceneThunderSlide : TestSceneSlide
 {
-    protected override PathShapes PathShape => PathShapes.Thunder;
+    protected override PathShape PathShape => PathShape.Thunder;
 }

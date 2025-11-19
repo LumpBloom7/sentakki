@@ -37,7 +37,7 @@ public partial class TestSceneInvalidSlideProperties : OsuTestScene
     {
         var slideBody = new SlideBodyInfo
         {
-            Segments = [new SlideSegment(PathShapes.Straight, 4, false)],
+            Segments = [new SlideSegment(PathShape.Straight, 4, false)],
             WaitDuration = -500,
             Duration = 1000
         };
@@ -65,7 +65,7 @@ public partial class TestSceneInvalidSlideProperties : OsuTestScene
     {
         var slideBody = new SlideBodyInfo
         {
-            Segments = [new SlideSegment(PathShapes.Straight, 4, false)],
+            Segments = [new SlideSegment(PathShape.Straight, 4, false)],
             WaitDuration = 5000,
             Duration = 1000
         };

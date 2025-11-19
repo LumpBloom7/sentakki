@@ -103,7 +103,7 @@ public partial class SentakkiBeatmapConverter
 
         var candidates = SlidePaths.VALID_CONVERT_PATHS.AsEnumerable();
         if (!ConversionFlags.HasFlag(ConversionFlags.FanSlides) || !allowFans)
-            candidates = candidates.Where(p => p.Segment.Shape != PathShapes.Fan);
+            candidates = candidates.Where(p => p.Segment.Shape != PathShape.Fan);
 
         if (!ConversionFlags.HasFlag(ConversionFlags.DisableCompositeSlides))
         {
@@ -119,7 +119,7 @@ public partial class SentakkiBeatmapConverter
             {
                 var nextChoices = candidates.Where(p => p.MinDuration * velocityAdjustmentFactor < durationLeft)
                                             .Shuffle(rng)
-                                            .SkipWhile(p => p.Segment.Shape == PathShapes.Circle && !isValidCircleComposition(p.Segment, lastPart));
+                                            .SkipWhile(p => p.Segment.Shape == PathShape.Circle && !isValidCircleComposition(p.Segment, lastPart));
 
                 if (!nextChoices.Any())
                     break;
@@ -164,7 +164,7 @@ public partial class SentakkiBeatmapConverter
         if (previousPart is null)
             return true;
 
-        if (previousPart.Value.Shape != PathShapes.Circle)
+        if (previousPart.Value.Shape != PathShape.Circle)
             return true;
 
         if (part.Mirrored != previousPart.Value.Mirrored)

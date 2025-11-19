@@ -26,7 +26,7 @@ public abstract partial class TestSceneSlide : OsuTestScene
 
     private bool mirrored;
 
-    protected abstract PathShapes PathShape { get; }
+    protected abstract PathShape PathShape { get; }
 
     private readonly SlideVisual slide;
     private readonly SlideBodyInfo slideBodyInfo = new SlideBodyInfo();

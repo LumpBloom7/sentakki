@@ -165,7 +165,7 @@ public class SlideBodyInfo
         // We transform the progress so that it is in relation to the current segment.
         progress = (float)((progress - segmentStart) / (segmentEnd - segmentStart));
 
-        if (segments[segmentIndex].Shape is not PathShapes.Fan || segmentIndex != segments.Count - 1)
+        if (segments[segmentIndex].Shape is not PathShape.Fan || segmentIndex != segments.Count - 1)
             return segmentPaths[segmentIndex].PositionAt(progress);
 
         // Special case for slide fans

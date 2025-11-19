@@ -35,7 +35,7 @@ public partial class TestSceneFanSlide : OsuTestScene
         {
             Path = new SlideBodyInfo
             {
-                Segments = [new SlideSegment(PathShapes.Fan, 4, false)]
+                Segments = [new SlideSegment(PathShape.Fan, 4, false)]
             }
         });
 

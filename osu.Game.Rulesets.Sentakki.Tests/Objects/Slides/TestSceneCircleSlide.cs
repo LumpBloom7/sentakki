@@ -4,5 +4,5 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides;
 
 public partial class TestSceneCircleSlide : TestSceneSlide
 {
-    protected override PathShapes PathShape => PathShapes.Circle;
+    protected override PathShape PathShape => PathShape.Circle;
 }
