@@ -21,6 +21,7 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
     [
         new TapCompositionTool(),
         new HoldCompositionTool(),
+        new SlideCompositionTool(),
         new TouchCompositionTool(),
         new TouchHoldCompositionTool(),
     ];
