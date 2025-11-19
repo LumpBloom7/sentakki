@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
@@ -33,7 +32,7 @@ public static class SlidePaths
                 {
                     var tmp = new SlideSegment(i, j, k == 1);
                     if (CheckSlideValidity(tmp, true))
-                        VALID_CONVERT_PATHS.Add((tmp, CreateSlidePath([tmp]).Sum(p => p.CalculatedDistance) / 5));
+                        VALID_CONVERT_PATHS.Add((tmp, CreateSlidePathFor(tmp, 0).CalculatedDistance / 5));
                 }
             }
         }
@@ -76,51 +75,19 @@ public static class SlidePaths
         return false;
     }
 
-    public static IReadOnlyList<SliderPath> CreateSlidePath(IReadOnlyList<SlideSegment> pathParameters) => CreateSlidePath(0, pathParameters);
-
-    public static IReadOnlyList<SliderPath> CreateSlidePath(int startOffset, IReadOnlyList<SlideSegment> pathParameters)
+    public static SliderPath CreateSlidePathFor(SlideSegment segment, int startLane)
     {
-        List<SliderPath> slideSegments = [];
-
-        for (int i = 0; i < pathParameters.Count; ++i)
+        return segment.Shape switch
         {
-            var path = pathParameters[i];
-
-            switch (path.Shape)
-            {
-                case PathShapes.Straight:
-                    slideSegments.Add(generateStraightPattern(startOffset, path.RelativeEndLane));
-                    break;
-
-                case PathShapes.Fan:
-                    slideSegments.Add(generateStraightPattern(startOffset, 4));
-                    break;
-
-                case PathShapes.Circle:
-                    slideSegments.Add(generateCirclePattern(startOffset, path.RelativeEndLane, path.Mirrored ? RotationDirection.Counterclockwise : RotationDirection.Clockwise));
-                    break;
-
-                case PathShapes.V:
-                    slideSegments.Add(generateVPattern(startOffset, path.RelativeEndLane));
-                    break;
-
-                case PathShapes.U:
-                    slideSegments.Add(generateUPattern(startOffset, path.RelativeEndLane, path.Mirrored));
-                    break;
-
-                case PathShapes.Cup:
-                    slideSegments.Add(generateCupPattern(startOffset, path.RelativeEndLane, path.Mirrored));
-                    break;
-
-                case PathShapes.Thunder:
-                    slideSegments.AddRange(generateThunderPattern(startOffset, path.Mirrored));
-                    break;
-            }
-
-            startOffset += path.RelativeEndLane;
-        }
-
-        return slideSegments;
+            PathShapes.Straight => generateStraightPattern(startLane, segment.RelativeEndLane),
+            PathShapes.Fan => generateStraightPattern(startLane, 4),
+            PathShapes.Circle => generateCirclePattern(startLane, segment.RelativeEndLane, segment.Mirrored ? RotationDirection.Counterclockwise : RotationDirection.Clockwise),
+            PathShapes.V => generateVPattern(startLane, segment.RelativeEndLane),
+            PathShapes.U => generateUPattern(startLane, segment.RelativeEndLane, segment.Mirrored),
+            PathShapes.Cup => generateCupPattern(startLane, segment.RelativeEndLane, segment.Mirrored),
+            PathShapes.Thunder => generateThunderPattern(startLane, segment.Mirrored),
+            _ => throw new ArgumentOutOfRangeException(nameof(segment.Shape))
+        };
     }
 
     #region Generation methods
@@ -148,7 +115,7 @@ public static class SlidePaths
     }
 
     // Thunder pattern
-    private static IEnumerable<SliderPath> generateThunderPattern(int startLane, bool mirrored = false)
+    private static SliderPath generateThunderPattern(int startLane, bool mirrored = false)
     {
         int lane1 = (mirrored ? 3 : 5) + startLane;
         int lane2 = (mirrored ? 2 : 6) + startLane;
@@ -161,15 +128,12 @@ public static class SlidePaths
         Vector2 node2Pos = getIntesectPoint(lanestart(lane2), lanestart(lane3), lanestart(lane4), lanestart(4 + startLane));
         Vector2 node3Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, 4 + startLane);
 
-        return
-        [
-            new SliderPath([
-                new PathControlPoint(node0Pos, PathType.LINEAR),
-                new PathControlPoint(node1Pos, PathType.LINEAR),
-                new PathControlPoint(node2Pos, PathType.LINEAR),
-                new PathControlPoint(node3Pos, PathType.LINEAR)
-            ])
-        ];
+        return new SliderPath([
+            new PathControlPoint(node0Pos, PathType.LINEAR),
+            new PathControlPoint(node1Pos, PathType.LINEAR),
+            new PathControlPoint(node2Pos, PathType.LINEAR),
+            new PathControlPoint(node3Pos, PathType.LINEAR)
+        ]);
 
         static Vector2 lanestart(int x) => SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, x);
     }

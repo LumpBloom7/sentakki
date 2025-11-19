@@ -116,7 +116,13 @@ public class SlideBodyInfo
         segmentPaths.Clear();
         segmentStartProgress.Clear();
 
-        segmentPaths.AddRange(SlidePaths.CreateSlidePath(segments));
+        int currentLane = 0;
+
+        foreach (var segment in Segments)
+        {
+            segmentPaths.Add(SlidePaths.CreateSlidePathFor(segment, currentLane));
+            currentLane += segment.RelativeEndLane;
+        }
 
         totalLength = segmentPaths.Sum(s => s.CalculatedDistance);
 
