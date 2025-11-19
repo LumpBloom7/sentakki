@@ -42,7 +42,7 @@ public partial class TestSceneCircleChaining : OsuTestScene
 
         Add(slide = new SlideVisual()
         {
-            Path = slideBodyInfo
+            SlideBodyInfo = slideBodyInfo
         });
 
         AddToggleStep("Mirrored second part", b =>

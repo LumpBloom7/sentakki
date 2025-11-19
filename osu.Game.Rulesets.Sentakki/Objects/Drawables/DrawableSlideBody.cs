@@ -122,7 +122,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
     protected override void OnApply()
     {
         base.OnApply();
-        Slidepath.Path = HitObject.SlideBodyInfo;
+        Slidepath.SlideBodyInfo = HitObject.SlideBodyInfo;
         Slidepath.Progress = 0;
         StarProgress = 0;
     }
