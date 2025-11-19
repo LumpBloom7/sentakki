@@ -75,10 +75,10 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
         return base.UpdateTimeAndPosition(screenSpacePosition, time);
     }
 
-    protected override bool OnClick(ClickEvent e)
+    protected override bool OnMouseDown(MouseDownEvent e)
     {
         if (e.Button is not MouseButton.Left)
-            return base.OnClick(e);
+            return base.OnMouseDown(e);
 
         switch (PlacementActive)
         {
@@ -92,6 +92,6 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
                 return true;
         }
 
-        return base.OnClick(e);
+        return base.OnMouseDown(e);
     }
 }
