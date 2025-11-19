@@ -9,6 +9,7 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Tests.Visual;
 using osuTK.Graphics;
 
@@ -41,13 +42,6 @@ public partial class TestSceneSlideNote : OsuTestScene
     public TestSceneSlideNote()
     {
         base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
-        /*         Add(new SentakkiRing
-                {
-                    RelativeSizeAxes = Axes.None,
-                    Size = new Vector2(SentakkiPlayfield.RINGSIZE),
-                    Rotation = -22.5f
-                });
-     */
         Add(chevronPool = new DrawablePool<SlideChevron>(62));
     }
 
@@ -76,7 +70,8 @@ public partial class TestSceneSlideNote : OsuTestScene
             [
                 new SlideBodyInfo
                 {
-                    SlidePathParts = [new SlideBodyPart(SlidePaths.PathShapes.Circle, 0, false)],
+                    WaitDuration = 100,
+                    Segments = [new SlideSegment(PathShape.Circle, 0, false)],
                     Duration = 1000,
                     Break = bodyBreak,
                     Ex = bodyEx
@@ -84,7 +79,8 @@ public partial class TestSceneSlideNote : OsuTestScene
 
                 new SlideBodyInfo
                 {
-                    SlidePathParts = [new SlideBodyPart(SlidePaths.PathShapes.Straight, 4, false)],
+                    WaitDuration = 100,
+                    Segments = [new SlideSegment(PathShape.Straight, 4, false)],
                     Duration = 1500,
                     Break = bodyBreak,
                     Ex = bodyEx
@@ -92,7 +88,8 @@ public partial class TestSceneSlideNote : OsuTestScene
 
                 new SlideBodyInfo
                 {
-                    SlidePathParts = [new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false)],
+                    WaitDuration = 100,
+                    Segments = [new SlideSegment(PathShape.Cup, 2, false)],
                     Duration = 2000,
                     Break = bodyBreak,
                     Ex = bodyEx
@@ -140,13 +137,14 @@ public partial class TestSceneSlideNote : OsuTestScene
             [
                 new SlideBodyInfo
                 {
-                    SlidePathParts =
+                    Segments =
                     [
-                        new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
-                        new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
-                        new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
-                        new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false)
+                        new SlideSegment(PathShape.Cup, 2, false),
+                        new SlideSegment(PathShape.Cup, 2, false),
+                        new SlideSegment(PathShape.Cup, 2, false),
+                        new SlideSegment(PathShape.Cup, 2, false)
                     ],
+                    WaitDuration = 100,
                     Duration = duration,
                     Break = bodyBreak,
                     Ex = bodyEx
@@ -194,14 +192,15 @@ public partial class TestSceneSlideNote : OsuTestScene
             [
                 new SlideBodyInfo
                 {
-                    SlidePathParts =
+                    Segments =
                     [
-                        new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
-                        new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
-                        new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
-                        new SlideBodyPart(SlidePaths.PathShapes.Cup, 2, false),
-                        new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false)
+                        new SlideSegment(PathShape.Cup, 2, false),
+                        new SlideSegment(PathShape.Cup, 2, false),
+                        new SlideSegment(PathShape.Cup, 2, false),
+                        new SlideSegment(PathShape.Cup, 2, false),
+                        new SlideSegment(PathShape.Fan, 4, false)
                     ],
+                    WaitDuration = 100,
                     Duration = duration,
                     Break = bodyBreak,
                     Ex = bodyEx

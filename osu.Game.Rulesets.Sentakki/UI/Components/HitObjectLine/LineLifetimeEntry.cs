@@ -79,7 +79,15 @@ public class LineLifetimeEntry : LifetimeEntry
 
                 AngleRange = angleRange / 360f;
 
-                Rotation = anchor.Lane.GetRotationForLane() + delta * 22.5f - angleRange / 2f;
+                if (delta == 4)
+                {
+                    Rotation = HitObjects.First().Lane.GetRotationForLane() - 180;
+                }
+                else
+                {
+                    Rotation = anchor.Lane.GetRotationForLane() + delta * 22.5f - angleRange / 2f;
+                }
+
                 break;
             }
         }

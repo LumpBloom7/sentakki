@@ -6,6 +6,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps;
 
@@ -84,21 +85,15 @@ public class CompositeBeatmapConverter : BeatmapConverter<SentakkiHitObject>
 
                 case Slide slide:
                     var slideInfoList = new List<SlideBodyInfo>();
+
                     foreach (var slideInfo in slide.SlideInfoList)
                     {
-                        var slidePathParts = new SlideBodyPart[slideInfo.SlidePathParts.Length];
-
-                        for (int i = 0; i < slideInfo.SlidePathParts.Length; ++i)
-                        {
-                            ref var part = ref slideInfo.SlidePathParts[i];
-                            slidePathParts[i] = new SlideBodyPart(part.Shape, part.EndOffset, part.Mirrored);
-                        }
                         slideInfoList.Add(new SlideBodyInfo
                         {
                             Duration = slideInfo.Duration,
                             Break = slideInfo.Break,
-                            ShootDelay = slideInfo.ShootDelay,
-                            SlidePathParts = slidePathParts
+                            Segments = slideInfo.Segments,
+                            WaitDuration = slideInfo.WaitDuration,
                         });
                     }
 
@@ -135,7 +130,6 @@ public class CompositeBeatmapConverter : BeatmapConverter<SentakkiHitObject>
                         Break = touch.Break,
                     });
                     break;
-
             }
         }
 

@@ -3,8 +3,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.UI;
-using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
@@ -16,18 +14,25 @@ public partial class HoldBody : CompositeDrawable
 
     public HoldBody()
     {
-        Scale = Vector2.Zero;
-        Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE);
         Anchor = Anchor.Centre;
         Origin = Anchor.TopCentre;
         InternalChildren =
         [
             new Container
             {
+                // For simplicity in sizing and positioning
+                // let's put the endpoints outside the main area
+                Padding = new MarginPadding(-TapPiece.CIRCLE_RADIUS),
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Child = new NoteRingPiece(true)
+                Child = new LaneNoteVisual
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Shape = NoteShape.Hex
+                }
             }
         ];
     }

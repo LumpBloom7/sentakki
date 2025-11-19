@@ -7,10 +7,10 @@ using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osuTK;
 using osuTK.Graphics;
 
@@ -20,6 +20,8 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
 {
     public new DrawableSlide ParentHitObject => (DrawableSlide)base.ParentHitObject;
     public new SlideBody HitObject => (SlideBody)base.HitObject;
+
+    private SlideBodyInfo slideBodyInfo => HitObject.SlideBodyInfo;
 
     // This slide body can only be interacted with iff the slidetap associated with this slide is judged
     public bool IsHittable
@@ -48,16 +50,18 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         {
             starProgress = value;
 
-            for (int i = 2; i >= 0; --i)
-            {
-                int laneOffset = (i * 2 - 1) % 3;
+            SlideStars[2].Position = slideBodyInfo.PositionAt(value);
+            SlideStars[2].Rotation = slideBodyInfo.PositionAt(value - .01f).AngleTo(SlideStars[2].Position);
 
-                SlideStars[i].Position = Slidepath.Path.PositionAt(value, laneOffset);
-                SlideStars[i].Rotation = Slidepath.Path.PositionAt(value - .01f, laneOffset).AngleTo(Slidepath.Path.PositionAt(value + .01f, laneOffset));
+            if (slideBodyInfo.Segments[^1].Shape is not PathShape.Fan) return;
 
-                if (i != 2 && value < Slidepath.Path.FanStartProgress)
-                    break;
-            }
+            double fanStartProgress = slideBodyInfo.SegmentStartProgressFor(^1);
+
+            if (value < fanStartProgress)
+                return;
+
+            SlideStars[0].Position = slideBodyInfo.PositionAt(value, -1);
+            SlideStars[1].Position = slideBodyInfo.PositionAt(value, 1);
         }
     }
 
@@ -118,7 +122,8 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
     protected override void OnApply()
     {
         base.OnApply();
-        Slidepath.Path = HitObject.SlideBodyInfo.SlidePath;
+        Slidepath.Path = HitObject.SlideBodyInfo;
+        Slidepath.Progress = 0;
         StarProgress = 0;
     }
 
@@ -170,23 +175,30 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         base.UpdateStartTimeStateTransforms();
 
         // The primary star is always guaranteed to enter.
-        SlideStars[2].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
-
-        // The fan slide stars will enter with the same transforms as the primary star iff the slide starts with a fan
-        if (Slidepath.Path.StartsWithSlideFan)
-        {
-            SlideStars[0].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
-            SlideStars[1].FadeInFromZero(HitObject.ShootDelay).ScaleTo(1.25f, HitObject.ShootDelay);
-        }
+        SlideStars[2].FadeInFromZero(slideBodyInfo.EffectiveWaitDuration).ScaleTo(1.25f, slideBodyInfo.EffectiveWaitDuration);
 
         // This indirectly controls the animation of the stars following the path
-        using (BeginDelayedSequence(HitObject.ShootDelay))
-            this.TransformTo(nameof(StarProgress), 1f, (HitObject as IHasDuration).Duration - HitObject.ShootDelay);
+        using (BeginDelayedSequence(slideBodyInfo.EffectiveWaitDuration))
+            this.TransformTo(nameof(StarProgress), 1f, slideBodyInfo.EffectiveMovementDuration);
 
-        // If the slide doesn't start with a fan, but ends with it, then we fade them in instantly at the point the fan begins on the path.
-        if (!Slidepath.Path.StartsWithSlideFan && Slidepath.Path.EndsWithSlideFan)
+        if (slideBodyInfo.Segments[^1].Shape is not PathShape.Fan) return;
+
+        int fanStartLane = slideBodyInfo.RelativeEndLane - 4;
+        float fanStartLaneAngle = fanStartLane.GetRotationForLane();
+
+        // Apply rotation to the extra stars
+        SlideStars[0].RotateTo(fanStartLaneAngle + 180 - 22.5f);
+        SlideStars[1].RotateTo(fanStartLaneAngle + 180 + 22.5f);
+
+        // If the only segment is a fan, we fade the extra stars in the same way as the main star.
+        if (slideBodyInfo.Segments.Count == 1)
         {
-            using (BeginDelayedSequence(HitObject.ShootDelay + (HitObject.Duration - HitObject.ShootDelay) * Slidepath.Path.FanStartProgress))
+            SlideStars[0].FadeInFromZero(slideBodyInfo.EffectiveWaitDuration).ScaleTo(1.25f, slideBodyInfo.EffectiveWaitDuration);
+            SlideStars[1].FadeInFromZero(slideBodyInfo.EffectiveWaitDuration).ScaleTo(1.25f, slideBodyInfo.EffectiveWaitDuration);
+        }
+        else // Otherwise, they suddenly pop-in.
+        {
+            using (BeginDelayedSequence(slideBodyInfo.EffectiveWaitDuration + slideBodyInfo.EffectiveMovementDuration * slideBodyInfo.SegmentStartProgressFor(^1)))
             {
                 SlideStars[0].FadeIn().ScaleTo(1.25f);
                 SlideStars[1].FadeIn().ScaleTo(1.25f);
@@ -204,27 +216,25 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         // If any of the checkpoints aren't complete, we consider the slide to be incomplete
         for (int i = 0; i < SlideCheckpoints.Count; ++i)
         {
-            if (!SlideCheckpoints[i].Result.HasResult)
-            {
-                userTriggered = false;
-                break;
-            }
+            if (SlideCheckpoints[i].Result.HasResult) continue;
+
+            userTriggered = false;
+            break;
         }
 
         if (!userTriggered)
         {
-            if (!HitObject.HitWindows.CanBeHit(timeOffset))
-            {
-                // Ensure that all of them have results
-                foreach (var checkpoint in SlideCheckpoints)
-                    checkpoint.ForcefullyMiss();
+            if (HitObject.HitWindows.CanBeHit(timeOffset)) return;
 
-                // Apply a leniency if the player almost completed the slide
-                if (SlideCheckpoints.Count(node => !node.Result.IsHit) <= 2 && SlideCheckpoints.Count > 2)
-                    ApplyResult(hitResult: HitResult.Ok);
-                else
-                    ApplyResult(Result.Judgement.MinResult);
-            }
+            // Ensure that all of them have results
+            foreach (var checkpoint in SlideCheckpoints)
+                checkpoint.ForcefullyMiss();
+
+            // Apply a leniency if the player almost completed the slide
+            if (SlideCheckpoints.Count(node => !node.Result.IsHit) <= 2 && SlideCheckpoints.Count > 2)
+                ApplyResult(hitResult: HitResult.Ok);
+            else
+                ApplyResult(Result.Judgement.MinResult);
 
             return;
         }
@@ -232,7 +242,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         var result = HitObject.HitWindows.ResultFor(timeOffset);
 
         // Give the player an OK for extremely early completion
-        // This is also a safegaurd for super late hits beyond the late windows, where the input may have occured prior to the late window being exceeded due to lag.
+        // This is also a safeguard for super late hits beyond the late windows, where the input may have occured prior to the late window being exceeded due to lag.
         if (result == HitResult.None)
             result = HitResult.Ok;
 
@@ -240,7 +250,9 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         // This is to preserve the expected invariant that following the star perfectly should guarantee a perfect judgement.
         if (timeOffset < 0)
         {
-            if ((1 - StarProgress) * Slidepath.Path.TotalDistance <= DrawableSlideCheckpointNode.DETECTION_RADIUS)
+            double remainingTravelDistance = slideBodyInfo.SlideLength * (1 - StarProgress);
+
+            if (remainingTravelDistance <= DrawableSlideCheckpointNode.DETECTION_RADIUS)
                 result = HitResult.Perfect;
         }
 
@@ -257,7 +269,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         switch (state)
         {
             case ArmedState.Hit:
-                Slidepath.PerformExitAnimation(time_fade_hit, HitStateUpdateTime);
+                Slidepath.PerformExitAnimation(time_fade_hit);
                 foreach (var star in SlideStars)
                     star.FadeOut(time_fade_hit);
 
@@ -266,7 +278,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
                 break;
 
             case ArmedState.Miss:
-                Slidepath.PerformExitAnimation(time_fade_miss, Result.TimeAbsolute);
+                Slidepath.PerformExitAnimation(time_fade_miss);
 
                 foreach (var star in SlideStars)
                 {

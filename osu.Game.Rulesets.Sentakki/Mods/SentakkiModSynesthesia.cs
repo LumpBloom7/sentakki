@@ -133,7 +133,7 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
     private static double getStartTime(HitObject ho)
     {
         if (ho is SlideBody sb)
-            return sb.StartTime + sb.ShootDelay;
+            return sb.StartTime + sb.SlideBodyInfo.EffectiveWaitDuration;
 
         return ho.StartTime;
     }

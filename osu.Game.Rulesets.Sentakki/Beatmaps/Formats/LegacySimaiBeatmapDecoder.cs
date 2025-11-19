@@ -12,10 +12,12 @@ using osu.Game.IO;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using SimaiSharp;
 using SimaiSharp.Structures;
+using SlideSegment = osu.Game.Rulesets.Sentakki.Objects.SlidePath.SlideSegment;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Formats;
 
@@ -260,12 +262,12 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
     {
         foreach (SlidePath path in note.slidePaths)
         {
-            List<SlideBodyPart> slideBodyParts = new List<SlideBodyPart>();
+            List<SlideSegment> segments = [];
             int startLane = locationToLane(note.location);
 
-            foreach (SlideSegment slideSegment in path.segments)
+            foreach (var slideSegment in path.segments)
             {
-                SlidePaths.PathShapes shape = SlidePaths.PathShapes.Straight;
+                PathShape shape = PathShape.Straight;
                 bool mirrored = false;
 
                 int endLane;
@@ -276,7 +278,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                     foreach (var nextLocation in slideSegment.vertices)
                     {
                         endLane = locationToLane(nextLocation);
-                        slideBodyParts.Add(new SlideBodyPart(SlidePaths.PathShapes.Straight,
+                        segments.Add(new SlideSegment(PathShape.Straight,
                             (endLane - startLane).NormalizeLane(),
                             false
                         ));
@@ -293,39 +295,39 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
                     case SlideType.RingCw:
                     case SlideType.RingCcw:
-                        shape = SlidePaths.PathShapes.Circle;
+                        shape = PathShape.Circle;
                         mirrored = slideSegment.slideType == SlideType.RingCcw;
                         break;
 
                     case SlideType.Fold:
-                        shape = SlidePaths.PathShapes.V;
+                        shape = PathShape.V;
                         break;
 
                     case SlideType.CurveCw:
                     case SlideType.CurveCcw:
-                        shape = SlidePaths.PathShapes.U;
+                        shape = PathShape.U;
                         mirrored = slideSegment.slideType == SlideType.CurveCw;
                         break;
 
                     case SlideType.ZigZagS:
                     case SlideType.ZigZagZ:
-                        shape = SlidePaths.PathShapes.Thunder;
+                        shape = PathShape.Thunder;
                         mirrored = slideSegment.slideType == SlideType.ZigZagZ;
                         break;
 
                     case SlideType.EdgeCurveCw:
                     case SlideType.EdgeCurveCcw:
-                        shape = SlidePaths.PathShapes.Cup;
+                        shape = PathShape.Cup;
                         mirrored = slideSegment.slideType == SlideType.EdgeCurveCw;
                         break;
 
                     case SlideType.Fan:
-                        shape = SlidePaths.PathShapes.Fan;
+                        shape = PathShape.Fan;
                         break;
                 }
 
                 endLane = locationToLane(slideSegment.vertices.Last());
-                slideBodyParts.Add(new SlideBodyPart(shape,
+                segments.Add(new SlideSegment(shape,
                     (endLane - startLane).NormalizeLane(),
                     mirrored
                 ));
@@ -334,10 +336,10 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
             slide.SlideInfoList.Add(new SlideBodyInfo
             {
-                SlidePathParts = slideBodyParts.ToArray(),
+                Segments = segments,
                 Duration = (path.delay + path.duration) * 1000f,
                 Break = path.type == NoteType.Break,
-                ShootDelay = path.delay * 1000f
+                WaitDuration = path.delay * 1000f
             });
         }
     }

@@ -63,14 +63,14 @@ public class SentakkiModMirror : Mod, IApplicableAfterBeatmapConversion
 
             foreach (var slideInfo in slide.SlideInfoList)
             {
-                for (int i = 0; i < slideInfo.SlidePathParts.Length; ++i)
-                {
-                    ref var part = ref slideInfo.SlidePathParts[i];
-                    part.EndOffset = (part.EndOffset * -1).NormalizeLane();
-                    part.Mirrored ^= mirrored;
-                }
-
-                slideInfo.UpdatePaths();
+                slideInfo.Segments =
+                [
+                    ..slideInfo.Segments.Select(s => s with
+                    {
+                        RelativeEndLane = (-s.RelativeEndLane).NormalizeLane(),
+                        Mirrored = s.Mirrored ^ mirrored
+                    })
+                ];
             }
         });
 
