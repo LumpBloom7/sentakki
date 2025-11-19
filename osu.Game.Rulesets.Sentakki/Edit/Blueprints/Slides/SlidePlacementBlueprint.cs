@@ -51,12 +51,24 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         });
     }
 
+    private bool initialStateApplied;
+
     protected override void Update()
     {
         base.Update();
+        float newRotation = HitObject.Lane.GetRotationForLane();
 
-        InternalChild.Rotation = HitObject.Lane.GetRotationForLane();
         tapHighlight.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
+
+        if (!initialStateApplied)
+        {
+            InternalChild.Rotation = newRotation;
+            initialStateApplied = true;
+            return;
+        }
+
+        float angleDelta = MathExtensions.AngleDelta(InternalChild.Rotation, newRotation);
+        InternalChild.Rotation += 25 * angleDelta * (float)(Time.Elapsed / 1000);
     }
 
     private double commitStartTime;

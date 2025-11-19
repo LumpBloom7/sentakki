@@ -45,9 +45,13 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
         configs.BindWith(SentakkiRulesetSettings.AnimationSpeed, animationSpeed);
     }
 
+    private bool initialStateApplied;
+
     protected override void Update()
     {
-        InternalChild.Rotation = HitObject.Lane.GetRotationForLane();
+        base.Update();
+
+        float targetRotation = HitObject.Lane.GetRotationForLane();
 
         const float max_height = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
         double animationDuration = DrawableSentakkiRuleset.ComputeLaneNoteEntryTime(animationSpeed.Value) / 2;
@@ -57,8 +61,26 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
         double tailY = Math.Min(HitObject.EndTime - EditorClock.CurrentTime, animationDuration);
         double height = tailY - headY;
 
-        highlight.Y = (float)(-SentakkiPlayfield.INTERSECTDISTANCE + headY / animationDuration * max_height);
-        highlight.Height = (float)(height / animationDuration * max_height);
+        float targetY = (float)(-SentakkiPlayfield.INTERSECTDISTANCE + headY / animationDuration * max_height);
+        float targetHeight = (float)(height / animationDuration * max_height);
+
+        if (!initialStateApplied)
+        {
+            InternalChild.Rotation = targetRotation;
+            highlight.Y = targetY;
+            highlight.Height = targetHeight;
+
+            initialStateApplied = true;
+            return;
+        }
+
+        float roc = 25 * (float)(Time.Elapsed / 1000);
+
+        float angleDelta = MathExtensions.AngleDelta(InternalChild.Rotation, targetRotation);
+        InternalChild.Rotation += angleDelta * roc;
+
+        highlight.Y += (targetY - highlight.Y) * roc;
+        highlight.Height += (targetHeight - highlight.Height) * roc;
     }
 
     private double commitStartTime;

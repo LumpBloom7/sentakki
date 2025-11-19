@@ -34,11 +34,23 @@ public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
         };
     }
 
+    private bool initialStateApplied;
+
     protected override void Update()
     {
         base.Update();
-        InternalChild.Rotation = HitObject.Lane.GetRotationForLane();
+        float newRotation = HitObject.Lane.GetRotationForLane();
+
         highlight.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
+
+        if (!initialStateApplied)
+        {
+            InternalChild.Rotation = newRotation;
+            initialStateApplied = true;
+        }
+
+        float angleDelta = MathExtensions.AngleDelta(InternalChild.Rotation, newRotation);
+        InternalChild.Rotation += 25 * angleDelta * (float)(Time.Elapsed / 1000);
     }
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
