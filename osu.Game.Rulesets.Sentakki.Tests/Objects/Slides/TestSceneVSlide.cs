@@ -1,8 +1,8 @@
-using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects.Slides;
 
 public partial class TestSceneVSlide : TestSceneSlide
 {
-    protected override SlidePaths.PathShapes PathShape => SlidePaths.PathShapes.V;
+    protected override PathShape PathShape => PathShape.V;
 }

@@ -53,6 +53,8 @@ public partial class SentakkiRuleset : Ruleset
     public override string PlayingVerb => "Washing laundry";
     public override string ShortName => "Sentakki";
 
+    public override IEnumerable<RulesetBeatmapAttribute> GetBeatmapAttributesForDisplay(IBeatmapInfo beatmapInfo, IReadOnlyCollection<Mod> mods) => [];
+
     public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor(this);
     public override HealthProcessor CreateHealthProcessor(double drainStartTime) => new SentakkiHealthProcessor();
 

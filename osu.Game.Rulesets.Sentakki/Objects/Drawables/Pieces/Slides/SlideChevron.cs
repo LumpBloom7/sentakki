@@ -25,20 +25,18 @@ public partial class SlideChevron : PoolableDrawable
     public bool Glow
     {
         get => chevron.Glow;
-        set => chevron.Glow = value;
-    }
-
-    public float ShadowRadius
-    {
-        get => chevron.ShadowRadius;
-        set => chevron.ShadowRadius = value;
+        set
+        {
+            chevron.Glow = value;
+            chevron.ShadowRadius = value ? 15 : 7.5f;
+        }
     }
 
     public SlideChevron()
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        Size = new Vector2(80, 60);
+        Size = new Vector2(50, 30);
     }
 
     [BackgroundDependencyLoader]
@@ -48,20 +46,17 @@ public partial class SlideChevron : PoolableDrawable
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            RelativeSizeAxes = Axes.Both,
-            ShadowRadius = 7.5f,
-            Thickness = 15f
+            RelativeSizeAxes = Axes.Both
         });
     }
 
-    protected override void FreeAfterUse()
+    public override void Hide()
     {
-        // This is used to ensure that the chevrons transforms are reverted to the initial state.
-        // TODO: Investigate what clears the transforms without rewinding them...
-        if (!RemoveCompletedTransforms)
-            ApplyTransformsAt(double.MinValue, propagateChildren: true);
-        ClearTransformsAfter(double.MinValue, propagateChildren: true);
+        chevron.Alpha = 0;
+    }
 
-        base.FreeAfterUse();
+    public override void Show()
+    {
+        chevron.Alpha = 1;
     }
 }

@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects;
@@ -84,7 +85,7 @@ public class Slide : SentakkiLanedHitObject, IHasDuration
             SlideBody body;
             AddNested(body = new SlideBody(slideInfo)
             {
-                Lane = slideInfo.SlidePath.EndLane + Lane,
+                Lane = slideInfo.RelativeEndLane + Lane,
                 StartTime = StartTime,
                 Samples = Samples,
             });

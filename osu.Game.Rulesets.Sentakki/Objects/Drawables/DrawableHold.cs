@@ -63,7 +63,11 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         Origin = Anchor.Centre;
         AddRangeInternal(
         [
-            NoteBody = new HoldBody(),
+            NoteBody = new HoldBody
+            {
+                Scale = Vector2.Zero,
+                Y = -SentakkiPlayfield.NOTESTARTDISTANCE
+            },
             headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
         ]);
     }
@@ -113,7 +117,11 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
                 isHolding = false;
 
             // If auto is within the hittable time, attempt to hit it
-            if (Time.Current >= HitObject.StartTime && Time.Current <= HitObject.GetEndTime())
+            // HACK: In editor context, frame stability is not enforced, this could potentially lead to 0 duration slides being missed as we never ever visit the window.
+            // We resolve this by giving autoplay a bit more leniency. In practice nothing should change for regular autoplay.
+            double missWindow = HitObject.HitWindows.WindowFor(HitResult.Miss);
+
+            if (Time.Current >= HitObject.StartTime && Time.Current < HitObject.EndTime + missWindow)
             {
                 if (!isHolding)
                     Head.UpdateResult();
@@ -268,8 +276,8 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         headContainer.Clear(false);
     }
 
-    private SentakkiInputManager? sentakkiActionInputManager;
-    internal SentakkiInputManager SentakkiActionInputManager => sentakkiActionInputManager ??= (SentakkiInputManager)GetContainingInputManager();
+    [Resolved]
+    private SentakkiInputManager sentakkiInputManager { get; set; } = null!;
 
     private int pressedCount
     {
@@ -277,9 +285,9 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         {
             int count = 0;
 
-            foreach (var pressedAction in SentakkiActionInputManager.PressedActions)
+            foreach (var pressedAction in sentakkiInputManager.PressedActions)
             {
-                if (pressedAction == SentakkiAction.Key1 + HitObject.Lane)
+                if (IsValidLaneAction(pressedAction))
                     ++count;
             }
 
@@ -292,7 +300,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         if (AllJudged)
             return false;
 
-        if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
+        if (!IsValidLaneAction(e.Action))
             return false;
 
         // Passthrough excess inputs to later hitobjects in the same lane
@@ -315,7 +323,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         if (AllJudged) return;
         if (!isHolding) return;
 
-        if (e.Action != SentakkiAction.Key1 + HitObject.Lane)
+        if (!IsValidLaneAction(e.Action))
             return;
 
         // We only release the hold once ALL inputs are released

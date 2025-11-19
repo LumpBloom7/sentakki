@@ -5,6 +5,7 @@ using System.Text;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using static System.FormattableString;
@@ -192,17 +193,17 @@ public class SimaiBeatmapEncoder
                 var slideInfo = slide.SlideInfoList[i];
                 int currentLane = slide.Lane;
 
-                foreach (var part in slideInfo.SlidePathParts)
+                foreach (var part in slideInfo.Segments)
                 {
-                    int endLane = (currentLane + part.EndOffset).NormalizeLane();
-                    slideBuilder.Append(shapeForSlidePart(currentLane, part, slideInfo.SlidePathParts.Length > 1));
+                    int endLane = (currentLane + part.RelativeEndLane).NormalizeLane();
+                    slideBuilder.Append(shapeForSlidePart(currentLane, part, slideInfo.Segments.Count > 1));
                     slideBuilder.Append(endLane + 1);
                     currentLane = endLane;
                 }
 
-                double durationWithoutDelay = slideInfo.Duration - slideInfo.ShootDelay;
+                double durationWithoutDelay = slideInfo.Duration - slideInfo.WaitDuration;
 
-                slideBuilder.Append(Invariant($"[{slideInfo.ShootDelay / 1000:F3}##{durationWithoutDelay / 1000:F3}]"));
+                slideBuilder.Append(Invariant($"[{slideInfo.WaitDuration / 1000:F3}##{durationWithoutDelay / 1000:F3}]"));
 
                 if (slideInfo.Break)
                     slideBuilder.Append('b');
@@ -215,42 +216,36 @@ public class SimaiBeatmapEncoder
         return slideBuilder.ToString();
     }
 
-    private static string shapeForSlidePart(int startLane, in SlideBodyPart part, bool inChain)
+    private static string shapeForSlidePart(int startLane, in SlideSegment part, bool inChain)
     {
         switch (part.Shape)
         {
-            case SlidePaths.PathShapes.Straight:
+            case PathShape.Straight:
                 return "-";
 
-            case SlidePaths.PathShapes.Circle:
+            case PathShape.Circle:
                 bool startsFromBottom = ((startLane + 2) % 8) >= 4;
                 bool facingLeft = part.Mirrored ^ startsFromBottom;
 
                 return facingLeft ? "<" : ">";
 
-            case SlidePaths.PathShapes.V:
+            case PathShape.V:
                 // Majdata(view/play) shits itself because it is not robust enough to handle slide equivalences
-                if (part.EndOffset == 4)
-                    return "-";
+                return part.RelativeEndLane == 4 ? "-" : "v";
 
-                return "v";
-
-            case SlidePaths.PathShapes.U:
+            case PathShape.U:
                 return part.Mirrored ? "q" : "p";
 
-            case SlidePaths.PathShapes.Thunder:
+            case PathShape.Thunder:
                 return part.Mirrored ? "z" : "s";
 
-            case SlidePaths.PathShapes.Cup:
+            case PathShape.Cup:
                 return part.Mirrored ? "qq" : "pp";
 
-            case SlidePaths.PathShapes.Fan:
+            case PathShape.Fan:
                 // Slide chain into a fan is only supported in sentakki
                 // Coerce the slide into a straight
-                if (inChain)
-                    return "-";
-
-                return "w";
+                return inChain ? "-" : "w";
 
             default:
                 return "-";

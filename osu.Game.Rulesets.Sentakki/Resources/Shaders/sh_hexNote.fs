@@ -6,7 +6,6 @@
 layout(std140, set = 0, binding = 0) uniform m_shapeParameters
 {
     float borderThickness;
-    vec2 size;
     float shadowRadius;
     bool glow;
 };
@@ -48,17 +47,17 @@ float roundedHexSDF(in vec2 p, in vec2 origin, in float h, in float r) {
 
 void main(void) {
     vec2 resolution = v_TexRect.zw - v_TexRect.xy;
-    vec2 origin = size * 0.5;
-    vec2 pixelPos = ((v_TexCoord - v_TexRect.xy) / resolution) * size;
+    vec2 origin = v_DrawSize * 0.5;
+    vec2 pixelPos = ((v_TexCoord - v_TexRect.xy) / resolution) * v_DrawSize;
 
-    float radius = size.x / 2.0;
+    float radius = v_DrawSize.x / 2.0;
 
     // Since our edge effect is centred along the sdf path
     //// each side of the sdf will have the same thickness
     float strokeRadius = borderThickness * 0.5;
 
     float sdfRadius = radius - strokeRadius - shadowRadius;
-    float sdfHeight = size.y - (shadowRadius + sdfRadius) * 2.0 - borderThickness;
+    float sdfHeight = v_DrawSize.y - (shadowRadius + sdfRadius) * 2.0 - borderThickness;
 
     float sdf = roundedHexSDF(pixelPos, origin, sdfHeight, sdfRadius);
 
