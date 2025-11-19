@@ -105,6 +105,13 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                 switch (e.Button)
                 {
                     case MouseButton.Left:
+                        if (e.AltPressed)
+                        {
+                            currentSegment.Mirrored = !currentSegment.Mirrored;
+                            activeSegmentVisual.SlideBodyInfo!.Segments = [currentSegment];
+                            return true;
+                        }
+
                         committedSlideInfo.Segments = [.. committedSlideInfo.Segments, currentSegment];
                         return true;
 
@@ -169,5 +176,26 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         }
 
         return base.UpdateTimeAndPosition(screenSpacePosition, time);
+    }
+
+    protected override bool OnScroll(ScrollEvent e)
+    {
+        if (PlacementActive is not PlacementState.Active || !e.AltPressed)
+            return base.OnScroll(e);
+
+        var newSegment = currentSegment with { Shape = (PathShape)(((int)currentSegment.Shape + (int)e.ScrollDelta.Y) % 7) };
+
+        if (newSegment.Shape < 0)
+            newSegment.Shape += 7;
+
+        while (!SlidePaths.CheckSlideValidity(newSegment))
+        {
+            newSegment.RelativeEndLane = (newSegment.RelativeEndLane + (currentSegment.RelativeEndLane > 4 ? 7 : 1)) % 8;
+        }
+
+        currentSegment = newSegment;
+        activeSegmentVisual.SlideBodyInfo!.Segments = [currentSegment];
+
+        return true;
     }
 }
