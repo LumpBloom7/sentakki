@@ -66,22 +66,19 @@ public partial class SlideVisual : CompositeDrawable
                 return;
 
             progress = value;
-            UpdateChevronVisibility();
+            updateChevronVisibility();
         }
     }
 
-    public void UpdateProgress(SlideChevron chevron)
+    private void updateChevronVisibility()
     {
-        if (chevron.DisappearThreshold <= Progress)
-            chevron.Hide();
-        else
-            chevron.Show();
-    }
-
-    public void UpdateChevronVisibility()
-    {
-        for (int i = 0; i < chevrons.Count; i++)
-            UpdateProgress(chevrons[i]);
+        foreach (var chevron in chevrons)
+        {
+            if (chevron.DisappearThreshold <= Progress)
+                chevron.Hide();
+            else
+                chevron.Show();
+        }
     }
 
     public SlideVisual()
@@ -127,7 +124,7 @@ public partial class SlideVisual : CompositeDrawable
         // Create fan slide chevrons if needed
         createFanChevrons();
 
-        UpdateChevronVisibility();
+        updateChevronVisibility();
     }
 
     private const int chevrons_per_eith = 9;
@@ -136,9 +133,7 @@ public partial class SlideVisual : CompositeDrawable
     private const double endpoint_distance = 30; // margin for each end
 
     private static int chevronsInContinuousPath(SliderPath path)
-    {
-        return (int)Math.Ceiling((path.CalculatedDistance - 2 * endpoint_distance) * chevrons_per_distance);
-    }
+        => (int)Math.Ceiling((path.CalculatedDistance - 2 * endpoint_distance) * chevrons_per_distance);
 
     private void createRegularChevrons()
     {
