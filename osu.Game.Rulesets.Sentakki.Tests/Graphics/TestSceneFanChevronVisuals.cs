@@ -6,8 +6,8 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Sentakki.Extensions;
-using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Graphics;
 public partial class TestSceneFanChevronVisual : OsuGridTestScene
 {
     protected override Ruleset CreateRuleset() => new SentakkiRuleset();
-    private readonly SlideVisual slide;
+    private readonly SlideBodyInfo slideBodyInfo = new SlideBodyInfo();
 
     [Cached]
     private readonly DrawablePool<SlideChevron> chevronPool;
@@ -39,7 +39,13 @@ public partial class TestSceneFanChevronVisual : OsuGridTestScene
             RelativeSizeAxes = Axes.None,
             Size = new Vector2(SentakkiPlayfield.RINGSIZE)
         });
-        Cell(0).Add(slide = new SlideVisual());
+        Cell(0).Add(new SlideVisual
+        {
+            Path = new SlideBodyInfo
+            {
+                Segments = [new SlideSegment(PathShapes.Fan, 4, false)]
+            }
+        });
         Cell(0).Add(new SentakkiRing
         {
             RelativeSizeAxes = Axes.None,
@@ -111,11 +117,5 @@ public partial class TestSceneFanChevronVisual : OsuGridTestScene
 
             fanChevContainer.Add(fanChev);
         }
-    }
-
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-        slide.Path = SlidePaths.CreateSlidePath(new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false));
     }
 }

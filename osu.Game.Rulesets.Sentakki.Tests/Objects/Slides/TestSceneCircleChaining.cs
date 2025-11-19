@@ -5,8 +5,8 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
-using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
@@ -23,6 +23,8 @@ public partial class TestSceneCircleChaining : OsuTestScene
     private bool mirrored;
 
     private readonly SlideVisual slide;
+    private readonly SlideBodyInfo slideBodyInfo = new();
+
     private readonly Container nodes;
 
     [Cached]
@@ -38,7 +40,10 @@ public partial class TestSceneCircleChaining : OsuTestScene
             Size = new Vector2(SentakkiPlayfield.RINGSIZE)
         });
 
-        Add(slide = new SlideVisual());
+        Add(slide = new SlideVisual()
+        {
+            Path = slideBodyInfo
+        });
 
         AddToggleStep("Mirrored second part", b =>
         {
@@ -49,7 +54,7 @@ public partial class TestSceneCircleChaining : OsuTestScene
         AddStep("Perform entry animation", () => slide.PerformEntryAnimation(1000));
         AddWaitStep("Wait for transforms", 5);
 
-        AddStep("Perform exit animation", () => slide.PerformExitAnimation(1000, Time.Current));
+        AddStep("Perform exit animation", () => slide.PerformExitAnimation(1000));
         AddWaitStep("Wait for transforms", 5);
 
         Add(nodes = new Container
@@ -57,17 +62,6 @@ public partial class TestSceneCircleChaining : OsuTestScene
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
         });
-    }
-
-    protected SentakkiSlidePath CreatePattern()
-    {
-        var pathParameters = new[]
-        {
-            new SlideBodyPart(SlidePaths.PathShapes.Circle, endOffset: 4, false),
-            new SlideBodyPart(SlidePaths.PathShapes.Circle, endOffset: 4, mirrored),
-        };
-
-        return SlidePaths.CreateSlidePath(pathParameters);
     }
 
     protected override void LoadComplete()
@@ -78,10 +72,14 @@ public partial class TestSceneCircleChaining : OsuTestScene
 
     protected void RefreshSlide()
     {
-        slide.Path = CreatePattern();
+        slideBodyInfo.Segments =
+        [
+            new SlideSegment(PathShapes.Circle, relativeEndLane: 4, false),
+            new SlideSegment(PathShapes.Circle, relativeEndLane: 4, mirrored),
+        ];
         nodes.Clear();
 
-        foreach (var node in slide.Path.SlideSegments.SelectMany(s => s.ControlPoints))
+        foreach (var node in slideBodyInfo.SegmentPaths.SelectMany(s => s.ControlPoints))
         {
             nodes.Add(new CircularContainer
             {

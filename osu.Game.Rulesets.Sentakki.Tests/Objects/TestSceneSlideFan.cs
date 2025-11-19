@@ -9,6 +9,7 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
@@ -72,7 +73,8 @@ public partial class TestSceneSlideFan : OsuTestScene
             [
                 new SlideBodyInfo
                 {
-                    SlidePathParts = [new SlideBodyPart(SlidePaths.PathShapes.Fan, 4, false)],
+                    Segments = [new SlideSegment(PathShapes.Fan, 4, false)],
+                    WaitDuration = 1000,
                     Duration = duration,
                     Break = bodyBreak,
                     Ex = bodyEx

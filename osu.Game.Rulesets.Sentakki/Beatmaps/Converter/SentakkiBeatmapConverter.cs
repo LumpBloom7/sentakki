@@ -10,6 +10,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
@@ -102,9 +103,9 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
 
                     if (result is Slide slide)
                     {
-                        var slidePath = slide.SlideInfoList[0].SlidePath;
-                        if (slidePath.EndsWithSlideFan)
-                            fanStartTime = slide.StartTime + slide.Duration * slidePath.FanStartProgress;
+                        var slideBodyInfo = slide.SlideInfoList[0];
+                        if (slideBodyInfo.Segments[^1].Shape is PathShapes.Fan)
+                            fanStartTime = slide.StartTime + slideBodyInfo.EffectiveWaitDuration + slideBodyInfo.EffectiveMovementDuration * slideBodyInfo.SegmentStartProgressFor(^1);
                     }
 
                     if (allClaps && fanStartTime == double.MaxValue)
@@ -221,7 +222,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
             if (isOverlappingStart)
                 return;
 
-            currentLane = slide.SlideInfoList[0].SlidePath.EndLane;
+            currentLane += slide.SlideInfoList[0].RelativeEndLane;
         }
         else
             currentLane += streamOffset;

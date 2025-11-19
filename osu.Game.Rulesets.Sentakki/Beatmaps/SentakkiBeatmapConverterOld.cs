@@ -10,6 +10,7 @@ using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
@@ -217,7 +218,7 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
         // If there is a SlideFan, we always prioritize that, and ignore the rest
         foreach (var slide in slides)
         {
-            if (slide.SlideInfoList[0].SlidePathParts[0].Shape != SlidePaths.PathShapes.Fan) continue;
+            if (slide.SlideInfoList[0].Segments[0].Shape != PathShapes.Fan) continue;
 
             yield return slide;
 
@@ -309,10 +310,10 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
             [
                 new SlideBodyInfo
                 {
-                    SlidePathParts = [selectedPath.Value],
+                    Segments = [selectedPath.Value],
                     Duration = ((IHasDuration)original).Duration,
                     Break = hasBreakTail,
-                    ShootDelay = 0.5f * Beatmap.ControlPointInfo.TimingPointAt(original.StartTime).BeatLength,
+                    WaitDuration = 0.5f * Beatmap.ControlPointInfo.TimingPointAt(original.StartTime).BeatLength,
                 }
             ],
             Lane = noteLane,
@@ -322,16 +323,16 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
         };
     }
 
-    private SlideBodyPart? chooseSlidePartFor(HitObject original)
+    private SlideSegment? chooseSlidePartFor(HitObject original)
     {
         double duration = ((IHasDuration)original).Duration;
 
         var candidates = SlidePaths.VALID_CONVERT_PATHS;
         if (!ConversionFlags.HasFlag(ConversionFlags.FanSlides))
-            candidates = [.. candidates.Where(p => p.SlidePart.Shape != SlidePaths.PathShapes.Fan)];
+            candidates = [.. candidates.Where(p => p.Segment.Shape != PathShapes.Fan)];
 
         var candidateParts = candidates.Where(t => duration >= t.MinDuration && duration <= t.MinDuration * 10)
-                                       .Select(t => t.SlidePart)
+                                       .Select(t => t.Segment)
                                        .ToList();
 
         return candidateParts.Count != 0 ? null : candidateParts[patternGenerator.RNG.Next(candidateParts.Count)];
