@@ -2,6 +2,7 @@ using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Configuration;
@@ -17,15 +18,22 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
 
 public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
 {
+    private readonly HoldBody highlight;
+
     public HoldPlacementBlueprint()
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        InternalChild = new HoldBody()
+        InternalChild = new Container()
         {
-            Colour = Color4.YellowGreen,
-            Alpha = 0.5f,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Child = highlight = new HoldBody
+            {
+                Colour = Color4.YellowGreen,
+                Alpha = 0.5f,
+            }
         };
     }
 
@@ -39,7 +47,7 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
 
     protected override void Update()
     {
-        Rotation = HitObject.Lane.GetRotationForLane();
+        InternalChild.Rotation = HitObject.Lane.GetRotationForLane();
 
         const float max_height = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
         double animationDuration = DrawableSentakkiRuleset.ComputeLaneNoteEntryTime(animationSpeed.Value) / 2;
@@ -49,8 +57,8 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
         double tailY = Math.Min(HitObject.EndTime - EditorClock.CurrentTime, animationDuration);
         double height = tailY - headY;
 
-        InternalChild.Y = (float)(-SentakkiPlayfield.INTERSECTDISTANCE + headY / animationDuration * max_height);
-        InternalChild.Height = (float)(height / animationDuration * max_height);
+        highlight.Y = (float)(-SentakkiPlayfield.INTERSECTDISTANCE + headY / animationDuration * max_height);
+        highlight.Height = (float)(height / animationDuration * max_height);
     }
 
     private double commitStartTime;
@@ -60,7 +68,12 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
         switch (PlacementActive)
         {
             case PlacementState.Waiting:
-                float angle = ToScreenSpace(OriginPosition).AngleTo(screenSpacePosition);
+                var localPosition = ToLocalSpace(screenSpacePosition);
+
+                if (Vector2.Distance(OriginPosition, localPosition) < 100)
+                    break;
+
+                float angle = OriginPosition.AngleTo(localPosition);
 
                 HitObject.Lane = (int)Math.Round((angle - 22.5f) / 45);
                 break;

@@ -1,5 +1,6 @@
 using System;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Extensions;
@@ -21,23 +22,33 @@ public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        InternalChild = highlight = new TapPiece()
+        InternalChild = new Container
         {
-            Alpha = 0.5f,
-            Colour = Color4.YellowGreen
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Child = highlight = new TapPiece
+            {
+                Alpha = 0.5f,
+                Colour = Color4.YellowGreen
+            }
         };
     }
 
     protected override void Update()
     {
         base.Update();
-        Rotation = HitObject.Lane.GetRotationForLane();
+        InternalChild.Rotation = HitObject.Lane.GetRotationForLane();
         highlight.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
     }
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {
-        float angle = ToScreenSpace(OriginPosition).AngleTo(screenSpacePosition);
+        var localPosition = ToLocalSpace(screenSpacePosition);
+
+        if (Vector2.Distance(OriginPosition, localPosition) < 100)
+            return base.UpdateTimeAndPosition(screenSpacePosition, time);
+
+        float angle = OriginPosition.AngleTo(localPosition);
 
         HitObject.Lane = (int)Math.Round((angle - 22.5f) / 45);
 

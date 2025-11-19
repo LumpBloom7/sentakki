@@ -55,7 +55,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
     {
         base.Update();
 
-        Rotation = HitObject.Lane.GetRotationForLane();
+        InternalChild.Rotation = HitObject.Lane.GetRotationForLane();
         tapHighlight.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
     }
 
@@ -121,12 +121,17 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {
-        float angle = ToScreenSpace(OriginPosition).AngleTo(screenSpacePosition);
+        var localPosition = ToLocalSpace(screenSpacePosition);
+        float angle = OriginPosition.AngleTo(localPosition);
+
         int targetLane = (int)Math.Round((angle - 22.5f) / 45);
 
         switch (PlacementActive)
         {
             case PlacementState.Waiting:
+                if (Vector2.Distance(OriginPosition, localPosition) < 100)
+                    break;
+
                 HitObject.Lane = targetLane;
                 break;
 
@@ -136,6 +141,10 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                 double endTime = Math.Max(commitStartTime, time);
 
                 HitObject.SlideInfoList[0].Duration = endTime - HitObject.StartTime;
+
+                // Yes this distance is higher, since slide bodies feel worse
+                if (Vector2.Distance(OriginPosition, localPosition) < 200)
+                    break;
 
                 int startLane = HitObject.Lane + currentBody.RelativeEndLane - segments[^1].RelativeEndLane;
 
