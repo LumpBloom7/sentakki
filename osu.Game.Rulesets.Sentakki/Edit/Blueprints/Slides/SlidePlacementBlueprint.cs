@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
@@ -19,6 +19,9 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 {
     private readonly SlideTapPiece tapHighlight;
 
+    private readonly SlideBodyInfo committedSlideInfo;
+    private readonly SlideVisual activeSegmentVisual;
+
     protected override bool IsValidForPlacement => base.IsValidForPlacement && HitObject.SlideInfoList[0].Segments.Count > 0;
 
     public SlidePlacementBlueprint()
@@ -26,7 +29,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        HitObject.SlideInfoList = [new SlideBodyInfo()];
+        HitObject.SlideInfoList = [committedSlideInfo = new SlideBodyInfo()];
 
         AddInternal(new Container
         {
@@ -38,7 +41,17 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                 new SlideVisual
                 {
                     Rotation = -22.5f,
-                    SlideBodyInfo = currentBody,
+                    Alpha = 0.5f,
+                    SlideBodyInfo = committedSlideInfo,
+                },
+                activeSegmentVisual = new SlideVisual
+                {
+                    Alpha = 0,
+                    Rotation = -22.5f,
+                    SlideBodyInfo = new SlideBodyInfo
+                    {
+                        Segments = [new SlideSegment(PathShape.Straight, 4, false)]
+                    },
                 },
                 tapHighlight = new SlideTapPiece
                 {
@@ -69,6 +82,8 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
         float angleDelta = MathExtensions.AngleDelta(InternalChild.Rotation, newRotation);
         InternalChild.Rotation += 25 * angleDelta * (float)(Time.Elapsed / 1000);
+
+        activeSegmentVisual.Rotation = committedSlideInfo.RelativeEndLane.GetRotationForLane() - 45f;
     }
 
     private double commitStartTime;
@@ -82,7 +97,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                     break;
 
                 BeginPlacement(true);
-                updateSlideVisual();
+                activeSegmentVisual.Show();
                 commitStartTime = HitObject.StartTime;
                 return true;
 
@@ -90,20 +105,15 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                 switch (e.Button)
                 {
                     case MouseButton.Left:
-                        segments.Add(segments[^1]);
-
-                        commitChange();
-                        updateSlideVisual();
+                        committedSlideInfo.Segments = [.. committedSlideInfo.Segments, currentSegment];
                         return true;
 
                     case MouseButton.Middle:
-                        if (HitObject.SlideInfoList[0].Segments.Count == 0)
+
+                        if (committedSlideInfo.Segments.Count == 0)
                             break;
 
-                        segments.RemoveAt(segments.Count - 1);
-
-                        commitChange();
-                        updateSlideVisual();
+                        committedSlideInfo.Segments = [.. committedSlideInfo.Segments.SkipLast(1)];
                         return true;
 
                     case MouseButton.Right:
@@ -117,19 +127,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         return base.OnMouseDown(e);
     }
 
-    private readonly SlideBodyInfo currentBody = new SlideBodyInfo();
-
-    private readonly List<SlideSegment> segments = [new SlideSegment(PathShape.Straight, 4, false)];
-
-    private void updateSlideVisual()
-    {
-        currentBody.Segments = segments;
-    }
-
-    private void commitChange()
-    {
-        HitObject.SlideInfoList[0].Segments = segments[..^1];
-    }
+    private SlideSegment currentSegment = new SlideSegment(PathShape.Straight, 4, false);
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {
@@ -155,18 +153,18 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                 HitObject.SlideInfoList[0].Duration = endTime - HitObject.StartTime;
 
                 // Yes this distance is higher, since slide bodies feel worse
-                if (Vector2.Distance(OriginPosition, localPosition) < 200)
+                if (Vector2.Distance(OriginPosition, localPosition) < 100)
                     break;
 
-                int startLane = HitObject.Lane + currentBody.RelativeEndLane - segments[^1].RelativeEndLane;
+                int startLane = committedSlideInfo.RelativeEndLane + HitObject.Lane;
 
-                var newSegment = segments[^1] with { RelativeEndLane = targetLane - startLane };
+                var newSegment = currentSegment with { RelativeEndLane = targetLane - startLane };
 
                 if (!SlidePaths.CheckSlideValidity(newSegment))
                     break;
 
-                segments[^1] = newSegment;
-                updateSlideVisual();
+                currentSegment = newSegment;
+                activeSegmentVisual.SlideBodyInfo!.Segments = [currentSegment];
                 break;
         }
 
