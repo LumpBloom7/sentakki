@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Newtonsoft.Json;
 using osu.Game.Rulesets.Judgements;
@@ -33,17 +34,31 @@ public class Slide : SentakkiLanedHitObject, IHasDuration
 
     protected override bool PlaysBreakSample => false;
 
+    /// <summary>
+    /// The duration of this slide, determined by the longest slide body in the list.
+    /// </summary>
+    /// <remarks>
+    /// If there are no slide bodies, this will return a duration of 0.
+    /// <br/>
+    /// When increasing/decreasing the duration, each slide body's duration will be scaled proportionally.
+    /// </remarks>
     public double Duration
     {
-        get
+        get => SlideInfoList.Select(static t => t.Duration).Prepend(0).Max();
+        set
         {
-            double max = 0;
-            for (int i = 0; i < SlideInfoList.Count; ++i)
-                max = Math.Max(max, SlideInfoList[i].Duration);
+            double max = SlideInfoList.Select(static t => t.Duration).Prepend(0).Max();
 
-            return max;
+            if (max == value)
+                return;
+
+            foreach (var s in SlideInfoList)
+            {
+                double ratio = s.Duration / max;
+
+                s.Duration = ratio * value;
+            }
         }
-        set => throw new NotSupportedException();
     }
 
     public TapTypeEnum TapType = TapTypeEnum.Star;
