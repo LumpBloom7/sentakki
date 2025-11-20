@@ -43,6 +43,21 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
         ];
     }
 
+    protected override void OnDeselected()
+    {
+        base.OnDeselected();
+
+        foreach (var sbh in slideBodyHighlights)
+            sbh.Hide();
+    }
+
+    protected override void OnSelected()
+    {
+        base.OnSelected();
+        foreach (var sbh in slideBodyHighlights)
+            sbh.Show();
+    }
+
     protected override void Update()
     {
         base.Update();

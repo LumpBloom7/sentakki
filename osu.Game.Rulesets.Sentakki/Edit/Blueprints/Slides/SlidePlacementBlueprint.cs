@@ -20,6 +20,8 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
     private readonly SlideTapPiece tapHighlight;
 
     private readonly SlideBodyInfo committedSlideInfo;
+
+    private readonly SlideVisual commitedSlideVisual;
     private readonly SlideVisual activeSegmentVisual;
 
     protected override bool IsValidForPlacement => base.IsValidForPlacement && HitObject.SlideInfoList[0].Segments.Count > 0;
@@ -38,7 +40,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
             Colour = Color4.YellowGreen,
             Children =
             [
-                new SlideVisual
+                commitedSlideVisual = new SlideVisual
                 {
                     Rotation = -22.5f,
                     Alpha = 0.5f,
@@ -197,5 +199,14 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         activeSegmentVisual.SlideBodyInfo!.Segments = [currentSegment];
 
         return true;
+    }
+
+    public override void EndPlacement(bool commit)
+    {
+        base.EndPlacement(commit);
+
+        // Return the chevrons to the pool when placement ends
+        commitedSlideVisual.SlideBodyInfo = null;
+        activeSegmentVisual.SlideBodyInfo = null;
     }
 }

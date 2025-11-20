@@ -14,10 +14,14 @@ public partial class SlideBodyHighlight : CompositeDrawable
 
     public Quad SelectionQuad => slideVisual.ScreenSpaceDrawQuad;
 
+    private readonly SlideBodyInfo slideBodyInfo;
+
     public SlideBodyHighlight(SlideBodyInfo slideBodyInfo)
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
+
+        this.slideBodyInfo = slideBodyInfo;
 
         starPieces = new StarPiece[3];
 
@@ -37,7 +41,6 @@ public partial class SlideBodyHighlight : CompositeDrawable
                 [
                     slideVisual = new SlideVisual
                     {
-                        SlideBodyInfo = slideBodyInfo
                     },
                     new Container
                     {
@@ -62,5 +65,17 @@ public partial class SlideBodyHighlight : CompositeDrawable
             localStar.Rotation = dhoStar.Rotation;
             localStar.Position = dhoStar.Position;
         }
+    }
+
+    public override void Show()
+    {
+        slideVisual.SlideBodyInfo = slideBodyInfo;
+        base.Show();
+    }
+
+    public override void Hide()
+    {
+        base.Hide();
+        slideVisual.SlideBodyInfo = null;
     }
 }
