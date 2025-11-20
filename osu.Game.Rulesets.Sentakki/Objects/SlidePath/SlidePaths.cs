@@ -76,6 +76,12 @@ public static class SlidePaths
 
     public static SliderPath CreateSlidePathFor(SlideSegment segment, int startLane)
     {
+        // these lane values could be out of range
+        // yet still be technically valid due to the circular playfield
+        // Let's conservatively place them back within the [0, 7] range.
+        startLane = startLane.NormalizeLane();
+        segment.RelativeEndLane = segment.RelativeEndLane.NormalizeLane();
+
         return segment.Shape switch
         {
             PathShape.Straight => generateStraightPattern(startLane, segment.RelativeEndLane),
