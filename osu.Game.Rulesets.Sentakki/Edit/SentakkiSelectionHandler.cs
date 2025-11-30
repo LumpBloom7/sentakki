@@ -33,17 +33,27 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
 
         var items = selection.Select(s => s.Item).OfType<SentakkiHitObject>();
 
-        yield return new TernaryStateToggleMenuItem("Break") { State = { BindTarget = breakTernaryState } };
-        yield return new TernaryStateToggleMenuItem("EX ") { State = { BindTarget = exTernaryState } };
+        yield return new OsuMenuItem("Modifiers")
+        {
+            Items =
+            [
+                new TernaryStateToggleMenuItem("Break") { State = { BindTarget = breakTernaryState } },
+                new TernaryStateToggleMenuItem("EX ") { State = { BindTarget = exTernaryState } }
+            ]
+        };
 
         var slideBodies = items.OfType<Slide>().SelectMany(s => s.SlideInfoList);
 
         if (!slideBodies.Any()) yield break;
 
-        yield return new OsuMenuItemSpacer();
-
-        yield return new TernaryStateToggleMenuItem("Break slide") { State = { BindTarget = breakSlideTernaryState } };
-        yield return new TernaryStateToggleMenuItem("EX slide") { State = { BindTarget = exSlideTernaryState } };
+        yield return new OsuMenuItem("Slide Modifiers")
+        {
+            Items =
+            [
+                new TernaryStateToggleMenuItem("Break") { State = { BindTarget = breakSlideTernaryState } },
+                new TernaryStateToggleMenuItem("EX ") { State = { BindTarget = exSlideTernaryState } }
+            ]
+        };
     }
 
     private readonly Bindable<TernaryState> exTernaryState = new Bindable<TernaryState>();
