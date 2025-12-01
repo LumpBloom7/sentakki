@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics.UserInterface;
+using osu.Game.Extensions;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Screens.Edit.Compose.Components;
+using osu.Game.Utils;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit;
 
@@ -22,7 +26,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
         breakSlideTernaryState.ValueChanged += v => applyTernaryChanges<Slide>(setBreakSlideState, v.NewValue);
     }
 
-    #region TernaryStates
+    #region ContextMenu
 
     protected override IEnumerable<MenuItem> GetContextMenuItemsForSelection(IEnumerable<SelectionBlueprint<HitObject>> selection)
     {
@@ -93,6 +97,67 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
 
     private void setExSlideState(Slide slide, bool newValue) => slide.SlideInfoList.ForEach(si => si.Ex = newValue);
     private void setBreakSlideState(Slide slide, bool newValue) => slide.SlideInfoList.ForEach(si => si.Ex = newValue);
+
+    #endregion
+
+    #region ObjectMovement
+
+    public override bool HandleMovement(MoveSelectionEvent<HitObject> moveEvent)
+    {
+        var dragDelta = this.ScreenSpaceDeltaToParentSpace(moveEvent.ScreenSpaceDelta);
+        moveTouchNotes(dragDelta);
+        return true;
+    }
+
+    private void moveTouchNotes(Vector2 dragDelta)
+    {
+        const float boundary_radius = 270;
+
+        List<IHasPosition> touches = [.. SelectedBlueprints.Select(bp => bp.Item).OfType<IHasPosition>()];
+
+        if (touches.Count == 0)
+            return;
+
+        var centre = GeometryUtils.MinimumEnclosingCircle(touches).Item1;
+
+        float minimalDragDistance = (centre + dragDelta).Length;
+        var dragDirection = (dragDelta + centre).Normalized();
+
+        foreach (var touch in touches)
+        {
+            // Get the relative position of the touch note, with the centre of mass as the origin.
+            var positionAroundCenter = touch.Position - centre;
+
+            // Project the relative position onto the drag direction
+            // This gives us information about how far along the drag direction the touch note is.
+            float b = (dragDirection.X * positionAroundCenter.X) + (dragDirection.Y * positionAroundCenter.Y);
+
+            // This gives us the amount of violation incurred by the point. In our case
+            float c = positionAroundCenter.LengthSquared - MathF.Pow(boundary_radius, 2);
+
+            // b^2 is the squared projection of relative position onto the squared direction
+            // c already measured the squared constraint violation
+            // sqrt(b^2 - c) gives the intersect of the line from the origin/centre, which we offset with the projected relative position b
+            float distanceToRingIntersect = MathF.Sqrt(MathF.Pow(b, 2) - c) - b;
+
+            minimalDragDistance = Math.Min(minimalDragDistance, distanceToRingIntersect);
+        }
+
+        // No movement or invalid movement occurred, break out early to avoid NaN during normalisation.
+        if (minimalDragDistance < 0) return;
+
+        var movementAmount = -centre + (minimalDragDistance * dragDirection);
+
+        EditorBeatmap.BeginChange();
+
+        foreach (var touch in touches)
+        {
+            touch.Position += movementAmount;
+            EditorBeatmap.Update((SentakkiHitObject)touch);
+        }
+
+        EditorBeatmap.EndChange();
+    }
 
     #endregion
 }

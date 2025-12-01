@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Pooling;
@@ -55,8 +56,23 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
         }
     }
 
+    protected override SelectionHandler<HitObject> CreateSelectionHandler() => new SentakkiSelectionHandler();
+
+    private Vector2 currentMousePosition => InputManager.CurrentState.Mouse.Position;
+
+    // Since the movement is going to be a rotation, it makes sense that we prioritise the closest hitobject.
+    protected override IEnumerable<SelectionBlueprint<HitObject>> SortForMovement(IReadOnlyList<SelectionBlueprint<HitObject>> blueprints)
+        => blueprints.OrderBy(b => Vector2.DistanceSquared(b.ScreenSpaceSelectionPoint, currentMousePosition));
+
     protected override bool TryMoveBlueprints(DragEvent e, IList<(SelectionBlueprint<HitObject> blueprint, Vector2[] originalSnapPositions)> blueprints)
     {
-        return false;
+        Vector2 distanceTravelled = e.ScreenSpaceMousePosition - e.ScreenSpaceMouseDownPosition;
+
+        // The final movement position, relative to movementBlueprintOriginalPosition.
+        Vector2 movePosition = blueprints.First().originalSnapPositions.First() + distanceTravelled;
+
+        var movementEvent = new MoveSelectionEvent<HitObject>(blueprints.First().blueprint, movePosition - blueprints.First().blueprint.ScreenSpaceSelectionPoint);
+        SelectionHandler.HandleMovement(movementEvent);
+        return true;
     }
 }
