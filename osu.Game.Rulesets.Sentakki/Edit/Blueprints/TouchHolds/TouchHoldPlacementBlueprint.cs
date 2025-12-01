@@ -83,7 +83,6 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
                 break;
         }
 
-        EndPlacement(true);
         return true;
     }
 }
