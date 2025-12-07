@@ -5,6 +5,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input.Bindings;
 using osu.Game.Extensions;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Edit;
@@ -24,8 +25,8 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
     {
         Origin = Anchor.Centre;
         Anchor = Anchor.Centre;
-        exTernaryState.ValueChanged += v => applyTernaryChanges<SentakkiHitObject>(setExState, v.NewValue);
-        breakTernaryState.ValueChanged += v => applyTernaryChanges<SentakkiHitObject>(setBreakState, v.NewValue);
+        ExTernaryState.ValueChanged += v => applyTernaryChanges<SentakkiHitObject>(setExState, v.NewValue);
+        BreakTernaryState.ValueChanged += v => applyTernaryChanges<SentakkiHitObject>(setBreakState, v.NewValue);
 
         exSlideTernaryState.ValueChanged += v => applyTernaryChanges<Slide>(setExSlideState, v.NewValue);
         breakSlideTernaryState.ValueChanged += v => applyTernaryChanges<Slide>(setBreakSlideState, v.NewValue);
@@ -46,8 +47,16 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
         {
             Items =
             [
-                new TernaryStateToggleMenuItem("Break") { State = { BindTarget = breakTernaryState } },
-                new TernaryStateToggleMenuItem("EX ") { State = { BindTarget = exTernaryState } }
+                new TernaryStateToggleMenuItem("Break")
+                {
+                    State = { BindTarget = BreakTernaryState },
+                    Hotkey = new Hotkey(new KeyCombination(InputKey.R))
+                },
+                new TernaryStateToggleMenuItem("EX ")
+                {
+                    State = { BindTarget = ExTernaryState, },
+                    Hotkey = new Hotkey(new KeyCombination(InputKey.T))
+                }
             ]
         };
 
@@ -65,8 +74,8 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
         };
     }
 
-    private readonly Bindable<TernaryState> exTernaryState = new Bindable<TernaryState>();
-    private readonly Bindable<TernaryState> breakTernaryState = new Bindable<TernaryState>();
+    public readonly Bindable<TernaryState> ExTernaryState = new Bindable<TernaryState>();
+    public readonly Bindable<TernaryState> BreakTernaryState = new Bindable<TernaryState>();
 
     private readonly Bindable<TernaryState> exSlideTernaryState = new Bindable<TernaryState>();
     private readonly Bindable<TernaryState> breakSlideTernaryState = new Bindable<TernaryState>();
@@ -74,8 +83,8 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
     protected override void UpdateTernaryStates()
     {
         var selectedItems = SelectedItems.OfType<SentakkiHitObject>();
-        exTernaryState.Value = GetStateFromSelection(selectedItems, h => h.Ex);
-        breakTernaryState.Value = GetStateFromSelection(selectedItems, h => h.Break);
+        ExTernaryState.Value = GetStateFromSelection(selectedItems, h => h.Ex);
+        BreakTernaryState.Value = GetStateFromSelection(selectedItems, h => h.Break);
 
         var selectedSlideBodies = selectedItems.OfType<Slide>().SelectMany(s => s.SlideInfoList);
         breakSlideTernaryState.Value = GetStateFromSelection(selectedSlideBodies, s => s.Break);
