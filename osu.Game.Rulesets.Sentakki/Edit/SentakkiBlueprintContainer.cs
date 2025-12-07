@@ -18,8 +18,11 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit;
 
+[Cached]
 public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
 {
+    public new HitObjectComposer Composer => base.Composer;
+
     [Cached]
     private DrawablePool<SlideChevron> chevrons { get; set; }
 

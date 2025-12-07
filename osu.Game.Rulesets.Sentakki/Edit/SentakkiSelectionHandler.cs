@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.UserInterface;
 using osu.Game.Extensions;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Screens.Edit.Compose.Components;
 using osu.Game.Utils;
@@ -19,6 +22,8 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
 {
     public SentakkiSelectionHandler()
     {
+        Origin = Anchor.Centre;
+        Anchor = Anchor.Centre;
         exTernaryState.ValueChanged += v => applyTernaryChanges<SentakkiHitObject>(setExState, v.NewValue);
         breakTernaryState.ValueChanged += v => applyTernaryChanges<SentakkiHitObject>(setBreakState, v.NewValue);
 
@@ -105,11 +110,71 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
     public override bool HandleMovement(MoveSelectionEvent<HitObject> moveEvent)
     {
         var dragDelta = this.ScreenSpaceDeltaToParentSpace(moveEvent.ScreenSpaceDelta);
-        moveTouchNotes(dragDelta);
+
+        // Laned notes have the least movement freedom. If any are selected, *ALL* notes share the same movement constraints
+        if (SelectedBlueprints.Any(bp => bp.Item is SentakkiLanedHitObject))
+            lanedBasedMovement(moveEvent.Blueprint.ScreenSpaceSelectionPoint, dragDelta);
+        else // Without laned notes, then touch and touch notes can move freely.
+            moveTouchNotesFreeform(dragDelta);
+
         return true;
     }
 
-    private void moveTouchNotes(Vector2 dragDelta)
+    [Resolved]
+    private SentakkiBlueprintContainer blueprintContainer { get; set; } = null!;
+
+    private void lanedBasedMovement(Vector2 screenSpaceSelectionPoint, Vector2 dragDelta)
+    {
+        List<SentakkiLanedHitObject> lanedNotes = [.. SelectedBlueprints.Select(bp => bp.Item).OfType<SentakkiLanedHitObject>()];
+        List<IHasPosition> touchNotes = [.. SelectedBlueprints.Select(bp => bp.Item).OfType<IHasPosition>()];
+
+        var originalMousePosition = ToLocalSpace(screenSpaceSelectionPoint);
+        var currentMousePosition = originalMousePosition + dragDelta;
+
+        float originalAngle = OriginPosition.AngleTo(originalMousePosition);
+        float currentAngle = OriginPosition.AngleTo(currentMousePosition);
+
+        float angleDelta = MathExtensions.AngleDelta(originalAngle, currentAngle);
+        int laneOffset = (int)Math.Round(angleDelta / 45);
+
+        if (laneOffset == 0)
+            return;
+
+        var playfield = blueprintContainer.Composer.Playfield;
+
+        EditorBeatmap.BeginChange();
+
+        foreach (var lanedNote in lanedNotes)
+        {
+            playfield.Remove(lanedNote);
+            lanedNote.Lane = (lanedNote.Lane + laneOffset).NormalizeLane();
+            playfield.Add(lanedNote);
+        }
+
+        // Rotate the touch notes around the origin, in order to preserve their relative positions to the laned notes.
+        if (touchNotes.Count > 0)
+        {
+            float theta = laneOffset * 45f / 180 * MathF.PI;
+            (float sin, float cos) = MathF.SinCos(theta);
+
+            foreach (var touchNote in touchNotes)
+            {
+                var pos = touchNote.Position;
+
+                touchNote.Position = new Vector2
+                {
+                    X = cos * pos.X - sin * pos.Y,
+                    Y = sin * pos.X + cos * pos.Y
+                };
+
+                EditorBeatmap.Update((SentakkiHitObject)touchNote);
+            }
+        }
+
+        EditorBeatmap.EndChange();
+    }
+
+    private void moveTouchNotesFreeform(Vector2 dragDelta)
     {
         const float boundary_radius = 270;
 
