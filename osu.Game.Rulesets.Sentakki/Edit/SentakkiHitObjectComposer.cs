@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Edit.Tools;
 using osu.Game.Rulesets.Sentakki.Edit.CompositionTools;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Edit.Components.TernaryButtons;
 using osu.Game.Screens.Edit.Compose.Components;
 
@@ -17,6 +19,11 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
         : base(ruleset)
     {
     }
+
+    private DrawableRulesetDependencies dependencies = null!;
+
+    protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
+        => dependencies = new DrawableRulesetDependencies(Ruleset, base.CreateChildDependencies(parent));
 
     protected override ComposeBlueprintContainer CreateBlueprintContainer()
         => new SentakkiBlueprintContainer(this);
