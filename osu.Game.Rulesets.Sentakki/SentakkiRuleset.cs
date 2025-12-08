@@ -18,12 +18,14 @@ using osu.Game.Graphics.Containers;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Difficulty;
+using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Replays.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Difficulty;
+using osu.Game.Rulesets.Sentakki.Edit;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Localisation;
 using osu.Game.Rulesets.Sentakki.Mods;
@@ -34,6 +36,7 @@ using osu.Game.Rulesets.Sentakki.Statistics;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
+using osu.Game.Screens.Edit.Setup;
 using osu.Game.Screens.Ranking.Statistics;
 using osuTK;
 using osuTK.Graphics;
@@ -52,6 +55,34 @@ public partial class SentakkiRuleset : Ruleset
     public override string Description => IsDevelopmentBuild ? "sentakki (Dev build)" : "sentakki";
     public override string PlayingVerb => "Washing laundry";
     public override string ShortName => "Sentakki";
+
+    #region Editor
+
+    public override bool EditorShowScrollSpeed => false;
+
+    public override HitObjectComposer? CreateHitObjectComposer()
+        => new SentakkiHitObjectComposer(this);
+
+    public override IEnumerable<Drawable> CreateEditorSetupSections()
+    {
+        return
+        [
+            new MetadataSection(),
+            new FillFlowContainer
+            {
+                AutoSizeAxes = Axes.Y,
+                Direction = FillDirection.Vertical,
+                Spacing = new Vector2(25),
+                Children =
+                [
+                    new ResourcesSection { RelativeSizeAxes = Axes.X },
+                    new DesignSection { RelativeSizeAxes = Axes.X },
+                ]
+            }
+        ];
+    }
+
+    #endregion
 
     public override IEnumerable<RulesetBeatmapAttribute> GetBeatmapAttributesForDisplay(IBeatmapInfo beatmapInfo, IReadOnlyCollection<Mod> mods) => [];
 
