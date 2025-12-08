@@ -12,6 +12,8 @@ public abstract partial class SentakkiSelectionBlueprint<THitObject, TDrawable> 
     public override Vector2 ScreenSpaceSelectionPoint => SelectionQuad.Centre;
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => SelectionQuad.Contains(screenSpacePos);
 
+    protected override bool AlwaysShowWhenSelected => true;
+
     protected SentakkiSelectionBlueprint(THitObject item)
         : base(item)
     {
