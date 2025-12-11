@@ -177,7 +177,7 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
 
         private void importFromSimai()
         {
-            SimaiFile simaiFile = new SimaiFile(fileSelector.CurrentFile.Value);
+            using SimaiFile simaiFile = new SimaiFile(fileSelector.CurrentFile.Value);
 
             string? osuFile = SimaiOsz.OsuFromSimai(simaiFile).FirstOrDefault();
 

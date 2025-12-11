@@ -117,7 +117,7 @@ MaiDiff:{9}
 
     public static void ConvertToOsz(DirectoryInfo path, Func<string, Stream> createOutputStream, bool closeStream = true)
     {
-        SimaiFile simaiFile = new SimaiFile(path.EnumerateFileSystemInfos().First(f => f.Name is "maidata.txt"));
+        using SimaiFile simaiFile = new SimaiFile(path.EnumerateFileSystemInfos().First(f => f.Name is "maidata.txt"));
         Dictionary<string, string> dict = simaiFile.ToKeyValuePairs().ToDictionary(x => x.Key, x => x.Value);
 
         string titleUnicode = dict.GetValueOrDefault("title", "Unknown Title");
