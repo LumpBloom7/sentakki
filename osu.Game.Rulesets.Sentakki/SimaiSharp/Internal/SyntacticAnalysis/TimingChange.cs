@@ -2,6 +2,7 @@ namespace SimaiSharp.Internal.SyntacticAnalysis
 {
     public struct TimingChange
     {
+        public float trueInheritedTempo;
         public float time;
         public float tempo;
         public float subdivisions;

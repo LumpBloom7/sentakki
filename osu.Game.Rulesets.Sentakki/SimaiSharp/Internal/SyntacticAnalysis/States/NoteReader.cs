@@ -44,27 +44,27 @@ namespace SimaiSharp.Internal.SyntacticAnalysis.States
                         throw new ScopeMismatchException(token.line, token.character, ScopeMismatchException.ScopeType.Global);
 
                     case TokenType.Decorator:
-                        {
-                            DecorateNote(in token, ref currentNote);
-                            break;
-                        }
+                    {
+                        DecorateNote(in token, ref currentNote);
+                        break;
+                    }
 
                     case TokenType.Slide:
-                        {
-                            if (currentNote.type == NoteType.Hold) currentNote.length = overrideTiming.SecondsPerBeat;
+                    {
+                        if (currentNote.type == NoteType.Hold) currentNote.length = overrideTiming.SecondsPerBeat;
 
-                            var slide = SlideReader.Process(parent, in currentNote, in token, in overrideTiming);
-                            manuallyMoved = true;
+                        var slide = SlideReader.Process(parent, in currentNote, in token, in overrideTiming);
+                        manuallyMoved = true;
 
-                            currentNote.slidePaths.Add(slide);
-                            break;
-                        }
+                        currentNote.slidePaths.Add(slide);
+                        break;
+                    }
 
                     case TokenType.Duration:
-                        {
-                            ReadDuration(parent.timingChanges[^1], in token, ref currentNote);
-                            break;
-                        }
+                    {
+                        ReadDuration(parent.timingChanges[^1], in token, ref currentNote);
+                        break;
+                    }
 
                     case TokenType.SlideJoiner:
                         throw new ScopeMismatchException(token.line, token.character, ScopeMismatchException.ScopeType.Slide);
