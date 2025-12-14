@@ -47,18 +47,18 @@ namespace SimaiSharp.Structures
                 case NoteGroup.CSensor:
                     return "C";
                 default:
-                {
-                    char groupChar = group switch
                     {
-                        NoteGroup.ASensor => 'A',
-                        NoteGroup.BSensor => 'B',
-                        NoteGroup.DSensor => 'D',
-                        NoteGroup.ESensor => 'E',
-                        _ => throw new ArgumentOutOfRangeException()
-                    };
+                        char groupChar = group switch
+                        {
+                            NoteGroup.ASensor => 'A',
+                            NoteGroup.BSensor => 'B',
+                            NoteGroup.DSensor => 'D',
+                            NoteGroup.ESensor => 'E',
+                            _ => throw new ArgumentOutOfRangeException()
+                        };
 
-                    return $"{groupChar}{index + 1}";
-                }
+                        return $"{groupChar}{index + 1}";
+                    }
             }
         }
     }

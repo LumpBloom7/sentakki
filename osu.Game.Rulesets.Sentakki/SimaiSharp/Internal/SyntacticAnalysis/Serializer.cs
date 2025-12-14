@@ -18,7 +18,7 @@ namespace SimaiSharp.Internal.SyntacticAnalysis
             while (_currentTime <= chart.FinishTiming.GetValueOrDefault(0))
             {
                 if (_currentTimingChange < chart.TimingChanges.Length - 1 &&
-                    Math.Abs(chart.TimingChanges[_currentTimingChange + 1].time - _currentTime) < float.Epsilon)
+                    Math.Abs(chart.TimingChanges[_currentTimingChange + 1].time - _currentTime) < 0.01)
                 {
                     _currentTimingChange++;
 
@@ -33,7 +33,7 @@ namespace SimaiSharp.Internal.SyntacticAnalysis
 
                 if (_currentNoteCollection < chart.NoteCollections.Length &&
                     Math.Abs(chart.NoteCollections[_currentNoteCollection].time - _currentTime) <=
-                    float.Epsilon)
+                    0.01)
                 {
                     SerializeNoteCollection(chart.NoteCollections[_currentNoteCollection], writer);
 

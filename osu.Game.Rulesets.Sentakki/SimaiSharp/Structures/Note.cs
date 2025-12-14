@@ -75,6 +75,9 @@ namespace SimaiSharp.Structures
                     break;
             }
 
+            if (type == NoteType.Break)
+                writer.Write('b');
+
             if (length.HasValue)
                 writer.Write($"h[#{length.Value:0.0000000}]");
 
