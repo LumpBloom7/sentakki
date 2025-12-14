@@ -68,7 +68,7 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
         if (editorBeatmap.PlayableBeatmap is not IBeatmap<SentakkiHitObject> senBeatmap)
             return;
 
-        var encoder = new QuantizedSimaiBeatmapEncoder(senBeatmap);
+        var encoder = new SimaiBeatmapEncoder(senBeatmap);
 
         string filename = SimaiOsz.CleanFileName(
             $"(sen) {editorBeatmap.BeatmapInfo.Metadata.ArtistUnicode} - {editorBeatmap.BeatmapInfo.Metadata.TitleUnicode} ({editorBeatmap.BeatmapInfo.DifficultyName}).txt");
