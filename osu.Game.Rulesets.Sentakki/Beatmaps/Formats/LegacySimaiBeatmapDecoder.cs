@@ -91,6 +91,9 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
         foreach (var timingChange in chart.TimingChanges)
         {
+            if (timingChange.TempoInherited)
+                continue;
+
             double coercedTime = timingChange.time >= 0f
                 ? timingChange.time
                 : timingChange.time - Math.Floor(timingChange.time / timingChange.SecondsPerBar) * timingChange.SecondsPerBar;
@@ -98,15 +101,9 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
             var controlPoint = new TimingControlPoint
             {
                 Time = Math.Round(coercedTime * 1000f),
-                BeatLength = 60000.0 / timingChange.tempo,
+                BeatLength = 60000.0 / timingChange.trueInheritedTempo,
                 TimeSignature = new TimeSignature(4)
             };
-
-            // Strong assumption:
-            /// Since simai is inherently (sub)beat aligned, if two timing changes are adjacent with the same tempo, then the latter is likely rerdundant
-            /// The subdivision info is only used by simai, since the osu editor doesn't time their notes using that
-            if (lastTimingPoint is not null && lastTimingPoint.BeatLength == controlPoint.BeatLength)
-                continue;
 
             lastTimingPoint = controlPoint;
 
