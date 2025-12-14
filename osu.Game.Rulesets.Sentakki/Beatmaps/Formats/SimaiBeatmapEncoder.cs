@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using osu.Game.Beatmaps;
+using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -110,52 +111,76 @@ public class SimaiBeatmapEncoder
 
     protected virtual string CreateSimaiChart()
     {
-        var hitObjectsGroups = Beatmap.HitObjects.GroupBy(h => h.StartTime).OrderBy(g => g.Key).ToList();
+        var hitObjectsGroups = Beatmap.HitObjects.GroupBy(h => h.StartTime).OrderBy(g => g.Key).Select(g => new TimedBeatmapEvent
+        {
+            Time = g.Key,
+            BeatmapEvent = new HitObjectGroup([.. g])
+        });
 
-        if (hitObjectsGroups.Count == 0)
-            return "E";
+        var timingPoints = Beatmap.ControlPointInfo.TimingPoints.Select(t => new TimedBeatmapEvent
+        {
+            Time = t.Time,
+            BeatmapEvent = new TimingPointMarker(t)
+        });
+
+        TimedBeatmapEvent[] events = [.. hitObjectsGroups, .. timingPoints];
+
+        if (events.Length == 0)
+            return ",E";
 
         StringBuilder maidataBuilder = new StringBuilder();
 
-        // Add padding timingPoint prior to first hitobject
-        if (hitObjectsGroups[0].Key > 0)
-            maidataBuilder.Append(Invariant($"\n{{#{hitObjectsGroups[0].Key / 1000:F3}}},"));
+        // Add padding timingPoint prior to first event
+        if (events[0].Time > 0)
+            maidataBuilder.Append(Invariant($"\n({((TimingPointMarker)timingPoints.First().BeatmapEvent).timingPoint.BPM}){{#{events[0].Time / 1000:F3}}},"));
 
-        for (int i = 0; i < hitObjectsGroups.Count; ++i)
+        for (int i = 0; i < events.Length; ++i)
         {
-            var group = hitObjectsGroups[i];
+            var group = events[i];
 
-            if (i < hitObjectsGroups.Count - 1)
+            double nextTime = group.Time;
+
+            if (group.BeatmapEvent is TimingPointMarker tp)
+                maidataBuilder.Append(Invariant($"({tp.timingPoint.BPM})"));
+
+
+
+            if (i < events.Length - 1)
             {
-                var nextGroup = hitObjectsGroups[i + 1];
-                double delta = nextGroup.Key - group.Key;
+                var nextGroup = events[i + 1];
+                double delta = nextGroup.Time - group.Time;
 
                 maidataBuilder.Append(Invariant($"\n{{#{delta / 1000:F3}}}"));
             }
 
-            var hitobjects = group.ToList();
-
-            for (int j = 0; j < hitobjects.Count; ++j)
+            if (group.BeatmapEvent is HitObjectGroup hog)
             {
-                var hitobject = hitobjects[j];
+                var hitobjects = hog.HitObjects;
 
-                string hitObjectString = hitobject switch
+                for (int j = 0; j < hitobjects.Length; ++j)
                 {
-                    Tap t => TapToString(t),
-                    Hold h => HoldToString(h),
-                    Slide s => SlideToString(s),
-                    Touch tc => TouchToString(tc),
-                    TouchHold th => TouchHoldToString(th),
-                    _ => ""
-                };
+                    var hitobject = hitobjects[j];
 
-                maidataBuilder.Append(hitObjectString);
-                if (j < hitobjects.Count - 1)
-                    maidataBuilder.Append('/');
+                    string hitObjectString = hitobject switch
+                    {
+                        Tap t => TapToString(t),
+                        Hold h => HoldToString(h),
+                        Slide s => SlideToString(s),
+                        Touch tc => TouchToString(tc),
+                        TouchHold th => TouchHoldToString(th),
+                        _ => ""
+                    };
+
+                    maidataBuilder.Append(hitObjectString);
+                    if (j < hitobjects.Length - 1)
+                        maidataBuilder.Append('/');
+                }
             }
 
             maidataBuilder.Append(',');
         }
+
+        maidataBuilder.Append(",\nE");
 
         return maidataBuilder.ToString();
     }
@@ -272,4 +297,15 @@ public class SimaiBeatmapEncoder
         Encode(file);
         file.Close();
     }
+
+    public class TimedBeatmapEvent
+    {
+        public double Time;
+        public IBeatmapEvent BeatmapEvent = null!;
+    }
+
+    public interface IBeatmapEvent;
+    public record class HitObjectGroup(SentakkiHitObject[] HitObjects) : IBeatmapEvent { }
+
+    public record class TimingPointMarker(TimingControlPoint timingPoint) : IBeatmapEvent { };
 }
