@@ -123,7 +123,8 @@ public class SimaiBeatmapEncoder
             BeatmapEvent = new TimingPointMarker(t)
         });
 
-        TimedBeatmapEvent[] events = [.. hitObjectsGroups, .. timingPoints];
+        TimedBeatmapEvent[] events = [.. hitObjectsGroups.Concat(timingPoints).OrderBy(g => g.Time)];
+
 
         if (events.Length == 0)
             return ",E";

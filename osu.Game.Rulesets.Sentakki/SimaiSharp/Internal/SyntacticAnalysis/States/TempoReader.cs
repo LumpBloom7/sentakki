@@ -19,6 +19,7 @@ namespace SimaiSharp.Internal.SyntacticAnalysis.States
 
             var newTimingChange = parent.timingChanges[^1];
             newTimingChange.tempo = tempo;
+            newTimingChange.trueInheritedTempo = tempo;
             newTimingChange.time = parent.currentTime;
             newTimingChange.TempoInherited = false;
 

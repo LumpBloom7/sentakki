@@ -99,7 +99,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
             var controlPoint = new TimingControlPoint
             {
                 Time = Math.Round(coercedTime * 1000f),
-                BeatLength = 60000.0 / timingChange.tempo,
+                BeatLength = 60000.0 / timingChange.trueInheritedTempo,
                 TimeSignature = new TimeSignature(4)
             };
 

@@ -29,7 +29,7 @@ namespace SimaiSharp.Internal.SyntacticAnalysis.States
                 }
                 else
                 {
-                    newTimingChange.TempoInherited = false;
+                    newTimingChange.TempoInherited = true;
                 }
 
                 parent.timingChanges.Add(newTimingChange);
@@ -52,7 +52,7 @@ namespace SimaiSharp.Internal.SyntacticAnalysis.States
                 }
                 else
                 {
-                    newTimingChange.TempoInherited = false;
+                    newTimingChange.TempoInherited = true;
                 }
 
                 parent.timingChanges.Add(newTimingChange);

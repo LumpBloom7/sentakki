@@ -50,58 +50,58 @@ namespace SimaiSharp.Internal.SyntacticAnalysis
                 switch (token.type)
                 {
                     case TokenType.Tempo:
-                        {
-                            TempoReader.Process(this, token);
-                            break;
-                        }
+                    {
+                        TempoReader.Process(this, token);
+                        break;
+                    }
                     case TokenType.Subdivision:
-                        {
-                            SubdivisionReader.Process(this, token);
-                            break;
-                        }
+                    {
+                        SubdivisionReader.Process(this, token);
+                        break;
+                    }
                     case TokenType.Location:
+                    {
+                        currentNoteCollection ??= new NoteCollection(currentTime);
+
+                        if (token.lexeme.Span[0] == '0')
                         {
-                            currentNoteCollection ??= new NoteCollection(currentTime);
-
-                            if (token.lexeme.Span[0] == '0')
-                            {
-                                if (currentNoteCollection.eachStyle is not EachStyle.ForceBroken)
-                                    currentNoteCollection.eachStyle = EachStyle.ForceEach;
-                                break;
-                            }
-
-                            var note = NoteReader.Process(this, token);
-                            currentNoteCollection.Add(note);
-                            manuallyMoved = true;
-
-                            _maxFinishTime = Math.Max(_maxFinishTime, currentNoteCollection.time + note.GetVisibleDuration());
+                            if (currentNoteCollection.eachStyle is not EachStyle.ForceBroken)
+                                currentNoteCollection.eachStyle = EachStyle.ForceEach;
                             break;
                         }
+
+                        var note = NoteReader.Process(this, token);
+                        currentNoteCollection.Add(note);
+                        manuallyMoved = true;
+
+                        _maxFinishTime = Math.Max(_maxFinishTime, currentNoteCollection.time + note.GetVisibleDuration());
+                        break;
+                    }
                     case TokenType.TimeStep:
+                    {
+                        if (currentNoteCollection != null)
                         {
-                            if (currentNoteCollection != null)
-                            {
-                                noteCollections.Add(currentNoteCollection);
-                                currentNoteCollection = null;
-                            }
-
-                            currentTime += timingChanges[^1].SecondsPerBeat;
+                            noteCollections.Add(currentNoteCollection);
+                            currentNoteCollection = null;
                         }
-                        break;
+
+                        currentTime += timingChanges[^1].SecondsPerBeat;
+                    }
+                    break;
                     case TokenType.EachDivider:
+                    {
+                        switch (token.lexeme.Span[0])
                         {
-                            switch (token.lexeme.Span[0])
-                            {
-                                case '/':
-                                    break;
+                            case '/':
+                                break;
 
-                                case '`':
-                                    if (currentNoteCollection != null)
-                                        currentNoteCollection.eachStyle = EachStyle.ForceBroken;
-                                    break;
-                            }
+                            case '`':
+                                if (currentNoteCollection != null)
+                                    currentNoteCollection.eachStyle = EachStyle.ForceBroken;
+                                break;
                         }
-                        break;
+                    }
+                    break;
                     case TokenType.Decorator:
                         throw new ScopeMismatchException(token.line, token.character,
                                                          ScopeMismatchException.ScopeType.Note);
@@ -154,15 +154,15 @@ namespace SimaiSharp.Internal.SyntacticAnalysis
                 case -1:
                     return ((startLocation.index + 2) % 8 >= 4) ? SlideType.RingCw : SlideType.RingCcw;
                 default:
-                    {
-                        int difference = endLocation.index - startLocation.index;
+                {
+                    int difference = endLocation.index - startLocation.index;
 
-                        int rotation = difference >= 0
-                                           ? difference > 4 ? -1 : 1
-                                           : difference < -4 ? 1 : -1;
+                    int rotation = difference >= 0
+                                       ? difference > 4 ? -1 : 1
+                                       : difference < -4 ? 1 : -1;
 
-                        return rotation > 0 ? SlideType.RingCw : SlideType.RingCcw;
-                    }
+                    return rotation > 0 ? SlideType.RingCw : SlideType.RingCcw;
+                }
             }
         }
 
