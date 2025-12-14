@@ -15,4 +15,4 @@ public class HoldCompositionTool : CompositionTool
 
     public override Drawable CreateIcon() => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Sliders);
     public override PlacementBlueprint CreatePlacementBlueprint() => new HoldPlacementBlueprint();
-};
+}

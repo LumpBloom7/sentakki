@@ -65,4 +65,11 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
         new TouchCompositionTool(),
         new TouchHoldCompositionTool(),
     ];
+
+    protected override void Dispose(bool isDisposing)
+    {
+        base.Dispose(isDisposing);
+
+        dependencies?.Dispose();
+    }
 }
