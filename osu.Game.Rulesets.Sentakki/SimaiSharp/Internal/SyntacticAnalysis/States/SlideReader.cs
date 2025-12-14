@@ -39,29 +39,29 @@ namespace SimaiSharp.Internal.SyntacticAnalysis.States
                         throw new ScopeMismatchException(token.line, token.character, ScopeMismatchException.ScopeType.Global);
 
                     case TokenType.Decorator:
-                    {
-                        DecorateSlide(in token, ref path);
-                        break;
-                    }
+                        {
+                            DecorateSlide(in token, ref path);
+                            break;
+                        }
 
                     case TokenType.Slide:
-                    {
-                        ReadSegment(parent, token, path.segments[^1].vertices[^1], ref path);
-                        manuallyMoved = true;
-                        break;
-                    }
+                        {
+                            ReadSegment(parent, token, path.segments[^1].vertices[^1], ref path);
+                            manuallyMoved = true;
+                            break;
+                        }
 
                     case TokenType.Duration:
-                    {
-                        ReadDuration(parent!.timingChanges[^1], in token, ref path);
-                        break;
-                    }
+                        {
+                            ReadDuration(parent!.timingChanges[^1], in token, ref path);
+                            break;
+                        }
 
                     case TokenType.SlideJoiner:
-                    {
-                        parent.MoveNext();
-                        return path;
-                    }
+                        {
+                            parent.MoveNext();
+                            return path;
+                        }
 
                     case TokenType.TimeStep:
                     case TokenType.EachDivider:

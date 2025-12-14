@@ -1,7 +1,6 @@
 using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Xml.XPath;
 using SimaiSharp.Internal.Errors;
 using SimaiSharp.Internal.LexicalAnalysis;
 
@@ -21,6 +20,7 @@ namespace SimaiSharp.Internal.SyntacticAnalysis.States
             var newTimingChange = parent.timingChanges[^1];
             newTimingChange.tempo = tempo;
             newTimingChange.time = parent.currentTime;
+            newTimingChange.TempoInherited = false;
 
             if (Math.Abs(parent.timingChanges[^1].time - parent.currentTime) <= float.Epsilon)
                 parent.timingChanges.RemoveAt(parent.timingChanges.Count - 1);

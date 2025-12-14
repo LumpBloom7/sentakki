@@ -24,7 +24,13 @@ namespace SimaiSharp.Internal.SyntacticAnalysis.States
                 newTimingChange.time = parent.currentTime;
 
                 if (Math.Abs(parent!.timingChanges[^1].time - parent.currentTime) <= float.Epsilon)
+                {
                     parent.timingChanges.RemoveAt(parent.timingChanges.Count - 1);
+                }
+                else
+                {
+                    newTimingChange.TempoInherited = false;
+                }
 
                 parent.timingChanges.Add(newTimingChange);
                 return;
@@ -41,7 +47,13 @@ namespace SimaiSharp.Internal.SyntacticAnalysis.States
                 newTimingChange.time = parent.currentTime;
 
                 if (Math.Abs(parent!.timingChanges[^1].time - parent.currentTime) <= float.Epsilon)
+                {
                     parent.timingChanges.RemoveAt(parent.timingChanges.Count - 1);
+                }
+                else
+                {
+                    newTimingChange.TempoInherited = false;
+                }
 
                 parent.timingChanges.Add(newTimingChange);
             }

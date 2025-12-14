@@ -125,15 +125,15 @@ namespace SimaiSharp.Internal.LexicalAnalysis
                     return CompileToken(TokenType.EndOfFile);
 
                 case '|':
-                {
-                    if (Peek() != '|')
-                        throw new UnexpectedCharacterException(_line, _charIndex, "|");
+                    {
+                        if (Peek() != '|')
+                            throw new UnexpectedCharacterException(_line, _charIndex, "|");
 
-                    while (Peek() != '\n' && !IsAtEnd)
-                        Advance();
+                        while (Peek() != '\n' && !IsAtEnd)
+                            Advance();
 
-                    return null;
-                }
+                        return null;
+                    }
 
                 default:
                     throw new UnsupportedSyntaxException(_line, _charIndex);
