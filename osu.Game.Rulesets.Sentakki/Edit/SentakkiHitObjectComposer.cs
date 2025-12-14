@@ -3,8 +3,10 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Edit.Tools;
+using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Sentakki.Edit.CompositionTools;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.UI;
@@ -27,6 +29,9 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
 
     protected override ComposeBlueprintContainer CreateBlueprintContainer()
         => new SentakkiBlueprintContainer(this);
+
+    protected override DrawableRuleset<SentakkiHitObject> CreateDrawableRuleset(Ruleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
+    => new DrawableSentakkiEditorRuleset((SentakkiRuleset)ruleset, beatmap, mods);
 
     protected override IEnumerable<Drawable> CreateTernaryButtons()
     {
