@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -58,7 +59,8 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
                 Colour = colourProvider.Content2,
                 ExpandedLabel = "Simai export is experimental. Use at your own risk."
             },
-            new EditorToolButton("Export", () => new SpriteIcon { Icon = FontAwesome.Solid.FileExport }, () => new SimaiExportPopover(this)),
+            new EditorToolButton("Export", () => new SpriteIcon { Icon = FontAwesome.Solid.FileExport }, () => new SimaiExportPopover(this, exportToSimai)),
+            new EditorToolButton("Export quantised", () => new SpriteIcon { Icon = FontAwesome.Solid.FileExport }, () => new SimaiExportPopover(this, exportToSimaiQuantised)),
             new EditorToolButton("Import", () => new SpriteIcon { Icon = FontAwesome.Solid.FileImport }, () => new SimaiImportPopover(this))
         ];
     }
@@ -95,6 +97,40 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
 
         file.Close();
     }
+
+    private void exportToSimaiQuantised()
+    {
+        if (editorBeatmap.PlayableBeatmap is not IBeatmap<SentakkiHitObject> senBeatmap)
+            return;
+
+        var encoder = new QuantizedSimaiBeatmapEncoder(senBeatmap);
+
+        string filename = SimaiOsz.CleanFileName(
+            $"(sen) {editorBeatmap.BeatmapInfo.Metadata.ArtistUnicode} - {editorBeatmap.BeatmapInfo.Metadata.TitleUnicode} ({editorBeatmap.BeatmapInfo.DifficultyName}).txt");
+
+        string path = $"{currentDirectory.Value}/{filename}";
+        var file = File.CreateText(path);
+
+        try
+        {
+            encoder.Encode(file);
+            notifications?.Post(new ProgressCompletionNotification()
+            {
+                Text = "Successfully exported to simai.",
+                Activated = () => gamehost.PresentFileExternally(path)
+            });
+        }
+        catch
+        {
+            notifications?.Post(new SimpleErrorNotification()
+            {
+                Text = "Error encoding beatmap to simai"
+            });
+        }
+
+        file.Close();
+    }
+
 
     protected override void LoadComplete()
     {
@@ -223,10 +259,13 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
     {
         private readonly SimaiEditorToolboxGroup simaiToolboxGroup;
 
-        public SimaiExportPopover(SimaiEditorToolboxGroup simaiEditorToolboxGroup)
+        private Action exportAction;
+
+        public SimaiExportPopover(SimaiEditorToolboxGroup simaiEditorToolboxGroup, Action exportAction)
         {
             AllowableAnchors = [Anchor.CentreLeft, Anchor.CentreRight];
             simaiToolboxGroup = simaiEditorToolboxGroup;
+            this.exportAction = exportAction;
         }
 
         [Resolved]
@@ -273,7 +312,7 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
                                     Width = 150f,
                                     Anchor = Anchor.CentreRight,
                                     Origin = Anchor.CentreRight,
-                                    Action = simaiToolboxGroup.exportToSimai
+                                    Action = exportAction
                                 }
                             ]
                         }
