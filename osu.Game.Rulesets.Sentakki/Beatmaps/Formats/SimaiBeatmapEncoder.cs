@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -113,13 +114,13 @@ public class SimaiBeatmapEncoder
     {
         var hitObjectsGroups = Beatmap.HitObjects.GroupBy(h => h.StartTime).OrderBy(g => g.Key).Select(g => new TimedBeatmapEvent
         {
-            Time = g.Key,
+            Time = Math.Round(g.Key),
             BeatmapEvent = new HitObjectGroup([.. g])
         });
 
         var timingPoints = Beatmap.ControlPointInfo.TimingPoints.Select(t => new TimedBeatmapEvent
         {
-            Time = t.Time,
+            Time = Math.Round(t.Time),
             BeatmapEvent = new TimingPointMarker(t)
         });
 
@@ -142,8 +143,6 @@ public class SimaiBeatmapEncoder
 
             if (group.BeatmapEvent is TimingPointMarker tp)
                 maidataBuilder.Append(Invariant($"({tp.timingPoint.BPM})"));
-
-
 
             if (i < events.Length - 1)
             {
