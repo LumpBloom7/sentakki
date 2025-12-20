@@ -7,9 +7,9 @@ namespace SimaiSharp.Structures
     public sealed class NoteCollection : List<Note>
     {
         public EachStyle eachStyle;
-        public float time;
+        public double time;
 
-        public NoteCollection(float time)
+        public NoteCollection(double time)
         {
             this.time = time;
         }

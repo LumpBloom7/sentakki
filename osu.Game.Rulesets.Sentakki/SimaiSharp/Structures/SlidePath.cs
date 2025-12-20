@@ -13,9 +13,9 @@ namespace SimaiSharp.Structures
         /// <summary>
         ///     The intro delay of a slide before it starts moving.
         /// </summary>
-        public float delay;
+        public double delay;
 
-        public float duration;
+        public double duration;
 
         public NoteType type;
 
