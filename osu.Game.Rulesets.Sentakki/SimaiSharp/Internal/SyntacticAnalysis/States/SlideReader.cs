@@ -175,10 +175,10 @@ namespace SimaiSharp.Internal.SyntacticAnalysis.States
                 var delayDeclaration = token.lexeme.Span[..firstHashIndex];
                 bool isExplicitStatement = firstHashIndex != lastHashIndex;
 
-                if (!float.TryParse(delayDeclaration,
+                if (!double.TryParse(delayDeclaration,
                                     NumberStyles.Any,
                                     CultureInfo.InvariantCulture,
-                                    out float delayValue))
+                                    out double delayValue))
                     throw new UnexpectedCharacterException(token.line, token.character, "0~9, or \".\"");
 
                 if (isExplicitStatement)
@@ -198,25 +198,25 @@ namespace SimaiSharp.Internal.SyntacticAnalysis.States
             // By explicit statement: D (seconds)
             if (indexOfSeparator == -1)
             {
-                if (!float.TryParse(durationDeclaration,
+                if (!double.TryParse(durationDeclaration,
                                     NumberStyles.Any,
                                     CultureInfo.InvariantCulture,
-                                    out float explicitValue))
+                                    out double explicitValue))
                     throw new UnexpectedCharacterException(token.line, token.character + startOfDurationDeclaration, "0~9, or \".\"");
 
                 path.duration += explicitValue;
                 return;
             }
 
-            if (!float.TryParse(durationDeclaration[..indexOfSeparator], NumberStyles.Any,
+            if (!double.TryParse(durationDeclaration[..indexOfSeparator], NumberStyles.Any,
                                 CultureInfo.InvariantCulture,
-                                out float nominator))
+                                out double nominator))
                 throw new UnexpectedCharacterException(token.line, token.character + startOfDurationDeclaration, "0~9, or \".\"");
 
-            if (!float.TryParse(durationDeclaration[(indexOfSeparator + 1)..],
+            if (!double.TryParse(durationDeclaration[(indexOfSeparator + 1)..],
                                 NumberStyles.Any,
                                 CultureInfo.InvariantCulture,
-                                out float denominator))
+                                out double denominator))
                 throw new UnexpectedCharacterException(token.line, token.character + startOfDurationDeclaration
                                                                                    + indexOfSeparator + 1, "0~9, or \".\"");
 

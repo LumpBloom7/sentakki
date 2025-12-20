@@ -13,17 +13,17 @@ namespace SimaiSharp.Internal.SyntacticAnalysis.States
         {
             if (token.lexeme.Span[0] == '#')
             {
-                if (!float.TryParse(token.lexeme.Span[1..],
+                if (!double.TryParse(token.lexeme.Span[1..],
                                     NumberStyles.Any,
                                     CultureInfo.InvariantCulture,
-                                    out float explicitTempo))
+                                    out double explicitTempo))
                     throw new UnexpectedCharacterException(token.line, token.character + 1, "0~9, or \".\"");
 
                 var newTimingChange = parent!.timingChanges[^1];
                 newTimingChange.SetSeconds(explicitTempo);
                 newTimingChange.time = parent.currentTime;
 
-                if (Math.Abs(parent!.timingChanges[^1].time - parent.currentTime) <= float.Epsilon)
+                if (Math.Abs(parent!.timingChanges[^1].time - parent.currentTime) <= double.Epsilon)
                 {
                     parent.timingChanges.RemoveAt(parent.timingChanges.Count - 1);
                 }
@@ -36,17 +36,17 @@ namespace SimaiSharp.Internal.SyntacticAnalysis.States
                 return;
             }
 
-            if (!float.TryParse(token.lexeme.Span,
+            if (!double.TryParse(token.lexeme.Span,
                                 NumberStyles.Any,
                                 CultureInfo.InvariantCulture,
-                                out float subdivision)) throw new UnexpectedCharacterException(token.line, token.character, "0~9, or \".\"");
+                                out double subdivision)) throw new UnexpectedCharacterException(token.line, token.character, "0~9, or \".\"");
 
             {
                 var newTimingChange = parent!.timingChanges[^1];
                 newTimingChange.subdivisions = subdivision;
                 newTimingChange.time = parent.currentTime;
 
-                if (Math.Abs(parent!.timingChanges[^1].time - parent.currentTime) <= float.Epsilon)
+                if (Math.Abs(parent!.timingChanges[^1].time - parent.currentTime) <= double.Epsilon)
                 {
                     parent.timingChanges.RemoveAt(parent.timingChanges.Count - 1);
                 }

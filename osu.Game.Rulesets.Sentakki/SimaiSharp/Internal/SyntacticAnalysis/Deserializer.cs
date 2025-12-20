@@ -14,8 +14,8 @@ namespace SimaiSharp.Internal.SyntacticAnalysis
         internal readonly IEnumerator<Token> enumerator;
 
         internal readonly List<TimingChange> timingChanges = new();
-        private float _maxFinishTime;
-        internal float currentTime;
+        private double _maxFinishTime;
+        internal double currentTime;
         internal NoteCollection? currentNoteCollection;
         internal bool endOfFile;
 

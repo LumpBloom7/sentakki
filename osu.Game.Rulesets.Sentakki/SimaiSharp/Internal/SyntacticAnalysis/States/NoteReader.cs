@@ -137,10 +137,10 @@ namespace SimaiSharp.Internal.SyntacticAnalysis.States
 
             if (indexOfHash == 0)
             {
-                if (!float.TryParse(token.lexeme.Span[1..],
+                if (!double.TryParse(token.lexeme.Span[1..],
                                     NumberStyles.Any,
                                     CultureInfo.InvariantCulture,
-                                    out float explicitValue))
+                                    out double explicitValue))
                     throw new UnexpectedCharacterException(token.line, token.character + 1, "0~9, or \".\"");
 
                 note.length = explicitValue;
@@ -149,26 +149,26 @@ namespace SimaiSharp.Internal.SyntacticAnalysis.States
 
             if (indexOfHash != -1)
             {
-                if (!float.TryParse(token.lexeme.Span[..indexOfHash],
+                if (!double.TryParse(token.lexeme.Span[..indexOfHash],
                                     NumberStyles.Any,
                                     CultureInfo.InvariantCulture,
-                                    out float tempo))
+                                    out double tempo))
                     throw new UnexpectedCharacterException(token.line, token.character + 1, "0~9, or \".\"");
 
                 timing.tempo = tempo;
             }
 
             int indexOfSeparator = token.lexeme.Span.IndexOf(':');
-            if (!float.TryParse(token.lexeme.Span[(indexOfHash + 1)..indexOfSeparator],
+            if (!double.TryParse(token.lexeme.Span[(indexOfHash + 1)..indexOfSeparator],
                                 NumberStyles.Any,
                                 CultureInfo.InvariantCulture,
-                                out float nominator))
+                                out double nominator))
                 throw new UnexpectedCharacterException(token.line, token.character, "0~9, or \".\"");
 
-            if (!float.TryParse(token.lexeme.Span[(indexOfSeparator + 1)..],
+            if (!double.TryParse(token.lexeme.Span[(indexOfSeparator + 1)..],
                                 NumberStyles.Any,
                                 CultureInfo.InvariantCulture,
-                                out float denominator))
+                                out double denominator))
                 throw new UnexpectedCharacterException(token.line, token.character + indexOfSeparator + 1, "0~9, or \".\"");
 
             note.length = timing.SecondsPerBar / (nominator / 4) * denominator;

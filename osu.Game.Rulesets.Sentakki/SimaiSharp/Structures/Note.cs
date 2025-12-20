@@ -15,7 +15,7 @@ namespace SimaiSharp.Structures
         public NoteAppearance appearance;
         public NoteType type;
 
-        public float? length;
+        public double? length;
 
         public SlideMorph slideMorph;
         public List<SlidePath> slidePaths;
@@ -37,9 +37,9 @@ namespace SimaiSharp.Structures
         public bool IsStar => appearance >= NoteAppearance.ForceStar ||
                               (slidePaths.Count > 0 && appearance is not NoteAppearance.ForceNormal);
 
-        public float GetVisibleDuration()
+        public double GetVisibleDuration()
         {
-            float baseValue = length ?? 0;
+            double baseValue = length ?? 0;
 
             if (slidePaths is { Count: > 0 })
                 baseValue = slidePaths.Max(s => s.delay + s.duration);

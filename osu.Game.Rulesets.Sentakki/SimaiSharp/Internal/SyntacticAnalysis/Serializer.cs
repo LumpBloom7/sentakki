@@ -8,7 +8,7 @@ namespace SimaiSharp.Internal.SyntacticAnalysis
     {
         private int _currentTimingChange;
         private int _currentNoteCollection;
-        private float _currentTime;
+        private double _currentTime;
 
         public void Serialize(MaiChart chart, StringWriter writer)
         {
@@ -23,11 +23,11 @@ namespace SimaiSharp.Internal.SyntacticAnalysis
                     _currentTimingChange++;
 
                     if (Math.Abs(chart.TimingChanges[_currentTimingChange].tempo -
-                                 chart.TimingChanges[_currentTimingChange - 1].tempo) > float.Epsilon)
+                                 chart.TimingChanges[_currentTimingChange - 1].tempo) > double.Epsilon)
                         writer.Write($"({chart.TimingChanges[_currentTimingChange].tempo})");
 
                     if (Math.Abs(chart.TimingChanges[_currentTimingChange].subdivisions -
-                                 chart.TimingChanges[_currentTimingChange - 1].subdivisions) > float.Epsilon)
+                                 chart.TimingChanges[_currentTimingChange - 1].subdivisions) > double.Epsilon)
                         writer.Write($"{{{chart.TimingChanges[_currentTimingChange].subdivisions}}}");
                 }
 
