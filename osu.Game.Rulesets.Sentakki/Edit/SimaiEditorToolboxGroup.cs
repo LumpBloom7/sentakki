@@ -59,8 +59,7 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
                 Colour = colourProvider.Content2,
                 ExpandedLabel = "Simai export is experimental. Use at your own risk."
             },
-            new EditorToolButton("Export", () => new SpriteIcon { Icon = FontAwesome.Solid.FileExport }, () => new SimaiExportPopover(this, exportToSimai)),
-            new EditorToolButton("Export quantised", () => new SpriteIcon { Icon = FontAwesome.Solid.FileExport }, () => new SimaiExportPopover(this, exportToSimaiQuantised)),
+            new EditorToolButton("Export", () => new SpriteIcon { Icon = FontAwesome.Solid.FileExport }, () => new SimaiExportPopover(this, exportToSimaiQuantised)),
             new EditorToolButton("Import", () => new SpriteIcon { Icon = FontAwesome.Solid.FileImport }, () => new SimaiImportPopover(this))
         ];
     }
@@ -143,7 +142,7 @@ public partial class SimaiEditorToolboxGroup : EditorToolboxGroup
         if (e.Key is not Key.S || !e.ControlPressed)
             return false;
 
-        exportToSimai();
+        exportToSimaiQuantised();
 
         return base.OnKeyDown(e);
     }
