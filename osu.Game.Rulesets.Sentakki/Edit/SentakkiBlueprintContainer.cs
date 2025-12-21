@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -6,6 +7,7 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
@@ -21,12 +23,12 @@ namespace osu.Game.Rulesets.Sentakki.Edit;
 [Cached]
 public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
 {
-    public new HitObjectComposer Composer => base.Composer;
+    public new SentakkiHitObjectComposer Composer => (SentakkiHitObjectComposer)base.Composer;
 
     [Cached]
     private DrawablePool<SlideChevron> chevrons { get; set; }
 
-    public SentakkiBlueprintContainer(HitObjectComposer composer)
+    public SentakkiBlueprintContainer(SentakkiHitObjectComposer composer)
         : base(composer)
     {
         Anchor = Anchor.Centre;
@@ -73,6 +75,27 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
 
         // The final movement position, relative to movementBlueprintOriginalPosition.
         Vector2 movePosition = blueprints.First().originalSnapPositions.First() + distanceTravelled;
+
+        if (blueprints.All(h => h.blueprint.Item is IHasPosition))
+        {
+            var snappedPosition = Composer.TouchPositionSnapGrid.GetSnappedPosition(ToLocalSpace(movePosition) - OriginPosition);
+
+            if (snappedPosition is not null)
+            {
+                snappedPosition = ToScreenSpace(snappedPosition.Value + OriginPosition);
+                Vector2 snapOffset = snappedPosition.Value - movePosition;
+
+                foreach (var bp in blueprints)
+                {
+                    var snappedPosition2 = ToLocalSpace(bp.originalSnapPositions.First() + (distanceTravelled + snapOffset)) - OriginPosition;
+
+                    if (Math.Round(snappedPosition2.Length) > 270)
+                        return false;
+                }
+
+                movePosition = snappedPosition.Value;
+            }
+        }
 
         var movementEvent = new MoveSelectionEvent<HitObject>(blueprints.First().blueprint, movePosition - blueprints.First().blueprint.ScreenSpaceSelectionPoint);
         SelectionHandler.HandleMovement(movementEvent);
