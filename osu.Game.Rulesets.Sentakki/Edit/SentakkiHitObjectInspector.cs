@@ -206,16 +206,12 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
                 new OsuSpriteText()
                 {
                     Text = value,
-                    Anchor = Anchor.TopRight,
-                    Origin = Anchor.TopRight,
                     Font = OsuFont.Torus.With(weight: FontWeight.SemiBold),
                     Colour = colour,
                 },
                 new OsuSpriteText()
                 {
                     Text = subvalue,
-                    Origin = Anchor.TopRight,
-                    Anchor = Anchor.TopRight,
                     Margin = new MarginPadding { Bottom = -5, },
                     Font = OsuFont.Torus.With(size: 10, weight: FontWeight.SemiBold),
                     Colour = subvalueColour ?? colour,
