@@ -92,7 +92,13 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
 
     private void applyTernaryChanges<T>(Action<T, bool> applicator, TernaryState newTernaryState) where T : HitObject
     {
+        // We can get into an indeterminate state when mixing notes with different break/ex values
+        // We don't want to force enable/disable from this intermediate state
+        if (newTernaryState is TernaryState.Indeterminate)
+            return;
+
         var selectedItems = SelectedItems.OfType<T>();
+
         bool newValue = newTernaryState is TernaryState.True;
 
         EditorBeatmap.BeginChange();
