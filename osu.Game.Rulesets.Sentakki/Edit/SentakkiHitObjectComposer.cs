@@ -7,7 +7,9 @@ using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Edit.Tools;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Edit.CompositionTools;
+using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Edit.Components.TernaryButtons;
@@ -32,6 +34,51 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
 
     protected override DrawableRuleset<SentakkiHitObject> CreateDrawableRuleset(Ruleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
     => new DrawableSentakkiEditorRuleset((SentakkiRuleset)ruleset, beatmap, mods);
+
+    public TouchPositionSnapGrid TouchPositionSnapGrid { get; private set; } = null!;
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        LayerBelowRuleset.Add(TouchPositionSnapGrid = new TouchPositionSnapGrid());
+
+        EditorBeatmap.SelectedHitObjects.CollectionChanged += (_, _) => UpdateSnapGrid();
+    }
+
+    private CompositionTool? currentTool = null;
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (BlueprintContainer.CurrentTool != currentTool)
+        {
+            currentTool = BlueprintContainer.CurrentTool;
+
+            UpdateSnapGrid();
+        }
+    }
+
+    public void UpdateSnapGrid()
+    {
+        TouchPositionSnapGrid.Hide();
+
+        switch (BlueprintContainer.CurrentTool)
+        {
+            case SelectTool:
+                if (EditorBeatmap.SelectedHitObjects.Count == 0)
+                    break;
+
+                if (EditorBeatmap.SelectedHitObjects.All(h => h is IHasPosition))
+                    TouchPositionSnapGrid.Show();
+                break;
+
+            case TouchCompositionTool:
+            case TouchHoldCompositionTool:
+                TouchPositionSnapGrid.Show();
+                break;
+        }
+    }
 
     protected override IEnumerable<Drawable> CreateTernaryButtons()
     {
