@@ -114,7 +114,7 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
 
     private void addModifierInformation(SentakkiHitObject hitObject)
     {
-        AddHeader("Slide modifiers");
+        AddHeader("Modifiers");
 
         List<string> modifiers = [];
 
