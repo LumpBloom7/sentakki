@@ -17,6 +17,7 @@ using osu.Game.Screens.Edit.Compose.Components;
 
 namespace osu.Game.Rulesets.Sentakki.Edit;
 
+[Cached]
 public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitObject>
 {
     public SentakkiHitObjectComposer(Ruleset ruleset)
