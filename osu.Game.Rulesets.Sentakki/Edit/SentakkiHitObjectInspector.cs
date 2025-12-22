@@ -213,7 +213,7 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
                 {
                     Text = subvalue,
                     Margin = new MarginPadding { Bottom = -5, },
-                    Font = OsuFont.Torus.With(size: 10, weight: FontWeight.SemiBold),
+                    Font = OsuFont.Torus.With(size: 12, weight: FontWeight.SemiBold),
                     Colour = subvalueColour ?? colour,
                 }
             ]
