@@ -34,10 +34,10 @@ public partial class TouchPositionSnapGrid : VisibilityContainer
     protected override void PopIn() => this.FadeIn(50);
     protected override void PopOut() => this.FadeOut(100);
 
-    public Vector2? GetSnappedPosition(Vector2 original)
+    public Vector2 GetSnappedPosition(Vector2 original)
     {
         if (State.Value is Visibility.Hidden)
-            return null;
+            return original;
 
         return SentakkiBeatmapConverterOld.VALID_TOUCH_POSITIONS.MinBy(v => Vector2.DistanceSquared(original, v));
     }
