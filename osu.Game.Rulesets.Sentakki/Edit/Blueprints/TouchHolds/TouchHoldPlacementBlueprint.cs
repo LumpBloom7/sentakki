@@ -5,6 +5,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
+using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
 using osuTK;
@@ -41,6 +42,11 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
 
     private double commitStartTime;
 
+
+    [Resolved]
+    private TouchPositionSnapGrid touchPositionSnapGrid { get; set; } = null!;
+
+
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {
         switch (PlacementActive)
@@ -48,11 +54,20 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
             case PlacementState.Waiting:
                 Vector2 localPos = ToLocalSpace(screenSpacePosition) - OriginPosition;
 
-                // Touch notes cannot be placed more than 270 units away from the centre
-                float distance = Math.Min(localPos.Length, 270);
+                Vector2? snappedPos = touchPositionSnapGrid.GetSnappedPosition(localPos);
 
-                Vector2 clampedPosition = localPos.Normalized() * distance;
-                HitObject.Position = clampedPosition;
+                if (snappedPos.HasValue)
+                {
+                    HitObject.Position = snappedPos.Value;
+                }
+                else
+                {
+                    // Touch notes cannot be placed more than 270 units away from the centre
+                    float distance = Math.Min(localPos.Length, 270);
+
+                    Vector2 clampedPosition = localPos.Normalized() * distance;
+                    HitObject.Position = clampedPosition;
+                }
 
                 break;
 

@@ -35,12 +35,13 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
     protected override DrawableRuleset<SentakkiHitObject> CreateDrawableRuleset(Ruleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
     => new DrawableSentakkiEditorRuleset((SentakkiRuleset)ruleset, beatmap, mods);
 
-    public TouchPositionSnapGrid TouchPositionSnapGrid { get; private set; } = null!;
+    [Cached]
+    public TouchPositionSnapGrid TouchPositionSnapGrid { get; private set; } = new TouchPositionSnapGrid();
 
     [BackgroundDependencyLoader]
     private void load()
     {
-        LayerBelowRuleset.Add(TouchPositionSnapGrid = new TouchPositionSnapGrid());
+        LayerBelowRuleset.Add(TouchPositionSnapGrid);
 
         EditorBeatmap.SelectedHitObjects.CollectionChanged += (_, _) => UpdateSnapGrid();
     }
