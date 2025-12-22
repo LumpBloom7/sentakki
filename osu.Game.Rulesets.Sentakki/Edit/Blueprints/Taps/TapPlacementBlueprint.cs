@@ -56,7 +56,7 @@ public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
         base.Update();
         float newRotation = HitObject.Lane.GetRotationForLane();
 
-        highlight.Y = -Interpolation.ValueAt(
+        float newY = -Interpolation.ValueAt(
             HitObject.StartTime,
             SentakkiPlayfield.INTERSECTDISTANCE,
             SentakkiPlayfield.NOTESTARTDISTANCE,
@@ -70,8 +70,11 @@ public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
             initialStateApplied = true;
         }
 
+        float roc = 25 * (float)(Time.Elapsed / 1000);
+
         float angleDelta = MathExtensions.AngleDelta(InternalChild.Rotation, newRotation);
-        InternalChild.Rotation += 25 * angleDelta * (float)(Time.Elapsed / 1000);
+        InternalChild.Rotation += angleDelta * roc;
+        highlight.Y += (newY - highlight.Y) * roc;
     }
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)

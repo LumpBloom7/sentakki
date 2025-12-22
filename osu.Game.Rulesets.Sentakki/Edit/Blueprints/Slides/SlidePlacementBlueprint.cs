@@ -89,7 +89,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         base.Update();
         float newRotation = HitObject.Lane.GetRotationForLane();
 
-        tapHighlight.Y = -Interpolation.ValueAt(
+        float newY = -Interpolation.ValueAt(
             HitObject.StartTime,
             SentakkiPlayfield.INTERSECTDISTANCE,
             SentakkiPlayfield.NOTESTARTDISTANCE,
@@ -105,7 +105,10 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         }
 
         float angleDelta = MathExtensions.AngleDelta(InternalChild.Rotation, newRotation);
-        InternalChild.Rotation += 25 * angleDelta * (float)(Time.Elapsed / 1000);
+
+        float roc = 25 * (float)(Time.Elapsed / 1000);
+        InternalChild.Rotation += angleDelta * roc;
+        tapHighlight.Y += roc * (newY - tapHighlight.Y);
 
         activeSegmentVisual.Rotation = committedSlideInfo.RelativeEndLane.GetRotationForLane() - 45f;
     }

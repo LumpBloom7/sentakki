@@ -30,6 +30,9 @@ public partial class SentakkiMovementHandler : Component
     private TouchPositionSnapGrid touchSnapGrid { get; set; } = null!;
 
     [Resolved]
+    private LaneNoteSnapGrid laneNoteSnapGrid { get; set; } = null!;
+
+    [Resolved]
     private EditorBeatmap editorBeatmap { get; set; } = null!;
 
     [Resolved]
@@ -49,18 +52,29 @@ public partial class SentakkiMovementHandler : Component
         if (blueprints.All(bp => bp.blueprint.Item is IHasPosition))
             return tryPerformTouchMovement(localSpaceUnsnappedTarget, localSpaceOriginalPosition);
         else
-            return tryPerformLaneMovement(localSpaceUnsnappedTarget, localSpaceOriginalPosition);
+            return tryPerformLaneMovement(localSpaceUnsnappedTarget, localSpaceOriginalPosition, referenceObject.blueprint.Item.StartTime);
     }
 
-    private bool tryPerformLaneMovement(Vector2 localTarget, Vector2 localPosition)
+    private bool tryPerformLaneMovement(Vector2 localTarget, Vector2 localPosition, double originalTime)
     {
+        // Stupid fucking approach to get snapped time, without code repetition
+        Vector2 tmp = ToScreenSpace(localTarget + OriginPosition);
+        (double snappedTime, _) = laneNoteSnapGrid.GetSnappedTimeAndPosition(originalTime, tmp);
+
         float originalAngle = Vector2.Zero.AngleTo(localPosition);
         float currentAngle = Vector2.Zero.AngleTo(localTarget);
 
         float angleDelta = MathExtensions.AngleDelta(originalAngle, currentAngle);
         int laneOffset = (int)Math.Round(angleDelta / 45);
 
-        if (laneOffset == 0)
+        double timeOffset = snappedTime - originalTime;
+
+        // In order to prevent accidentally changing the time when the intention was to rotate
+        // we make sure the resulting time of the notes don't jump significantly
+        if (timeOffset > editorBeatmap.GetBeatLengthAtTime(originalTime))
+            timeOffset = 0;
+
+        if (laneOffset == 0 && timeOffset == 0)
             return false;
 
         editorBeatmap.BeginChange();
@@ -71,6 +85,8 @@ public partial class SentakkiMovementHandler : Component
         {
             playfield.Remove(lanedNote);
             lanedNote.Lane = (lanedNote.Lane + laneOffset).NormalizeLane();
+            lanedNote.StartTime += timeOffset;
+            editorBeatmap.Update(lanedNote);
             playfield.Add(lanedNote);
         }
 
@@ -91,6 +107,8 @@ public partial class SentakkiMovementHandler : Component
                     X = cos * pos.X - sin * pos.Y,
                     Y = sin * pos.X + cos * pos.Y
                 };
+
+                ((SentakkiHitObject)touchNote).StartTime += timeOffset;
 
                 editorBeatmap.Update((SentakkiHitObject)touchNote);
             }
