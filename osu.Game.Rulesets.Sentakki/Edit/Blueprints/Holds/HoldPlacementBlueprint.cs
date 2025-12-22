@@ -6,6 +6,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Configuration;
+using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
@@ -18,6 +19,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
 
 public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
 {
+    [Resolved]
+    private LaneNoteSnapGrid snapGrid { get; set; } = null!;
+
     private readonly HoldBody highlight;
 
     public HoldPlacementBlueprint()
@@ -87,17 +91,12 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {
+        (time, int lane) = snapGrid.GetSnappedTimeAndPosition(time, screenSpacePosition);
+
         switch (PlacementActive)
         {
             case PlacementState.Waiting:
-                var localPosition = ToLocalSpace(screenSpacePosition);
-
-                if (Vector2.Distance(OriginPosition, localPosition) < 100)
-                    break;
-
-                float angle = OriginPosition.AngleTo(localPosition);
-
-                HitObject.Lane = (int)Math.Round((angle - 22.5f) / 45);
+                HitObject.Lane = lane;
                 break;
 
             case PlacementState.Active:

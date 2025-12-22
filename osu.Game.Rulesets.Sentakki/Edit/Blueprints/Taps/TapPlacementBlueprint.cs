@@ -1,8 +1,12 @@
 using System;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Edit;
+using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
@@ -15,6 +19,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
 
 public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
 {
+    [Resolved]
+    private LaneNoteSnapGrid snapGrid { get; set; } = null!;
+
     private readonly TapPiece highlight;
 
     public TapPlacementBlueprint()
@@ -36,12 +43,26 @@ public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
 
     private bool initialStateApplied;
 
+    private readonly Bindable<double> animationSpeed = new Bindable<double>(5);
+
+    [BackgroundDependencyLoader]
+    private void load(SentakkiBlueprintContainer blueprintContainer)
+    {
+        animationSpeed.BindTo(blueprintContainer.Composer.DrawableRuleset.AdjustedAnimDuration);
+    }
+
     protected override void Update()
     {
         base.Update();
         float newRotation = HitObject.Lane.GetRotationForLane();
 
-        highlight.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
+        highlight.Y = -Interpolation.ValueAt(
+            HitObject.StartTime,
+            SentakkiPlayfield.INTERSECTDISTANCE,
+            SentakkiPlayfield.NOTESTARTDISTANCE,
+            EditorClock.CurrentTime,
+            EditorClock.CurrentTime + animationSpeed.Value / 2
+        );
 
         if (!initialStateApplied)
         {
@@ -55,14 +76,9 @@ public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {
-        var localPosition = ToLocalSpace(screenSpacePosition);
+        (time, int lane) = snapGrid.GetSnappedTimeAndPosition(time, screenSpacePosition);
 
-        if (Vector2.Distance(OriginPosition, localPosition) < 100)
-            return base.UpdateTimeAndPosition(screenSpacePosition, time);
-
-        float angle = OriginPosition.AngleTo(localPosition);
-
-        HitObject.Lane = (int)Math.Round((angle - 22.5f) / 45);
+        HitObject.Lane = lane;
 
         return base.UpdateTimeAndPosition(screenSpacePosition, time);
     }

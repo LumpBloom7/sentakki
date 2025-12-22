@@ -1,4 +1,5 @@
 
+using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Caching;
@@ -8,6 +9,7 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Utils;
 using osu.Game.Graphics;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
 using osuTK;
@@ -120,6 +122,37 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
                 gridLines.Add(line);
             }
         }
+    }
+
+    public (double snappedTime, int snappedLane) GetSnappedTimeAndPosition(double originalTime, Vector2 screenSpaceMousePosition)
+    {
+        double snappedTime = originalTime;
+
+        Vector2 localMousePosition = ToLocalSpace(screenSpaceMousePosition) - OriginPosition;
+
+        if (State.Value is Visibility.Visible)
+        {
+            float mouseDistanceFromCentre = Math.Clamp(localMousePosition.Length, SentakkiPlayfield.NOTESTARTDISTANCE, SentakkiPlayfield.INTERSECTDISTANCE);
+
+            double currentTime = editorClock.CurrentTime;
+            double maximumTime = currentTime + animationDuration.Value / 2;
+
+            double timeAtMousePosition = Interpolation.ValueAt(mouseDistanceFromCentre, maximumTime, currentTime, SentakkiPlayfield.NOTESTARTDISTANCE, SentakkiPlayfield.INTERSECTDISTANCE);
+
+            // Due to snapping preferring the closest snap time
+            // we reduce the time range to ensure that the snap result will be within bounds
+            timeAtMousePosition = Math.Clamp(
+            timeAtMousePosition,
+            currentTime + editorBeatmap.GetBeatLengthAtTime(currentTime) / 2.05,
+            maximumTime - editorBeatmap.GetBeatLengthAtTime(maximumTime) / 2);
+
+            snappedTime = editorBeatmap.SnapTime(timeAtMousePosition, null);
+        }
+
+        float angle = Vector2.Zero.AngleTo(localMousePosition);
+        int lane = (int)Math.Round((angle - 22.5f) / 45);
+
+        return (snappedTime, lane);
     }
 
     private partial class DrawableGridLine : PoolableDrawable
