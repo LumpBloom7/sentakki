@@ -11,6 +11,7 @@ using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Edit.CompositionTools;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
 using osu.Game.Screens.Edit.Components.TernaryButtons;
 using osu.Game.Screens.Edit.Compose.Components;
@@ -20,6 +21,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit;
 [Cached]
 public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitObject>
 {
+    public new DrawableSentakkiRuleset DrawableRuleset => (DrawableSentakkiRuleset)base.DrawableRuleset;
+
     public SentakkiHitObjectComposer(Ruleset ruleset)
         : base(ruleset)
     {
@@ -39,10 +42,14 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
     [Cached]
     public TouchPositionSnapGrid TouchPositionSnapGrid { get; private set; } = new TouchPositionSnapGrid();
 
+    [Cached]
+    public LaneNoteSnapGrid LaneNoteSnapGrid { get; private set; } = new LaneNoteSnapGrid();
+
     [BackgroundDependencyLoader]
     private void load()
     {
         LayerBelowRuleset.Add(TouchPositionSnapGrid);
+        LayerBelowRuleset.Add(LaneNoteSnapGrid);
 
         EditorBeatmap.SelectedHitObjects.CollectionChanged += (_, _) => UpdateSnapGrid();
     }
@@ -64,6 +71,7 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
     public void UpdateSnapGrid()
     {
         TouchPositionSnapGrid.Hide();
+        LaneNoteSnapGrid.Hide();
 
         switch (BlueprintContainer.CurrentTool)
         {
@@ -73,6 +81,14 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
 
                 if (EditorBeatmap.SelectedHitObjects.All(h => h is IHasPosition))
                     TouchPositionSnapGrid.Show();
+                if (EditorBeatmap.SelectedHitObjects.All(h => h is SentakkiLanedHitObject))
+                    LaneNoteSnapGrid.Show();
+                break;
+
+            case TapCompositionTool:
+            case HoldCompositionTool:
+            case SlideCompositionTool:
+                LaneNoteSnapGrid.Show();
                 break;
 
             case TouchCompositionTool:
