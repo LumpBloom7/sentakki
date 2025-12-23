@@ -19,9 +19,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps.Formats;
 /// </summary>
 public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
 {
-    // Precision in terms of ms
-    private const float precision = 5;
-
     public QuantizedSimaiBeatmapEncoder(IBeatmap<SentakkiHitObject> beatmap)
         : base(beatmap)
     {
@@ -72,8 +69,10 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                 else
                 {
                     var prevTimingPoint = timingGroups[i - 1].TimingPoint;
-                    maidataUnits.AddRange(smartGeneratePaddingBeats(timeUntilTimingPoint, prevTimingPoint, out double timeRemaining));
-                    currentTime = timingPoint.Time - timeRemaining;
+                    var beatsUntilTimingPoint = AsFraction(timeUntilTimingPoint / prevTimingPoint.BeatLength);
+
+                    maidataUnits.AddRange(generatePaddingBeats(beatsUntilTimingPoint));
+                    currentTime = timingPoint.Time;
                 }
             }
 
@@ -85,8 +84,10 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                 // Handle time before hitObject time
                 double timeUntilCurrent = hitObjectGroups[j].Time - currentTime;
 
-                maidataUnits.AddRange(smartGeneratePaddingBeats(timeUntilCurrent, timingPoint, out double timeRemaining));
-                currentTime = hitObjectGroups[j].Time - timeRemaining;
+                var beatsUntilCurrent = AsFraction(timeUntilCurrent / timingPoint.BeatLength);
+
+                maidataUnits.AddRange(generatePaddingBeats(beatsUntilCurrent));
+                currentTime = hitObjectGroups[j].Time;
 
                 StringBuilder hitObjectGroupBuilder = new StringBuilder();
 
@@ -178,74 +179,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
         return maichartBuilder.ToString();
     }
 
-    private static List<IMaidataUnit> smartGeneratePaddingBeats(double timeDelta, TimingControlPoint activeTimingPoint, out double timeRemaining)
-    {
-        var commonDivisorPadding = generatePaddingBeats(timeDelta, activeTimingPoint, out double commonTimeRemaining, 2);
-        var tripletsDivisorPadding = generatePaddingBeats(timeDelta, activeTimingPoint, out double tripletsTimeRemaining, 3);
 
-        double absCommonTimeRemaining = Math.Abs(commonTimeRemaining);
-        double absTripletsTimeRemaining = Math.Abs(tripletsTimeRemaining);
-
-        if (absCommonTimeRemaining <= absTripletsTimeRemaining)
-        {
-            timeRemaining = commonTimeRemaining;
-            return commonDivisorPadding;
-        }
-        else
-        {
-            timeRemaining = tripletsTimeRemaining;
-            return tripletsDivisorPadding;
-        }
-    }
-
-    private static IEnumerable<int> getDivisors(int divisorBase)
-    {
-        yield return 1;
-
-        int divisorPower = 1;
-
-        while (true)
-        {
-            yield return divisorBase * divisorPower;
-
-            divisorPower <<= 1;
-        }
-    }
-
-    private static List<IMaidataUnit> generatePaddingBeats(double timeDelta, TimingControlPoint activeTimingPoint, out double timeRemaining, int divisorBase = 2)
-    {
-        timeRemaining = timeDelta;
-        if (timeDelta < precision)
-            return [];
-
-        List<IMaidataUnit> paddingBeats = [];
-
-        foreach (int divisor in getDivisors(divisorBase))
-        {
-            double subBeatLength = activeTimingPoint.BeatLength / divisor;
-
-            int numberOfSubBeats = (int)(timeRemaining / subBeatLength);
-
-            // Is it possible to get within PRECISION if we allow timeDelta to go negative?
-            // If so, we would prefer that as it is "close enough" while reducing number of subdivisions
-            if (Math.Abs(timeRemaining - subBeatLength * (numberOfSubBeats + 1)) < precision)
-                ++numberOfSubBeats;
-
-            if (numberOfSubBeats > 0)
-            {
-                paddingBeats.Add(new DivisorUnit(divisor * 4));
-
-                for (int i = 0; i < numberOfSubBeats; ++i)
-                    paddingBeats.Add(new BeatUnit());
-            }
-
-            timeRemaining -= numberOfSubBeats * subBeatLength;
-
-            if (Math.Abs(timeRemaining) < precision) break;
-        }
-
-        return paddingBeats;
-    }
 
     private interface IMaidataUnit
     {
@@ -278,5 +212,74 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
     private readonly record struct HitObjectCollectionUnit(string CollectionString) : IMaidataUnit
     {
         public override readonly string ToString() => CollectionString;
+    }
+
+    // Source: Algorithm To Convert A Decimal To A Fraction - John Kennedy (rkennedy@ix.netcom.com)
+    // https://web.archive.org/web/20111027100847/http://homepage.smc.edu/kennedy_john/DEC2FRAC.pdf
+    // Lightly adjusted to output whole numbers separately.
+    // The accuracy is chosen so that the fraction will deviate from x by at most two decimal places.
+    // x = interval / BeatLength, so in practice you wouldn't need too many decimal places
+    public static (int wholes, int numerator, int denominator) AsFraction(double x, double accuracy = 0.005)
+    {
+        if (x == 0)
+            return (0, 0, 1);
+
+        if (accuracy <= 0.0 || accuracy >= 1.0)
+            throw new ArgumentOutOfRangeException(nameof(accuracy), "must be > 0 and < 1.");
+
+        int sign = Math.Sign(x);
+        x = Math.Abs(x);
+
+        // Accuracy is the maximum relative error; convert to absolute maxError
+        double maxError = x * accuracy;
+
+        int n = (int)Math.Floor(x);
+        x -= n;
+
+        if (x < maxError)
+            return new(sign * n, 0, 1);
+
+        if (1 - maxError < x)
+            return (sign * (n + 1), 0, 1);
+
+        double z = x;
+        int previousDenominator = 0;
+        int denominator = 1;
+        int numerator;
+
+        do
+        {
+            z = 1.0 / (z - (int)z);
+            int temp = denominator;
+            denominator = denominator * (int)z + previousDenominator;
+            previousDenominator = temp;
+            numerator = Convert.ToInt32(x * denominator);
+        }
+        while (Math.Abs(x - (double)numerator / denominator) > maxError && z != (int)z);
+
+        return (n * sign, numerator * sign, denominator);
+    }
+
+    private List<IMaidataUnit> generatePaddingBeats((int wholes, int numerator, int denominator) fraction)
+    {
+        List<IMaidataUnit> result = [];
+
+        if (fraction.wholes > 0)
+        {
+            result.Add(new DivisorUnit(4));
+
+            for (int i = 0; i < fraction.wholes; ++i)
+                result.Add(new BeatUnit());
+        }
+
+        if (fraction.numerator > 0)
+        {
+            result.Add(new DivisorUnit(fraction.denominator * 4));
+
+            for (int i = 0; i < fraction.numerator; ++i)
+                result.Add(new BeatUnit());
+        }
+
+        return result;
     }
 }
