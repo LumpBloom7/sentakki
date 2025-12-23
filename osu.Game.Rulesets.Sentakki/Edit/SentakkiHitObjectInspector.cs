@@ -3,9 +3,7 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.TypeExtensions;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics;
-using osu.Game.Graphics.Sprites;
 using osu.Game.Overlays;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
@@ -41,7 +39,7 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
                 SentakkiHitObject selected = (SentakkiHitObject)objects.Single();
 
                 AddHeader("Type");
-                AddValue($"{selected.GetType().ReadableName()}");
+                addValue($"{selected.GetType().ReadableName()}");
 
                 addPositionInformation(selected);
 
@@ -49,7 +47,7 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
                 addSlideModifiersInformation(selected);
 
                 AddHeader("Time");
-                AddValue($"{selected.StartTime:#,0.##}ms");
+                addValue($"{selected.StartTime:#,0.##}ms");
 
                 addDurationInformation(selected);
 
@@ -65,12 +63,12 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
         switch (hitObject)
         {
             case IHasPosition pos:
-                AddValue($"x:{pos.X:#,0.##}");
-                AddValue($"y:{pos.Y:#,0.##}");
+                addValue($"x:{pos.X:#,0.##}");
+                addValue($"y:{pos.Y:#,0.##}");
                 break;
 
             case IHasLane lane:
-                AddValue($"Lane: {lane.Lane}");
+                addValue($"Lane: {lane.Lane}");
                 break;
         }
     }
@@ -84,11 +82,8 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
         double durationInBeats = duration.Duration / beatLength;
 
         AddHeader("Duration");
-
-        addValueWithSubvalue(
-                $"{duration.Duration:#,0.##}ms",
-                $"{durationInBeats:0.##} beats",
-                colourProvider.Content1);
+        addValue($"{duration.Duration:#,0.##}ms");
+        addValue($"{durationInBeats:0.##} beats");
 
         if (hitObject is not Slide s)
             return;
@@ -97,19 +92,12 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
         double movementDurationInBeats = s.SlideInfoList[0].EffectiveMovementDuration / beatLength;
 
         AddHeader("Wait duration");
-
-        addValueWithSubvalue(
-            $"{s.SlideInfoList[0].EffectiveWaitDuration:#,0.##}ms",
-            $"{waitDurationInBeats:0.##} beats",
-            colourProvider.Content1
-        );
+        addValue($"{s.SlideInfoList[0].EffectiveWaitDuration:#,0.##}ms");
+        addValue($"{waitDurationInBeats:0.##} beats");
 
         AddHeader("Movement duration");
-        addValueWithSubvalue(
-            $"{s.SlideInfoList[0].EffectiveMovementDuration:#,0.##}ms",
-            $"{movementDurationInBeats:0.##} beats",
-            colourProvider.Content1
-        );
+        addValue($"{s.SlideInfoList[0].EffectiveMovementDuration:#,0.##}ms");
+        addValue($"{movementDurationInBeats:0.##} beats");
     }
 
     private void addModifierInformation(SentakkiHitObject hitObject)
@@ -126,11 +114,11 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
 
         if (modifiers.Count == 0)
         {
-            AddValue("None");
+            addValue("None");
             return;
         }
 
-        AddValue(string.Join(", ", [.. modifiers]));
+        addValue(string.Join(", ", [.. modifiers]));
     }
 
     private void addSlideModifiersInformation(SentakkiHitObject hitObject)
@@ -150,11 +138,11 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
 
         if (modifiers.Count == 0)
         {
-            AddValue("None");
+            addValue("None");
             return;
         }
 
-        AddValue(string.Join(", ", [.. modifiers]));
+        addValue(string.Join(", ", [.. modifiers]));
     }
 
     private void addSlideSegmentInformation(SentakkiHitObject hitObject)
@@ -165,7 +153,7 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
         if (s.SlideInfoList.Count != 1)
         {
             AddHeader("Slide bodies");
-            AddValue($"{s.SlideInfoList.Count}");
+            addValue($"{s.SlideInfoList.Count}");
         }
 
         AddHeader("Segments");
@@ -190,35 +178,19 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
                     break;
             }
 
-            AddValue($"{segment.Shape}({simpleEndOffset}){mirrored}");
+            addValue($"{segment.Shape}({simpleEndOffset}){mirrored}");
         }
     }
 
-    private void addValueWithSubvalue(string value, string subvalue, Color4 colour, Color4? subvalueColour = null)
+    // This is an alternative implementation that reduces the spacing between the values and the headers
+    private void addValue(string value) => addValue(value, colourProvider.Content1);
+    private void addValue(string value, Color4 colour)
     {
-        InspectorText.AddParagraph("");
-
-        var wrappingContainer = new FillFlowContainer()
+        InspectorText.NewLine();
+        InspectorText.AddText(value, s =>
         {
-            AutoSizeAxes = Axes.Both,
-            Direction = FillDirection.Vertical,
-            Children = [
-                new OsuSpriteText()
-                {
-                    Text = value,
-                    Font = OsuFont.Torus.With(weight: FontWeight.SemiBold),
-                    Colour = colour,
-                },
-                new OsuSpriteText()
-                {
-                    Text = subvalue,
-                    Margin = new MarginPadding { Bottom = -5, },
-                    Font = OsuFont.Torus.With(size: 12, weight: FontWeight.SemiBold),
-                    Colour = subvalueColour ?? colour,
-                }
-            ]
-        };
-
-        InspectorText.AddArbitraryDrawable(wrappingContainer);
+            s.Font = s.Font.With(weight: FontWeight.SemiBold);
+            s.Colour = colour;
+        });
     }
 }
