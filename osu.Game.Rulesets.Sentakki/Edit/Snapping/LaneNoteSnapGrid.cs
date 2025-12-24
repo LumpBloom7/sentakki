@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Utils;
 using osu.Game.Graphics;
+using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
@@ -18,6 +19,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Snapping;
 
 public partial class LaneNoteSnapGrid : VisibilityContainer
 {
+    public readonly Bindable<TernaryState> Enabled = new Bindable<TernaryState>(TernaryState.True);
+    private Bindable<bool> activationRequested = new Bindable<bool>();
+
     [Resolved]
     private EditorClock editorClock { get; set; } = null!;
 
@@ -62,7 +66,26 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
             },
             linePool = new DrawablePool<DrawableGridLine>(20)
         ]);
+
+        Enabled.ValueChanged += _ => updateVisibility();
+        activationRequested.ValueChanged += _ => updateVisibility();
     }
+
+    private void updateVisibility()
+    {
+        State.Value = (Enabled.Value is TernaryState.True && activationRequested.Value) ? Visibility.Visible : Visibility.Hidden;
+    }
+
+    public override void Show()
+    {
+        activationRequested.Value = true;
+    }
+
+    public override void Hide()
+    {
+        activationRequested.Value = false;
+    }
+
 
     protected override void Update()
     {

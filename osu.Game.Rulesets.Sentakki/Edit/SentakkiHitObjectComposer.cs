@@ -4,6 +4,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Beatmaps;
+using osu.Game.Graphics;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Edit.Tools;
 using osu.Game.Rulesets.Mods;
@@ -119,6 +120,20 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
             CreateIcon = () => new SpriteIcon { Icon = FontAwesome.Solid.Seedling },
             Description = "Ex",
             TooltipText = "Increases the judgement leniency of notes. Typically used to provide a safety net for players, allowing harder patterns to be introduced."
+        };
+
+        yield return new DrawableTernaryButton()
+        {
+            Current = LaneNoteSnapGrid.Enabled,
+            CreateIcon = () => new SpriteIcon { Icon = OsuIcon.EditorDistanceSnap },
+            Description = "Lane note snap grid",
+        };
+
+        yield return new DrawableTernaryButton()
+        {
+            Current = TouchPositionSnapGrid.Enabled,
+            CreateIcon = () => new SpriteIcon { Icon = OsuIcon.EditorGridSnap },
+            Description = "Touch snap grid",
         };
     }
 
