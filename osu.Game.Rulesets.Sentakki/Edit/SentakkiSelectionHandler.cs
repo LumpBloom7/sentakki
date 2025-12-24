@@ -1,21 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
-using osu.Game.Extensions;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Types;
-using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Screens.Edit.Compose.Components;
-using osu.Game.Utils;
-using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit;
 
@@ -117,127 +111,6 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
 
     private void setExSlideState(Slide slide, bool newValue) => slide.SlideInfoList.ForEach(si => si.Ex = newValue);
     private void setBreakSlideState(Slide slide, bool newValue) => slide.SlideInfoList.ForEach(si => si.Ex = newValue);
-
-    #endregion
-
-    #region ObjectMovement
-
-    public override bool HandleMovement(MoveSelectionEvent<HitObject> moveEvent)
-    {
-        var dragDelta = this.ScreenSpaceDeltaToParentSpace(moveEvent.ScreenSpaceDelta);
-
-        // Laned notes have the least movement freedom. If any are selected, *ALL* notes share the same movement constraints
-        if (SelectedBlueprints.Any(bp => bp.Item is SentakkiLanedHitObject))
-            lanedBasedMovement(moveEvent.Blueprint.ScreenSpaceSelectionPoint, dragDelta);
-        else // Without laned notes, then touch and touch notes can move freely.
-            moveTouchNotesFreeform(dragDelta);
-
-        return true;
-    }
-
-    [Resolved]
-    private SentakkiBlueprintContainer blueprintContainer { get; set; } = null!;
-
-    private void lanedBasedMovement(Vector2 screenSpaceSelectionPoint, Vector2 dragDelta)
-    {
-        List<SentakkiLanedHitObject> lanedNotes = [.. SelectedBlueprints.Select(bp => bp.Item).OfType<SentakkiLanedHitObject>()];
-        List<IHasPosition> touchNotes = [.. SelectedBlueprints.Select(bp => bp.Item).OfType<IHasPosition>()];
-
-        var originalMousePosition = ToLocalSpace(screenSpaceSelectionPoint);
-        var currentMousePosition = originalMousePosition + dragDelta;
-
-        float originalAngle = OriginPosition.AngleTo(originalMousePosition);
-        float currentAngle = OriginPosition.AngleTo(currentMousePosition);
-
-        float angleDelta = MathExtensions.AngleDelta(originalAngle, currentAngle);
-        int laneOffset = (int)Math.Round(angleDelta / 45);
-
-        if (laneOffset == 0)
-            return;
-
-        var playfield = blueprintContainer.Composer.Playfield;
-
-        EditorBeatmap.BeginChange();
-
-        foreach (var lanedNote in lanedNotes)
-        {
-            playfield.Remove(lanedNote);
-            lanedNote.Lane = (lanedNote.Lane + laneOffset).NormalizeLane();
-            playfield.Add(lanedNote);
-        }
-
-        // Rotate the touch notes around the origin, in order to preserve their relative positions to the laned notes.
-        if (touchNotes.Count > 0)
-        {
-            float theta = laneOffset * 45f / 180 * MathF.PI;
-            (float sin, float cos) = MathF.SinCos(theta);
-
-            foreach (var touchNote in touchNotes)
-            {
-                var pos = touchNote.Position;
-
-                touchNote.Position = new Vector2
-                {
-                    X = cos * pos.X - sin * pos.Y,
-                    Y = sin * pos.X + cos * pos.Y
-                };
-
-                EditorBeatmap.Update((SentakkiHitObject)touchNote);
-            }
-        }
-
-        EditorBeatmap.EndChange();
-    }
-
-    private void moveTouchNotesFreeform(Vector2 dragDelta)
-    {
-        const float boundary_radius = 270;
-
-        List<IHasPosition> touches = [.. SelectedBlueprints.Select(bp => bp.Item).OfType<IHasPosition>()];
-
-        if (touches.Count == 0)
-            return;
-
-        var centre = GeometryUtils.MinimumEnclosingCircle(touches).Item1;
-
-        float minimalDragDistance = (centre + dragDelta).Length;
-        var dragDirection = (dragDelta + centre).Normalized();
-
-        foreach (var touch in touches)
-        {
-            // Get the relative position of the touch note, with the centre of mass as the origin.
-            var positionAroundCenter = touch.Position - centre;
-
-            // Project the relative position onto the drag direction
-            // This gives us information about how far along the drag direction the touch note is.
-            float b = (dragDirection.X * positionAroundCenter.X) + (dragDirection.Y * positionAroundCenter.Y);
-
-            // This gives us the amount of violation incurred by the point. In our case
-            float c = positionAroundCenter.LengthSquared - MathF.Pow(boundary_radius, 2);
-
-            // b^2 is the squared projection of relative position onto the squared direction
-            // c already measured the squared constraint violation
-            // sqrt(b^2 - c) gives the intersect of the line from the origin/centre, which we offset with the projected relative position b
-            float distanceToRingIntersect = MathF.Sqrt(MathF.Pow(b, 2) - c) - b;
-
-            minimalDragDistance = Math.Min(minimalDragDistance, distanceToRingIntersect);
-        }
-
-        // No movement or invalid movement occurred, break out early to avoid NaN during normalisation.
-        if (minimalDragDistance < 0) return;
-
-        var movementAmount = -centre + (minimalDragDistance * dragDirection);
-
-        EditorBeatmap.BeginChange();
-
-        foreach (var touch in touches)
-        {
-            touch.Position += movementAmount;
-            EditorBeatmap.Update((SentakkiHitObject)touch);
-        }
-
-        EditorBeatmap.EndChange();
-    }
 
     #endregion
 }

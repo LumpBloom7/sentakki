@@ -1,9 +1,13 @@
 using System;
 using System.Linq;
+using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Edit;
+using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
@@ -17,14 +21,15 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 
 public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 {
+    [Resolved]
+    private LaneNoteSnapGrid snapGrid { get; set; } = null!;
+
     private readonly SlideTapPiece tapHighlight;
 
     private readonly SlideBodyInfo committedSlideInfo;
 
     private readonly SlideVisual commitedSlideVisual;
     private readonly SlideVisual activeSegmentVisual;
-
-    protected override bool IsValidForPlacement => base.IsValidForPlacement && HitObject.SlideInfoList[0].Segments.Count > 0;
 
     public SlidePlacementBlueprint()
     {
@@ -66,6 +71,15 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         });
     }
 
+    private readonly Bindable<double> animationSpeed = new Bindable<double>(5);
+
+    [BackgroundDependencyLoader]
+    private void load(SentakkiBlueprintContainer blueprintContainer)
+    {
+        animationSpeed.BindTo(blueprintContainer.Composer.DrawableRuleset.AdjustedAnimDuration);
+    }
+
+
     private bool initialStateApplied;
 
     protected override void Update()
@@ -73,17 +87,27 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         base.Update();
         float newRotation = HitObject.Lane.GetRotationForLane();
 
-        tapHighlight.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
+        float newY = -Interpolation.ValueAt(
+            HitObject.StartTime,
+            SentakkiPlayfield.INTERSECTDISTANCE,
+            SentakkiPlayfield.NOTESTARTDISTANCE,
+            EditorClock.CurrentTime,
+            EditorClock.CurrentTime + animationSpeed.Value / 2
+        );
 
         if (!initialStateApplied)
         {
             InternalChild.Rotation = newRotation;
+            tapHighlight.Y = newY;
             initialStateApplied = true;
             return;
         }
 
         float angleDelta = MathExtensions.AngleDelta(InternalChild.Rotation, newRotation);
-        InternalChild.Rotation += 25 * angleDelta * (float)(Time.Elapsed / 1000);
+
+        float roc = 25 * (float)(Time.Elapsed / 1000);
+        InternalChild.Rotation += angleDelta * roc;
+        tapHighlight.Y += roc * (newY - tapHighlight.Y);
 
         activeSegmentVisual.Rotation = committedSlideInfo.RelativeEndLane.GetRotationForLane() - 45f;
     }
@@ -96,6 +120,9 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         {
             case PlacementState.Waiting:
                 if (e.Button is not MouseButton.Left)
+                    break;
+
+                if (!IsValidForPlacement)
                     break;
 
                 BeginPlacement(true);
@@ -126,7 +153,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                         return true;
 
                     case MouseButton.Right:
-                        EndPlacement(true);
+                        EndPlacement(HitObject.SlideInfoList[0].Segments.Count > 0);
                         return true;
                 }
 
@@ -140,18 +167,13 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {
-        var localPosition = ToLocalSpace(screenSpacePosition);
-        float angle = OriginPosition.AngleTo(localPosition);
-
-        int targetLane = (int)Math.Round((angle - 22.5f) / 45);
+        (double snappedTime, int lane) = snapGrid.GetSnappedTimeAndPosition(time, screenSpacePosition);
 
         switch (PlacementActive)
         {
             case PlacementState.Waiting:
-                if (Vector2.Distance(OriginPosition, localPosition) < 100)
-                    break;
-
-                HitObject.Lane = targetLane;
+                time = snappedTime;
+                HitObject.Lane = lane;
                 break;
 
             case PlacementState.Active:
@@ -161,13 +183,9 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
                 HitObject.SlideInfoList[0].Duration = endTime - HitObject.StartTime;
 
-                // Yes this distance is higher, since slide bodies feel worse
-                if (Vector2.Distance(OriginPosition, localPosition) < 100)
-                    break;
-
                 int startLane = committedSlideInfo.RelativeEndLane + HitObject.Lane;
 
-                var newSegment = currentSegment with { RelativeEndLane = targetLane - startLane };
+                var newSegment = currentSegment with { RelativeEndLane = lane - startLane };
 
                 if (!SlidePaths.CheckSlideValidity(newSegment))
                     break;
