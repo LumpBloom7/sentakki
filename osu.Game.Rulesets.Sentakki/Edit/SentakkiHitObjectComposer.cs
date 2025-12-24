@@ -24,6 +24,8 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
 
     private DrawableRulesetDependencies dependencies = null!;
 
+    protected override Drawable CreateHitObjectInspector() => new SentakkiHitObjectInspector();
+
     protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
         => dependencies = new DrawableRulesetDependencies(Ruleset, base.CreateChildDependencies(parent));
 
