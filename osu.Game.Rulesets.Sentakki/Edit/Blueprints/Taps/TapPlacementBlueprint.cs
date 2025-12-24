@@ -66,8 +66,10 @@ public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
 
         if (!initialStateApplied)
         {
+            highlight.Y = newY;
             InternalChild.Rotation = newRotation;
             initialStateApplied = true;
+            return;
         }
 
         float roc = 25 * (float)(Time.Elapsed / 1000);

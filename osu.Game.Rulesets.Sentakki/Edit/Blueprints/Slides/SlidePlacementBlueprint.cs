@@ -100,6 +100,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         if (!initialStateApplied)
         {
             InternalChild.Rotation = newRotation;
+            tapHighlight.Y = newY;
             initialStateApplied = true;
             return;
         }
