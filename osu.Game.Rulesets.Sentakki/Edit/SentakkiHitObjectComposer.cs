@@ -81,7 +81,7 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
 
                 if (EditorBeatmap.SelectedHitObjects.All(h => h is IHasPosition))
                     TouchPositionSnapGrid.Show();
-                if (EditorBeatmap.SelectedHitObjects.All(h => h is SentakkiLanedHitObject))
+                if (EditorBeatmap.SelectedHitObjects.Any(h => h is SentakkiLanedHitObject))
                     LaneNoteSnapGrid.Show();
                 break;
 
