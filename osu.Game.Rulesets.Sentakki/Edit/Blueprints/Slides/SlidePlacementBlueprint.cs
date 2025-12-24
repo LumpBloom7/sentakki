@@ -31,8 +31,6 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
     private readonly SlideVisual commitedSlideVisual;
     private readonly SlideVisual activeSegmentVisual;
 
-    protected override bool IsValidForPlacement => base.IsValidForPlacement && HitObject.SlideInfoList[0].Segments.Count > 0;
-
     public SlidePlacementBlueprint()
     {
         Anchor = Anchor.Centre;
@@ -124,6 +122,9 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                 if (e.Button is not MouseButton.Left)
                     break;
 
+                if (!IsValidForPlacement)
+                    break;
+
                 BeginPlacement(true);
                 activeSegmentVisual.Show();
                 commitStartTime = HitObject.StartTime;
@@ -152,7 +153,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                         return true;
 
                     case MouseButton.Right:
-                        EndPlacement(true);
+                        EndPlacement(HitObject.SlideInfoList[0].Segments.Count > 0);
                         return true;
                 }
 

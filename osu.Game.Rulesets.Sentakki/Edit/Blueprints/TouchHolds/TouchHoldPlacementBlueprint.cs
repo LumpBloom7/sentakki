@@ -93,6 +93,9 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
         switch (PlacementActive)
         {
             case PlacementState.Waiting:
+                if (!IsValidForPlacement)
+                    break;
+
                 BeginPlacement(true);
                 commitStartTime = HitObject.StartTime;
                 break;

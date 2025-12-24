@@ -117,7 +117,10 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
         switch (PlacementActive)
         {
             case PlacementState.Waiting:
-                BeginPlacement(true);
+                if (!IsValidForPlacement)
+                    break;
+
+                BeginPlacement(IsValidForPlacement);
                 commitStartTime = HitObject.StartTime;
                 return true;
 
