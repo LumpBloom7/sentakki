@@ -127,7 +127,7 @@ public partial class SentakkiMovementHandler : Component
 
         List<IHasPosition> touches = [.. editorBeatmap.SelectedHitObjects.OfType<IHasPosition>()];
 
-        if (touchSnapGrid.State.Value is not Visibility.Visible)
+        if (touchSnapGrid.State.Value is Visibility.Visible)
         {
             // When the snap grid is visible, any attempts to move a note will be snapped to the dot.
             // Only the note being targetted needs to be snapped.
@@ -141,7 +141,7 @@ public partial class SentakkiMovementHandler : Component
             {
                 var snappedPosition = touchNotes.Position + localSpaceDelta;
 
-                if (snappedPosition.Length > boundary_radius)
+                if (snappedPosition.Length - boundary_radius > 0.01f)
                     return false;
             }
 
