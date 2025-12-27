@@ -76,8 +76,8 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
                 break;
 
             case PlacementState.Active:
-                HitObject.EndTime = Math.Max(commitStartTime, EditorClock.CurrentTime);
-                HitObject.StartTime = Math.Min(commitStartTime, EditorClock.CurrentTime);
+                HitObject.EndTime = Math.Max(commitStartTime, time);
+                HitObject.StartTime = Math.Min(commitStartTime, time);
 
                 break;
         }
