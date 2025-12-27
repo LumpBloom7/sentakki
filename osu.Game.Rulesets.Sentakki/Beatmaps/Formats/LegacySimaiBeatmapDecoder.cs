@@ -98,7 +98,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
             var controlPoint = new TimingControlPoint
             {
-                Time = Math.Round(coercedTime * 1000f),
+                Time = coercedTime * 1000f,
                 BeatLength = 60000.0 / timingChange.trueInheritedTempo,
                 TimeSignature = new TimeSignature(4)
             };
@@ -122,7 +122,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
         foreach (NoteCollection noteCollection in chart.NoteCollections)
         {
-            double roundedStartTime = Math.Round(noteCollection.time * 1000);
+            double roundedStartTime = noteCollection.time * 1000;
 
             var timingPoint = ControlPointInfo.BinarySearchWithFallback(simaiTimingPoints, roundedStartTime, null);
             if (timingPoint is not null)
@@ -133,7 +133,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
             foreach (var note in noteCollection)
             {
                 if (note.styles.HasFlagFast(NoteStyles.Fireworks))
-                    hanabiTimes.Add(roundedStartTime + Math.Round((note.length ?? 0) * 1000.0));
+                    hanabiTimes.Add(roundedStartTime + (note.length ?? 0) * 1000.0);
 
                 var hitObject = noteToHitObject(roundedStartTime, note);
 
