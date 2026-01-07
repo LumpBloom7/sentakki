@@ -56,7 +56,7 @@ public static class SentakkiExtensions
             case HitResult.Good:
                 return "Great";
 
-            case HitResult.Ok:
+            case HitResult.Meh:
                 return "Good";
 
             default:

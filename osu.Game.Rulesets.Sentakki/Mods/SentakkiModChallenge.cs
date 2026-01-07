@@ -98,7 +98,7 @@ public class SentakkiModChallenge : ModFailCondition, IApplicableToDrawableRules
                 newValue -= 1;
                 break;
 
-            case HitResult.Ok:
+            case HitResult.Meh:
                 newValue -= 2;
                 break;
 

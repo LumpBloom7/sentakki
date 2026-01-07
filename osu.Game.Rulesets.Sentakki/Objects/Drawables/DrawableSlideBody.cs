@@ -221,7 +221,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
 
                 // Apply a leniency if the player almost completed the slide
                 if (SlideCheckpoints.Count(node => !node.Result.IsHit) <= 2 && SlideCheckpoints.Count > 2)
-                    ApplyResult(hitResult: HitResult.Ok);
+                    ApplyResult(hitResult: HitResult.Meh);
                 else
                     ApplyResult(Result.Judgement.MinResult);
             }

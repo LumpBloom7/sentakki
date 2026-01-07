@@ -21,14 +21,23 @@ public partial class SentakkiScoreProcessor : ScoreProcessor
 
     public override int GetBaseScoreForResult(HitResult result)
     {
-        return result == HitResult.Perfect ? 305 : base.GetBaseScoreForResult(result);
+        switch (result)
+        {
+            case HitResult.Perfect:
+                return 305;
+
+            case HitResult.Meh:
+                return 100;
+
+            default:
+                return base.GetBaseScoreForResult(result);
+        }
     }
 
     public override ScoreRank RankFromScore(double accuracy, IReadOnlyDictionary<HitResult, int> results)
     {
         bool anyImperfect =
             results.GetValueOrDefault(HitResult.Good) > 0
-            || results.GetValueOrDefault(HitResult.Ok) > 0
             || results.GetValueOrDefault(HitResult.Meh) > 0
             || results.GetValueOrDefault(HitResult.Miss) > 0;
 
