@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
+using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -39,6 +40,7 @@ using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
 using osu.Game.Screens.Edit.Setup;
 using osu.Game.Screens.Ranking.Statistics;
+using osu.Game.Utils;
 using osuTK;
 using osuTK.Graphics;
 
@@ -63,7 +65,33 @@ public partial class SentakkiRuleset : Ruleset
     public override string PlayingVerb => "Washing laundry";
     public override string ShortName => "Sentakki";
 
-    public override IEnumerable<RulesetBeatmapAttribute> GetBeatmapAttributesForDisplay(IBeatmapInfo beatmapInfo, IReadOnlyCollection<Mod> mods) => [];
+    public override IEnumerable<RulesetBeatmapAttribute> GetBeatmapAttributesForDisplay(IBeatmapInfo beatmapInfo, IReadOnlyCollection<Mod> mods)
+    {
+        var hitWindows = new SentakkiTapHitWindows();
+
+        var hrMod = mods.FirstOrDefault(m => m is SentakkiModHardRock) as SentakkiModHardRock;
+
+        hitWindows.JudgementMode = hrMod?.JudgementMode.Value ?? SentakkiJudgementMode.Normal;
+        hitWindows.MinimumHitResult = (HitResult)(hrMod?.MinimumValidResult.Value ?? SentakkiModHardRock.SentakkiHitResult.Good);
+
+        OsuColour colours = new OsuColour();
+
+        int adjustedDiff = (int)hitWindows.JudgementMode;
+
+        yield return new RulesetBeatmapAttribute("Difficulty", "HR", 1, 1 + adjustedDiff, 3)
+        {
+            Description = "Affects baseline timing requirements (TAP notes shown here)",
+            AdditionalMetrics = [..hitWindows.GetAllAvailableWindows()
+                                          .Where(r=>r.result is not HitResult.Miss)
+                                          .Reverse()
+                                          .DistinctBy(r=>r.length)
+                                          .Select(window => new RulesetBeatmapAttribute.AdditionalMetric(
+                                              $"{window.result.GetDisplayNameForSentakkiResult().ToUpperInvariant()} hit window",
+                                              LocalisableString.Interpolate($@"±{hitWindows.WindowFor(window.result):0.##} ms"),
+                                              colours.ForSentakkiResult(window.result).AverageColour
+                                          ))]
+        };
+    }
 
     public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor(this);
     public override HealthProcessor CreateHealthProcessor(double drainStartTime) => new SentakkiHealthProcessor();
