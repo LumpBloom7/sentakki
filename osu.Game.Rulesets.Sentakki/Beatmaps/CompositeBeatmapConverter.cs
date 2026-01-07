@@ -48,6 +48,10 @@ public class CompositeBeatmapConverter : BeatmapConverter<SentakkiHitObject>
         beatmap.Breaks = original.Breaks;
         beatmap.UnhandledEventLines = original.UnhandledEventLines;
         beatmap.HitObjects = cloneHitObjects(original.HitObjects);
+
+        // For the 0 people that insist on using it.
+        beatmap.Bookmarks = original.Bookmarks;
+        beatmap.TimelineZoom = original.TimelineZoom;
         return beatmap;
     }
 
