@@ -10,7 +10,7 @@
         <NoWarn>SYSLIB0001,IDE0130</NoWarn>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="ppy.osu.Game" Version="2025.1029.0"/>
+        <PackageReference Include="ppy.osu.Game" Version="2026.102.0"/>
     </ItemGroup>
 
     <!--Since we aren't changing the assembly name, we use the assembly title to indicate whether it is a dev build-->
