@@ -32,7 +32,7 @@ public partial class SentakkiHealthProcessor : AccumulatingHealthProcessor
             HitResult.Perfect => 1,
             HitResult.Great => 1,
             HitResult.Good => 2 / 3f,
-            HitResult.Ok => 1 / 3f,
+            HitResult.Meh => 1 / 3f,
             _ => 0,
         };
     }
