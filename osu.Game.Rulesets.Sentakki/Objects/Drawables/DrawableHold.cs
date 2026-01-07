@@ -213,7 +213,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
             var newResult = originalResult - deduction;
 
-            return newResult <= HitResult.Ok ? HitResult.Ok : newResult;
+            return newResult <= HitResult.Meh ? HitResult.Meh : newResult;
         }
     }
 

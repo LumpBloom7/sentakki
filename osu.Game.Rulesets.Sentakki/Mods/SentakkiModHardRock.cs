@@ -72,7 +72,7 @@ public class SentakkiModHardRock : ModHardRock, IApplicableToHitObject, IApplica
 
     public enum SentakkiHitResult
     {
-        Good = 3,
+        Good = 2,
         Great = 4,
         Perfect = 5,
 

@@ -30,9 +30,6 @@ public static class SentakkiExtensions
             case HitResult.Perfect:
                 return ColourInfo.GradientVertical(Color4Extensions.FromHex("#7CF6FF"), Color4Extensions.FromHex("#FF9AD7"));
 
-            case HitResult.Ok:
-                return osuColour.Yellow;
-
             default:
                 return osuColour.ForHitResult(result);
         }
@@ -51,7 +48,7 @@ public static class SentakkiExtensions
             case HitResult.Good:
                 return "Great";
 
-            case HitResult.Ok:
+            case HitResult.Meh:
                 return "Good";
 
             default:

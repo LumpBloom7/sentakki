@@ -232,7 +232,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
 
             // Apply a leniency if the player almost completed the slide
             if (SlideCheckpoints.Count(node => !node.Result.IsHit) <= 2 && SlideCheckpoints.Count > 2)
-                ApplyResult(hitResult: HitResult.Ok);
+                ApplyResult(hitResult: HitResult.Meh);
             else
                 ApplyResult(Result.Judgement.MinResult);
 
@@ -244,7 +244,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         // Give the player an OK for extremely early completion
         // This is also a safeguard for super late hits beyond the late windows, where the input may have occured prior to the late window being exceeded due to lag.
         if (result == HitResult.None)
-            result = HitResult.Ok;
+            result = HitResult.Meh;
 
         // Give a perfect result if the star is intersecting with the last node
         // This is to preserve the expected invariant that following the star perfectly should guarantee a perfect judgement.

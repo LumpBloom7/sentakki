@@ -27,7 +27,7 @@ public abstract class SentakkiHitWindows : HitWindows
             // These are conditional on the minimum valid result
             case HitResult.Great:
             case HitResult.Good:
-            case HitResult.Ok:
+            case HitResult.Meh:
                 return result >= MinimumHitResult;
 
             default:
