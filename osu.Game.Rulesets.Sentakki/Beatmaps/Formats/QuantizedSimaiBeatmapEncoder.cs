@@ -219,19 +219,13 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
     // Lightly adjusted to output whole numbers separately.
     // The accuracy is chosen so that the fraction will deviate from x by at most two decimal places.
     // x = interval / BeatLength, so in practice you wouldn't need too many decimal places
-    public static (int wholes, int numerator, int denominator) AsFraction(double x, double accuracy = 0.005)
+    public static (int wholes, int numerator, int denominator) AsFraction(double x, double maxError = 0.001)
     {
         if (x == 0)
             return (0, 0, 1);
 
-        if (accuracy <= 0.0 || accuracy >= 1.0)
-            throw new ArgumentOutOfRangeException(nameof(accuracy), "must be > 0 and < 1.");
-
         int sign = Math.Sign(x);
         x = Math.Abs(x);
-
-        // Accuracy is the maximum relative error; convert to absolute maxError
-        double maxError = x * accuracy;
 
         int n = (int)Math.Floor(x);
         x -= n;
