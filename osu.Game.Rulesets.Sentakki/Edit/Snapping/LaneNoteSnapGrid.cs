@@ -86,13 +86,18 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
         activationRequested.Value = false;
     }
 
-
+    private double lastTime = 0;
     protected override void Update()
     {
         base.Update();
 
-        if (editorClock.ElapsedFrameTime != 0)
+        // When paused, the clock's frame-rate is 0, and so the ElapsedFrameTime is 0
+        // Let's manually keep track of time changes.
+        if (lastTime != editorClock.CurrentTime)
+        {
+            lastTime = editorClock.CurrentTime;
             gridCache.Invalidate();
+        }
 
         regenerateGrid();
     }
@@ -145,6 +150,8 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
                 gridLines.Add(line);
             }
         }
+
+        gridCache.Validate();
     }
 
     public (double snappedTime, int snappedLane) GetSnappedTimeAndPosition(double originalTime, Vector2 screenSpaceMousePosition)
