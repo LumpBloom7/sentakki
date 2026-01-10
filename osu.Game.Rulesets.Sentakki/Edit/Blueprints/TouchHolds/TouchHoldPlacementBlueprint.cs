@@ -5,6 +5,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
+using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
 using osuTK;
@@ -29,6 +30,7 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
         InternalChild = highlight = new TouchHoldBody
         {
             Alpha = 0.5f,
+            Colour = Color4.YellowGreen
         };
     }
 
@@ -41,24 +43,28 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
 
     private double commitStartTime;
 
+    [Resolved]
+    private TouchPositionSnapGrid touchPositionSnapGrid { get; set; } = null!;
+
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {
         switch (PlacementActive)
         {
             case PlacementState.Waiting:
-                Vector2 localPos = ToLocalSpace(screenSpacePosition) - OriginPosition;
+                Vector2 localMousePosition = ToLocalSpace(screenSpacePosition) - OriginPosition;
+                Vector2 snappedPos = touchPositionSnapGrid.GetSnappedPosition(localMousePosition);
 
                 // Touch notes cannot be placed more than 270 units away from the centre
-                float distance = Math.Min(localPos.Length, 270);
+                float distance = Math.Min(snappedPos.Length, 270);
 
-                Vector2 clampedPosition = localPos.Normalized() * distance;
+                Vector2 clampedPosition = distance == 0 ? Vector2.Zero : (snappedPos.Normalized() * distance);
                 HitObject.Position = clampedPosition;
 
                 break;
 
             case PlacementState.Active:
-                HitObject.EndTime = Math.Max(commitStartTime, EditorClock.CurrentTime);
-                HitObject.StartTime = Math.Min(commitStartTime, EditorClock.CurrentTime);
+                HitObject.EndTime = Math.Max(commitStartTime, time);
+                HitObject.StartTime = Math.Min(commitStartTime, time);
 
                 break;
         }
@@ -74,6 +80,9 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
         switch (PlacementActive)
         {
             case PlacementState.Waiting:
+                if (!IsValidForPlacement)
+                    break;
+
                 BeginPlacement(true);
                 commitStartTime = HitObject.StartTime;
                 break;
