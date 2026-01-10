@@ -71,7 +71,7 @@ public partial class SentakkiMovementHandler : Component
         // In order to prevent accidentally changing the time when the intention was to rotate
         // we make sure the resulting time of the notes don't jump significantly
         // Add 1ms leniency to account for slight unsnapping of notes
-        if (Precision.DefinitelyBigger(Math.Abs(timeOffset), editorBeatmap.GetBeatLengthAtTime(snappedTime) + 1))
+        if (Precision.DefinitelyBigger(Math.Abs(timeOffset), editorBeatmap.GetBeatLengthAtTime(snappedTime), 1))
             timeOffset = 0;
 
         if (laneOffset == 0 && timeOffset == 0)
