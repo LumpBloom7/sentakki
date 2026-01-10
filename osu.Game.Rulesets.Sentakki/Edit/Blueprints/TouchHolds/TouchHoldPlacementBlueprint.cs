@@ -30,6 +30,7 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
         InternalChild = highlight = new TouchHoldBody
         {
             Alpha = 0.5f,
+            Colour = Color4.YellowGreen
         };
     }
 

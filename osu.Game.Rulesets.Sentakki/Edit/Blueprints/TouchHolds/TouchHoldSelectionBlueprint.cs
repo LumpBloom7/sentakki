@@ -15,10 +15,10 @@ public partial class TouchHoldSelectionBlueprint : SentakkiSelectionBlueprint<To
 {
     public static readonly IReadOnlyList<Color4> SELECTION_PALETTE =
     [
-        Color4.YellowGreen,
-        Color4.YellowGreen.Darken(0.5f),
-        Color4.YellowGreen,
-        Color4.YellowGreen.Darken(0.5f),
+        Color4.White,
+        Color4.White.Darken(0.5f),
+        Color4.White,
+        Color4.White.Darken(0.5f),
     ];
 
     // TouchHoldBody typically relies on colour provided by DrawableTouchHold to set its colour. Since the highlight is not tied to a DHO, we provide that dependency here.
@@ -37,7 +37,8 @@ public partial class TouchHoldSelectionBlueprint : SentakkiSelectionBlueprint<To
 
         InternalChild = highlight = new TouchHoldBody
         {
-            Alpha = 0.5f
+            Alpha = 0.5f,
+            Colour = Color4.YellowGreen
         };
     }
 
