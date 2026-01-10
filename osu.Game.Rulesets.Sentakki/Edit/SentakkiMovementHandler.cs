@@ -58,9 +58,7 @@ public partial class SentakkiMovementHandler : Component
 
     private bool tryPerformLaneMovement(Vector2 localTarget, Vector2 localPosition, double originalTime)
     {
-        // Stupid fucking approach to get snapped time, without code repetition
-        Vector2 tmp = ToScreenSpace(localTarget + OriginPosition);
-        (double snappedTime, _) = laneNoteSnapGrid.GetSnappedTimeAndPosition(originalTime, tmp);
+        (double snappedTime, _) = laneNoteSnapGrid.GetSnappedTimeAndPosition(originalTime, localTarget);
 
         float originalAngle = Vector2.Zero.AngleTo(localPosition);
         float currentAngle = Vector2.Zero.AngleTo(localTarget);

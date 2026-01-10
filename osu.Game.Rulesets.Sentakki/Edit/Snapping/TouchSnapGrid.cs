@@ -55,11 +55,11 @@ public partial class TouchPositionSnapGrid : VisibilityContainer
         activationRequested.Value = false;
     }
 
-    public Vector2 GetSnappedPosition(Vector2 original)
+    public Vector2 GetSnappedPosition(Vector2 localMousePosition)
     {
         if (State.Value is Visibility.Hidden)
-            return original;
+            return localMousePosition;
 
-        return SentakkiBeatmapConverterOld.VALID_TOUCH_POSITIONS.MinBy(v => Vector2.DistanceSquared(original, v));
+        return SentakkiBeatmapConverterOld.VALID_TOUCH_POSITIONS.MinBy(v => Vector2.DistanceSquared(localMousePosition, v));
     }
 }

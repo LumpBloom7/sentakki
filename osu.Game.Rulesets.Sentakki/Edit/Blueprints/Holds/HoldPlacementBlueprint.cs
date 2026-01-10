@@ -75,7 +75,8 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {
-        (time, int lane) = snapGrid.GetSnappedTimeAndPosition(time, screenSpacePosition);
+        Vector2 localMousePosition = ToLocalSpace(screenSpacePosition) - OriginPosition;
+        (time, int lane) = snapGrid.GetSnappedTimeAndPosition(time, localMousePosition);
 
         switch (PlacementActive)
         {

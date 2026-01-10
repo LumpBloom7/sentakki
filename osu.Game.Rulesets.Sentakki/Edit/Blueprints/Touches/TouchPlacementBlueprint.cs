@@ -41,8 +41,8 @@ public partial class TouchPlacementBlueprint : SentakkiPlacementBlueprint<Touch>
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {
-        Vector2 localPos = ToLocalSpace(screenSpacePosition) - OriginPosition;
-        Vector2 snappedPos = touchPositionSnapGrid.GetSnappedPosition(localPos);
+        Vector2 localMousePosition = ToLocalSpace(screenSpacePosition) - OriginPosition;
+        Vector2 snappedPos = touchPositionSnapGrid.GetSnappedPosition(localMousePosition);
 
         // Touch notes cannot be placed more than 270 units away from the centre
         float distance = Math.Min(snappedPos.Length, 270);

@@ -151,7 +151,8 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {
-        (double snappedTime, int lane) = snapGrid.GetSnappedTimeAndPosition(time, screenSpacePosition);
+        Vector2 localMousePosition = ToLocalSpace(screenSpacePosition) - OriginPosition;
+        (double snappedTime, int lane) = snapGrid.GetSnappedTimeAndPosition(time, localMousePosition);
 
         switch (PlacementActive)
         {

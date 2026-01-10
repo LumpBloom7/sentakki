@@ -52,9 +52,8 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
         switch (PlacementActive)
         {
             case PlacementState.Waiting:
-                Vector2 localPos = ToLocalSpace(screenSpacePosition) - OriginPosition;
-
-                Vector2 snappedPos = touchPositionSnapGrid.GetSnappedPosition(localPos);
+                Vector2 localMousePosition = ToLocalSpace(screenSpacePosition) - OriginPosition;
+                Vector2 snappedPos = touchPositionSnapGrid.GetSnappedPosition(localMousePosition);
 
                 // Touch notes cannot be placed more than 270 units away from the centre
                 float distance = Math.Min(snappedPos.Length, 270);

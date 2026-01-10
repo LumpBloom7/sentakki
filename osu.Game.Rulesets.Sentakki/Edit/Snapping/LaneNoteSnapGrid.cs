@@ -154,11 +154,9 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
         gridCache.Validate();
     }
 
-    public (double snappedTime, int snappedLane) GetSnappedTimeAndPosition(double originalTime, Vector2 screenSpaceMousePosition)
+    public (double snappedTime, int snappedLane) GetSnappedTimeAndPosition(double originalTime, Vector2 localMousePosition)
     {
         double snappedTime = originalTime;
-
-        Vector2 localMousePosition = ToLocalSpace(screenSpaceMousePosition) - OriginPosition;
 
         if (State.Value is Visibility.Visible)
         {
