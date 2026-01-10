@@ -8,7 +8,6 @@ using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
-using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
 using osuTK.Input;
@@ -66,24 +65,11 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         });
     }
 
-    private bool initialStateApplied;
-
     protected override void Update()
     {
         base.Update();
-        float newRotation = HitObject.Lane.GetRotationForLane();
 
-        tapHighlight.Y = -SentakkiPlayfield.INTERSECTDISTANCE;
-
-        if (!initialStateApplied)
-        {
-            InternalChild.Rotation = newRotation;
-            initialStateApplied = true;
-            return;
-        }
-
-        float angleDelta = MathExtensions.AngleDelta(InternalChild.Rotation, newRotation);
-        InternalChild.Rotation += 25 * angleDelta * (float)(Time.Elapsed / 1000);
+        InternalChild.Rotation = HitObject.Lane.GetRotationForLane();
 
         activeSegmentVisual.Rotation = committedSlideInfo.RelativeEndLane.GetRotationForLane() - 45f;
     }
