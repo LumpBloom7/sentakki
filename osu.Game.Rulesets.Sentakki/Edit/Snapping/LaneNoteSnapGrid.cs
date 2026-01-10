@@ -124,7 +124,6 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
             if (timingPoint.Time > maximumTime)
                 return;
 
-
             double beatLength = timingPoint.BeatLength / bindableBeatDivisor.Value;
 
             for (int beatIndex = 0; ; ++beatIndex)

@@ -42,10 +42,8 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
 
     private double commitStartTime;
 
-
     [Resolved]
     private TouchPositionSnapGrid touchPositionSnapGrid { get; set; } = null!;
-
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {

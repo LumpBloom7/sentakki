@@ -79,7 +79,6 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         animationSpeed.BindTo(blueprintContainer.Composer.DrawableRuleset.AdjustedAnimDuration);
     }
 
-
     protected override void Update()
     {
         base.Update();
