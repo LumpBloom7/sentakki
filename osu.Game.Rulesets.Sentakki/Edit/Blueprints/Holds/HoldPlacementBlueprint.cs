@@ -49,8 +49,6 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
         configs.BindWith(SentakkiRulesetSettings.AnimationSpeed, animationSpeed);
     }
 
-    private bool initialStateApplied;
-
     protected override void Update()
     {
         base.Update();
@@ -68,23 +66,9 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
         float targetY = (float)(-SentakkiPlayfield.INTERSECTDISTANCE + headY / animationDuration * max_height);
         float targetHeight = (float)(height / animationDuration * max_height);
 
-        if (!initialStateApplied)
-        {
-            InternalChild.Rotation = targetRotation;
-            highlight.Y = targetY;
-            highlight.Height = targetHeight;
-
-            initialStateApplied = true;
-            return;
-        }
-
-        float roc = 25 * (float)(Time.Elapsed / 1000);
-
-        float angleDelta = MathExtensions.AngleDelta(InternalChild.Rotation, targetRotation);
-        InternalChild.Rotation += angleDelta * roc;
-
-        highlight.Y += (targetY - highlight.Y) * roc;
-        highlight.Height += (targetHeight - highlight.Height) * roc;
+        InternalChild.Rotation = targetRotation;
+        highlight.Y = targetY;
+        highlight.Height = (float)targetHeight;
     }
 
     private double commitStartTime;

@@ -41,8 +41,6 @@ public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
         };
     }
 
-    private bool initialStateApplied;
-
     private readonly Bindable<double> animationSpeed = new Bindable<double>(5);
 
     [BackgroundDependencyLoader]
@@ -54,9 +52,8 @@ public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
     protected override void Update()
     {
         base.Update();
-        float newRotation = HitObject.Lane.GetRotationForLane();
 
-        float newY = -Interpolation.ValueAt(
+        highlight.Y = -Interpolation.ValueAt(
             HitObject.StartTime,
             SentakkiPlayfield.INTERSECTDISTANCE,
             SentakkiPlayfield.NOTESTARTDISTANCE,
@@ -64,19 +61,7 @@ public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
             EditorClock.CurrentTime + animationSpeed.Value / 2
         );
 
-        if (!initialStateApplied)
-        {
-            highlight.Y = newY;
-            InternalChild.Rotation = newRotation;
-            initialStateApplied = true;
-            return;
-        }
-
-        float roc = 25 * (float)(Time.Elapsed / 1000);
-
-        float angleDelta = MathExtensions.AngleDelta(InternalChild.Rotation, newRotation);
-        InternalChild.Rotation += angleDelta * roc;
-        highlight.Y += (newY - highlight.Y) * roc;
+        InternalChild.Rotation = HitObject.Lane.GetRotationForLane();
     }
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)

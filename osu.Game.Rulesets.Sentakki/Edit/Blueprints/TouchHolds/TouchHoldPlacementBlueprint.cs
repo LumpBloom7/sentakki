@@ -33,22 +33,11 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
         };
     }
 
-    private bool initialStateApplied;
-
     protected override void Update()
     {
         base.Update();
 
-        if (!initialStateApplied)
-        {
-            highlight.Position = HitObject.Position;
-            initialStateApplied = true;
-            return;
-        }
-
-        float roc = 25 * (float)(Time.Elapsed / 1000);
-
-        highlight.Position += (HitObject.Position - highlight.Position) * roc;
+        highlight.Position = HitObject.Position;
     }
 
     private double commitStartTime;
