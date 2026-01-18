@@ -1,7 +1,10 @@
 using System;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
+using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
 using osuTK;
@@ -33,14 +36,19 @@ public partial class TouchPlacementBlueprint : SentakkiPlacementBlueprint<Touch>
         highlight.Position = HitObject.Position;
     }
 
+    [Resolved]
+    private TouchPositionSnapGrid touchPositionSnapGrid { get; set; } = null!;
+
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {
-        Vector2 localPos = ToLocalSpace(screenSpacePosition) - OriginPosition;
+        Vector2 localMousePosition = ToLocalSpace(screenSpacePosition) - OriginPosition;
+        Vector2 snappedPos = touchPositionSnapGrid.GetSnappedPosition(localMousePosition);
 
         // Touch notes cannot be placed more than 270 units away from the centre
-        float distance = Math.Min(localPos.Length, 270);
+        float distance = Math.Min(snappedPos.Length, 270);
 
-        Vector2 clampedPosition = localPos.Normalized() * distance;
+        Vector2 clampedPosition = distance == 0 ? Vector2.Zero : (snappedPos.Normalized() * distance);
+
         HitObject.Position = clampedPosition;
 
         return base.UpdateTimeAndPosition(screenSpacePosition, time);

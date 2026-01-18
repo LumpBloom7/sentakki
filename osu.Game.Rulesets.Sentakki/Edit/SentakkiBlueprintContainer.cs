@@ -21,18 +21,21 @@ namespace osu.Game.Rulesets.Sentakki.Edit;
 [Cached]
 public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
 {
-    public new HitObjectComposer Composer => base.Composer;
+    public new SentakkiHitObjectComposer Composer => (SentakkiHitObjectComposer)base.Composer;
+
+    private SentakkiMovementHandler movementHandler;
 
     [Cached]
     private DrawablePool<SlideChevron> chevrons { get; set; }
 
-    public SentakkiBlueprintContainer(HitObjectComposer composer)
+    public SentakkiBlueprintContainer(SentakkiHitObjectComposer composer)
         : base(composer)
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
         AddInternal(chevrons = new DrawablePool<SlideChevron>(100));
+        AddInternal(movementHandler = new SentakkiMovementHandler());
     }
 
     public override HitObjectSelectionBlueprint? CreateHitObjectBlueprintFor(HitObject hitObject)
@@ -68,14 +71,5 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
         => blueprints.OrderBy(b => Vector2.DistanceSquared(b.ScreenSpaceSelectionPoint, currentMousePosition));
 
     protected override bool TryMoveBlueprints(DragEvent e, IList<(SelectionBlueprint<HitObject> blueprint, Vector2[] originalSnapPositions)> blueprints)
-    {
-        Vector2 distanceTravelled = e.ScreenSpaceMousePosition - e.ScreenSpaceMouseDownPosition;
-
-        // The final movement position, relative to movementBlueprintOriginalPosition.
-        Vector2 movePosition = blueprints.First().originalSnapPositions.First() + distanceTravelled;
-
-        var movementEvent = new MoveSelectionEvent<HitObject>(blueprints.First().blueprint, movePosition - blueprints.First().blueprint.ScreenSpaceSelectionPoint);
-        SelectionHandler.HandleMovement(movementEvent);
-        return true;
-    }
+        => movementHandler.TryMoveBlueprints(e, blueprints);
 }
