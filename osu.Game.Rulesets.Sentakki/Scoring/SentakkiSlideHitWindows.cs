@@ -7,7 +7,7 @@ public class SentakkiSlideHitWindows : SentakkiHitWindows
 {
     protected override double DefaultWindowFor(HitResult result) => result switch
     {
-        HitResult.Miss or HitResult.Ok => 36 * TIMING_UNIT,
+        HitResult.Miss or HitResult.Meh => 36 * TIMING_UNIT,
         HitResult.Good => 26 * TIMING_UNIT,
         HitResult.Great => 14 * TIMING_UNIT,
         HitResult.Perfect => 14 * TIMING_UNIT,
@@ -16,7 +16,7 @@ public class SentakkiSlideHitWindows : SentakkiHitWindows
 
     protected override double MajiWindowFor(HitResult result) => result switch
     {
-        HitResult.Miss or HitResult.Ok => 26 * TIMING_UNIT,
+        HitResult.Miss or HitResult.Meh => 26 * TIMING_UNIT,
         HitResult.Good => 26 * TIMING_UNIT,
         HitResult.Great => 14 * TIMING_UNIT,
         HitResult.Perfect => 14 * TIMING_UNIT,

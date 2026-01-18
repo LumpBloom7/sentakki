@@ -210,7 +210,7 @@ public partial class SentakkiRuleset : Ruleset
         };
 
     protected override IEnumerable<HitResult> GetValidHitResults()
-        => [HitResult.Perfect, HitResult.Great, HitResult.Good, HitResult.Ok];
+        => [HitResult.Perfect, HitResult.Great, HitResult.Good, HitResult.Meh];
 
     public override LocalisableString GetDisplayNameForHitResult(HitResult result) => result.GetDisplayNameForSentakkiResult();
 
