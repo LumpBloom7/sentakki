@@ -8,15 +8,14 @@ using osu.Game.Overlays;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.Objects.Types;
 using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Compose.Components;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Edit;
+namespace osu.Game.Rulesets.Sentakki.Edit.Inspector;
 
-public partial class SentakkiHitObjectInspector : HitObjectInspector
+public partial class SentakkiHitObjectInspector : EditorInspector
 {
     [Resolved]
     private EditorBeatmap editorBeatmap { get; set; } = null!;
@@ -24,13 +23,42 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
     [Resolved]
     private OverlayColourProvider colourProvider { get; set; } = null!;
 
-    protected override void AddInspectorValues(HitObject[] objects)
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        EditorBeatmap.SelectedHitObjects.CollectionChanged += (_, _) => updateInspectorText();
+        EditorBeatmap.PlacementObject.BindValueChanged(_ => updateInspectorText());
+        EditorBeatmap.TransactionBegan += updateInspectorText;
+        EditorBeatmap.TransactionEnded += updateInspectorText;
+        updateInspectorText();
+    }
+
+
+    private void updateInspectorText()
+    {
+        InspectorText.Clear();
+
+        HitObject[] objects;
+
+        if (EditorBeatmap.SelectedHitObjects.Count > 0)
+            objects = EditorBeatmap.SelectedHitObjects.ToArray();
+        else if (EditorBeatmap.PlacementObject.Value != null)
+            objects = [EditorBeatmap.PlacementObject.Value];
+        else
+            objects = [];
+
+        AddInspectorValues(objects);
+    }
+
+
+    protected void AddInspectorValues(HitObject[] objects)
     {
         switch (objects.Length)
         {
             default:
             case 0:
-                base.AddInspectorValues(objects);
+                AddValue("No selection");
                 break;
 
             // This is an intentional reimplementation of the base behaviour.
@@ -159,28 +187,11 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
         AddHeader("Segments");
         foreach (var segment in s.SlideInfoList[0].Segments)
         {
-            int simpleEndOffset = segment.RelativeEndLane;
-            if (simpleEndOffset > 4)
-                simpleEndOffset -= 8;
-
-            string mirrored = "";
-
-            switch (segment.Shape)
-            {
-                case PathShape.Circle:
-                    mirrored = segment.Mirrored ? "CCW" : "CW";
-                    break;
-
-                case PathShape.U:
-                case PathShape.Cup:
-                case PathShape.Thunder:
-                    mirrored = segment.Mirrored ? "M" : "";
-                    break;
-            }
-
-            addValue($"{segment.Shape}({simpleEndOffset}){mirrored}");
+            InspectorText.NewLine();
+            InspectorText.AddArbitraryDrawable(new SentakkiSlideSegmentInspectorEntry(s.SlideInfoList[0], segment));
         }
     }
+
 
     // This is an alternative implementation that reduces the spacing between the values and the headers
     private void addValue(string value) => addValue(value, colourProvider.Content1);
