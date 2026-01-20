@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
@@ -12,7 +13,9 @@ using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Rulesets.Sentakki.Extensions;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
+using osu.Game.Screens.Edit;
 using osuTK;
 using osuTK.Graphics;
 
@@ -23,13 +26,18 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
     private OsuSpriteText text;
 
     private SlideBodyInfo slideBodyInfo;
-    private SlideSegment segment;
+    private int segmentIndex;
 
-    public SentakkiSlideSegmentInspectorEntry(SlideBodyInfo slideBodyInfo, SlideSegment segment)
+    private SlideSegment segment => slideBodyInfo.Segments[segmentIndex];
+    private Slide slide;
+
+    public SentakkiSlideSegmentInspectorEntry(Slide slide, SlideBodyInfo slideBodyInfo, int index)
     {
-        AutoSizeAxes = Axes.Both;
+        this.slide = slide;
         this.slideBodyInfo = slideBodyInfo;
-        this.segment = segment;
+        segmentIndex = index;
+
+        AutoSizeAxes = Axes.Both;
 
         int simpleEndOffset = segment.RelativeEndLane;
         if (simpleEndOffset > 4)
@@ -69,7 +77,7 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
     }
 
 
-    public Popover? GetPopover() => new SegmentEditPopover(slideBodyInfo, segment)
+    public Popover? GetPopover() => new SegmentEditPopover(slide, slideBodyInfo, segmentIndex)
     {
         State = { BindTarget = popoverVisibilityState }
     };
@@ -83,14 +91,29 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
 
     private partial class SegmentEditPopover : OsuPopover
     {
-        private SlideBodyInfo slideBodyInfo;
-        private SlideSegment segment;
+        [Resolved]
+        private EditorBeatmap editorBeatmap { get; set; } = null!;
 
-        public SegmentEditPopover(SlideBodyInfo slideBodyInfo, in SlideSegment segment)
+        private Slide slide;
+        private SlideBodyInfo slideBodyInfo;
+        private int segmentIndex;
+
+        private SlideSegment segment => slideBodyInfo.Segments[segmentIndex];
+
+        private IBindable<int> versionBindable;
+
+        public SegmentEditPopover(Slide slide, SlideBodyInfo slideBodyInfo, int index)
         {
+            this.slide = slide;
             this.slideBodyInfo = slideBodyInfo;
-            this.segment = segment;
+            segmentIndex = index;
+
+            versionBindable = slideBodyInfo.Version.GetBoundCopy();
         }
+
+        private FormEnumDropdown<PathShape> shapeDropdown = null!;
+        private FormCheckBox mirroredCheckbox = null!;
+        private FormDropdown<int> endLaneDropdown = null!;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -106,21 +129,14 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                         Text = "Edit segment",
                         Font = OsuFont.Style.Heading2
                     },
-                    new FormEnumDropdown<PathShape>(){
+                    shapeDropdown = new FormEnumDropdown<PathShape>(){
                         Caption = "Segment shape",
-                        Current = {Value = segment.Shape}
                     },
-                    new FormCheckBox(){
+                    mirroredCheckbox = new FormCheckBox(){
                         Caption = "Mirror shape",
-                        Current = {Value = segment.Mirrored}
                     },
-                    new FormDropdown<int>(){
-                        Caption = "End offset",
-                        Items = Enumerable.Range(-3,8).Where(i => SlidePaths.CheckSlideValidity(segment with {RelativeEndLane = i.NormalizeLane()})),
-
-                        Current = {
-                            Value= Enumerable.Range(-3,8).First(i => i.NormalizeLane() == segment.RelativeEndLane)
-                        }
+                    endLaneDropdown = new FormDropdown<int>(){
+                        Caption = "End Lane",
                     },
                     new GridContainer{
                         RelativeSizeAxes = Axes.X,
@@ -145,10 +161,69 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                             ]
                         }
                     }
-
                 ]
             };
+
+            versionBindable.BindValueChanged(v => refreshForms(), true);
+            shapeDropdown.Current.BindValueChanged(_ => updateShape());
+            mirroredCheckbox.Current.BindValueChanged(_ => updateShape());
+            endLaneDropdown.Current.BindValueChanged(_ => updateShape());
+        }
+
+        private void refreshForms()
+        {
+            if (slideBodyInfo.Segments.Count <= segmentIndex)
+                return;
+
+            shapeDropdown.Current.Value = segment.Shape;
+            mirroredCheckbox.Current.Value = segment.Mirrored;
+
+            int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(segmentIndex + 1).Sum(s => s.RelativeEndLane)).NormalizeLane();
+            int startLane = (currentEndLane - segment.RelativeEndLane).NormalizeLane();
+
+            // We have to temporarily re-enable the bindable to be able to change it.
+            endLaneDropdown.Current.Disabled = false;
+
+            endLaneDropdown.Items = Enumerable.Range(0, 8).Where(i => SlidePaths.CheckSlideValidity(segment with { RelativeEndLane = i })).Select(i => (i + startLane).NormalizeLane() + 1).Order();
+            endLaneDropdown.Current.Value = currentEndLane + 1;
+            endLaneDropdown.Current.Disabled = endLaneDropdown.Items.Count() == 1;
+        }
+
+        private void updateShape()
+        {
+            List<SlideSegment> updatedSegments = [.. slideBodyInfo.Segments];
+
+            int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(segmentIndex + 1).Sum(s => s.RelativeEndLane)).NormalizeLane();
+            int startLane = (currentEndLane - segment.RelativeEndLane).NormalizeLane();
+
+            int relativeEnd = (endLaneDropdown.Current.Value - 1 - startLane).NormalizeLane();
+
+            var candidateSegment = new SlideSegment
+            {
+                Shape = shapeDropdown.Current.Value,
+                Mirrored = mirroredCheckbox.Current.Value,
+                RelativeEndLane = relativeEnd
+            };
+
+            int offset = 1;
+            while (!SlidePaths.CheckSlideValidity(candidateSegment))
+            {
+                candidateSegment.RelativeEndLane = (relativeEnd + offset).NormalizeLane();
+                if (SlidePaths.CheckSlideValidity(candidateSegment))
+                    break;
+
+                candidateSegment.RelativeEndLane = (relativeEnd + offset).NormalizeLane();
+                if (SlidePaths.CheckSlideValidity(candidateSegment))
+                    break;
+
+                ++offset;
+            }
+
+            updatedSegments[segmentIndex] = candidateSegment;
+
+            slideBodyInfo.Segments = updatedSegments;
+
+            editorBeatmap.Update(slide);
         }
     }
-
 }

@@ -185,10 +185,10 @@ public partial class SentakkiHitObjectInspector : EditorInspector
         }
 
         AddHeader("Segments");
-        foreach (var segment in s.SlideInfoList[0].Segments)
+        for (int i = 0; i < s.SlideInfoList[0].Segments.Count; ++i)
         {
             InspectorText.NewLine();
-            InspectorText.AddArbitraryDrawable(new SentakkiSlideSegmentInspectorEntry(s.SlideInfoList[0], segment));
+            InspectorText.AddArbitraryDrawable(new SentakkiSlideSegmentInspectorEntry(s, s.SlideInfoList[0], i));
         }
     }
 
