@@ -124,42 +124,63 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
             Child = new FillFlowContainer
             {
                 Direction = FillDirection.Vertical,
-                Width = 220,
+                Width = 240,
                 AutoSizeAxes = Axes.Y,
                 Spacing = new Vector2(5),
                 Children = [
-                    new OsuSpriteText{
+                    new OsuSpriteText
+                    {
                         Text = "Edit segment",
                         Font = OsuFont.Style.Heading2
                     },
-                    shapeDropdown = new FormEnumDropdown<PathShape>(){
+                    shapeDropdown = new FormEnumDropdown<PathShape>()
+                    {
                         Caption = "Shape",
-                    },
-                    mirroredCheckbox = new FormCheckBox(){
-                        Caption = "Mirrored",
-                    },
-                    endLaneDropdown = new FormDropdown<int>(){
-                        Caption = "End Lane",
                     },
                     new GridContainer{
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
 
                         RowDimensions = [new Dimension(GridSizeMode.AutoSize)],
-                        ColumnDimensions = [new Dimension(GridSizeMode.Distributed), new Dimension(GridSizeMode.Absolute, 5), new Dimension(GridSizeMode.Distributed)],
-
-                        Content = new Drawable?[][]{
+                        ColumnDimensions = [new Dimension(GridSizeMode.Relative, 0.4f), new Dimension(GridSizeMode.Absolute, 5), new Dimension(GridSizeMode.Distributed)],
+                        Content = new Drawable?[][]
+                        {
                             [
-                                new RoundedButton(){
-                                    Text = "Duplicate",
-                                    RelativeSizeAxes = Axes.X,
-                                    Enabled = {Value = true}
+                                endLaneDropdown = new FormDropdown<int>()
+                                {
+                                    Caption = "End Lane",
                                 },
                                 null,
-                                new DangerousRoundedButton(){
+                                mirroredCheckbox = new FormCheckBox()
+                                {
+                                    Caption = "Mirrored",
+                                },
+                            ]
+                        }
+                    },
+                    new GridContainer
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        AutoSizeAxes = Axes.Y,
+
+                        RowDimensions = [new Dimension(GridSizeMode.AutoSize)],
+                        ColumnDimensions = [new Dimension(GridSizeMode.Distributed), new Dimension(GridSizeMode.Absolute, 5), new Dimension(GridSizeMode.Distributed)],
+
+                        Content = new Drawable?[][]
+                        {
+                            [
+                                new RoundedButton()
+                                {
+                                    Text = "Duplicate",
+                                    RelativeSizeAxes = Axes.X,
+                                    Enabled = { Value = true }
+                                },
+                                null,
+                                new DangerousRoundedButton()
+                                {
                                     Text = "Delete",
                                     RelativeSizeAxes = Axes.X,
-                                    Enabled = {Value = true}
+                                    Enabled = { Value = true }
                                 }
                             ]
                         }
