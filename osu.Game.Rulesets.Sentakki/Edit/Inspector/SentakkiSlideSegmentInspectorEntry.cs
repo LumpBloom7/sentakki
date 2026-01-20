@@ -39,6 +39,12 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
 
         AutoSizeAxes = Axes.Both;
 
+        InternalChild = text = new OsuSpriteText();
+        text.Font = text.Font.With(weight: FontWeight.SemiBold);
+    }
+
+    private void updateText()
+    {
         int simpleEndOffset = segment.RelativeEndLane;
         if (simpleEndOffset > 4)
             simpleEndOffset -= 8;
@@ -58,21 +64,18 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                 break;
         }
 
-        InternalChildren = [
-            text = new OsuSpriteText{
-                Text = $"{segment.Shape}({simpleEndOffset}){mirrored}",
-            },
-        ];
-
-        text.Font = text.Font.With(weight: FontWeight.SemiBold);
+        text.Text = $"{segment.Shape}({simpleEndOffset}){mirrored}";
     }
 
     private Bindable<Visibility> popoverVisibilityState = new();
+    private IBindable<int> versionBindable = new Bindable<int>();
 
     protected override void LoadComplete()
     {
         base.LoadComplete();
 
+        versionBindable.BindTo(slideBodyInfo.Version);
+        versionBindable.BindValueChanged(_ => updateText(), true);
         popoverVisibilityState.BindValueChanged(v => Colour = v.NewValue == Visibility.Visible ? Color4.YellowGreen : Color4.White);
     }
 
@@ -130,10 +133,10 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                         Font = OsuFont.Style.Heading2
                     },
                     shapeDropdown = new FormEnumDropdown<PathShape>(){
-                        Caption = "Segment shape",
+                        Caption = "Shape",
                     },
                     mirroredCheckbox = new FormCheckBox(){
-                        Caption = "Mirror shape",
+                        Caption = "Mirrored",
                     },
                     endLaneDropdown = new FormDropdown<int>(){
                         Caption = "End Lane",
