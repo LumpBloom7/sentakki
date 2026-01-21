@@ -25,7 +25,7 @@ public partial class PreciseRotationPopover : OsuPopover
 
     private readonly Bindable<PreciseRotationInfo> rotationInfo = new Bindable<PreciseRotationInfo>(new PreciseRotationInfo(0, EditorOrigin.GridCentre));
 
-    private SliderWithTextBoxInput<float> angleInput = null!;
+    private FormSliderBar<float> angleInput = null!;
     private EditorRadioButtonCollection rotationOrigin = null!;
 
     private RadioButton playfieldCentreButton = null!;
@@ -52,8 +52,9 @@ public partial class PreciseRotationPopover : OsuPopover
             Spacing = new Vector2(20),
             Children =
             [
-                angleInput = new SliderWithTextBoxInput<float>("Angle (degrees):")
+                angleInput = new FormSliderBar<float>()
                 {
+                    Caption = "Angle (degrees)",
                     Current = new BindableNumber<float>
                     {
                         MinValue = -360,
@@ -61,7 +62,6 @@ public partial class PreciseRotationPopover : OsuPopover
                         Precision = 1
                     },
                     KeyboardStep = 1f,
-                    Instantaneous = true
                 },
                 rotationOrigin = new EditorRadioButtonCollection
                 {
