@@ -19,7 +19,7 @@ using osu.Game.Screens.Edit;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Edit.Inspector;
+namespace osu.Game.Rulesets.Sentakki.Edit.Inspector.Slides;
 
 public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHasPopover
 {
@@ -118,6 +118,8 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
         private FormCheckBox mirroredCheckbox = null!;
         private FormDropdown<int> endLaneDropdown = null!;
 
+        private RoundedButton deleteButton = null!;
+
         [BackgroundDependencyLoader]
         private void load()
         {
@@ -173,14 +175,16 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                                 {
                                     Text = "Duplicate",
                                     RelativeSizeAxes = Axes.X,
-                                    Enabled = { Value = true }
+                                    Enabled = { Value = true },
+                                    Action = duplicateSegment
                                 },
                                 null,
-                                new DangerousRoundedButton()
+                                deleteButton = new DangerousRoundedButton()
                                 {
                                     Text = "Delete",
                                     RelativeSizeAxes = Axes.X,
-                                    Enabled = { Value = true }
+                                    Enabled = { Value = true },
+                                    Action = deleteSegment
                                 }
                             ]
                         }
@@ -211,6 +215,8 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
             endLaneDropdown.Items = Enumerable.Range(0, 8).Where(i => SlidePaths.CheckSlideValidity(segment with { RelativeEndLane = i })).Select(i => (i + startLane).NormalizeLane() + 1).Order();
             endLaneDropdown.Current.Value = currentEndLane + 1;
             endLaneDropdown.Current.Disabled = endLaneDropdown.Items.Count() == 1;
+
+            deleteButton.Enabled.Value = slideBodyInfo.Segments.Count > 1;
         }
 
         private void updateShape()
@@ -246,7 +252,21 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
             updatedSegments[segmentIndex] = candidateSegment;
 
             slideBodyInfo.Segments = updatedSegments;
+            editorBeatmap.Update(slide);
+        }
 
+        private void deleteSegment()
+        {
+            slideBodyInfo.Segments = [.. slideBodyInfo.Segments.Where((v, i) => i != segmentIndex)];
+            editorBeatmap.Update(slide);
+        }
+
+        private void duplicateSegment()
+        {
+            List<SlideSegment> updatedSegments = [.. slideBodyInfo.Segments];
+            updatedSegments.Insert(segmentIndex, segment);
+
+            slideBodyInfo.Segments = updatedSegments;
             editorBeatmap.Update(slide);
         }
     }

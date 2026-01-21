@@ -7,6 +7,7 @@ using osu.Game.Graphics;
 using osu.Game.Overlays;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Sentakki.Edit.Inspector.Slides;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Types;
 using osu.Game.Screens.Edit;
@@ -185,11 +186,8 @@ public partial class SentakkiHitObjectInspector : EditorInspector
         }
 
         AddHeader("Segments");
-        for (int i = 0; i < s.SlideInfoList[0].Segments.Count; ++i)
-        {
-            InspectorText.NewLine();
-            InspectorText.AddArbitraryDrawable(new SentakkiSlideSegmentInspectorEntry(s, s.SlideInfoList[0], i));
-        }
+        InspectorText.NewLine();
+        InspectorText.AddArbitraryDrawable(new SlideBodyInspectorSection(s, s.SlideInfoList[0]));
     }
 
 
