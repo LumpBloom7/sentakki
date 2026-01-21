@@ -3,7 +3,9 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.TypeExtensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Containers;
 using osu.Game.Overlays;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
@@ -16,50 +18,64 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Inspector;
 
-public partial class SentakkiHitObjectInspector : EditorInspector
+public partial class SentakkiHitObjectInspector : CompositeDrawable
 {
+    protected OsuTextFlowContainer inspectorText = null!;
+
     [Resolved]
     private EditorBeatmap editorBeatmap { get; set; } = null!;
 
     [Resolved]
     private OverlayColourProvider colourProvider { get; set; } = null!;
 
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        AutoSizeAxes = Axes.Y;
+        RelativeSizeAxes = Axes.X;
+
+        InternalChild = inspectorText = new OsuTextFlowContainer
+        {
+            RelativeSizeAxes = Axes.X,
+            AutoSizeAxes = Axes.Y,
+        };
+    }
+
     protected override void LoadComplete()
     {
         base.LoadComplete();
 
-        EditorBeatmap.SelectedHitObjects.CollectionChanged += (_, _) => updateInspectorText();
-        EditorBeatmap.PlacementObject.BindValueChanged(_ => updateInspectorText());
-        EditorBeatmap.TransactionBegan += updateInspectorText;
-        EditorBeatmap.TransactionEnded += updateInspectorText;
+        editorBeatmap.SelectedHitObjects.CollectionChanged += (_, _) => updateInspectorText();
+        editorBeatmap.PlacementObject.BindValueChanged(_ => updateInspectorText());
+        editorBeatmap.TransactionBegan += updateInspectorText;
+        editorBeatmap.TransactionEnded += updateInspectorText;
         updateInspectorText();
     }
 
 
     private void updateInspectorText()
     {
-        InspectorText.Clear();
+        inspectorText.Clear();
 
         HitObject[] objects;
 
-        if (EditorBeatmap.SelectedHitObjects.Count > 0)
-            objects = EditorBeatmap.SelectedHitObjects.ToArray();
-        else if (EditorBeatmap.PlacementObject.Value != null)
-            objects = [EditorBeatmap.PlacementObject.Value];
+        if (editorBeatmap.SelectedHitObjects.Count > 0)
+            objects = [.. editorBeatmap.SelectedHitObjects];
+        else if (editorBeatmap.PlacementObject.Value != null)
+            objects = [editorBeatmap.PlacementObject.Value];
         else
             objects = [];
 
-        AddInspectorValues(objects);
+        addInspectorValues(objects);
     }
 
 
-    protected void AddInspectorValues(HitObject[] objects)
+    private void addInspectorValues(HitObject[] objects)
     {
         switch (objects.Length)
         {
-            default:
             case 0:
-                AddValue("No selection");
+                addValue("No selection");
                 break;
 
             // This is an intentional reimplementation of the base behaviour.
@@ -67,7 +83,7 @@ public partial class SentakkiHitObjectInspector : EditorInspector
             case 1:
                 SentakkiHitObject selected = (SentakkiHitObject)objects.Single();
 
-                AddHeader("Type");
+                addHeader("Type");
                 addValue($"{selected.GetType().ReadableName()}");
 
                 addPositionInformation(selected);
@@ -75,19 +91,29 @@ public partial class SentakkiHitObjectInspector : EditorInspector
                 addModifierInformation(selected);
                 addSlideModifiersInformation(selected);
 
-                AddHeader("Time");
+                addHeader("Time");
                 addValue($"{selected.StartTime:#,0.##}ms");
-
                 addDurationInformation(selected);
 
                 addSlideSegmentInformation(selected);
+                break;
+
+            default:
+                addHeader("Selected Objects");
+                addValue($"{objects.Length:#,0.##}");
+
+                addHeader("Start Time");
+                addValue($"{objects.Min(o => o.StartTime):#,0.##}ms");
+
+                addHeader("End Time");
+                addValue(new SelfUpdatingInspectorEntry(() => $"{objects.Max(o => o.GetEndTime()):#,0.##}ms"));
                 break;
         }
     }
 
     private void addPositionInformation(SentakkiHitObject hitObject)
     {
-        AddHeader("Position");
+        addHeader("Position");
 
         switch (hitObject)
         {
@@ -110,9 +136,9 @@ public partial class SentakkiHitObjectInspector : EditorInspector
         double beatLength = editorBeatmap.ControlPointInfo.TimingPointAt(hitObject.StartTime).BeatLength;
         double durationInBeats = duration.Duration / beatLength;
 
-        AddHeader("Duration");
-        addValue($"{duration.Duration:#,0.##}ms");
-        addValue($"{durationInBeats:0.##} beats");
+        addHeader("Duration");
+        addValue(new SelfUpdatingInspectorEntry(() => $"{duration.Duration:#,0.##}ms"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"{duration.Duration / beatLength:0.##} beats"));
 
         if (hitObject is not Slide s)
             return;
@@ -120,18 +146,18 @@ public partial class SentakkiHitObjectInspector : EditorInspector
         double waitDurationInBeats = s.SlideInfoList[0].EffectiveWaitDuration / beatLength;
         double movementDurationInBeats = s.SlideInfoList[0].EffectiveMovementDuration / beatLength;
 
-        AddHeader("Wait duration");
-        addValue($"{s.SlideInfoList[0].EffectiveWaitDuration:#,0.##}ms");
-        addValue($"{waitDurationInBeats:0.##} beats");
+        addHeader("Wait duration");
+        addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveWaitDuration:#,0.##}ms"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveWaitDuration / beatLength:0.##} beats"));
 
-        AddHeader("Movement duration");
-        addValue($"{s.SlideInfoList[0].EffectiveMovementDuration:#,0.##}ms");
-        addValue($"{movementDurationInBeats:0.##} beats");
+        addHeader("Movement duration");
+        addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveMovementDuration:#,0.##}ms"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveMovementDuration / beatLength:0.##} beats"));
     }
 
     private void addModifierInformation(SentakkiHitObject hitObject)
     {
-        AddHeader("Modifiers");
+        addHeader("Modifiers");
 
         List<string> modifiers = [];
 
@@ -155,7 +181,7 @@ public partial class SentakkiHitObjectInspector : EditorInspector
         if (hitObject is not Slide s || s.SlideInfoList.Count != 1)
             return;
 
-        AddHeader("Slide modifiers");
+        addHeader("Slide modifiers");
 
         List<string> modifiers = [];
 
@@ -181,22 +207,34 @@ public partial class SentakkiHitObjectInspector : EditorInspector
 
         if (s.SlideInfoList.Count != 1)
         {
-            AddHeader("Slide bodies");
+            addHeader("Slide bodies");
             addValue($"{s.SlideInfoList.Count}");
         }
 
-        AddHeader("Segments");
-        InspectorText.NewLine();
-        InspectorText.AddArbitraryDrawable(new SlideBodyInspectorSection(s, s.SlideInfoList[0]));
+        addHeader("Segments");
+        inspectorText.NewLine();
+        inspectorText.AddArbitraryDrawable(new SlideBodyInspectorSection(s, s.SlideInfoList[0]));
     }
 
+    private void addHeader(string header) => inspectorText.AddParagraph($"{header}: ", s =>
+    {
+        s.Padding = new MarginPadding { Top = 2 };
+        s.Font = s.Font.With(size: 12);
+        s.Colour = colourProvider.Content2;
+    });
+
+    private void addValue<T>(T value) where T : Drawable
+    {
+        inspectorText.NewLine();
+        inspectorText.AddArbitraryDrawable(value);
+    }
 
     // This is an alternative implementation that reduces the spacing between the values and the headers
     private void addValue(string value) => addValue(value, colourProvider.Content1);
     private void addValue(string value, Color4 colour)
     {
-        InspectorText.NewLine();
-        InspectorText.AddText(value, s =>
+        inspectorText.NewLine();
+        inspectorText.AddText(value, s =>
         {
             s.Font = s.Font.With(weight: FontWeight.SemiBold);
             s.Colour = colour;
