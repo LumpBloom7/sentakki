@@ -335,7 +335,7 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
                                        .Select(t => t.Segment)
                                        .ToList();
 
-        return candidateParts.Count != 0 ? null : candidateParts[patternGenerator.RNG.Next(candidateParts.Count)];
+        return candidateParts.Count == 0 ? null : candidateParts[patternGenerator.RNG.Next(candidateParts.Count)];
     }
 
     private IEnumerable<Tap> createTapsFromNodes(HitObject original, IList<IList<HitSampleInfo>> nodeSamples)
