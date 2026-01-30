@@ -48,7 +48,7 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
 
     private readonly SentakkiPatternGenerator patternGenerator;
 
-    private readonly Dictionary<Vector2, double> endTimes = [];
+    private readonly Dictionary<Vector2, double> endTimes = VALID_TOUCH_POSITIONS.Select(p => new KeyValuePair<Vector2, double>(p, double.MinValue)).ToDictionary();
 
     public SentakkiBeatmapConverterOld(IBeatmap beatmap, Ruleset ruleset)
         : base(beatmap, ruleset)
