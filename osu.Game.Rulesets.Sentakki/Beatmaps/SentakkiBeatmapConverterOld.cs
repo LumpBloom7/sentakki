@@ -325,7 +325,7 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
 
     private SlideSegment? chooseSlidePartFor(HitObject original)
     {
-        double duration = ((IHasDuration)original).Duration;
+        double duration = ((IHasDuration)original).Duration - 0.5f * Beatmap.ControlPointInfo.TimingPointAt(original.StartTime).BeatLength;
 
         var candidates = SlidePaths.VALID_CONVERT_PATHS;
         if (!ConversionFlags.HasFlag(ConversionFlags.FanSlides))
