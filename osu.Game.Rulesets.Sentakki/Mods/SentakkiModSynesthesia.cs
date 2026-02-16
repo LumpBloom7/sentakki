@@ -37,7 +37,9 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
     {
         OsuColour colours = new OsuColour();
 
-        foreach (var hitObject in beatmap.HitObjects)
+        var hitobjects = beatmap.HitObjects.Where(h => h is Slide).SelectMany(s => s.NestedHitObjects).Cast<SentakkiHitObject>().ToList();
+
+        foreach (var hitObject in hitobjects)
         {
             double startTime = getStartTime(hitObject);
             int beatDivisor = beatmap.ControlPointInfo.GetClosestBeatDivisor(startTime);
