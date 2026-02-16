@@ -209,8 +209,8 @@ public partial class SentakkiRuleset : Ruleset
             Size = new Vector2(100, 100)
         };
 
-    protected override IEnumerable<HitResult> GetValidHitResults()
-        => [HitResult.Perfect, HitResult.Great, HitResult.Good, HitResult.Meh];
+    public override IEnumerable<HitResult> GetValidHitResults()
+        => [HitResult.Perfect, HitResult.Great, HitResult.Good, HitResult.Meh, HitResult.Miss];
 
     public override LocalisableString GetDisplayNameForHitResult(HitResult result) => result.GetDisplayNameForSentakkiResult();
 
