@@ -114,6 +114,8 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
 
         protected override bool OnDragStart(DragStartEvent e) => DragAction is not null;
 
+        protected override bool OnClick(ClickEvent e) => true;
+
         protected override void OnDrag(DragEvent e)
         {
             DragAction(e.ScreenSpaceMousePosition);
