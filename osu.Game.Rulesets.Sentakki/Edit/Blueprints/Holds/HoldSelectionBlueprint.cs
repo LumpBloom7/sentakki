@@ -22,8 +22,10 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
     private readonly HoldBody highlight;
 
     public override Quad SelectionQuad => highlight.ScreenSpaceDrawQuad;
+    public override Vector2 ScreenSpaceSelectionPoint => startDot.ScreenSpaceDrawQuad.Centre;
 
     private Container highlightContainer;
+    private Drawable startDot;
 
     public HoldSelectionBlueprint(Hold item)
         : base(item)
@@ -45,7 +47,7 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
                     Colour = Color4.YellowGreen,
                 },
 
-                new DraggableDotPiece(){
+                startDot = new DraggableDotPiece(){
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.Centre,
                     DragAction = adjustStartTime
