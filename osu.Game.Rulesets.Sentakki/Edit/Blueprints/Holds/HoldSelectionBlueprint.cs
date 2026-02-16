@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Input.Events;
+using osu.Game.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Extensions;
@@ -34,14 +35,14 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.TopCentre,
-            Colour = Color4.YellowGreen,
-            Alpha = 0.5f,
+
             Children = [
                 highlight = new HoldBody()
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    RelativeSizeAxes = Axes.Both
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = Color4.YellowGreen,
                 },
 
                 new DraggableDotPiece(){
@@ -101,6 +102,14 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
 
     private partial class DraggableDotPiece : DotPiece
     {
+        [BackgroundDependencyLoader]
+        private void load(OsuColour colours)
+        {
+            Alpha = 0;
+            AlwaysPresent = true;
+            Colour = colours.YellowDark;
+        }
+
         public Action<Vector2> DragAction { get; init; } = null!;
 
         protected override bool OnDragStart(DragStartEvent e) => DragAction is not null;
@@ -110,15 +119,16 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
             DragAction(e.ScreenSpaceMousePosition);
             base.OnDrag(e);
         }
+
         protected override bool OnHover(HoverEvent e)
         {
-            this.ScaleTo(1.2f, 100);
+            this.ScaleTo(1.3f, 50).FadeIn(50);
             return true;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            this.ScaleTo(1f, 200);
+            this.ScaleTo(1f, 100).FadeOut(100);
         }
     }
 }
