@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -69,27 +70,20 @@ public partial class SlideBodyHighlight : CompositeDrawable
 
     private void createSegmentHighlights()
     {
-        // The segment highlights will update themselves when SlideBodyInfo changes
-        // This prevents the popup from closing automatically
-        // We only need to remove excess entries or add missing ones to match the current count.
+        slideSegments.Clear();
 
-        if (slideSegments.Count >= slideBodyInfo.Segments.Count)
-        {
-            slideSegments.RemoveRange([.. slideSegments.Children.Skip(slideBodyInfo.Segments.Count)], true);
-            return;
-        }
-
-        for (int i = slideSegments.Count; i < slideBodyInfo.Segments.Count; ++i)
-            slideSegments.Add(new(slide, i) { Depth = i });
+        List<SlideSegmentHighlight> newSegments = [];
 
         int offset = 0;
-
         for (int i = 0; i < slideBodyInfo.Segments.Count; ++i)
         {
-            slideSegments[0].Rotation = offset * 45;
+            newSegments.Add(new(slide, i) { Rotation = offset * 45 });
 
             offset += slideBodyInfo.Segments[i].RelativeEndLane;
         }
+        newSegments.Reverse();
+
+        slideSegments.Children = newSegments;
     }
 
     public void UpdateFrom(DrawableSlideBody drawableObject)
