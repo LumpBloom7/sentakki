@@ -1,27 +1,37 @@
+using System.Linq;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Primitives;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 
 public partial class SlideBodyHighlight : CompositeDrawable
 {
     private readonly StarPiece[] starPieces;
-    private readonly SlideVisual slideVisual;
-
-    public Quad SelectionQuad => slideVisual.ScreenSpaceDrawQuad;
+    private readonly Container<SlideSegmentHighlight> slideSegments;
 
     private readonly SlideBodyInfo slideBodyInfo;
+    private readonly Slide slide;
 
-    public SlideBodyHighlight(SlideBodyInfo slideBodyInfo)
+    private readonly IBindable<int> versionBindable;
+
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
+        => slideSegments.Children.Any(c => c.ReceivePositionalInputAt(screenSpacePos));
+
+    public SlideBodyHighlight(Slide slide, SlideBodyInfo slideBodyInfo)
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
         this.slideBodyInfo = slideBodyInfo;
+        this.slide = slide;
+
+        versionBindable = slideBodyInfo.Version.GetBoundCopy();
 
         starPieces = new StarPiece[3];
 
@@ -39,8 +49,10 @@ public partial class SlideBodyHighlight : CompositeDrawable
                 Rotation = -22.5f,
                 Children =
                 [
-                    slideVisual = new SlideVisual
+                    slideSegments = new Container<SlideSegmentHighlight>
                     {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
                     },
                     new Container
                     {
@@ -51,6 +63,34 @@ public partial class SlideBodyHighlight : CompositeDrawable
                 ]
             }
         ];
+
+        versionBindable.BindValueChanged(_ => createSegmentHighlights(), true);
+    }
+
+    private void createSegmentHighlights()
+    {
+        // The segment highlights will update themselves when SlideBodyInfo changes
+        // This prevents the popup from closing automatically
+        // We only need to remove excess entries or add missing ones to match the current count.
+
+        if (slideSegments.Count >= slideBodyInfo.Segments.Count)
+        {
+            slideSegments.RemoveRange([.. slideSegments.Children.Skip(slideBodyInfo.Segments.Count)], true);
+            return;
+        }
+
+        for (int i = slideSegments.Count; i < slideBodyInfo.Segments.Count; ++i)
+            slideSegments.Add(new(slide, i));
+
+
+        int offset = 0;
+
+        for (int i = 0; i < slideBodyInfo.Segments.Count; ++i)
+        {
+            slideSegments[0].Rotation = offset * 45;
+
+            offset += slideBodyInfo.Segments[i].RelativeEndLane;
+        }
     }
 
     public void UpdateFrom(DrawableSlideBody drawableObject)
@@ -65,17 +105,5 @@ public partial class SlideBodyHighlight : CompositeDrawable
             localStar.Rotation = dhoStar.Rotation;
             localStar.Position = dhoStar.Position;
         }
-    }
-
-    public override void Show()
-    {
-        slideVisual.SlideBodyInfo = slideBodyInfo;
-        base.Show();
-    }
-
-    public override void Hide()
-    {
-        base.Hide();
-        slideVisual.SlideBodyInfo = null;
     }
 }

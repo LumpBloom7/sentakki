@@ -1,11 +1,11 @@
-using System.Linq;
+
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
@@ -16,6 +16,8 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
     private readonly SlideTapPiece slideTapHighlight;
 
     public override Quad SelectionQuad => slideTapHighlight.ScreenSpaceDrawQuad;
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
+        => slideTapHighlight.ReceivePositionalInputAt(screenSpacePos) || (slideBodyHighlight?.ReceivePositionalInputAt(screenSpacePos) ?? false);
 
     public SlideSelectionBlueprint(Slide item)
         : base(item)
@@ -24,23 +26,9 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
         Origin = Anchor.Centre;
 
         if (item.SlideInfoList.Count == 1)
-            AddInternal(slideBodyHighlight = new SlideBodyHighlight(item.SlideInfoList[0]) { Colour = Color4.YellowGreen });
+            AddInternal(slideBodyHighlight = new SlideBodyHighlight(item, item.SlideInfoList[0]) { Colour = Color4.YellowGreen });
 
         AddInternal(slideTapHighlight = new SlideTapPiece { Colour = Color4.YellowGreen });
-    }
-
-    protected override void OnDeselected()
-    {
-        base.OnDeselected();
-
-        slideBodyHighlight?.Hide();
-    }
-
-    protected override void OnSelected()
-    {
-        base.OnSelected();
-
-        slideBodyHighlight?.Show();
     }
 
     protected override void Update()
