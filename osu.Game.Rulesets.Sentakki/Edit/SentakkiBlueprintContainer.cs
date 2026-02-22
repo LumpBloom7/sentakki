@@ -27,6 +27,8 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
 
     private SentakkiMovementHandler movementHandler;
 
+    public new SentakkiSelectionHandler SelectionHandler => (SentakkiSelectionHandler)base.SelectionHandler;
+
     [Cached]
     private DrawablePool<SlideChevron> chevrons { get; set; }
 

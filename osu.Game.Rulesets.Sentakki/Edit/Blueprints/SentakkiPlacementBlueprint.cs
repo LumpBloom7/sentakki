@@ -21,7 +21,7 @@ public partial class SentakkiPlacementBlueprint<T> : HitObjectPlacementBlueprint
     [BackgroundDependencyLoader]
     private void load(SentakkiBlueprintContainer blueprintContainer)
     {
-        var selectionHandler = (SentakkiSelectionHandler)blueprintContainer.SelectionHandler;
+        var selectionHandler = blueprintContainer.SelectionHandler;
 
         // We want to inherit the current state of the flag ternary buttons, similarly to hitobject samples.
         // The samples are being set by `ComposeBlueprintContainer.ensurePlacementCreated`, which is not overridable.
