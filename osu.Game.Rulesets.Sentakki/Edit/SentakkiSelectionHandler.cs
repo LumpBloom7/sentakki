@@ -110,7 +110,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
     private void setBreakState(SentakkiHitObject hitObject, bool newValue) => hitObject.Break = newValue;
 
     private void setExSlideState(Slide slide, bool newValue) => slide.SlideInfoList.ForEach(si => si.Ex = newValue);
-    private void setBreakSlideState(Slide slide, bool newValue) => slide.SlideInfoList.ForEach(si => si.Ex = newValue);
+    private void setBreakSlideState(Slide slide, bool newValue) => slide.SlideInfoList.ForEach(si => si.Break = newValue);
 
     #endregion
 }
