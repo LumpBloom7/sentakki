@@ -87,7 +87,6 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
 
     protected override bool OnClick(ClickEvent e)
     {
-        popoverVisibilityState.Value = Visibility.Visible;
         this.ShowPopover();
         return true;
     }
