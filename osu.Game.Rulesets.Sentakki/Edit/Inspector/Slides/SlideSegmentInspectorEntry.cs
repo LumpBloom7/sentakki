@@ -242,7 +242,7 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                 if (SlidePaths.CheckSlideValidity(candidateSegment))
                     break;
 
-                candidateSegment.RelativeEndLane = (relativeEnd + offset).NormalizeLane();
+                candidateSegment.RelativeEndLane = (relativeEnd - offset).NormalizeLane();
                 if (SlidePaths.CheckSlideValidity(candidateSegment))
                     break;
 
