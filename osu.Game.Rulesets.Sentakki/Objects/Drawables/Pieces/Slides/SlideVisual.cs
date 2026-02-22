@@ -38,7 +38,7 @@ public partial class SlideVisual : CompositeDrawable
         return Quad.FromRectangle(rect);
     }
 
-    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => chevrons.Any(c => c.ReceivePositionalInputAt(screenSpacePos));
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => chevrons.Any(c => c.IsVisible && c.ReceivePositionalInputAt(screenSpacePos));
 
     private SlideBodyInfo? slideBodyInfo;
 
