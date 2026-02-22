@@ -80,8 +80,7 @@ public partial class SlideBodyHighlight : CompositeDrawable
         }
 
         for (int i = slideSegments.Count; i < slideBodyInfo.Segments.Count; ++i)
-            slideSegments.Add(new(slide, i));
-
+            slideSegments.Add(new(slide, i) { Depth = i });
 
         int offset = 0;
 
