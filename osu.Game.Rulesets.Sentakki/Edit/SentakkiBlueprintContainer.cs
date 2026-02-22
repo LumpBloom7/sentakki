@@ -6,6 +6,7 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
@@ -13,6 +14,7 @@ using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Compose.Components;
 using osuTK;
 
@@ -36,6 +38,41 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
 
         AddInternal(chevrons = new DrawablePool<SlideChevron>(100));
         AddInternal(movementHandler = new SentakkiMovementHandler());
+    }
+
+    [BackgroundDependencyLoader]
+    private void load(EditorBeatmap beatmap)
+    {
+        Schedule(() => ungroupAllSlides(beatmap));
+    }
+
+    private static void ungroupAllSlides(EditorBeatmap editorBeatmap)
+    {
+        // Find all slides, and decompose them into individual parts
+        var slides = editorBeatmap.HitObjects.OfType<Slide>().Where(s => s.SlideInfoList.Count > 1).ToList();
+
+        editorBeatmap.RemoveRange(slides);
+
+        List<Slide> newSlides = [];
+
+        foreach (var slide in slides)
+        {
+            foreach (var slideBodyInfo in slide.SlideInfoList)
+            {
+                newSlides.Add(new Slide
+                {
+                    Lane = slide.Lane,
+                    StartTime = slide.StartTime,
+                    SlideInfoList = [slideBodyInfo],
+                    Samples = slide.Samples,
+                    TapType = slide.TapType,
+                    Break = slide.Break,
+                    Ex = slide.Ex
+                });
+            }
+        }
+
+        editorBeatmap.AddRange(newSlides);
     }
 
     public override HitObjectSelectionBlueprint? CreateHitObjectBlueprintFor(HitObject hitObject)
