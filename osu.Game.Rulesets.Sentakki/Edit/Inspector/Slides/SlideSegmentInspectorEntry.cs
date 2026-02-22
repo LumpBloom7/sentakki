@@ -23,6 +23,9 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Inspector.Slides;
 
 public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHasPopover
 {
+    [Resolved]
+    private OsuColour colours { get; set; } = null!;
+
     private OsuSpriteText text;
 
     private SlideBodyInfo slideBodyInfo;
@@ -76,7 +79,7 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
 
         versionBindable.BindTo(slideBodyInfo.Version);
         versionBindable.BindValueChanged(_ => updateText(), true);
-        popoverVisibilityState.BindValueChanged(v => Colour = v.NewValue == Visibility.Visible ? Color4.YellowGreen : Color4.White);
+        popoverVisibilityState.BindValueChanged(v => Colour = v.NewValue == Visibility.Visible ? colours.YellowDark : Color4.White);
     }
 
 
@@ -89,6 +92,25 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
     {
         this.ShowPopover();
         return true;
+    }
+
+    protected override bool OnHover(HoverEvent e)
+    {
+        if (popoverVisibilityState.Value is Visibility.Visible)
+            return false;
+
+        Colour = colours.YellowLight;
+
+        return true;
+    }
+
+    protected override void OnHoverLost(HoverLostEvent e)
+    {
+        if (popoverVisibilityState.Value is Visibility.Visible)
+            return;
+
+        Colour = Color4.White;
+        base.OnHoverLost(e);
     }
 
     private partial class SegmentEditPopover : OsuPopover
@@ -264,6 +286,7 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
         private void duplicateSegment()
         {
             List<SlideSegment> updatedSegments = [.. slideBodyInfo.Segments];
+
             updatedSegments.Insert(segmentIndex, segment);
 
             slideBodyInfo.Segments = updatedSegments;

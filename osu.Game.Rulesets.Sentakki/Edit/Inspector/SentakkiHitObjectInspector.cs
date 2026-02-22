@@ -13,7 +13,6 @@ using osu.Game.Rulesets.Sentakki.Edit.Inspector.Slides;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Types;
 using osu.Game.Screens.Edit;
-using osu.Game.Screens.Edit.Compose.Components;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Inspector;
