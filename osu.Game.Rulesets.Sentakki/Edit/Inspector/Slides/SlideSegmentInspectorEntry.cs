@@ -138,7 +138,8 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                     {
                         Caption = "Shape",
                     },
-                    new GridContainer{
+                    new GridContainer
+                    {
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
 

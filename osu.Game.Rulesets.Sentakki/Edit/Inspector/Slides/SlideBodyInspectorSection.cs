@@ -37,6 +37,10 @@ public partial class SlideBodyInspectorSection : CompositeDrawable
 
     private void populateEntries()
     {
+        // The entries will update themselves when SlideBodyInfo changes
+        // This prevents the popup from closing automatically
+        // We only need to remove excess entries or add missing ones to match the current count.
+
         if (segmentEntries.Count >= slideBodyInfo.Segments.Count)
         {
             segmentEntries.RemoveRange([.. segmentEntries.Children.Skip(slideBodyInfo.Segments.Count)], true);
