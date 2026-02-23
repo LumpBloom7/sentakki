@@ -10,6 +10,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Game.Graphics.UserInterface;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
@@ -27,14 +28,10 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     private EditorBeatmap beatmap { get; set; } = null!;
 
     private Slide slide;
-    private int segmentIndex;
-
-    private IBindable<int> versionBindable;
+    public int SegmentIndex { get; private set; }
 
     private SlideBodyInfo slideBodyInfo => slide.SlideInfoList[0];
-    private SlideSegment segment => slideBodyInfo.Segments[segmentIndex];
-
-
+    private SlideSegment segment => slideBodyInfo.Segments[SegmentIndex];
 
     private SlideVisual visual;
 
@@ -46,13 +43,13 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     public SlideSegmentHighlight(Slide slide, int segmentIndex)
     {
         this.slide = slide;
-        this.segmentIndex = segmentIndex;
-
-        versionBindable = slideBodyInfo.Version.GetBoundCopy();
+        SegmentIndex = segmentIndex;
 
         InternalChildren = [
-            visual = new SlideVisual(){
-                SlideBodyInfo = new SlideBodyInfo{
+            visual = new SlideVisual()
+            {
+                SlideBodyInfo = new SlideBodyInfo
+                {
                     Segments = [segment]
                 }
             },
@@ -112,19 +109,49 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         yield return new OsuMenuItemSpacer();
 
+        List<TernaryStateRadioMenuItem> shapeMenuItems = [];
+
+        foreach (var shape in Enum.GetValues<PathShape>())
+        {
+            shapeMenuItems.Add(new TernaryStateRadioMenuItem($"{shape}", action: _ => changeShape(shape))
+            {
+                State = { Value = segment.Shape == shape ? TernaryState.True : TernaryState.False }
+            });
+        }
+
         yield return new OsuMenuItem("Shape")
         {
-            Items = [.. Enum.GetValues<PathShape>().Select(s => new TernaryStateRadioMenuItem($"{s}"))],
+            Items = shapeMenuItems,
         };
 
-        yield return new OsuMenuItem("End Lane")
+        List<(int, TernaryStateRadioMenuItem)> endLaneItems = [];
+
+        int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(SegmentIndex + 1).Sum(s => s.RelativeEndLane)).NormalizeLane();
+        int startLane = (currentEndLane - segment.RelativeEndLane).NormalizeLane();
+
+        foreach (int i in Enumerable.Range(0, 8))
         {
-            Items = [.. Enumerable.Range(1, 8).Select(s => new TernaryStateRadioMenuItem($"{s}"))]
-        };
+            if (!SlidePaths.CheckSlideValidity(segment with { RelativeEndLane = i }))
+                continue;
 
-        yield return new OsuMenuItem("Duplicate segment");
+            int displayIndex = (i + startLane).NormalizeLane() + 1;
+            endLaneItems.Add((displayIndex, new TernaryStateRadioMenuItem($"{displayIndex}", action: _ => changeEndLane(i))
+            {
+                State = { Value = segment.RelativeEndLane == i ? TernaryState.True : TernaryState.False }
+            }));
+        }
 
-        yield return new OsuMenuItem("Delete segment", MenuItemType.Destructive);
+        if (endLaneItems.Count > 0)
+        {
+            yield return new OsuMenuItem("End Lane")
+            {
+                Items = [.. endLaneItems.OrderBy(i => i.Item1).Select(i => i.Item2)]
+            };
+        }
+
+        yield return new OsuMenuItem("Duplicate segment", MenuItemType.Standard, action: duplicateSegment);
+
+        yield return new OsuMenuItem("Delete segment", MenuItemType.Destructive, deleteSegment);
 
         yield return new OsuMenuItemSpacer();
 
@@ -136,5 +163,58 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     private void deleteSlide()
     {
         beatmap.Remove(slide);
+    }
+
+    private void deleteSegment()
+    {
+        slideBodyInfo.Segments = [.. slideBodyInfo.Segments.Where((v, i) => i != SegmentIndex)];
+        beatmap.Update(slide);
+    }
+
+    private void duplicateSegment()
+    {
+        List<SlideSegment> updatedSegments = [.. slideBodyInfo.Segments];
+
+        updatedSegments.Insert(SegmentIndex, segment);
+
+        slideBodyInfo.Segments = updatedSegments;
+        beatmap.Update(slide);
+    }
+
+    private void changeShape(PathShape shape)
+    {
+        var segments = slideBodyInfo.Segments.ToList();
+
+        var candidateSegment = segment with { Shape = shape };
+        int relativeEnd = segment.RelativeEndLane;
+
+        int offset = 1;
+        while (!SlidePaths.CheckSlideValidity(candidateSegment))
+        {
+            candidateSegment.RelativeEndLane = (relativeEnd + offset).NormalizeLane();
+            if (SlidePaths.CheckSlideValidity(candidateSegment))
+                break;
+
+            candidateSegment.RelativeEndLane = (relativeEnd - offset).NormalizeLane();
+            if (SlidePaths.CheckSlideValidity(candidateSegment))
+                break;
+
+            ++offset;
+        }
+
+        segments[SegmentIndex] = candidateSegment;
+
+        slideBodyInfo.Segments = segments;
+        beatmap.Update(slide);
+    }
+
+    private void changeEndLane(int lane)
+    {
+        var segments = slideBodyInfo.Segments.ToList();
+
+        segments[SegmentIndex] = segments[SegmentIndex] with { RelativeEndLane = lane };
+
+        slideBodyInfo.Segments = segments;
+        beatmap.Update(slide);
     }
 }
