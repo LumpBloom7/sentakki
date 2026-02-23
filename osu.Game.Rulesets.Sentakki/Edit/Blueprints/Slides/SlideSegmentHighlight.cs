@@ -141,13 +141,10 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
             }));
         }
 
-        if (endLaneItems.Count > 0)
+        yield return new OsuMenuItem("End Lane")
         {
-            yield return new OsuMenuItem("End Lane")
-            {
-                Items = [.. endLaneItems.OrderBy(i => i.Item1).Select(i => i.Item2)]
-            };
-        }
+            Items = [.. endLaneItems.OrderBy(i => i.Item1).Select(i => i.Item2)]
+        };
 
         yield return new OsuMenuItem("Duplicate segment", MenuItemType.Standard, action: duplicateSegment);
 
