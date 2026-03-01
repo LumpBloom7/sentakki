@@ -156,31 +156,30 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                         Text = "Edit segment",
                         Font = OsuFont.Style.Heading2
                     },
-                    shapeDropdown = new FormEnumDropdown<PathShape>()
-                    {
-                        Caption = "Shape",
-                    },
                     new GridContainer
                     {
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
-
                         RowDimensions = [new Dimension(GridSizeMode.AutoSize)],
-                        ColumnDimensions = [new Dimension(GridSizeMode.Relative, 0.4f), new Dimension(GridSizeMode.Absolute, 5), new Dimension(GridSizeMode.Distributed)],
+                        ColumnDimensions = [new Dimension(GridSizeMode.Distributed), new Dimension(GridSizeMode.Absolute, 5), new Dimension(GridSizeMode.Distributed)],
                         Content = new Drawable?[][]
                         {
                             [
+                                shapeDropdown = new FormEnumDropdown<PathShape>()
+                                {
+                                    Caption = "Shape",
+                                },
+                                null,
                                 endLaneDropdown = new FormDropdown<int>()
                                 {
                                     Caption = "End Lane",
                                 },
-                                null,
-                                mirroredCheckbox = new FormCheckBox()
-                                {
-                                    Caption = "Mirrored",
-                                },
                             ]
                         }
+                    },
+                    mirroredCheckbox = new FormCheckBox()
+                    {
+                        Caption = "Mirrored",
                     },
                     new GridContainer
                     {
