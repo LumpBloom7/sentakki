@@ -148,7 +148,8 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         yield return new OsuMenuItem("Duplicate segment", MenuItemType.Standard, action: duplicateSegment);
 
-        yield return new OsuMenuItem("Delete segment", MenuItemType.Destructive, deleteSegment);
+        if (slideBodyInfo.Segments.Count > 1)
+            yield return new OsuMenuItem("Delete segment", MenuItemType.Destructive, deleteSegment);
 
         yield return new OsuMenuItemSpacer();
 
