@@ -51,7 +51,6 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
         updateInspectorText();
     }
 
-
     private void updateInspectorText()
     {
         inspectorText.Clear();
@@ -67,7 +66,6 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
 
         addInspectorValues(objects);
     }
-
 
     private void addInspectorValues(HitObject[] objects)
     {

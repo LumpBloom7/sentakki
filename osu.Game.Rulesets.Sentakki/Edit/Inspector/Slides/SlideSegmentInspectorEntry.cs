@@ -82,7 +82,6 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
         popoverVisibilityState.BindValueChanged(v => Colour = v.NewValue == Visibility.Visible ? colours.YellowDark : Color4.White);
     }
 
-
     public Popover? GetPopover() => new SegmentEditPopover(slide, slideBodyInfo, segmentIndex)
     {
         State = { BindTarget = popoverVisibilityState }
