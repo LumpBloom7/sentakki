@@ -9,6 +9,8 @@ public abstract partial class SentakkiSelectionBlueprint<THitObject, TDrawable> 
     where THitObject : SentakkiHitObject
     where TDrawable : DrawableSentakkiHitObject
 {
+    public new THitObject Item => (THitObject)base.Item;
+
     public override Vector2 ScreenSpaceSelectionPoint => SelectionQuad.Centre;
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => SelectionQuad.Contains(screenSpacePos);
 
