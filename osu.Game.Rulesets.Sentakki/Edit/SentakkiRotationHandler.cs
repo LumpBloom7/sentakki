@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -9,6 +11,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Compose.Components;
+using osu.Game.Utils;
 using osuTK;
 namespace osu.Game.Rulesets.Sentakki.Edit;
 
@@ -20,26 +23,55 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
     [Resolved]
     private SentakkiHitObjectComposer composer { get; set; } = null!;
 
+    private BindableList<HitObject> selectedHitObjects = null!;
+
     public SentakkiRotationHandler()
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        DefaultOrigin = Vector2.Zero;
 
         CanRotateAroundPlayfieldOrigin.Value = true;
 
         // We really only care about rotating around playfield origin
         // But we still want to show the convenient button and allow the use of keybinds.
         CanRotateAroundSelectionOrigin.Value = true;
-
-        OperationInProgress.Value = true;
     }
 
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        selectedHitObjects = editorBeatmap.SelectedHitObjects.GetBoundCopy();
+        selectedHitObjects.BindCollectionChanged((_, _) => updateState());
+    }
+
+    private void updateState()
+    {
+        // If there are laned notes, always trick rotation handles into thinking a rotation is in progress
+        // This prevents the handle from attempting any continous rotation
+        OperationInProgress.Value = selectedHitObjects.Any(s => s is SentakkiLanedHitObject);
+
+        if (OperationInProgress.Value)
+            return;
+
+        if (selectedHitObjects.Count == 0)
+            return;
+
+        DefaultOrigin = GeometryUtils.GetSurroundingQuad(selectedHitObjects.OfType<IHasPosition>().Select(p => p.Position)).Centre;
+    }
 
     public override void Update(float rotation, Vector2? origin = null)
     {
-        base.Update(rotation, origin);
+        if (selectedHitObjects.Any(h => h is SentakkiLanedHitObject))
+        {
+            laneBasedRotation(rotation);
+            return;
+        }
 
+        selectionOriginBasedRotation(rotation);
+    }
+
+    private void laneBasedRotation(float rotation)
+    {
         int laneShift = (int)Math.Round(rotation / 45);
 
         float theta = laneShift * 45f / 180 * MathF.PI;
@@ -78,14 +110,41 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
         editorBeatmap.EndChange();
     }
 
-    // HACK: For some reason, rotation handles do not explicitly specify that they want to rotate around the selection origin
-    // Yet they always come free with the rotation buttons
-    // Let's fool the handlers into thinking a rotation is always happening, so they don't even attempt to do continuous rotation
+    private void selectionOriginBasedRotation(float rotation)
+    {
+        if (DefaultOrigin is null)
+            return;
+
+        foreach (var item in selectedHitObjects.OfType<IHasPosition>())
+        {
+            var result = GeometryUtils.RotatePointAroundOrigin(originalPosition[item], DefaultOrigin.Value, rotation);
+
+            item.Position = result;
+
+            editorBeatmap.Update((HitObject)item);
+        }
+    }
+
+    private Dictionary<IHasPosition, Vector2> originalPosition = [];
+
     public override void Begin()
     {
+        base.Begin();
+
+        originalPosition.Clear();
+
+        foreach (var touch in selectedHitObjects.OfType<IHasPosition>())
+        {
+            originalPosition[touch] = touch.Position;
+        }
     }
 
     public override void Commit()
     {
+        // If there are laned notes, always trick rotation handles into thinking a rotation is in progress
+        if (selectedHitObjects.Any(s => s is SentakkiLanedHitObject))
+            return;
+
+        base.Commit();
     }
 }
