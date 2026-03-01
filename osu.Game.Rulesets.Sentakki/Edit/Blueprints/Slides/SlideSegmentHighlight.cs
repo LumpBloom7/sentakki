@@ -228,7 +228,13 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         protected override bool OnDragStart(DragStartEvent e) => DragAction is not null;
 
-        protected override bool OnClick(ClickEvent e) => true;
+        protected override bool OnClick(ClickEvent e)
+        {
+            if (e.Button is osuTK.Input.MouseButton.Right)
+                return false;
+
+            return true;
+        }
 
         protected override void OnDrag(DragEvent e)
         {
