@@ -43,6 +43,47 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
         // We are always able to flip hitobjects
         SelectionBox.CanFlipX = true;
         SelectionBox.CanFlipY = true;
+        SelectionBox.CanReverse = SelectedItems.Count > 1;
+    }
+
+    public override bool HandleReverse()
+    {
+        var orderedItems = SelectedItems.OrderBy(s => s.GetEndTime()).ToArray();
+
+        List<double> times = [];
+
+        foreach (var item in orderedItems)
+        {
+            times.Add(item.StartTime);
+
+            if (item is IHasDuration d)
+                times.Add(d.EndTime);
+        }
+
+        times.Reverse();
+
+        int i = 0;
+
+        foreach (var item in orderedItems)
+        {
+            if (item is IHasDuration d)
+            {
+                double et = times[i++];
+                double st = times[i++];
+
+                item.StartTime = st;
+                d.Duration = et - st;
+            }
+            else
+            {
+                item.StartTime = times[i++];
+            }
+
+            EditorBeatmap.Update(item);
+        }
+
+
+        return base.HandleReverse();
     }
 
     public override bool HandleRotation(float angle)
