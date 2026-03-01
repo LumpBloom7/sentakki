@@ -1,3 +1,4 @@
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
@@ -69,13 +70,19 @@ public partial class SlideBodyHighlight : CompositeDrawable
 
     public override void Show()
     {
-        slideVisual.SlideBodyInfo = slideBodyInfo;
+        slideBodyInfo.Version.BindValueChanged(updateSlideVisual, true);
         base.Show();
     }
 
     public override void Hide()
     {
         base.Hide();
+        slideBodyInfo.Version.ValueChanged -= updateSlideVisual;
         slideVisual.SlideBodyInfo = null;
+    }
+
+    private void updateSlideVisual(ValueChangedEvent<int> _)
+    {
+        slideVisual.SlideBodyInfo = slideBodyInfo;
     }
 }
