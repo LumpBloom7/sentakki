@@ -169,6 +169,9 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
     private void changeShape(PathShape shape)
     {
+        if (segment.Shape == shape)
+            return;
+
         var segments = slideBodyInfo.Segments.ToList();
 
         var candidateSegment = segment with { Shape = shape };
@@ -196,6 +199,9 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
     private void changeEndLane(int lane)
     {
+        if (segment.RelativeEndLane == lane)
+            return;
+
         var candidateSegment = segment with { RelativeEndLane = lane };
 
         if (!SlidePaths.CheckSlideValidity(candidateSegment))
