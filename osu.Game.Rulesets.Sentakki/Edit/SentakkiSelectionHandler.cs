@@ -12,12 +12,12 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.Types;
 using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Compose.Components;
 
 namespace osu.Game.Rulesets.Sentakki.Edit;
 
+[Cached]
 public partial class SentakkiSelectionHandler : EditorSelectionHandler
 {
     [Resolved]
@@ -34,6 +34,8 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
         breakSlideTernaryState.ValueChanged += v => applyTernaryChanges<Slide>(setBreakSlideState, v.NewValue);
     }
 
+    public override SelectionRotationHandler CreateRotationHandler() => new SentakkiRotationHandler();
+
     protected override void OnSelectionChanged()
     {
         base.OnSelectionChanged();
@@ -41,6 +43,11 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
         // We are always able to flip hitobjects
         SelectionBox.CanFlipX = true;
         SelectionBox.CanFlipY = true;
+    }
+
+    public override bool HandleRotation(float angle)
+    {
+        return base.HandleRotation(angle);
     }
 
     public override bool HandleFlip(Direction direction, bool flipOverOrigin)
@@ -184,7 +191,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
             Items =
             [
                 new TernaryStateToggleMenuItem("Break") { State = { BindTarget = breakSlideTernaryState } },
-                new TernaryStateToggleMenuItem("EX ") { State = { BindTarget = exSlideTernaryState } }
+                new TernaryStateToggleMenuItem("EX") { State = { BindTarget = exSlideTernaryState } }
             ]
         };
     }
