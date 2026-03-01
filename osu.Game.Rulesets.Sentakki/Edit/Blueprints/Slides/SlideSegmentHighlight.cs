@@ -35,11 +35,12 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
     private SlideVisual visual;
     private Drawable dragDotContainer;
+    private DraggableDotPiece dragDot;
 
     private IBindable<int> versionBindable;
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
-        => visual.ReceivePositionalInputAt(screenSpacePos);
+        => visual.ReceivePositionalInputAt(screenSpacePos) || dragDot.ReceivePositionalInputAt(screenSpacePos);
 
     public SlideSegmentHighlight(Slide slide, int segmentIndex)
     {
@@ -53,7 +54,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Children = [
-                    new DraggableDotPiece(){
+                    dragDot = new DraggableDotPiece(){
                         Y = -SentakkiPlayfield.INTERSECTDISTANCE,
                         DragAction = handleDragEvent
                     },
@@ -223,13 +224,6 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
     private partial class DraggableDotPiece : DotPiece
     {
-        [BackgroundDependencyLoader]
-        private void load(OsuColour colours)
-        {
-            AlwaysPresent = true;
-            Colour = colours.YellowDark;
-        }
-
         public Action<Vector2> DragAction { get; init; } = null!;
 
         protected override bool OnDragStart(DragStartEvent e) => DragAction is not null;
@@ -245,7 +239,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         protected override bool OnHover(HoverEvent e)
         {
             this.ScaleTo(1.3f, 50);
-            return true;
+            return false;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
