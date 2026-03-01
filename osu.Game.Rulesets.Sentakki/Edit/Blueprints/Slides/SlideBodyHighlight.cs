@@ -70,20 +70,20 @@ public partial class SlideBodyHighlight : CompositeDrawable
 
     private void createSegmentHighlights()
     {
-        slideSegments.Clear();
+        if (slideSegments.Count > slideBodyInfo.Segments.Count)
+            slideSegments.RemoveRange(slideSegments.Skip(slideBodyInfo.Segments.Count), true);
 
-        List<SlideSegmentHighlight> newSegments = [];
+        for (int i = slideSegments.Count; i < slideBodyInfo.Segments.Count; ++i)
+            slideSegments.Add(new SlideSegmentHighlight(slide, i));
 
-        int offset = 0;
+
+        int laneSum = 0;
         for (int i = 0; i < slideBodyInfo.Segments.Count; ++i)
         {
-            newSegments.Add(new(slide, i) { Rotation = offset * 45 });
+            slideSegments[i].Rotation = laneSum * 45;
 
-            offset += slideBodyInfo.Segments[i].RelativeEndLane;
+            laneSum += slideBodyInfo.Segments[i].RelativeEndLane;
         }
-        newSegments.Reverse();
-
-        slideSegments.Children = newSegments;
     }
 
     public void UpdateFrom(DrawableSlideBody drawableObject)

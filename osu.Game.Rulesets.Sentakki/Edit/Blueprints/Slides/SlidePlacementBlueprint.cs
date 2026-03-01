@@ -128,7 +128,6 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                         return true;
 
                     case MouseButton.Middle:
-
                         if (committedSlideInfo.Segments.Count == 0)
                             break;
 

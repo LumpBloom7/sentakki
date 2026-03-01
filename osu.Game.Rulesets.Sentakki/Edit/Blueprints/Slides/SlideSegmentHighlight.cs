@@ -2,15 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -32,11 +34,12 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     private SlideSegment segment => slideBodyInfo.Segments[SegmentIndex];
 
     private SlideVisual visual;
+    private Drawable dragDotContainer;
 
-    private IReadOnlyList<Drawable> additionalHoverPoints;
+    private IBindable<int> versionBindable;
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
-        => additionalHoverPoints.Any(d => d.ReceivePositionalInputAt(screenSpacePos)) || visual.ReceivePositionalInputAt(screenSpacePos);
+        => visual.ReceivePositionalInputAt(screenSpacePos);
 
     public SlideSegmentHighlight(Slide slide, int segmentIndex)
     {
@@ -44,46 +47,22 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         SegmentIndex = segmentIndex;
 
         InternalChildren = [
-            visual = new SlideVisual()
-            {
-                SlideBodyInfo = new SlideBodyInfo
-                {
-                    Segments = [segment]
-                }
-            },
-            new Container
+            visual = new SlideVisual(),
+            dragDotContainer = new Container
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Rotation = 22.5f,
-                Children = additionalHoverPoints = [
-                    new Circle
-                    {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Alpha = 0,
-                        Size = new Vector2(60),
+                Children = [
+                    new DraggableDotPiece(){
                         Y = -SentakkiPlayfield.INTERSECTDISTANCE,
-                        AlwaysPresent = true,
+                        DragAction = handleDragEvent
                     },
-                    new Container
-                    {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Rotation = segment.RelativeEndLane * 45f,
-                        Child =  new Circle
-                        {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Alpha = 0,
-                            Size = new Vector2(60),
-                            Y = -SentakkiPlayfield.INTERSECTDISTANCE,
-                            AlwaysPresent = true,
-                        }
-                    }
                 ]
             },
         ];
+
+        versionBindable = slideBodyInfo.Version.GetBoundCopy();
+        versionBindable.BindValueChanged(_ => updateSelf(), true);
     }
 
     protected override bool OnHover(HoverEvent e)
@@ -95,6 +74,16 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     protected override void OnHoverLost(HoverLostEvent e)
     {
         Colour = Color4.White;
+    }
+
+    private void updateSelf()
+    {
+        visual.SlideBodyInfo = new SlideBodyInfo
+        {
+            Segments = [segment]
+        };
+
+        dragDotContainer.Rotation = segment.RelativeEndLane * 45 + 22.5f;
     }
 
     [Resolved]
@@ -206,11 +195,62 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
     private void changeEndLane(int lane)
     {
+        var candidateSegment = segment with { RelativeEndLane = lane };
+
+        if (!SlidePaths.CheckSlideValidity(candidateSegment))
+            return;
+
         var segments = slideBodyInfo.Segments.ToList();
 
-        segments[SegmentIndex] = segments[SegmentIndex] with { RelativeEndLane = lane };
+        segments[SegmentIndex] = candidateSegment;
 
         slideBodyInfo.Segments = segments;
         beatmap.Update(slide);
+    }
+
+    private void handleDragEvent(Vector2 screenSpacePosition)
+    {
+        var localMousePosition = ToLocalSpace(screenSpacePosition);
+
+        float angle = OriginPosition.AngleTo(localMousePosition);
+
+        int lane = (int)Math.Round((angle - 22.5f) / 45);
+
+        int currentStartLane = slideBodyInfo.Segments.Take(SegmentIndex).Sum(s => s.RelativeEndLane);
+
+        changeEndLane(lane.NormalizeLane());
+    }
+
+    private partial class DraggableDotPiece : DotPiece
+    {
+        [BackgroundDependencyLoader]
+        private void load(OsuColour colours)
+        {
+            AlwaysPresent = true;
+            Colour = colours.YellowDark;
+        }
+
+        public Action<Vector2> DragAction { get; init; } = null!;
+
+        protected override bool OnDragStart(DragStartEvent e) => DragAction is not null;
+
+        protected override bool OnClick(ClickEvent e) => true;
+
+        protected override void OnDrag(DragEvent e)
+        {
+            DragAction(e.ScreenSpaceMousePosition);
+            base.OnDrag(e);
+        }
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            this.ScaleTo(1.3f, 50);
+            return true;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            this.ScaleTo(1f, 100);
+        }
     }
 }
