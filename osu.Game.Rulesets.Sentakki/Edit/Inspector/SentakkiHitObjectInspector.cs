@@ -3,34 +3,76 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.TypeExtensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Containers;
 using osu.Game.Overlays;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Sentakki.Edit.Inspector.Slides;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.Objects.Types;
 using osu.Game.Screens.Edit;
-using osu.Game.Screens.Edit.Compose.Components;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Edit;
+namespace osu.Game.Rulesets.Sentakki.Edit.Inspector;
 
-public partial class SentakkiHitObjectInspector : HitObjectInspector
+public partial class SentakkiHitObjectInspector : CompositeDrawable
 {
+    protected OsuTextFlowContainer inspectorText = null!;
+
     [Resolved]
     private EditorBeatmap editorBeatmap { get; set; } = null!;
 
     [Resolved]
     private OverlayColourProvider colourProvider { get; set; } = null!;
 
-    protected override void AddInspectorValues(HitObject[] objects)
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        AutoSizeAxes = Axes.Y;
+        RelativeSizeAxes = Axes.X;
+
+        InternalChild = inspectorText = new OsuTextFlowContainer
+        {
+            RelativeSizeAxes = Axes.X,
+            AutoSizeAxes = Axes.Y,
+        };
+    }
+
+    protected override void LoadComplete()
+    {
+        base.LoadComplete();
+
+        editorBeatmap.SelectedHitObjects.CollectionChanged += (_, _) => updateInspectorText();
+        editorBeatmap.PlacementObject.BindValueChanged(_ => updateInspectorText());
+        editorBeatmap.TransactionBegan += updateInspectorText;
+        editorBeatmap.TransactionEnded += updateInspectorText;
+        updateInspectorText();
+    }
+
+    private void updateInspectorText()
+    {
+        inspectorText.Clear();
+
+        HitObject[] objects;
+
+        if (editorBeatmap.SelectedHitObjects.Count > 0)
+            objects = [.. editorBeatmap.SelectedHitObjects];
+        else if (editorBeatmap.PlacementObject.Value != null)
+            objects = [editorBeatmap.PlacementObject.Value];
+        else
+            objects = [];
+
+        addInspectorValues(objects);
+    }
+
+    private void addInspectorValues(HitObject[] objects)
     {
         switch (objects.Length)
         {
-            default:
             case 0:
-                base.AddInspectorValues(objects);
+                addValue("No selection");
                 break;
 
             // This is an intentional reimplementation of the base behaviour.
@@ -38,7 +80,7 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
             case 1:
                 SentakkiHitObject selected = (SentakkiHitObject)objects.Single();
 
-                AddHeader("Type");
+                addHeader("Type");
                 addValue($"{selected.GetType().ReadableName()}");
 
                 addPositionInformation(selected);
@@ -46,19 +88,29 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
                 addModifierInformation(selected);
                 addSlideModifiersInformation(selected);
 
-                AddHeader("Time");
+                addHeader("Time");
                 addValue($"{selected.StartTime:#,0.##}ms");
-
                 addDurationInformation(selected);
 
                 addSlideSegmentInformation(selected);
+                break;
+
+            default:
+                addHeader("Selected Objects");
+                addValue($"{objects.Length:#,0.##}");
+
+                addHeader("Start Time");
+                addValue($"{objects.Min(o => o.StartTime):#,0.##}ms");
+
+                addHeader("End Time");
+                addValue(new SelfUpdatingInspectorEntry(() => $"{objects.Max(o => o.GetEndTime()):#,0.##}ms"));
                 break;
         }
     }
 
     private void addPositionInformation(SentakkiHitObject hitObject)
     {
-        AddHeader("Position");
+        addHeader("Position");
 
         switch (hitObject)
         {
@@ -81,9 +133,9 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
         double beatLength = editorBeatmap.ControlPointInfo.TimingPointAt(hitObject.StartTime).BeatLength;
         double durationInBeats = duration.Duration / beatLength;
 
-        AddHeader("Duration");
-        addValue($"{duration.Duration:#,0.##}ms");
-        addValue($"{durationInBeats:0.##} beats");
+        addHeader("Duration");
+        addValue(new SelfUpdatingInspectorEntry(() => $"{duration.Duration:#,0.##}ms"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"{duration.Duration / beatLength:0.##} beats"));
 
         if (hitObject is not Slide s)
             return;
@@ -91,18 +143,18 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
         double waitDurationInBeats = s.SlideInfoList[0].EffectiveWaitDuration / beatLength;
         double movementDurationInBeats = s.SlideInfoList[0].EffectiveMovementDuration / beatLength;
 
-        AddHeader("Wait duration");
-        addValue($"{s.SlideInfoList[0].EffectiveWaitDuration:#,0.##}ms");
-        addValue($"{waitDurationInBeats:0.##} beats");
+        addHeader("Wait duration");
+        addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveWaitDuration:#,0.##}ms"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveWaitDuration / beatLength:0.##} beats"));
 
-        AddHeader("Movement duration");
-        addValue($"{s.SlideInfoList[0].EffectiveMovementDuration:#,0.##}ms");
-        addValue($"{movementDurationInBeats:0.##} beats");
+        addHeader("Movement duration");
+        addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveMovementDuration:#,0.##}ms"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveMovementDuration / beatLength:0.##} beats"));
     }
 
     private void addModifierInformation(SentakkiHitObject hitObject)
     {
-        AddHeader("Modifiers");
+        addHeader("Modifiers");
 
         List<string> modifiers = [];
 
@@ -126,7 +178,7 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
         if (hitObject is not Slide s || s.SlideInfoList.Count != 1)
             return;
 
-        AddHeader("Slide modifiers");
+        addHeader("Slide modifiers");
 
         List<string> modifiers = [];
 
@@ -152,42 +204,34 @@ public partial class SentakkiHitObjectInspector : HitObjectInspector
 
         if (s.SlideInfoList.Count != 1)
         {
-            AddHeader("Slide bodies");
+            addHeader("Slide bodies");
             addValue($"{s.SlideInfoList.Count}");
         }
 
-        AddHeader("Segments");
-        foreach (var segment in s.SlideInfoList[0].Segments)
-        {
-            int simpleEndOffset = segment.RelativeEndLane;
-            if (simpleEndOffset > 4)
-                simpleEndOffset -= 8;
+        addHeader("Segments");
+        inspectorText.NewLine();
+        inspectorText.AddArbitraryDrawable(new SlideBodyInspectorSection(s, s.SlideInfoList[0]));
+    }
 
-            string mirrored = "";
+    private void addHeader(string header) => inspectorText.AddParagraph($"{header}: ", s =>
+    {
+        s.Padding = new MarginPadding { Top = 2 };
+        s.Font = s.Font.With(size: 12);
+        s.Colour = colourProvider.Content2;
+    });
 
-            switch (segment.Shape)
-            {
-                case PathShape.Circle:
-                    mirrored = segment.Mirrored ? "CCW" : "CW";
-                    break;
-
-                case PathShape.U:
-                case PathShape.Cup:
-                case PathShape.Thunder:
-                    mirrored = segment.Mirrored ? "M" : "";
-                    break;
-            }
-
-            addValue($"{segment.Shape}({simpleEndOffset}){mirrored}");
-        }
+    private void addValue<T>(T value) where T : Drawable
+    {
+        inspectorText.NewLine();
+        inspectorText.AddArbitraryDrawable(value);
     }
 
     // This is an alternative implementation that reduces the spacing between the values and the headers
     private void addValue(string value) => addValue(value, colourProvider.Content1);
     private void addValue(string value, Color4 colour)
     {
-        InspectorText.NewLine();
-        InspectorText.AddText(value, s =>
+        inspectorText.NewLine();
+        inspectorText.AddText(value, s =>
         {
             s.Font = s.Font.With(weight: FontWeight.SemiBold);
             s.Colour = colour;

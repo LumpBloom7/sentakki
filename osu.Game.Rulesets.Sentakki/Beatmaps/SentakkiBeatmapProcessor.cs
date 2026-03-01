@@ -11,7 +11,6 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps;
 
 public class SentakkiBeatmapProcessor : BeatmapProcessor
 {
-
     public new SentakkiBeatmap Beatmap => (SentakkiBeatmap)(base.Beatmap is EditorBeatmap eb ? eb.PlayableBeatmap : base.Beatmap);
 
     public Action<SentakkiBeatmap>? CustomNoteColouringDelegate = null;

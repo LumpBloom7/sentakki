@@ -54,7 +54,7 @@ public class Slide : SentakkiLanedHitObject, IHasDuration
 
             foreach (var s in SlideInfoList)
             {
-                double ratio = s.Duration / max;
+                double ratio = max == 0 ? 1 : (s.Duration / max);
 
                 s.Duration = ratio * value;
             }
