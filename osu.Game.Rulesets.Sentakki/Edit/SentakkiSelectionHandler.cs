@@ -82,7 +82,6 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
             EditorBeatmap.Update(item);
         }
 
-
         return base.HandleReverse();
     }
 
@@ -138,7 +137,6 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
                     position.X = -position.X;
                     EditorBeatmap.Update(item);
                     break;
-
             }
         }
 
@@ -185,14 +183,12 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
                     position.Y = -position.Y;
                     EditorBeatmap.Update(item);
                     break;
-
             }
         }
 
         EditorBeatmap.EndChange();
 
         return true;
-
     }
 
     #region ContextMenu

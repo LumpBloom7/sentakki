@@ -98,8 +98,8 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
 
                     touch.Position = new Vector2
                     {
-                        X = cos * pos.X - sin * pos.Y,
-                        Y = sin * pos.X + cos * pos.Y
+                        X = (cos * pos.X) - (sin * pos.Y),
+                        Y = (sin * pos.X) + (cos * pos.Y)
                     };
 
                     editorBeatmap.Update(item);
