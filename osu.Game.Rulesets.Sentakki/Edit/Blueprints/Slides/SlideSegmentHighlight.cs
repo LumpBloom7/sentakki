@@ -19,6 +19,7 @@ using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
 using osuTK;
 using osuTK.Graphics;
+using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 
@@ -35,7 +36,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
     private SlideVisual visual;
     private Drawable dragDotContainer;
-    private DraggableDotPiece dragDot;
+    private DotPiece dragDot;
 
     private IBindable<int> versionBindable;
 
@@ -54,9 +55,9 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Children = [
-                    dragDot = new DraggableDotPiece(){
+                    dragDot = new HoverableDotPiece()
+                    {
                         Y = -SentakkiPlayfield.INTERSECTDISTANCE,
-                        DragAction = handleDragEvent
                     },
                 ]
             },
@@ -64,17 +65,6 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         versionBindable = slideBodyInfo.Version.GetBoundCopy();
         versionBindable.BindValueChanged(_ => updateSelf(), true);
-    }
-
-    protected override bool OnHover(HoverEvent e)
-    {
-        Colour = Color4.Orange;
-        return true;
-    }
-
-    protected override void OnHoverLost(HoverLostEvent e)
-    {
-        Colour = Color4.White;
     }
 
     private void updateSelf()
@@ -215,6 +205,34 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         beatmap.Update(slide);
     }
 
+    protected override bool OnClick(ClickEvent e)
+    {
+        switch (e.Button)
+        {
+            case MouseButton.Middle:
+                deleteSegment();
+                return true;
+
+            case MouseButton.Left:
+                return true;
+        }
+        return base.OnClick(e);
+    }
+
+    protected override bool OnDragStart(DragStartEvent e) => true;
+    protected override void OnDrag(DragEvent e) => handleDragEvent(e.ScreenSpaceMousePosition);
+
+    protected override bool OnHover(HoverEvent e)
+    {
+        Colour = Color4.Orange;
+        return true;
+    }
+
+    protected override void OnHoverLost(HoverLostEvent e)
+    {
+        Colour = Color4.White;
+    }
+
     private void handleDragEvent(Vector2 screenSpacePosition)
     {
         var localMousePosition = ToLocalSpace(screenSpacePosition);
@@ -228,26 +246,8 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         changeEndLane(lane.NormalizeLane());
     }
 
-    private partial class DraggableDotPiece : DotPiece
+    private partial class HoverableDotPiece : DotPiece
     {
-        public Action<Vector2> DragAction { get; init; } = null!;
-
-        protected override bool OnDragStart(DragStartEvent e) => DragAction is not null;
-
-        protected override bool OnClick(ClickEvent e)
-        {
-            if (e.Button is osuTK.Input.MouseButton.Right)
-                return false;
-
-            return true;
-        }
-
-        protected override void OnDrag(DragEvent e)
-        {
-            DragAction(e.ScreenSpaceMousePosition);
-            base.OnDrag(e);
-        }
-
         protected override bool OnHover(HoverEvent e)
         {
             this.ScaleTo(1.3f, 50);
