@@ -22,7 +22,7 @@ public class SentakkiModExperimental : Mod, IApplicableToBeatmapConverter
 
     public override double ScoreMultiplier => 1.00;
 
-    public override IconUsage? Icon => OsuIcon.CheckCircle;
+    public override IconUsage? Icon => OsuIcon.Debug;
 
     public override bool Ranked => true;
 
