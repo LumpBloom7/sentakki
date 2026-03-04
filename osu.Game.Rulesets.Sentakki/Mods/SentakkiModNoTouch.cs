@@ -1,7 +1,5 @@
 using System;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
-using osu.Game.Graphics;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Localisation.Mods;
@@ -16,7 +14,6 @@ public class SentakkiModNoTouch : Mod, IApplicableToDrawableHitObject
     public override ModType Type => ModType.Automation;
     public override LocalisableString Description => SentakkiModNoTouchStrings.ModDescription;
     public override double ScoreMultiplier => .2f;
-    public override IconUsage? Icon => OsuIcon.ModNoRelease;
     public override Type[] IncompatibleMods => [.. base.IncompatibleMods, typeof(ModAutoplay)];
 
     public void ApplyToDrawableHitObject(DrawableHitObject drawableHitObject)
