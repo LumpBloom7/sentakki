@@ -10,5 +10,4 @@ public enum ConversionFlags
     TwinSlides = 2,
     FanSlides = 4,
     OldConverter = 8,
-    DisableCompositeSlides = 16
 }

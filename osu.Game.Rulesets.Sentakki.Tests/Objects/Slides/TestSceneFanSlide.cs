@@ -33,7 +33,7 @@ public partial class TestSceneFanSlide : OsuTestScene
 
         Add(slide = new SlideVisual
         {
-            Path = new SlideBodyInfo
+            SlideBodyInfo = new SlideBodyInfo
             {
                 Segments = [new SlideSegment(PathShape.Fan, 4, false)]
             }

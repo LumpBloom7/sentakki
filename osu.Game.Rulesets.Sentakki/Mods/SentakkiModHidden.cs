@@ -82,7 +82,7 @@ public partial class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset
         switch (hitObject)
         {
             case DrawableTouch t:
-                preemptTime = t.HitObject.HitWindows.WindowFor(HitResult.Ok);
+                preemptTime = t.HitObject.HitWindows.WindowFor(HitResult.Meh);
                 fadeOutTime = preemptTime * 0.3f;
                 using (t.BeginAbsoluteSequence(t.HitObject.StartTime - preemptTime))
                     t.TouchBody.FadeOut(fadeOutTime);

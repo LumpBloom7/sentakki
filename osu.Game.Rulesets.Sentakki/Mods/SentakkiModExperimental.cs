@@ -1,7 +1,9 @@
 ﻿using osu.Framework.Bindables;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
+using osu.Game.Graphics;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
@@ -19,6 +21,8 @@ public class SentakkiModExperimental : Mod, IApplicableToBeatmapConverter
     public override bool RequiresConfiguration => true;
 
     public override double ScoreMultiplier => 1.00;
+
+    public override IconUsage? Icon => OsuIcon.Debug;
 
     public override bool Ranked => true;
 

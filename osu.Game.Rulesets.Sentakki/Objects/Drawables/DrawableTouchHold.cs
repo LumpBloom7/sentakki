@@ -186,7 +186,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         else if (result >= 0.5)
             resultType = HitResult.Good;
         else if (result >= 0.25)
-            resultType = HitResult.Ok;
+            resultType = HitResult.Meh;
         else
             resultType = HitResult.Miss;
 

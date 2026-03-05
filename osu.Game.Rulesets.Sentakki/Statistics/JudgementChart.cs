@@ -39,7 +39,7 @@ public partial class JudgementChart : TableContainer
         HitResult.Perfect,
         HitResult.Great,
         HitResult.Good,
-        HitResult.Ok,
+        HitResult.Meh,
         HitResult.Miss
     ];
 

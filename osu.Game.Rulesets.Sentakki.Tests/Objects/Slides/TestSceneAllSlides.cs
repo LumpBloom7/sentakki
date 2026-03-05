@@ -39,7 +39,7 @@ public partial class TestSceneAllSlides : OsuTestScene
         });
         Add(new SlideVisual
         {
-            Path = slideBodyInfo
+            SlideBodyInfo = slideBodyInfo
         });
 
         AddSliderStep("Path ID", 0, SlidePaths.VALID_CONVERT_PATHS.Count - 1, 0, p =>

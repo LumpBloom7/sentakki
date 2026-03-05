@@ -75,11 +75,11 @@ public class LineLifetimeEntry : LifetimeEntry
 
                 Colour = Color4.Gold;
 
-                int angleRange = delta == 4 ? 360 : 90 + 45 * delta;
+                int angleRange = delta >= 4 ? 360 : 90 + 45 * delta;
 
                 AngleRange = angleRange / 360f;
 
-                if (delta == 4)
+                if (delta >= 4)
                 {
                     Rotation = HitObjects.First().Lane.GetRotationForLane() - 180;
                 }

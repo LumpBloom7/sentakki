@@ -63,8 +63,8 @@ public partial class SentakkiBeatmapConverter
         while (waitDurationBeats * beatLength >= duration - 50)
         {
             waitDurationBeats /= 2;
-            // If wait duration is below 0.25 beats, then this cannot ever be a slide
-            if (waitDurationBeats < 0.25)
+            // If shoot delay is below 0.5 beats, then this cannot ever be a slide
+            if (waitDurationBeats < 0.5)
                 return null;
         }
 
@@ -99,64 +99,39 @@ public partial class SentakkiBeatmapConverter
     private IReadOnlyList<SlideSegment>? chooseSlidePartFor(HitObject original, bool allowFans, double duration)
     {
         double velocity = original is IHasSliderVelocity slider ? slider.SliderVelocityMultiplier * beatmap.Difficulty.SliderMultiplier : 1;
-        double adjustedDuration = duration * velocity;
+
+        double adjustedDuration = duration;
 
         var candidates = SlidePaths.VALID_CONVERT_PATHS.AsEnumerable();
+
         if (!ConversionFlags.HasFlag(ConversionFlags.FanSlides) || !allowFans)
             candidates = candidates.Where(p => p.Segment.Shape != PathShape.Fan);
 
-        if (!ConversionFlags.HasFlag(ConversionFlags.DisableCompositeSlides))
+        List<SlideSegment> parts = [];
+
+        double velocityFactor = 1 + 1 / velocity;
+
+        SlideSegment? lastPart = null;
+
+        while (true)
         {
-            List<SlideSegment> parts = [];
+            var nextChoices = candidates.Where(p => p.MinDuration * velocityFactor < adjustedDuration)
+                                        .Shuffle(rng)
+                                        .SkipWhile(p => p.Segment.Shape == PathShape.Circle && !isValidCircleComposition(p.Segment, lastPart));
 
-            double durationLeft = duration;
+            if (!nextChoices.Any())
+                break;
 
-            SlideSegment? lastPart = null;
+            var chosen = nextChoices.First();
 
-            double velocityAdjustmentFactor = 1 + 0.5 / velocity;
-
-            while (true)
-            {
-                var nextChoices = candidates.Where(p => p.MinDuration * velocityAdjustmentFactor < durationLeft)
-                                            .Shuffle(rng)
-                                            .SkipWhile(p => p.Segment.Shape == PathShape.Circle && !isValidCircleComposition(p.Segment, lastPart));
-
-                if (!nextChoices.Any())
-                    break;
-
-                var chosen = nextChoices.First();
-
-                durationLeft -= chosen.MinDuration * velocityAdjustmentFactor;
-                parts.Add((lastPart = chosen.Segment).Value);
-            }
-
-            if (parts.Count == 0)
-                return null;
-
-            return [.. parts];
-        }
-        else
-        {
-            // Find the part that is the closest
-            return
-            [
-                candidates.GroupBy(t => getDelta(t.MinDuration))
-                          .OrderBy(g => g.Key)
-                          .Take(5)
-                          .ProbabilityPick(t => t.Key, rng)
-                          .Shuffle(rng)
-                          .First()
-                          .Segment
-            ];
+            adjustedDuration -= chosen.MinDuration * velocityFactor;
+            parts.Add((lastPart = chosen.Segment).Value);
         }
 
-        double getDelta(double d)
-        {
-            double diff = adjustedDuration - d * 2;
-            if (diff > 0) diff *= 3; // We don't want to overly favor longer slides when a shorter one is available
+        if (parts.Count == 0)
+            return null;
 
-            return Math.Round(Math.Abs(diff) * 0.02) * 100; // Round to nearest 100ms
-        }
+        return [.. parts];
     }
 
     private static bool isValidCircleComposition(SlideSegment part, SlideSegment? previousPart)
