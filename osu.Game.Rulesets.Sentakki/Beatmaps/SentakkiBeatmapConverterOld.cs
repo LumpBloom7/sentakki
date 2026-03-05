@@ -48,7 +48,7 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
 
     private readonly SentakkiPatternGenerator patternGenerator;
 
-    private readonly Dictionary<Vector2, double> endTimes = [];
+    private readonly Dictionary<Vector2, double> endTimes = VALID_TOUCH_POSITIONS.Select(p => new KeyValuePair<Vector2, double>(p, double.MinValue)).ToDictionary();
 
     public SentakkiBeatmapConverterOld(IBeatmap beatmap, Ruleset ruleset)
         : base(beatmap, ruleset)
@@ -325,7 +325,7 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
 
     private SlideSegment? chooseSlidePartFor(HitObject original)
     {
-        double duration = ((IHasDuration)original).Duration;
+        double duration = ((IHasDuration)original).Duration - 0.5f * Beatmap.ControlPointInfo.TimingPointAt(original.StartTime).BeatLength;
 
         var candidates = SlidePaths.VALID_CONVERT_PATHS;
         if (!ConversionFlags.HasFlag(ConversionFlags.FanSlides))
@@ -335,7 +335,7 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
                                        .Select(t => t.Segment)
                                        .ToList();
 
-        return candidateParts.Count != 0 ? null : candidateParts[patternGenerator.RNG.Next(candidateParts.Count)];
+        return candidateParts.Count == 0 ? null : candidateParts[patternGenerator.RNG.Next(candidateParts.Count)];
     }
 
     private IEnumerable<Tap> createTapsFromNodes(HitObject original, IList<IList<HitSampleInfo>> nodeSamples)
