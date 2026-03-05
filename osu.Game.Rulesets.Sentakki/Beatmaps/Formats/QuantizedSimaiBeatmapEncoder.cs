@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Objects;
 using static System.FormattableString;
 
@@ -24,15 +25,52 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
     {
     }
 
+    private List<HitObject> getFinalHitObjects()
+    {
+        List<HitObject> hitobjects = [.. Beatmap.HitObjects];
+
+        var slideGroups = hitobjects.OfType<Slide>().GroupBy(s => (s.Lane, s.StartTime)).ToList();
+
+        foreach (var slideGroup in slideGroups)
+        {
+            foreach (var slide in slideGroup)
+                hitobjects.Remove(slide);
+
+            bool isBreak = slideGroup.Any(s => s.Break);
+            bool isEx = slideGroup.Any(s => s.Ex);
+            var tapType = slideGroup.Min(s => s.TapType);
+
+            if (tapType is Slide.TapTypeEnum.None)
+                Console.WriteLine(tapType);
+
+            var slideBodies = slideGroup.SelectMany(s => s.SlideInfoList);
+            var samples = slideGroup.SelectMany(s => s.Samples);
+
+            hitobjects.Add(new Slide
+            {
+                StartTime = slideGroup.Key.StartTime,
+                Lane = slideGroup.Key.Lane,
+                Samples = [.. samples],
+                SlideInfoList = [.. slideBodies],
+                Break = isBreak,
+                Ex = isEx,
+                TapType = tapType
+            });
+        }
+
+        return [.. hitobjects.OrderBy(s => s.StartTime)];
+    }
+
     protected override string CreateSimaiChart()
     {
         if (Beatmap.HitObjects.Count == 0)
             return "E";
 
         List<IMaidataUnit> maidataUnits = [];
+        var ho = getFinalHitObjects();
 
         var timingGroups =
-            Beatmap.HitObjects.GroupBy(h => h.StartTime)
+            ho.GroupBy(h => h.StartTime)
                    .Select(g => new
                    {
                        Time = g.Key,
