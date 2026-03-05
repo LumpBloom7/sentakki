@@ -69,6 +69,8 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
     private void updateSelf()
     {
+        int offset = slideBodyInfo.Segments.Take(SegmentIndex).Sum(s => s.RelativeEndLane);
+        Rotation = offset * 45;
         visual.SlideBodyInfo = new SlideBodyInfo
         {
             Segments = [segment]
