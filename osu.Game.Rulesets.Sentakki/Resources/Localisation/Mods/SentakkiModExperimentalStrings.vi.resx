@@ -59,12 +59,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mod_description" xml:space="preserve">
-        <value>音符在你擊中它們之前淡出。</value>
+        <value>Một vài tính năng thử nghiệm sẽ được thêm vào sentakki ở các phiên bản tương lai. Khuyên dùng Autoplay/No-Fail. Không hỗ trợ xem lại.</value>
     </data>
-  <data name="visible_radius" xml:space="preserve">
-        <value>可見半徑</value>
+  <data name="twin_notes" xml:space="preserve">
+        <value>Nốt đôi</value>
+        <comment>Twin is an adjective.</comment>
     </data>
-  <data name="visible_radius_description" xml:space="preserve">
-        <value>已下落音符的可見半徑。</value>
+  <data name="twin_notes_description" xml:space="preserve">
+        <value>Cho phép nhiều nốt xuất hiện đồng thời ở một thời điểm (Cần hỗ trợ chạm đa điểm)</value>
+    </data>
+  <data name="twin_slides" xml:space="preserve">
+        <value>Nốt trượt đôi</value>
+        <comment>Twin is an adjective.</comment>
+    </data>
+  <data name="twin_slides_description" xml:space="preserve">
+        <value>Cho phép nhiều nốt xuất hiện đồng thời ở một thời điểm (Cần hỗ trợ chạm đa điểm)</value>
+    </data>
+  <data name="fan_slides" xml:space="preserve">
+        <value>Slide nón</value>
+        <comment>Fan is a adjective, referring to the shape of the Slide.</comment>
+    </data>
+  <data name="fan_slides_description" xml:space="preserve">
+        <value>Cho phép slide hình nón đôi khi xuất hiện (Yêu cầu cảm ứng đa điểm)</value>
     </data>
 </root>

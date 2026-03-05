@@ -58,13 +58,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="mod_description" xml:space="preserve">
-        <value>音符在你擊中它們之前淡出。</value>
+  <data name="judgement_mode" xml:space="preserve">
+        <value>判定模式</value>
     </data>
-  <data name="visible_radius" xml:space="preserve">
-        <value>可見半徑</value>
+  <data name="judgement_mode_description" xml:space="preserve">
+        <value>判定模式能決定判定的嚴謹度。</value>
     </data>
-  <data name="visible_radius_description" xml:space="preserve">
-        <value>已下落音符的可見半徑。</value>
+  <data name="minimum_result" xml:space="preserve">
+        <value>最低判定要求</value>
+    </data>
+  <data name="minimum_result_description" xml:space="preserve">
+        <value>遊玩中最低能夠接受的判定結果。任何判定低於該結果會被視為Miss。</value>
     </data>
 </root>

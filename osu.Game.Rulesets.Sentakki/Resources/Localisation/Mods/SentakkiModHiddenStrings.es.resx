@@ -61,4 +61,10 @@
   <data name="mod_description" xml:space="preserve">
         <value>Las notas desaparecen justo antes de que las toques.</value>
     </data>
+  <data name="visible_radius" xml:space="preserve">
+        <value>Radio visible</value>
+    </data>
+  <data name="visible_radius_description" xml:space="preserve">
+        <value>El radio visible de notas del carril.</value>
+    </data>
 </root>
