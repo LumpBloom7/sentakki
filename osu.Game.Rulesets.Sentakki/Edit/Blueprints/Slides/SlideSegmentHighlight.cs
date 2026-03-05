@@ -55,7 +55,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Children = [
-                    dragDot = new HoverableDotPiece()
+                    dragDot = new DotPiece
                     {
                         Y = -SentakkiPlayfield.INTERSECTDISTANCE,
                     },
@@ -228,12 +228,14 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     protected override bool OnHover(HoverEvent e)
     {
         Colour = Color4.Orange;
+        dragDot.ScaleTo(1.3f, 50);
         return true;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
     {
         Colour = Color4.White;
+        dragDot.ScaleTo(1.0f, 100);
     }
 
     private void handleDragEvent(Vector2 screenSpacePosition)
@@ -247,19 +249,5 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         int currentStartLane = slideBodyInfo.Segments.Take(SegmentIndex).Sum(s => s.RelativeEndLane);
 
         changeEndLane(lane.NormalizeLane());
-    }
-
-    private partial class HoverableDotPiece : DotPiece
-    {
-        protected override bool OnHover(HoverEvent e)
-        {
-            this.ScaleTo(1.3f, 50);
-            return false;
-        }
-
-        protected override void OnHoverLost(HoverLostEvent e)
-        {
-            this.ScaleTo(1f, 100);
-        }
     }
 }
