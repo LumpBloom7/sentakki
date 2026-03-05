@@ -4,10 +4,8 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Events;
-using osu.Framework.Localisation;
 using osu.Framework.Utils;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
@@ -18,10 +16,11 @@ using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
 using osuTK;
 using osuTK.Graphics;
+using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 
-public partial class SlideOffsetTool : CompositeDrawable, IHasTooltip
+public partial class SlideOffsetTool : CompositeDrawable
 {
     private readonly Slide slide;
     private readonly SlideBodyInfo slideBodyInfo;
@@ -29,20 +28,10 @@ public partial class SlideOffsetTool : CompositeDrawable, IHasTooltip
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => InternalChildren.Any(c => c.ReceivePositionalInputAt(screenSpacePos));
 
     [Resolved]
-    private IBeatSnapProvider beatSnapProvider { get; set; } = null!;
+    private EditorBeatmap editorBeatmap { get; set; } = null!;
 
     [Resolved]
     private EditorClock editorClock { get; set; } = null!;
-
-    public LocalisableString TooltipText
-    {
-        get
-        {
-            double shootDelayBeats = slideBodyInfo.EffectiveWaitDuration / (beatSnapProvider.GetBeatLengthAtTime(slide.StartTime) * beatSnapProvider.BeatDivisor);
-
-            return $"Shoot offset: {slideBodyInfo.EffectiveWaitDuration:0.##}ms ({shootDelayBeats:0.##} beats)";
-        }
-    }
 
     public SlideOffsetTool(Slide slide, SlideBodyInfo slideBodyInfo)
     {
@@ -113,19 +102,37 @@ public partial class SlideOffsetTool : CompositeDrawable, IHasTooltip
         Height = Math.Abs(Y - Y2);
     }
 
-    protected override bool OnHover(HoverEvent e)
-    {
-        Colour = Color4.Orange;
-        return true;
-    }
-
-    protected override void OnHoverLost(HoverLostEvent e)
-    {
-        Colour = Color4.White;
-    }
-
     protected override bool OnClick(ClickEvent e) => true;
     protected override bool OnDragStart(DragStartEvent e) => true;
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        switch (e.Key)
+        {
+            case Key.Plus:
+            case Key.KeypadPlus:
+            {
+                double beatLength = editorBeatmap.GetBeatLengthAtTime(editorClock.CurrentTime);
+                slideBodyInfo.WaitDuration = slideBodyInfo.EffectiveWaitDuration + beatLength;
+
+                editorBeatmap.Update(slide);
+                return true;
+            }
+
+            case Key.Minus:
+            case Key.KeypadMinus:
+            {
+                double beatLength = editorBeatmap.GetBeatLengthAtTime(editorClock.CurrentTime);
+                slideBodyInfo.WaitDuration = slideBodyInfo.EffectiveWaitDuration - beatLength;
+
+                editorBeatmap.Update(slide);
+
+                return true;
+            }
+        }
+
+        return base.OnKeyDown(e);
+    }
 
     private partial class DragHandle : DotPiece
     {
