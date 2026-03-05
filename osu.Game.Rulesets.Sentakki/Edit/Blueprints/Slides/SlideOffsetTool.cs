@@ -162,7 +162,7 @@ public partial class SlideOffsetTool : CompositeDrawable
         protected override void OnHoverLost(HoverLostEvent e)
         {
             Colour = Color4.White;
-            this.ScaleTo(1.3f, 100);
+            this.ScaleTo(1f, 100);
         }
 
         protected override bool OnMouseDown(MouseDownEvent e) => true;
