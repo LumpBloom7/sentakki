@@ -87,7 +87,7 @@
         <value>环能见度</value>
     </data>
   <data name="lane_input_mode" xml:space="preserve">
-        <value>行输入模式 (触摸不会被影响)</value>
+        <value>定轨输入模式（不影响触屏）</value>
         <comment>"Touch"as in the verb, as in "touchscreen"</comment>
     </data>
   <data name="lane_input_mode_button" xml:space="preserve">
@@ -97,7 +97,7 @@
         <value>传感器</value>
     </data>
   <data name="note_entry_speed" xml:space="preserve">
-        <value>音符输入速度</value>
+        <value>音符出现速度</value>
     </data>
   <data name="touch_note_entry_speed" xml:space="preserve">
         <value>Touch 音符出现速度</value>
