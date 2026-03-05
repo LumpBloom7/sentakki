@@ -1,4 +1,4 @@
-preserve_hierarchy: true
+preserve_hierarchy: 1
 files:
   - source: /osu.Game.Rulesets.Sentakki/Resources/Localisation/**/*.resx
     translation: /osu.Game.Rulesets.Sentakki/Resources/Localisation/**/%file_name%.%locale%.%file_extension%
