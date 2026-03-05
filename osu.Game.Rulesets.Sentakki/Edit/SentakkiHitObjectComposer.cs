@@ -5,9 +5,14 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterface;
+using osu.Game.Input.Bindings;
+using osu.Game.Overlays;
+using osu.Game.Overlays.Notifications;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Edit.Tools;
 using osu.Game.Rulesets.Mods;
@@ -27,7 +32,7 @@ using osu.Game.Utils;
 namespace osu.Game.Rulesets.Sentakki.Edit;
 
 [Cached]
-public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitObject, SentakkiAction>
+public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitObject, SentakkiAction>, IKeyBindingHandler<GlobalAction>
 {
     public new DrawableSentakkiRuleset DrawableRuleset => (DrawableSentakkiRuleset)base.DrawableRuleset;
 
@@ -303,5 +308,24 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
         base.Dispose(isDisposing);
 
         dependencies?.Dispose();
+    }
+
+    [Resolved]
+    private INotificationOverlay? notifications { get; set; }
+
+    public override bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
+    {
+        if (base.OnPressed(e))
+            return true;
+
+        if (e.Action is not GlobalAction.Back)
+            return false;
+
+        notifications?.Post(new SimpleNotification
+        {
+            Text = "Intending to exit the sentakki editor? Please manually exit from the file menu, or use Alt-F4."
+        });
+
+        return true;
     }
 }
