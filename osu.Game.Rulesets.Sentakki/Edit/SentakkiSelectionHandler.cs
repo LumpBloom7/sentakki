@@ -193,6 +193,8 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
 
     #region ContextMenu
 
+    public IEnumerable<MenuItem> GetContextMenuItemsForSelection() => GetContextMenuItemsForSelection(SelectedBlueprints);
+
     protected override IEnumerable<MenuItem> GetContextMenuItemsForSelection(IEnumerable<SelectionBlueprint<HitObject>> selection)
     {
         foreach (var item in base.GetContextMenuItemsForSelection(selection))

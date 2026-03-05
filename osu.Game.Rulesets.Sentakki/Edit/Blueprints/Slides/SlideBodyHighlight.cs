@@ -1,28 +1,39 @@
+using System.Collections.Generic;
+using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Primitives;
+using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
+using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 
 public partial class SlideBodyHighlight : CompositeDrawable
 {
     private readonly StarPiece[] starPieces;
-    private readonly SlideVisual slideVisual;
-
-    public Quad SelectionQuad => slideVisual.ScreenSpaceDrawQuad;
+    private readonly Container<SlideSegmentHighlight> slideSegments;
 
     private readonly SlideBodyInfo slideBodyInfo;
+    private readonly Slide slide;
 
-    public SlideBodyHighlight(SlideBodyInfo slideBodyInfo)
+    private readonly IBindable<int> versionBindable;
+
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
+        => slideSegments.Children.Any(c => c.ReceivePositionalInputAt(screenSpacePos));
+
+    public SlideBodyHighlight(Slide slide, SlideBodyInfo slideBodyInfo)
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
         this.slideBodyInfo = slideBodyInfo;
+        this.slide = slide;
+
+        versionBindable = slideBodyInfo.Version.GetBoundCopy();
 
         starPieces = new StarPiece[3];
 
@@ -33,6 +44,7 @@ public partial class SlideBodyHighlight : CompositeDrawable
         [
             new Container
             {
+                Colour = Color4.YellowGreen,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 // Slide paths are built with the assumption that it will always start from Lane 0
@@ -40,18 +52,47 @@ public partial class SlideBodyHighlight : CompositeDrawable
                 Rotation = -22.5f,
                 Children =
                 [
-                    slideVisual = new SlideVisual
+                    slideSegments = new Container<SlideSegmentHighlight>
                     {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
                     },
                     new Container
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         Children = starPieces,
-                    }
+                    },
+
                 ]
+            },
+            new SlideOffsetTool(slide, slideBodyInfo)
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.TopCentre,
             }
         ];
+
+        versionBindable.BindValueChanged(_ => createSegmentHighlights(), true);
+    }
+
+    private void createSegmentHighlights()
+    {
+        if (slideSegments.Count == slideBodyInfo.Segments.Count)
+            return;
+
+        List<SlideSegmentHighlight> newSegments = [];
+
+        int offset = 0;
+        for (int i = 0; i < slideBodyInfo.Segments.Count; ++i)
+        {
+            newSegments.Add(new(slide, i) { Rotation = offset * 45 });
+
+            offset += slideBodyInfo.Segments[i].RelativeEndLane;
+        }
+        newSegments.Reverse();
+
+        slideSegments.Children = newSegments;
     }
 
     public void UpdateFrom(DrawableSlideBody drawableObject)
@@ -66,23 +107,5 @@ public partial class SlideBodyHighlight : CompositeDrawable
             localStar.Rotation = dhoStar.Rotation;
             localStar.Position = dhoStar.Position;
         }
-    }
-
-    public override void Show()
-    {
-        slideBodyInfo.Version.BindValueChanged(updateSlideVisual, true);
-        base.Show();
-    }
-
-    public override void Hide()
-    {
-        base.Hide();
-        slideBodyInfo.Version.ValueChanged -= updateSlideVisual;
-        slideVisual.SlideBodyInfo = null;
-    }
-
-    private void updateSlideVisual(ValueChangedEvent<int> _)
-    {
-        slideVisual.SlideBodyInfo = slideBodyInfo;
     }
 }

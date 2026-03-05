@@ -1,21 +1,24 @@
+
 using System.Linq;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 
 public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide, DrawableSlide>
 {
-    private readonly SlideBodyHighlight[] slideBodyHighlights;
+    private readonly SlideBodyHighlight? slideBodyHighlight;
     private readonly SlideTapPiece slideTapHighlight;
 
     public override Quad SelectionQuad => slideTapHighlight.ScreenSpaceDrawQuad;
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
+        => slideTapHighlight.ReceivePositionalInputAt(screenSpacePos) || DrawableObject.SlideBodies.Select(s => s.Slidepath).Any(s => s.ReceivePositionalInputAt(screenSpacePos));
 
     public SlideSelectionBlueprint(Slide item)
         : base(item)
@@ -23,39 +26,10 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        slideBodyHighlights = [.. item.SlideBodies.Select(sb => new SlideBodyHighlight(sb.SlideBodyInfo))];
+        if (item.SlideInfoList.Count == 1)
+            AddInternal(slideBodyHighlight = new SlideBodyHighlight(item, item.SlideInfoList[0]) { });
 
-        InternalChildren =
-        [
-            new Container
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Alpha = 0.5f,
-                Colour = Color4.YellowGreen,
-                Children = slideBodyHighlights
-            },
-            slideTapHighlight = new SlideTapPiece
-            {
-                Alpha = 0.5f,
-                Colour = Color4.YellowGreen,
-            },
-        ];
-    }
-
-    protected override void OnDeselected()
-    {
-        base.OnDeselected();
-
-        foreach (var sbh in slideBodyHighlights)
-            sbh.Hide();
-    }
-
-    protected override void OnSelected()
-    {
-        base.OnSelected();
-        foreach (var sbh in slideBodyHighlights)
-            sbh.Show();
+        AddInternal(slideTapHighlight = new SlideTapPiece { Colour = Color4.YellowGreen });
     }
 
     protected override void Update()
@@ -71,7 +45,9 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
         slideTapHighlight.Scale = tapVisual.Scale;
         slideTapHighlight.Y = tapVisual.Y;
 
-        for (int i = 0; i < slideBodyHighlights.Length; ++i)
-            slideBodyHighlights[i].UpdateFrom(DrawableObject.SlideBodies[i]);
+        if (slideBodyHighlight is null)
+            return;
+
+        slideBodyHighlight.UpdateFrom(DrawableObject.SlideBodies[0]);
     }
 }

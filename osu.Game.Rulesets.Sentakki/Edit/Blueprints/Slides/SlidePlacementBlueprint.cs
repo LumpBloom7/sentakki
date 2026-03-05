@@ -24,6 +24,9 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
     [Resolved]
     private LaneNoteSnapGrid snapGrid { get; set; } = null!;
 
+    [Resolved]
+    private IBeatSnapProvider beatSnapProvider { get; set; } = null!;
+
     private readonly SlideTapPiece tapHighlight;
 
     private readonly SlideBodyInfo committedSlideInfo;
@@ -128,7 +131,6 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                         return true;
 
                     case MouseButton.Middle:
-
                         if (committedSlideInfo.Segments.Count == 0)
                             break;
 
@@ -158,6 +160,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
             case PlacementState.Waiting:
                 time = snappedTime;
                 HitObject.Lane = lane;
+                committedSlideInfo.WaitDuration = beatSnapProvider.GetBeatLengthAtTime(snappedTime) * beatSnapProvider.BeatDivisor;
                 break;
 
             case PlacementState.Active:

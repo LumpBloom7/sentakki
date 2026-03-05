@@ -9,6 +9,7 @@ public partial class SlideChevron : PoolableDrawable
 {
     public double DisappearThreshold { get; set; }
     private DrawableChevron chevron = null!;
+    public bool IsVisible => chevron.IsPresent && IsPresent;
 
     public bool FanChevron
     {
