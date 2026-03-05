@@ -47,7 +47,7 @@ public abstract partial class TestSceneSlide : OsuTestScene
 
         Add(slide = new SlideVisual()
         {
-            Path = slideBodyInfo
+            SlideBodyInfo = slideBodyInfo
         });
 
         AddSliderStep("Start lane", 0, 7, 0, p =>

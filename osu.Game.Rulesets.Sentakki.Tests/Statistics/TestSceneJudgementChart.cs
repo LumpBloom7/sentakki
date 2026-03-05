@@ -32,9 +32,9 @@ public partial class TestSceneJudgementChart : OsuTestScene
         new HitEvent(0, 1, HitResult.Good, new Tap(), new Tap(), null),
         new HitEvent(0, 1, HitResult.Good, new Tap(), new Tap(), null),
         new HitEvent(0, 1, HitResult.Good, new Tap(), new Tap(), null),
-        new HitEvent(0, 1, HitResult.Ok, new Tap(), new Tap(), null),
-        new HitEvent(0, 1, HitResult.Ok, new Tap(), new Tap(), null),
-        new HitEvent(0, 1, HitResult.Ok, new Tap(), new Tap(), null),
+        new HitEvent(0, 1, HitResult.Meh, new Tap(), new Tap(), null),
+        new HitEvent(0, 1, HitResult.Meh, new Tap(), new Tap(), null),
+        new HitEvent(0, 1, HitResult.Meh, new Tap(), new Tap(), null),
         new HitEvent(0, 1, HitResult.Miss, new Tap(), new Tap(), null),
         new HitEvent(0, 1, HitResult.Miss, new Tap(), new Tap(), null),
         // Holds
@@ -45,9 +45,9 @@ public partial class TestSceneJudgementChart : OsuTestScene
         new HitEvent(0, 1, HitResult.Good, new Touch(), new Tap(), null),
         new HitEvent(0, 1, HitResult.Good, new Touch(), new Tap(), null),
         new HitEvent(0, 1, HitResult.Good, new Touch(), new Tap(), null),
-        new HitEvent(0, 1, HitResult.Ok, new Touch(), new Tap(), null),
-        new HitEvent(0, 1, HitResult.Ok, new Touch(), new Tap(), null),
-        new HitEvent(0, 1, HitResult.Ok, new Touch(), new Tap(), null),
+        new HitEvent(0, 1, HitResult.Meh, new Touch(), new Tap(), null),
+        new HitEvent(0, 1, HitResult.Meh, new Touch(), new Tap(), null),
+        new HitEvent(0, 1, HitResult.Meh, new Touch(), new Tap(), null),
         new HitEvent(0, 1, HitResult.Miss, new Touch(), new Tap(), null),
         new HitEvent(0, 1, HitResult.Miss, new Touch(), new Tap(), null),
         new HitEvent(0, 1, HitResult.Great, new Touch(), new Tap(), null),
@@ -59,7 +59,7 @@ public partial class TestSceneJudgementChart : OsuTestScene
         new HitEvent(0, 1, HitResult.Good, new Tap { Break = true }, new Tap(), null),
         new HitEvent(0, 1, HitResult.Good, new Tap { Break = true }, new Tap(), null),
         new HitEvent(0, 1, HitResult.Good, new Tap { Break = true }, new Tap(), null),
-        new HitEvent(0, 1, HitResult.Ok, new Tap { Break = true }, new Tap(), null)
+        new HitEvent(0, 1, HitResult.Meh, new Tap { Break = true }, new Tap(), null)
     ];
 
     public TestSceneJudgementChart()

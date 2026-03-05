@@ -15,6 +15,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects;
 
 public partial class TouchHold : SentakkiHitObject, IHasDuration, IHasPosition
 {
+    public override Color4 DefaultNoteColour => DEFAULT_PALETTE[0];
+
     public double EndTime
     {
         get => StartTime + Duration;

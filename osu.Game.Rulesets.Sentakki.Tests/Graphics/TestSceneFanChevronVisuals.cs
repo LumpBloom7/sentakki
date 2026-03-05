@@ -41,7 +41,7 @@ public partial class TestSceneFanChevronVisual : OsuGridTestScene
         });
         Cell(0).Add(new SlideVisual
         {
-            Path = new SlideBodyInfo
+            SlideBodyInfo = new SlideBodyInfo
             {
                 Segments = [new SlideSegment(PathShape.Fan, 4, false)]
             }

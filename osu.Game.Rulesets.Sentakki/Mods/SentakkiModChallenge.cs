@@ -29,6 +29,7 @@ public class SentakkiModChallenge : ModFailCondition, IApplicableToDrawableRules
     public override bool RequiresConfiguration => true;
 
     public override double ScoreMultiplier => 1.00;
+
     public override bool Ranked => true;
 
     public override Type[] IncompatibleMods =>
@@ -98,7 +99,7 @@ public class SentakkiModChallenge : ModFailCondition, IApplicableToDrawableRules
                 newValue -= 1;
                 break;
 
-            case HitResult.Ok:
+            case HitResult.Meh:
                 newValue -= 2;
                 break;
 

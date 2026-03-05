@@ -61,4 +61,10 @@
   <data name="mod_description" xml:space="preserve">
         <value>音符在你擊中它們之前淡出。</value>
     </data>
+  <data name="visible_radius" xml:space="preserve">
+        <value>可見半徑</value>
+    </data>
+  <data name="visible_radius_description" xml:space="preserve">
+        <value>已下落音符的可見半徑。</value>
+    </data>
 </root>

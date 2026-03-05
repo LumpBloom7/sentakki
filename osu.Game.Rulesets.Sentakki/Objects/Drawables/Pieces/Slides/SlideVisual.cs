@@ -36,20 +36,20 @@ public partial class SlideVisual : CompositeDrawable
         return Quad.FromRectangle(rect);
     }
 
-    private SlideBodyInfo? path;
+    private SlideBodyInfo? slideBodyInfo;
 
-    private readonly IBindable<int> pathVersion = new Bindable<int>();
+    private readonly IBindable<int> slideBodyInfoVersion = new Bindable<int>();
 
-    public SlideBodyInfo? Path
+    public SlideBodyInfo? SlideBodyInfo
     {
-        get => path;
+        get => slideBodyInfo;
         set
         {
-            pathVersion.UnbindAll();
-            path = value;
+            slideBodyInfoVersion.UnbindAll();
+            slideBodyInfo = value;
 
-            if (path is not null)
-                pathVersion.BindTo(path.Version);
+            if (slideBodyInfo is not null)
+                slideBodyInfoVersion.BindTo(slideBodyInfo.Version);
 
             updateVisuals();
         }
@@ -103,14 +103,14 @@ public partial class SlideVisual : CompositeDrawable
     private void load(SentakkiRulesetConfigManager? sentakkiConfig)
     {
         sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
-        pathVersion.BindValueChanged(_ => updateVisuals(), true);
+        slideBodyInfoVersion.BindValueChanged(_ => updateVisuals(), true);
     }
 
     private void updateVisuals()
     {
         chevrons.Clear(false);
 
-        if (path is null)
+        if (slideBodyInfo is null)
             return;
 
         // There is a possibility that dependencies aren't injected yet
@@ -138,18 +138,18 @@ public partial class SlideVisual : CompositeDrawable
     private void createRegularChevrons()
     {
         Debug.Assert(chevronPool is not null);
-        Debug.Assert(path is not null);
+        Debug.Assert(slideBodyInfo is not null);
 
-        for (int i = 0; i < path.Segments.Count; ++i)
+        for (int i = 0; i < slideBodyInfo.Segments.Count; ++i)
         {
-            var segment = path.Segments[i];
+            var segment = slideBodyInfo.Segments[i];
 
             // We don't handle fan slides here
-            if (i == path.Segments.Count - 1 && segment.Shape is PathShape.Fan)
+            if (i == slideBodyInfo.Segments.Count - 1 && segment.Shape is PathShape.Fan)
                 return;
 
-            var segmentPath = path.SegmentPaths[i];
-            double segmentStartProgress = path.SegmentStartProgressFor(i);
+            var segmentPath = slideBodyInfo.SegmentPaths[i];
+            double segmentStartProgress = slideBodyInfo.SegmentStartProgressFor(i);
 
             // First we get the number of chevrons that is part of this segment
             int nChevrons = chevronsInContinuousPath(segmentPath);
@@ -160,7 +160,7 @@ public partial class SlideVisual : CompositeDrawable
             double margin = endpoint_distance / segmentPath.CalculatedDistance;
             double spacing = (1 - 2 * margin) / (nChevrons - 1);
 
-            double segmentRatio = segmentPath.CalculatedDistance / path.SlideLength;
+            double segmentRatio = segmentPath.CalculatedDistance / slideBodyInfo.SlideLength;
 
             SlideChevron? lastChevron = null;
 
@@ -201,20 +201,20 @@ public partial class SlideVisual : CompositeDrawable
     private void createFanChevrons()
     {
         Debug.Assert(chevronPool is not null);
-        Debug.Assert(path is not null);
+        Debug.Assert(slideBodyInfo is not null);
 
-        if (path.Segments.Count == 0 || path.Segments[^1].Shape is not PathShape.Fan)
+        if (slideBodyInfo.Segments.Count == 0 || slideBodyInfo.Segments[^1].Shape is not PathShape.Fan)
             return;
 
         // All fans have 11 chevrons, this is exactly half the number of chevrons used by straight slides
         const int n_chevrons = 11;
 
-        double fanStartProgress = path.SegmentStartProgressFor(^1);
+        double fanStartProgress = slideBodyInfo.SegmentStartProgressFor(^1);
 
-        Vector2 fanOrigin = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.RelativeEndLane - 4);
-        Vector2 middleLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.RelativeEndLane);
-        Vector2 leftLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.RelativeEndLane - 1);
-        Vector2 rightLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, path.RelativeEndLane + 1);
+        Vector2 fanOrigin = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideBodyInfo.RelativeEndLane - 4);
+        Vector2 middleLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideBodyInfo.RelativeEndLane);
+        Vector2 leftLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideBodyInfo.RelativeEndLane - 1);
+        Vector2 rightLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideBodyInfo.RelativeEndLane + 1);
 
         Vector2 middleVector = middleLineEnd - fanOrigin;
         Vector2 middleDirection = middleVector.Normalized();
