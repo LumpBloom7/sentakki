@@ -8,7 +8,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
-using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -220,7 +219,6 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         }
         return base.OnClick(e);
     }
-
 
     protected override bool OnDragStart(DragStartEvent e) => true;
     protected override void OnDrag(DragEvent e) => handleDragEvent(e.ScreenSpaceMousePosition);
