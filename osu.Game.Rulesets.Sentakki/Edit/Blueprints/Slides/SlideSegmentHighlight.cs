@@ -41,7 +41,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     private IBindable<int> versionBindable;
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
-        => visual.ReceivePositionalInputAt(screenSpacePos) || dragDot.ReceivePositionalInputAt(screenSpacePos);
+        => IsDragged || visual.ReceivePositionalInputAt(screenSpacePos) || dragDot.ReceivePositionalInputAt(screenSpacePos);
 
     public SlideSegmentHighlight(Slide slide, int segmentIndex)
     {
@@ -220,6 +220,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         }
         return base.OnClick(e);
     }
+
 
     protected override bool OnDragStart(DragStartEvent e) => true;
     protected override void OnDrag(DragEvent e) => handleDragEvent(e.ScreenSpaceMousePosition);
