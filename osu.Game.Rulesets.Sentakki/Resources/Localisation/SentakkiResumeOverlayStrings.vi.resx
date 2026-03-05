@@ -58,13 +58,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="mod_description" xml:space="preserve">
-        <value>音符在你擊中它們之前淡出。</value>
+  <data name="get_ready" xml:space="preserve">
+        <value>Chuẩn bị!</value>
     </data>
-  <data name="visible_radius" xml:space="preserve">
-        <value>可見半徑</value>
+  <data name="lets_go" xml:space="preserve">
+        <value>Bắt đầu nào!</value>
     </data>
-  <data name="visible_radius_description" xml:space="preserve">
-        <value>已下落音符的可見半徑。</value>
+  <data name="sentakki_supported_by" xml:space="preserve">
+        <value>Sentakki được tạo nên với sự hỗ trợ của {0}.</value>
+        <comment>The placeholder is for the name of a sentakki supporter.</comment>
     </data>
 </root>

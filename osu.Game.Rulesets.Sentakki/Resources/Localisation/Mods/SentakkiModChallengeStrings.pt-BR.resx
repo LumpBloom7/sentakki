@@ -58,13 +58,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="number_of_lives" xml:space="preserve">
+        <value>Número de vidas</value>
+    </data>
   <data name="mod_description" xml:space="preserve">
-        <value>音符在你擊中它們之前淡出。</value>
+        <value>Você obtém somente uma pequena margem para erros.</value>
     </data>
-  <data name="visible_radius" xml:space="preserve">
-        <value>可見半徑</value>
-    </data>
-  <data name="visible_radius_description" xml:space="preserve">
-        <value>已下落音符的可見半徑。</value>
+  <data name="number_of_lives_description" xml:space="preserve">
+        <value>O número de vidas que você começa.</value>
     </data>
 </root>

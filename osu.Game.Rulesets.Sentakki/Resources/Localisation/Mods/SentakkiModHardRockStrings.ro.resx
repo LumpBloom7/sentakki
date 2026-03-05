@@ -58,13 +58,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="mod_description" xml:space="preserve">
-        <value>音符在你擊中它們之前淡出。</value>
+  <data name="judgement_mode" xml:space="preserve">
+        <value>Mod statistici</value>
     </data>
-  <data name="visible_radius" xml:space="preserve">
-        <value>可見半徑</value>
+  <data name="judgement_mode_description" xml:space="preserve">
+        <value>Modurile de statistici determină lungimea perioadei de lovire din timpul jocului.</value>
     </data>
-  <data name="visible_radius_description" xml:space="preserve">
-        <value>已下落音符的可見半徑。</value>
+  <data name="minimum_result" xml:space="preserve">
+        <value>Acuratețe minimă</value>
+    </data>
+  <data name="minimum_result_description" xml:space="preserve">
+        <value>Acuratețea minimă acceptată de joc. Tot ce se află sub va fi considerat un rateu.</value>
     </data>
 </root>

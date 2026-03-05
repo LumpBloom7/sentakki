@@ -59,12 +59,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mod_description" xml:space="preserve">
-        <value>音符在你擊中它們之前淡出。</value>
+        <value>Notele dispar înainte de a le lovi.</value>
     </data>
   <data name="visible_radius" xml:space="preserve">
-        <value>可見半徑</value>
+        <value>Raza de vizibilitate</value>
     </data>
   <data name="visible_radius_description" xml:space="preserve">
-        <value>已下落音符的可見半徑。</value>
+        <value>Raza vizibilă a notelor aliniate.</value>
     </data>
 </root>

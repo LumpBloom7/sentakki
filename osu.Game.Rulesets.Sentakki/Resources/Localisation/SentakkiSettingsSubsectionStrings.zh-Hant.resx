@@ -96,14 +96,18 @@
   <data name="lane_input_mode_sensor" xml:space="preserve">
         <value>傳感器</value>
     </data>
-  <data name="break_sample_volume" xml:space="preserve">
-        <value>Break 聲音量</value>
-        <comment>Break is a proper noun, referring to a property on laned notes.</comment>
-    </data>
   <data name="note_entry_speed" xml:space="preserve">
         <value>音符輸入速度</value>
     </data>
-  <data name="touch_note_fade_in_speed" xml:space="preserve">
-        <value>Touch 音符淡入速度</value>
+  <data name="touch_note_entry_speed" xml:space="preserve">
+        <value>Touch 速度</value>
+    </data>
+  <data name="entry_speed_tooltip" xml:space="preserve">
+        <value>{0}（{1}毫秒）</value>
+        <comment>The left placeholder is the speed value between 0 - 10, or "Sonic" if too fast. The right placeholder duration value.</comment>
+    </data>
+  <data name="sonic" xml:space="preserve">
+        <value>Sonic</value>
+        <comment>Used when the speed value is greater than 10.</comment>
     </data>
 </root>
