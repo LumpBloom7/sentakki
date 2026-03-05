@@ -8,6 +8,7 @@ using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osuTK;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 
@@ -43,6 +44,7 @@ public partial class SlideBodyHighlight : CompositeDrawable
         [
             new Container
             {
+                Colour = Color4.YellowGreen,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 // Slide paths are built with the assumption that it will always start from Lane 0
@@ -60,8 +62,14 @@ public partial class SlideBodyHighlight : CompositeDrawable
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
                         Children = starPieces,
-                    }
+                    },
+
                 ]
+            },
+            new SlideOffsetTool(slide, slideBodyInfo)
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.TopCentre,
             }
         ];
 

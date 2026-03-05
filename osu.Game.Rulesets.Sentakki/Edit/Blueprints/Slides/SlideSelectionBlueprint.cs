@@ -27,7 +27,7 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
         Origin = Anchor.Centre;
 
         if (item.SlideInfoList.Count == 1)
-            AddInternal(slideBodyHighlight = new SlideBodyHighlight(item, item.SlideInfoList[0]) { Colour = Color4.YellowGreen });
+            AddInternal(slideBodyHighlight = new SlideBodyHighlight(item, item.SlideInfoList[0]) { });
 
         AddInternal(slideTapHighlight = new SlideTapPiece { Colour = Color4.YellowGreen });
     }
