@@ -42,8 +42,10 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
 
         AutoSizeAxes = Axes.Both;
 
-        InternalChild = text = new OsuSpriteText();
-        text.Font = text.Font.With(weight: FontWeight.SemiBold);
+        InternalChild = text = new OsuSpriteText
+        {
+            Font = OsuFont.Style.Body
+        };
     }
 
     private void updateText()

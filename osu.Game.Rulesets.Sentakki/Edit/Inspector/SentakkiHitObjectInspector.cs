@@ -209,14 +209,12 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
         }
 
         addHeader("Segments");
-        inspectorText.NewLine();
-        inspectorText.AddArbitraryDrawable(new SlideBodyInspectorSection(s, s.SlideInfoList[0]));
+        addValue(new SlideBodyInspectorSection(s, s.SlideInfoList[0]));
     }
 
     private void addHeader(string header) => inspectorText.AddParagraph($"{header}: ", s =>
     {
-        s.Padding = new MarginPadding { Top = 2 };
-        s.Font = s.Font.With(size: 12);
+        s.Font = OsuFont.Style.Caption1;
         s.Colour = colourProvider.Content2;
     });
 
@@ -233,7 +231,7 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
         inspectorText.NewLine();
         inspectorText.AddText(value, s =>
         {
-            s.Font = s.Font.With(weight: FontWeight.SemiBold);
+            s.Font = OsuFont.Style.Body;
             s.Colour = colour;
         });
     }
