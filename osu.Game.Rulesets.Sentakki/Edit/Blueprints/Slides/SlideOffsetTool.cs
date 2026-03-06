@@ -96,7 +96,8 @@ public partial class SlideOffsetTool : CompositeDrawable
             editorClock.CurrentTime + animationSpeed.Value / 2
         );
 
-        Y2 = Math.Min(Y2, SentakkiPlayfield.NOTESTARTDISTANCE);
+        Y = Math.Min(Y, -SentakkiPlayfield.NOTESTARTDISTANCE);
+        Y2 = Math.Min(Y2, -SentakkiPlayfield.NOTESTARTDISTANCE);
 
         Height = Math.Abs(Y - Y2);
     }
