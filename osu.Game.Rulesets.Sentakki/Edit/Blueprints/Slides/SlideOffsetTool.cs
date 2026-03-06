@@ -46,7 +46,7 @@ public partial class SlideOffsetTool : CompositeDrawable
                 Height = 5,
                 Width = 0.5f,
                 RelativeSizeAxes = Axes.X,
-                Anchor = Anchor.TopRight,
+                Anchor = Anchor.TopCentre,
                 Origin = Anchor.Centre,
                 EdgeSmoothness = Vector2.One,
             },
@@ -54,16 +54,13 @@ public partial class SlideOffsetTool : CompositeDrawable
             {
                 Width = 5,
                 RelativeSizeAxes = Axes.Y,
-                Anchor = Anchor.CentreRight,
+                Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 EdgeSmoothness = Vector2.One,
             },
             new DragHandle(this)
             {
-                Height = 20,
-                Width = 2 / 5f,
-                RelativeSizeAxes = Axes.X,
-                Anchor = Anchor.BottomRight,
+                Anchor = Anchor.BottomCentre,
                 Origin = Anchor.Centre,
             },
         ];
