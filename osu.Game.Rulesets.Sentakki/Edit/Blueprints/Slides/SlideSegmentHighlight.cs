@@ -206,14 +206,23 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         beatmap.Update(slide);
     }
 
+    protected override bool OnMouseDown(MouseDownEvent e)
+    {
+        if (e.Button != MouseButton.Middle)
+            return base.OnMouseDown(e);
+
+        if (slideBodyInfo.Segments.Count == 1)
+            deleteSlide();
+        else
+            deleteSegment();
+
+        return true;
+    }
+
     protected override bool OnClick(ClickEvent e)
     {
         switch (e.Button)
         {
-            case MouseButton.Middle:
-                deleteSegment();
-                return true;
-
             case MouseButton.Left:
                 return true;
         }
