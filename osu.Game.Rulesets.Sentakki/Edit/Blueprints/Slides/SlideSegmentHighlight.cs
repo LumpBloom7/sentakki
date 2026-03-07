@@ -236,7 +236,9 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     {
         Colour = Color4.Orange;
         dragDot.ScaleTo(1.3f, 50);
-        return true;
+
+        // We don't "handle" the hover, allowing the blueprint container to accept click events
+        return false;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)

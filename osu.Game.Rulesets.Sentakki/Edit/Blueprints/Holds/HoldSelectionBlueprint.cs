@@ -127,7 +127,9 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
         protected override bool OnHover(HoverEvent e)
         {
             this.ScaleTo(1.3f, 50).FadeIn(50);
-            return true;
+
+            // We don't "handle" the hover, allowing the blueprint container to accept click events
+            return false;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
