@@ -105,6 +105,9 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
             => IsDragged || base.ReceivePositionalInputAt(screenSpacePos);
 
+        [Resolved]
+        private SentakkiBlueprintContainer blueprintContainer { get; set; } = null!;
+
         [BackgroundDependencyLoader]
         private void load(OsuColour colours)
         {
@@ -113,15 +116,29 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
             Colour = colours.YellowDark;
         }
 
-        public Action<Vector2> DragAction { get; init; } = null!;
 
-        protected override bool OnDragStart(DragStartEvent e) => DragAction is not null;
+
+        public Action<Vector2> DragAction { get; init; } = null!;
 
         protected override void OnDrag(DragEvent e)
         {
             DragAction(e.ScreenSpaceMousePosition);
             base.OnDrag(e);
         }
+
+        private bool dragOccured;
+
+        protected override bool OnDragStart(DragStartEvent e) => dragOccured = DragAction is not null;
+
+        protected override void OnMouseUp(MouseUpEvent e)
+        {
+            // HACK: Blueprint container will attempt to perform selection actions, jankily supress it.
+            if (dragOccured)
+                blueprintContainer.SuppressMouseUp();
+
+            base.OnMouseUp(e);
+        }
+
 
         protected override bool OnHover(HoverEvent e)
         {

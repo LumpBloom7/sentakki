@@ -219,8 +219,26 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         return true;
     }
 
-    protected override bool OnDragStart(DragStartEvent e) => true;
+
+
     protected override void OnDrag(DragEvent e) => handleDragEvent(e.ScreenSpaceMousePosition);
+
+    private bool dragOccured;
+
+    protected override bool OnDragStart(DragStartEvent e)
+    {
+        dragOccured = true;
+        return true;
+    }
+
+    protected override void OnMouseUp(MouseUpEvent e)
+    {
+        // HACK: Blueprint container will attempt to perform selection actions, jankily supress it.
+        if (dragOccured)
+            blueprintContainer.SuppressMouseUp();
+
+        base.OnMouseUp(e);
+    }
 
     protected override bool OnHover(HoverEvent e)
     {
