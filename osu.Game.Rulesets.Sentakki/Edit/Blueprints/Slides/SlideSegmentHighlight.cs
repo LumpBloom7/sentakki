@@ -219,16 +219,6 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         return true;
     }
 
-    protected override bool OnClick(ClickEvent e)
-    {
-        switch (e.Button)
-        {
-            case MouseButton.Left:
-                return true;
-        }
-        return base.OnClick(e);
-    }
-
     protected override bool OnDragStart(DragStartEvent e) => true;
     protected override void OnDrag(DragEvent e) => handleDragEvent(e.ScreenSpaceMousePosition);
 
@@ -249,6 +239,9 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
     private void handleDragEvent(Vector2 screenSpacePosition)
     {
+        if (!IsPresent)
+            return;
+
         var localMousePosition = ToLocalSpace(screenSpacePosition);
 
         float angle = OriginPosition.AngleTo(localMousePosition);
