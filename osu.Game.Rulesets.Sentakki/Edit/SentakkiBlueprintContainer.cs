@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -104,6 +105,16 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
     protected override SelectionHandler<HitObject> CreateSelectionHandler() => new SentakkiSelectionHandler();
 
     private Vector2 currentMousePosition => InputManager.CurrentState.Mouse.Position;
+
+    // In the playfield, we actually proxy the slides to be under every other note type, and touches to be above.
+    // The default selection order doesn't take that into account when determining the click target, which results in targetting the bottom note instead of the top.
+    // We apply the proxy precedence rules Touch -> TouchHold -> Tap/Holds -> Slides, before applying time based precedence
+    protected override IEnumerable<SelectionBlueprint<HitObject>> ApplySelectionOrder(IEnumerable<SelectionBlueprint<HitObject>> blueprints)
+        => blueprints.Reverse()
+        .OrderBy(b => b.Item is not Touch)
+        .ThenBy(b => b.Item is not TouchHold)
+        .ThenBy(b => b.Item is Slide)
+        .ThenBy(b => Math.Min(Math.Abs(EditorClock.CurrentTime - b.Item.GetEndTime()), Math.Abs(EditorClock.CurrentTime - b.Item.StartTime)));
 
     // Since the movement is going to be a rotation, it makes sense that we prioritise the closest hitobject.
     protected override IEnumerable<SelectionBlueprint<HitObject>> SortForMovement(IReadOnlyList<SelectionBlueprint<HitObject>> blueprints)
