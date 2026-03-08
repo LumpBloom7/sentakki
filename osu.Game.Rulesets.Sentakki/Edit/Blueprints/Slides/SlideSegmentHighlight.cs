@@ -75,7 +75,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
             Segments = [segment]
         };
 
-        dragDotContainer.Rotation = segment.RelativeEndLane * 45 + 22.5f;
+        dragDotContainer.Rotation = (segment.RelativeEndLane * 45) + 22.5f;
     }
 
     [Resolved]
@@ -218,8 +218,6 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         return true;
     }
-
-
 
     protected override void OnDrag(DragEvent e) => handleDragEvent(e.ScreenSpaceMousePosition);
 

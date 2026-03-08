@@ -116,8 +116,6 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
             Colour = colours.YellowDark;
         }
 
-
-
         public Action<Vector2> DragAction { get; init; } = null!;
 
         protected override void OnDrag(DragEvent e)
@@ -138,7 +136,6 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
 
             base.OnMouseUp(e);
         }
-
 
         protected override bool OnHover(HoverEvent e)
         {

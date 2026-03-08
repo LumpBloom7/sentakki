@@ -113,7 +113,6 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
     protected override bool TryMoveBlueprints(DragEvent e, IList<(SelectionBlueprint<HitObject> blueprint, Vector2[] originalSnapPositions)> blueprints)
         => movementHandler.TryMoveBlueprints(e, blueprints);
 
-
     // <HACK ZONE>
     // Some blueprints can be interactive parts, such as draggable elements.
     // We don't handle OnMouseDown in order to preserve functionality provided by the BlueprintContainer.
