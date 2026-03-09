@@ -22,8 +22,6 @@ public class SentakkiModExperimental : Mod, IApplicableToBeatmapConverter
 
     public override double ScoreMultiplier => 1.00;
 
-    public override IconUsage? Icon => FontAwesome.Solid.Microchip;
-
     public override bool Ranked => true;
 
     [SettingSource(typeof(SentakkiModExperimentalStrings), nameof(SentakkiModExperimentalStrings.FanSlides), nameof(SentakkiModExperimentalStrings.FanSlidesDescription))]
