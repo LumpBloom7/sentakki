@@ -5,7 +5,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Input.Events;
 using osu.Game.Graphics;
-using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -25,6 +24,7 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
     public override Vector2 ScreenSpaceSelectionPoint => startDot.ScreenSpaceDrawQuad.Centre;
 
     private Container highlightContainer;
+
     private Drawable startDot;
 
     public HoldSelectionBlueprint(Hold item)
@@ -46,13 +46,11 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.YellowGreen,
                 },
-
                 startDot = new DraggableDotPiece(){
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.Centre,
                     DragAction = adjustStartTime
                 },
-
                 new DraggableDotPiece(){
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.Centre,
@@ -104,6 +102,12 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
 
     private partial class DraggableDotPiece : DotPiece
     {
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
+            => IsDragged || base.ReceivePositionalInputAt(screenSpacePos);
+
+        [Resolved]
+        private SentakkiBlueprintContainer blueprintContainer { get; set; } = null!;
+
         [BackgroundDependencyLoader]
         private void load(OsuColour colours)
         {
@@ -114,20 +118,31 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
 
         public Action<Vector2> DragAction { get; init; } = null!;
 
-        protected override bool OnDragStart(DragStartEvent e) => DragAction is not null;
-
-        protected override bool OnClick(ClickEvent e) => true;
-
         protected override void OnDrag(DragEvent e)
         {
             DragAction(e.ScreenSpaceMousePosition);
             base.OnDrag(e);
         }
 
+        private bool dragOccured;
+
+        protected override bool OnDragStart(DragStartEvent e) => dragOccured = DragAction is not null;
+
+        protected override void OnMouseUp(MouseUpEvent e)
+        {
+            // HACK: Blueprint container will attempt to perform selection actions, jankily supress it.
+            if (dragOccured)
+                blueprintContainer.SuppressMouseUp();
+
+            base.OnMouseUp(e);
+        }
+
         protected override bool OnHover(HoverEvent e)
         {
             this.ScaleTo(1.3f, 50).FadeIn(50);
-            return true;
+
+            // We don't "handle" the hover, allowing the blueprint container to accept click events
+            return false;
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
