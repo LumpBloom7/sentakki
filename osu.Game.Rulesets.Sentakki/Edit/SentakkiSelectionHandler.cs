@@ -60,6 +60,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
                 times.Add(d.EndTime);
         }
 
+        times.Sort();
         times.Reverse();
 
         int i = 0;
