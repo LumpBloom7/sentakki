@@ -13,6 +13,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Screens.Edit;
 using osuTK;
 using osuTK.Graphics;
 using osuTK.Input;
@@ -150,6 +151,9 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
     private SlideSegment currentSegment = new SlideSegment(PathShape.Straight, 4, false);
 
+    [Resolved]
+    private EditorBeatmap editorBeatmap { get; set; } = null!;
+
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {
         Vector2 localMousePosition = ToLocalSpace(screenSpacePosition) - OriginPosition;
@@ -160,6 +164,14 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
             case PlacementState.Waiting:
                 time = snappedTime;
                 HitObject.Lane = lane;
+
+                var previousSlide = editorBeatmap.HitObjects.OfType<Slide>().LastOrDefault(s => s.StartTime < snappedTime && s.SlideInfoList.Count > 0);
+
+                if (previousSlide is not null)
+                {
+                    currentSegment = previousSlide.SlideInfoList[^1].Segments[^1];
+                }
+
                 committedSlideInfo.WaitDuration = beatSnapProvider.GetBeatLengthAtTime(snappedTime) * beatSnapProvider.BeatDivisor;
                 break;
 
