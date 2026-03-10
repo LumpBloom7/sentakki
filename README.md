@@ -15,7 +15,11 @@ All the essential note types have been implemented. Features like editor is bein
 
 ## Demo
 
-https://github.com/user-attachments/assets/5d8723ee-98c1-48af-92f5-5b3c8a633e9f
+
+
+https://github.com/user-attachments/assets/3cf77a91-2336-4b08-b258-f2695dfd9de4
+
+
 
 ## Trying the ruleset
 
