@@ -72,6 +72,7 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
     }
 
     private double commitStartTime;
+    private bool dragged;
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)
     {
@@ -88,6 +89,10 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
                 // If the mapper maps the hold in reverse direction, we swap the start and end times to ensure correctness.
                 HitObject.StartTime = Math.Min(commitStartTime, time);
                 HitObject.EndTime = Math.Max(commitStartTime, time);
+
+                if (time != commitStartTime)
+                    dragged = true;
+
                 break;
         }
 
@@ -115,5 +120,18 @@ public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
         }
 
         return base.OnMouseDown(e);
+    }
+
+    protected override void OnMouseUp(MouseUpEvent e)
+    {
+        if (e.Button is not MouseButton.Left)
+            return;
+
+        switch (PlacementActive)
+        {
+            case PlacementState.Active when dragged:
+                EndPlacement(true);
+                break;
+        }
     }
 }
