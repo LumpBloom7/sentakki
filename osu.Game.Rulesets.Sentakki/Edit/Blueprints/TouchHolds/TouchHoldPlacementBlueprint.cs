@@ -42,6 +42,7 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
     }
 
     private double commitStartTime;
+    private bool dragged;
 
     [Resolved]
     private TouchPositionSnapGrid touchPositionSnapGrid { get; set; } = null!;
@@ -63,6 +64,9 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
                 break;
 
             case PlacementState.Active:
+                if (time != commitStartTime)
+                    dragged = true;
+
                 HitObject.EndTime = Math.Max(commitStartTime, time);
                 HitObject.StartTime = Math.Min(commitStartTime, time);
 
@@ -93,5 +97,19 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
         }
 
         return true;
+    }
+
+
+    protected override void OnMouseUp(MouseUpEvent e)
+    {
+        if (e.Button is not MouseButton.Left)
+            return;
+
+        switch (PlacementActive)
+        {
+            case PlacementState.Active when dragged:
+                EndPlacement(true);
+                break;
+        }
     }
 }
