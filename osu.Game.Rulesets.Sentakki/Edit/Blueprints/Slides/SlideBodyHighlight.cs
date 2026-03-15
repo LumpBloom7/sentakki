@@ -66,11 +66,23 @@ public partial class SlideBodyHighlight : CompositeDrawable
 
                 ]
             },
-            new SlideOffsetTool(slide, slideBodyInfo)
+            new Container
             {
                 Anchor = Anchor.Centre,
-                Origin = Anchor.TopCentre,
-            }
+                Origin = Anchor.Centre,
+                Rotation = 5f,
+                // Slide paths are built with the assumption that it will always start from Lane 0
+                // We apply a counter rotation so that the visuals line up when lane rotation is applied at a higher level.
+                Children =
+                [
+                    new SlideOffsetTool(slide, slideBodyInfo)
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.TopCentre,
+                    }
+                ]
+            },
+
         ];
 
         versionBindable.BindValueChanged(_ => createSegmentHighlights(), true);
