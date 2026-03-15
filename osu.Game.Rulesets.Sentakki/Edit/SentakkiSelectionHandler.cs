@@ -34,7 +34,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
         breakSlideTernaryState.ValueChanged += v => applyTernaryChanges<Slide>(setBreakSlideState, v.NewValue);
     }
 
-    public override SelectionRotationHandler CreateRotationHandler() => new SentakkiRotationHandler();
+    // public override SelectionRotationHandler CreateRotationHandler() => new SentakkiRotationHandler();
 
     protected override void OnSelectionChanged()
     {
@@ -43,7 +43,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
         // We are always able to flip hitobjects
         SelectionBox.CanFlipX = true;
         SelectionBox.CanFlipY = true;
-        SelectionBox.CanReverse = SelectedItems.Count > 1;
+        // SelectionBox.CanReverse = SelectedItems.Count > 1;
     }
 
     public override bool HandleReverse()
