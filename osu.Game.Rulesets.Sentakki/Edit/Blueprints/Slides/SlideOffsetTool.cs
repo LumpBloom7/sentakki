@@ -112,7 +112,10 @@ public partial class SlideOffsetTool : CompositeDrawable
                 double beatLength = editorBeatmap.GetBeatLengthAtTime(editorClock.CurrentTime);
                 slideBodyInfo.WaitDuration = slideBodyInfo.EffectiveWaitDuration + beatLength;
 
+                editorBeatmap.BeginChange();
                 editorBeatmap.Update(slide);
+                editorBeatmap.EndChange();
+
                 return true;
             }
 
@@ -122,7 +125,9 @@ public partial class SlideOffsetTool : CompositeDrawable
                 double beatLength = editorBeatmap.GetBeatLengthAtTime(editorClock.CurrentTime);
                 slideBodyInfo.WaitDuration = slideBodyInfo.EffectiveWaitDuration - beatLength;
 
+                editorBeatmap.BeginChange();
                 editorBeatmap.Update(slide);
+                editorBeatmap.EndChange();
 
                 return true;
             }
