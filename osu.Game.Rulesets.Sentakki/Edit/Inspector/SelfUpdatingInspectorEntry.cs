@@ -1,6 +1,5 @@
 using System;
 using osu.Framework.Allocation;
-using osu.Framework.Graphics;
 using osu.Framework.Localisation;
 using osu.Framework.Threading;
 using osu.Game.Graphics;
@@ -19,7 +18,7 @@ public partial class SelfUpdatingInspectorEntry : OsuSpriteText
     public SelfUpdatingInspectorEntry(Func<LocalisableString> textUpdateAction)
     {
         this.textUpdateAction = textUpdateAction;
-        Font = Font.With(weight: FontWeight.SemiBold);
+        Font = OsuFont.Style.Body;
         Text = textUpdateAction.Invoke();
     }
 
