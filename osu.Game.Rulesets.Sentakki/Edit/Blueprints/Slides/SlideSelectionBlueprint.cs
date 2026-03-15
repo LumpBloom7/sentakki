@@ -69,11 +69,10 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
 
         Rotation = HitObject.Lane.GetRotationForLane();
 
-        slideTapHighlight.Scale = new Vector2(Math.Clamp(
-            Interpolation.ValueAt(HitObject.StartTime, 1f, 0f, editorClock.CurrentTime + (animationSpeed.Value / 2), editorClock.CurrentTime + animationSpeed.Value),
-            0f, 1f));
+        float targetScale = Interpolation.ValueAt(HitObject.StartTime, 1f, 0f, editorClock.CurrentTime + (animationSpeed.Value / 2), editorClock.CurrentTime + animationSpeed.Value);
+        targetScale = Math.Clamp(targetScale, 0, 1);
 
-        tapHighlight.Scale = slideTapHighlight.Scale;
+        tapHighlight.Scale = slideTapHighlight.Scale = new Vector2(targetScale);
 
         slideTapHighlight.Y = -Interpolation.ValueAt(
                 HitObject.StartTime,
@@ -86,25 +85,30 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
         slideTapHighlight.Y = Math.Clamp(slideTapHighlight.Y, -SentakkiPlayfield.INTERSECTDISTANCE, -SentakkiPlayfield.NOTESTARTDISTANCE);
         tapHighlight.Y = slideTapHighlight.Y;
 
-        if (Item.TapType is Slide.TapTypeEnum.None)
+        switch (Item.TapType)
         {
-            slideTapHighlight.Alpha = 0.5f;
-            tapHighlight.Alpha = 0;
-        }
-        else if (Item.TapType is Slide.TapTypeEnum.Tap)
-        {
-            slideTapHighlight.Alpha = 0f;
-            tapHighlight.Alpha = 1;
-        }
-        else
-        {
-            SlideTapPiece tapVisual = (SlideTapPiece)DrawableObject.SlideTaps.Child.TapVisual;
+            case Slide.TapTypeEnum.None:
+                slideTapHighlight.Alpha = 0.5f;
+                tapHighlight.Alpha = 0;
+                slideTapHighlight.Stars.Rotation = 0;
+                slideTapHighlight.SecondStar.Alpha = 0;
+                break;
 
-            slideTapHighlight.Stars.Rotation = tapVisual.Stars.Rotation;
-            slideTapHighlight.SecondStar.Alpha = tapVisual.SecondStar.Alpha;
+            // While there is no way to manually make this in the editor, it could still appear due to converts/imports.
+            case Slide.TapTypeEnum.Tap:
+                slideTapHighlight.Alpha = 0f;
+                tapHighlight.Alpha = 1;
+                break;
 
-            slideTapHighlight.Alpha = 1f;
-            tapHighlight.Alpha = 0;
+            default:
+                SlideTapPiece tapVisual = (SlideTapPiece)DrawableObject.SlideTaps.Child.TapVisual;
+
+                slideTapHighlight.Stars.Rotation = tapVisual.Stars.Rotation;
+                slideTapHighlight.SecondStar.Alpha = tapVisual.SecondStar.Alpha;
+
+                slideTapHighlight.Alpha = 1f;
+                tapHighlight.Alpha = 0;
+                break;
         }
 
         if (slideBodyHighlight is null)
