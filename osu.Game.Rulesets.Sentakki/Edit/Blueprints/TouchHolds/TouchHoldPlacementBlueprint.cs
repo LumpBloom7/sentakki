@@ -99,7 +99,6 @@ public partial class TouchHoldPlacementBlueprint : SentakkiPlacementBlueprint<To
         return true;
     }
 
-
     protected override void OnMouseUp(MouseUpEvent e)
     {
         if (e.Button is not MouseButton.Left)
