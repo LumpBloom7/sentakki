@@ -112,7 +112,8 @@ public partial class SlideOffsetTool : CompositeDrawable
             case Key.KeypadPlus:
             {
                 double beatLength = editorBeatmap.GetBeatLengthAtTime(editorClock.CurrentTime);
-                slideBodyInfo.WaitDuration = slideBodyInfo.EffectiveWaitDuration + beatLength;
+
+                slideBodyInfo.WaitDuration = Math.Min(slideBodyInfo.EffectiveWaitDuration + beatLength, slideBodyInfo.Duration);
 
                 editorBeatmap.Update(slide);
                 return true;
@@ -122,7 +123,7 @@ public partial class SlideOffsetTool : CompositeDrawable
             case Key.KeypadMinus:
             {
                 double beatLength = editorBeatmap.GetBeatLengthAtTime(editorClock.CurrentTime);
-                slideBodyInfo.WaitDuration = slideBodyInfo.EffectiveWaitDuration - beatLength;
+                slideBodyInfo.WaitDuration = Math.Max(0, slideBodyInfo.EffectiveWaitDuration - beatLength);
 
                 editorBeatmap.Update(slide);
 
@@ -175,7 +176,7 @@ public partial class SlideOffsetTool : CompositeDrawable
             (double snappedTime, _) = snapProvider.GetSnappedTimeAndPosition(editorClock.CurrentTime, localPosition);
             double shootDelay = snappedTime - slideOffsetTool.slide.StartTime;
 
-            slideOffsetTool.slideBodyInfo.WaitDuration = shootDelay;
+            slideOffsetTool.slideBodyInfo.WaitDuration = Math.Clamp(shootDelay, 0, slideOffsetTool.slideBodyInfo.Duration);
 
             editorBeatmap.Update(slideOffsetTool.slide);
         }

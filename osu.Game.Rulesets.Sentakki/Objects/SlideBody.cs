@@ -55,7 +55,7 @@ public class SlideBody : SentakkiLanedHitObject, IHasDuration
         float progress = 0;
         float totalDistance = (float)SlideBodyInfo.SlideLength;
 
-        double shootTime = StartTime + SlideBodyInfo.WaitDuration;
+        double shootTime = StartTime + SlideBodyInfo.EffectiveWaitDuration;
 
         for (int i = 0; i < SlideBodyInfo.Segments.Count; ++i)
         {
