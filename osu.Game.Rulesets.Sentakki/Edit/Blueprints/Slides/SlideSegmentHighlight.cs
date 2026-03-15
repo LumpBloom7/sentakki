@@ -125,6 +125,14 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
             Items = [.. endLaneItems.OrderBy(i => i.Item1).Select(i => i.Item2)]
         };
 
+        if (SlidePaths.CheckSlideValidity(segment with { Mirrored = !segment.Mirrored }, true))
+        {
+            yield return new TernaryStateToggleMenuItem("Mirrored", action: _ => mirrorSegment())
+            {
+                State = { Value = segment.Mirrored ? TernaryState.True : TernaryState.False }
+            };
+        }
+
         yield return new OsuMenuItem("Duplicate segment", MenuItemType.Standard, action: duplicateSegment);
 
         if (slideBodyInfo.Segments.Count > 1)
@@ -155,6 +163,19 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         updatedSegments.Insert(SegmentIndex, segment);
 
         slideBodyInfo.Segments = updatedSegments;
+        beatmap.Update(slide);
+    }
+
+    private void mirrorSegment()
+    {
+        var segments = slideBodyInfo.Segments.ToList();
+
+        var segment = segments[SegmentIndex];
+        segment.Mirrored = !segment.Mirrored;
+
+        segments[SegmentIndex] = segment;
+
+        slideBodyInfo.Segments = segments;
         beatmap.Update(slide);
     }
 
