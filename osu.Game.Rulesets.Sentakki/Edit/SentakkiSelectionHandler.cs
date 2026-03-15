@@ -286,7 +286,14 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
     private void setExState(SentakkiHitObject hitObject, bool newValue) => hitObject.Ex = newValue;
     private void setBreakState(SentakkiHitObject hitObject, bool newValue) => hitObject.Break = newValue;
 
-    private void setOmitSlideTapState(Slide slide, bool newValue) => slide.TapType = newValue ? Slide.TapTypeEnum.None : Slide.TapTypeEnum.Star;
+    private void setOmitSlideTapState(Slide slide, bool newValue)
+    {
+        slide.TapType = newValue ? Slide.TapTypeEnum.None : Slide.TapTypeEnum.Star;
+
+        // Revalidate the arcs
+        composer.Playfield.Remove(slide);
+        composer.Playfield.Add(slide);
+    }
 
     private void setExSlideState(Slide slide, bool newValue) => slide.SlideInfoList.ForEach(si => si.Ex = newValue);
     private void setBreakSlideState(Slide slide, bool newValue) => slide.SlideInfoList.ForEach(si => si.Break = newValue);
