@@ -92,7 +92,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
             SentakkiPlayfield.INTERSECTDISTANCE,
             SentakkiPlayfield.NOTESTARTDISTANCE,
             EditorClock.CurrentTime,
-            EditorClock.CurrentTime + animationSpeed.Value / 2
+            EditorClock.CurrentTime + (animationSpeed.Value / 2)
         );
 
         activeSegmentVisual.Rotation = committedSlideInfo.RelativeEndLane.GetRotationForLane() - 45f;
@@ -168,7 +168,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                 HitObject.StartTime = Math.Min(commitStartTime, time);
                 double endTime = Math.Max(commitStartTime, time);
 
-                HitObject.SlideInfoList[0].Duration = endTime - HitObject.StartTime;
+                HitObject.SlideInfoList[0].Duration = Math.Max(endTime - HitObject.StartTime, beatSnapProvider.GetBeatLengthAtTime(time));
 
                 int startLane = committedSlideInfo.RelativeEndLane + HitObject.Lane;
 
