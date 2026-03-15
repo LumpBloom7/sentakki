@@ -75,7 +75,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
             Segments = [segment]
         };
 
-        dragDotContainer.Rotation = segment.RelativeEndLane * 45 + 22.5f;
+        dragDotContainer.Rotation = (segment.RelativeEndLane * 45) + 22.5f;
     }
 
     [Resolved]
@@ -206,28 +206,45 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         beatmap.Update(slide);
     }
 
-    protected override bool OnClick(ClickEvent e)
+    protected override bool OnMouseDown(MouseDownEvent e)
     {
-        switch (e.Button)
-        {
-            case MouseButton.Middle:
-                deleteSegment();
-                return true;
+        if (e.Button != MouseButton.Middle)
+            return base.OnMouseDown(e);
 
-            case MouseButton.Left:
-                return true;
-        }
-        return base.OnClick(e);
+        if (slideBodyInfo.Segments.Count == 1)
+            deleteSlide();
+        else
+            deleteSegment();
+
+        return true;
     }
 
-    protected override bool OnDragStart(DragStartEvent e) => true;
     protected override void OnDrag(DragEvent e) => handleDragEvent(e.ScreenSpaceMousePosition);
+
+    private bool dragOccured;
+
+    protected override bool OnDragStart(DragStartEvent e)
+    {
+        dragOccured = true;
+        return true;
+    }
+
+    protected override void OnMouseUp(MouseUpEvent e)
+    {
+        // HACK: Blueprint container will attempt to perform selection actions, jankily supress it.
+        if (dragOccured)
+            blueprintContainer.SuppressMouseUp();
+
+        base.OnMouseUp(e);
+    }
 
     protected override bool OnHover(HoverEvent e)
     {
         Colour = Color4.Orange;
         dragDot.ScaleTo(1.3f, 50);
-        return true;
+
+        // We don't "handle" the hover, allowing the blueprint container to accept click events
+        return false;
     }
 
     protected override void OnHoverLost(HoverLostEvent e)
@@ -238,6 +255,9 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
     private void handleDragEvent(Vector2 screenSpacePosition)
     {
+        if (!IsPresent)
+            return;
+
         var localMousePosition = ToLocalSpace(screenSpacePosition);
 
         float angle = OriginPosition.AngleTo(localMousePosition);

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -111,4 +112,27 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
 
     protected override bool TryMoveBlueprints(DragEvent e, IList<(SelectionBlueprint<HitObject> blueprint, Vector2[] originalSnapPositions)> blueprints)
         => movementHandler.TryMoveBlueprints(e, blueprints);
+
+    // <HACK ZONE>
+    // Some blueprints can be interactive parts, such as draggable elements.
+    // We don't handle OnMouseDown in order to preserve functionality provided by the BlueprintContainer.
+    // However, because of that, BlueprintContainer will always run OnMouseUp regardless of whether a drag is handled on a target blueprint.
+    // We provide a mechanism for interactive blueprints to inform the BlueprintContainer that they "handled" OnMouseUp,
+    //   and that the BlueprintContainer doesn't need to do anything
+    private bool suppressMouseUp;
+    public void SuppressMouseUp()
+    {
+        suppressMouseUp = true;
+    }
+
+    protected override void OnMouseUp(MouseUpEvent e)
+    {
+        if (suppressMouseUp)
+        {
+            suppressMouseUp = false;
+            return;
+        }
+
+        base.OnMouseUp(e);
+    }
 }
