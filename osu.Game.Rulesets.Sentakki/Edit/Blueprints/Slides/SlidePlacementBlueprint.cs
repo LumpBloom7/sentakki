@@ -36,7 +36,8 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
     // Make sure that slides with no segments are considered invalid
     protected override bool IsValidForPlacement
-        => base.IsValidForPlacement && (PlacementActive is PlacementState.Waiting || committedSlideInfo.Segments.Count > 0);
+        => base.IsValidForPlacement
+            && (PlacementActive is PlacementState.Waiting || committedSlideInfo.Segments.Count > 0);
 
     public SlidePlacementBlueprint()
     {
