@@ -32,6 +32,8 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
 
         exSlideTernaryState.ValueChanged += v => applyTernaryChanges<Slide>(setExSlideState, v.NewValue);
         breakSlideTernaryState.ValueChanged += v => applyTernaryChanges<Slide>(setBreakSlideState, v.NewValue);
+
+        omitSlideTapTypeTernaryState.ValueChanged += v => applyTernaryChanges<Slide>(setOmitSlideTapState, v.NewValue);
     }
 
     // public override SelectionRotationHandler CreateRotationHandler() => new SentakkiRotationHandler();
@@ -234,6 +236,8 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
                 new TernaryStateToggleMenuItem("EX") { State = { BindTarget = exSlideTernaryState } }
             ]
         };
+
+        yield return new TernaryStateToggleMenuItem("Omit slide tap") { State = { BindTarget = omitSlideTapTypeTernaryState } };
     }
 
     public readonly Bindable<TernaryState> ExTernaryState = new Bindable<TernaryState>();
@@ -241,6 +245,8 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
 
     private readonly Bindable<TernaryState> exSlideTernaryState = new Bindable<TernaryState>();
     private readonly Bindable<TernaryState> breakSlideTernaryState = new Bindable<TernaryState>();
+
+    private readonly Bindable<TernaryState> omitSlideTapTypeTernaryState = new Bindable<TernaryState>();
 
     protected override void UpdateTernaryStates()
     {
@@ -250,6 +256,9 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
 
         var selectedSlideBodies = selectedItems.OfType<Slide>().SelectMany(s => s.SlideInfoList);
         breakSlideTernaryState.Value = GetStateFromSelection(selectedSlideBodies, s => s.Break);
+
+        var selectedSlides = selectedItems.OfType<Slide>();
+        omitSlideTapTypeTernaryState.Value = GetStateFromSelection(selectedSlides, s => s.TapType == Slide.TapTypeEnum.None);
     }
 
     private void applyTernaryChanges<T>(Action<T, bool> applicator, TernaryState newTernaryState) where T : HitObject
@@ -276,6 +285,15 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
 
     private void setExState(SentakkiHitObject hitObject, bool newValue) => hitObject.Ex = newValue;
     private void setBreakState(SentakkiHitObject hitObject, bool newValue) => hitObject.Break = newValue;
+
+    private void setOmitSlideTapState(Slide slide, bool newValue)
+    {
+        slide.TapType = newValue ? Slide.TapTypeEnum.None : Slide.TapTypeEnum.Star;
+
+        // Revalidate the arcs
+        composer.Playfield.Remove(slide);
+        composer.Playfield.Add(slide);
+    }
 
     private void setExSlideState(Slide slide, bool newValue) => slide.SlideInfoList.ForEach(si => si.Ex = newValue);
     private void setBreakSlideState(Slide slide, bool newValue) => slide.SlideInfoList.ForEach(si => si.Break = newValue);
