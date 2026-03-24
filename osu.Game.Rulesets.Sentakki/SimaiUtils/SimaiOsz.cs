@@ -57,7 +57,12 @@ MaiDiff:{9}
     public static void ConvertToOsz(DirectoryInfo path, Func<string, Stream> createOutputStream, bool closeStream = true)
     {
         SimaiFile simaiFile = new SimaiFile(path.EnumerateFileSystemInfos().First(f => f.Name is "maidata.txt"));
-        Dictionary<string, string> dict = simaiFile.ToKeyValuePairs().ToDictionary(x => x.Key, x => x.Value);
+
+        // For some godforsaken reason, some idiot decided that it is a good idea to have multiple values identified with the same key either by mistake or by intention.
+        // As a safety measure, we ensure no duplicate keys prior to dictionary creation.
+        // Consequence: If the option isn't in spec: no harm done, we likely don't support it anyways.
+        //              If it is in spec: None of the options in spec can have duplicates anyways. So duplicates imply undefined behaviour. We can do whatever
+        Dictionary<string, string> dict = simaiFile.ToKeyValuePairs().DistinctBy(kvp => kvp.Key).ToDictionary();
 
         string titleUnicode = dict.GetValueOrDefault("title", "Unknown Title");
         string title = dict.GetValueOrDefault("titleRomanised", titleUnicode);
