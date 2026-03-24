@@ -174,10 +174,10 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
             string oszPath = path.Name;
             MemoryStream memoryStream = new MemoryStream();
 
-            SimaiOsz.ConvertToOsz(path, _ => memoryStream, false);
-
             try
             {
+                SimaiOsz.ConvertToOsz(path, _ => memoryStream, false);
+
                 await game.Import([new ImportTask(memoryStream, oszPath + ".osz")]).ConfigureAwait(false);
             }
             catch (Exception e)
@@ -214,10 +214,10 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
                 string oszPath = item.Name;
                 MemoryStream memoryStream = new MemoryStream();
 
-                SimaiOsz.ConvertToOsz(item, _ => memoryStream, false);
-
                 try
                 {
+                    SimaiOsz.ConvertToOsz(item, _ => memoryStream, false);
+
                     await game.Import([new ImportTask(memoryStream, oszPath + ".osz")]).ConfigureAwait(false);
                 }
                 catch (Exception e)
