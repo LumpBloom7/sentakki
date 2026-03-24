@@ -54,6 +54,72 @@ MaiDiff:{9}
         return Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty));
     }
 
+    public static IEnumerable<string> OsuFromSimai(SimaiFile file)
+    {
+        // For some godforsaken reason, some idiot decided that it is a good idea to have multiple values identified with the same key either by mistake or by intention.
+        // As a safety measure, we ensure no duplicate keys prior to dictionary creation.
+        // Consequence: If the option isn't in spec: no harm done, we likely don't support it anyways.
+        //              If it is in spec: None of the options in spec can have duplicates anyways. So duplicates imply undefined behaviour. We can do whatever
+        Dictionary<string, string> dict = file.ToKeyValuePairs().DistinctBy(kvp => kvp.Key).ToDictionary();
+
+
+        string title = dict.GetValueOrDefault("title", "Unknown Title");
+        string artist = dict.GetValueOrDefault("artist", "Unknown Artist");
+        string allCreator = dict.GetValueOrDefault("des", "-");
+        string first = dict.GetValueOrDefault("first", "0");
+
+        foreach (var (k, v) in dict)
+        {
+            if (!k.StartsWith("inote", StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            string diffIndex = k.Split("_")[1];
+            string diffName = diff_index_to_dict.GetValueOrDefault(diffIndex, $"Extra - {diffIndex}");
+
+            if (v.Length == 0) continue;
+
+            string chart = string.Join('\n', v.Split('\n').Select(x => x.TrimStart()));
+
+            if (first != "0")
+            {
+                chart = $"{{#{first}}}," + chart;
+            }
+
+            MaiChart maiChart = SimaiConvert.Deserialize(chart);
+
+            bool isDeluxe = maiChart.NoteCollections.Any(noteCollection => noteCollection.Any(note =>
+                    note.IsEx // Ex note
+                    || note.slidePaths.Any(slidePath => slidePath.segments.Count > 1 || slidePath.type == NoteType.Break) // Chain slide | Break slide
+                    || note.location.group != NoteGroup.Tap // TOUCH
+            ));
+
+            string creator = dict.GetValueOrDefault($"des_{diffIndex}", allCreator);
+            string level = dict.GetValueOrDefault($"lv_{diffIndex}", "0");
+            string version = dict.GetValueOrDefault($"version", "maimai");
+            string genre = dict.GetValueOrDefault("genre", "");
+
+            string[] tags = { "sentakki-legacy", level, creator, isDeluxe ? "deluxe" : "standard", genre };
+
+            string osuFile = string.Format(
+                osu_template,
+                "",
+                title,
+                title,
+                artist,
+                artist,
+                creator,
+                diffName,
+                version,
+                string.Join(" ", tags),
+                level,
+                "",
+                chart);
+            yield return osuFile;
+        }
+    }
+
     public static void ConvertToOsz(DirectoryInfo path, Func<string, Stream> createOutputStream, bool closeStream = true)
     {
         SimaiFile simaiFile = new SimaiFile(path.EnumerateFileSystemInfos().First(f => f.Name is "maidata.txt"));
@@ -64,18 +130,14 @@ MaiDiff:{9}
         //              If it is in spec: None of the options in spec can have duplicates anyways. So duplicates imply undefined behaviour. We can do whatever
         Dictionary<string, string> dict = simaiFile.ToKeyValuePairs().DistinctBy(kvp => kvp.Key).ToDictionary();
 
-        string titleUnicode = dict.GetValueOrDefault("title", "Unknown Title");
-        string title = dict.GetValueOrDefault("titleRomanised", titleUnicode);
-
-        string artistUnicode = dict.GetValueOrDefault("artist", "Unknown Artist");
-        string artist = dict.GetValueOrDefault("artistRomanised", artistUnicode);
-
+        string title = dict.GetValueOrDefault("title", "Unknown Title");
+        string artist = dict.GetValueOrDefault("artist", "Unknown Artist");
         string allCreator = dict.GetValueOrDefault("des", "-");
         string first = dict.GetValueOrDefault("first", "0");
 
         string trackName = "track.mp3";
 
-        string filename = $"{CleanFileName($"{artist} - {title}")}.osz";
+        string filename = $"{CleanFileName($"{artist} - {title}")}].osz";
         Stream zipStream = createOutputStream(filename);
 
         var events = new List<string>();
@@ -150,9 +212,9 @@ MaiDiff:{9}
                     osu_template,
                     trackName,
                     title,
-                    titleUnicode,
+                    title,
                     artist,
-                    artistUnicode,
+                    artist,
                     creator,
                     diffName,
                     version,
