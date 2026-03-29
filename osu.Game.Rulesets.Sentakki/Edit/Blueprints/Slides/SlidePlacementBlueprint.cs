@@ -185,12 +185,9 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
         return base.UpdateTimeAndPosition(screenSpacePosition, time);
     }
 
-    protected override bool OnScroll(ScrollEvent e)
+    private void cycleShape(int direction)
     {
-        if (PlacementActive is not PlacementState.Active || !e.AltPressed)
-            return base.OnScroll(e);
-
-        var newSegment = currentSegment with { Shape = (PathShape)(((int)currentSegment.Shape + (int)e.ScrollDelta.Y) % 7) };
+        var newSegment = currentSegment with { Shape = (PathShape)(((int)currentSegment.Shape + Math.Sign(direction)) % 7) };
 
         if (newSegment.Shape < 0)
             newSegment.Shape += 7;
@@ -202,6 +199,24 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
 
         currentSegment = newSegment;
         activeSegmentVisual.SlideBodyInfo!.Segments = [currentSegment];
+    }
+
+    protected override bool OnKeyDown(KeyDownEvent e)
+    {
+        if (e.Key is not Key.Tab)
+            return false;
+
+        cycleShape(e.ShiftPressed ? -1 : 1);
+
+        return true;
+    }
+
+    protected override bool OnScroll(ScrollEvent e)
+    {
+        if (PlacementActive is not PlacementState.Active || !e.AltPressed)
+            return base.OnScroll(e);
+
+        cycleShape(Math.Sign(e.ScrollDelta.Y));
 
         return true;
     }
