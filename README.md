@@ -11,11 +11,15 @@ sentakki is a recreation of maimaiDX for use within osu, taking advantage of the
 ## Status
 
 
-All the essential note types have been implemented. Features like editor is being developed on the side, since lazer doesn't support third party ruleset editors yet. PP/diff calc haven't been given considered yet, and it is currently open to ideas.
+All the essential note types, as well as an editor, have been implemented. Other features like PP/diff calc haven't yet been developed, and are open to ideas.
 
 ## Demo
 
-https://github.com/user-attachments/assets/5d8723ee-98c1-48af-92f5-5b3c8a633e9f
+
+
+https://github.com/user-attachments/assets/3cf77a91-2336-4b08-b258-f2695dfd9de4
+
+
 
 ## Trying the ruleset
 

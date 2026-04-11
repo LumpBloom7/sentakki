@@ -24,6 +24,9 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
     [Resolved]
     private LaneNoteSnapGrid snapGrid { get; set; } = null!;
 
+    [Resolved]
+    private IBeatSnapProvider beatSnapProvider { get; set; } = null!;
+
     private readonly SlideTapPiece tapHighlight;
 
     private readonly SlideBodyInfo committedSlideInfo;
@@ -89,7 +92,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
             SentakkiPlayfield.INTERSECTDISTANCE,
             SentakkiPlayfield.NOTESTARTDISTANCE,
             EditorClock.CurrentTime,
-            EditorClock.CurrentTime + animationSpeed.Value / 2
+            EditorClock.CurrentTime + (animationSpeed.Value / 2)
         );
 
         activeSegmentVisual.Rotation = committedSlideInfo.RelativeEndLane.GetRotationForLane() - 45f;
@@ -128,7 +131,6 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                         return true;
 
                     case MouseButton.Middle:
-
                         if (committedSlideInfo.Segments.Count == 0)
                             break;
 
@@ -158,6 +160,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
             case PlacementState.Waiting:
                 time = snappedTime;
                 HitObject.Lane = lane;
+                committedSlideInfo.WaitDuration = beatSnapProvider.GetBeatLengthAtTime(snappedTime) * beatSnapProvider.BeatDivisor;
                 break;
 
             case PlacementState.Active:
@@ -165,7 +168,7 @@ public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
                 HitObject.StartTime = Math.Min(commitStartTime, time);
                 double endTime = Math.Max(commitStartTime, time);
 
-                HitObject.SlideInfoList[0].Duration = endTime - HitObject.StartTime;
+                HitObject.SlideInfoList[0].Duration = Math.Max(endTime - HitObject.StartTime, beatSnapProvider.GetBeatLengthAtTime(time));
 
                 int startLane = committedSlideInfo.RelativeEndLane + HitObject.Lane;
 

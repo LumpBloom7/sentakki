@@ -1,7 +1,9 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
@@ -35,6 +37,8 @@ public partial class SlideVisual : CompositeDrawable
 
         return Quad.FromRectangle(rect);
     }
+
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => chevrons.Any(c => c.IsVisible && c.ReceivePositionalInputAt(screenSpacePos));
 
     private SlideBodyInfo? slideBodyInfo;
 
