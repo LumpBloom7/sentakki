@@ -76,7 +76,7 @@ public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
 
         Add(new SettingsItemV2(new FormCheckBox
         {
-            Caption = "Mobile layout",
+            Caption = SentakkiSettingsSubsectionStrings.PreferPortraitLayout,
             Current = config.GetBindable<bool>(SentakkiRulesetSettings.PreferPortraitLayout),
         })
         { Keywords = ["override", "orientation"] });
