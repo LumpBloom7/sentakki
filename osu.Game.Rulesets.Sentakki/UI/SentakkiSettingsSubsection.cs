@@ -71,8 +71,8 @@ public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
             }) { Keywords = ["transparency"] },
         ];
 
-        //if (!RuntimeInfo.IsMobile)
-        //return;
+        if (!RuntimeInfo.IsMobile)
+            return;
 
         Add(new SettingsItemV2(new FormCheckBox
         {
