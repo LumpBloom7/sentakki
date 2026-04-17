@@ -166,13 +166,6 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
 
             double timeAtMousePosition = Interpolation.ValueAt(mouseDistanceFromCentre, maximumTime, currentTime, SentakkiPlayfield.NOTESTARTDISTANCE, SentakkiPlayfield.INTERSECTDISTANCE);
 
-            // Due to snapping preferring the closest snap time
-            // we reduce the time range to ensure that the snap result will be within bounds
-            timeAtMousePosition = Math.Clamp(
-            timeAtMousePosition,
-            currentTime + editorBeatmap.GetBeatLengthAtTime(currentTime) / 2.05,
-            maximumTime - editorBeatmap.GetBeatLengthAtTime(maximumTime) / 2);
-
             snappedTime = editorBeatmap.SnapTime(timeAtMousePosition, null);
         }
 
