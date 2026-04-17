@@ -39,8 +39,20 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
     private IBindable<int> versionBindable;
 
+    [Resolved]
+    private SlideTapPiece slideTapPiece { get; set; } = null!;
+
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
-        => IsDragged || visual.ReceivePositionalInputAt(screenSpacePos) || dragDot.ReceivePositionalInputAt(screenSpacePos);
+    {
+        if (IsDragged)
+            return true;
+
+        // Special behaviour: We don't want to allow the slide segment to take control when the target is actually the tap.
+        if (slideTapPiece.ReceivePositionalInputAt(screenSpacePos))
+            return false;
+
+        return visual.ReceivePositionalInputAt(screenSpacePos) || dragDot.ReceivePositionalInputAt(screenSpacePos);
+    }
 
     public SlideSegmentHighlight(Slide slide, int segmentIndex)
     {
