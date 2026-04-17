@@ -138,7 +138,7 @@ public partial class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject
 
     public override DrawableHitObject<SentakkiHitObject> CreateDrawableRepresentation(SentakkiHitObject h) => null!;
 
-    protected override ResumeOverlay CreateResumeOverlay() => new DelayedResumeOverlay();
+    protected override ResumeOverlay CreateResumeOverlay() => new SentakkiResumeOverlay();
 
     protected override PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset.RulesetInfo);
 }
