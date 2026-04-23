@@ -38,6 +38,7 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
         OsuColour colours = new OsuColour();
 
         var hitobjects = beatmap.HitObjects.Where(h => h is Slide).SelectMany(s => s.NestedHitObjects).Cast<SentakkiHitObject>().ToList();
+        hitobjects.AddRange(beatmap.HitObjects);
 
         foreach (var hitObject in hitobjects)
         {
