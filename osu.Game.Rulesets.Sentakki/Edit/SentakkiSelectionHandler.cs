@@ -268,7 +268,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
         if (newTernaryState is TernaryState.Indeterminate)
             return;
 
-        var selectedItems = SelectedItems.OfType<T>();
+        var selectedItems = SelectedItems.OfType<T>().ToArray();
 
         bool newValue = newTernaryState is TernaryState.True;
 
@@ -289,10 +289,6 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
     private void setOmitSlideTapState(Slide slide, bool newValue)
     {
         slide.TapType = newValue ? Slide.TapTypeEnum.None : Slide.TapTypeEnum.Star;
-
-        // Revalidate the arcs
-        composer.Playfield.Remove(slide);
-        composer.Playfield.Add(slide);
     }
 
     private void setExSlideState(Slide slide, bool newValue) => slide.SlideInfoList.ForEach(si => si.Ex = newValue);
