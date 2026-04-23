@@ -261,7 +261,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
         omitSlideTapTypeTernaryState.Value = GetStateFromSelection(selectedSlides, s => s.TapType == Slide.TapTypeEnum.None);
     }
 
-    private void applyTernaryChanges<T>(Action<T, bool> applicator, TernaryState newTernaryState) where T : HitObject
+    private void applyTernaryChanges<T>(Func<T, bool, bool> applicator, TernaryState newTernaryState) where T : HitObject
     {
         // We can get into an indeterminate state when mixing notes with different break/ex values
         // We don't want to force enable/disable from this intermediate state
@@ -276,27 +276,76 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
 
         foreach (var item in selectedItems)
         {
-            applicator(item, newValue);
-            EditorBeatmap.Update(item);
+            if (applicator(item, newValue))
+                EditorBeatmap.Update(item);
         }
 
         EditorBeatmap.EndChange();
     }
 
-    private void setExState(SentakkiHitObject hitObject, bool newValue) => hitObject.Ex = newValue;
-    private void setBreakState(SentakkiHitObject hitObject, bool newValue) => hitObject.Break = newValue;
-
-    private void setOmitSlideTapState(Slide slide, bool newValue)
+    private bool setExState(SentakkiHitObject hitObject, bool newValue)
     {
-        slide.TapType = newValue ? Slide.TapTypeEnum.None : Slide.TapTypeEnum.Star;
+        if (hitObject.Ex == newValue)
+            return false;
+
+        hitObject.Ex = newValue;
+        return true;
+    }
+    private bool setBreakState(SentakkiHitObject hitObject, bool newValue)
+    {
+        if (hitObject.Break == newValue)
+            return false;
+
+        hitObject.Break = newValue;
+        return true;
+    }
+
+    private bool setOmitSlideTapState(Slide slide, bool newValue)
+    {
+        var newState = newValue ? Slide.TapTypeEnum.None : Slide.TapTypeEnum.Star;
+
+        if (slide.TapType == newState)
+            return false;
+
+        slide.TapType = newState;
 
         // Revalidate the arcs
         composer.Playfield.Remove(slide);
         composer.Playfield.Add(slide);
+
+        return true;
     }
 
-    private void setExSlideState(Slide slide, bool newValue) => slide.SlideInfoList.ForEach(si => si.Ex = newValue);
-    private void setBreakSlideState(Slide slide, bool newValue) => slide.SlideInfoList.ForEach(si => si.Break = newValue);
+    private bool setExSlideState(Slide slide, bool newValue)
+    {
+        bool anySet = false;
+
+        foreach (var slideInfo in slide.SlideInfoList)
+        {
+            if (slideInfo.Ex == newValue)
+                continue;
+
+            anySet = true;
+            slideInfo.Ex = newValue;
+        }
+
+        return anySet;
+    }
+    private bool setBreakSlideState(Slide slide, bool newValue)
+    {
+        bool anySet = false;
+
+        foreach (var slideInfo in slide.SlideInfoList)
+        {
+            if (slideInfo.Break == newValue)
+                continue;
+
+            anySet = true;
+            slideInfo.Break = newValue;
+        }
+
+        return anySet;
+    }
 
     #endregion
 }
