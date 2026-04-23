@@ -22,10 +22,14 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide, DrawableSlide>
 {
     private readonly SlideBodyHighlight? slideBodyHighlight;
+
+    [Cached]
     private readonly SlideTapPiece slideTapHighlight;
+
     private readonly TapPiece tapHighlight;
 
     public override Quad SelectionQuad => slideTapHighlight.ScreenSpaceDrawQuad;
+
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
         => slideTapHighlight.ReceivePositionalInputAt(screenSpacePos) || DrawableObject.SlideBodies.Select(s => s.Slidepath).Any(s => s.ReceivePositionalInputAt(screenSpacePos));
 
