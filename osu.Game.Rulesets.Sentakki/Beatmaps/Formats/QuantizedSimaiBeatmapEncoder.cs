@@ -61,7 +61,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
         return [.. hitobjects.OrderBy(s => s.StartTime)];
     }
 
-    protected override string CreateSimaiChart()
+    public override string CreateSimaiChart()
     {
         if (Beatmap.HitObjects.Count == 0)
             return "E";
@@ -109,8 +109,10 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                     var prevTimingPoint = timingGroups[i - 1].TimingPoint;
                     var beatsUntilTimingPoint = AsFraction(timeUntilTimingPoint / prevTimingPoint.BeatLength);
 
+                    double accounted_for = (beatsUntilTimingPoint.wholes + beatsUntilTimingPoint.numerator / (double)beatsUntilTimingPoint.denominator) * prevTimingPoint.BeatLength;
+
                     maidataUnits.AddRange(generatePaddingBeats(beatsUntilTimingPoint));
-                    currentTime = timingPoint.Time;
+                    currentTime += accounted_for;
                 }
             }
 
@@ -125,7 +127,10 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                 var beatsUntilCurrent = AsFraction(timeUntilCurrent / timingPoint.BeatLength);
 
                 maidataUnits.AddRange(generatePaddingBeats(beatsUntilCurrent));
-                currentTime = hitObjectGroups[j].Time;
+
+                double accounted_for = (beatsUntilCurrent.wholes + beatsUntilCurrent.numerator / (double)beatsUntilCurrent.denominator) * timingPoint.BeatLength;
+
+                currentTime += accounted_for;
 
                 StringBuilder hitObjectGroupBuilder = new StringBuilder();
 

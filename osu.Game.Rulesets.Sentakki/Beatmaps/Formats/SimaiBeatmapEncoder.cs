@@ -111,7 +111,7 @@ public class SimaiBeatmapEncoder
         writer.WriteLine($"&inote_7={CreateSimaiChart()}");
     }
 
-    protected virtual string CreateSimaiChart()
+    public virtual string CreateSimaiChart()
     {
         var hitObjectsGroups = Beatmap.HitObjects.GroupBy(h => h.StartTime).OrderBy(g => g.Key).Select(g => new TimedBeatmapEvent
         {
