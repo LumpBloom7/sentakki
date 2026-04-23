@@ -268,7 +268,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
         if (newTernaryState is TernaryState.Indeterminate)
             return;
 
-        var selectedItems = SelectedItems.OfType<T>();
+        var selectedItems = SelectedItems.OfType<T>().ToArray();
 
         bool newValue = newTernaryState is TernaryState.True;
 
