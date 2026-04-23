@@ -63,5 +63,10 @@ public static class SentakkiSettingsSubsectionStrings
 
     public static LocalisableString Sonic => new TranslatableString(getKey(@"sonic"), @"Sonic");
 
+    /// <summary>
+    /// Prefer portrait layout
+    /// </summary>
+    public static LocalisableString PreferPortraitLayout => new TranslatableString(getKey(@"prefer_portrat_layout"), @"Prefer portrait layout");
+
     private static string getKey(string key) => $"{prefix}:{key}";
 }

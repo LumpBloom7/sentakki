@@ -36,11 +36,15 @@ public partial class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject
     [Resolved]
     private GameHost gamehost { get; set; } = null!;
 
+    public override bool RequiresPortraitOrientation => configPreferPortrait.Value;
+    private Bindable<bool> configPreferPortrait = new();
+
     [BackgroundDependencyLoader]
     private void load()
     {
         Config.BindWith(SentakkiRulesetSettings.AnimationSpeed, configEntrySpeed);
         Config.BindWith(SentakkiRulesetSettings.TouchAnimationSpeed, configTouchEntrySpeed);
+        Config.BindWith(SentakkiRulesetSettings.PreferPortraitLayout, configPreferPortrait);
 
         configEntrySpeed.BindValueChanged(v => currentAnimDuration = ComputeLaneNoteEntryTime(v.NewValue), true);
         configTouchEntrySpeed.BindValueChanged(v => currentTouchAnimDuration = ComputeTouchNoteEntryTime(v.NewValue), true);

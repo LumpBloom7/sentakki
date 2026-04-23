@@ -1,4 +1,5 @@
-﻿using osu.Framework.Allocation;
+﻿using osu.Framework;
+using osu.Framework.Allocation;
 using osu.Framework.Localisation;
 using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Overlays.Settings;
@@ -69,5 +70,15 @@ public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
                 DisplayAsPercentage = true,
             }) { Keywords = ["transparency"] },
         ];
+
+        if (!RuntimeInfo.IsMobile)
+            return;
+
+        Add(new SettingsItemV2(new FormCheckBox
+        {
+            Caption = SentakkiSettingsSubsectionStrings.PreferPortraitLayout,
+            Current = config.GetBindable<bool>(SentakkiRulesetSettings.PreferPortraitLayout),
+        })
+        { Keywords = ["override", "orientation"] });
     }
 }

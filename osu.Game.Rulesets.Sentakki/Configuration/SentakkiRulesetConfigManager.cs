@@ -25,6 +25,7 @@ public class SentakkiRulesetConfigManager : RulesetConfigManager<SentakkiRuleset
         SetDefault(SentakkiRulesetSettings.RingOpacity, 1f, 0f, 1f, 0.01f);
         SetDefault(SentakkiRulesetSettings.SnakingSlideBody, true);
         SetDefault(SentakkiRulesetSettings.DetailedJudgements, false);
+        SetDefault(SentakkiRulesetSettings.PreferPortraitLayout, false);
     }
 
     public override TrackedSettings CreateTrackedSettings() =>
@@ -47,4 +48,5 @@ public enum SentakkiRulesetSettings
     TouchAnimationSpeed,
     SnakingSlideBody,
     DetailedJudgements,
+    PreferPortraitLayout,
 }
