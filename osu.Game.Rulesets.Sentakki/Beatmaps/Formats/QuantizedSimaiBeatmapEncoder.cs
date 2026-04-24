@@ -107,7 +107,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                 else
                 {
                     var prevTimingPoint = timingGroups[i - 1].TimingPoint;
-                    var beatsUntilTimingPoint = AsFraction(timeUntilTimingPoint / prevTimingPoint.BeatLength);
+                    var beatsUntilTimingPoint = AsFraction(timeUntilTimingPoint, prevTimingPoint.BeatLength);
 
                     double accounted_for = (beatsUntilTimingPoint.wholes + beatsUntilTimingPoint.numerator / (double)beatsUntilTimingPoint.denominator) * prevTimingPoint.BeatLength;
 
@@ -124,7 +124,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                 // Handle time before hitObject time
                 double timeUntilCurrent = hitObjectGroups[j].Time - currentTime;
 
-                var beatsUntilCurrent = AsFraction(timeUntilCurrent / timingPoint.BeatLength);
+                var beatsUntilCurrent = AsFraction(timeUntilCurrent, timingPoint.BeatLength);
 
                 maidataUnits.AddRange(generatePaddingBeats(beatsUntilCurrent));
 
@@ -260,8 +260,10 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
     // Lightly adjusted to output whole numbers separately.
     // The accuracy is chosen so that the fraction will deviate from x by at most two decimal places.
     // x = interval / BeatLength, so in practice you wouldn't need too many decimal places
-    public static (int wholes, int numerator, int denominator) AsFraction(double x, double maxError = 0.001)
+    public static (int wholes, int numerator, int denominator) AsFraction(double interval, double beatLength, double maxError = 1.0)
     {
+        double x = interval / beatLength;
+
         if (x == 0)
             return (0, 0, 1);
 
@@ -271,10 +273,12 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
         int n = (int)Math.Floor(x);
         x -= n;
 
-        if (x < maxError)
+        double maxFractionalError = maxError / beatLength;
+
+        if (x < maxFractionalError) // 1 ms of error
             return new(sign * n, 0, 1);
 
-        if (1 - maxError < x)
+        if ((x - 1) > -maxFractionalError)
             return (sign * (n + 1), 0, 1);
 
         double z = x;
@@ -290,7 +294,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
             previousDenominator = temp;
             numerator = Convert.ToInt32(x * denominator);
         }
-        while (Math.Abs(x - (double)numerator / denominator) > maxError && z != (int)z);
+        while (Math.Abs(x - numerator / (double)denominator) > maxFractionalError && z != (int)z);
 
         return (n * sign, numerator * sign, denominator);
     }
