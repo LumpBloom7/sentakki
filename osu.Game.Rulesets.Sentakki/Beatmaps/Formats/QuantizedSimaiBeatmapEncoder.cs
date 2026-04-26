@@ -40,9 +40,6 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
             bool isEx = slideGroup.Any(s => s.Ex);
             var tapType = slideGroup.Min(s => s.TapType);
 
-            if (tapType is Slide.TapTypeEnum.None)
-                Console.WriteLine(tapType);
-
             var slideBodies = slideGroup.SelectMany(s => s.SlideInfoList);
             var samples = slideGroup.SelectMany(s => s.Samples);
 
