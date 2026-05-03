@@ -94,57 +94,69 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     [Resolved]
     private SentakkiBlueprintContainer blueprintContainer { get; set; } = null!;
 
+    #region Context menu updates
+    private Dictionary<PathShape, TernaryStateRadioMenuItem>? shapeMenuItems;
+    private Dictionary<int, TernaryStateRadioMenuItem>? endLaneMenuItems;
+    private TernaryStateToggleMenuItem? mirrorMenuItem;
+
+    private void updateTernaryItems()
+    {
+        if (shapeMenuItems is null || endLaneMenuItems is null || mirrorMenuItem is null)
+            return;
+
+        foreach (var shape in Enum.GetValues<PathShape>())
+        {
+            var menuItem = shapeMenuItems[shape];
+            menuItem.State.Value = segment.Shape == shape ? TernaryState.True : TernaryState.False;
+        }
+
+        for (int i = 0; i < 8; ++i)
+        {
+            var menuItem = endLaneMenuItems[i];
+
+            menuItem.State.Value = segment.RelativeEndLane == i ? TernaryState.True : TernaryState.False;
+            menuItem.Action.Disabled = !SlidePaths.CheckSlideValidity(segment with { RelativeEndLane = i });
+        }
+
+        mirrorMenuItem.State.Value = segment.Mirrored ? TernaryState.True : TernaryState.False;
+        mirrorMenuItem.Action.Disabled = !SlidePaths.CheckSlideValidity(segment with { Mirrored = true }, true);
+    }
+    #endregion
+
     private IEnumerable<MenuItem> createContextMenuItems()
     {
+        // Add the items present in the SelectionHandler context menu
         foreach (var item in blueprintContainer.SelectionHandler.GetContextMenuItemsForSelection())
             yield return item;
 
         yield return new OsuMenuItemSpacer();
 
-        List<OsuMenuItem> shapeMenuItems = [];
-
-        foreach (var shape in Enum.GetValues<PathShape>())
-        {
-            shapeMenuItems.Add(new OsuMenuItem($"{shape}", MenuItemType.Standard, action: () => changeShape(shape))
-            {
-                Icon = (segment.Shape == shape) ? FontAwesome.Solid.Check : default
-            });
-        }
-
-        yield return new OsuMenuItem("Shape")
-        {
-            Items = shapeMenuItems,
-        };
-
-        List<(int, OsuMenuItem)> endLaneItems = [];
+        shapeMenuItems = Enum.GetValues<PathShape>()
+                       .ToDictionary(p => p, p => new TernaryStateRadioMenuItem($"{p}", action: _ => changeShape(p)));
 
         int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(SegmentIndex + 1).Sum(s => s.RelativeEndLane)).NormalizeLane();
         int startLane = (currentEndLane - segment.RelativeEndLane).NormalizeLane();
 
-        foreach (int i in Enumerable.Range(0, 8))
-        {
-            if (!SlidePaths.CheckSlideValidity(segment with { RelativeEndLane = i }))
-                continue;
+        endLaneMenuItems = Enumerable.Range(0, 8)
+                                       .ToDictionary(
+                                            i => i,
+                                            i => new TernaryStateRadioMenuItem($"{(i + startLane).NormalizeLane() + 1}", action: _ => changeEndLane(i)));
 
-            int displayIndex = (i + startLane).NormalizeLane() + 1;
-            endLaneItems.Add((displayIndex, new OsuMenuItem($"{displayIndex}", MenuItemType.Standard, action: () => changeEndLane(i))
-            {
-                Icon = (segment.RelativeEndLane == i) ? FontAwesome.Solid.Check : default
-            }));
-        }
+        yield return new OsuMenuItem("Shape")
+        {
+            Items = [.. shapeMenuItems.Values],
+        };
 
         yield return new OsuMenuItem("End Lane")
         {
-            Items = [.. endLaneItems.OrderBy(i => i.Item1).Select(i => i.Item2)]
+            Items = endLaneMenuItems.OrderBy(kvp => (kvp.Key + startLane).NormalizeLane() + 1)
+                                    .Select(kvp => kvp.Value)
+                                    .ToList()
         };
 
-        if (SlidePaths.CheckSlideValidity(segment with { Mirrored = !segment.Mirrored }, true))
-        {
-            yield return new OsuMenuItem("Mirrored", MenuItemType.Standard, action: () => mirrorSegment())
-            {
-                Icon = (segment.Mirrored == segment.Mirrored) ? FontAwesome.Solid.Check : default
-            };
-        }
+        mirrorMenuItem = new TernaryStateToggleMenuItem("Mirrored", MenuItemType.Standard, action: _ => mirrorSegment());
+
+        yield return mirrorMenuItem;
 
         yield return new OsuMenuItem("Duplicate segment", MenuItemType.Standard, action: duplicateSegment);
 
@@ -154,6 +166,9 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         yield return new OsuMenuItemSpacer();
 
         yield return new OsuMenuItem("Delete slide", MenuItemType.Destructive, deleteSlide);
+
+        // Let's ensure the initial state is correct
+        updateTernaryItems();
     }
 
     public MenuItem[]? ContextMenuItems => [.. createContextMenuItems()];
@@ -220,6 +235,8 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         slideBodyInfo.Segments = segments;
         beatmap.Update(slide);
+
+        updateTernaryItems();
     }
 
     private void changeEndLane(int lane)
@@ -238,6 +255,8 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         slideBodyInfo.Segments = segments;
         beatmap.Update(slide);
+
+        updateTernaryItems();
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)
