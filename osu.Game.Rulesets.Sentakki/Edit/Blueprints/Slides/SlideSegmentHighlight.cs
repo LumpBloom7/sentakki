@@ -119,7 +119,6 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         }
 
         mirrorMenuItem.State.Value = segment.Mirrored ? TernaryState.True : TernaryState.False;
-        mirrorMenuItem.Action.Disabled = !SlidePaths.CheckSlideValidity(segment with { Mirrored = true }, true);
     }
     #endregion
 
