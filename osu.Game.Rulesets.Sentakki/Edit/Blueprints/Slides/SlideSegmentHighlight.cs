@@ -6,6 +6,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Game.Graphics.UserInterface;
@@ -100,13 +101,13 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         yield return new OsuMenuItemSpacer();
 
-        List<TernaryStateRadioMenuItem> shapeMenuItems = [];
+        List<OsuMenuItem> shapeMenuItems = [];
 
         foreach (var shape in Enum.GetValues<PathShape>())
         {
-            shapeMenuItems.Add(new TernaryStateRadioMenuItem($"{shape}", action: _ => changeShape(shape))
+            shapeMenuItems.Add(new OsuMenuItem($"{shape}", MenuItemType.Standard, action: () => changeShape(shape))
             {
-                State = { Value = segment.Shape == shape ? TernaryState.True : TernaryState.False }
+                Icon = (segment.Shape == shape) ? FontAwesome.Solid.Check : default
             });
         }
 
@@ -115,7 +116,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
             Items = shapeMenuItems,
         };
 
-        List<(int, TernaryStateRadioMenuItem)> endLaneItems = [];
+        List<(int, OsuMenuItem)> endLaneItems = [];
 
         int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(SegmentIndex + 1).Sum(s => s.RelativeEndLane)).NormalizeLane();
         int startLane = (currentEndLane - segment.RelativeEndLane).NormalizeLane();
@@ -126,9 +127,9 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
                 continue;
 
             int displayIndex = (i + startLane).NormalizeLane() + 1;
-            endLaneItems.Add((displayIndex, new TernaryStateRadioMenuItem($"{displayIndex}", action: _ => changeEndLane(i))
+            endLaneItems.Add((displayIndex, new OsuMenuItem($"{displayIndex}", MenuItemType.Standard, action: () => changeEndLane(i))
             {
-                State = { Value = segment.RelativeEndLane == i ? TernaryState.True : TernaryState.False }
+                Icon = (segment.RelativeEndLane == i) ? FontAwesome.Solid.Check : default
             }));
         }
 
@@ -139,9 +140,9 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         if (SlidePaths.CheckSlideValidity(segment with { Mirrored = !segment.Mirrored }, true))
         {
-            yield return new TernaryStateToggleMenuItem("Mirrored", action: _ => mirrorSegment())
+            yield return new OsuMenuItem("Mirrored", MenuItemType.Standard, action: () => mirrorSegment())
             {
-                State = { Value = segment.Mirrored ? TernaryState.True : TernaryState.False }
+                Icon = (segment.Mirrored == segment.Mirrored) ? FontAwesome.Solid.Check : default
             };
         }
 
