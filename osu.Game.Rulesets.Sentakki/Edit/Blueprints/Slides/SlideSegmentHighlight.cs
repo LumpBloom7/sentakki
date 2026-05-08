@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Game.Graphics.UserInterface;
@@ -95,27 +95,26 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     private SentakkiBlueprintContainer blueprintContainer { get; set; } = null!;
 
     #region Context menu updates
-    private Dictionary<PathShape, TernaryStateRadioMenuItem>? shapeMenuItems;
-    private Dictionary<int, TernaryStateRadioMenuItem>? endLaneMenuItems;
+    private List<(PathShape Shape, TernaryStateRadioMenuItem MenuItem)>? shapeMenuItems;
+    private (int RelativeEndLane, TernaryStateRadioMenuItem MenuItem)[]? endLaneMenuItems;
     private TernaryStateToggleMenuItem? mirrorMenuItem;
 
-    private void updateTernaryItems()
+    private void updateContextMenuItems()
     {
-        if (shapeMenuItems is null || endLaneMenuItems is null || mirrorMenuItem is null)
+        if (shapeMenuItems is null)
             return;
 
-        foreach (var shape in Enum.GetValues<PathShape>())
-        {
-            var menuItem = shapeMenuItems[shape];
+        // If shapeMenuItems is not null, we know these are not null as well
+        Debug.Assert(endLaneMenuItems is not null);
+        Debug.Assert(mirrorMenuItem is not null);
+
+        foreach (var (shape, menuItem) in shapeMenuItems)
             menuItem.State.Value = segment.Shape == shape ? TernaryState.True : TernaryState.False;
-        }
 
-        for (int i = 0; i < 8; ++i)
+        foreach (var (endLane, menuItem) in endLaneMenuItems)
         {
-            var menuItem = endLaneMenuItems[i];
-
-            menuItem.State.Value = segment.RelativeEndLane == i ? TernaryState.True : TernaryState.False;
-            menuItem.Action.Disabled = !SlidePaths.CheckSlideValidity(segment with { RelativeEndLane = i });
+            menuItem.State.Value = segment.RelativeEndLane == endLane ? TernaryState.True : TernaryState.False;
+            menuItem.Action.Disabled = !SlidePaths.CheckSlideValidity(segment with { RelativeEndLane = endLane });
         }
 
         mirrorMenuItem.State.Value = segment.Mirrored ? TernaryState.True : TernaryState.False;
@@ -130,26 +129,22 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         yield return new OsuMenuItemSpacer();
 
-        shapeMenuItems = Enum.GetValues<PathShape>()
-                       .ToDictionary(p => p, p => new TernaryStateRadioMenuItem($"{p}", action: _ => changeShape(p)));
+        shapeMenuItems = [.. Enum.GetValues<PathShape>().Select(s => (s, new TernaryStateRadioMenuItem($"{s}", action: _ => changeShape(s))))];
 
         int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(SegmentIndex + 1).Sum(s => s.RelativeEndLane)).NormalizeLane();
         int startLane = (currentEndLane - segment.RelativeEndLane).NormalizeLane();
 
-        endLaneMenuItems = Enumerable.Range(0, 8)
-                                       .ToDictionary(
-                                            i => i,
-                                            i => new TernaryStateRadioMenuItem($"{(i + startLane).NormalizeLane() + 1}", action: _ => changeEndLane(i)));
+        endLaneMenuItems = [.. Enumerable.Range(0, 8).Select(i => (i, new TernaryStateRadioMenuItem($"{(i + startLane).NormalizeLane() + 1}", action: _ => changeEndLane(i))))];
 
         yield return new OsuMenuItem("Shape")
         {
-            Items = [.. shapeMenuItems.Values],
+            Items = [.. shapeMenuItems.Select(kvp => kvp.MenuItem)],
         };
 
         yield return new OsuMenuItem("End Lane")
         {
-            Items = endLaneMenuItems.OrderBy(kvp => (kvp.Key + startLane).NormalizeLane() + 1)
-                                    .Select(kvp => kvp.Value)
+            Items = endLaneMenuItems.OrderBy(kvp => (kvp.RelativeEndLane + startLane).NormalizeLane())
+                                    .Select(kvp => kvp.MenuItem)
                                     .ToList()
         };
 
@@ -167,7 +162,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         yield return new OsuMenuItem("Delete slide", MenuItemType.Destructive, deleteSlide);
 
         // Let's ensure the initial state is correct
-        updateTernaryItems();
+        updateContextMenuItems();
     }
 
     public MenuItem[]? ContextMenuItems => [.. createContextMenuItems()];
@@ -235,7 +230,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         slideBodyInfo.Segments = segments;
         beatmap.Update(slide);
 
-        updateTernaryItems();
+        updateContextMenuItems();
     }
 
     private void changeEndLane(int lane)
@@ -255,7 +250,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         slideBodyInfo.Segments = segments;
         beatmap.Update(slide);
 
-        updateTernaryItems();
+        updateContextMenuItems();
     }
 
     protected override bool OnMouseDown(MouseDownEvent e)
