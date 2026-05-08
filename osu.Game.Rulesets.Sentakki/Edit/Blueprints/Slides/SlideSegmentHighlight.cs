@@ -9,6 +9,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Game.Graphics.Cursor;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -43,6 +44,11 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     [Resolved]
     private SlideTapPiece slideTapPiece { get; set; } = null!;
 
+    [Resolved]
+    private OsuContextMenuContainer? contextMenuContainer { get; set; }
+
+    private Bindable<int> slideLaneBindable;
+
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
     {
         if (IsDragged)
@@ -58,6 +64,11 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     public SlideSegmentHighlight(Slide slide, int segmentIndex)
     {
         this.slide = slide;
+        slideLaneBindable = slide.LaneBindable.GetBoundCopy();
+
+        // When the start lane changes, we forcefully close the context menu to avoid the endLane dropdown making no
+        slideLaneBindable.BindValueChanged(_ => contextMenuContainer?.CloseMenu());
+
         SegmentIndex = segmentIndex;
 
         InternalChildren = [
