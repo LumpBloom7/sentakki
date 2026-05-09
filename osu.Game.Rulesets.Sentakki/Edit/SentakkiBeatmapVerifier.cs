@@ -9,7 +9,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit;
 public partial class SentakkiBeatmapVerifier : IBeatmapVerifier
 {
     private ICheck[] checks = [
-        new CheckSlideTapOmission()
+        new CheckSlideTapOmission(),
+        new CheckMismatchedSlideTaps(),
     ];
 
     public IEnumerable<Issue> Run(BeatmapVerifierContext context) => checks.SelectMany(c => c.Run(context));

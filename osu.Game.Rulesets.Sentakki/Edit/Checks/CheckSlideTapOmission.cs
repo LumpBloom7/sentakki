@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using System.Linq;
 using osu.Game.Rulesets.Edit;
@@ -9,24 +8,31 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Checks;
 
 public class CheckSlideTapOmission : ICheck
 {
-    public CheckMetadata Metadata => new CheckMetadata(CheckCategory.HitObjects, "Incorrectly omitted slides", CheckScope.Difficulty);
+    public CheckMetadata Metadata { get; } = new CheckMetadata(CheckCategory.HitObjects, "Incorrectly omitted slides", CheckScope.Difficulty);
 
-    public IEnumerable<IssueTemplate> PossibleTemplates => throw new System.NotImplementedException();
+    public IEnumerable<IssueTemplate> PossibleTemplates { get; }
 
     public CheckSlideTapOmission()
     {
-        omittedSlideTapIssueTemplate = new(this);
+        PossibleTemplates = [
+            omittedSlideTapIssueTemplate = new(this)
+        ];
     }
 
     private OmittedSlideTapIssueTemplate omittedSlideTapIssueTemplate;
 
     public IEnumerable<Issue> Run(BeatmapVerifierContext context)
     {
-        var slides = context.CurrentDifficulty.Playable.HitObjects.OfType<Slide>();
-        foreach (var slide in slides)
+        var hitobjects = context.CurrentDifficulty.Playable.HitObjects.Where(h => h is Tap or Slide).Cast<SentakkiLanedHitObject>().ToArray();
+
+        // Just flag any that have an omitted slide tap
+        foreach (var hitobject in hitobjects)
         {
-            if (slide.TapType is Slide.TapTypeEnum.None)
-                yield return omittedSlideTapIssueTemplate.Create(slide);
+            if (hitobject is not Slide s)
+                continue;
+
+            if (s.TapType is Slide.TapTypeEnum.None)
+                yield return omittedSlideTapIssueTemplate.Create(s);
         }
     }
 
