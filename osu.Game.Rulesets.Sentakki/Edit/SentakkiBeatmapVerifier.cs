@@ -10,6 +10,7 @@ public partial class SentakkiBeatmapVerifier : IBeatmapVerifier
 {
     private ICheck[] checks = [
         new CheckConcurrentLaneHitObjects(),
+        new CheckThreeHandedness(),
         new CheckSlideTapOmission(),
         new CheckMismatchedSlideTaps(),
     ];
