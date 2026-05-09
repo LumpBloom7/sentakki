@@ -9,6 +9,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit;
 public partial class SentakkiBeatmapVerifier : IBeatmapVerifier
 {
     private ICheck[] checks = [
+        new CheckConcurrentLaneHitObjects(),
         new CheckSlideTapOmission(),
         new CheckMismatchedSlideTaps(),
     ];
