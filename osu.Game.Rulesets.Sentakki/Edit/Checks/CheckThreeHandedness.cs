@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Humanizer;
 using NUnit.Framework;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Edit.Checks;
@@ -50,11 +51,13 @@ public class CheckThreeHandedness : ICheck
 
             if (period.end)
             {
-                if (overlapping.Count > 2 && !justRemoved)
+                int numberOfObjects = overlapping.GroupBy(p => (p.Mergeable, ((SentakkiLanedHitObject)p.hitObject).Lane))
+                                                 .Sum(g => g.Key.Mergeable ? 1 : g.Count());
+
+                if (numberOfObjects > 2 && !justRemoved)
                 {
                     yield return issueTemplateTooManyHands.Create(period.time, overlapping.Select(p => p.hitObject));
                     justRemoved = true;
-
                 }
 
                 overlapping.Remove(period.period);
