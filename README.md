@@ -71,6 +71,9 @@ dotnet build osu.Game.Rulesets.Sentakki
 
 There are a few ways one can look to contribute to sentakki.
 
+> [!IMPORTANT]
+> Contributions to this repository must be human-composed. Anything created in-full or with assistance of AI/LLM will be rejected. 
+
 ### Code contributions
 
 If you are interested in implementing new features or improving current features, you can fork the repository and develop the feature/improvement on a topic branch of your fork before PR'ing the changes to this repository.
