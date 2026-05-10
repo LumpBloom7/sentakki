@@ -23,6 +23,7 @@ using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Replays.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
+using osu.Game.Rulesets.Sentakki.Beatmaps.Formats;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Difficulty;
 using osu.Game.Rulesets.Sentakki.Edit;
@@ -45,6 +46,12 @@ namespace osu.Game.Rulesets.Sentakki;
 
 public partial class SentakkiRuleset : Ruleset
 {
+    public SentakkiRuleset()
+    {
+        LegacySimaiBeatmapDecoder.Register();
+        RulesetInfo.OnlineID = 21;
+    }
+
     public override string RulesetAPIVersionSupported => CURRENT_RULESET_API_VERSION;
 
     private static readonly Lazy<bool> is_development_build
@@ -108,6 +115,7 @@ public partial class SentakkiRuleset : Ruleset
     public override IEnumerable<Mod> GetModsFor(ModType type)
     {
         switch (type)
+
         {
             case ModType.DifficultyReduction:
                 return
@@ -243,40 +251,39 @@ public partial class SentakkiRuleset : Ruleset
                 Texture = textureStore.Get("Textures/SentakkiIcon.png"),
             });
 
-            if (IsDevelopmentBuild)
+            if (!IsDevelopmentBuild) return;
+
+            AddInternal(new Container
             {
-                AddInternal(new Container
-                {
-                    Anchor = Anchor.BottomRight,
-                    Origin = Anchor.BottomRight,
-                    Size = new Vector2(60, 35),
-                    Children =
-                    [
-                        // Used to offset the fonts being misaligned
-                        new Container
+                Anchor = Anchor.BottomRight,
+                Origin = Anchor.BottomRight,
+                Size = new Vector2(60, 35),
+                Children =
+                [
+                    // Used to offset the fonts being misaligned
+                    new Container
+                    {
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.BottomCentre,
+                        Size = new Vector2(60, 32),
+                        CornerRadius = 8f,
+                        CornerExponent = 2.5f,
+                        Masking = true,
+                        Child = new Box
                         {
-                            Anchor = Anchor.BottomCentre,
-                            Origin = Anchor.BottomCentre,
-                            Size = new Vector2(60, 32),
-                            CornerRadius = 8f,
-                            CornerExponent = 2.5f,
-                            Masking = true,
-                            Child = new Box
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                            },
+                            RelativeSizeAxes = Axes.Both,
                         },
-                        new SpriteText
-                        {
-                            Text = "DEV",
-                            Colour = Color4.Gray,
-                            Font = OsuFont.Torus.With(size: 32, weight: FontWeight.Bold),
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                        }
-                    ]
-                });
-            }
+                    },
+                    new SpriteText
+                    {
+                        Text = "DEV",
+                        Colour = Color4.Gray,
+                        Font = OsuFont.Torus.With(size: 32, weight: FontWeight.Bold),
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                    }
+                ]
+            });
         }
     }
 }
