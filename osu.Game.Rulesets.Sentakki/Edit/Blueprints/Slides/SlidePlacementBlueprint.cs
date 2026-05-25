@@ -7,6 +7,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osu.Framework.Utils;
 using osu.Game.Rulesets.Edit;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
@@ -20,8 +21,10 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 
-public partial class SlidePlacementBlueprint : SentakkiPlacementBlueprint<Slide>
+public partial class SlidePlacementBlueprint : LanedPlacementBlueprint<Slide>
 {
+    public override bool ReplacesExistingObject(HitObject existing) => false;
+
     [Resolved]
     private LaneNoteSnapGrid snapGrid { get; set; } = null!;
 
