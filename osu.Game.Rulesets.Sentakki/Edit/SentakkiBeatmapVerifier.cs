@@ -13,7 +13,7 @@ public partial class SentakkiBeatmapVerifier : IBeatmapVerifier
         new CheckThreeHandedness(),
         new CheckSlideTapOmission(),
         new CheckMismatchedSlideTaps(),
-        new CheckSlideEndHitWindowOverlap(),
+        new CheckTouchAreaAndHitWindowOverlap(),
     ];
 
     public IEnumerable<Issue> Run(BeatmapVerifierContext context) => checks.SelectMany(c => c.Run(context));
