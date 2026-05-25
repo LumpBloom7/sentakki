@@ -47,7 +47,6 @@ public class CompositeBeatmapConverter : BeatmapConverter<SentakkiHitObject>
         beatmap.BeatmapInfo = original.BeatmapInfo;
         beatmap.ControlPointInfo = original.ControlPointInfo;
         beatmap.Breaks = original.Breaks;
-        beatmap.UnhandledEventLines = original.UnhandledEventLines;
         beatmap.HitObjects = cloneHitObjects(original.HitObjects);
 
         // For the 0 people that insist on using it.

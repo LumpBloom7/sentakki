@@ -47,7 +47,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
     private readonly List<string> noteLines = [];
     private readonly Dictionary<Location, Vector2> locationPositionMap = [];
 
-    protected override void ParseLine(Beatmap beatmap, Section section, string line)
+    protected override void ParseLine(Beatmap beatmap, Section section, string line, bool isPrimaryStream)
     {
         if (section != Section.HitObjects)
         {
@@ -57,16 +57,16 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                 return;
             }
 
-            base.ParseLine(beatmap, section, line);
+            base.ParseLine(beatmap, section, line, isPrimaryStream);
             return;
         }
 
         noteLines.Add(line);
     }
 
-    protected override void ParseStreamInto(LineBufferedReader stream, Beatmap output)
+    protected override void ParseStreamInto(LineBufferedReader stream, bool isPrimaryStream, Beatmap output)
     {
-        base.ParseStreamInto(stream, output);
+        base.ParseStreamInto(stream, isPrimaryStream, output);
         processNotes(output, string.Join('\n', noteLines));
     }
 
