@@ -218,7 +218,7 @@ public partial class SentakkiSimaiConvertScreen : OsuScreen
 
         notificationOverlay.Post(notification);
 
-        string batchOutputFolder = $"{origin.FullName}{Path.DirectorySeparatorChar}osz";
+        string batchOutputFolder = $"{origin.FullName}{Path.DirectorySeparatorChar}olz";
 
         Task.Factory.StartNew(() =>
         {
