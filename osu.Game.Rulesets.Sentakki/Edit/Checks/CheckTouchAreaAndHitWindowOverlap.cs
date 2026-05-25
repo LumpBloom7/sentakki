@@ -62,9 +62,9 @@ public class CheckTouchAreaAndHitWindowOverlap : ICheck
 
                     Vector2 position = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, lane);
 
-                    perfectWindowPeriods.Add(new Period(hitObject, hitObject.StartTime - tapPerfectWindow, hitObject.StartTime + tapPerfectWindow, position, 100));
-                    nonPerfectWindowPeriods.Add(new Period(hitObject, hitObject.StartTime - tapMissWindow, hitObject.StartTime - tapPerfectWindow, position, 100));
-                    nonPerfectWindowPeriods.Add(new Period(hitObject, hitObject.StartTime + tapPerfectWindow, hitObject.StartTime + tapMissWindow, position, 100));
+                    perfectWindowPeriods.Add(new Period(hitObject, hitObject.StartTime - tapPerfectWindow, hitObject.StartTime + tapPerfectWindow, position, 100, true));
+                    nonPerfectWindowPeriods.Add(new Period(hitObject, hitObject.StartTime - tapMissWindow, hitObject.StartTime - tapPerfectWindow, position, 100, true));
+                    nonPerfectWindowPeriods.Add(new Period(hitObject, hitObject.StartTime + tapPerfectWindow, hitObject.StartTime + tapMissWindow, position, 100, true));
                     break;
                 }
 
@@ -73,9 +73,9 @@ public class CheckTouchAreaAndHitWindowOverlap : ICheck
                     {
                         Vector2 position = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slide.Lane);
 
-                        perfectWindowPeriods.Add(new Period(hitObject, hitObject.StartTime - tapPerfectWindow, hitObject.StartTime + tapPerfectWindow, position, 100));
-                        nonPerfectWindowPeriods.Add(new Period(hitObject, hitObject.StartTime - tapMissWindow, hitObject.StartTime - tapPerfectWindow, position, 100));
-                        nonPerfectWindowPeriods.Add(new Period(hitObject, hitObject.StartTime + tapPerfectWindow, hitObject.StartTime + tapMissWindow, position, 100));
+                        perfectWindowPeriods.Add(new Period(hitObject, hitObject.StartTime - tapPerfectWindow, hitObject.StartTime + tapPerfectWindow, position, 100, true));
+                        nonPerfectWindowPeriods.Add(new Period(hitObject, hitObject.StartTime - tapMissWindow, hitObject.StartTime - tapPerfectWindow, position, 100, true));
+                        nonPerfectWindowPeriods.Add(new Period(hitObject, hitObject.StartTime + tapPerfectWindow, hitObject.StartTime + tapMissWindow, position, 100, true));
                     }
 
                     foreach (var slideBodyInfo in slide.SlideInfoList)
@@ -157,10 +157,13 @@ public class CheckTouchAreaAndHitWindowOverlap : ICheck
         public Issue Create(IEnumerable<HitObject> hitObjects) => new Issue(hitObjects, this);
     }
 
-    private record Period(HitObject hitObject, double Start, double End, Vector2 position, float radius)
+    private record Period(HitObject hitObject, double Start, double End, Vector2 position, float radius, bool isTap = false)
     {
         public bool IsOverlapped(Period other)
         {
+            if (isTap && other.isTap && position == other.position)
+                return false;
+
             float distanceSquared = Vector2.DistanceSquared(position, other.position);
             float mutualExclusionDistanceSquared = MathF.Pow(radius + other.radius, 2);
 
