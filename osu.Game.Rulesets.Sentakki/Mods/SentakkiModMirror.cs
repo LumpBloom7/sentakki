@@ -22,7 +22,6 @@ public class SentakkiModMirror : Mod, IApplicableAfterBeatmapConversion
     public override IconUsage? Icon => OsuIcon.ModMirror;
     public override string Acronym => "MR";
     public override ModType Type => ModType.Conversion;
-    public override double ScoreMultiplier => 1;
 
     public override bool Ranked => true;
 

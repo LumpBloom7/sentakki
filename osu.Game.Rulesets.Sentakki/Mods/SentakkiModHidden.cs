@@ -33,8 +33,6 @@ public partial class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset
 
     public override string ExtendedIconInformation => VisibleRadius.IsDefault ? string.Empty : $"{VisibleRadius.Value:P0}";
 
-    public override double ScoreMultiplier => 1 + MathF.Pow(1 - VisibleRadius.Value, 2) * 0.2;
-
     [SettingSource(
         typeof(SentakkiModHiddenStrings),
         nameof(SentakkiModHiddenStrings.VisibleRadius),
