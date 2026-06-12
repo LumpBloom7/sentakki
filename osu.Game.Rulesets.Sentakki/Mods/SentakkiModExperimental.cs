@@ -20,8 +20,6 @@ public class SentakkiModExperimental : Mod, IApplicableToBeatmapConverter
 
     public override bool RequiresConfiguration => true;
 
-    public override double ScoreMultiplier => 1.00;
-
     public override bool Ranked => true;
 
     [SettingSource(typeof(SentakkiModExperimentalStrings), nameof(SentakkiModExperimentalStrings.FanSlides), nameof(SentakkiModExperimentalStrings.FanSlidesDescription))]

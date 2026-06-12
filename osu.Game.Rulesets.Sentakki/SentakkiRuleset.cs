@@ -162,6 +162,9 @@ public partial class SentakkiRuleset : Ruleset
         }
     }
 
+    public override ScoreMultiplierCalculator CreateScoreMultiplierCalculator(ScoreMultiplierContext context)
+        => new SentakkiScoreMultiplierCalculator(context);
+
     public override RulesetSettingsSubsection CreateSettings() => new SentakkiSettingsSubsection(this);
 
     public override IRulesetConfigManager CreateConfig(SettingsStore? settings) => new SentakkiRulesetConfigManager(settings, RulesetInfo);
