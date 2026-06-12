@@ -305,6 +305,10 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
     {
         var newState = newValue ? Slide.TapTypeEnum.None : Slide.TapTypeEnum.Star;
 
+        // Special case: If the original slide had a regular tap, we don't force it to be a star
+        if (newState == Slide.TapTypeEnum.Star && slide.TapType is Slide.TapTypeEnum.Tap)
+            return false;
+
         if (slide.TapType == newState)
             return false;
 
