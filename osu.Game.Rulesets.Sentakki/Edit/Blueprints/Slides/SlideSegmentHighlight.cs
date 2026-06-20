@@ -283,6 +283,9 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
     protected override bool OnDragStart(DragStartEvent e)
     {
+        if (e.Button is not MouseButton.Left)
+            return false;
+
         dragOccured = true;
         return true;
     }
