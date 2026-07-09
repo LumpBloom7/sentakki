@@ -48,7 +48,7 @@ public class SentakkiBeatmapProcessor : BeatmapProcessor
 
         foreach (var group in colourableHitObjects.Values)
         {
-            bool isTwin = group.Count(countsForTwin) > 1; // This determines whether the twin colour should be used for eligible objects
+            bool isTwin = isTwinGroup(group); // This determines whether the twin colour should be used for eligible objects
 
             foreach (SentakkiHitObject hitObject in group)
             {
@@ -101,10 +101,19 @@ public class SentakkiBeatmapProcessor : BeatmapProcessor
         }
     }
 
-    private static bool countsForTwin(HitObject hitObject) => hitObject switch
+    private static bool isTwinGroup(List<SentakkiHitObject> sentakkiHitObject)
     {
-        Hold.HoldHead => false,
-        Slide => false,
-        _ => true
-    };
+        int count = 0;
+
+        foreach (var hitObject in sentakkiHitObject)
+        {
+            if (hitObject is Hold.HoldHead or Slide)
+                continue;
+
+            if (++count > 1)
+                return true;
+        }
+
+        return false;
+    }
 }
