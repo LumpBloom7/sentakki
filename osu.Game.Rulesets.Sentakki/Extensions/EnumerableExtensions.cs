@@ -34,4 +34,23 @@ public static class EnumerableExtensions
 
         return list.Last();
     }
+
+    // An alternative implementation of LINQ's GroupBy, which may have better performance characteristics in some situations
+    public static Dictionary<K, List<V>> GroupByDictionary<K, V>(this IEnumerable<V> values, Func<V, K> keySelector) where K : notnull
+    {
+        Dictionary<K, List<V>> result = [];
+
+        foreach (var value in values)
+        {
+            var key = keySelector(value);
+
+            if (!result.TryGetValue(key, out var group))
+                result[key] = group = [];
+
+            group.Add(value);
+        }
+
+        return result;
+    }
+
 }
