@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Screens.Edit;
 using osuTK.Graphics;
@@ -35,14 +36,21 @@ public class SentakkiBeatmapProcessor : BeatmapProcessor
         Color4 twinColor = Color4.Gold;
         Color4 breakColor = Color4.OrangeRed;
 
-        var hitObjectGroups = getColorableHitObject(Beatmap.HitObjects)
-            .GroupBy(h => new { _ = h is SlideBody, Time = Math.Round(h.StartTime + ((h as SlideBody)?.SlideBodyInfo.EffectiveWaitDuration ?? 0)) });
+        var colourableHitObjects = getColorableHitObject(Beatmap.HitObjects)
+            .GroupByDictionary(h =>
+                {
+                    if (h is SlideBody sb)
+                        return (true, Math.Round(sb.StartTime + sb.SlideBodyInfo.EffectiveWaitDuration));
 
-        foreach (var group in hitObjectGroups)
+                    return (false, Math.Round(h.StartTime));
+                }
+            );
+
+        foreach (var group in colourableHitObjects.Values)
         {
             bool isTwin = group.Count(countsForTwin) > 1; // This determines whether the twin colour should be used for eligible objects
 
-            foreach (SentakkiHitObject hitObject in group.OfType<SentakkiHitObject>())
+            foreach (SentakkiHitObject hitObject in group)
             {
                 if (hitObject is TouchHold th)
                 {
@@ -68,35 +76,29 @@ public class SentakkiBeatmapProcessor : BeatmapProcessor
         }
     }
 
-    private IEnumerable<HitObject> getColorableHitObject(IReadOnlyList<HitObject> hitObjects)
+    private static IEnumerable<SentakkiHitObject> getColorableHitObject(List<SentakkiHitObject> hitObjects)
     {
-        for (int i = 0; i < hitObjects.Count; ++i)
+        foreach (var hitObject in hitObjects)
         {
-            var hitObject = hitObjects[i];
-            if (canBeColored(hitObject)) yield return hitObject;
+            yield return hitObject;
 
-            foreach (var nested in getColorableHitObject(hitObject.NestedHitObjects))
-                yield return nested;
+            switch (hitObject)
+            {
+                case Hold h:
+                    // The HitExplosion uses the colour of the hold head as well as the hold itself.
+                    yield return (Hold.HoldHead)h.NestedHitObjects[0];
+                    break;
+
+                case Slide s:
+                    if (s.TapType is not Slide.TapTypeEnum.None)
+                        yield return s.SlideTap;
+
+                    foreach (var slideBody in s.SlideBodies)
+                        yield return slideBody;
+
+                    break;
+            }
         }
-    }
-
-    private static bool canBeColored(HitObject hitObject)
-    {
-        switch (hitObject)
-        {
-            case Tap:
-            case SlideBody:
-            case Hold.HoldHead:
-            case Touch:
-            case TouchHold:
-
-            // HitObject lines take the parent colour, instead of considering the nested object's colour
-            case Slide:
-            case Hold:
-                return true;
-        }
-
-        return false;
     }
 
     private static bool countsForTwin(HitObject hitObject) => hitObject switch
