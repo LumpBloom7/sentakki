@@ -7,26 +7,17 @@ using osu.Game.Rulesets.Mods;
 
 namespace osu.Game.Rulesets.Sentakki.Difficulty;
 
-public class SentakkiDifficultyCalculator : DifficultyCalculator
+public class SentakkiDifficultyCalculator(IRulesetInfo ruleset, IWorkingBeatmap beatmap) : DifficultyCalculator(ruleset, beatmap)
 {
-    public SentakkiDifficultyCalculator(IRulesetInfo ruleset, IWorkingBeatmap beatmap)
-        : base(ruleset, beatmap)
-    {
-    }
-
-    protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills, double clockRate)
-    {
-        int maxCombo = beatmap.GetMaxCombo();
-
-        return new DifficultyAttributes
+    protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills)
+        => new DifficultyAttributes
         {
             StarRating = beatmap.BeatmapInfo.StarRating * 1.25f, // Inflate SR of converts, to encourage players to try lower diffs, without hurting their fragile ego.
             Mods = mods,
-            MaxCombo = maxCombo
+            MaxCombo = beatmap.GetMaxCombo()
         };
-    }
 
-    protected override IEnumerable<DifficultyHitObject> CreateDifficultyHitObjects(IBeatmap beatmap, double clockRate) => [];
+    protected override IEnumerable<DifficultyHitObject> CreateDifficultyHitObjects(IBeatmap beatmap, Mod[] mods) => [];
 
-    protected override Skill[] CreateSkills(IBeatmap beatmap, Mod[] mods, double clockRate) => [];
+    protected override Skill[] CreateSkills(IBeatmap beatmap, Mod[] mods) => [];
 }
