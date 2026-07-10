@@ -14,24 +14,6 @@ namespace osu.Game.Rulesets.Sentakki.Mods;
 
 public class SentakkiModHardRock : ModHardRock, IApplicableToHitObject, IApplicableToDrawableHitObject
 {
-    public override double ScoreMultiplier
-    {
-        get
-        {
-            switch (JudgementMode.Value)
-            {
-                case SentakkiJudgementMode.Gati:
-                    return 1.2;
-
-                case SentakkiJudgementMode.Maji:
-                    return 1.1;
-
-                default:
-                    return 1;
-            }
-        }
-    }
-
     public override string ExtendedIconInformation => $"{(JudgementMode.Value == SentakkiJudgementMode.Normal ? string.Empty : JudgementMode.Value)}";
 
     public override void ApplyToDifficulty(BeatmapDifficulty difficulty)

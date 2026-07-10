@@ -22,22 +22,6 @@ public class SentakkiModDifficultyAdjust : Mod, IApplicableAfterBeatmapConversio
 
     public override IconUsage? Icon => OsuIcon.ModDifficultyAdjust;
 
-    public override double ScoreMultiplier
-    {
-        get
-        {
-            double result = 1;
-
-            if (BreakRemoval.Value)
-                result *= 0.8;
-
-            if (AllEx.Value)
-                result *= 0.3;
-
-            return result;
-        }
-    }
-
     public override bool RequiresConfiguration => true;
     public override bool Ranked => true;
 

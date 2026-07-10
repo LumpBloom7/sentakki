@@ -17,7 +17,7 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
 
-public partial class HoldPlacementBlueprint : SentakkiPlacementBlueprint<Hold>
+public partial class HoldPlacementBlueprint : LanedPlacementBlueprint<Hold>
 {
     [Resolved]
     private LaneNoteSnapGrid snapGrid { get; set; } = null!;

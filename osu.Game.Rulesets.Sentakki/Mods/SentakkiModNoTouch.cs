@@ -13,7 +13,6 @@ public class SentakkiModNoTouch : Mod, IApplicableToDrawableHitObject
     public override string Acronym => "NT";
     public override ModType Type => ModType.Automation;
     public override LocalisableString Description => SentakkiModNoTouchStrings.ModDescription;
-    public override double ScoreMultiplier => .2f;
     public override Type[] IncompatibleMods => [.. base.IncompatibleMods, typeof(ModAutoplay)];
 
     public void ApplyToDrawableHitObject(DrawableHitObject drawableHitObject)

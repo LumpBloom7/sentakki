@@ -250,8 +250,8 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
 
     protected override void UpdateTernaryStates()
     {
-        var selectedItems = SelectedItems.OfType<SentakkiHitObject>();
-        ExTernaryState.Value = GetStateFromSelection(selectedItems, h => h.Ex);
+        var selectedItems = SelectedItems.OfType<SentakkiHitObject>().ToList();
+        ExTernaryState.Value = GetStateFromSelection(selectedItems.Where(h => h is not TouchHold), h => h.Ex);
         BreakTernaryState.Value = GetStateFromSelection(selectedItems, h => h.Break);
 
         var selectedSlideBodies = selectedItems.OfType<Slide>().SelectMany(s => s.SlideInfoList);

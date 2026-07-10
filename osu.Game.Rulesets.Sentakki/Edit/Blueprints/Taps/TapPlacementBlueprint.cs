@@ -17,7 +17,7 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
 
-public partial class TapPlacementBlueprint : SentakkiPlacementBlueprint<Tap>
+public partial class TapPlacementBlueprint : LanedPlacementBlueprint<Tap>
 {
     [Resolved]
     private LaneNoteSnapGrid snapGrid { get; set; } = null!;

@@ -1,7 +1,6 @@
 using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
@@ -13,7 +12,7 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches;
 
-public partial class TouchPlacementBlueprint : SentakkiPlacementBlueprint<Touch>
+public partial class TouchPlacementBlueprint : TouchPlacementBlueprint<Touch>
 {
     private readonly TouchBody highlight;
 

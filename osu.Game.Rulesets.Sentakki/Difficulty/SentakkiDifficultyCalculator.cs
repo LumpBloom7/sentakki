@@ -9,17 +9,12 @@ using osu.Game.Rulesets.Mods;
 
 namespace osu.Game.Rulesets.Sentakki.Difficulty;
 
-public partial class SentakkiDifficultyCalculator : DifficultyCalculator
+public partial class SentakkiDifficultyCalculator(IRulesetInfo ruleset, IWorkingBeatmap beatmap) : DifficultyCalculator(ruleset, beatmap)
 {
-    public SentakkiDifficultyCalculator(IRulesetInfo ruleset, IWorkingBeatmap beatmap)
-        : base(ruleset, beatmap)
-    {
-    }
-
     [GeneratedRegex("[+?]")]
     public static partial Regex PlusRegex();
 
-    protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills, double clockRate)
+    protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills)
     {
         double? starRating = null;
 
@@ -57,7 +52,7 @@ public partial class SentakkiDifficultyCalculator : DifficultyCalculator
         };
     }
 
-    protected override IEnumerable<DifficultyHitObject> CreateDifficultyHitObjects(IBeatmap beatmap, double clockRate) => [];
+    protected override IEnumerable<DifficultyHitObject> CreateDifficultyHitObjects(IBeatmap beatmap, Mod[] mods) => [];
 
-    protected override Skill[] CreateSkills(IBeatmap beatmap, Mod[] mods, double clockRate) => [];
+    protected override Skill[] CreateSkills(IBeatmap beatmap, Mod[] mods) => [];
 }
