@@ -12,7 +12,7 @@ public class SentakkiDifficultyCalculator(IRulesetInfo ruleset, IWorkingBeatmap 
     protected override DifficultyAttributes CreateDifficultyAttributes(IBeatmap beatmap, Mod[] mods, Skill[] skills)
         => new DifficultyAttributes
         {
-            StarRating = beatmap.BeatmapInfo.StarRating * 1.25f, // Inflate SR of converts, to encourage players to try lower diffs, without hurting their fragile ego.
+            StarRating = beatmap.BeatmapInfo.StarRating * 0.75f,
             Mods = mods,
             MaxCombo = beatmap.GetMaxCombo()
         };
