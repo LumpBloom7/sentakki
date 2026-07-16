@@ -9,9 +9,10 @@ using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shaders.Types;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default;
 
 public enum NoteShape
 {
