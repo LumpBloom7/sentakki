@@ -56,7 +56,7 @@ public partial class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset
         var lanedHitObjectArea = lanedPlayfield.LanedHitObjectArea;
         var lanedNoteProxyContainer = lanedHitObjectArea.Child;
 
-        const float note_visible_point = SentakkiPlayfield.NOTESTARTDISTANCE - TapPiece.CIRCLE_RADIUS;
+        const float note_visible_point = SentakkiPlayfield.NOTESTARTDISTANCE - DrawableTap.CIRCLE_RADIUS;
         const float total_visible_distance = SentakkiPlayfield.INTERSECTDISTANCE;
 
         const float visibility_start_point = note_visible_point / total_visible_distance;

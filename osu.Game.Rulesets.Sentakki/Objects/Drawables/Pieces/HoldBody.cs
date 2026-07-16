@@ -28,7 +28,7 @@ public partial class HoldBody : CompositeDrawable
             {
                 // For simplicity in sizing and positioning
                 // let's put the endpoints outside the main area
-                Padding = new MarginPadding(-TapPiece.CIRCLE_RADIUS),
+                Padding = new MarginPadding(-DrawableTap.CIRCLE_RADIUS),
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

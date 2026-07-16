@@ -12,7 +12,7 @@ public partial class StarPiece : CompositeDrawable
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        Size = new Vector2(TapPiece.CIRCLE_RADIUS * 2);
+        Size = new Vector2(DrawableTap.CIRCLE_RADIUS * 2);
     }
 
     [BackgroundDependencyLoader]

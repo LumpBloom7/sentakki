@@ -20,7 +20,7 @@ public partial class SlideTapPiece : CompositeDrawable
 
     public SlideTapPiece()
     {
-        Size = new Vector2(TapPiece.CIRCLE_RADIUS * 2);
+        Size = new Vector2(DrawableTap.CIRCLE_RADIUS * 2);
 
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
