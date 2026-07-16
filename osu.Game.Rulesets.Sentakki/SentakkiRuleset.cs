@@ -222,6 +222,7 @@ public partial class SentakkiRuleset : Ruleset
     {
         return skin switch
         {
+            LegacySkin => new SentakkiLegacySkinTransformer(skin),
             _ => null
         };
     }
