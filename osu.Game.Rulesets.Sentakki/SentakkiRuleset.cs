@@ -38,6 +38,7 @@ using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
 using osu.Game.Screens.Edit.Setup;
 using osu.Game.Screens.Ranking.Statistics;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -216,6 +217,14 @@ public partial class SentakkiRuleset : Ruleset
         => [HitResult.Perfect, HitResult.Great, HitResult.Good, HitResult.Meh, HitResult.Miss];
 
     public override LocalisableString GetDisplayNameForHitResult(HitResult result) => result.GetDisplayNameForSentakkiResult();
+
+    public override ISkin? CreateSkinTransformer(ISkin skin, IBeatmap beatmap)
+    {
+        return skin switch
+        {
+            _ => null
+        };
+    }
 
     public partial class SentakkiIcon : CompositeDrawable
     {
