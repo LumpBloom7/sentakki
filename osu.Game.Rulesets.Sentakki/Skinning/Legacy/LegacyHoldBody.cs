@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -16,53 +15,58 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Legacy;
 
 public partial class LegacyHoldBody : CompositeDrawable
 {
-    //public override Quad ScreenSpaceDrawQuad => noteVisuals.ScreenSpaceDrawQuad;
+    private Drawable glowLayer = null!;
 
-    private Container noteVisuals;
-
-    private Sprite headGlow = null!;
-    private Sprite midGlow = null!;
-    private Sprite tailGlow = null!;
+    private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
+    private readonly IBindable<bool> exBindable = new Bindable<bool>();
 
     public LegacyHoldBody()
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.TopCentre;
         RelativeSizeAxes = Axes.Both;
+    }
 
-        InternalChildren =
-        [
-            noteVisuals = new Container
+    [BackgroundDependencyLoader]
+    private void load(DrawableHitObject? drawableObject, ISkinSource skin)
+    {
+        InternalChild = new Container
+        {
+            // For simplicity in sizing and positioning
+            // let's put the endpoints outside the main area
+            Padding = new MarginPadding(-DrawableTap.CIRCLE_RADIUS),
+            RelativeSizeAxes = Axes.Both,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Child = new Container
             {
-                // For simplicity in sizing and positioning
-                // let's put the endpoints outside the main area
-                Padding = new MarginPadding(-DrawableTap.CIRCLE_RADIUS),
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
+
+                Children = [
+                    glowLayer = createGlow(skin),
+                    createMainBody(skin),
+                ]
             }
-        ];
-    }
+        };
 
-    private void createParts(ISkin skin)
-    {
-        var texture = skin.GetTexture("sentakki/hold");
-        var glowTexture = skin.GetTexture("sentakki/hold-glow");
-
-        if (texture is null || glowTexture is null)
+        if (drawableObject is not DrawableSentakkiHitObject dsho)
             return;
 
-        var headTexture = texture.Crop(new RectangleF(0, 0, 1, 0.5f), Axes.Both);
-        var headGlowTexture = glowTexture.Crop(new RectangleF(0, 0, 1, 0.5f), Axes.Both);
+        accentColour.BindTo(drawableObject.AccentColour);
+        accentColour.BindValueChanged(colour => Colour = colour.NewValue, true);
 
-        var size = texture.Size;
-        var glowSize = glowTexture.Size;
+        exBindable.BindTo(dsho.ExBindable);
+        exBindable.BindValueChanged(e => glowLayer.Colour = e.NewValue ? Color4.White : Color4.Black, true);
+    }
 
-        var midRect = new RectangleF(new Vector2(0, (size.Y / 2) - 1), new Vector2(size.X, 2));
-        var midGlowRect = new RectangleF(new Vector2(0, (glowSize.Y / 2) - 1), new Vector2(glowSize.X, 2));
+    private static GridContainer createMainBody(ISkin skin)
+    {
+        var texture = skin.GetTexture("sentakki/hold");
 
-        var middleTexture = texture.Crop(midRect, wrapModeT: WrapMode.Repeat);
-        var middleGlowTexture = glowTexture.Crop(midGlowRect, wrapModeT: WrapMode.Repeat);
+        var capTexture = texture?.Crop(new RectangleF(0, 0, 1, 0.5f), Axes.Both);
+        var bodyTexture = texture?.Crop(new RectangleF(0, (texture.Size.Y / 2) - 1, texture.Size.X, 2), wrapModeT: WrapMode.Repeat);
 
         var grid = new GridContainer()
         {
@@ -73,6 +77,8 @@ public partial class LegacyHoldBody : CompositeDrawable
             ],
             ColumnDimensions = [new Dimension(GridSizeMode.Distributed)],
             RelativeSizeAxes = Axes.Both,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
 
             // The corner-to-corner diameter of the hexagon matches the diameter of a regular tap circle
             // On the vertical axis is is perfect, but there are no corners on the sides, so let's adjust the drawable size so it doesn't look weird
@@ -80,116 +86,84 @@ public partial class LegacyHoldBody : CompositeDrawable
 
             Content = new Drawable[][]
             {
-                [
-                    new Container
+                    [new Sprite
                     {
+                        RelativeSizeAxes = Axes.Both,
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.BottomCentre,
+                        Texture = capTexture,
+                    }],
+                    [new Sprite
+                    {
+                        RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
-                        RelativeSizeAxes = Axes.Both,
-
-                        Children = [
-                            headGlow = new Sprite
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Anchor = Anchor.BottomCentre,
-                                Origin = Anchor.BottomCentre,
-                                Texture = headGlowTexture,
-                                // Counter adjust the scale of the glow to properly take into account drawable size
-                                Scale = new Vector2(1.51f, 1.3f)
-                            },
-                            new Sprite()
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Texture = headTexture,
-                            }
-                        ]
-                    },
-                ],
-            [
-                    new Container
+                        Texture = bodyTexture,
+                    }],
+                    [new Sprite
                     {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
                         RelativeSizeAxes = Axes.Both,
-
-                        Children = [
-                            midGlow = new Sprite
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Texture = middleGlowTexture,
-                                // Counter adjust the scale of the glow to properly take into account drawable size
-                                Scale = new Vector2(1.5f, 1.0f)
-                            },
-                            new Sprite()
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Texture = middleTexture,
-                            }
-                        ]
-                    },
-                ],
-            [
-                    new Container
-                    {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        RelativeSizeAxes = Axes.Both,
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.BottomCentre,
                         Height = -1,
-
-                        Children = [
-                            tailGlow = new Sprite
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Anchor = Anchor.BottomCentre,
-                                Origin = Anchor.BottomCentre,
-                                Texture = headGlowTexture,
-                                // Counter adjust the scale of the glow to properly take into account drawable size
-                                Scale = new Vector2(1.51f, 1.3f)
-                            },
-                            new Sprite()
-                            {
-                                RelativeSizeAxes = Axes.Both,
-                                Anchor = Anchor.Centre,
-                                Origin = Anchor.Centre,
-                                Texture = headTexture,
-                            }
-                        ]
-                    },
-                ]
+                        Texture = capTexture,
+                    }]
             }
         };
 
-        noteVisuals.Child = grid;
+        return grid;
     }
 
-    private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
-    private readonly IBindable<bool> exBindable = new Bindable<bool>();
-
-    [BackgroundDependencyLoader]
-    private void load(DrawableHitObject? drawableObject, ISkinSource skin)
+    private static GridContainer createGlow(ISkin skin)
     {
-        createParts(skin);
+        var texture = skin.GetTexture("sentakki/hold-glow");
 
-        if (drawableObject is not DrawableSentakkiHitObject dsho)
-            return;
+        var capTexture = texture?.Crop(new RectangleF(0, 0, 1, 0.5f), Axes.Both);
+        var bodyTexture = texture?.Crop(new RectangleF(0, (texture.Size.Y / 2) - 1, texture.Size.X, 2), wrapModeT: WrapMode.Repeat);
 
-        accentColour.BindTo(drawableObject.AccentColour);
-        accentColour.BindValueChanged(colour => Colour = colour.NewValue, true);
-
-        exBindable.BindTo(dsho.ExBindable);
-        exBindable.BindValueChanged(e =>
+        var grid = new GridContainer()
         {
-            var colour = e.NewValue ? Color4.White : Color4.Black;
+            RowDimensions = [
+                new Dimension(GridSizeMode.Absolute, DrawableTap.CIRCLE_RADIUS),
+                new Dimension(GridSizeMode.Distributed),
+                new Dimension(GridSizeMode.Absolute, DrawableTap.CIRCLE_RADIUS)
+            ],
+            ColumnDimensions = [new Dimension(GridSizeMode.Distributed)],
+            RelativeSizeAxes = Axes.Both,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
 
-            headGlow.Colour = colour;
-            midGlow.Colour = colour;
-            tailGlow.Colour = colour;
-        }, true);
+            Content = new Drawable[][]
+            {
+                [new Sprite
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.BottomCentre,
+                    Origin = Anchor.BottomCentre,
+                    Texture = capTexture,
+                    Scale = new Vector2(1.3f),
+                }],
+                [new Sprite
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Texture = bodyTexture,
+                    // The body doesn't have a top and bottom edge, don't scale the vertical axis so to avoid overlapping shadows
+                    Scale = new Vector2(1.3f, 1.0f),
+                }],
+                [new Sprite
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.BottomCentre,
+                    Height = -1,
+                    Texture = capTexture,
+                    Scale = new Vector2(1.3f),
+                }]
+            }
+        };
+
+        return grid;
     }
 }
