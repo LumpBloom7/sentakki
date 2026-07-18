@@ -38,7 +38,7 @@ public partial class LegacySlideFanChevron : CompositeDrawable
                 FillMode = FillMode.Fit,
                 Scale = new Vector2(1.5f),
 
-                Texture = skin.GetTexture($"sentakki/slide-fan-chevron-{index}-glow")
+                Texture = skin.GetTexture($"sentakki/glow/slide-fan-chevron-{index}")
             },
             new Sprite
             {

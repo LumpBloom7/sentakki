@@ -35,7 +35,7 @@ public partial class LegacyStarPiece : CompositeDrawable
                 Origin = Anchor.Centre,
                 Scale = new Vector2(1.5f),
 
-                Texture = skin.GetTexture("sentakki/star-glow"),
+                Texture = skin.GetTexture("sentakki/glow/star"),
             },
             new Sprite
             {

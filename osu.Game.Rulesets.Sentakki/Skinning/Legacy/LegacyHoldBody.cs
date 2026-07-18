@@ -119,7 +119,7 @@ public partial class LegacyHoldBody : CompositeDrawable
 
     private static GridContainer createGlow(ISkin skin)
     {
-        var texture = skin.GetTexture("sentakki/hold-glow");
+        var texture = skin.GetTexture("sentakki/glow/hold");
 
         var capTexture = texture?.Crop(new RectangleF(0, 0, 1, 0.5f), Axes.Both);
         var bodyTexture = texture?.Crop(new RectangleF(0, (texture.Size.Y / 2) - 1, texture.Size.X, 2), wrapModeT: WrapMode.Repeat);

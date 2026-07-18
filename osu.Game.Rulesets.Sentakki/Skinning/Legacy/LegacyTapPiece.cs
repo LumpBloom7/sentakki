@@ -36,7 +36,7 @@ public partial class LegacyTapPiece : CompositeDrawable
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Scale = new Vector2(1.5f),
-                Texture = skin.GetTexture("sentakki/tap-glow")
+                Texture = skin.GetTexture("sentakki/glow/tap")
             },
             new Sprite
             {

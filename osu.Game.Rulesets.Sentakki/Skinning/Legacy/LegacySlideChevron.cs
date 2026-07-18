@@ -35,7 +35,7 @@ public partial class LegacySlideChevron : CompositeDrawable
                 FillMode = FillMode.Fit,
                 Scale = new Vector2(1.5f),
 
-                Texture = skin.GetTexture("sentakki/slide-chevron-glow")
+                Texture = skin.GetTexture("sentakki/glow/slide-chevron")
             },
             new Sprite
             {
