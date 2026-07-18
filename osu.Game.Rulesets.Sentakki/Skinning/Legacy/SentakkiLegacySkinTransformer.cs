@@ -29,10 +29,14 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
                             return null;
 
                         return new LegacyStarPiece();
+
+                    case SentakkiSkinComponents.SlideChevron:
+                        if (GetTexture("sentakki/slide-chevron") is null)
+                            return null;
+
+                        return new LegacySlideChevron();
                 }
                 break;
-
-
         }
 
         return base.GetDrawableComponent(lookup);
