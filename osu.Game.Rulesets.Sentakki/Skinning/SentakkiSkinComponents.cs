@@ -4,4 +4,6 @@ public enum SentakkiSkinComponents
 {
     Tap,
     Hold,
+
+    SlideStar,
 }

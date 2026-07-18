@@ -3,12 +3,13 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
-using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Common;
 
 public partial class SlideTapPiece : CompositeDrawable
 {
@@ -16,7 +17,7 @@ public partial class SlideTapPiece : CompositeDrawable
     public override bool RemoveWhenNotAlive => false;
 
     public readonly Container Stars;
-    public readonly StarPiece SecondStar;
+    public readonly SkinnableDrawable SecondStar;
 
     public SlideTapPiece()
     {
@@ -24,8 +25,6 @@ public partial class SlideTapPiece : CompositeDrawable
 
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        Scale = new Vector2(0f);
-        Position = new Vector2(0, -SentakkiPlayfield.NOTESTARTDISTANCE);
 
         InternalChildren =
         [
@@ -36,8 +35,17 @@ public partial class SlideTapPiece : CompositeDrawable
                 Origin = Anchor.Centre,
                 Children =
                 [
-                    new StarPiece(),
-                    SecondStar = new StarPiece { Rotation = 36 }
+                    new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.SlideStar), _=> new StarPiece(), ConfineMode.ScaleToFit)
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                    },
+                    SecondStar = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.SlideStar), _=> new StarPiece(), ConfineMode.ScaleToFit)
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Rotation = 36
+                    }
                 ]
             }
         ];
