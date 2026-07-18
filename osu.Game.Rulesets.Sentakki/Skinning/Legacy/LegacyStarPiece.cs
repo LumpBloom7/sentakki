@@ -33,10 +33,9 @@ public partial class LegacyStarPiece : CompositeDrawable
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Scale = new Vector2(1.3f),
+                Scale = new Vector2(1.5f),
 
                 Texture = skin.GetTexture("sentakki/star-glow"),
-
             },
             new Sprite
             {

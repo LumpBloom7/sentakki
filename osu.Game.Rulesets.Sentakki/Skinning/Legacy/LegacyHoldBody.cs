@@ -133,6 +133,10 @@ public partial class LegacyHoldBody : CompositeDrawable
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
 
+            // The corner-to-corner diameter of the hexagon matches the diameter of a regular tap circle
+            // On the vertical axis is is perfect, but there are no corners on the sides, so let's adjust the drawable size so it doesn't look weird
+            Size = new Vector2(0.89f, 1.0f),
+
             Content = new Drawable[][]
             {
                 [new Sprite
@@ -141,7 +145,7 @@ public partial class LegacyHoldBody : CompositeDrawable
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
                     Texture = capTexture,
-                    Scale = new Vector2(1.3f),
+                    Scale = new Vector2(1.5f),
                 }],
                 [new Sprite
                 {
@@ -150,7 +154,7 @@ public partial class LegacyHoldBody : CompositeDrawable
                     Origin = Anchor.Centre,
                     Texture = bodyTexture,
                     // The body doesn't have a top and bottom edge, don't scale the vertical axis so to avoid overlapping shadows
-                    Scale = new Vector2(1.3f, 1.0f),
+                    Scale = new Vector2(1.5f, 1.0f),
                 }],
                 [new Sprite
                 {
@@ -159,7 +163,7 @@ public partial class LegacyHoldBody : CompositeDrawable
                     Origin = Anchor.BottomCentre,
                     Height = -1,
                     Texture = capTexture,
-                    Scale = new Vector2(1.3f),
+                    Scale = new Vector2(1.5f),
                 }]
             }
         };

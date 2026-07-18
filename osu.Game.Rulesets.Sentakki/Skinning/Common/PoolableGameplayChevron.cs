@@ -5,6 +5,7 @@ using osu.Framework.Graphics.Pooling;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Common;
 
+[Cached]
 public partial class PoolableGameplayChevron : PoolableDrawable
 {
     public double DisappearThreshold { get; set; }
