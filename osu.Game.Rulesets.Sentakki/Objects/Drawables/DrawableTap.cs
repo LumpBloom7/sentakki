@@ -60,7 +60,6 @@ public partial class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHa
 
         Size = new Vector2(CIRCLE_RADIUS * 2);
 
-
         AddRangeInternal([
             TapVisual = CreateTapRepresentation()
         ]);

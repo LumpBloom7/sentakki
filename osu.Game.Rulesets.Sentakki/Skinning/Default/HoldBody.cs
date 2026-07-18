@@ -4,16 +4,13 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Skinning.Default;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default;
 
 public partial class HoldBody : CompositeDrawable
 {
-    // This will be proxied, so a must.
-    public override bool RemoveWhenNotAlive => false;
-
     public override Quad ScreenSpaceDrawQuad => noteVisuals.ScreenSpaceDrawQuad;
 
     private readonly LaneNoteVisual noteVisuals;
@@ -22,6 +19,8 @@ public partial class HoldBody : CompositeDrawable
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.TopCentre;
+        RelativeSizeAxes = Axes.Both;
+
         InternalChildren =
         [
             new Container
