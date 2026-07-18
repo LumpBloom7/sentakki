@@ -1,6 +1,7 @@
 using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Audio;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Input.Events;
@@ -10,8 +11,10 @@ using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Skinning;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Screens.Edit;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -19,12 +22,11 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
 
 public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, DrawableHold>
 {
-    private readonly HoldBody highlight;
-
     public override Quad SelectionQuad => highlight.ScreenSpaceDrawQuad;
     public override Vector2 ScreenSpaceSelectionPoint => startDot.ScreenSpaceDrawQuad.Centre;
 
     private Container highlightContainer;
+    private readonly ProxyableSkinnableDrawable highlight;
 
     private Drawable startDot;
 
@@ -40,7 +42,7 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
             Origin = Anchor.TopCentre,
 
             Children = [
-                highlight = new HoldBody()
+                highlight = new ProxyableSkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Hold), _ => new HoldBody())
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
@@ -96,9 +98,9 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
     protected override void Update()
     {
         Rotation = HitObject.Lane.GetRotationForLane();
-        highlightContainer.Y = DrawableObject.NoteBody.Y;
-        highlightContainer.Scale = DrawableObject.NoteBody.Scale;
-        highlightContainer.Height = DrawableObject.NoteBody.Height;
+        highlightContainer.Y = DrawableObject.Y;
+        highlightContainer.Scale = DrawableObject.Scale;
+        highlightContainer.Height = DrawableObject.Height;
     }
 
     private partial class DraggableDotPiece : DotPiece

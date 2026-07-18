@@ -9,8 +9,10 @@ using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Skinning;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 using osuTK.Input;
@@ -22,7 +24,7 @@ public partial class HoldPlacementBlueprint : LanedPlacementBlueprint<Hold>
     [Resolved]
     private LaneNoteSnapGrid snapGrid { get; set; } = null!;
 
-    private readonly HoldBody highlight;
+    private readonly SkinnableDrawable highlight;
 
     public HoldPlacementBlueprint()
     {
@@ -33,8 +35,10 @@ public partial class HoldPlacementBlueprint : LanedPlacementBlueprint<Hold>
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            Child = highlight = new HoldBody
+
+            Child = highlight = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Hold), _ => new HoldBody())
             {
+                RelativeSizeAxes = Axes.None,
                 Colour = Color4.YellowGreen,
                 Alpha = 0.5f,
             }

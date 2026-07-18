@@ -25,7 +25,7 @@ public partial class LegacyStarPiece : CompositeDrawable
     private IBindable<bool> exBindable = new Bindable<bool>();
 
     [BackgroundDependencyLoader]
-    private void load(DrawableHitObject drawableHitObject, ISkinSource skin)
+    private void load(DrawableHitObject? drawableHitObject, ISkinSource skin)
     {
         AddRangeInternal([
             glowLayer = new Sprite

@@ -16,9 +16,12 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Legacy;
 public partial class LegacyHoldBody : CompositeDrawable
 {
     private Drawable glowLayer = null!;
+    private Drawable mainBody = null!;
 
     private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
     private readonly IBindable<bool> exBindable = new Bindable<bool>();
+
+    public override Quad ScreenSpaceDrawQuad => mainBody.ScreenSpaceDrawQuad;
 
     public LegacyHoldBody()
     {
@@ -46,7 +49,7 @@ public partial class LegacyHoldBody : CompositeDrawable
 
                 Children = [
                     glowLayer = createGlow(skin),
-                    createMainBody(skin),
+                    mainBody = createMainBody(skin),
                 ]
             }
         };
