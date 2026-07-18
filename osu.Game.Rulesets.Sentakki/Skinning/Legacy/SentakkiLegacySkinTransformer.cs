@@ -17,8 +17,16 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
                             return null;
 
                         return new LegacyTapPiece();
+
+                    case SentakkiSkinComponents.Hold:
+                        if (GetTexture("sentakki/hold") is null)
+                            return null;
+
+                        return new LegacyHoldBody();
                 }
                 break;
+
+
         }
 
         return base.GetDrawableComponent(lookup);

@@ -62,9 +62,10 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
+
         AddRangeInternal(
         [
-            NoteBody = new ProxyableSkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Hold), _=> new HoldBody(), Game.Skinning.ConfineMode.ScaleToFit){
+            NoteBody = new ProxyableSkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Hold), _=> new HoldBody()){
                 Anchor = Anchor.Centre,
                 Origin = Anchor.TopCentre,
             },
