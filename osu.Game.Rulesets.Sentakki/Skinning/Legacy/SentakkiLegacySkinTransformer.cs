@@ -13,7 +13,7 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
                 switch (sentakkiComponent.Component)
                 {
                     case SentakkiSkinComponents.Tap:
-                        if (GetTexture("sentakki-tap") == null)
+                        if (GetTexture("sentakki/tap") == null)
                             return null;
 
                         return new LegacyTapPiece();
