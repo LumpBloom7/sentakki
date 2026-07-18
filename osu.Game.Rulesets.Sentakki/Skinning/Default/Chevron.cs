@@ -9,9 +9,9 @@ using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shaders.Types;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default;
 
-public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
+public partial class Chevron : Drawable, ITexturedShaderDrawable
 {
     private float thickness = 13f;
 
@@ -97,7 +97,7 @@ public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
 
     private partial class ChevronDrawNode : TexturedShaderDrawNode
     {
-        protected new DrawableChevron Source => (DrawableChevron)base.Source;
+        protected new Chevron Source => (Chevron)base.Source;
         protected override bool CanDrawOpaqueInterior => false;
 
         private IUniformBuffer<ShapeParameters>? uniformBuffer;
@@ -105,7 +105,7 @@ public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
 
         private ShapeParameters parameters;
 
-        public ChevronDrawNode(DrawableChevron source)
+        public ChevronDrawNode(Chevron source)
             : base(source)
         {
         }

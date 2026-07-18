@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Pooling;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
+using osu.Game.Rulesets.Sentakki.Skinning.Common;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
@@ -17,13 +18,13 @@ public partial class TestSceneFanSlide : OsuTestScene
     protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 
     [Cached]
-    private readonly DrawablePool<SlideChevron> chevronPool = null!;
+    private readonly SlideChevronProvider chevronPool = null!;
 
     private readonly SlideVisual slide;
 
     public TestSceneFanSlide()
     {
-        Add(chevronPool = new DrawablePool<SlideChevron>(62));
+        Add(chevronPool = new SlideChevronProvider());
 
         Add(new SentakkiRing
         {

@@ -8,6 +8,7 @@ using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.Skinning.Common;
 using osu.Game.Rulesets.Sentakki.UI.Components.HitObjectLine;
 using osu.Game.Rulesets.UI;
 
@@ -24,7 +25,7 @@ public partial class LanedPlayfield : Playfield
     public readonly LineRenderer HitObjectLineRenderer;
 
     [Cached]
-    private readonly DrawablePool<SlideChevron> chevronPool;
+    private readonly SlideChevronProvider chevronProvider;
 
     public readonly Container LanedHitObjectArea;
 
@@ -47,7 +48,7 @@ public partial class LanedPlayfield : Playfield
         }
 
         AddRangeInternal([
-            chevronPool = new DrawablePool<SlideChevron>(100),
+            chevronProvider = new SlideChevronProvider(),
             HitObjectLineRenderer = new LineRenderer(),
             slideBodyProxyContainer = new SortedDrawableProxyContainer(),
             slideStarProxyContainer = new SortedDrawableProxyContainer(),

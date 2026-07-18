@@ -15,6 +15,7 @@ using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.Skinning.Common;
 using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Compose.Components;
 using osuTK;
@@ -31,7 +32,7 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
     public new SentakkiSelectionHandler SelectionHandler => (SentakkiSelectionHandler)base.SelectionHandler;
 
     [Cached]
-    private DrawablePool<SlideChevron> chevrons { get; set; }
+    private SlideChevronProvider chevrons { get; set; }
 
     public SentakkiBlueprintContainer(SentakkiHitObjectComposer composer)
         : base(composer)
@@ -39,7 +40,7 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        AddInternal(chevrons = new DrawablePool<SlideChevron>(100));
+        AddInternal(chevrons = new SlideChevronProvider());
         AddInternal(movementHandler = new SentakkiMovementHandler());
     }
 

@@ -3,6 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
@@ -10,6 +11,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
+using osu.Game.Rulesets.Sentakki.Skinning.Common;
 using osuTK;
 using osuTK.Graphics;
 
@@ -18,12 +20,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Objects;
 [TestFixture]
 public partial class TestSceneSlideNote : SentakkiSkinnableTestScene
 {
-
-    private int depthIndex;
-
-    [Cached]
-    private readonly DrawablePool<SlideChevron> chevronPool;
-
     public static bool[][] ObjectFlagsSource =
     [
         [false, false, false, false],
@@ -35,10 +31,6 @@ public partial class TestSceneSlideNote : SentakkiSkinnableTestScene
         [false, false, true, true],
     ];
 
-    public TestSceneSlideNote()
-    {
-        Add(chevronPool = new DrawablePool<SlideChevron>(62));
-    }
 
     [TestCaseSource(nameof(ObjectFlagsSource))]
     public void TestSlides(bool headBreak, bool headEx, bool bodyBreak, bool bodyEx)
@@ -115,7 +107,6 @@ public partial class TestSceneSlideNote : SentakkiSkinnableTestScene
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Depth = depthIndex++,
                 Auto = auto,
                 Scale = new Vector2(0.3f),
             };
@@ -126,7 +117,7 @@ public partial class TestSceneSlideNote : SentakkiSkinnableTestScene
                     nested2.Auto = auto;
             }
 
-            return dSlide;
+            return new SlideTestContext(dSlide);
         });
     }
 
@@ -174,7 +165,6 @@ public partial class TestSceneSlideNote : SentakkiSkinnableTestScene
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Depth = depthIndex++,
                 Auto = auto,
                 Scale = new Vector2(0.3f),
             };
@@ -185,7 +175,7 @@ public partial class TestSceneSlideNote : SentakkiSkinnableTestScene
                     nested2.Auto = auto;
             }
 
-            return dSlide;
+            return new SlideTestContext(dSlide);
         });
     }
 
@@ -234,7 +224,6 @@ public partial class TestSceneSlideNote : SentakkiSkinnableTestScene
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Depth = depthIndex++,
                 Auto = auto,
                 Scale = new Vector2(0.3f),
             };
@@ -245,7 +234,21 @@ public partial class TestSceneSlideNote : SentakkiSkinnableTestScene
                     nested2.Auto = auto;
             }
 
-            return dSlide;
+            return new SlideTestContext(dSlide);
         });
+    }
+
+    private partial class SlideTestContext : Container
+    {
+        [Cached]
+        private SlideChevronProvider chevronPool = null!;
+
+        public SlideTestContext(Drawable drawable)
+        {
+            RelativeSizeAxes = Axes.Both;
+
+            AddInternal(chevronPool = new SlideChevronProvider());
+            AddInternal(drawable);
+        }
     }
 }

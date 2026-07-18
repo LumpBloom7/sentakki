@@ -6,4 +6,5 @@ public enum SentakkiSkinComponents
     Hold,
 
     SlideStar,
+    SlideChevron,
 }
