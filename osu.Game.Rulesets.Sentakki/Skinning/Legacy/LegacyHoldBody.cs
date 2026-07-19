@@ -68,7 +68,8 @@ public partial class LegacyHoldBody : CompositeDrawable
     {
         var texture = skin.GetTexture("sentakki/hold");
 
-        var capTexture = texture?.Crop(new RectangleF(0, 0, 1, 0.5f), Axes.Both);
+        var headCapTexture = texture?.Crop(new RectangleF(0, 0, 1, 0.5f), Axes.Both);
+        var tailCapTexture = texture?.Crop(new RectangleF(0, 0.5f, 1, 0.5f), Axes.Both);
         var bodyTexture = texture?.Crop(new RectangleF(0, (texture.Size.Y / 2) - 1, texture.Size.X, 2), wrapModeT: WrapMode.Repeat);
 
         var grid = new GridContainer()
@@ -94,7 +95,7 @@ public partial class LegacyHoldBody : CompositeDrawable
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.BottomCentre,
                         Origin = Anchor.BottomCentre,
-                        Texture = capTexture,
+                        Texture = headCapTexture,
                     }],
                     [new Sprite
                     {
@@ -107,9 +108,8 @@ public partial class LegacyHoldBody : CompositeDrawable
                     {
                         RelativeSizeAxes = Axes.Both,
                         Anchor = Anchor.TopCentre,
-                        Origin = Anchor.BottomCentre,
-                        Height = -1,
-                        Texture = capTexture,
+                        Origin = Anchor.TopCentre,
+                        Texture = tailCapTexture,
                     }]
             }
         };
@@ -121,7 +121,8 @@ public partial class LegacyHoldBody : CompositeDrawable
     {
         var texture = skin.GetTexture("sentakki/glow/hold");
 
-        var capTexture = texture?.Crop(new RectangleF(0, 0, 1, 0.5f), Axes.Both);
+        var headCapTexture = texture?.Crop(new RectangleF(0, 0, 1, 0.5f), Axes.Both);
+        var tailCapTexture = texture?.Crop(new RectangleF(0, 0.5f, 1, 0.5f), Axes.Both);
         var bodyTexture = texture?.Crop(new RectangleF(0, (texture.Size.Y / 2) - 1, texture.Size.X, 2), wrapModeT: WrapMode.Repeat);
 
         var grid = new GridContainer()
@@ -147,7 +148,7 @@ public partial class LegacyHoldBody : CompositeDrawable
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
-                    Texture = capTexture,
+                    Texture = headCapTexture,
                     Scale = new Vector2(1.5f),
                 }],
                 [new Sprite
@@ -163,9 +164,8 @@ public partial class LegacyHoldBody : CompositeDrawable
                 {
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.TopCentre,
-                    Origin = Anchor.BottomCentre,
-                    Height = -1,
-                    Texture = capTexture,
+                    Origin = Anchor.TopCentre,
+                    Texture = tailCapTexture,
                     Scale = new Vector2(1.5f),
                 }]
             }
