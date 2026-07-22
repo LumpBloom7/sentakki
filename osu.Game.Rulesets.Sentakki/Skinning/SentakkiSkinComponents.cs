@@ -19,4 +19,6 @@ public enum SentakkiSkinComponents
     SlideFanChevron8,
     SlideFanChevron9,
     SlideFanChevron10,
+
+    Touch,
 }

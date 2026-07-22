@@ -5,7 +5,9 @@ using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
+using osu.Game.Rulesets.Sentakki.Skinning;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.Touch;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 using osuTK.Input;
@@ -14,15 +16,19 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches;
 
 public partial class TouchPlacementBlueprint : TouchPlacementBlueprint<Touch>
 {
-    private readonly TouchBody highlight;
+    private readonly SkinnableDrawable highlight;
 
     public TouchPlacementBlueprint()
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        InternalChild = highlight = new TouchBody()
+        InternalChild = highlight = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Touch), _ => new TouchBody(), ConfineMode.ScaleToFit)
         {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            RelativeSizeAxes = Axes.None,
+            Size = new Vector2(130),
             Alpha = 0.5f,
             Colour = Color4.YellowGreen,
         };

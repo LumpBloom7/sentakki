@@ -3,7 +3,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.Touch;
 using osuTK;
 using osuTK.Graphics;
 

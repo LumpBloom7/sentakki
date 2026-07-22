@@ -2,7 +2,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Touch;
 
 public partial class TouchPieceShadow : CompositeDrawable
 {
@@ -11,7 +11,7 @@ public partial class TouchPieceShadow : CompositeDrawable
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        AddInternal(new DrawableTouchTriangle
+        AddInternal(new TouchTriangle
         {
             Anchor = Anchor.TopCentre,
             Origin = Anchor.TopCentre,

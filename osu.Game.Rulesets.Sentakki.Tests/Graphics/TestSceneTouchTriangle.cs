@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Shapes;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.Touch;
 using osu.Game.Tests.Visual;
 using osuTK.Graphics;
 

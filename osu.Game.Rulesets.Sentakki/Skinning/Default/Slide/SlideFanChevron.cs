@@ -1,7 +1,6 @@
 using osu.Framework.Allocation;
-using osu.Game.Rulesets.Sentakki.Skinning.Default.Slide;
 
-namespace osu.Game.Rulesets.Sentakki.Skinning.Default;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slide;
 
 public partial class SlideFanChevron : SlideChevron
 {

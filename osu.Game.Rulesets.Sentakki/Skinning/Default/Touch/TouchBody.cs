@@ -4,22 +4,25 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Skinning.Common;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Touch;
 
-public partial class TouchBody : CompositeDrawable
+public partial class TouchBody : CompositeDrawable, ITouchBody
 {
+    public Drawable Border => BorderContainer;
+
     public Container BorderContainer;
     public Container PieceContainer;
 
     public TouchBody()
     {
-        Size = new Vector2(value: 130);
+        RelativeSizeAxes = Axes.Both;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        Alpha = 0;
 
         InternalChildren =
         [
@@ -39,11 +42,12 @@ public partial class TouchBody : CompositeDrawable
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Size = new Vector2(100),
-                CornerRadius = 25,
+                RelativeSizeAxes = Axes.Both,
+                Scale = new Vector2(10f / 9f),
+                CornerRadius = 22.5f,
                 CornerExponent = 2.5f,
                 Masking = true,
-                BorderThickness = 12,
+                BorderThickness = 10,
                 BorderColour = Color4.White,
                 Alpha = 0,
                 Child = new Box

@@ -1,6 +1,6 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.Touch;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
@@ -12,7 +12,7 @@ public partial class TouchHoldPiece : CompositeDrawable
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        AddInternal(new DrawableTouchTriangle
+        AddInternal(new TouchTriangle
         {
             Anchor = Anchor.TopCentre,
             Origin = Anchor.TopCentre,

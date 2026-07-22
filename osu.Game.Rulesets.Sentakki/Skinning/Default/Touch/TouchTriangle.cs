@@ -9,11 +9,12 @@ using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shaders.Types;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Touch;
 
-public partial class DrawableTouchTriangle : Drawable, ITexturedShaderDrawable
+public partial class TouchTriangle : Drawable, ITexturedShaderDrawable
 {
     private float thickness = 15f;
 
@@ -123,7 +124,7 @@ public partial class DrawableTouchTriangle : Drawable, ITexturedShaderDrawable
 
     private partial class TouchTriangleDrawNode : TexturedShaderDrawNode
     {
-        protected new DrawableTouchTriangle Source => (DrawableTouchTriangle)base.Source;
+        protected new TouchTriangle Source => (TouchTriangle)base.Source;
         protected override bool CanDrawOpaqueInterior => false;
 
         private IUniformBuffer<ShapeParameters>? uniformBuffer;
@@ -131,7 +132,7 @@ public partial class DrawableTouchTriangle : Drawable, ITexturedShaderDrawable
 
         private ShapeParameters parameters;
 
-        public TouchTriangleDrawNode(DrawableTouchTriangle source)
+        public TouchTriangleDrawNode(TouchTriangle source)
             : base(source)
         {
         }
