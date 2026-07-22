@@ -148,6 +148,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
             if (Head.AllJudged)
                 timeNotHeld = Math.Clamp(timeNotHeld + Time.Elapsed, 0, HitObject.Duration);
+
             return;
         }
 
@@ -316,7 +317,6 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
         Head.UpdateResult();
         isHolding = true;
-        NoteBody.FadeColour(AccentColour.Value, 50);
         return true;
     }
 
@@ -335,8 +335,5 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
         UpdateResult(true);
         isHolding = false;
-
-        if (!AllJudged)
-            NoteBody.FadeColour(Color4.Gray, 100);
     }
 }
