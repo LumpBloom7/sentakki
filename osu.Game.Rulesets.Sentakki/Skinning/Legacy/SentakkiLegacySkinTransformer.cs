@@ -24,6 +24,12 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
 
                         return new LegacyHoldBody();
 
+                    case SentakkiSkinComponents.Touch:
+                        if (GetTexture("sentakki/touch") is null)
+                            return null;
+
+                        return new LegacyTouchBody();
+
                     case SentakkiSkinComponents.SlideStar:
                         if (GetTexture("sentakki/star") is null)
                             return null;

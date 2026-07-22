@@ -13,19 +13,22 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Touch;
 
 public partial class TouchBody : CompositeDrawable, ITouchBody
 {
-    public Drawable Border => BorderContainer;
-
-    public Container BorderContainer;
-    public Container PieceContainer;
+    public Drawable Border { get; private set; } = null!;
+    public Container PieceContainer = null!;
 
     public TouchBody()
     {
         RelativeSizeAxes = Axes.Both;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
+    }
 
-        InternalChildren =
-        [
+    private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
+
+    [BackgroundDependencyLoader]
+    private void load(DrawableHitObject? drawableObject)
+    {
+        InternalChildren = [
             PieceContainer = new Container
             {
                 Anchor = Anchor.Centre,
@@ -38,7 +41,7 @@ public partial class TouchBody : CompositeDrawable, ITouchBody
                     new DotPiece()
                 ]
             },
-            BorderContainer = new Container
+            Border = new Container
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -58,13 +61,7 @@ public partial class TouchBody : CompositeDrawable, ITouchBody
                 }
             },
         ];
-    }
 
-    private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
-
-    [BackgroundDependencyLoader]
-    private void load(DrawableHitObject? drawableObject)
-    {
         if (drawableObject is null)
             return;
 
