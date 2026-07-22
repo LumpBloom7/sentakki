@@ -4,7 +4,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.Skinning.Default;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slide;
 
 public partial class StarPiece : CompositeDrawable
 {

@@ -5,6 +5,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.Slide;
 using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;

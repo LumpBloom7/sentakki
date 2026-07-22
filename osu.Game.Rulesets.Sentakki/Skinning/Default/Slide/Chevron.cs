@@ -9,7 +9,7 @@ using osu.Framework.Graphics.Shaders;
 using osu.Framework.Graphics.Shaders.Types;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.Skinning.Default;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.Slide;
 
 public partial class Chevron : Drawable, ITexturedShaderDrawable
 {

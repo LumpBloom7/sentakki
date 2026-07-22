@@ -13,6 +13,7 @@ using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.Skinning;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.Slide;
 using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
