@@ -41,25 +41,7 @@ public partial class TouchBody : CompositeDrawable, ITouchBody
                     new DotPiece()
                 ]
             },
-            Border = new Container
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                RelativeSizeAxes = Axes.Both,
-                Scale = new Vector2(10f / 9f),
-                CornerRadius = 22.5f,
-                CornerExponent = 2.5f,
-                Masking = true,
-                BorderThickness = 10,
-                BorderColour = Color4.White,
-                Alpha = 0,
-                Child = new Box
-                {
-                    Alpha = 0,
-                    AlwaysPresent = true,
-                    RelativeSizeAxes = Axes.Both
-                }
-            },
+            Border = new TouchBorder()
         ];
 
         if (drawableObject is null)
