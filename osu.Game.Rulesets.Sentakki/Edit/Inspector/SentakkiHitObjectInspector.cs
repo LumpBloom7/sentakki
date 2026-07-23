@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
-using osu.Framework.Extensions.TypeExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics;
@@ -83,9 +82,14 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
                 addHeader("Time");
 
                 if (selected is IHasDuration duration)
+                {
+                    addValue(new SelfUpdatingInspectorEntry(() => $"{selected.StartTime:#,0.##} - {duration.EndTime:#,0.##} ms"));
                     addDurationInformation(selected);
+                }
                 else
+                {
                     addValue($"{selected.StartTime:#,0.##}ms");
+                }
 
                 addPositionInformation(selected);
 
@@ -136,8 +140,9 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
         double beatLength = editorBeatmap.ControlPointInfo.TimingPointAt(hitObject.StartTime).BeatLength;
         double durationInBeats = duration.Duration / beatLength;
 
-        addValue(new SelfUpdatingInspectorEntry(() => $"{hitObject.StartTime:#,0.##} - {duration.Duration:#,0.##} ms"));
-        addValue(new SelfUpdatingInspectorEntry(() => $"{duration.Duration / beatLength:0.##} beats"));
+        addHeader("Duration");
+        addValue(new SelfUpdatingInspectorEntry(() => $"{duration.Duration:#,0.##} ms"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"({duration.Duration / beatLength:0.##} beats)"));
 
         if (hitObject is not Slide s)
             return;
@@ -147,11 +152,11 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
 
         addHeader("Wait duration");
         addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveWaitDuration:#,0.##} ms"));
-        addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveWaitDuration / beatLength:0.##} beats"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"({s.SlideInfoList[0].EffectiveWaitDuration / beatLength:0.##} beats)"));
 
         addHeader("Movement duration");
         addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveMovementDuration:#,0.##} ms"));
-        addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveMovementDuration / beatLength:0.##} beats"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"({s.SlideInfoList[0].EffectiveMovementDuration / beatLength:0.##} beats)"));
     }
 
     private void addModifierInformation(SentakkiHitObject hitObject)
