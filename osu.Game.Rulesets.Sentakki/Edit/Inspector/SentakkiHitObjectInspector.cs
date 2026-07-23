@@ -80,17 +80,17 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
             case 1:
                 SentakkiHitObject selected = (SentakkiHitObject)objects.Single();
 
-                addHeader("Type");
-                addValue($"{selected.GetType().ReadableName()}");
+                addHeader("Time");
+
+                if (selected is IHasDuration duration)
+                    addDurationInformation(selected);
+                else
+                    addValue($"{selected.StartTime:#,0.##}ms");
 
                 addPositionInformation(selected);
 
                 addModifierInformation(selected);
                 addSlideModifiersInformation(selected);
-
-                addHeader("Time");
-                addValue($"{selected.StartTime:#,0.##}ms");
-                addDurationInformation(selected);
 
                 addSlideSegmentInformation(selected);
                 break;
@@ -99,11 +99,15 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
                 addHeader("Selected Objects");
                 addValue($"{objects.Length:#,0.##}");
 
-                addHeader("Start Time");
-                addValue($"{objects.Min(o => o.StartTime):#,0.##}ms");
+                addHeader("Time");
+                double minTime = objects.Min(o => o.StartTime);
+                double maxTime = objects.Max(o => o.GetEndTime());
 
-                addHeader("End Time");
-                addValue(new SelfUpdatingInspectorEntry(() => $"{objects.Max(o => o.GetEndTime()):#,0.##}ms"));
+                if (minTime == maxTime)
+                    addValue($"{minTime:#,0.##} ms");
+                else
+                    addValue($"{objects.Min(o => o.StartTime):#,0.##} - {objects.Max(o => o.GetEndTime()):#,0.##} ms");
+
                 break;
         }
     }
@@ -115,8 +119,7 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
         switch (hitObject)
         {
             case IHasPosition pos:
-                addValue($"x:{pos.X:#,0.##}");
-                addValue($"y:{pos.Y:#,0.##}");
+                addValue($"x:{pos.X:#,0.##}, y:{pos.Y:#,0.##}");
                 break;
 
             case IHasLane lane:
@@ -133,8 +136,7 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
         double beatLength = editorBeatmap.ControlPointInfo.TimingPointAt(hitObject.StartTime).BeatLength;
         double durationInBeats = duration.Duration / beatLength;
 
-        addHeader("Duration");
-        addValue(new SelfUpdatingInspectorEntry(() => $"{duration.Duration:#,0.##}ms"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"{hitObject.StartTime:#,0.##} - {duration.Duration:#,0.##} ms"));
         addValue(new SelfUpdatingInspectorEntry(() => $"{duration.Duration / beatLength:0.##} beats"));
 
         if (hitObject is not Slide s)
@@ -144,11 +146,11 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
         double movementDurationInBeats = s.SlideInfoList[0].EffectiveMovementDuration / beatLength;
 
         addHeader("Wait duration");
-        addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveWaitDuration:#,0.##}ms"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveWaitDuration:#,0.##} ms"));
         addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveWaitDuration / beatLength:0.##} beats"));
 
         addHeader("Movement duration");
-        addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveMovementDuration:#,0.##}ms"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveMovementDuration:#,0.##} ms"));
         addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveMovementDuration / beatLength:0.##} beats"));
     }
 
@@ -214,7 +216,7 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
 
     private void addHeader(string header) => inspectorText.AddParagraph($"{header}: ", s =>
     {
-        s.Font = OsuFont.Style.Caption1;
+        s.Font = OsuFont.Style.Caption2;
         s.Colour = colourProvider.Content2;
     });
 
@@ -231,7 +233,7 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
         inspectorText.NewLine();
         inspectorText.AddText(value, s =>
         {
-            s.Font = OsuFont.Style.Body;
+            s.Font = OsuFont.Style.Caption2.With(weight: FontWeight.SemiBold);
             s.Colour = colour;
         });
     }
