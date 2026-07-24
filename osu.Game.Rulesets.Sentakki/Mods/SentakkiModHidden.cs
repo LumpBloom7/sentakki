@@ -22,6 +22,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.TouchHold;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
 using osuTK;
@@ -88,7 +89,8 @@ public partial class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset
                 break;
 
             case DrawableTouchHold th:
-                th.TouchHoldBody.ProgressPiece.Hide();
+                if (th.TouchHoldBody.Drawable is TouchHoldBody defaultBody)
+                    defaultBody.ProgressPiece.Hide();
                 break;
 
             case DrawableSlideBody sb:

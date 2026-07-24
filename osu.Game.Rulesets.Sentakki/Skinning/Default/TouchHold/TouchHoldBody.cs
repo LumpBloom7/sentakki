@@ -1,11 +1,15 @@
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Skinning.Common;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Default.TouchHold;
 
-public partial class TouchHoldBody : CircularContainer
+public partial class TouchHoldBody : CircularContainer, IHasCopyableVisualState
 {
     public readonly TouchHoldProgressPiece ProgressPiece;
     public readonly TouchHoldCentrePiece CentrePiece;
@@ -16,7 +20,7 @@ public partial class TouchHoldBody : CircularContainer
 
     public TouchHoldBody()
     {
-        Size = new Vector2(130);
+        RelativeSizeAxes = Axes.Both;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
         InternalChildren =
@@ -28,5 +32,40 @@ public partial class TouchHoldBody : CircularContainer
             CompletedCentre = new TouchHoldCompletedCentre(),
             new DotPiece()
         ];
+    }
+
+    [Resolved]
+    private DrawableTouchHold? drawableTouchHold { get; set; } = null!;
+
+    [BackgroundDependencyLoader]
+    private void load()
+    {
+        if (drawableTouchHold is null)
+            return;
+
+        drawableTouchHold.ApplyCustomUpdateState += applyCustomUpdateState;
+    }
+
+    private void applyCustomUpdateState(DrawableHitObject hitobject, ArmedState state)
+    {
+        if (hitobject != drawableTouchHold)
+            return;
+
+        using (BeginAbsoluteSequence(drawableTouchHold.HitObject.StartTime))
+        {
+            ProgressPiece.TransformBindableTo(ProgressPiece.ProgressBindable, 1, drawableTouchHold.HitObject.Duration);
+            CentrePiece.FadeOut();
+            CompletedCentre.FadeIn();
+        }
+    }
+
+    public void CopyVisualStateTo(IHasCopyableVisualState other)
+    {
+        if (other is not TouchHoldBody thb)
+            return;
+
+        thb.ProgressPiece.ProgressBindable.Value = ProgressPiece.ProgressBindable.Value;
+        thb.CentrePiece.Alpha = CentrePiece.Alpha;
+        thb.CompletedCentre.Alpha = CompletedCentre.Alpha;
     }
 }

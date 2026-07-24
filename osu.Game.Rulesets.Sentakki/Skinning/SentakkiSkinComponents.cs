@@ -21,4 +21,5 @@ public enum SentakkiSkinComponents
     SlideFanChevron10,
 
     Touch,
+    TouchHold,
 }

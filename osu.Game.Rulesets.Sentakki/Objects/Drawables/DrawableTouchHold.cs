@@ -12,6 +12,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Skinning;
 using osu.Game.Rulesets.Sentakki.Skinning.Default.TouchHold;
 using osu.Game.Skinning;
 using osuTK;
@@ -19,6 +20,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables;
 
+[Cached]
 public partial class DrawableTouchHold : DrawableSentakkiHitObject
 {
     public new TouchHold HitObject => (TouchHold)base.HitObject;
@@ -27,7 +29,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => TouchHoldBody.ReceivePositionalInputAt(screenSpacePos);
 
-    public TouchHoldBody TouchHoldBody = null!;
+    public SkinnableDrawable TouchHoldBody = null!;
 
     private PausableSkinnableSound holdSample = null!;
 
@@ -59,12 +61,18 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         if (DrawableSentakkiRuleset is not null)
             AnimationDuration.BindTo(DrawableSentakkiRuleset?.AdjustedTouchAnimDuration);
 
+        Size = new Vector2(130);
         Colour = Color4.SlateGray;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
         AddRangeInternal(
         [
-            TouchHoldBody = new TouchHoldBody(),
+            TouchHoldBody = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.TouchHold),  _=> new TouchHoldBody(), ConfineMode.ScaleToFit){
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                RelativeSizeAxes = Axes.None,
+                Size  = new Vector2(130)
+            },
             holdSample = new PausableSkinnableSound
             {
                 Volume = { Value = 1 },
@@ -114,15 +122,6 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
 
         using (BeginDelayedSequence(fadeTime))
             TouchHoldBody.ResizeTo(80, animTime, Easing.InCirc);
-    }
-
-    protected override void UpdateStartTimeStateTransforms()
-    {
-        base.UpdateStartTimeStateTransforms();
-
-        TouchHoldBody.CentrePiece.FadeOut();
-        TouchHoldBody.CompletedCentre.FadeIn();
-        TouchHoldBody.ProgressPiece.TransformBindableTo(TouchHoldBody.ProgressPiece.ProgressBindable, 1, ((IHasDuration)HitObject).Duration);
     }
 
     [Cached]
