@@ -7,7 +7,7 @@ using osu.Framework.Graphics.Effects;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.TouchHold;
 
 public partial class TouchHoldCompletedCentre : CompositeDrawable
 {

@@ -6,7 +6,7 @@ using osu.Framework.Utils;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.TouchHold;
 
 public partial class TouchHoldCircularProgress : CircularProgress
 {

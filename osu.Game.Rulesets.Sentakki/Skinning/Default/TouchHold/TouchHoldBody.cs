@@ -1,8 +1,9 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osuTK;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default.TouchHold;
 
 public partial class TouchHoldBody : CircularContainer
 {

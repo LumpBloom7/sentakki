@@ -7,7 +7,7 @@ using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.TouchHold;
 using osuTK;
 using osuTK.Graphics;
 using osuTK.Input;
