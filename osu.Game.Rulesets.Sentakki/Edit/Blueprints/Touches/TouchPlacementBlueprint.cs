@@ -12,7 +12,7 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches;
 
-public partial class TouchPlacementBlueprint : TouchPlacementBlueprint<Touch>
+public partial class TouchPlacementBlueprint : TouchPlacementBlueprintBase<Touch>
 {
     private readonly TouchBody highlight;
 
