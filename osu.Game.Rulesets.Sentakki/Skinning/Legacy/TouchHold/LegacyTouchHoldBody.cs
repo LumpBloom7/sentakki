@@ -17,6 +17,9 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Legacy.TouchHold;
 public partial class LegacyTouchHoldBody : CompositeDrawable, IHasCopyableVisualState
 {
     public LegacyTouchHoldProgress ProgressPiece = null!;
+
+    private Container mainPiece = null!;
+
     private Container trianglePieces = null!;
 
     public LegacyTouchHoldBody()
@@ -37,11 +40,11 @@ public partial class LegacyTouchHoldBody : CompositeDrawable, IHasCopyableVisual
     {
         InternalChildren = [
             ProgressPiece = new LegacyTouchHoldProgress(){
-                Size = new Vector2(130),
+                RelativeSizeAxes = Axes.Both
             },
-            new Container
+            mainPiece = new Container
             {
-                RelativeSizeAxes = Axes.Both,
+                Size = new Vector2(130),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Children = [
@@ -161,6 +164,17 @@ public partial class LegacyTouchHoldBody : CompositeDrawable, IHasCopyableVisual
     {
         if (hitobject != drawableTouchHold)
             return;
+
+        double initialLifetimeOffset = drawableTouchHold.HitObject.StartTime - drawableTouchHold.AnimationStartTime.Value;
+
+        double animTime = initialLifetimeOffset * 0.8;
+        double fadeTime = initialLifetimeOffset * 0.2;
+
+        using (BeginAbsoluteSequence(drawableTouchHold.AnimationStartTime.Value))
+        {
+            this.FadeInFromZero(fadeTime);
+            mainPiece.Delay(fadeTime).ResizeTo(90, animTime, Easing.InCirc);
+        }
 
         using (BeginAbsoluteSequence(drawableTouchHold.HitObject.StartTime))
         {

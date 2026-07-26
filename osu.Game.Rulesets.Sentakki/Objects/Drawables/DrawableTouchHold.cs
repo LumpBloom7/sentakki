@@ -115,13 +115,6 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
     protected override void UpdateInitialTransforms()
     {
         base.UpdateInitialTransforms();
-        double animTime = AnimationDuration.Value * 0.8;
-        double fadeTime = AnimationDuration.Value * 0.2;
-
-        TouchHoldBody.FadeInFromZero(fadeTime).ScaleTo(1);
-
-        using (BeginDelayedSequence(fadeTime))
-            TouchHoldBody.ResizeTo(80, animTime, Easing.InCirc);
     }
 
     [Cached]

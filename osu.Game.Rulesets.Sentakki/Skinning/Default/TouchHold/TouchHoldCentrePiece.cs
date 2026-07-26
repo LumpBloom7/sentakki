@@ -22,9 +22,8 @@ public partial class TouchHoldCentrePiece : CompositeDrawable
     {
         Origin = Anchor.Centre;
         Anchor = Anchor.Centre;
-        RelativeSizeAxes = Axes.Both;
+        //RelativeSizeAxes = Axes.Both;
         Rotation = 45;
-        Scale = new Vector2(80 / 90f);
 
         InternalChildren =
         [

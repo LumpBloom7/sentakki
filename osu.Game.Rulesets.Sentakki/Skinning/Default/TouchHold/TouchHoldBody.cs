@@ -26,7 +26,9 @@ public partial class TouchHoldBody : CircularContainer, IHasCopyableVisualState
         InternalChildren =
         [
             ProgressPiece = new TouchHoldProgressPiece(),
-            CentrePiece = new TouchHoldCentrePiece(),
+            CentrePiece = new TouchHoldCentrePiece(){
+                Size = new Vector2(130)
+            },
             // We swap the centre piece with this other drawable to make it look better with the progress bar
             // Otherwise we'd need to add a thick border in between the centre and the progress
             CompletedCentre = new TouchHoldCompletedCentre(),
@@ -51,6 +53,17 @@ public partial class TouchHoldBody : CircularContainer, IHasCopyableVisualState
         if (hitobject != drawableTouchHold)
             return;
 
+        double initialLifetimeOffset = drawableTouchHold.HitObject.StartTime - drawableTouchHold.AnimationStartTime.Value;
+
+        double animTime = initialLifetimeOffset * 0.8;
+        double fadeTime = initialLifetimeOffset * 0.2;
+
+        using (BeginAbsoluteSequence(drawableTouchHold.AnimationStartTime.Value))
+        {
+            this.FadeInFromZero(fadeTime);
+            CentrePiece.Delay(fadeTime).ResizeTo(90, animTime, Easing.InCirc).ScaleTo(8 / 9f, animTime, Easing.InCirc);
+        }
+
         using (BeginAbsoluteSequence(drawableTouchHold.HitObject.StartTime))
         {
             ProgressPiece.TransformBindableTo(ProgressPiece.ProgressBindable, 1, drawableTouchHold.HitObject.Duration);
@@ -63,6 +76,9 @@ public partial class TouchHoldBody : CircularContainer, IHasCopyableVisualState
     {
         if (other is not TouchHoldBody thb)
             return;
+
+        thb.CentrePiece.Size = CentrePiece.Size;
+        thb.Alpha = Alpha;
 
         thb.ProgressPiece.ProgressBindable.Value = ProgressPiece.ProgressBindable.Value;
         thb.CentrePiece.Alpha = CentrePiece.Alpha;
