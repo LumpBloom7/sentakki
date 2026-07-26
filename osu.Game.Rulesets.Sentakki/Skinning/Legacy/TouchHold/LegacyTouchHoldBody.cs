@@ -50,9 +50,9 @@ public partial class LegacyTouchHoldBody : CompositeDrawable, IHasCopyableVisual
                 Children = [
                     createTouchShadow(skin),
                     trianglePieces = createCentrePiece(skin),
+                    new LegacyTouchDot(),
                 ]
             },
-            new DotPiece(),
         ];
 
         if (drawableTouchHold is null)

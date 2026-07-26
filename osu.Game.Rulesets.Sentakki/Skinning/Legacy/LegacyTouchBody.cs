@@ -41,6 +41,7 @@ public partial class LegacyTouchBody : CompositeDrawable, ITouchBody
                 Children = [
                     glowContainer = createTouchGlow(skin),
                     createTouchShape(skin),
+                    new LegacyTouchDot(),
                 ]
             },
 
@@ -49,7 +50,7 @@ public partial class LegacyTouchBody : CompositeDrawable, ITouchBody
                 Texture = skin.GetTexture("sentakki/touch-border"),
                 FillMode = FillMode.Fit,
                 Alpha = 0,
-            }
+            },
         ];
 
         if (drawableHitObject is not DrawableSentakkiHitObject dsho)
