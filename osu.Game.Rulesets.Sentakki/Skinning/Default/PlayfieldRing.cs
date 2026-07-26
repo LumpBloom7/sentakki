@@ -7,6 +7,7 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Rulesets.Sentakki.UI.Components;
 using osuTK;
 using osuTK.Graphics;
 
@@ -26,6 +27,7 @@ public partial class PlayfieldRing : CompositeDrawable
 
         InternalChildren =
         [
+            new PlayfieldVisualisation(),
             new CircularProgress
             {
                 Anchor = Anchor.Centre,

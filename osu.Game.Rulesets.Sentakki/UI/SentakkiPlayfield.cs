@@ -76,7 +76,6 @@ public partial class SentakkiPlayfield : Playfield
                 RelativeSizeAxes = Axes.Both,
                 Children =
                 [
-                    new PlayfieldVisualisation(),
                     playfieldRing = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.PlayfieldRing), _=> new PlayfieldRing())
                     {
                         Anchor = Anchor.Centre,
