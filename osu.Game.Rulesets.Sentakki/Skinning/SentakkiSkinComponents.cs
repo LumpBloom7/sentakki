@@ -22,4 +22,6 @@ public enum SentakkiSkinComponents
 
     Touch,
     TouchHold,
+
+    Cursor,
 }

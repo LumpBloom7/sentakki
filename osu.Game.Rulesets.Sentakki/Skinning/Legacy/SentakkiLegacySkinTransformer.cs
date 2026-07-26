@@ -13,6 +13,11 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
             case SentakkiSkinComponentLookup sentakkiComponent:
                 switch (sentakkiComponent.Component)
                 {
+                    case SentakkiSkinComponents.Cursor:
+                        if (GetTexture("cursor") == null)
+                            return null;
+
+                        return new LegacyCursor();
                     case SentakkiSkinComponents.Tap:
                         if (GetTexture("sentakki/tap") == null)
                             return null;
