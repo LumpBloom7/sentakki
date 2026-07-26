@@ -24,4 +24,5 @@ public enum SentakkiSkinComponents
     TouchHold,
 
     Cursor,
+    PlayfieldRing
 }

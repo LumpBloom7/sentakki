@@ -1,41 +1,23 @@
 ﻿using NUnit.Framework;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Shapes;
-using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Rulesets.Sentakki.UI.Components;
-using osu.Game.Tests.Visual;
+using osu.Game.Rulesets.Sentakki.Skinning;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
+using osu.Game.Skinning;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.UI;
 
 [TestFixture]
-public partial class TestSceneSentakkiRing : OsuTestScene
+public partial class TestSceneSentakkiRing : SentakkiSkinnableTestScene
 {
-    private SentakkiRing ring = null!;
-
-    public TestSceneSentakkiRing()
+    [Test]
+    public void DisplayRing()
     {
-        AddStep("Clear test", () =>
+        SetContents(_ => new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.PlayfieldRing), _ => new PlayfieldRing())
         {
-            Clear();
-            Add(new Box
-            {
-                RelativeSizeAxes = Axes.Both
-            });
-        });
-
-        AddStep("Create Ring", () => Add(ring = new SentakkiRing
-        {
-            RelativeSizeAxes = Axes.None,
-            Size = new Vector2(SentakkiPlayfield.RINGSIZE)
-        }));
-
-        AddUntilStep("Ring loaded", () => ring.IsLoaded && ring.Alpha == 1);
-        AddToggleStep("Toggle notestart Indicators", b => ring.NoteStartIndicators.Value = b);
-        AddRepeatStep("Trigger Kiai Beat", () => ring.KiaiBeat(), 5);
-        AddSliderStep<float>("Test opacity", 0, 1, 1, f =>
-        {
-            if (ring != null) ring.RingOpacity.Value = f;
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Scale = new Vector2(0.3f),
         });
     }
 }

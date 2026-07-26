@@ -18,6 +18,13 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
                             return null;
 
                         return new LegacyCursor();
+
+                    case SentakkiSkinComponents.PlayfieldRing:
+                        if (GetTexture("sentakki/playfield-ring") == null)
+                            return null;
+
+                        return new LegacyPlayfieldRing();
+
                     case SentakkiSkinComponents.Tap:
                         if (GetTexture("sentakki/tap") == null)
                             return null;

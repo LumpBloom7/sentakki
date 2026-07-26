@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -6,20 +6,23 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.UI.Components;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default;
 
-public partial class SentakkiRing : CompositeDrawable
+public partial class PlayfieldRing : CompositeDrawable
 {
     private readonly Container spawnIndicator;
 
-    public SentakkiRing()
+    public PlayfieldRing()
     {
-        RelativeSizeAxes = Axes.Both;
+        Size = new Vector2(600);
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
+
+        FillMode = FillMode.Fit;
 
         InternalChildren =
         [
@@ -70,7 +73,6 @@ public partial class SentakkiRing : CompositeDrawable
 
     public readonly Bindable<float> RingOpacity = new Bindable<float>(1);
     public readonly Bindable<bool> NoteStartIndicators = new Bindable<bool>();
-    private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
 
     [BackgroundDependencyLoader]
     private void load(SentakkiRulesetConfigManager? settings)
@@ -80,8 +82,6 @@ public partial class SentakkiRing : CompositeDrawable
 
         settings?.BindWith(SentakkiRulesetSettings.ShowNoteStartIndicators, NoteStartIndicators);
         NoteStartIndicators.BindValueChanged(opacity => spawnIndicator.FadeTo(Convert.ToSingle(opacity.NewValue), 200), true);
-
-        settings?.BindWith(SentakkiRulesetSettings.KiaiEffects, kiaiEffect);
     }
 
     protected override void LoadComplete()
@@ -90,11 +90,4 @@ public partial class SentakkiRing : CompositeDrawable
         spawnIndicator.FinishTransforms(true);
     }
 
-    public void KiaiBeat()
-    {
-        if (!kiaiEffect.Value) return;
-
-        FinishTransforms();
-        this.ScaleTo(1.01f, 100).Then().ScaleTo(1, 100);
-    }
 }
