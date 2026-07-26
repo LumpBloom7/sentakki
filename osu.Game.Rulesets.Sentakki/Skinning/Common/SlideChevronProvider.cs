@@ -1,10 +1,6 @@
 using System.Collections.Generic;
-using System.ComponentModel;
-using osu.Framework.Allocation;
-using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
-using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.Skinning.Default.Slide;
 using osu.Game.Skinning;
 

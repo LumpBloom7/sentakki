@@ -4,7 +4,7 @@ using osu.Game.Tests.Visual;
 
 namespace osu.Game.Rulesets.Sentakki.Tests;
 
-public partial class SentakkiSkinnableTestScene : SkinnableTestScene
+public abstract partial class SentakkiSkinnableTestScene : SkinnableTestScene
 {
     private Container content = null!;
 
@@ -18,8 +18,6 @@ public partial class SentakkiSkinnableTestScene : SkinnableTestScene
             return content;
         }
     }
-
-
 
     protected override Ruleset CreateRulesetForSkinProvider() => new SentakkiRuleset();
 }

@@ -13,11 +13,11 @@ public partial class TestSceneSentakkiRing : SentakkiSkinnableTestScene
     [Test]
     public void DisplayRing()
     {
-        SetContents(_ => new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.PlayfieldRing), _ => new PlayfieldRing())
+        Schedule(() => SetContents(_ => new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.PlayfieldRing), _ => new PlayfieldRing())
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Scale = new Vector2(0.3f),
-        });
+        }));
     }
 }
