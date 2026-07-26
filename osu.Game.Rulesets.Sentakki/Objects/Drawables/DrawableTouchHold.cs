@@ -71,7 +71,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.None,
-                Size  = new Vector2(130)
+                Size = new Vector2(130)
             },
             holdSample = new PausableSkinnableSound
             {

@@ -1,4 +1,5 @@
 using osu.Framework.Graphics;
+using osu.Game.Rulesets.Sentakki.Skinning.Legacy.TouchHold;
 using osu.Game.Skinning;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Legacy;
@@ -29,6 +30,12 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
                             return null;
 
                         return new LegacyTouchBody();
+
+                    case SentakkiSkinComponents.TouchHold:
+                        if (GetTexture("sentakki/touchhold") is null)
+                            return null;
+
+                        return new LegacyTouchHoldBody();
 
                     case SentakkiSkinComponents.SlideStar:
                         if (GetTexture("sentakki/star") is null)
