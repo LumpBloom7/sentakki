@@ -18,7 +18,7 @@ public partial class SelfUpdatingInspectorEntry : OsuSpriteText
     public SelfUpdatingInspectorEntry(Func<LocalisableString> textUpdateAction)
     {
         this.textUpdateAction = textUpdateAction;
-        Font = OsuFont.Style.Body;
+        Font = OsuFont.Style.Caption2.With(weight: FontWeight.SemiBold);
         Text = textUpdateAction.Invoke();
     }
 
