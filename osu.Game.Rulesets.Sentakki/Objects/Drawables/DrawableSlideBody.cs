@@ -11,6 +11,10 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
+using osu.Game.Rulesets.Sentakki.Skinning;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.Slide;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -39,7 +43,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
 
     public SlideVisual Slidepath { get; private set; } = null!;
 
-    public Container<StarPiece> SlideStars { get; private set; } = null!;
+    public Container<SkinnableDrawable> SlideStars { get; private set; } = null!;
 
     private float starProgress;
 
@@ -88,7 +92,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
 
         AddRangeInternal([
             Slidepath = new SlideVisual { Colour = inactive_color },
-            SlideStars = new ProxyableContainer<StarPiece>
+            SlideStars = new ProxyableContainer<SkinnableDrawable>
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
@@ -102,7 +106,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
 
         for (int i = 0; i < 3; ++i)
         {
-            SlideStars.Add(new StarPiece
+            SlideStars.Add(new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.SlideStar), _ => new StarPiece())
             {
                 Alpha = 0,
                 Scale = Vector2.Zero,
@@ -110,6 +114,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
                 Origin = Anchor.Centre,
                 Position = MathExtensions.PointOnCircle(296.5f, 22.5f),
                 RelativeSizeAxes = Axes.None,
+                Size = new Vector2(DrawableTap.CIRCLE_RADIUS * 2),
             });
         }
 

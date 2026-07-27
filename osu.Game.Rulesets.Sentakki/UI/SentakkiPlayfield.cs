@@ -13,6 +13,8 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Skinning;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.UI;
 using osu.Game.Skinning;
@@ -31,7 +33,9 @@ public partial class SentakkiPlayfield : Playfield
     private readonly DrawablePool<DrawableSentakkiJudgement> judgementPool;
     private readonly DrawablePool<HitExplosion> explosionPool;
 
-    private readonly SentakkiRing ring;
+    private readonly SkinnableDrawable playfieldRing;
+
+    private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
 
@@ -72,8 +76,11 @@ public partial class SentakkiPlayfield : Playfield
                 RelativeSizeAxes = Axes.Both,
                 Children =
                 [
-                    new PlayfieldVisualisation(),
-                    ring = new SentakkiRing()
+                    playfieldRing = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.PlayfieldRing), _=> new PlayfieldRing())
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                    }
                 ]
             },
             explosionLayer = new Container<HitExplosion> { RelativeSizeAxes = Axes.Both },
@@ -112,6 +119,8 @@ public partial class SentakkiPlayfield : Playfield
 
         skin = skinManager.CurrentSkin.GetBoundCopy();
         sentakkiRulesetConfig?.BindWith(SentakkiRulesetSettings.RingColor, ringColor);
+
+        sentakkiRulesetConfig?.BindWith(SentakkiRulesetSettings.KiaiEffects, kiaiEffect);
     }
 
     protected override void LoadComplete()
@@ -173,8 +182,11 @@ public partial class SentakkiPlayfield : Playfield
         if (judgedObject is DrawableSlideBody)
             return;
 
-        if (judgedObject.HitObject.Kiai)
-            ring.KiaiBeat();
+        if (judgedObject.HitObject.Kiai && kiaiEffect.Value)
+        {
+            playfieldRing.FinishTransforms();
+            playfieldRing.ScaleTo(1.01f, 100).Then().ScaleTo(1, 100);
+        }
 
         var explosion = explosionPool.Get().Apply(sentakkiHitObject);
         explosionLayer.Add(explosion);

@@ -9,6 +9,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
+using osu.Game.Rulesets.Sentakki.Skinning.Common;
 using osu.Game.Tests.Visual;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects;
@@ -22,12 +23,12 @@ public partial class TestSceneInvalidSlideProperties : OsuTestScene
     protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 
     [Cached]
-    private DrawablePool<SlideChevron> chevronPool;
+    private SlideChevronProvider chevronPool;
 
     public TestSceneInvalidSlideProperties()
     {
         base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
-        Add(chevronPool = new DrawablePool<SlideChevron>(62));
+        Add(chevronPool = new SlideChevronProvider());
 
         AddStep("Test negative wait duration", testNegativeWaitDuration);
         AddStep("Test larger wait duration than slide body duration", testLargerWaitDurationThanDuration);

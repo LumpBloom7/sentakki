@@ -8,6 +8,8 @@ using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
+using osu.Game.Rulesets.Sentakki.Skinning.Common;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
@@ -33,13 +35,13 @@ public abstract partial class TestSceneSlide : OsuTestScene
     private readonly Container nodes;
 
     [Cached]
-    private readonly DrawablePool<SlideChevron> chevronPool;
+    private readonly SlideChevronProvider chevronPool;
 
     protected TestSceneSlide()
     {
-        Add(chevronPool = new DrawablePool<SlideChevron>(62));
+        Add(chevronPool = new SlideChevronProvider());
 
-        Add(new SentakkiRing
+        Add(new PlayfieldRing
         {
             RelativeSizeAxes = Axes.None,
             Size = new Vector2(SentakkiPlayfield.RINGSIZE)

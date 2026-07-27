@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Allocation;
@@ -10,24 +11,15 @@ using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
-using osu.Game.Tests.Visual;
+using osu.Game.Rulesets.Sentakki.Skinning.Common;
+using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects;
 
 [TestFixture]
-public partial class TestSceneSlideNote : OsuTestScene
+public partial class TestSceneSlideNote : SentakkiSkinnableTestScene
 {
-    private readonly Container content;
-    protected override Container<Drawable> Content => content;
-
-    protected override Ruleset CreateRuleset() => new SentakkiRuleset();
-
-    private int depthIndex;
-
-    [Cached]
-    private readonly DrawablePool<SlideChevron> chevronPool;
-
     public static bool[][] ObjectFlagsSource =
     [
         [false, false, false, false],
@@ -39,26 +31,24 @@ public partial class TestSceneSlideNote : OsuTestScene
         [false, false, true, true],
     ];
 
-    public TestSceneSlideNote()
-    {
-        base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
-        Add(chevronPool = new DrawablePool<SlideChevron>(62));
-    }
 
     [TestCaseSource(nameof(ObjectFlagsSource))]
     public void TestSlides(bool headBreak, bool headEx, bool bodyBreak, bool bodyEx)
     {
-        AddStep("Miss Single", () => testSingle(2000, false, headBreak, headEx, bodyBreak, bodyEx));
-        AddStep("Hit Single", () => testSingle(2000, true, headBreak, headEx, bodyBreak, bodyEx));
-        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject hitObject && hitObject.AllJudged == false));
+        addStep("Miss Single", () => testSingle(2000, false, headBreak, headEx, bodyBreak, bodyEx));
+        addStep("Hit Single", () => testSingle(2000, true, headBreak, headEx, bodyBreak, bodyEx));
 
-        AddStep("Miss chain", () => testChain(5000, false, headBreak, headEx, bodyBreak, bodyEx));
-        AddStep("Hit chain", () => testChain(5000, true, headBreak, headEx, bodyBreak, bodyEx));
-        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject hitObject && hitObject.AllJudged == false));
+        addStep("Miss chain", () => testChain(5000, false, headBreak, headEx, bodyBreak, bodyEx));
+        addStep("Hit chain", () => testChain(5000, true, headBreak, headEx, bodyBreak, bodyEx));
 
-        AddStep("Miss chain with Fan", () => testChainWithFan(6000, false, headBreak, headEx, bodyBreak, bodyEx));
-        AddStep("Hit chain with Fan", () => testChainWithFan(6000, true, headBreak, headEx, bodyBreak, bodyEx));
-        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject hitObject && hitObject.AllJudged == false));
+        addStep("Miss chain with Fan", () => testChainWithFan(6000, false, headBreak, headEx, bodyBreak, bodyEx));
+        addStep("Hit chain with Fan", () => testChainWithFan(6000, true, headBreak, headEx, bodyBreak, bodyEx));
+    }
+
+    private void addStep(string title, Action action)
+    {
+        AddStep(title, action);
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject hitObject && hitObject.AllJudged == false));
     }
 
     private void testSingle(double duration, bool auto = false, bool headBreak = false, bool headEx = false, bool bodyBreak = false, bool bodyEx = false)
@@ -111,21 +101,24 @@ public partial class TestSceneSlideNote : OsuTestScene
                 body.NoteColour = Color4.OrangeRed;
         }
 
-        DrawableSlide dSlide;
-
-        Add(dSlide = new DrawableSlide(slide)
+        SetContents(_ =>
         {
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Depth = depthIndex++,
-            Auto = auto
+            DrawableSlide dSlide = new DrawableSlide(slide)
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Auto = auto,
+                Scale = new Vector2(0.3f),
+            };
+
+            foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects.OfType<DrawableSentakkiHitObject>())
+            {
+                foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects.OfType<DrawableSentakkiHitObject>())
+                    nested2.Auto = auto;
+            }
+
+            return new SlideTestContext(dSlide);
         });
-
-        foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects.OfType<DrawableSentakkiHitObject>())
-        {
-            foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects.OfType<DrawableSentakkiHitObject>())
-                nested2.Auto = auto;
-        }
     }
 
     private void testChain(double duration, bool auto = false, bool headBreak = false, bool headEx = false, bool bodyBreak = false, bool bodyEx = false)
@@ -166,21 +159,24 @@ public partial class TestSceneSlideNote : OsuTestScene
                 body.NoteColour = Color4.OrangeRed;
         }
 
-        DrawableSlide dSlide;
-
-        Add(dSlide = new DrawableSlide(slide)
+        SetContents(_ =>
         {
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Depth = depthIndex++,
-            Auto = auto
+            DrawableSlide dSlide = new DrawableSlide(slide)
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Auto = auto,
+                Scale = new Vector2(0.3f),
+            };
+
+            foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects.OfType<DrawableSentakkiHitObject>())
+            {
+                foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects.OfType<DrawableSentakkiHitObject>())
+                    nested2.Auto = auto;
+            }
+
+            return new SlideTestContext(dSlide);
         });
-
-        foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects.OfType<DrawableSentakkiHitObject>())
-        {
-            foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects.OfType<DrawableSentakkiHitObject>())
-                nested2.Auto = auto;
-        }
     }
 
     private void testChainWithFan(double duration, bool auto = false, bool headBreak = false, bool headEx = false, bool bodyBreak = false, bool bodyEx = false)
@@ -222,20 +218,37 @@ public partial class TestSceneSlideNote : OsuTestScene
                 body.NoteColour = Color4.OrangeRed;
         }
 
-        DrawableSlide dSlide;
-
-        Add(dSlide = new DrawableSlide(slide)
+        SetContents(_ =>
         {
-            Anchor = Anchor.Centre,
-            Origin = Anchor.Centre,
-            Depth = depthIndex++,
-            Auto = auto
+            DrawableSlide dSlide = new DrawableSlide(slide)
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Auto = auto,
+                Scale = new Vector2(0.3f),
+            };
+
+            foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects.OfType<DrawableSentakkiHitObject>())
+            {
+                foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects.OfType<DrawableSentakkiHitObject>())
+                    nested2.Auto = auto;
+            }
+
+            return new SlideTestContext(dSlide);
         });
+    }
 
-        foreach (DrawableSentakkiHitObject nested in dSlide.NestedHitObjects.OfType<DrawableSentakkiHitObject>())
+    private partial class SlideTestContext : Container
+    {
+        [Cached]
+        private SlideChevronProvider chevronPool = null!;
+
+        public SlideTestContext(Drawable drawable)
         {
-            foreach (DrawableSentakkiHitObject nested2 in nested.NestedHitObjects.OfType<DrawableSentakkiHitObject>())
-                nested2.Auto = auto;
+            RelativeSizeAxes = Axes.Both;
+
+            AddInternal(chevronPool = new SlideChevronProvider());
+            AddInternal(drawable);
         }
     }
 }

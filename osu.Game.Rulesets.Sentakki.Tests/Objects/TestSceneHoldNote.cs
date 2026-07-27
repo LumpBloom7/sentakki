@@ -12,18 +12,9 @@ using osuTK.Graphics;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects;
 
 [TestFixture]
-public partial class TestSceneHoldNote : OsuTestScene
+public partial class TestSceneHoldNote : SentakkiSkinnableTestScene
 {
-    private readonly Container content;
-    protected override Container<Drawable> Content => content;
-    protected override Ruleset CreateRuleset() => new SentakkiRuleset();
-
     private int depthIndex;
-
-    public TestSceneHoldNote()
-    {
-        base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
-    }
 
     public static bool[][] ObjectFlagsSource =
     [
@@ -37,18 +28,29 @@ public partial class TestSceneHoldNote : OsuTestScene
     public void TestHolds(bool breakState, bool ex)
     {
         AddStep("Miss Insane Short", () => testSingle(100, false, breakState, ex));
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
         AddStep("Hit Insane Short", () => testSingle(100, true, breakState, ex));
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
         AddStep("Miss Very Short", () => testSingle(200, false, breakState, ex));
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
         AddStep("Hit Very Short", () => testSingle(200, true, breakState, ex));
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
         AddStep("Miss Short", () => testSingle(500, false, breakState, ex));
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
         AddStep("Hit Short", () => testSingle(500, true, breakState, ex));
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
         AddStep("Miss Medium", () => testSingle(750, false, breakState, ex));
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
         AddStep("Hit Medium", () => testSingle(750, true, breakState, ex));
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
         AddStep("Miss Long", () => testSingle(1000, false, breakState, ex));
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
         AddStep("Hit Long", () => testSingle(1000, true, breakState, ex));
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
         AddStep("Miss Very Long", () => testSingle(3000, false, breakState, ex));
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
         AddStep("Hit Very Long", () => testSingle(3000, true, breakState, ex));
-        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
     }
 
     private void testSingle(double duration, bool auto = false, bool breakState = false, bool ex = false)
@@ -66,7 +68,7 @@ public partial class TestSceneHoldNote : OsuTestScene
 
         circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
-        Add(new DrawableHold(circle)
+        SetContents(_ => new DrawableHold(circle)
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,

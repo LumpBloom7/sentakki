@@ -1,29 +1,18 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Tests.Visual;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects;
 
 [TestFixture]
-public partial class TestSceneTouchHold : OsuTestScene
+public partial class TestSceneTouchHold : SentakkiSkinnableTestScene
 {
-    private readonly Container content;
-    protected override Container<Drawable> Content => content;
-
-    private int depthIndex;
-
-    public TestSceneTouchHold()
-    {
-        base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
-    }
-
     public static bool[][] ObjectFlagsSource =
     [
         [false],
@@ -36,6 +25,12 @@ public partial class TestSceneTouchHold : OsuTestScene
         AddStep("Miss Single", () => testSingle(false, breakState));
         AddStep("Hit Single", () => testSingle(true, breakState));
         AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
+    }
+
+    private void addStep(string title, Action action)
+    {
+        AddStep(title, action);
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject hitObject && hitObject.AllJudged == false));
     }
 
     private void testSingle(bool auto = false, bool breakState = false)
@@ -56,14 +51,11 @@ public partial class TestSceneTouchHold : OsuTestScene
 
         circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
-        Add(new DrawableTouchHold(circle)
+        SetContents(_ => new DrawableTouchHold(circle)
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            Depth = depthIndex++,
             Auto = auto
         });
     }
-
-    protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 }

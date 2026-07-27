@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
@@ -13,6 +12,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
+using osu.Game.Rulesets.Sentakki.Skinning.Common;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 
@@ -90,16 +90,16 @@ public partial class SlideVisual : CompositeDrawable
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        AddInternal(chevrons = new Container<SlideChevron>());
+        AddInternal(chevrons = new Container<PoolableGameplayChevron>());
     }
 
     [Resolved]
-    private DrawablePool<SlideChevron>? chevronPool { get; set; }
+    private SlideChevronProvider chevronPool { get; set; } = null!;
 
     [Resolved]
     private DrawableSentakkiHitObject? drawableHitObject { get; set; }
 
-    private readonly Container<SlideChevron> chevrons;
+    private readonly Container<PoolableGameplayChevron> chevrons;
 
     private readonly BindableBool snakingIn = new BindableBool(true);
 
@@ -166,7 +166,7 @@ public partial class SlideVisual : CompositeDrawable
 
             double segmentRatio = segmentPath.CalculatedDistance / slideBodyInfo.SlideLength;
 
-            SlideChevron? lastChevron = null;
+            PoolableGameplayChevron? lastChevron = null;
 
             for (int j = 0; j < nChevrons; ++j)
             {
@@ -188,12 +188,11 @@ public partial class SlideVisual : CompositeDrawable
                 }
 
                 // Prepare the chevron visual
-                var chevron = lastChevron = chevronPool.Get();
+                var chevron = lastChevron = chevronPool.GetChevron();
                 chevron.Position = position;
                 chevron.Rotation = rotation;
                 chevron.DisappearThreshold = segmentStartProgress + segmentProgress * segmentRatio;
                 chevron.Size = new Vector2(50, 30);
-                chevron.FanChevron = false;
                 chevron.Glow = drawableHitObject?.ExBindable.Value ?? false;
                 chevron.Depth = chevrons.Count; // Earlier chevrons should be drawn above later chevrons
 
@@ -256,11 +255,10 @@ public partial class SlideVisual : CompositeDrawable
             float yOffset = (height - 30) / 2;
 
             // Prepare the chevron visual
-            var chevron = chevronPool.Get();
+            var chevron = chevronPool.GetFanChevron(i);
             chevron.Position = position - yOffset * middleDirection;
             chevron.Rotation = rotation;
             chevron.Size = new Vector2(width, height);
-            chevron.FanChevron = true;
             chevron.Glow = drawableHitObject?.ExBindable.Value ?? false;
 
             chevron.DisappearThreshold = fanStartProgress + (margin + segmentProgress) * segmentRatio;

@@ -21,6 +21,8 @@ using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.TouchHold;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
 using osuTK;
@@ -55,7 +57,7 @@ public partial class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset
         var lanedHitObjectArea = lanedPlayfield.LanedHitObjectArea;
         var lanedNoteProxyContainer = lanedHitObjectArea.Child;
 
-        const float note_visible_point = SentakkiPlayfield.NOTESTARTDISTANCE - TapPiece.CIRCLE_RADIUS;
+        const float note_visible_point = SentakkiPlayfield.NOTESTARTDISTANCE - DrawableTap.CIRCLE_RADIUS;
         const float total_visible_distance = SentakkiPlayfield.INTERSECTDISTANCE;
 
         const float visibility_start_point = note_visible_point / total_visible_distance;
@@ -87,7 +89,8 @@ public partial class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset
                 break;
 
             case DrawableTouchHold th:
-                th.TouchHoldBody.ProgressPiece.Hide();
+                if (th.TouchHoldBody.Drawable is TouchHoldBody defaultBody)
+                    defaultBody.ProgressPiece.Hide();
                 break;
 
             case DrawableSlideBody sb:

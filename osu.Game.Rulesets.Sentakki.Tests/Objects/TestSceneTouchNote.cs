@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -16,29 +17,13 @@ using osuTK.Graphics;
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects;
 
 [TestFixture]
-public partial class TestSceneTouchNote : OsuTestScene
+public partial class TestSceneTouchNote : SentakkiSkinnableTestScene
 {
-    private readonly Container content;
-    protected override Container<Drawable> Content => content;
-
-    private int depthIndex;
-
-    public TestSceneTouchNote()
-    {
-        base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
-        base.Content.Add(new SentakkiRing
-        {
-            RelativeSizeAxes = Axes.None,
-            Size = new Vector2(SentakkiPlayfield.RINGSIZE)
-        });
-    }
-
     [TestCaseSource(nameof(ObjectFlagsSource))]
     public void TestTouchNotes(bool breakState, bool ex)
     {
-        AddStep("Miss Single", () => testAllPositions(false, breakState, ex));
-        AddStep("Hit Single", () => testAllPositions(true, breakState, ex));
-        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
+        addStep("Miss Single", () => testSingle(false, breakState, ex));
+        addStep("Hit Single", () => testSingle(true, breakState, ex));
     }
 
     public static bool[][] ObjectFlagsSource =
@@ -49,32 +34,32 @@ public partial class TestSceneTouchNote : OsuTestScene
         [true, true],
     ];
 
-    private void testAllPositions(bool auto = false, bool breakState = false, bool ex = false)
+    private void addStep(string title, Action action)
     {
-        foreach (var position in SentakkiBeatmapConverterOld.VALID_TOUCH_POSITIONS)
-        {
-            var circle = new Touch
-            {
-                StartTime = Time.Current + 1000,
-                Position = position,
-                Break = breakState,
-                Ex = ex
-            };
-
-            if (breakState)
-                circle.NoteColour = Color4.OrangeRed;
-
-            circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
-
-            Add(new DrawableTouch(circle)
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Depth = depthIndex++,
-                Auto = auto
-            });
-        }
+        AddStep(title, action);
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject hitObject && hitObject.AllJudged == false));
     }
 
-    protected override Ruleset CreateRuleset() => new SentakkiRuleset();
+    private void testSingle(bool auto = false, bool breakState = false, bool ex = false)
+    {
+        var circle = new Touch
+        {
+            StartTime = Time.Current + 1000,
+            Position = Vector2.Zero,
+            Break = breakState,
+            Ex = ex
+        };
+
+        if (breakState)
+            circle.NoteColour = Color4.OrangeRed;
+
+        circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
+
+        SetContents(_ => new DrawableTouch(circle)
+        {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Auto = auto
+        });
+    }
 }

@@ -3,15 +3,18 @@ using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Skinning;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
+using osu.Game.Skinning;
+using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
 
 public partial class TapSelectionBlueprint : SentakkiSelectionBlueprint<Tap, DrawableTap>
 {
-    private readonly TapPiece highlight;
-    public override Quad SelectionQuad => DrawableObject.TapVisual.ScreenSpaceDrawQuad;
+    private readonly SkinnableDrawable highlight;
+    public override Quad SelectionQuad => highlight.ScreenSpaceDrawQuad;
 
     public TapSelectionBlueprint(Tap item)
         : base(item)
@@ -19,8 +22,12 @@ public partial class TapSelectionBlueprint : SentakkiSelectionBlueprint<Tap, Dra
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        AddInternal(highlight = new TapPiece
+        AddInternal(highlight = new ProxyableSkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap), _ => new TapPiece())
         {
+            RelativeSizeAxes = Axes.None,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Size = new Vector2(DrawableTap.CIRCLE_RADIUS * 2),
             Alpha = 0.5f,
             Colour = Color4.YellowGreen
         });
@@ -30,7 +37,7 @@ public partial class TapSelectionBlueprint : SentakkiSelectionBlueprint<Tap, Dra
     {
         base.Update();
         Rotation = HitObject.Lane.GetRotationForLane();
-        highlight.Scale = DrawableObject.TapVisual.Scale;
-        highlight.Y = DrawableObject.TapVisual.Y;
+        highlight.Scale = DrawableObject.Scale;
+        highlight.Y = DrawableObject.Y;
     }
 }

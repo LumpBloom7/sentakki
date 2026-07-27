@@ -4,7 +4,10 @@ using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
+using osu.Game.Rulesets.Sentakki.Skinning;
+using osu.Game.Rulesets.Sentakki.Skinning.Common;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.Touch;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -14,7 +17,7 @@ public partial class DrawableTouch : DrawableSentakkiHitObject
 {
     protected new Touch HitObject => (Touch)base.HitObject;
 
-    public TouchBody TouchBody = null!;
+    public SkinnableDrawable TouchBody = null!;
 
     public DrawableTouch()
         : this(null)
@@ -36,7 +39,12 @@ public partial class DrawableTouch : DrawableSentakkiHitObject
         Origin = Anchor.Centre;
         Anchor = Anchor.Centre;
         AddRangeInternal([
-            TouchBody = new TouchBody()
+            TouchBody = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Touch), _ => new TouchBody(), ConfineMode.ScaleToFit){
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                RelativeSizeAxes = Axes.None,
+                Size  = new Vector2(130)
+            }
         ]);
     }
 
@@ -92,12 +100,12 @@ public partial class DrawableTouch : DrawableSentakkiHitObject
         double animTime = AnimationDuration.Value * 0.8;
         double fadeTime = AnimationDuration.Value * 0.2;
 
-        TouchBody.FadeIn(fadeTime);
+        TouchBody.FadeInFromZero(fadeTime);
 
         using (BeginDelayedSequence(fadeTime))
         {
             TouchBody.ResizeTo(90, animTime, Easing.InCirc);
-            TouchBody.BorderContainer.Delay(animTime).FadeIn();
+            (TouchBody.Drawable as ITouchBody)?.Border.Delay(animTime).FadeIn();
         }
     }
 

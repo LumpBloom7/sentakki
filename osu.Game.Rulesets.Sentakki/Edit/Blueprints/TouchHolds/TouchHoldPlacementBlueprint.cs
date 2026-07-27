@@ -7,7 +7,9 @@ using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
+using osu.Game.Rulesets.Sentakki.Skinning;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.TouchHold;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 using osuTK.Input;
@@ -20,17 +22,21 @@ public partial class TouchHoldPlacementBlueprint : TouchPlacementBlueprintBase<T
     private IBindable<IReadOnlyList<Color4>>? paletteBindable { get; set; }
         = new Bindable<IReadOnlyList<Color4>>(TouchHoldSelectionBlueprint.SELECTION_PALETTE);
 
-    private readonly TouchHoldBody highlight;
+    private readonly SkinnableDrawable highlight;
 
     public TouchHoldPlacementBlueprint()
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        InternalChild = highlight = new TouchHoldBody
+        InternalChild = highlight = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.TouchHold), _ => new TouchHoldBody(), ConfineMode.ScaleToFit)
         {
             Alpha = 0.5f,
-            Colour = Color4.YellowGreen
+            Colour = Color4.YellowGreen,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            RelativeSizeAxes = Axes.None,
+            Size = new Vector2(130),
         };
     }
 

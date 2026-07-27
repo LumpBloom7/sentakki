@@ -6,7 +6,11 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
+using osu.Game.Rulesets.Sentakki.Skinning;
+using osu.Game.Rulesets.Sentakki.Skinning.Common;
+using osu.Game.Rulesets.Sentakki.Skinning.Default.TouchHold;
+using osu.Game.Skinning;
+using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds;
@@ -25,20 +29,21 @@ public partial class TouchHoldSelectionBlueprint : SentakkiSelectionBlueprint<To
     [Cached]
     private Bindable<IReadOnlyList<Color4>>? paletteBindable { get; set; } = new Bindable<IReadOnlyList<Color4>>(SELECTION_PALETTE);
 
-    private readonly TouchHoldBody highlight;
-
-    public override Quad SelectionQuad => highlight.ProgressPiece.ScreenSpaceDrawQuad;
-
+    private readonly SkinnableDrawable highlight;
     public TouchHoldSelectionBlueprint(TouchHold item)
         : base(item)
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
+        Size = new Vector2(130);
 
-        InternalChild = highlight = new TouchHoldBody
+        InternalChild = highlight = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.TouchHold), _ => new TouchHoldBody(), ConfineMode.ScaleToFit)
         {
             Alpha = 0.5f,
-            Colour = Color4.YellowGreen
+            Colour = Color4.YellowGreen,
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            RelativeSizeAxes = Axes.None,
         };
     }
 
@@ -51,8 +56,6 @@ public partial class TouchHoldSelectionBlueprint : SentakkiSelectionBlueprint<To
         var drawableVisuals = DrawableObject.TouchHoldBody;
 
         highlight.Size = drawableVisuals.Size;
-        highlight.CentrePiece.Alpha = drawableVisuals.CentrePiece.Alpha;
-        highlight.CompletedCentre.Alpha = drawableVisuals.CompletedCentre.Alpha;
-        highlight.ProgressPiece.ProgressBindable.Value = drawableVisuals.ProgressPiece.ProgressBindable.Value;
+        ((IHasCopyableVisualState)drawableVisuals.Drawable).CopyVisualStateTo((IHasCopyableVisualState)highlight.Drawable);
     }
 }
