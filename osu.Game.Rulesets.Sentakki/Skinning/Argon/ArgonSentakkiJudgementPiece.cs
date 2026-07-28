@@ -1,5 +1,6 @@
 using System;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
@@ -9,7 +10,9 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Extensions;
+using osu.Game.Rulesets.Sentakki.Scoring;
 using osuTK;
 using osuTK.Graphics;
 
@@ -21,6 +24,9 @@ public partial class ArgonSentakkiJudgementPiece : TextJudgementPiece, IAnimatab
     private OsuColour colours { get; set; } = null!;
 
     private RingExplosion? ringExplosion;
+    private SpriteText? timingIndicatorText;
+
+    private Bindable<bool> timingIndicatorEnabled = new Bindable<bool>();
 
     public ArgonSentakkiJudgementPiece(HitResult result) : base(result)
     {
@@ -28,7 +34,7 @@ public partial class ArgonSentakkiJudgementPiece : TextJudgementPiece, IAnimatab
     }
 
     [BackgroundDependencyLoader]
-    private void load()
+    private void load(SentakkiRulesetConfigManager configManager)
     {
         JudgementText.Text = SentakkiExtensions.GetDisplayNameForSentakkiResult(Result).ToUpperInvariant();
         JudgementText.Colour = colours.ForSentakkiResult(Result);
@@ -40,6 +46,43 @@ public partial class ArgonSentakkiJudgementPiece : TextJudgementPiece, IAnimatab
         {
             Colour = JudgementText.Colour.AverageColour
         });
+
+        if (Result is not HitResult.Perfect)
+        {
+            AddInternal(new Container
+            {
+                RelativeSizeAxes = Axes.Both,
+                Child = timingIndicatorText = new OsuSpriteText
+                {
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.Centre,
+                    Blending = BlendingParameters.Additive,
+                    Font = OsuFont.Default.With(size: 20, weight: FontWeight.Bold),
+                }
+            });
+
+
+            configManager.BindWith(SentakkiRulesetSettings.DetailedJudgements, timingIndicatorEnabled);
+            timingIndicatorEnabled.BindValueChanged(v => timingIndicatorText.Alpha = v.NewValue ? 1 : 0);
+        }
+    }
+
+    public void ApplyTimingIndicator(JudgementResult result)
+    {
+        if (timingIndicatorText is null)
+            return;
+
+        // HACK: We don't want to show this to hitobjects that don't have the concept of timing
+        if (result.HitObject.HitWindows is SentakkiEmptyHitWindows)
+        {
+            timingIndicatorText.Text = "";
+            return;
+        }
+
+        bool isEarly = result.TimeOffset < 0;
+
+        timingIndicatorText.Text = isEarly ? "EARLY" : "LATE";
+        timingIndicatorText.Colour = isEarly ? Color4.GreenYellow : Color4.OrangeRed;
     }
 
     protected override SpriteText CreateJudgementText() =>
@@ -85,7 +128,17 @@ public partial class ArgonSentakkiJudgementPiece : TextJudgementPiece, IAnimatab
         }
     }
 
-    public Drawable? GetAboveHitObjectsProxiedContent() => JudgementText.CreateProxy();
+    public Drawable? GetAboveHitObjectsProxiedContent()
+    {
+        var proxiedDrawables = new Container();
+
+        if (timingIndicatorText is not null)
+            proxiedDrawables.Add(timingIndicatorText.CreateProxy());
+
+        proxiedDrawables.Add(JudgementText.CreateProxy());
+
+        return proxiedDrawables;
+    }
 
     private partial class RingExplosion : CompositeDrawable
     {
