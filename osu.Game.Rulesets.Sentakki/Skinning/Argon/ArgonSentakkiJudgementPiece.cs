@@ -61,9 +61,8 @@ public partial class ArgonSentakkiJudgementPiece : TextJudgementPiece, IAnimatab
                 }
             });
 
-
             configManager.BindWith(SentakkiRulesetSettings.DetailedJudgements, timingIndicatorEnabled);
-            timingIndicatorEnabled.BindValueChanged(v => timingIndicatorText.Alpha = v.NewValue ? 1 : 0);
+            timingIndicatorEnabled.BindValueChanged(v => timingIndicatorText.Alpha = v.NewValue ? 1 : 0, true);
         }
     }
 
