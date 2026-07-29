@@ -15,12 +15,14 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Default;
 
-public partial class DefaultSentakkiJudgementPiece : DefaultJudgementPiece, IHasTimingIndicator
+public partial class DefaultSentakkiJudgementPiece : DefaultJudgementPiece, IHasTimingIndicator, IAnimatableJudgement
 {
     [Resolved]
     private OsuColour colours { get; set; } = null!;
 
     private SpriteText? timingIndicatorText;
+
+    Drawable? IAnimatableJudgement.GetAboveHitObjectsProxiedContent() => CreateProxy();
 
     public DefaultSentakkiJudgementPiece(HitResult result) : base(result)
     {
@@ -35,7 +37,7 @@ public partial class DefaultSentakkiJudgementPiece : DefaultJudgementPiece, IHas
         JudgementText.Text = SentakkiExtensions.GetDisplayNameForSentakkiResult(Result).ToUpperInvariant();
         JudgementText.Colour = colours.ForSentakkiResult(Result);
 
-        if (Result is not HitResult.Perfect)
+        if (Result is not HitResult.Perfect && Result.IsHit())
         {
             AddInternal(new Container
             {

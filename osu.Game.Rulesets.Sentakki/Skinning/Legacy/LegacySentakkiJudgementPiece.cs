@@ -8,6 +8,7 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Skinning;
 using osuTK;
+using SharpGen.Runtime;
 using static osu.Game.Rulesets.Sentakki.Extensions.SentakkiExtensions;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Legacy;
@@ -39,7 +40,7 @@ public partial class LegacySentakkiJudgementPiece : CompositeDrawable, IAnimatab
         if (judgementDrawable is not null)
             AddInternal(judgementDrawable);
 
-        if (hitResult is HitResult.Perfect)
+        if (hitResult is HitResult.Perfect || hitResult.IsMiss())
             return;
 
         Container timingIndicatorContainer;
