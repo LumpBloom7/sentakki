@@ -18,7 +18,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Argon;
 
-public partial class ArgonSentakkiJudgementPiece : TextJudgementPiece, IAnimatableJudgement
+public partial class ArgonSentakkiJudgementPiece : TextJudgementPiece, IAnimatableJudgement, IHasTimingIndicator
 {
     [Resolved]
     private OsuColour colours { get; set; } = null!;
@@ -67,17 +67,13 @@ public partial class ArgonSentakkiJudgementPiece : TextJudgementPiece, IAnimatab
         }
     }
 
-    public void ApplyTimingIndicator(JudgementResult result)
+    public void ApplyTimingIndicatorFor(JudgementResult result)
     {
         if (timingIndicatorText is null)
             return;
 
-        // HACK: We don't want to show this to hitobjects that don't have the concept of timing
-        if (result.HitObject.HitWindows is SentakkiEmptyHitWindows)
-        {
-            timingIndicatorText.Text = "";
-            return;
-        }
+        // We don't want to show this to hitobjects that don't have the concept of timing
+        timingIndicatorText.Scale = result.HitObject.HitWindows is SentakkiEmptyHitWindows ? Vector2.Zero : Vector2.One;
 
         bool isEarly = result.TimeOffset < 0;
 
