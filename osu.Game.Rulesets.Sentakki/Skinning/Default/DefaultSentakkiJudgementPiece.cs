@@ -82,6 +82,9 @@ public partial class DefaultSentakkiJudgementPiece : DefaultJudgementPiece, IHas
                 this.ScaleTo(1.6f);
                 this.ScaleTo(1, 100, Easing.In);
 
+                this.MoveTo(Vector2.Zero);
+                this.MoveToOffset(new Vector2(0, 50), 800, Easing.InQuint);
+
                 this.RotateTo(0);
                 this.RotateTo(40, 800, Easing.InQuint);
 
