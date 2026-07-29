@@ -1,19 +1,24 @@
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Animations;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Skinning;
+using osuTK;
 using static osu.Game.Rulesets.Sentakki.Extensions.SentakkiExtensions;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Legacy;
 
-public partial class LegacySentakkiJudgementPiece : CompositeDrawable, IAnimatableJudgement
+public partial class LegacySentakkiJudgementPiece : CompositeDrawable, IAnimatableJudgement, IHasTimingIndicator
 {
     private HitResult hitResult;
 
     private Drawable? judgementDrawable;
+    private Drawable? timingIndicatorDrawableEarly;
+    private Drawable? timingIndicatorDrawableLate;
 
     public LegacySentakkiJudgementPiece(HitResult hitResult)
     {
@@ -24,15 +29,40 @@ public partial class LegacySentakkiJudgementPiece : CompositeDrawable, IAnimatab
         this.hitResult = hitResult;
     }
 
+    private Bindable<bool> timingIndicatorEnabled = new Bindable<bool>();
+
     [BackgroundDependencyLoader]
-    private void load(ISkinSource skin)
+    private void load(ISkinSource skin, SentakkiRulesetConfigManager configManager)
     {
         judgementDrawable = skin.GetAnimation($"sentakki/judgement-{hitResult.GetDisplayNameForSentakkiResult()}", true, false);
 
-        if (judgementDrawable is null)
+        if (judgementDrawable is not null)
+            AddInternal(judgementDrawable);
+
+        if (hitResult is HitResult.Perfect)
             return;
 
-        AddInternal(judgementDrawable);
+        Container timingIndicatorContainer;
+
+        AddInternal(timingIndicatorContainer = new Container
+        {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            RelativeSizeAxes = Axes.Both,
+        });
+
+        timingIndicatorDrawableEarly = skin.GetAnimation($"sentakki/judgement-early", true, false);
+
+        if (timingIndicatorDrawableEarly is not null)
+            timingIndicatorContainer.Add(timingIndicatorDrawableEarly);
+
+        timingIndicatorDrawableLate = skin.GetAnimation($"sentakki/judgement-late", true, false);
+
+        if (timingIndicatorDrawableLate is not null)
+            timingIndicatorContainer.Add(timingIndicatorDrawableLate);
+
+        configManager.BindWith(SentakkiRulesetSettings.DetailedJudgements, timingIndicatorEnabled);
+        timingIndicatorEnabled.BindValueChanged(v => timingIndicatorContainer.Alpha = v.NewValue ? 1 : 0, true);
     }
 
     public Drawable? GetAboveHitObjectsProxiedContent() => CreateProxy();
@@ -66,5 +96,17 @@ public partial class LegacySentakkiJudgementPiece : CompositeDrawable, IAnimatab
                     .FadeOut(300);
                 break;
         }
+    }
+
+    public void ApplyTimingIndicatorFor(JudgementResult judgementResult)
+    {
+        if (timingIndicatorDrawableEarly is null)
+            return;
+
+        if (timingIndicatorDrawableEarly is not null)
+            timingIndicatorDrawableEarly.Scale = judgementResult.TimeOffset < 0 ? Vector2.One : Vector2.Zero;
+
+        if (timingIndicatorDrawableLate is not null)
+            timingIndicatorDrawableLate.Scale = judgementResult.TimeOffset < 0 ? Vector2.Zero : Vector2.One;
     }
 }
