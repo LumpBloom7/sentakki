@@ -45,7 +45,7 @@ public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
             new SettingsItemV2(new FormCheckBox {
                 Caption = SentakkiSettingsSubsectionStrings.ShowDetailedJudgements,
                 Current = config.GetBindable<bool>(SentakkiRulesetSettings.DetailedJudgements),
-                HintText = "Shows EARLY/LATE indicators on Argon skins."
+                HintText = "Show EARLY/LATE indicators on supported skins."
             }) {
                 Keywords = ["early", "late","indicators", "timing"],
             },
