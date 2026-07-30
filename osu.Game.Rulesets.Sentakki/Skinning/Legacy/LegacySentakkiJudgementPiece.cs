@@ -17,17 +17,19 @@ public partial class LegacySentakkiJudgementPiece : CompositeDrawable, IAnimatab
 {
     private HitResult hitResult;
 
-    private Drawable? judgementDrawable;
+    private Drawable judgementDrawable;
     private Drawable? timingIndicatorDrawableEarly;
     private Drawable? timingIndicatorDrawableLate;
 
-    public LegacySentakkiJudgementPiece(HitResult hitResult)
+    public LegacySentakkiJudgementPiece(HitResult hitResult, Drawable mainJudgementDrawable)
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
         AutoSizeAxes = Axes.Both;
 
         this.hitResult = hitResult;
+
+        judgementDrawable = mainJudgementDrawable;
     }
 
     private Bindable<bool> timingIndicatorEnabled = new Bindable<bool>();
@@ -35,10 +37,11 @@ public partial class LegacySentakkiJudgementPiece : CompositeDrawable, IAnimatab
     [BackgroundDependencyLoader]
     private void load(ISkinSource skin, SentakkiRulesetConfigManager configManager)
     {
-        judgementDrawable = skin.GetAnimation($"sentakki/judgement-{hitResult.GetDisplayNameForSentakkiResult()}", true, false);
-
-        if (judgementDrawable is not null)
-            AddInternal(judgementDrawable);
+        AddInternal(judgementDrawable.With(d =>
+        {
+            d.Anchor = Anchor.Centre;
+            d.Origin = Anchor.Centre;
+        }));
 
         if (hitResult is HitResult.Perfect || hitResult.IsMiss())
             return;
@@ -52,12 +55,12 @@ public partial class LegacySentakkiJudgementPiece : CompositeDrawable, IAnimatab
             RelativeSizeAxes = Axes.Both,
         });
 
-        timingIndicatorDrawableEarly = skin.GetAnimation($"sentakki/judgement-early", true, false);
+        timingIndicatorDrawableEarly = skin.GetAnimation($"sentakki/judgements/early", true, false);
 
         if (timingIndicatorDrawableEarly is not null)
             timingIndicatorContainer.Add(timingIndicatorDrawableEarly);
 
-        timingIndicatorDrawableLate = skin.GetAnimation($"sentakki/judgement-late", true, false);
+        timingIndicatorDrawableLate = skin.GetAnimation($"sentakki/judgements/late", true, false);
 
         if (timingIndicatorDrawableLate is not null)
             timingIndicatorContainer.Add(timingIndicatorDrawableLate);

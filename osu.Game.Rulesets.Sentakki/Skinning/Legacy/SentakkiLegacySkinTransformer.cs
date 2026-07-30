@@ -14,13 +14,14 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
             case SkinComponentLookup<HitResult> resultComponent:
                 var result = resultComponent.Component;
 
-                if (Skin.GetAnimation($"sentakki/judgement-{result.GetDisplayNameForSentakkiResult()}", true, true) is null)
+                Drawable? drawable = Skin.GetAnimation($"sentakki/judgements/{result.GetDisplayNameForSentakkiResult().ToLowerInvariant()}", true, false, animationSeparator: "/");
+
+                if (drawable is null)
                     return null;
 
-                return new LegacySentakkiJudgementPiece(result);
+                return new LegacySentakkiJudgementPiece(result, drawable);
 
             case SentakkiSkinComponentLookup sentakkiComponent:
-
                 switch (sentakkiComponent)
                 {
                     default:
