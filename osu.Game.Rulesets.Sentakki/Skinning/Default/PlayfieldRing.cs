@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -6,16 +6,17 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.UI.Components;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default;
 
-public partial class SentakkiRing : CompositeDrawable
+public partial class PlayfieldRing : CompositeDrawable
 {
     private readonly Container spawnIndicator;
 
-    public SentakkiRing()
+    public PlayfieldRing()
     {
         RelativeSizeAxes = Axes.Both;
         Anchor = Anchor.Centre;

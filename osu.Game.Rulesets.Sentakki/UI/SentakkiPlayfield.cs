@@ -13,6 +13,8 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Skinning;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.UI;
 using osu.Game.Skinning;
@@ -31,7 +33,7 @@ public partial class SentakkiPlayfield : Playfield
     private readonly DrawablePool<DrawableSentakkiJudgement> judgementPool;
     private readonly DrawablePool<HitExplosion> explosionPool;
 
-    private readonly SentakkiRing ring;
+    private readonly SkinnableDrawable ring;
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
 
@@ -73,7 +75,7 @@ public partial class SentakkiPlayfield : Playfield
                 Children =
                 [
                     new PlayfieldVisualisation(),
-                    ring = new SentakkiRing()
+                    ring = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.PlayfieldRing), _ => new PlayfieldRing())
                 ]
             },
             explosionLayer = new Container<HitExplosion> { RelativeSizeAxes = Axes.Both },
@@ -173,8 +175,8 @@ public partial class SentakkiPlayfield : Playfield
         if (judgedObject is DrawableSlideBody)
             return;
 
-        if (judgedObject.HitObject.Kiai)
-            ring.KiaiBeat();
+        if (judgedObject.HitObject.Kiai && ring.Drawable is PlayfieldRing defaultRing)
+            defaultRing.KiaiBeat();
 
         var explosion = explosionPool.Get().Apply(sentakkiHitObject);
         explosionLayer.Add(explosion);
