@@ -91,7 +91,6 @@ public partial class PlayfieldRing : BeatSyncedContainer
 
     public readonly Bindable<float> RingOpacity = new Bindable<float>(1);
     public readonly Bindable<bool> NoteStartIndicators = new Bindable<bool>();
-    private readonly Bindable<bool> kiaiEffect = new Bindable<bool>(true);
 
     private readonly Bindable<ColorOption> ringColor = new Bindable<ColorOption>();
     private IBindable<StarDifficulty> beatmapDifficulty = null!;
@@ -106,8 +105,6 @@ public partial class PlayfieldRing : BeatSyncedContainer
 
         settings?.BindWith(SentakkiRulesetSettings.ShowNoteStartIndicators, NoteStartIndicators);
         NoteStartIndicators.BindValueChanged(opacity => spawnIndicator.FadeTo(Convert.ToSingle(opacity.NewValue), 200), true);
-
-        settings?.BindWith(SentakkiRulesetSettings.KiaiEffects, kiaiEffect);
 
         if (beatmap is null || difficultyCache is null)
             return;
@@ -129,9 +126,6 @@ public partial class PlayfieldRing : BeatSyncedContainer
     {
         base.Update();
 
-        if (!kiaiEffect.Value)
-            return;
-
         if (EffectPoint.KiaiMode && !wasKiai)
         {
             bool isNearEffectPoint = Math.Abs(BeatSyncSource.Clock.CurrentTime - EffectPoint.Time) < 500;
@@ -146,9 +140,6 @@ public partial class PlayfieldRing : BeatSyncedContainer
     protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, ChannelAmplitudes amplitudes)
     {
         base.OnNewBeat(beatIndex, timingPoint, effectPoint, amplitudes);
-
-        if (!kiaiEffect.Value)
-            return;
 
         if (!effectPoint.KiaiMode)
             return;

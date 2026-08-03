@@ -17,7 +17,6 @@ public class SentakkiRulesetConfigManager : RulesetConfigManager<SentakkiRuleset
     {
         base.InitialiseDefaults();
 
-        SetDefault(SentakkiRulesetSettings.KiaiEffects, true);
         SetDefault(SentakkiRulesetSettings.AnimationSpeed, 2.0f, 1.0f, 10.25f, 0.25f);
         SetDefault(SentakkiRulesetSettings.TouchAnimationSpeed, 2.0f, 1.0f, 10.25f, 0.25f);
         SetDefault(SentakkiRulesetSettings.ShowNoteStartIndicators, false);
@@ -40,7 +39,6 @@ public class SentakkiRulesetConfigManager : RulesetConfigManager<SentakkiRuleset
 
 public enum SentakkiRulesetSettings
 {
-    KiaiEffects,
     AnimationSpeed,
     RingOpacity,
     ShowNoteStartIndicators,

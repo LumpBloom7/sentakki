@@ -28,11 +28,6 @@ public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
         Children =
         [
             new SettingsItemV2(new FormCheckBox {
-                Caption = SentakkiSettingsSubsectionStrings.ShowKiaiEffects,
-                Current = config.GetBindable<bool>(SentakkiRulesetSettings.KiaiEffects),
-            }) { Keywords = ["visualiser", "visualizer", "bounce"] },
-
-            new SettingsItemV2(new FormCheckBox {
                 Caption = SentakkiSettingsSubsectionStrings.ShowNoteStartIndicators,
                 Current = config.GetBindable<bool>(SentakkiRulesetSettings.ShowNoteStartIndicators)
             }),
