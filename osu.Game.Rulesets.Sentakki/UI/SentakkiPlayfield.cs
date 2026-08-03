@@ -3,14 +3,11 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
-using osu.Framework.Utils;
 using osu.Game.Beatmaps;
-using osu.Game.Graphics;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Skinning;
@@ -19,7 +16,6 @@ using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.UI;
 using osu.Game.Skinning;
 using osuTK;
-using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.UI;
 
@@ -74,7 +70,6 @@ public partial class SentakkiPlayfield : Playfield
                 RelativeSizeAxes = Axes.Both,
                 Children =
                 [
-                    new PlayfieldVisualisation(),
                     ring = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.PlayfieldRing), _ => new PlayfieldRing())
                 ]
             },
@@ -95,13 +90,7 @@ public partial class SentakkiPlayfield : Playfield
     [Resolved]
     private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; } = null!;
 
-    [Resolved]
-    private SentakkiRulesetConfigManager? sentakkiRulesetConfig { get; set; }
-
     private Bindable<Skin> skin = null!;
-    private readonly Bindable<ColorOption> ringColor = new Bindable<ColorOption>();
-
-    private IBindable<StarDifficulty> beatmapDifficulty = null!;
 
     [BackgroundDependencyLoader]
     private void load(SkinManager skinManager, IBeatmap beatmap, BeatmapDifficultyCache difficultyCache)
@@ -109,19 +98,7 @@ public partial class SentakkiPlayfield : Playfield
         RegisterPool<TouchHold, DrawableTouchHold>(2);
         RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(8);
 
-        // handle colouring of playfield elements
-        beatmapDifficulty = difficultyCache.GetBindableDifficulty(beatmap.BeatmapInfo);
-
         skin = skinManager.CurrentSkin.GetBoundCopy();
-        sentakkiRulesetConfig?.BindWith(SentakkiRulesetSettings.RingColor, ringColor);
-    }
-
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-
-        skin.BindValueChanged(_ => changePlayfieldAccent(), true);
-        ringColor.BindValueChanged(_ => changePlayfieldAccent(), true);
     }
 
     protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, drawableSentakkiRuleset);
@@ -175,37 +152,9 @@ public partial class SentakkiPlayfield : Playfield
         if (judgedObject is DrawableSlideBody)
             return;
 
-        if (judgedObject.HitObject.Kiai && ring.Drawable is PlayfieldRing defaultRing)
-            defaultRing.KiaiBeat();
-
         var explosion = explosionPool.Get().Apply(sentakkiHitObject);
         explosionLayer.Add(explosion);
     }
 
-    [Resolved]
-    private OsuColour colours { get; set; } = null!;
 
-    private void changePlayfieldAccent()
-    {
-        switch (ringColor.Value)
-        {
-            case ColorOption.Difficulty:
-                double starRating = beatmapDifficulty.Value.Stars;
-                var colour = colours.ForStarDifficulty(starRating);
-
-                // Normalize the colors to make sure the ring is actually visible
-                colour = Interpolation.ValueAt(0.5f, colour, new HSPAColour(colour) { P = 0.6f }.ToColor4(), 0, 1);
-
-                AccentContainer.FadeColour(colour, 200);
-                break;
-
-            case ColorOption.Skin:
-                AccentContainer.FadeColour(skin.Value.GetConfig<GlobalSkinColours, Color4>(GlobalSkinColours.MenuGlow)?.Value ?? Color4.White, 200);
-                break;
-
-            default:
-                AccentContainer.FadeColour(Color4.White, 200);
-                break;
-        }
-    }
 }
