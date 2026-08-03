@@ -39,7 +39,7 @@ public partial class TestSceneSentakkiRing : SentakkiSkinnableTestScene
     private void triggerKiaiBeat()
     {
         CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<PlayfieldRing>().ForEach(
-            r => r.KiaiBeat()
+            r => r.Pulse()
         );
     }
 

@@ -1,26 +1,32 @@
 using System;
 using osu.Framework.Allocation;
+using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Utils;
 using osu.Game.Beatmaps;
+using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Containers;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Default;
 
-public partial class PlayfieldRing : CompositeDrawable
+public partial class PlayfieldRing : BeatSyncedContainer
 {
+
     private readonly Container spawnIndicator;
+    private readonly Drawable pulseRing;
+
+    public override bool RemoveCompletedTransforms => false;
 
     public PlayfieldRing()
     {
@@ -30,7 +36,16 @@ public partial class PlayfieldRing : CompositeDrawable
 
         InternalChildren =
         [
-            new PlayfieldVisualisation(),
+            pulseRing = new CircularProgress
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Size = new Vector2(608),
+                Colour = Color4.White,
+                InnerRadius = 12f / 304f,
+                Progress = 1,
+                Alpha = 0,
+            },
             new CircularProgress
             {
                 Anchor = Anchor.Centre,
@@ -81,7 +96,6 @@ public partial class PlayfieldRing : CompositeDrawable
     private readonly Bindable<ColorOption> ringColor = new Bindable<ColorOption>();
     private IBindable<StarDifficulty> beatmapDifficulty = null!;
 
-
     [BackgroundDependencyLoader]
     private void load(SentakkiRulesetConfigManager? settings, IBeatmap? beatmap, BeatmapDifficultyCache? difficultyCache)
     {
@@ -107,6 +121,40 @@ public partial class PlayfieldRing : CompositeDrawable
         // These usually animate in, but they shouldn't if the game was started with it already on
         spawnIndicator.FinishTransforms(true);
         ringColor.BindValueChanged(_ => updateColours(), true);
+    }
+
+    private bool wasKiai;
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (!kiaiEffect.Value)
+            return;
+
+        if (EffectPoint.KiaiMode && !wasKiai)
+        {
+            bool isNearEffectPoint = Math.Abs(BeatSyncSource.Clock.CurrentTime - EffectPoint.Time) < 500;
+
+            if (isNearEffectPoint)
+                Pulse(BeatSyncSource.CurrentAmplitudes.Average);
+        }
+
+        wasKiai = EffectPoint.KiaiMode;
+    }
+
+    protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, ChannelAmplitudes amplitudes)
+    {
+        base.OnNewBeat(beatIndex, timingPoint, effectPoint, amplitudes);
+
+        if (!kiaiEffect.Value)
+            return;
+
+        if (!effectPoint.KiaiMode)
+            return;
+
+        if (((beatIndex * 4) % timingPoint.TimeSignature.Numerator) == 0)
+            Pulse(amplitudes.Average);
     }
 
     [Resolved]
@@ -139,11 +187,10 @@ public partial class PlayfieldRing : CompositeDrawable
         }
     }
 
-    public void KiaiBeat()
+    public void Pulse(float amplitude = 1)
     {
-        if (!kiaiEffect.Value) return;
-
-        FinishTransforms();
-        this.ScaleTo(1.01f, 100).Then().ScaleTo(1, 100);
+        pulseRing.FinishTransforms();
+        pulseRing.ClearTransforms();
+        pulseRing.ScaleTo(1).FadeTo(0.5f * amplitude).ScaleTo(1.06f, 200).FadeOut(200);
     }
 }
