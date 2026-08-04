@@ -10,8 +10,7 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
         switch (lookup)
         {
             case SentakkiSkinComponentLookup sentakkiComponent:
-
-                switch (sentakkiComponent)
+                switch (sentakkiComponent.Component)
                 {
                     default:
                         break;
