@@ -22,7 +22,7 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
                 return new LegacySentakkiJudgementPiece(result, drawable);
 
             case SentakkiSkinComponentLookup sentakkiComponent:
-                switch (sentakkiComponent)
+                switch (sentakkiComponent.Component)
                 {
                     default:
                         break;
