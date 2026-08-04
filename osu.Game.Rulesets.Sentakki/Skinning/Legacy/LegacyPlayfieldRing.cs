@@ -64,10 +64,12 @@ public partial class LegacyPlayfieldRing : BeatSyncedContainer
 
         // handle colouring of playfield elements
         beatmapDifficulty = difficultyCache.GetBindableDifficulty(beatmap.BeatmapInfo);
+        beatmapDifficulty.BindValueChanged(_ => updateColours());
     }
 
     protected override void LoadComplete()
     {
+
         ringColor.BindValueChanged(_ => updateColours(), true);
     }
 

@@ -106,12 +106,14 @@ public partial class PlayfieldRing : BeatSyncedContainer
 
         // handle colouring of playfield elements
         beatmapDifficulty = difficultyCache.GetBindableDifficulty(beatmap.BeatmapInfo);
+        beatmapDifficulty.BindValueChanged(_ => updateColours());
     }
 
     protected override void LoadComplete()
     {
         // These usually animate in, but they shouldn't if the game was started with it already on
         spawnIndicator.FinishTransforms(true);
+
         ringColor.BindValueChanged(_ => updateColours(), true);
     }
 
