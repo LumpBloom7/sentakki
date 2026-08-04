@@ -16,13 +16,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables;
 
 public partial class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHandler<SentakkiAction>
 {
-    protected virtual Drawable CreateTapRepresentation() => new ProxyableSkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap), _ => new TapRing())
-    {
-        Anchor = Anchor.Centre,
-        Origin = Anchor.Centre,
-        Y = -SentakkiPlayfield.NOTESTARTDISTANCE,
-        Scale = Vector2.Zero,
-    };
+    protected virtual Drawable CreateTapRepresentation() => new ProxyableSkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap), _ => new TapRing(), ConfineMode.ScaleToFit);
 
     public override double LifetimeStart
     {
@@ -61,6 +55,12 @@ public partial class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHa
     {
         Origin = Anchor.Centre;
         Anchor = Anchor.Centre;
+        Size = new Vector2(TapRing.CIRCLE_RADIUS * 2);
+
+        Y = -SentakkiPlayfield.NOTESTARTDISTANCE;
+        Alpha = 0;
+        Scale = Vector2.Zero;
+
         AddRangeInternal([
             TapVisual = CreateTapRepresentation()
         ]);
@@ -71,12 +71,12 @@ public partial class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHa
         base.UpdateInitialTransforms();
         double animTime = AnimationDuration.Value / 2;
 
-        TapVisual.FadeInFromZero(animTime).ScaleTo(1, animTime);
+        this.FadeInFromZero(animTime).ScaleTo(1, animTime);
 
         using (BeginDelayedSequence(animTime))
         {
             double excessDistance = (-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * HitObject.HitWindows.WindowFor(HitResult.Miss);
-            TapVisual.MoveToY((float)(-SentakkiPlayfield.INTERSECTDISTANCE + excessDistance), animTime + HitObject.HitWindows.WindowFor(HitResult.Miss));
+            this.MoveToY((float)(-SentakkiPlayfield.INTERSECTDISTANCE + excessDistance), animTime + HitObject.HitWindows.WindowFor(HitResult.Miss));
         }
     }
 
@@ -110,15 +110,14 @@ public partial class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHa
         switch (state)
         {
             case ArmedState.Hit:
-                TapVisual.FadeOut();
                 this.FadeOut();
                 break;
 
             case ArmedState.Miss:
-                TapVisual.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
-                         .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
-                         .MoveToOffset(new Vector2(0, -100), time_fade_miss, Easing.OutCubic)
-                         .FadeOut(time_fade_miss);
+                this.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                    .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
+                    .MoveToOffset(new Vector2(0, -100), time_fade_miss, Easing.OutCubic)
+                    .FadeOut(time_fade_miss);
 
                 this.Delay(time_fade_miss).FadeOut();
 

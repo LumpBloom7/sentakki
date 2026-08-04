@@ -53,6 +53,12 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
                 Children = [
                     slideTapHighlight = new SlideTapPiece(),
                     tapHighlight = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap), _ => new TapRing())
+                    {
+                        RelativeSizeAxes = Axes.None,
+                        Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                    }
                 ]
             }
         );

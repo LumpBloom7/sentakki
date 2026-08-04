@@ -29,11 +29,12 @@ public partial class TapPlacementBlueprint : LanedPlacementBlueprint<Tap>
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-
         InternalChild = new Container
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
+            Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
+
             Child = highlight = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap), _ => new TapRing())
             {
                 Anchor = Anchor.Centre,

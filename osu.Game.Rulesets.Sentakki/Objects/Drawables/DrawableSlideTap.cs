@@ -1,12 +1,18 @@
 ﻿using System.Linq;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables;
 
 public partial class DrawableSlideTap : DrawableTap
 {
-    protected override Drawable CreateTapRepresentation() => new SlideTapPiece();
+    protected override Drawable CreateTapRepresentation() => new SlideTapPiece()
+    {
+        Alpha = 1,
+        Scale = Vector2.One,
+        Position = Vector2.Zero,
+    };
 
     protected new DrawableSlide ParentHitObject => (DrawableSlide)base.ParentHitObject;
 
