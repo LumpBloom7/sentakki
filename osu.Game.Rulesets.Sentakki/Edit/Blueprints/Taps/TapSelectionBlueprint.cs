@@ -3,14 +3,14 @@ using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
 
 public partial class TapSelectionBlueprint : SentakkiSelectionBlueprint<Tap, DrawableTap>
 {
-    private readonly TapPiece highlight;
+    private readonly TapRing highlight;
     public override Quad SelectionQuad => DrawableObject.TapVisual.ScreenSpaceDrawQuad;
 
     public TapSelectionBlueprint(Tap item)
@@ -19,7 +19,7 @@ public partial class TapSelectionBlueprint : SentakkiSelectionBlueprint<Tap, Dra
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        AddInternal(highlight = new TapPiece
+        AddInternal(highlight = new TapRing
         {
             Alpha = 0.5f,
             Colour = Color4.YellowGreen

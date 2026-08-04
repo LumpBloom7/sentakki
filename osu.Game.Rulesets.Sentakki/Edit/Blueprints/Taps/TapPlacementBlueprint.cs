@@ -1,4 +1,3 @@
-using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -9,7 +8,7 @@ using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
@@ -22,7 +21,7 @@ public partial class TapPlacementBlueprint : LanedPlacementBlueprint<Tap>
     [Resolved]
     private LaneNoteSnapGrid snapGrid { get; set; } = null!;
 
-    private readonly TapPiece highlight;
+    private readonly TapRing highlight;
 
     public TapPlacementBlueprint()
     {
@@ -33,7 +32,7 @@ public partial class TapPlacementBlueprint : LanedPlacementBlueprint<Tap>
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            Child = highlight = new TapPiece
+            Child = highlight = new TapRing
             {
                 Alpha = 0.5f,
                 Colour = Color4.YellowGreen

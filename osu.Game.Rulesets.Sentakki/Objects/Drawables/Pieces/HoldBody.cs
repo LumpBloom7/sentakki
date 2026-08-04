@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Primitives;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
@@ -27,7 +28,7 @@ public partial class HoldBody : CompositeDrawable
             {
                 // For simplicity in sizing and positioning
                 // let's put the endpoints outside the main area
-                Padding = new MarginPadding(-TapPiece.CIRCLE_RADIUS),
+                Padding = new MarginPadding(-TapRing.CIRCLE_RADIUS),
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

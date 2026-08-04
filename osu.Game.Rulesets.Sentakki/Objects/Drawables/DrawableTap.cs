@@ -5,8 +5,10 @@ using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Skinning;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -14,10 +16,13 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables;
 
 public partial class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHandler<SentakkiAction>
 {
-    protected virtual Drawable CreateTapRepresentation() => new TapPiece
+    protected virtual Drawable CreateTapRepresentation() => new ProxyableSkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap), _ => new TapRing(), ConfineMode.ScaleToFit)
     {
+        Anchor = Anchor.Centre,
+        Origin = Anchor.Centre,
         Y = -SentakkiPlayfield.NOTESTARTDISTANCE,
-        Scale = Vector2.Zero
+        Scale = Vector2.Zero,
+        Size = new Vector2(TapRing.CIRCLE_RADIUS * 2)
     };
 
     public override double LifetimeStart

@@ -12,6 +12,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
 using osuTK;
@@ -26,7 +27,7 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
     [Cached]
     private readonly SlideTapPiece slideTapHighlight;
 
-    private readonly TapPiece tapHighlight;
+    private readonly TapRing tapHighlight;
 
     public override Quad SelectionQuad => slideTapHighlight.ScreenSpaceDrawQuad;
 
@@ -50,7 +51,7 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
                 Colour = Color4.YellowGreen,
                 Children = [
                     slideTapHighlight = new SlideTapPiece(),
-                    tapHighlight = new TapPiece()
+                    tapHighlight = new TapRing()
                 ]
             }
         );

@@ -1,24 +1,17 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NUnit.Framework;
-using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Tests.Visual;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.Objects;
 
-public partial class TestSceneTapNote : OsuTestScene
+public partial class TestSceneTapNote : SentakkiSkinnableTestScene
 {
-    private Container content = null!;
-    protected override Container<Drawable> Content => content;
-
-    protected override Ruleset CreateRuleset() => new SentakkiRuleset();
-
     private int depthIndex;
 
     public static bool[][] ObjectFlagsSource =
@@ -29,18 +22,18 @@ public partial class TestSceneTapNote : OsuTestScene
         [true, true],
     ];
 
-    [BackgroundDependencyLoader]
-    private void load()
-    {
-        base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
-    }
 
     [TestCaseSource(nameof(ObjectFlagsSource))]
     public void PerformNoteTest(bool breakState = false, bool ex = false)
     {
-        AddStep("Miss Single", () => testSingle(false, breakState, ex));
-        AddStep("Hit Single", () => testSingle(true, breakState, ex));
-        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
+        addStep("Miss Single", () => testSingle(false, breakState, ex));
+        addStep("Hit Single", () => testSingle(true, breakState, ex));
+    }
+
+    private void addStep(string title, Action action)
+    {
+        AddStep(title, action);
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
     }
 
     private void testSingle(bool auto = false, bool breakState = false, bool ex = false)
@@ -57,7 +50,7 @@ public partial class TestSceneTapNote : OsuTestScene
 
         circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
-        Add(new DrawableTap(circle)
+        SetContents(_ => new DrawableTap(circle)
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
