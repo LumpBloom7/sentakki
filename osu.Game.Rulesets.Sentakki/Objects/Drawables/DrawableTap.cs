@@ -16,13 +16,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables;
 
 public partial class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHandler<SentakkiAction>
 {
-    protected virtual Drawable CreateTapRepresentation() => new ProxyableSkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap), _ => new TapRing(), ConfineMode.ScaleToFit)
+    protected virtual Drawable CreateTapRepresentation() => new ProxyableSkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap), _ => new TapRing())
     {
         Anchor = Anchor.Centre,
         Origin = Anchor.Centre,
         Y = -SentakkiPlayfield.NOTESTARTDISTANCE,
         Scale = Vector2.Zero,
-        Size = new Vector2(TapRing.CIRCLE_RADIUS * 2)
     };
 
     public override double LifetimeStart
