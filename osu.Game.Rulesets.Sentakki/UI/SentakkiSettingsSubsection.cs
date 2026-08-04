@@ -58,12 +58,6 @@ public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
                 Current = config.GetBindable<float>(SentakkiRulesetSettings.TouchAnimationSpeed),
                 LabelFormat = v => SentakkiSettingsSubsectionStrings.EntrySpeedTooltip(v, DrawableSentakkiRuleset.ComputeTouchNoteEntryTime(v))
             }) { Keywords = ["scroll"] },
-
-            new SettingsItemV2(new FormSliderBar<float>{
-                Caption = SentakkiSettingsSubsectionStrings.RingOpacity,
-                Current = config.GetBindable<float>(SentakkiRulesetSettings.RingOpacity),
-                DisplayAsPercentage = true,
-            }) { Keywords = ["transparency"] },
         ];
 
         if (!RuntimeInfo.IsMobile)

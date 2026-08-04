@@ -27,7 +27,6 @@ public partial class TestSceneSentakkiRing : SentakkiSkinnableTestScene
         AddUntilStep("Ring loaded", () => CreatedDrawables.All(d => d.IsLoaded));
         AddToggleStep("Toggle notestart Indicators", toggleNotestartIndicators);
         AddRepeatStep("Trigger Kiai Beat", triggerKiaiBeat, 5);
-        AddSliderStep<float>("Test opacity", 0, 1, 1, adjustOpacity);
     }
 
     private void toggleNotestartIndicators(bool b)
@@ -41,17 +40,6 @@ public partial class TestSceneSentakkiRing : SentakkiSkinnableTestScene
     {
         CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<PlayfieldRing>().ForEach(
             r => r.Pulse()
-        );
-
-        CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<LegacyPlayfieldRing>().ForEach(
-            r => r.Pulse()
-        );
-    }
-
-    private void adjustOpacity(float f)
-    {
-        CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<PlayfieldRing>().ForEach(
-            r => r.RingOpacity.Value = f
         );
 
         CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<LegacyPlayfieldRing>().ForEach(

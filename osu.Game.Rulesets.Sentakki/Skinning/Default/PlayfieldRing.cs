@@ -22,7 +22,6 @@ namespace osu.Game.Rulesets.Sentakki.Skinning.Default;
 
 public partial class PlayfieldRing : BeatSyncedContainer
 {
-
     private readonly Container spawnIndicator;
     private readonly Drawable pulseRing;
 
@@ -89,7 +88,6 @@ public partial class PlayfieldRing : BeatSyncedContainer
         }
     }
 
-    public readonly Bindable<float> RingOpacity = new Bindable<float>(1);
     public readonly Bindable<bool> NoteStartIndicators = new Bindable<bool>();
 
     private readonly Bindable<ColorOption> ringColor = new Bindable<ColorOption>();
@@ -99,9 +97,6 @@ public partial class PlayfieldRing : BeatSyncedContainer
     private void load(SentakkiRulesetConfigManager? settings, IBeatmap? beatmap, BeatmapDifficultyCache? difficultyCache)
     {
         settings?.BindWith(SentakkiRulesetSettings.RingColor, ringColor);
-
-        settings?.BindWith(SentakkiRulesetSettings.RingOpacity, RingOpacity);
-        RingOpacity.BindValueChanged(opacity => Alpha = opacity.NewValue, true);
 
         settings?.BindWith(SentakkiRulesetSettings.ShowNoteStartIndicators, NoteStartIndicators);
         NoteStartIndicators.BindValueChanged(opacity => spawnIndicator.FadeTo(Convert.ToSingle(opacity.NewValue), 200), true);

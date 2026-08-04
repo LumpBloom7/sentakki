@@ -22,7 +22,6 @@ public partial class LegacyPlayfieldRing : BeatSyncedContainer
 
     public override bool RemoveCompletedTransforms => false;
 
-    public readonly Bindable<float> RingOpacity = new Bindable<float>(1);
     private readonly Bindable<ColorOption> ringColor = new Bindable<ColorOption>();
     private IBindable<StarDifficulty> beatmapDifficulty = null!;
 
@@ -59,9 +58,6 @@ public partial class LegacyPlayfieldRing : BeatSyncedContainer
         ];
 
         settings?.BindWith(SentakkiRulesetSettings.RingColor, ringColor);
-
-        settings?.BindWith(SentakkiRulesetSettings.RingOpacity, RingOpacity);
-        RingOpacity.BindValueChanged(opacity => Alpha = opacity.NewValue, true);
 
         if (beatmap is null || difficultyCache is null)
             return;
