@@ -53,8 +53,8 @@ public partial class LegacyTapRing : CompositeDrawable
                         RelativeSizeAxes = Axes.Both,
                         FillMode = FillMode.Fit,
                         Texture = glowTexture,
-                        Blending = BlendingParameters.Additive,
                         Scale = new Vector2(1.5f),
+                        Colour = Color4.Black,
                     },
                     new Sprite
                     {
