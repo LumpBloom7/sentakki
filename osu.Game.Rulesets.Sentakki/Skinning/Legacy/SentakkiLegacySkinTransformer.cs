@@ -12,6 +12,11 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
             case SentakkiSkinComponentLookup sentakkiComponent:
                 switch (sentakkiComponent.Component)
                 {
+                    case SentakkiSkinComponents.PlayfieldRing:
+                        if (Skin.GetAnimation("sentakki/playfield-ring", true, true, true, "/") is null)
+                            return null;
+
+                        return new LegacyPlayfieldRing();
                     default:
                         break;
                 }

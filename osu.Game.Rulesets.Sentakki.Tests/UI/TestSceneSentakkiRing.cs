@@ -4,6 +4,7 @@ using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Sentakki.Skinning;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
+using osu.Game.Rulesets.Sentakki.Skinning.Legacy;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Skinning;
 using osuTK;
@@ -41,12 +42,20 @@ public partial class TestSceneSentakkiRing : SentakkiSkinnableTestScene
         CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<PlayfieldRing>().ForEach(
             r => r.Pulse()
         );
+
+        CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<LegacyPlayfieldRing>().ForEach(
+            r => r.Pulse()
+        );
     }
 
     private void adjustOpacity(float f)
     {
         CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<PlayfieldRing>().ForEach(
             r => r.RingOpacity.Value = f
+        );
+
+        CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<LegacyPlayfieldRing>().ForEach(
+            r => r.Pulse()
         );
     }
 }
