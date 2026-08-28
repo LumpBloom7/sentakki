@@ -62,9 +62,9 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
     private readonly Bindable<double> animationSpeed = new Bindable<double>(5);
 
     [BackgroundDependencyLoader]
-    private void load(SentakkiBlueprintContainer blueprintContainer)
+    private void load(SentakkiHitObjectComposer composer)
     {
-        animationSpeed.BindTo(blueprintContainer.Composer.DrawableRuleset.AdjustedAnimDuration);
+        animationSpeed.BindTo(composer.DrawableRuleset.AdjustedAnimDuration);
     }
 
     protected override void Update()
