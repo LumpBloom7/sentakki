@@ -6,7 +6,7 @@ using osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.CompositionTools;
 
-public class TouchHoldCompositionTool : CompositionTool
+public class TouchHoldCompositionTool : CompositionTool<SentakkiAction>
 {
     public TouchHoldCompositionTool()
         : base("TouchHold")

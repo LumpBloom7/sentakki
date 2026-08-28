@@ -6,7 +6,7 @@ using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.CompositionTools;
 
-public class TapCompositionTool : CompositionTool
+public class TapCompositionTool : CompositionTool<SentakkiAction>
 {
     public TapCompositionTool()
         : base("Tap")

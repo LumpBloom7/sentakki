@@ -6,7 +6,7 @@ using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.CompositionTools;
 
-public class HoldCompositionTool : CompositionTool
+public class HoldCompositionTool : CompositionTool<SentakkiAction>
 {
     public HoldCompositionTool()
         : base("Hold")
