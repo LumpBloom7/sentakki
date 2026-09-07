@@ -9,4 +9,4 @@ Special thanks to these people for providing translations to the sentakki projec
 | Agatem ([@agatemosu](https://github.com/agatemosu))               | Spanish                        | 33                 |
 | Jacob ([@itsgabrieljacob](https://github.com/itsgabrieljacob))    | Portuguese, Brazilian          | 64                 |
 | ziv ([@ziv-vy](https://github.com/ziv-vy))                        | Romanian                       | 57                 |
-| Kuina ([@ziv-vy](https://github.com/ziv-vy))                      | Vietnamese                     | 36                 | 
+| Kuina ([@Kuina-chan](https://github.com/Kuina-chan))              | Vietnamese                     | 36                 | 
