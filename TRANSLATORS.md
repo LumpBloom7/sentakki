@@ -8,3 +8,4 @@ Special thanks to these people for providing translations to the sentakki projec
 | Loreos ([@Loreos7](https://github.com/Loreos7))                   | Russian                        | 49                 |
 | Agatem ([@agatemosu](https://github.com/agatemosu))               | Spanish                        | 33                 |
 | Jacob ([@itsgabrieljacob](https://github.com/itsgabrieljacob))    | Portuguese, Brazilian          | 64                 |
+| ziv ([(@ziv-vy](https://github.com/ziv-vy))                       | Romanian                       | 57
