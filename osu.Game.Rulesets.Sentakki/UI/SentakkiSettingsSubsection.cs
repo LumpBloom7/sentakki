@@ -45,7 +45,10 @@ public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
             new SettingsItemV2(new FormCheckBox {
                 Caption = SentakkiSettingsSubsectionStrings.ShowDetailedJudgements,
                 Current = config.GetBindable<bool>(SentakkiRulesetSettings.DetailedJudgements),
-            }) { Keywords = ["early", "late","indicators", "timing"] },
+                HintText = "Show EARLY/LATE indicators on supported skins."
+            }) {
+                Keywords = ["early", "late","indicators", "timing"],
+            },
 
             new SettingsItemV2(new FormEnumDropdown<ColorOption> {
                Caption = SentakkiSettingsSubsectionStrings.RingColor,

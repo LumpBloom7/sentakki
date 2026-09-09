@@ -24,11 +24,12 @@ namespace osu.Game.Rulesets.Sentakki.UI;
 [Cached]
 public partial class SentakkiPlayfield : Playfield
 {
-    private readonly Container<DrawableSentakkiJudgement> judgementLayer;
-
     private readonly Container<HitExplosion> explosionLayer;
 
-    private readonly DrawablePool<DrawableSentakkiJudgement> judgementPool;
+    private readonly JudgementContainer<DrawableSentakkiJudgement> judgementLayer;
+    private readonly Container judgementAboveHitObjectLayer;
+
+    private readonly JudgementPooler<DrawableSentakkiJudgement> newJudgementPool;
     private readonly DrawablePool<HitExplosion> explosionPool;
 
     private readonly SentakkiRing ring;
@@ -66,24 +67,28 @@ public partial class SentakkiPlayfield : Playfield
         Size = new Vector2(RINGSIZE);
         AddRangeInternal([
             explosionPool = new DrawablePool<HitExplosion>(8),
-            judgementPool = new DrawablePool<DrawableSentakkiJudgement>(8),
+            newJudgementPool = new JudgementPooler<DrawableSentakkiJudgement>([HitResult.Perfect, HitResult.Great, HitResult.Good, HitResult.Meh, HitResult.Miss], onJudgementLoaded),
             AccentContainer = new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Children =
                 [
                     new PlayfieldVisualisation(),
-                    ring = new SentakkiRing()
+                        ring = new SentakkiRing()
                 ]
             },
             explosionLayer = new Container<HitExplosion> { RelativeSizeAxes = Axes.Both },
+            judgementLayer = new JudgementContainer<DrawableSentakkiJudgement>
+            {
+                RelativeSizeAxes = Axes.Both,
+            },
             LanedPlayfield = new LanedPlayfield(),
             HitObjectContainer, // This only contains TouchHolds
             touchPlayfield = new TouchPlayfield(), // This only contains Touch notes, which needs to be above all other note types
-            judgementLayer = new Container<DrawableSentakkiJudgement>
+            judgementAboveHitObjectLayer = new Container
             {
                 RelativeSizeAxes = Axes.Both,
-            }
+            },
         ]);
         AddNested(LanedPlayfield);
         AddNested(touchPlayfield);
@@ -159,13 +164,19 @@ public partial class SentakkiPlayfield : Playfield
         }
     }
 
+    private void onJudgementLoaded(DrawableSentakkiJudgement drawableJudgement)
+    {
+        judgementAboveHitObjectLayer.Add(drawableJudgement.ProxiedAboveHitObjectsContent);
+    }
+
     private void onNewResult(DrawableHitObject judgedObject, JudgementResult result)
     {
         if (!judgedObject.DisplayResult || !DisplayJudgements.Value || judgedObject is not DrawableSentakkiHitObject sentakkiHitObject)
             return;
 
-        if (!(skin.Value is ArgonProSkin && result.Type >= HitResult.Great))
-            judgementLayer.Add(judgementPool.Get().Apply(result, judgedObject));
+        var judgement = newJudgementPool.Get(result.Type, d => d.Apply(result, judgedObject));
+        if (judgement is not null)
+            judgementLayer.Add(judgement);
 
         if (!result.IsHit) return;
 
