@@ -17,6 +17,13 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
                             return null;
 
                         return new LegacyPlayfieldRing();
+
+                    case SentakkiSkinComponents.Tap:
+                        if (Skin.GetTexture("sentakki/hitobjects/tap/base") is null)
+                            return null;
+
+                        return new LegacyTapRing();
+
                     default:
                         break;
                 }

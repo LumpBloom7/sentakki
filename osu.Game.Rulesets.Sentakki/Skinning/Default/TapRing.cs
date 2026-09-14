@@ -1,21 +1,19 @@
-﻿using osu.Framework.Allocation;
+using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Default;
 
-public partial class TapPiece : CompositeDrawable
+public partial class TapRing : CompositeDrawable
 {
-    // This will be proxied, so a must.
-    public override bool RemoveWhenNotAlive => false;
-
     public const float CIRCLE_RADIUS = 75 * 0.5f;
 
-    public TapPiece()
+    public TapRing()
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;

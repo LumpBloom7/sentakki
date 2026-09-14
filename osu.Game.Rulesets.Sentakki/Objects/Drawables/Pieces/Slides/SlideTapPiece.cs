@@ -3,6 +3,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
@@ -19,7 +20,7 @@ public partial class SlideTapPiece : CompositeDrawable
 
     public SlideTapPiece()
     {
-        Size = new Vector2(TapPiece.CIRCLE_RADIUS * 2);
+        Size = new Vector2(TapRing.CIRCLE_RADIUS * 2);
 
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
