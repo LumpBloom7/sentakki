@@ -23,47 +23,42 @@ public enum NoteShape
 public partial class LaneNoteVisual : Drawable, ITexturedShaderDrawable
 {
     public NoteShape Shape { get; init; } = NoteShape.Ring;
-    private float thickness = 18.75f;
 
     public float Thickness
     {
-        get => thickness;
+        get;
         set
         {
-            if (thickness == value)
+            if (field == value)
                 return;
 
-            thickness = value;
+            field = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
-
-    private float shadowRadius = 15;
 
     public float ShadowRadius
     {
-        get => shadowRadius;
+        get;
         set
         {
-            if (shadowRadius == value)
+            if (field == value)
                 return;
 
-            shadowRadius = value;
+            field = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
 
-    private bool glow;
-
     public bool Glow
     {
-        get => glow;
+        get;
         set
         {
-            if (glow == value)
+            if (field == value)
                 return;
 
-            glow = value;
+            field = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
