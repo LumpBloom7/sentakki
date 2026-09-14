@@ -2,18 +2,18 @@
     <PropertyGroup Label="Project">
         <AssemblyTitle>sentakki for osu!lazer</AssemblyTitle>
         <Description>TAP, HOLD and SLIDE to the beat.</Description>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <OutputType>Library</OutputType>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <RootNamespace>osu.Game.Rulesets.Sentakki</RootNamespace>
         <AssemblyName>osu.Game.Rulesets.Sentakki</AssemblyName>
     </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="ppy.osu.Game" Version="2026.702.1" />
-    </ItemGroup>
 
     <!--Since we aren't changing the assembly name, we use the assembly title to indicate whether it is a dev build-->
     <PropertyGroup Condition="!('$(Configuration)' == 'Release')">
         <AssemblyTitle>sentakki for osu!lazer (dev build)</AssemblyTitle>
     </PropertyGroup>
+    <ItemGroup>
+      <PackageReference Include="ppy.osu.Game" Version="2026.916.0" />
+    </ItemGroup>
 </Project>

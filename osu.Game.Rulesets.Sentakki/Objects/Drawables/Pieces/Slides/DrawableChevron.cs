@@ -13,62 +13,54 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 
 public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
 {
-    private float thickness = 13f;
-
     public float Thickness
     {
-        get => thickness;
+        get;
         set
         {
-            if (thickness == value)
+            if (field == value)
                 return;
 
-            thickness = value;
+            field = value;
             Invalidate(Invalidation.DrawNode);
         }
-    }
-
-    private float shadowRadius = 7.5f;
+    } = 13f;
 
     public float ShadowRadius
     {
-        get => shadowRadius;
+        get;
         set
         {
-            if (shadowRadius == value)
+            if (field == value)
                 return;
 
-            shadowRadius = value;
+            field = value;
             Invalidate(Invalidation.DrawNode);
         }
-    }
-
-    private bool glow;
+    } = 7.5f;
 
     public bool Glow
     {
-        get => glow;
+        get;
         set
         {
-            if (glow == value)
+            if (field == value)
                 return;
 
-            glow = value;
+            field = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
 
-    private bool fanChevron;
-
     public bool FanChevron
     {
-        get => fanChevron;
+        get;
         set
         {
-            if (fanChevron == value)
+            if (field == value)
                 return;
 
-            fanChevron = value;
+            field = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
@@ -123,9 +115,9 @@ public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
 
             var newParameters = new ShapeParameters()
             {
-                Thickness = Source.thickness,
+                Thickness = Source.Thickness,
                 ShadowRadius = Source.ShadowRadius,
-                Glow = Source.glow,
+                Glow = Source.Glow,
                 FanChevron = Source.FanChevron,
             };
 

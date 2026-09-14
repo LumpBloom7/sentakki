@@ -182,17 +182,15 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
     {
         private CircularProgress circularProgress;
 
-        private float thickness;
-
         public float Thickness
         {
-            get => thickness;
+            get;
             set
             {
-                if (value == thickness)
+                if (value == field)
                     return;
 
-                thickness = value;
+                field = value;
                 circularProgress.InnerRadius = value / 300;
             }
         }
