@@ -69,7 +69,6 @@ public partial class LegacyPlayfieldRing : BeatSyncedContainer
 
     protected override void LoadComplete()
     {
-
         ringColor.BindValueChanged(_ => updateColours(), true);
     }
 
@@ -100,7 +99,6 @@ public partial class LegacyPlayfieldRing : BeatSyncedContainer
         if (((beatIndex * 4) % timingPoint.TimeSignature.Numerator) == 0)
             Pulse(amplitudes.Average);
     }
-
 
     [Resolved]
     private OsuColour colours { get; set; } = null!;

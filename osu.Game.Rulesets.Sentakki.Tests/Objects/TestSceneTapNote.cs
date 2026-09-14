@@ -22,7 +22,6 @@ public partial class TestSceneTapNote : SentakkiSkinnableTestScene
         [true, true],
     ];
 
-
     [TestCaseSource(nameof(ObjectFlagsSource))]
     public void PerformNoteTest(bool breakState = false, bool ex = false)
     {

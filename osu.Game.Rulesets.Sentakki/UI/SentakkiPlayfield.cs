@@ -166,6 +166,4 @@ public partial class SentakkiPlayfield : Playfield
         var explosion = explosionPool.Get().Apply(sentakkiHitObject);
         explosionLayer.Add(explosion);
     }
-
-
 }
