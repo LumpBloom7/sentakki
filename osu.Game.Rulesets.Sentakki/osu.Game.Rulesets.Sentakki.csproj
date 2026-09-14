@@ -16,4 +16,8 @@
     <PropertyGroup Condition="!('$(Configuration)' == 'Release')">
         <AssemblyTitle>sentakki for osu!lazer (dev build)</AssemblyTitle>
     </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="osu.Game.Rulesets.Sentakki.Tests" />
+    </ItemGroup>
 </Project>

@@ -1,41 +1,49 @@
-﻿using NUnit.Framework;
+﻿using System.Linq;
+using NUnit.Framework;
+using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Shapes;
+using osu.Game.Rulesets.Sentakki.Skinning;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
+using osu.Game.Rulesets.Sentakki.Skinning.Legacy;
 using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Rulesets.Sentakki.UI.Components;
-using osu.Game.Tests.Visual;
+using osu.Game.Skinning;
 using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Tests.UI;
 
 [TestFixture]
-public partial class TestSceneSentakkiRing : OsuTestScene
+public partial class TestSceneSentakkiRing : SentakkiSkinnableTestScene
 {
-    private SentakkiRing ring = null!;
-
-    public TestSceneSentakkiRing()
+    [Test]
+    public void TestPlayfieldRing()
     {
-        AddStep("Clear test", () =>
-        {
-            Clear();
-            Add(new Box
-            {
-                RelativeSizeAxes = Axes.Both
-            });
-        });
-
-        AddStep("Create Ring", () => Add(ring = new SentakkiRing
+        AddStep("Create Ring", () => SetContents(_ => new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.PlayfieldRing), _ => new PlayfieldRing())
         {
             RelativeSizeAxes = Axes.None,
-            Size = new Vector2(SentakkiPlayfield.RINGSIZE)
+            Size = new Vector2(SentakkiPlayfield.RINGSIZE),
+            Scale = new Vector2(0.3f),
         }));
 
-        AddUntilStep("Ring loaded", () => ring.IsLoaded && ring.Alpha == 1);
-        AddToggleStep("Toggle notestart Indicators", b => ring.NoteStartIndicators.Value = b);
-        AddRepeatStep("Trigger Kiai Beat", () => ring.KiaiBeat(), 5);
-        AddSliderStep<float>("Test opacity", 0, 1, 1, f =>
-        {
-            if (ring != null) ring.RingOpacity.Value = f;
-        });
+        AddUntilStep("Ring loaded", () => CreatedDrawables.All(d => d.IsLoaded));
+        AddToggleStep("Toggle notestart Indicators", toggleNotestartIndicators);
+        AddRepeatStep("Trigger Kiai Beat", triggerKiaiBeat, 5);
+    }
+
+    private void toggleNotestartIndicators(bool b)
+    {
+        CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<PlayfieldRing>().ForEach(
+            r => r.NoteStartIndicators.Value = b
+        );
+    }
+
+    private void triggerKiaiBeat()
+    {
+        CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<PlayfieldRing>().ForEach(
+            r => r.Pulse()
+        );
+
+        CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<LegacyPlayfieldRing>().ForEach(
+            r => r.Pulse()
+        );
     }
 }
