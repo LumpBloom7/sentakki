@@ -8,8 +8,8 @@ using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
 using osuTK;
 using osuTK.Graphics;
@@ -34,7 +34,7 @@ public partial class TestSceneFanChevronVisual : OsuGridTestScene
             RelativeSizeAxes = Axes.Both,
             Colour = Color4.White
         });
-        Cell(0).Add(new SentakkiRing
+        Cell(0).Add(new PlayfieldRing
         {
             RelativeSizeAxes = Axes.None,
             Size = new Vector2(SentakkiPlayfield.RINGSIZE)
@@ -46,7 +46,7 @@ public partial class TestSceneFanChevronVisual : OsuGridTestScene
                 Segments = [new SlideSegment(PathShape.Fan, 4, false)]
             }
         });
-        Cell(0).Add(new SentakkiRing
+        Cell(0).Add(new PlayfieldRing
         {
             RelativeSizeAxes = Axes.None,
             Size = new Vector2(SentakkiPlayfield.RINGSIZE)
@@ -56,7 +56,7 @@ public partial class TestSceneFanChevronVisual : OsuGridTestScene
             RelativeSizeAxes = Axes.Both,
             Colour = Color4.White
         });
-        Cell(1).Add(new SentakkiRing
+        Cell(1).Add(new PlayfieldRing
         {
             RelativeSizeAxes = Axes.None,
             Size = new Vector2(SentakkiPlayfield.RINGSIZE)
