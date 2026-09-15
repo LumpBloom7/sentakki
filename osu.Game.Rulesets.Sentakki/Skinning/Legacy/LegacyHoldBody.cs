@@ -25,7 +25,8 @@ public partial class LegacyHoldBody : CompositeDrawable
         RelativeSizeAxes = Axes.Both;
     }
 
-    private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
+    private readonly IBindable<Color4> accentColour = new Bindable<Color4>(Color4.White);
+
     private readonly IBindable<bool> exState = new Bindable<bool>();
 
     private readonly IBindable<bool> isHitting = new Bindable<bool>();

@@ -34,7 +34,7 @@ public partial class HoldBody : CompositeDrawable
         ];
     }
 
-    private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
+    private readonly IBindable<Color4> accentColour = new Bindable<Color4>(Color4.White);
 
     private readonly Bindable<bool> isHitting = new Bindable<bool>();
 
