@@ -41,7 +41,7 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
             Width = TapRing.CIRCLE_RADIUS * 2,
 
             Children = [
-                new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Hold), _ => new HoldBody(), ConfineMode.ScaleToFit)
+                new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Hold), _ => new HoldBody())
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.YellowGreen,

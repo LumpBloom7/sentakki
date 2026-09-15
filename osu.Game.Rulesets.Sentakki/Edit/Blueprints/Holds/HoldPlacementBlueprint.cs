@@ -44,7 +44,7 @@ public partial class HoldPlacementBlueprint : LanedPlacementBlueprint<Hold>
                 Anchor = Anchor.Centre,
                 OriginPosition = new Vector2(TapRing.CIRCLE_RADIUS),
                 Width = TapRing.CIRCLE_RADIUS * 2,
-                Child = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Hold), _ => new HoldBody(), ConfineMode.ScaleToFit)
+                Child = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Hold), _ => new HoldBody())
                 {
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.YellowGreen,
