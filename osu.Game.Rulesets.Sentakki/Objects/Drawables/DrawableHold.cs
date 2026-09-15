@@ -72,7 +72,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
         AddRangeInternal(
         [
-            NoteBody = new ProxyableSkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Hold), _ => new HoldBody(), Game.Skinning.ConfineMode.ScaleToFit)
+            NoteBody = new ProxyableSkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Hold), _ => new HoldBody())
             {
                 RelativeSizeAxes = Axes.Both,
             },

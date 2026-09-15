@@ -12,8 +12,6 @@ public partial class HoldBody : CompositeDrawable
 {
     public HoldBody()
     {
-        Anchor = Anchor.Centre;
-        Origin = Anchor.TopCentre;
         RelativeSizeAxes = Axes.Both;
         InternalChildren =
         [
