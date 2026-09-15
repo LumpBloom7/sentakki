@@ -10,7 +10,10 @@ using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Skinning;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Screens.Edit;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 
@@ -18,9 +21,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
 
 public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, DrawableHold>
 {
-    private readonly HoldBody highlight;
-
-    public override Quad SelectionQuad => highlight.ScreenSpaceDrawQuad;
+    public override Quad SelectionQuad => highlightContainer.ScreenSpaceDrawQuad;
     public override Vector2 ScreenSpaceSelectionPoint => startDot.ScreenSpaceDrawQuad.Centre;
 
     private Container highlightContainer;
@@ -36,23 +37,26 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
         InternalChild = highlightContainer = new Container
         {
             Anchor = Anchor.Centre,
-            Origin = Anchor.TopCentre,
+            OriginPosition = new Vector2(TapRing.CIRCLE_RADIUS),
+            Width = TapRing.CIRCLE_RADIUS * 2,
 
             Children = [
-                highlight = new HoldBody()
+                new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Hold), _ => new HoldBody())
                 {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.YellowGreen,
                 },
-                startDot = new DraggableDotPiece(){
+                startDot = new DraggableDotPiece()
+                {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.Centre,
+                    Y = TapRing.CIRCLE_RADIUS,
                     DragAction = adjustStartTime
                 },
-                new DraggableDotPiece(){
+                new DraggableDotPiece()
+                {
                     Anchor = Anchor.BottomCentre,
+                    Y = TapRing.CIRCLE_RADIUS,
                     Origin = Anchor.Centre,
                     DragAction = adjustEndTime
                 }
@@ -95,9 +99,9 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
     protected override void Update()
     {
         Rotation = HitObject.Lane.GetRotationForLane();
-        highlightContainer.Y = DrawableObject.NoteBody.Y;
-        highlightContainer.Scale = DrawableObject.NoteBody.Scale;
-        highlightContainer.Height = DrawableObject.NoteBody.Height;
+        highlightContainer.Y = DrawableObject.Y;
+        highlightContainer.Scale = DrawableObject.Scale;
+        highlightContainer.Height = DrawableObject.Height;
     }
 
     private partial class DraggableDotPiece : DotPiece
