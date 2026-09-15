@@ -103,10 +103,12 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
     {
         base.Update();
 
+        var colourableTarget = ((IHasColourableElement)NoteBody.Drawable).ColourableElement;
+
         if (AllJudged)
         {
             // Remove alterations to NoteBody colour
-            NoteBody.Drawable.Colour = AccentColour.Value;
+            colourableTarget.Colour = AccentColour.Value;
             return;
         }
 
@@ -114,7 +116,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         if (Time.Current < HitObject.StartTime)
         {
             Colour = Color4.White;
-            NoteBody.Drawable.Colour = AccentColour.Value;
+            colourableTarget.Colour = AccentColour.Value;
             return;
         }
 
@@ -145,7 +147,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         if (!isHolding)
         {
             // Remove alterations to NoteBody colour
-            NoteBody.Drawable.Colour = AccentColour.Value;
+            colourableTarget.Colour = AccentColour.Value;
 
             // Grey the note to indicate that it isn't being held
             Colour = Interpolation.ValueAt(
@@ -166,9 +168,9 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         double flashProg = Time.Current % (flashing_time * 2) / (flashing_time * 2);
 
         if (flashProg <= 0.5)
-            NoteBody.Drawable.Colour = Interpolation.ValueAt(flashProg, AccentColour.Value, flashingColour, 0, 0.5, Easing.OutSine);
+            colourableTarget.Colour = Interpolation.ValueAt(flashProg, AccentColour.Value, flashingColour, 0, 0.5, Easing.OutSine);
         else
-            NoteBody.Drawable.Colour = Interpolation.ValueAt(flashProg, flashingColour, AccentColour.Value, 0.5, 0, Easing.InSine);
+            colourableTarget.Colour = Interpolation.ValueAt(flashProg, flashingColour, AccentColour.Value, 0.5, 0, Easing.InSine);
     }
 
     protected override void UpdateInitialTransforms()
@@ -319,7 +321,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
         Head.UpdateResult();
         isHolding = true;
-        NoteBody.Drawable.FadeColour(AccentColour.Value, 50);
+        ((IHasColourableElement)NoteBody.Drawable).ColourableElement.FadeColour(AccentColour.Value, 50);
         return true;
     }
 
@@ -340,6 +342,6 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         isHolding = false;
 
         if (!AllJudged)
-            NoteBody.Drawable.FadeColour(Color4.Gray, 100);
+            ((IHasColourableElement)NoteBody.Drawable).ColourableElement.FadeColour(Color4.Gray, 100);
     }
 }

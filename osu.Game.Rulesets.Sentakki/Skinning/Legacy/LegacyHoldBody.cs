@@ -13,10 +13,12 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Legacy;
 
-public partial class LegacyHoldBody : CompositeDrawable
+public partial class LegacyHoldBody : CompositeDrawable, IHasColourableElement
 {
     private Container accentContainer = null!;
     private Drawable glowDrawable = null!;
+
+    public Drawable ColourableElement => accentContainer;
 
     public LegacyHoldBody()
     {
@@ -25,7 +27,6 @@ public partial class LegacyHoldBody : CompositeDrawable
 
     private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
     private readonly IBindable<bool> exState = new Bindable<bool>();
-
 
     [BackgroundDependencyLoader]
     private void load(ISkinSource skin, DrawableHitObject? drawableHitObject)
@@ -37,26 +38,27 @@ public partial class LegacyHoldBody : CompositeDrawable
 
                 Children = [
                     glowDrawable = createGlowLayer(skin),
-                    createBaseLayer(skin)
+                    createLayer(skin)
                 ]
-            }
+            },
+            createLayer(skin, "_overlay"),
         ];
 
         if (drawableHitObject is not DrawableSentakkiHitObject dsho)
             return;
 
         accentColour.BindTo(dsho.AccentColour);
-        accentColour.BindValueChanged(c => Colour = c.NewValue);
+        accentColour.BindValueChanged(c => accentContainer.Colour = c.NewValue);
 
         exState.BindTo(dsho.ExBindable);
         exState.BindValueChanged(ex => glowDrawable.Colour = ex.NewValue ? Color4.White : Color4.Black, true);
     }
 
-    private static GridContainer createBaseLayer(ISkinSource skin)
+    private static GridContainer createLayer(ISkinSource skin, string texturePostfix = "")
     {
-        var bodyTexture = skin.GetTexture("sentakki/hitobjects/hold/body", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
-        var headTexture = skin.GetTexture("sentakki/hitobjects/hold/head", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
-        var tailTexture = skin.GetTexture("sentakki/hitobjects/hold/tail", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
+        var bodyTexture = skin.GetTexture($"sentakki/hitobjects/hold/body{texturePostfix}", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
+        var headTexture = skin.GetTexture($"sentakki/hitobjects/hold/head{texturePostfix}", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
+        var tailTexture = skin.GetTexture($"sentakki/hitobjects/hold/tail{texturePostfix}", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
 
         return new GridContainer
         {

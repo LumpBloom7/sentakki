@@ -8,8 +8,10 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Default;
 
-public partial class HoldBody : CompositeDrawable
+public partial class HoldBody : CompositeDrawable, IHasColourableElement
 {
+    public Drawable ColourableElement => this;
+
     public HoldBody()
     {
         RelativeSizeAxes = Axes.Both;
