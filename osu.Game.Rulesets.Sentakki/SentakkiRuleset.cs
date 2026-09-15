@@ -48,6 +48,12 @@ namespace osu.Game.Rulesets.Sentakki;
 
 public partial class SentakkiRuleset : Ruleset
 {
+
+    public SentakkiRuleset()
+    {
+        RulesetInfo.OnlineID = 21;
+    }
+
     public override string RulesetAPIVersionSupported => CURRENT_RULESET_API_VERSION;
 
     private static readonly Lazy<bool> is_development_build

@@ -4,7 +4,9 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Skinning;
@@ -13,12 +15,10 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Legacy;
 
-public partial class LegacyHoldBody : CompositeDrawable, IHasColourableElement
+public partial class LegacyHoldBody : CompositeDrawable
 {
     private Container accentContainer = null!;
     private Drawable glowDrawable = null!;
-
-    public Drawable ColourableElement => accentContainer;
 
     public LegacyHoldBody()
     {
@@ -27,6 +27,11 @@ public partial class LegacyHoldBody : CompositeDrawable, IHasColourableElement
 
     private readonly IBindable<Color4> accentColour = new Bindable<Color4>();
     private readonly IBindable<bool> exState = new Bindable<bool>();
+
+    private readonly IBindable<bool> isHitting = new Bindable<bool>();
+
+    private Color4 flashingColour = Color4.White;
+
 
     [BackgroundDependencyLoader]
     private void load(ISkinSource skin, DrawableHitObject? drawableHitObject)
@@ -44,14 +49,36 @@ public partial class LegacyHoldBody : CompositeDrawable, IHasColourableElement
             createLayer(skin, "_overlay"),
         ];
 
-        if (drawableHitObject is not DrawableSentakkiHitObject dsho)
+        if (drawableHitObject is not DrawableHold drawableHold)
             return;
 
-        accentColour.BindTo(dsho.AccentColour);
-        accentColour.BindValueChanged(c => accentContainer.Colour = c.NewValue);
+        accentColour.BindTo(drawableHold.AccentColour);
+        accentColour.BindValueChanged(c => flashingColour = c.NewValue.LightenHsl(0.4f), true);
 
-        exState.BindTo(dsho.ExBindable);
+        exState.BindTo(drawableHold.ExBindable);
         exState.BindValueChanged(ex => glowDrawable.Colour = ex.NewValue ? Color4.White : Color4.Black, true);
+
+        isHitting.BindTo(drawableHold.IsHitting);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (!isHitting.Value)
+        {
+            accentContainer.Colour = accentColour.Value;
+            return;
+        }
+
+        const double flashing_time = 80;
+
+        double flashProg = Time.Current % (flashing_time * 2) / (flashing_time * 2);
+
+        if (flashProg <= 0.5)
+            accentContainer.Colour = Interpolation.ValueAt(flashProg, accentColour.Value, flashingColour, 0, 0.5, Easing.OutSine);
+        else
+            accentContainer.Colour = Interpolation.ValueAt(flashProg, flashingColour, accentColour.Value, 0.5, 0, Easing.InSine);
     }
 
     private static GridContainer createLayer(ISkinSource skin, string texturePostfix = "")
