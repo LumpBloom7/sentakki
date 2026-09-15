@@ -9,8 +9,10 @@ using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
+using osu.Game.Rulesets.Sentakki.Skinning;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI;
+using osu.Game.Skinning;
 using osuTK;
 using osuTK.Graphics;
 using osuTK.Input;
@@ -22,21 +24,32 @@ public partial class HoldPlacementBlueprint : LanedPlacementBlueprint<Hold>
     [Resolved]
     private LaneNoteSnapGrid snapGrid { get; set; } = null!;
 
-    private readonly HoldBody highlight;
+    private readonly Drawable rotationContainer;
+    private readonly Drawable highlight;
 
     public HoldPlacementBlueprint()
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        InternalChild = new Container()
+        InternalChild = rotationContainer = new Container
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
-            Child = highlight = new HoldBody
+
+            RelativeSizeAxes = Axes.Both,
+
+            Child = highlight = new Container
             {
-                Colour = Color4.YellowGreen,
-                Alpha = 0.5f,
+                Anchor = Anchor.Centre,
+                OriginPosition = new Vector2(TapRing.CIRCLE_RADIUS),
+                Width = TapRing.CIRCLE_RADIUS * 2,
+                Child = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Hold), _ => new HoldBody(), ConfineMode.ScaleToFit)
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Colour = Color4.YellowGreen,
+                    Alpha = 0.5f,
+                }
             }
         };
     }
@@ -66,9 +79,9 @@ public partial class HoldPlacementBlueprint : LanedPlacementBlueprint<Hold>
         float targetY = (float)(-SentakkiPlayfield.INTERSECTDISTANCE + headY / animationDuration * max_height);
         float targetHeight = (float)(height / animationDuration * max_height);
 
-        InternalChild.Rotation = targetRotation;
+        rotationContainer.Rotation = targetRotation;
         highlight.Y = targetY;
-        highlight.Height = (float)targetHeight;
+        highlight.Height = (float)targetHeight + TapRing.CIRCLE_RADIUS * 2;
     }
 
     private double commitStartTime;
