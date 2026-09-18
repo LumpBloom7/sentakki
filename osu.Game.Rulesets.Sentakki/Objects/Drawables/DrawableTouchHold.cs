@@ -207,12 +207,12 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         {
             case ArmedState.Hit:
                 TouchHoldBody.FadeOut();
-                this.FadeOut();
+                this.FadeOut().OnComplete(_ => holdSample.Stop());
                 break;
 
             case ArmedState.Miss:
                 TouchHoldBody.ScaleTo(.0f, time_fade_miss).FadeOut(time_fade_miss);
-                this.Delay(time_fade_miss).FadeOut();
+                this.Delay(time_fade_miss).FadeOut().OnComplete(_ => holdSample.Stop()); ;
                 break;
         }
 
