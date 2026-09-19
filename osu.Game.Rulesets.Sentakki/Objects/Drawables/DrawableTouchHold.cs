@@ -130,8 +130,8 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
 
     private double totalHoldTime;
 
-    private bool isHittable => Time.Current >= HitObject.StartTime - 150 && Time.Current <= HitObject.GetEndTime();
-    private bool withinActiveTime => Time.Current >= HitObject.StartTime && Time.Current <= HitObject.GetEndTime();
+    private bool isHittable => Time.Current >= HitObject.StartTime - 150 && Time.Current < HitObject.GetEndTime();
+    private bool withinActiveTime => Time.Current >= HitObject.StartTime && Time.Current < HitObject.GetEndTime();
 
     private int pressedCount;
 
