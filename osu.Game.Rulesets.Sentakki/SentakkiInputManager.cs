@@ -149,7 +149,6 @@ public enum SentakkiAction
     [LocalisableDescription(typeof(SentakkiEditorStrings), nameof(SentakkiEditorStrings.ExSlideToggle))]
     EditorToggleExSlide,
 
-
     [LocalisableDescription(typeof(SentakkiEditorStrings), nameof(SentakkiEditorStrings.LaneSnapGrid))]
     EditorToggleLaneSnapGrid,
 
