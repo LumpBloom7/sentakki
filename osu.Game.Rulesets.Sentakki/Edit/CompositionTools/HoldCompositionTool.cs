@@ -11,6 +11,7 @@ public class HoldCompositionTool : CompositionTool<SentakkiAction>
     public HoldCompositionTool()
         : base("Hold")
     {
+        Action = SentakkiAction.EditorHoldTool;
     }
 
     public override Drawable CreateIcon() => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Sliders);

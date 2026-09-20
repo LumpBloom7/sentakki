@@ -11,6 +11,7 @@ public class TapCompositionTool : CompositionTool<SentakkiAction>
     public TapCompositionTool()
         : base("Tap")
     {
+        Action = SentakkiAction.EditorTapTool;
     }
 
     public override Drawable CreateIcon() => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Circles);

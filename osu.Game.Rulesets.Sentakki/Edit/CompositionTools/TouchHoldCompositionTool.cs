@@ -11,6 +11,7 @@ public class TouchHoldCompositionTool : CompositionTool<SentakkiAction>
     public TouchHoldCompositionTool()
         : base("TouchHold")
     {
+        Action = SentakkiAction.EditorTouchHoldTool;
     }
 
     public override Drawable CreateIcon() => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Spinners);
