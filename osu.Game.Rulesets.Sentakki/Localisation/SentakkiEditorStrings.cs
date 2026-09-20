@@ -9,7 +9,20 @@ public static class SentakkiEditorStrings
 
     public static LocalisableString TapTool => new TranslatableString(getKey("tap_tool"), @"Tap");
     public static LocalisableString HoldTool => new TranslatableString(getKey("hold_tool"), @"Hold");
+
     public static LocalisableString SlideTool => new TranslatableString(getKey("slide_tool"), @"Slide");
+    public static LocalisableString SlideToolTooltip
+        => new TranslatableString(
+            getKey("slide_tool_tooltip"),
+            """
+            Left click to place segment.
+            Middle click or Backspace to remove segment.
+            Alt+Scroll to change segment types
+            Alt+Click to mirror segment (if applicable)
+            Right click to finish.
+            """
+        );
+
     public static LocalisableString TouchTool => new TranslatableString(getKey("touch_tool"), @"Touch");
     public static LocalisableString TouchHoldTool => new TranslatableString(getKey("touchhold_tool"), @"TouchHold");
 
@@ -32,4 +45,5 @@ public static class SentakkiEditorStrings
 
     public static LocalisableString LaneSnapGrid => new TranslatableString(getKey("lane_snap_grid"), @"Lane snap grid");
     public static LocalisableString TouchSnapGrid => new TranslatableString(getKey("touch_snap_grid"), @"Touch snap grid");
+
 }
