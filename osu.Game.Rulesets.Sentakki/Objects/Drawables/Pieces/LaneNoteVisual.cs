@@ -35,7 +35,7 @@ public partial class LaneNoteVisual : Drawable, ITexturedShaderDrawable
             field = value;
             Invalidate(Invalidation.DrawNode);
         }
-    }
+    } = 18.75f;
 
     public float ShadowRadius
     {
@@ -48,7 +48,7 @@ public partial class LaneNoteVisual : Drawable, ITexturedShaderDrawable
             field = value;
             Invalidate(Invalidation.DrawNode);
         }
-    }
+    } = 15f;
 
     public bool Glow
     {
