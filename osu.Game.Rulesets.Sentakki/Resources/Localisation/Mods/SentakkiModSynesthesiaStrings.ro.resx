@@ -62,6 +62,6 @@
         <value>Interval de colorare</value>
     </data>
   <data name="interval_colouring_description" xml:space="preserve">
-        <value>Colorează notele în funcție de distanța lor în timp față de cea mai apropiată notă vecină.</value>
+        <value>Colorează notele în funcție de distanța lor în timp față de cea mai apropiată notă.</value>
     </data>
 </root>
