@@ -14,7 +14,19 @@ public static class SentakkiEditorStrings
     public static LocalisableString TouchHoldTool => new TranslatableString(getKey("touchhold_tool"), @"TouchHold");
 
     public static LocalisableString BreakToggle => new TranslatableString(getKey("break_toggle"), @"Break");
+    public static LocalisableString BreakToggleTooltip
+        => new TranslatableString(
+            getKey("break_toggle_tooltip"),
+            @"Increases the scoring weight of notes. Typically used to emphasize certain notes, or to increase punishment for inaccuracy."
+        );
+
     public static LocalisableString ExToggle => new TranslatableString(getKey("ex_toggle"), @"Ex");
+    public static LocalisableString ExToggleTooltip
+        => new TranslatableString(
+            getKey("ex_toggle_tooltip"),
+            @"Increases the judgement leniency of notes. Typically used to provide a safety net for players, allowing harder patterns to be introduced."
+        );
+
     public static LocalisableString BreakSlideToggle => new TranslatableString(getKey("break_slide_toggle"), @"Break Slide");
     public static LocalisableString ExSlideToggle => new TranslatableString(getKey("ex_slide_toggle"), @"Ex Slide");
 
