@@ -3,24 +3,18 @@ using osu.Framework.Graphics.Sprites;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Edit.Tools;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
+using osu.Game.Rulesets.Sentakki.Localisation;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.CompositionTools;
 
 public class SlideCompositionTool : CompositionTool<SentakkiAction>
 {
     public SlideCompositionTool()
-        : base("Slide")
+        : base(SentakkiEditorStrings.SlideTool)
     {
         Action = SentakkiAction.EditorSlideTool;
 
-        TooltipText =
-            """
-            Left click to place segment.
-            Middle click or Backspace to remove segment.
-            Alt+Scroll to change segment types
-            Alt+Click to mirror segment (if applicable)
-            Right click to finish.
-            """;
+        TooltipText = SentakkiEditorStrings.SlideToolTooltip;
     }
 
     public override Drawable CreateIcon() => new SpriteIcon { Icon = FontAwesome.Regular.Star };

@@ -160,7 +160,7 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
             Current = breakTernaryState,
             CreateIcon = () => new SpriteIcon { Icon = FontAwesome.Solid.WeightHanging },
             Description = SentakkiEditorStrings.BreakToggle,
-            TooltipText = "Increases the scoring weight of notes. Typically used to emphasize certain notes, or to increase punishment for inaccuracy.",
+            TooltipText = SentakkiEditorStrings.BreakToggleTooltip,
             Action = SentakkiAction.EditorToggleBreak,
             Hotkey = new Hotkey(SentakkiRuleset.SHORT_NAME, Ruleset.EDITOR_VARIANT, (int)SentakkiAction.EditorToggleBreak),
         };
@@ -170,8 +170,7 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
             Current = exTernaryState,
             CreateIcon = () => new SpriteIcon { Icon = FontAwesome.Solid.Seedling },
             Description = SentakkiEditorStrings.ExToggle,
-            // TODO: Make localisable
-            TooltipText = "Increases the judgement leniency of notes. Typically used to provide a safety net for players, allowing harder patterns to be introduced.",
+            TooltipText = SentakkiEditorStrings.ExToggleTooltip,
             Action = SentakkiAction.EditorToggleEx,
             Hotkey = new Hotkey(SentakkiRuleset.SHORT_NAME, Ruleset.EDITOR_VARIANT, (int)SentakkiAction.EditorToggleEx),
         };
