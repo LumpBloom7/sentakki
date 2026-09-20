@@ -16,6 +16,7 @@ using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Edit.CompositionTools;
 using osu.Game.Rulesets.Sentakki.Edit.Inspector;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
+using osu.Game.Rulesets.Sentakki.Localisation;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
@@ -154,34 +155,43 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
 
         var selectionHandler = (SentakkiSelectionHandler)BlueprintContainer.SelectionHandler;
 
-        yield return new DrawableTernaryButton
+        yield return new DrawableTernaryButton<SentakkiAction>
         {
             Current = breakTernaryState,
             CreateIcon = () => new SpriteIcon { Icon = FontAwesome.Solid.WeightHanging },
-            Description = "Break",
-            TooltipText = "Increases the scoring weight of notes. Typically used to emphasize certain notes, or to increase punishment for inaccuracy."
+            Description = SentakkiEditorStrings.BreakToggle,
+            TooltipText = "Increases the scoring weight of notes. Typically used to emphasize certain notes, or to increase punishment for inaccuracy.",
+            Action = SentakkiAction.EditorToggleBreak,
+            Hotkey = new Hotkey(SentakkiRuleset.SHORT_NAME, Ruleset.EDITOR_VARIANT, (int)SentakkiAction.EditorToggleBreak),
         };
 
-        yield return new DrawableTernaryButton
+        yield return new DrawableTernaryButton<SentakkiAction>
         {
             Current = exTernaryState,
             CreateIcon = () => new SpriteIcon { Icon = FontAwesome.Solid.Seedling },
-            Description = "Ex",
-            TooltipText = "Increases the judgement leniency of notes. Typically used to provide a safety net for players, allowing harder patterns to be introduced."
+            Description = SentakkiEditorStrings.ExToggle,
+            // TODO: Make localisable
+            TooltipText = "Increases the judgement leniency of notes. Typically used to provide a safety net for players, allowing harder patterns to be introduced.",
+            Action = SentakkiAction.EditorToggleEx,
+            Hotkey = new Hotkey(SentakkiRuleset.SHORT_NAME, Ruleset.EDITOR_VARIANT, (int)SentakkiAction.EditorToggleEx),
         };
 
-        yield return new DrawableTernaryButton()
+        yield return new DrawableTernaryButton<SentakkiAction>
         {
             Current = LaneNoteSnapGrid.Enabled,
             CreateIcon = () => new SpriteIcon { Icon = OsuIcon.EditorDistanceSnap },
-            Description = "Lane note snap grid",
+            Description = SentakkiEditorStrings.LaneSnapGrid,
+            Action = SentakkiAction.EditorToggleLaneSnapGrid,
+            Hotkey = new Hotkey(SentakkiRuleset.SHORT_NAME, Ruleset.EDITOR_VARIANT, (int)SentakkiAction.EditorToggleLaneSnapGrid),
         };
 
-        yield return new DrawableTernaryButton()
+        yield return new DrawableTernaryButton<SentakkiAction>
         {
             Current = TouchPositionSnapGrid.Enabled,
             CreateIcon = () => new SpriteIcon { Icon = OsuIcon.EditorGridSnap },
-            Description = "Touch snap grid",
+            Description = SentakkiEditorStrings.TouchSnapGrid,
+            Action = SentakkiAction.EditorToggleTouchSnapGrid,
+            Hotkey = new Hotkey(SentakkiRuleset.SHORT_NAME, Ruleset.EDITOR_VARIANT, (int)SentakkiAction.EditorToggleTouchSnapGrid),
         };
     }
 

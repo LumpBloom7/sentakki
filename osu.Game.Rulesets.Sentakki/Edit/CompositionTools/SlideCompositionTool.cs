@@ -11,6 +11,8 @@ public class SlideCompositionTool : CompositionTool<SentakkiAction>
     public SlideCompositionTool()
         : base("Slide")
     {
+        Action = SentakkiAction.EditorSlideTool;
+
         TooltipText =
             """
             Left click to place segment.

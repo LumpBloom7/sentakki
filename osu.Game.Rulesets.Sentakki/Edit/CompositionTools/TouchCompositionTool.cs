@@ -11,6 +11,7 @@ public class TouchCompositionTool : CompositionTool<SentakkiAction>
     public TouchCompositionTool()
         : base("Touch")
     {
+        Action = SentakkiAction.EditorTouchTool;
     }
 
     public override Drawable CreateIcon() => new SpriteIcon { Icon = FontAwesome.Regular.HandPointRight };
