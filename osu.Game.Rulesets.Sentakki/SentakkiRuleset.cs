@@ -204,8 +204,10 @@ public partial class SentakkiRuleset : Ruleset
 
                     new KeyBinding(InputKey.T, SentakkiAction.EditorToggleBreak),
                     new KeyBinding(InputKey.Y, SentakkiAction.EditorToggleEx),
-                    new KeyBinding(new KeyCombination(InputKey.Alt, InputKey.T), SentakkiAction.EditorToggleBreakSlide),
-                    new KeyBinding(new KeyCombination(InputKey.Alt, InputKey.Y), SentakkiAction.EditorToggleExSlide),
+
+                    // Not supported yet, hide these for now
+                    //new KeyBinding(new KeyCombination(InputKey.Alt, InputKey.T), SentakkiAction.EditorToggleBreakSlide),
+                    //new KeyBinding(new KeyCombination(InputKey.Alt, InputKey.Y), SentakkiAction.EditorToggleExSlide),
 
                     new KeyBinding(InputKey.U, SentakkiAction.EditorToggleLaneSnapGrid),
                     new KeyBinding(InputKey.I, SentakkiAction.EditorToggleTouchSnapGrid),
