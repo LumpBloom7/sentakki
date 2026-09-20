@@ -10,7 +10,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.CompositionTools;
 public class SlideCompositionTool : CompositionTool<SentakkiAction>
 {
     public SlideCompositionTool()
-        : base("Slide")
+        : base(SentakkiEditorStrings.SlideTool)
     {
         Action = SentakkiAction.EditorSlideTool;
 

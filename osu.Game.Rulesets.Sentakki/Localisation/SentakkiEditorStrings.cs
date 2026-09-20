@@ -45,5 +45,4 @@ public static class SentakkiEditorStrings
 
     public static LocalisableString LaneSnapGrid => new TranslatableString(getKey("lane_snap_grid"), @"Lane snap grid");
     public static LocalisableString TouchSnapGrid => new TranslatableString(getKey("touch_snap_grid"), @"Touch snap grid");
-
 }
