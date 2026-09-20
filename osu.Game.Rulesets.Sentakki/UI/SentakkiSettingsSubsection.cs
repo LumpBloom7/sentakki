@@ -1,6 +1,5 @@
 ﻿using osu.Framework;
 using osu.Framework.Allocation;
-using osu.Framework.Localisation;
 using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Sentakki.Configuration;
@@ -10,14 +9,10 @@ namespace osu.Game.Rulesets.Sentakki.UI;
 
 public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
 {
-    private readonly Ruleset ruleset;
-
-    protected override LocalisableString Header => ruleset.Description;
 
     public SentakkiSettingsSubsection(Ruleset ruleset)
         : base(ruleset)
     {
-        this.ruleset = ruleset;
     }
 
     [BackgroundDependencyLoader]

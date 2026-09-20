@@ -21,7 +21,7 @@ public partial class TouchPlacementBlueprint : TouchPlacementBlueprintBase<Touch
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        InternalChild = highlight = new TouchBody()
+        Child = highlight = new TouchBody()
         {
             Alpha = 0.5f,
             Colour = Color4.YellowGreen,

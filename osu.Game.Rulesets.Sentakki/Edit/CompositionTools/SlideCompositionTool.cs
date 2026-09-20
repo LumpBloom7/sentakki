@@ -6,7 +6,7 @@ using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.CompositionTools;
 
-public class SlideCompositionTool : CompositionTool
+public class SlideCompositionTool : CompositionTool<SentakkiAction>
 {
     public SlideCompositionTool()
         : base("Slide")

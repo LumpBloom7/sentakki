@@ -29,7 +29,7 @@ public partial class HoldPlacementBlueprint : LanedPlacementBlueprint<Hold>
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        InternalChild = new Container()
+        Child = new Container()
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
@@ -66,7 +66,7 @@ public partial class HoldPlacementBlueprint : LanedPlacementBlueprint<Hold>
         float targetY = (float)(-SentakkiPlayfield.INTERSECTDISTANCE + headY / animationDuration * max_height);
         float targetHeight = (float)(height / animationDuration * max_height);
 
-        InternalChild.Rotation = targetRotation;
+        Child.Rotation = targetRotation;
         highlight.Y = targetY;
         highlight.Height = (float)targetHeight;
     }

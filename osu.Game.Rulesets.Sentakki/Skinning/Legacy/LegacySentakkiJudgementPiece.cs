@@ -110,10 +110,8 @@ public partial class LegacySentakkiJudgementPiece : CompositeDrawable, IAnimatab
         if (timingIndicatorDrawableEarly is null)
             return;
 
-        if (timingIndicatorDrawableEarly is not null)
-            timingIndicatorDrawableEarly.Scale = judgementResult.TimeOffset < 0 ? Vector2.One : Vector2.Zero;
+        timingIndicatorDrawableEarly?.Scale = judgementResult.TimeOffset < 0 ? Vector2.One : Vector2.Zero;
 
-        if (timingIndicatorDrawableLate is not null)
-            timingIndicatorDrawableLate.Scale = judgementResult.TimeOffset < 0 ? Vector2.Zero : Vector2.One;
+        timingIndicatorDrawableLate?.Scale = judgementResult.TimeOffset < 0 ? Vector2.Zero : Vector2.One;
     }
 }

@@ -29,7 +29,8 @@ public partial class TapPlacementBlueprint : LanedPlacementBlueprint<Tap>
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
-        InternalChild = new Container
+
+        Child = new Container
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
@@ -65,7 +66,7 @@ public partial class TapPlacementBlueprint : LanedPlacementBlueprint<Tap>
             EditorClock.CurrentTime + animationSpeed.Value / 2
         );
 
-        InternalChild.Rotation = HitObject.Lane.GetRotationForLane();
+        Child.Rotation = HitObject.Lane.GetRotationForLane();
     }
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)

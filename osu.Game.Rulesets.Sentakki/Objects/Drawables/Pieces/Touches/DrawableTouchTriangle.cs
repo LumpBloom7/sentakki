@@ -19,73 +19,65 @@ public partial class DrawableTouchTriangle : Drawable, ITexturedShaderDrawable
 
     public float Thickness
     {
-        get => thickness;
+        get;
         set
         {
-            if (thickness == value)
+            if (field == value)
                 return;
 
-            thickness = value;
+            field = value;
             Invalidate(Invalidation.DrawNode);
         }
-    }
-
-    private float shadowRadius = 15f;
+    } = 15f;
 
     public float ShadowRadius
     {
-        get => shadowRadius;
+        get;
         set
         {
-            if (shadowRadius == value)
+            if (field == value)
                 return;
 
-            shadowRadius = value;
+            field = value;
             Invalidate(Invalidation.DrawNode);
         }
-    }
-
-    private bool glow;
+    } = 15f;
 
     public bool Glow
     {
-        get => glow;
+        get;
         set
         {
-            if (glow == value)
+            if (field == value)
                 return;
 
-            glow = value;
+            field = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
-
-    private bool fillTriangle;
 
     public bool FillTriangle
     {
-        get => fillTriangle;
+        get;
         set
         {
-            if (fillTriangle == value)
+            if (field == value)
                 return;
 
-            fillTriangle = value;
+            field = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
 
-    private bool shadowOnly;
-
     public bool ShadowOnly
     {
-        get => shadowOnly;
+        get;
         set
         {
-            if (shadowOnly == value)
+            if (field == value)
                 return;
 
-            shadowOnly = value;
+            field = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
@@ -151,9 +143,9 @@ public partial class DrawableTouchTriangle : Drawable, ITexturedShaderDrawable
             {
                 Thickness = Source.thickness,
                 ShadowRadius = Source.ShadowRadius,
-                Glow = Source.glow,
+                Glow = Source.Glow,
                 fillTriangle = Source.FillTriangle,
-                shadowOnly = Source.shadowOnly
+                shadowOnly = Source.ShadowOnly
             };
 
             if (newParameters == parameters) return;

@@ -24,10 +24,10 @@ public partial class TestSceneTouchHold : OsuTestScene
         base.Content.Add(content = new SentakkiInputManager(new SentakkiRuleset().RulesetInfo));
     }
 
-    public static bool[][] ObjectFlagsSource =
+    public static bool[] ObjectFlagsSource =
     [
-        [false],
-        [true],
+        false,
+        true,
     ];
 
     [TestCaseSource(nameof(ObjectFlagsSource))]
