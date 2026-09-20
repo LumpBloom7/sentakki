@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 public partial class SlidePlacementBlueprint : LanedPlacementBlueprint<Slide>
 {
     public override bool ReplacesExistingObject(HitObject existing)
-        => base.ReplacesExistingObject(existing) && existing is not Slide;
+        => existing is not Slide && base.ReplacesExistingObject(existing);
 
     [Resolved]
     private LaneNoteSnapGrid snapGrid { get; set; } = null!;
