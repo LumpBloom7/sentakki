@@ -62,17 +62,17 @@
         <value>Afișează efectele Kiai</value>
     </data>
   <data name="show_note_start_indicators" xml:space="preserve">
-        <value>Afișează indicatori pentru începutul notelor</value>
+        <value>Afișează indicatorii pentru începutul notelor</value>
     </data>
   <data name="snaking_in_slides" xml:space="preserve">
-        <value>Extindere graduală alunecări</value>
+        <value>Extinde gradual notele Slide</value>
         <comment>"Snaking in" refers to the animation of the Slide extending out telescopically from the origin piece by piece.</comment>
     </data>
   <data name="show_detailed_judgements" xml:space="preserve">
         <value>Afișează note detaliate</value>
     </data>
   <data name="ring_color" xml:space="preserve">
-        <value>Culoare ring</value>
+        <value>Culoarea inelului</value>
     </data>
   <data name="ring_color_default" xml:space="preserve">
         <value>Prestabilit</value>
@@ -87,7 +87,7 @@
         <value>Opacitate ring</value>
     </data>
   <data name="lane_input_mode" xml:space="preserve">
-        <value>Mod de introducere linii (Nu se aplică la atingeri)</value>
+        <value>Mod de control linii (Nu se aplică atunci când se folosește un ecran tactil)</value>
         <comment>"Touch"as in the verb, as in "touchscreen"</comment>
     </data>
   <data name="lane_input_mode_button" xml:space="preserve">
@@ -97,7 +97,7 @@
         <value>Senzor</value>
     </data>
   <data name="note_entry_speed" xml:space="preserve">
-        <value>Viteză intrare note</value>
+        <value>Viteza de intrare a notelor de tip aliniate</value>
     </data>
   <data name="touch_note_entry_speed" xml:space="preserve">
         <value>Viteză intrare atingeri</value>
@@ -109,5 +109,8 @@
   <data name="sonic" xml:space="preserve">
         <value>Sonic</value>
         <comment>Used when the speed value is greater than 10.</comment>
+    </data>
+  <data name="prefer_portrait_layout" xml:space="preserve">
+        <value>Preferați orientarea pe verticală</value>
     </data>
 </root>
