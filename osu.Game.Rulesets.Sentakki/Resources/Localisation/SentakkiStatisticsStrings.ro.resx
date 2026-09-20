@@ -59,9 +59,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="timing_distribution" xml:space="preserve">
-        <value>Distribuirea timpului</value>
+        <value>Distribuția timpilor de lovire</value>
     </data>
   <data name="judgement_chart" xml:space="preserve">
-        <value>Grafic de statistici</value>
+        <value>Grafic cu evaluări</value>
     </data>
 </root>

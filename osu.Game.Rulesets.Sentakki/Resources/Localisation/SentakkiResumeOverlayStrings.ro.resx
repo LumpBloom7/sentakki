@@ -65,7 +65,7 @@
         <value>Start!</value>
     </data>
   <data name="sentakki_supported_by" xml:space="preserve">
-        <value>Sentakki a fost creat cu ajutorul voluntarilor {0}.</value>
+        <value>Sentakki este dezvoltat cu suportul donatorilor {0}.</value>
         <comment>The placeholder is for the name of a sentakki supporter.</comment>
     </data>
 </root>
