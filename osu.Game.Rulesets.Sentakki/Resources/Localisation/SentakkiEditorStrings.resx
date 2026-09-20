@@ -75,12 +75,11 @@
     </data>
 
     <data name="slide_tool_tooltip" xml:space="preserve">
-        <value>
-            Left click to place segment.
-            Middle click or Backspace to remove segment.
-            Alt+Scroll to change segment types
-            Alt+Click to mirror segment (if applicable)
-            Right click to finish.
+        <value>Left click to place segment.
+Middle click or Backspace to remove segment.
+Alt+Scroll to change segment types
+Alt+Click to mirror segment (if applicable)
+Right click to finish.
         </value>
         <comment>Slide is a proper noun.</comment>
     </data>
@@ -110,9 +109,9 @@
         <comment>Ex is a proper noun.</comment>
     </data>
 
-    <data name="break_toggle_tooltip" xml:space="preserve">
+    <data name="ex_toggle_tooltip" xml:space="preserve">
         <value>Increases the judgement leniency of notes. Typically used to provide a safety net for players, allowing harder patterns to be introduced.</value>
-        <comment>Break is a proper noun.</comment>
+        <comment>Ex is a proper noun.</comment>
     </data>
 
     <data name="break_slide_toggle" xml:space="preserve">
