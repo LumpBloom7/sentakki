@@ -14,6 +14,7 @@
         <AssemblyTitle>sentakki for osu!lazer (dev build)</AssemblyTitle>
     </PropertyGroup>
     <ItemGroup>
-      <PackageReference Include="ppy.osu.Game" Version="2026.916.0" />
+        <PackageReference Include="ppy.osu.Game" Version="2026.916.0" />
+        <InternalsVisibleTo Include="osu.Game.Rulesets.Sentakki.Tests" />
     </ItemGroup>
 </Project>
