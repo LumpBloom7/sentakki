@@ -149,7 +149,8 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
             if (Head.AllJudged && timeNotHeld >= 200)
             {
-                ApplyMinResult();
+                if (!AllJudged)
+                    ApplyMinResult();
                 return;
             }
 
@@ -200,20 +201,22 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
     {
         if (!userTriggered)
         {
+            double perfectWindow = HitObject.HitWindows.WindowFor(HitResult.Perfect);
             if (timeOffset > HitObject.HitWindows.WindowFor(HitResult.Perfect) && isHolding)
+            {
                 ApplyResult(HitResult.Great);
-            else if (Head.AllJudged && timeOffset > 0 && !isHolding)
-                ApplyResult(Result.Judgement.MinResult);
+            }
+            else if (Head.AllJudged && timeOffset >= -perfectWindow && !isHolding)
+            {
+                // If the user is not holding the note, use the unheld duration to determine an appropriate result
+                var earlyReleaseResult = HitObject.HitWindows.ResultFor(timeNotHeld + Math.Abs(timeOffset));
+
+                ApplyResult(earlyReleaseResult);
+            }
 
             return;
         }
 
-        var result = HitObject.HitWindows.ResultFor(timeOffset);
-
-        if (result == HitResult.None)
-            return;
-
-        ApplyResult(result);
         return;
     }
 
