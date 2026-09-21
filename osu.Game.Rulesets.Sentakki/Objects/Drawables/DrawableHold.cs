@@ -145,7 +145,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
             if (Head.AllJudged && timeNotHeld >= 200)
             {
-                if (!AllJudged)
+                if (!Judged)
                     ApplyMinResult();
                 return;
             }

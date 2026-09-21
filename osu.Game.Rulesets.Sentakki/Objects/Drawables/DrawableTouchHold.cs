@@ -55,6 +55,8 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         base.OnApply();
         colourPalette.BindTo(HitObject.ColourPaletteBindable);
         positionBindable.BindTo(HitObject.PositionBindable);
+        timeNotHeld = 0;
+        isHitting.Value = false;
     }
 
     [BackgroundDependencyLoader]
@@ -76,7 +78,6 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
                 Looping = true,
                 Frequency = { Value = 1 }
             },
-
         ]);
 
         positionBindable.BindValueChanged(v => Position = v.NewValue);
@@ -141,8 +142,6 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         holdSample.ClearSamples();
         colourPalette.UnbindFrom(HitObject.ColourPaletteBindable);
         positionBindable.UnbindFrom(HitObject.PositionBindable);
-        isHitting.Value = false;
-        timeNotHeld = 0;
     }
 
     protected override void UpdateInitialTransforms()
@@ -224,7 +223,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
 
             if (head.AllJudged && timeNotHeld >= 400)
             {
-                if (!AllJudged)
+                if (!Judged)
                     ApplyMinResult();
 
                 return;
@@ -256,6 +255,9 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         {
             // If the user is not holding the note, use the unheld duration to determine an appropriate result
             var earlyReleaseResult = HitObject.HitWindows.ResultFor(timeNotHeld + Math.Abs(timeOffset));
+
+            if (earlyReleaseResult <= HitResult.None)
+                earlyReleaseResult = HitResult.Miss;
 
             ApplyResult(earlyReleaseResult);
         }
