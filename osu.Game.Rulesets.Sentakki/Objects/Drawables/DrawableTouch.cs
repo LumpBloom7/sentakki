@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
@@ -14,7 +15,11 @@ public partial class DrawableTouch : DrawableSentakkiHitObject
 {
     protected new Touch HitObject => (Touch)base.HitObject;
 
+    private CircularContainer hitReceptor = null!;
+
     public TouchBody TouchBody = null!;
+
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => hitReceptor.ReceivePositionalInputAt(screenSpacePos);
 
     public DrawableTouch()
         : this(null)
@@ -32,11 +37,18 @@ public partial class DrawableTouch : DrawableSentakkiHitObject
         if (DrawableSentakkiRuleset is not null)
             AnimationDuration.BindTo(DrawableSentakkiRuleset?.AdjustedTouchAnimDuration);
 
-        Size = new Vector2(130);
+        Size = new Vector2(200);
+
         Origin = Anchor.Centre;
         Anchor = Anchor.Centre;
         AddRangeInternal([
-            TouchBody = new TouchBody()
+            TouchBody = new TouchBody(),
+            hitReceptor = new CircularContainer()
+            {
+                RelativeSizeAxes = Axes.Both,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+            }
         ]);
     }
 

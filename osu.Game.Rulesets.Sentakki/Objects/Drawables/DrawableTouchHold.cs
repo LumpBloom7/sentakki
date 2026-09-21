@@ -4,6 +4,7 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 using osu.Framework.Utils;
 using osu.Game.Audio;
@@ -23,9 +24,9 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
 {
     public new TouchHold HitObject => (TouchHold)base.HitObject;
 
-    public override bool HandlePositionalInput => true;
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => hitReceptor.ReceivePositionalInputAt(screenSpacePos);
 
-    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => TouchHoldBody.ReceivePositionalInputAt(screenSpacePos);
+    private CircularContainer hitReceptor = null!;
 
     public TouchHoldBody TouchHoldBody = null!;
 
@@ -59,6 +60,8 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         if (DrawableSentakkiRuleset is not null)
             AnimationDuration.BindTo(DrawableSentakkiRuleset?.AdjustedTouchAnimDuration);
 
+        Size = new Vector2(200);
+
         Colour = Color4.SlateGray;
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
@@ -70,6 +73,10 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
                 Volume = { Value = 1 },
                 Looping = true,
                 Frequency = { Value = 1 }
+            },
+            hitReceptor = new CircularContainer
+            {
+                RelativeSizeAxes = Axes.Both,
             }
         ]);
 
