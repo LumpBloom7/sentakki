@@ -8,19 +8,36 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "osu.Game.Rulesets.Sentakki.Tests", "osu.Game.Rulesets.Sentakki.Tests\osu.Game.Rulesets.Sentakki.Tests.csproj", "{B4577C85-CB83-462A-BCE3-22FFEB16311D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimaiSharp", "..\SimaiSharp\SimaiSharp\SimaiSharp.csproj", "{D133F26F-ADAD-4C21-8319-DA959E4599DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "osu.Game.Rulesets.Sentakki.Benchmarks", "osu.Game.Rulesets.Sentakki.Benchmarks\osu.Game.Rulesets.Sentakki.Benchmarks.csproj", "{4CFE385A-D4AF-4363-9818-04E59077A76A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5AE1F0F1-DAFA-46E7-959C-DA233B7C87E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5AE1F0F1-DAFA-46E7-959C-DA233B7C87E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AE1F0F1-DAFA-46E7-959C-DA233B7C87E9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5AE1F0F1-DAFA-46E7-959C-DA233B7C87E9}.Debug|x64.Build.0 = Debug|Any CPU
+		{5AE1F0F1-DAFA-46E7-959C-DA233B7C87E9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5AE1F0F1-DAFA-46E7-959C-DA233B7C87E9}.Debug|x86.Build.0 = Debug|Any CPU
 		{5AE1F0F1-DAFA-46E7-959C-DA233B7C87E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AE1F0F1-DAFA-46E7-959C-DA233B7C87E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AE1F0F1-DAFA-46E7-959C-DA233B7C87E9}.Release|x64.ActiveCfg = Release|Any CPU
+		{5AE1F0F1-DAFA-46E7-959C-DA233B7C87E9}.Release|x64.Build.0 = Release|Any CPU
+		{5AE1F0F1-DAFA-46E7-959C-DA233B7C87E9}.Release|x86.ActiveCfg = Release|Any CPU
+		{5AE1F0F1-DAFA-46E7-959C-DA233B7C87E9}.Release|x86.Build.0 = Release|Any CPU
 		{B4577C85-CB83-462A-BCE3-22FFEB16311D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B4577C85-CB83-462A-BCE3-22FFEB16311D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4577C85-CB83-462A-BCE3-22FFEB16311D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B4577C85-CB83-462A-BCE3-22FFEB16311D}.Debug|x64.Build.0 = Debug|Any CPU
+		{B4577C85-CB83-462A-BCE3-22FFEB16311D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B4577C85-CB83-462A-BCE3-22FFEB16311D}.Debug|x86.Build.0 = Debug|Any CPU
 		{B4577C85-CB83-462A-BCE3-22FFEB16311D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4577C85-CB83-462A-BCE3-22FFEB16311D}.Release|Any CPU.Build.0 = Release|Any CPU
 
@@ -28,41 +45,28 @@ Global
 		{D133F26F-ADAD-4C21-8319-DA959E4599DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D133F26F-ADAD-4C21-8319-DA959E4599DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D133F26F-ADAD-4C21-8319-DA959E4599DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4577C85-CB83-462A-BCE3-22FFEB16311D}.Release|x64.ActiveCfg = Release|Any CPU
+		{B4577C85-CB83-462A-BCE3-22FFEB16311D}.Release|x64.Build.0 = Release|Any CPU
+		{B4577C85-CB83-462A-BCE3-22FFEB16311D}.Release|x86.ActiveCfg = Release|Any CPU
+		{B4577C85-CB83-462A-BCE3-22FFEB16311D}.Release|x86.Build.0 = Release|Any CPU
+		{4CFE385A-D4AF-4363-9818-04E59077A76A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CFE385A-D4AF-4363-9818-04E59077A76A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CFE385A-D4AF-4363-9818-04E59077A76A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4CFE385A-D4AF-4363-9818-04E59077A76A}.Debug|x64.Build.0 = Debug|Any CPU
+		{4CFE385A-D4AF-4363-9818-04E59077A76A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4CFE385A-D4AF-4363-9818-04E59077A76A}.Debug|x86.Build.0 = Debug|Any CPU
+		{4CFE385A-D4AF-4363-9818-04E59077A76A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CFE385A-D4AF-4363-9818-04E59077A76A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CFE385A-D4AF-4363-9818-04E59077A76A}.Release|x64.ActiveCfg = Release|Any CPU
+		{4CFE385A-D4AF-4363-9818-04E59077A76A}.Release|x64.Build.0 = Release|Any CPU
+		{4CFE385A-D4AF-4363-9818-04E59077A76A}.Release|x86.ActiveCfg = Release|Any CPU
+		{4CFE385A-D4AF-4363-9818-04E59077A76A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {671B0BEC-2403-45B0-9357-2C97CC517668}
-	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		Policies = $0
-		$0.TextStylePolicy = $1
-		$1.EolMarker = Windows
-		$1.inheritsSet = VisualStudio
-		$1.inheritsScope = text/plain
-		$1.scope = text/x-csharp
-		$0.CSharpFormattingPolicy = $2
-		$2.IndentSwitchSection = True
-		$2.NewLinesForBracesInProperties = True
-		$2.NewLinesForBracesInAccessors = True
-		$2.NewLinesForBracesInAnonymousMethods = True
-		$2.NewLinesForBracesInControlBlocks = True
-		$2.NewLinesForBracesInAnonymousTypes = True
-		$2.NewLinesForBracesInObjectCollectionArrayInitializers = True
-		$2.NewLinesForBracesInLambdaExpressionBody = True
-		$2.NewLineForElse = True
-		$2.NewLineForCatch = True
-		$2.NewLineForFinally = True
-		$2.NewLineForMembersInObjectInit = True
-		$2.NewLineForMembersInAnonymousTypes = True
-		$2.NewLineForClausesInQuery = True
-		$2.SpacingAfterMethodDeclarationName = False
-		$2.SpaceAfterMethodCallName = False
-		$2.SpaceBeforeOpenSquareBracket = False
-		$2.inheritsSet = Mono
-		$2.inheritsScope = text/x-csharp
-		$2.scope = text/x-csharp
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

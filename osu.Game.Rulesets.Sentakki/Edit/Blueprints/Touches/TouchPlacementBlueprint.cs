@@ -12,7 +12,7 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches;
 
-public partial class TouchPlacementBlueprint : TouchPlacementBlueprint<Touch>
+public partial class TouchPlacementBlueprint : TouchPlacementBlueprintBase<Touch>
 {
     private readonly TouchBody highlight;
 
@@ -21,7 +21,7 @@ public partial class TouchPlacementBlueprint : TouchPlacementBlueprint<Touch>
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        InternalChild = highlight = new TouchBody()
+        Child = highlight = new TouchBody()
         {
             Alpha = 0.5f,
             Colour = Color4.YellowGreen,

@@ -75,16 +75,16 @@
         <value>環顏色</value>
     </data>
   <data name="ring_color_default" xml:space="preserve">
-        <value>默認</value>
+        <value>預設值</value>
     </data>
   <data name="ring_color_difficulty" xml:space="preserve">
         <value>基於難度的顏色</value>
     </data>
   <data name="ring_color_skin" xml:space="preserve">
-        <value>皮膚</value>
+        <value>Skin</value>
     </data>
   <data name="ring_opacity" xml:space="preserve">
-        <value>環能見度</value>
+        <value>環可見度</value>
     </data>
   <data name="lane_input_mode" xml:space="preserve">
         <value>行輸入模式 (觸摸不會被影響)</value>
@@ -109,5 +109,8 @@
   <data name="sonic" xml:space="preserve">
         <value>Sonic</value>
         <comment>Used when the speed value is greater than 10.</comment>
+    </data>
+  <data name="prefer_portrait_layout" xml:space="preserve">
+        <value>優先垂直排列</value>
     </data>
 </root>

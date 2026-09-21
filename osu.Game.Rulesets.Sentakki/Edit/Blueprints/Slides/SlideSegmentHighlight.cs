@@ -51,6 +51,10 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
     {
+        // HACK: We really only want to allow interactivity iff this is the only hitobject selected
+        if (beatmap.SelectedHitObjects.Count != 1)
+            return false;
+
         if (IsDragged)
             return true;
 

@@ -12,14 +12,10 @@ namespace osu.Game.Rulesets.Sentakki.UI;
 
 public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
 {
-    private readonly Ruleset ruleset;
-
-    protected override LocalisableString Header => ruleset.Description;
 
     public SentakkiSettingsSubsection(Ruleset ruleset)
         : base(ruleset)
     {
-        this.ruleset = ruleset;
     }
 
     [BackgroundDependencyLoader]
@@ -29,11 +25,6 @@ public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
 
         Children =
         [
-            new SettingsItemV2(new FormCheckBox {
-                Caption = SentakkiSettingsSubsectionStrings.ShowKiaiEffects,
-                Current = config.GetBindable<bool>(SentakkiRulesetSettings.KiaiEffects),
-            }) { Keywords = ["visualiser", "visualizer", "bounce"] },
-
             new SettingsItemV2(new FormCheckBox {
                 Caption = SentakkiSettingsSubsectionStrings.ShowNoteStartIndicators,
                 Current = config.GetBindable<bool>(SentakkiRulesetSettings.ShowNoteStartIndicators)
@@ -47,7 +38,10 @@ public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
             new SettingsItemV2(new FormCheckBox {
                 Caption = SentakkiSettingsSubsectionStrings.ShowDetailedJudgements,
                 Current = config.GetBindable<bool>(SentakkiRulesetSettings.DetailedJudgements),
-            }) { Keywords = ["early", "late","indicators", "timing"] },
+                HintText = "Show EARLY/LATE indicators on supported skins."
+            }) {
+                Keywords = ["early", "late","indicators", "timing"],
+            },
 
             new SettingsItemV2(new FormEnumDropdown<ColorOption> {
                Caption = SentakkiSettingsSubsectionStrings.RingColor,
@@ -65,17 +59,10 @@ public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
                 Current = config.GetBindable<float>(SentakkiRulesetSettings.TouchAnimationSpeed),
                 LabelFormat = v => SentakkiSettingsSubsectionStrings.EntrySpeedTooltip(v, DrawableSentakkiRuleset.ComputeTouchNoteEntryTime(v))
             }) { Keywords = ["scroll"] },
-
-            new SettingsItemV2(new FormSliderBar<float>{
-                Caption = SentakkiSettingsSubsectionStrings.RingOpacity,
-                Current = config.GetBindable<float>(SentakkiRulesetSettings.RingOpacity),
-                DisplayAsPercentage = true,
-            }) { Keywords = ["transparency"] },
         ];
 
         if (RuntimeInfo.IsMobile)
         {
-
             Add(new SettingsItemV2(new FormCheckBox
             {
                 Caption = SentakkiSettingsSubsectionStrings.PreferPortraitLayout,
@@ -85,7 +72,6 @@ public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
         }
         else
         {
-
             Add(new SettingsButtonV2
             {
                 Text = @"Import simai chart",

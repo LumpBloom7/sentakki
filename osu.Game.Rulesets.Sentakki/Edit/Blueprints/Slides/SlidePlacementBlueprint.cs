@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 public partial class SlidePlacementBlueprint : LanedPlacementBlueprint<Slide>
 {
     public override bool ReplacesExistingObject(HitObject existing)
-        => base.ReplacesExistingObject(existing) && existing is not Slide;
+        => existing is not Slide && base.ReplacesExistingObject(existing);
 
     [Resolved]
     private LaneNoteSnapGrid snapGrid { get; set; } = null!;
@@ -51,7 +51,7 @@ public partial class SlidePlacementBlueprint : LanedPlacementBlueprint<Slide>
 
         HitObject.SlideInfoList = [committedSlideInfo = new SlideBodyInfo()];
 
-        AddInternal(new Container
+        Child = new Container
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
@@ -81,7 +81,7 @@ public partial class SlidePlacementBlueprint : LanedPlacementBlueprint<Slide>
                     SecondStar = { Alpha = 0 }
                 }
             ]
-        });
+        };
     }
 
     private readonly Bindable<double> animationSpeed = new Bindable<double>(5);
@@ -96,7 +96,7 @@ public partial class SlidePlacementBlueprint : LanedPlacementBlueprint<Slide>
     {
         base.Update();
 
-        InternalChild.Rotation = HitObject.Lane.GetRotationForLane();
+        Child.Rotation = HitObject.Lane.GetRotationForLane();
         tapHighlight.Y = -Interpolation.ValueAt(
             HitObject.StartTime,
             SentakkiPlayfield.INTERSECTDISTANCE,

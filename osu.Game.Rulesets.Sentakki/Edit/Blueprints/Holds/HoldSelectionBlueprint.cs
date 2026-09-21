@@ -107,6 +107,10 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
         {
+            // HACK: We really only want to allow interactivity iff this is the only hitobject selected
+            if (blueprintContainer.SelectionHandler.SelectedItems.Count != 1)
+                return false;
+
             if (snapGrid.State.Value is Visibility.Hidden)
                 return false;
 

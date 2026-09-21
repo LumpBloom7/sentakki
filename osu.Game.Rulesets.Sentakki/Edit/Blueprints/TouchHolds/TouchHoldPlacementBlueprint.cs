@@ -14,7 +14,7 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.TouchHolds;
 
-public partial class TouchHoldPlacementBlueprint : TouchPlacementBlueprint<TouchHold>
+public partial class TouchHoldPlacementBlueprint : TouchPlacementBlueprintBase<TouchHold>
 {
     [Cached]
     private IBindable<IReadOnlyList<Color4>>? paletteBindable { get; set; }
@@ -27,7 +27,7 @@ public partial class TouchHoldPlacementBlueprint : TouchPlacementBlueprint<Touch
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        InternalChild = highlight = new TouchHoldBody
+        Child = highlight = new TouchHoldBody
         {
             Alpha = 0.5f,
             Colour = Color4.YellowGreen

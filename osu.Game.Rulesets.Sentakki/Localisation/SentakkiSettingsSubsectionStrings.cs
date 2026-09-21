@@ -7,11 +7,6 @@ public static class SentakkiSettingsSubsectionStrings
     private const string prefix = @"osu.Game.Rulesets.Sentakki.Resources.Localisation.SentakkiSettingsSubsectionStrings";
 
     /// <summary>
-    /// "Show kiai effects"
-    /// </summary>
-    public static LocalisableString ShowKiaiEffects => new TranslatableString(getKey(@"show_kiai_effects"), @"Show Kiai effects");
-
-    /// <summary>
     /// "Show note start indicators"
     /// </summary>
     public static LocalisableString ShowNoteStartIndicators => new TranslatableString(getKey(@"show_note_start_indicators"), @"Show note start indicators");

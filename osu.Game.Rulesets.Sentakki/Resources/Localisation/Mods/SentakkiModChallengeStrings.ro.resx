@@ -59,10 +59,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="number_of_lives" xml:space="preserve">
-        <value>Număr vieți</value>
+        <value>Număr de vieți</value>
     </data>
   <data name="mod_description" xml:space="preserve">
-        <value>Nu primești decât o marjă mică de eroare.</value>
+        <value>Nu ai decât o marjă redusă de eroare.</value>
     </data>
   <data name="number_of_lives_description" xml:space="preserve">
         <value>Numărul de vieți cu care începi.</value>

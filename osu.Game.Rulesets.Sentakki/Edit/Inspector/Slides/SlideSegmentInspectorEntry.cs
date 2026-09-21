@@ -44,7 +44,7 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
 
         InternalChild = text = new OsuSpriteText
         {
-            Font = OsuFont.Style.Body
+            Font = OsuFont.Style.Caption2.With(weight: FontWeight.SemiBold)
         };
     }
 

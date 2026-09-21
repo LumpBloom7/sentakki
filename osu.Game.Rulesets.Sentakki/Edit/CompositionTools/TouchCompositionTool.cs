@@ -3,14 +3,16 @@ using osu.Framework.Graphics.Sprites;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Edit.Tools;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Touches;
+using osu.Game.Rulesets.Sentakki.Localisation;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.CompositionTools;
 
-public class TouchCompositionTool : CompositionTool
+public class TouchCompositionTool : CompositionTool<SentakkiAction>
 {
     public TouchCompositionTool()
-        : base("Touch")
+        : base(SentakkiEditorStrings.TouchTool)
     {
+        Action = SentakkiAction.EditorTouchTool;
     }
 
     public override Drawable CreateIcon() => new SpriteIcon { Icon = FontAwesome.Regular.HandPointRight };

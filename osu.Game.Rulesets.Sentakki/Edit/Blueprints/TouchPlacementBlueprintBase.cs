@@ -1,0 +1,41 @@
+using System;
+using osu.Framework.Utils;
+using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Sentakki.Beatmaps;
+using osu.Game.Rulesets.Sentakki.Objects;
+using osuTK;
+
+namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints;
+
+public abstract partial class TouchPlacementBlueprintBase<T> : SentakkiPlacementBlueprint<T>
+    where T : SentakkiHitObject, IHasPosition, new()
+{
+    private static readonly Lazy<float> minimum_touch_spacing = new Lazy<float>(getMinimumDistance);
+    protected static float MinimumTouchSpacing => minimum_touch_spacing.Value;
+
+    public override bool ReplacesExistingObject(HitObject existing)
+        => base.ReplacesExistingObject(existing)
+            && existing is IHasPosition touchNote
+            && Precision.DefinitelyBigger(MinimumTouchSpacing, Vector2.Distance(HitObject.Position, touchNote.Position));
+
+    private static float getMinimumDistance()
+    {
+        var valid_positions = SentakkiBeatmapConverterOld.VALID_TOUCH_POSITIONS;
+        int n = valid_positions.Count;
+
+        float min_distance_squared = float.MaxValue;
+        for (int i = 0; i < n - 1; ++i)
+        {
+            var pos = valid_positions[i];
+            for (int j = i + 1; j < n; ++j)
+            {
+                var pos2 = valid_positions[j];
+
+                min_distance_squared = Math.Min(min_distance_squared, Vector2.DistanceSquared(pos, pos2));
+            }
+        }
+
+        return MathF.Sqrt(min_distance_squared);
+    }
+}

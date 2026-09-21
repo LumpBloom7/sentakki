@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Bindings;
@@ -27,13 +25,6 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
     {
         Origin = Anchor.Centre;
         Anchor = Anchor.Centre;
-        ExTernaryState.ValueChanged += v => applyTernaryChanges<SentakkiHitObject>(setExState, v.NewValue);
-        BreakTernaryState.ValueChanged += v => applyTernaryChanges<SentakkiHitObject>(setBreakState, v.NewValue);
-
-        exSlideTernaryState.ValueChanged += v => applyTernaryChanges<Slide>(setExSlideState, v.NewValue);
-        breakSlideTernaryState.ValueChanged += v => applyTernaryChanges<Slide>(setBreakSlideState, v.NewValue);
-
-        omitSlideTapTypeTernaryState.ValueChanged += v => applyTernaryChanges<Slide>(setOmitSlideTapState, v.NewValue);
     }
 
     // public override SelectionRotationHandler CreateRotationHandler() => new SentakkiRotationHandler();
@@ -213,12 +204,12 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
             [
                 new TernaryStateToggleMenuItem("Break")
                 {
-                    State = { BindTarget = BreakTernaryState },
+                    State = { BindTarget = composer.BreakTernaryState },
                     Hotkey = new Hotkey(new KeyCombination(InputKey.R))
                 },
                 new TernaryStateToggleMenuItem("EX ")
                 {
-                    State = { BindTarget = ExTernaryState, },
+                    State = { BindTarget = composer.ExTernaryState, },
                     Hotkey = new Hotkey(new KeyCombination(InputKey.T))
                 }
             ]
@@ -232,120 +223,12 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
         {
             Items =
             [
-                new TernaryStateToggleMenuItem("Break") { State = { BindTarget = breakSlideTernaryState } },
-                new TernaryStateToggleMenuItem("EX") { State = { BindTarget = exSlideTernaryState } }
+                new TernaryStateToggleMenuItem("Break") { State = { BindTarget = composer.BreakSlideTernaryState } },
+                new TernaryStateToggleMenuItem("EX") { State = { BindTarget = composer.ExSlideTernaryState } }
             ]
         };
 
-        yield return new TernaryStateToggleMenuItem("Omit slide tap") { State = { BindTarget = omitSlideTapTypeTernaryState } };
-    }
-
-    public readonly Bindable<TernaryState> ExTernaryState = new Bindable<TernaryState>();
-    public readonly Bindable<TernaryState> BreakTernaryState = new Bindable<TernaryState>();
-
-    private readonly Bindable<TernaryState> exSlideTernaryState = new Bindable<TernaryState>();
-    private readonly Bindable<TernaryState> breakSlideTernaryState = new Bindable<TernaryState>();
-
-    private readonly Bindable<TernaryState> omitSlideTapTypeTernaryState = new Bindable<TernaryState>();
-
-    protected override void UpdateTernaryStates()
-    {
-        var selectedItems = SelectedItems.OfType<SentakkiHitObject>().ToList();
-        ExTernaryState.Value = GetStateFromSelection(selectedItems.Where(h => h is not TouchHold), h => h.Ex);
-        BreakTernaryState.Value = GetStateFromSelection(selectedItems, h => h.Break);
-
-        var selectedSlideBodies = selectedItems.OfType<Slide>().SelectMany(s => s.SlideInfoList);
-        breakSlideTernaryState.Value = GetStateFromSelection(selectedSlideBodies, s => s.Break);
-        exSlideTernaryState.Value = GetStateFromSelection(selectedSlideBodies, s => s.Ex);
-
-        var selectedSlides = selectedItems.OfType<Slide>();
-        omitSlideTapTypeTernaryState.Value = GetStateFromSelection(selectedSlides, s => s.TapType == Slide.TapTypeEnum.None);
-    }
-
-    private void applyTernaryChanges<T>(Func<T, bool, bool> applicator, TernaryState newTernaryState) where T : HitObject
-    {
-        // We can get into an indeterminate state when mixing notes with different break/ex values
-        // We don't want to force enable/disable from this intermediate state
-        if (newTernaryState is TernaryState.Indeterminate)
-            return;
-
-        var selectedItems = SelectedItems.OfType<T>().ToArray();
-
-        bool newValue = newTernaryState is TernaryState.True;
-
-        EditorBeatmap.BeginChange();
-
-        foreach (var item in selectedItems)
-        {
-            if (applicator(item, newValue))
-                EditorBeatmap.Update(item);
-        }
-
-        EditorBeatmap.EndChange();
-    }
-
-    private bool setExState(SentakkiHitObject hitObject, bool newValue)
-    {
-        if (hitObject.Ex == newValue)
-            return false;
-
-        hitObject.Ex = newValue;
-        return true;
-    }
-    private bool setBreakState(SentakkiHitObject hitObject, bool newValue)
-    {
-        if (hitObject.Break == newValue)
-            return false;
-
-        hitObject.Break = newValue;
-        return true;
-    }
-
-    private bool setOmitSlideTapState(Slide slide, bool newValue)
-    {
-        var newState = newValue ? Slide.TapTypeEnum.None : Slide.TapTypeEnum.Star;
-
-        if (slide.TapType == newState)
-            return false;
-
-        slide.TapType = newState;
-
-        // Revalidate the arcs
-        composer.Playfield.Remove(slide);
-        composer.Playfield.Add(slide);
-
-        return true;
-    }
-
-    private bool setExSlideState(Slide slide, bool newValue)
-    {
-        bool anySet = false;
-
-        foreach (var slideInfo in slide.SlideInfoList)
-        {
-            if (slideInfo.Ex == newValue)
-                continue;
-
-            anySet = true;
-            slideInfo.Ex = newValue;
-        }
-
-        return anySet;
-    }
-    private bool setBreakSlideState(Slide slide, bool newValue)
-    {
-        bool anySet = false;
-
-        foreach (var slideInfo in slide.SlideInfoList)
-        {
-            if (slideInfo.Break == newValue)
-                continue;
-
-            anySet = true;
-            slideInfo.Break = newValue;
-        }
-
-        return anySet;
+        yield return new TernaryStateToggleMenuItem("Omit slide tap") { State = { BindTarget = composer.OmitSlideTapTernaryState } };
     }
 
     #endregion
