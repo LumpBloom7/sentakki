@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Game.Audio;
@@ -62,7 +63,19 @@ public partial class TouchHold : SentakkiHitObject, IHasDuration, IHasPosition
 
     public double Duration { get; set; }
 
-    protected override HitWindows CreateHitWindows() => new SentakkiEmptyHitWindows();
+    protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
+    {
+        AddNested(new TouchHoldHead
+        {
+            StartTime = StartTime,
+            Position = Position,
+            Break = Break,
+        });
+
+        base.CreateNestedHitObjects(cancellationToken);
+    }
+
+    protected override HitWindows CreateHitWindows() => new SentakkiHoldReleaseWindows();
 
     public override IList<HitSampleInfo> AuxiliarySamples => CreateHoldSample();
 
@@ -74,6 +87,35 @@ public partial class TouchHold : SentakkiHitObject, IHasDuration, IHasPosition
             return [];
 
         return [referenceSample.With("spinnerspin")];
+    }
+
+    public class TouchHoldHead : SentakkiHitObject, IHasPosition
+    {
+        private HitObjectProperty<Vector2> position;
+
+        public Bindable<Vector2> PositionBindable => position.Bindable;
+
+        public override Color4 DefaultNoteColour => DEFAULT_PALETTE[0];
+
+        public Vector2 Position
+        {
+            get => position.Value;
+            set => position.Value = value;
+        }
+
+        public float X
+        {
+            get => Position.X;
+            set => Position = new Vector2(value, Position.Y);
+        }
+
+        public float Y
+        {
+            get => Position.Y;
+            set => Position = new Vector2(Position.X, value);
+        }
+
+        protected override HitWindows CreateHitWindows() => new SentakkiTouchHitWindows();
     }
 }
 

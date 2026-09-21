@@ -112,10 +112,6 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
         if (Auto)
         {
-            // Auto can never hit prior to start time
-            if (Time.Current < HitObject.StartTime)
-                isHolding = false;
-
             // If auto is within the hittable time, attempt to hit it
             // HACK: In editor context, frame stability is not enforced, this could potentially lead to 0 duration slides being missed as we never ever visit the window.
             // We resolve this by giving autoplay a bit more leniency. In practice nothing should change for regular autoplay.
@@ -199,25 +195,24 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
     protected override void CheckForResult(bool userTriggered, double timeOffset)
     {
-        if (!userTriggered)
-        {
-            double perfectWindow = HitObject.HitWindows.WindowFor(HitResult.Perfect);
-            if (timeOffset > HitObject.HitWindows.WindowFor(HitResult.Perfect) && isHolding)
-            {
-                ApplyResult(HitResult.Great);
-            }
-            else if (Head.AllJudged && timeOffset >= -perfectWindow && !isHolding)
-            {
-                // If the user is not holding the note, use the unheld duration to determine an appropriate result
-                var earlyReleaseResult = HitObject.HitWindows.ResultFor(timeNotHeld + Math.Abs(timeOffset));
-
-                ApplyResult(earlyReleaseResult);
-            }
-
+        if (userTriggered)
             return;
-        }
 
-        return;
+        double perfectWindow = HitObject.HitWindows.WindowFor(HitResult.Perfect);
+        if (timeOffset > HitObject.HitWindows.WindowFor(HitResult.Perfect) && isHolding)
+        {
+            ApplyResult(HitResult.Great);
+        }
+        else if (Head.AllJudged && timeOffset >= -perfectWindow && !isHolding)
+        {
+            // If the user is not holding the note, use the unheld duration to determine an appropriate result
+            var earlyReleaseResult = HitObject.HitWindows.ResultFor(timeNotHeld + Math.Abs(timeOffset));
+
+            if (earlyReleaseResult <= HitResult.None)
+                earlyReleaseResult = HitResult.Miss;
+
+            ApplyResult(earlyReleaseResult);
+        }
     }
 
     protected override void UpdateHitStateTransforms(ArmedState state)
@@ -334,7 +329,6 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         if (pressedCount > 1)
             return;
 
-        UpdateResult(true);
         isHolding = false;
 
         if (!AllJudged)

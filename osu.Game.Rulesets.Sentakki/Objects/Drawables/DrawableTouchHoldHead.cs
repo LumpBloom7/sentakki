@@ -1,16 +1,16 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Sentakki.Objects.Drawables;
 
-public partial class DrawableHoldHead : DrawableSentakkiLanedHitObject
+public partial class DrawableTouchHoldHead : DrawableSentakkiHitObject
 {
-    public DrawableHoldHead()
+    public DrawableTouchHoldHead()
         : this(null)
     {
     }
 
-    public DrawableHoldHead(Hold.HoldHead? hitObject)
+    public DrawableTouchHoldHead(TouchHold.TouchHoldHead? hitObject)
         : base(hitObject)
     {
     }

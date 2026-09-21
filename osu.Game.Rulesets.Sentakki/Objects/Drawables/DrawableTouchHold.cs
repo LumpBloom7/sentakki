@@ -4,6 +4,7 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 using osu.Framework.Utils;
 using osu.Game.Audio;
@@ -36,6 +37,9 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
 
     private readonly IBindable<Vector2> positionBindable = new Bindable<Vector2>();
 
+    private Container<DrawableTouchHoldHead> headContainer = null!;
+    private DrawableTouchHoldHead head => headContainer.Child;
+
     public DrawableTouchHold()
         : this(null)
     {
@@ -64,16 +68,53 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         Origin = Anchor.Centre;
         AddRangeInternal(
         [
+            headContainer = new Container<DrawableTouchHoldHead> { RelativeSizeAxes = Axes.Both },
             TouchHoldBody = new TouchHoldBody(),
             holdSample = new PausableSkinnableSound
             {
                 Volume = { Value = 1 },
                 Looping = true,
                 Frequency = { Value = 1 }
-            }
+            },
+
         ]);
 
         positionBindable.BindValueChanged(v => Position = v.NewValue);
+        pressedCount.BindValueChanged(onPressedCountChanged);
+    }
+
+    protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
+    {
+        switch (hitObject)
+        {
+            case TouchHold.TouchHoldHead head:
+                return new DrawableTouchHoldHead(head)
+                {
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    AutoBindable = { BindTarget = AutoBindable }
+                };
+        }
+
+        return base.CreateNestedHitObject(hitObject);
+    }
+
+    protected override void AddNestedHitObject(DrawableHitObject hitObject)
+    {
+        base.AddNestedHitObject(hitObject);
+
+        switch (hitObject)
+        {
+            case DrawableTouchHoldHead head:
+                headContainer.Child = head;
+                break;
+        }
+    }
+
+    protected override void ClearNestedHitObjects()
+    {
+        base.ClearNestedHitObjects();
+        headContainer.Clear(false);
     }
 
     protected override void LoadSamples()
@@ -101,7 +142,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         colourPalette.UnbindFrom(HitObject.ColourPaletteBindable);
         positionBindable.UnbindFrom(HitObject.PositionBindable);
         isHitting.Value = false;
-        totalHoldTime = 0;
+        timeNotHeld = 0;
     }
 
     protected override void UpdateInitialTransforms()
@@ -128,25 +169,45 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
     [Cached]
     private readonly Bindable<bool> isHitting = new Bindable<bool>();
 
-    private double totalHoldTime;
+    private double timeNotHeld;
 
-    private bool isHittable => Time.Current >= HitObject.StartTime - 150 && Time.Current < HitObject.GetEndTime();
-    private bool withinActiveTime => Time.Current >= HitObject.StartTime && Time.Current < HitObject.GetEndTime();
-
-    private int pressedCount;
+    private Bindable<int> pressedCount = new Bindable<int>();
 
     protected override void Update()
     {
         base.Update();
 
-        int updatedPressedCounts = countActiveTouchPoints();
+        pressedCount.Value = countActiveTouchPoints();
 
-        if (isHittable && (updatedPressedCounts > pressedCount || Auto))
-            isHitting.Value = true;
-        else if (!isHittable || updatedPressedCounts == 0)
-            isHitting.Value = false;
+        if (AllJudged)
+        {
+            // Remove alterations to NoteBody colour
+            Colour = Color4.White;
+            return;
+        }
 
-        pressedCount = updatedPressedCounts;
+        // Ensure that the note colour is correct prior to the start time
+        if (Time.Current < HitObject.StartTime)
+        {
+            Colour = Color4.White;
+            return;
+        }
+
+        if (Auto)
+        {
+            // If auto is within the hittable time, attempt to hit it
+            // HACK: In editor context, frame stability is not enforced, this could potentially lead to 0 duration slides being missed as we never ever visit the window.
+            // We resolve this by giving autoplay a bit more leniency. In practice nothing should change for regular autoplay.
+            double missWindow = HitObject.HitWindows.WindowFor(HitResult.Miss);
+
+            if (Time.Current >= HitObject.StartTime && Time.Current < HitObject.EndTime + missWindow)
+            {
+                if (!isHitting.Value)
+                    head.UpdateResult();
+
+                isHitting.Value = true;
+            }
+        }
 
         if (!isHitting.Value)
         {
@@ -157,47 +218,50 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
                 Math.Clamp(Time.Current, HitObject.StartTime, HitObject.StartTime + 100),
                 Color4.White, Color4.SlateGray,
                 HitObject.StartTime, HitObject.StartTime + 100, Easing.OutSine);
+
+
+            timeNotHeld += Time.Elapsed;
+
+            if (head.AllJudged && timeNotHeld >= 400)
+            {
+                if (!AllJudged)
+                    ApplyMinResult();
+
+                return;
+            }
+
             return;
         }
 
-        if (!withinActiveTime)
-            return;
+        timeNotHeld = 0;
 
         if (!holdSample.RequestedPlaying)
             holdSample.Play();
 
-        totalHoldTime = Math.Clamp(totalHoldTime + Time.Elapsed, 0, ((IHasDuration)HitObject).Duration);
-        holdSample.Frequency.Value = 0.5 + totalHoldTime / ((IHasDuration)HitObject).Duration;
+        holdSample.Frequency.Value = 0.5 + ((Time.Current - HitObject.StartTime) / ((IHasDuration)HitObject).Duration) * 0.5f;
         Colour = Color4.White;
     }
 
     protected override void CheckForResult(bool userTriggered, double timeOffset)
     {
-        if (Time.Current < ((IHasDuration)HitObject).EndTime) return;
+        if (userTriggered)
+            return;
 
-        double result = totalHoldTime / ((IHasDuration)HitObject).Duration;
+        double perfectWindow = HitObject.HitWindows.WindowFor(HitResult.Perfect);
+        if (timeOffset > 0 && isHitting.Value)
+        {
+            ApplyResult(HitResult.Perfect);
+        }
+        else if (head.AllJudged && timeOffset >= -perfectWindow && !isHitting.Value)
+        {
+            // If the user is not holding the note, use the unheld duration to determine an appropriate result
+            var earlyReleaseResult = HitObject.HitWindows.ResultFor(timeNotHeld + Math.Abs(timeOffset));
 
-        HitResult resultType;
+            ApplyResult(earlyReleaseResult);
+        }
 
-        if (result >= 0.90)
-            resultType = HitResult.Perfect;
-        else if (result >= 0.75)
-            resultType = HitResult.Great;
-        else if (result >= 0.5)
-            resultType = HitResult.Good;
-        else if (result >= 0.25)
-            resultType = HitResult.Meh;
-        else
-            resultType = HitResult.Miss;
-
-        // This is specifically to accommodate the threshold setting in HR
-        if (!HitObject.HitWindows.IsHitResultAllowed(resultType))
-            resultType = HitResult.Miss;
-
-        AccentColour.Value = colours.ForHitResult(resultType);
-        ApplyResult(resultType);
+        return;
     }
-
     protected override void UpdateHitStateTransforms(ArmedState state)
     {
         base.UpdateHitStateTransforms(state);
@@ -243,5 +307,46 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         }
 
         return count;
+    }
+
+    private void onPressedCountChanged(ValueChangedEvent<int> pressedCount)
+    {
+        if (pressedCount.NewValue > pressedCount.OldValue)
+            onTouchPressed();
+        else
+            onTouchReleased();
+    }
+
+    private void onTouchPressed()
+    {
+        if (AllJudged)
+            return;
+
+        double timeOffset = Time.Current - HitObject.StartTime;
+
+        if (timeOffset < -head.HitObject.HitWindows.WindowFor(HitResult.Perfect))
+            return;
+
+        head.UpdateResult();
+        isHitting.Value = true;
+
+    }
+
+    private void onTouchReleased()
+    {
+        if (AllJudged)
+            return;
+
+        if (!isHitting.Value)
+            return;
+
+        if (pressedCount.Value > 0)
+            return;
+
+        UpdateResult(true);
+        isHitting.Value = false;
+
+        if (!AllJudged)
+            Colour = Color4.Gray;
     }
 }
