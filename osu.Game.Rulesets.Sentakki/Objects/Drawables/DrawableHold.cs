@@ -145,10 +145,18 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
                 Color4.White, Color4.SlateGray,
                 HitObject.StartTime, HitObject.StartTime + 100, Easing.OutSine);
 
-            if (Head.AllJudged)
-                timeNotHeld = Math.Clamp(timeNotHeld + Time.Elapsed, 0, HitObject.Duration);
+            timeNotHeld += Time.Elapsed;
+
+            if (Head.AllJudged && timeNotHeld >= 200)
+            {
+                ApplyMinResult();
+                return;
+            }
+
             return;
         }
+
+        timeNotHeld = 0;
 
         // Restore colour if it is being held
         Colour = Color4.White;
@@ -162,6 +170,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         else
             NoteBody.Colour = Interpolation.ValueAt(flashProg, flashingColour, AccentColour.Value, 0.5, 0, Easing.InSine);
     }
+
 
     protected override void UpdateInitialTransforms()
     {
@@ -192,7 +201,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         if (!userTriggered)
         {
             if (timeOffset > HitObject.HitWindows.WindowFor(HitResult.Perfect) && isHolding)
-                ApplyResult(applyDeductionTo(HitResult.Great));
+                ApplyResult(HitResult.Great);
             else if (Head.AllJudged && timeOffset > 0 && !isHolding)
                 ApplyResult(Result.Judgement.MinResult);
 
@@ -204,17 +213,8 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         if (result == HitResult.None)
             return;
 
-        ApplyResult(applyDeductionTo(result));
+        ApplyResult(result);
         return;
-
-        HitResult applyDeductionTo(HitResult originalResult)
-        {
-            int deduction = (int)Math.Clamp(Math.Floor(timeNotHeld / 300), 0, 3);
-
-            var newResult = originalResult - deduction;
-
-            return newResult <= HitResult.Meh ? HitResult.Meh : newResult;
-        }
     }
 
     protected override void UpdateHitStateTransforms(ArmedState state)
