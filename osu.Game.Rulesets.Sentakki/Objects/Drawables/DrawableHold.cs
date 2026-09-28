@@ -124,10 +124,11 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
                 isHolding = true;
             }
+            else { isHolding = false; }
 
             // Pretend that a release was made if auto is holding the note beyond end time
-            if (isHolding && Time.Current >= HitObject.GetEndTime())
-                UpdateResult(true);
+            if (Time.Current >= HitObject.GetEndTime())
+                isHolding = false;
         }
 
         if (!isHolding)
