@@ -150,7 +150,7 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
 
     protected override IEnumerable<Drawable> CreateTernaryButtons()
     {
-        foreach (var ternaryButton in base.CreateTernaryButtons().Skip(1))
+        foreach (var ternaryButton in base.CreateTernaryButtons())
             yield return ternaryButton;
 
         var selectionHandler = (SentakkiSelectionHandler)BlueprintContainer.SelectionHandler;
