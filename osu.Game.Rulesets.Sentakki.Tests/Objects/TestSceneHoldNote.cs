@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Tests.Visual;
@@ -36,22 +37,39 @@ public partial class TestSceneHoldNote : OsuTestScene
     [TestCaseSource(nameof(ObjectFlagsSource))]
     public void TestHolds(bool breakState, bool ex)
     {
-        AddStep("Miss Insane Short", () => testSingle(100, false, breakState, ex));
-        AddStep("Hit Insane Short", () => testSingle(100, true, breakState, ex));
-        AddStep("Miss Very Short", () => testSingle(200, false, breakState, ex));
-        AddStep("Hit Very Short", () => testSingle(200, true, breakState, ex));
-        AddStep("Miss Short", () => testSingle(500, false, breakState, ex));
-        AddStep("Hit Short", () => testSingle(500, true, breakState, ex));
-        AddStep("Miss Medium", () => testSingle(750, false, breakState, ex));
-        AddStep("Hit Medium", () => testSingle(750, true, breakState, ex));
-        AddStep("Miss Long", () => testSingle(1000, false, breakState, ex));
-        AddStep("Hit Long", () => testSingle(1000, true, breakState, ex));
-        AddStep("Miss Very Long", () => testSingle(3000, false, breakState, ex));
-        AddStep("Hit Very Long", () => testSingle(3000, true, breakState, ex));
-        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
+        testSingle(0, false, breakState, ex);
+        testSingle(0, true, breakState, ex);
+
+        testSingle(200, false, breakState, ex);
+        testSingle(200, true, breakState, ex);
+
+        testSingle(1000, false, breakState, ex);
+        testSingle(1000, true, breakState, ex);
+
+        testSingle(1000, false, breakState, ex);
+        testSingle(1000, true, breakState, ex);
     }
 
     private void testSingle(double duration, bool auto = false, bool breakState = false, bool ex = false)
+    {
+        DrawableHold hold = null!;
+        AddStep($"Create Hit Object ({duration:0.} ms)", () => hold = createHitObject(duration, auto, breakState, ex));
+        AddUntilStep("Wait until object judged", () => hold.AllJudged);
+
+        if (auto)
+        {
+            AddAssert("Hold head is perfectly hit", () => hold.Head.Result.Type is HitResult.Perfect);
+            AddAssert("Hold tail is perfectly hit", () => hold.Result.Type is HitResult.Perfect);
+        }
+        else
+        {
+            AddAssert("Hold head is missed", () => hold.Head.Result.Type is HitResult.Miss);
+            AddAssert("Hold tail is missed", () => hold.Result.Type is HitResult.Miss);
+        }
+    }
+
+
+    private DrawableHold createHitObject(double duration, bool auto = false, bool breakState = false, bool ex = false)
     {
         var circle = new Hold
         {
@@ -66,12 +84,16 @@ public partial class TestSceneHoldNote : OsuTestScene
 
         circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
 
-        Add(new DrawableHold(circle)
+        DrawableHold drawable = new DrawableHold(circle)
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Depth = depthIndex++,
             Auto = auto
-        });
+        };
+
+        Add(drawable);
+
+        return drawable;
     }
 }
