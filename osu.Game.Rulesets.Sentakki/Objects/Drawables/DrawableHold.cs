@@ -83,17 +83,20 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
     protected override void OnApply()
     {
         base.OnApply();
-        timeNotHeld = 0;
-        isHolding = false;
+        releaseTime = null;
+        holdAttempted = false;
     }
 
-    private double timeNotHeld;
+    private double? releaseTime;
+    private bool isHolding => releaseTime is null;
 
-    private bool isHolding;
+    private bool holdAttempted;
 
     protected override void Update()
     {
         base.Update();
+
+        autoplayUpdate();
 
         if (AllJudged)
         {
@@ -110,27 +113,6 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
             return;
         }
 
-        if (Auto)
-        {
-            // If auto is within the hittable time, attempt to hit it
-            // HACK: In editor context, frame stability is not enforced, this could potentially lead to 0 duration slides being missed as we never ever visit the window.
-            // We resolve this by giving autoplay a bit more leniency. In practice nothing should change for regular autoplay.
-            double missWindow = HitObject.HitWindows.WindowFor(HitResult.Miss);
-
-            if (Time.Current >= HitObject.StartTime && Time.Current < HitObject.EndTime + missWindow)
-            {
-                if (!isHolding)
-                    Head.UpdateResult();
-
-                isHolding = true;
-            }
-            else { isHolding = false; }
-
-            // Pretend that a release was made if auto is holding the note beyond end time
-            if (Time.Current >= HitObject.GetEndTime())
-                isHolding = false;
-        }
-
         if (!isHolding)
         {
             // Remove alterations to NoteBody colour
@@ -142,19 +124,8 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
                 Color4.White, Color4.SlateGray,
                 HitObject.StartTime, HitObject.StartTime + 100, Easing.OutSine);
 
-            timeNotHeld += Time.Elapsed;
-
-            if (Head.AllJudged && timeNotHeld >= 200)
-            {
-                if (!Judged)
-                    ApplyMinResult();
-                return;
-            }
-
             return;
         }
-
-        timeNotHeld = 0;
 
         // Restore colour if it is being held
         Colour = Color4.White;
@@ -199,20 +170,39 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         if (userTriggered)
             return;
 
+        // Judgement of the tail can only happen after the head is judged.
+        if (!Head.Judged)
+            return;
+
         double perfectWindow = HitObject.HitWindows.WindowFor(HitResult.Perfect);
-        if (timeOffset > HitObject.HitWindows.WindowFor(HitResult.Perfect) && isHolding)
+        double timeNotHeld = releaseTime.HasValue ? Time.Current - releaseTime.Value : 0;
+
+        // If the player is still holding it beyond the perfect window, the maximum result is a Great.
+        if (timeOffset > perfectWindow && isHolding)
         {
             ApplyResult(HitResult.Great);
         }
-        else if (Head.AllJudged && timeOffset >= -perfectWindow && !isHolding)
+        else if (timeOffset >= -perfectWindow && !isHolding)
         {
-            // If the user is not holding the note, use the unheld duration to determine an appropriate result
-            var earlyReleaseResult = HitObject.HitWindows.ResultFor(timeNotHeld + Math.Abs(timeOffset));
+            // If the player never attempted a hold, we just consider it a miss.
+            if (!holdAttempted)
+            {
+                ApplyResult(HitObject.Judgement.MinResult);
+                return;
+            }
+
+            // If the user is not holding the note, also take into account the time the player wasn't holding the note
+            var earlyReleaseResult = HitObject.HitWindows.ResultFor(timeOffset - timeNotHeld);
 
             if (earlyReleaseResult <= HitResult.None)
                 earlyReleaseResult = HitResult.Miss;
 
             ApplyResult(earlyReleaseResult);
+        }
+        // If the user hasn't held it for 200ms, unconditionally consider a miss.
+        else if (timeNotHeld >= 200)
+        {
+            ApplyResult(HitObject.Judgement.MinResult);
         }
     }
 
@@ -312,7 +302,10 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
             return false;
 
         Head.UpdateResult();
-        isHolding = true;
+
+        holdAttempted = true;
+        releaseTime = null;
+
         NoteBody.FadeColour(AccentColour.Value, 50);
         return true;
     }
@@ -330,9 +323,32 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         if (pressedCount > 1)
             return;
 
-        isHolding = false;
+        releaseTime = Time.Current;
 
         if (!AllJudged)
             NoteBody.FadeColour(Color4.Gray, 100);
+    }
+
+    private void autoplayUpdate()
+    {
+        if (!Auto)
+            return;
+
+        // If auto is within the hittable time, attempt to hit it
+        // HACK: In editor context, frame stability is not enforced, this could potentially lead to 0 duration slides being missed as we never ever visit the window.
+        // We resolve this by giving autoplay a bit more leniency. In practice nothing should change for regular autoplay.
+        double missWindow = HitObject.HitWindows.WindowFor(HitResult.Miss);
+
+        if (Time.Current >= HitObject.StartTime && Time.Current < HitObject.EndTime + missWindow)
+        {
+            if (!isHolding)
+                Head.UpdateResult();
+
+            holdAttempted = true;
+        }
+
+        // Pretend that a release was made if auto is holding the note beyond end time
+        if (Time.Current >= HitObject.GetEndTime())
+            releaseTime = Time.Current;
     }
 }

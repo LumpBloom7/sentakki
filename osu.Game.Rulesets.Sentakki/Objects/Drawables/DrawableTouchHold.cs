@@ -8,7 +8,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 using osu.Framework.Utils;
 using osu.Game.Audio;
-using osu.Game.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
@@ -38,7 +37,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
     private readonly IBindable<Vector2> positionBindable = new Bindable<Vector2>();
 
     private Container<DrawableTouchHoldHead> headContainer = null!;
-    private DrawableTouchHoldHead head => headContainer.Child;
+    public DrawableTouchHoldHead Head => headContainer.Child;
 
     public DrawableTouchHold()
         : this(null)
@@ -55,7 +54,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         base.OnApply();
         colourPalette.BindTo(HitObject.ColourPaletteBindable);
         positionBindable.BindTo(HitObject.PositionBindable);
-        timeNotHeld = 0;
+        releaseTime = null;
         isHitting.Value = false;
     }
 
@@ -132,9 +131,6 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         holdSample.Stop();
     }
 
-    [Resolved]
-    private OsuColour colours { get; set; } = null!;
-
     protected override void OnFree()
     {
         base.OnFree();
@@ -168,15 +164,19 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
     [Cached]
     private readonly Bindable<bool> isHitting = new Bindable<bool>();
 
-    private double timeNotHeld;
-
     private Bindable<int> pressedCount = new Bindable<int>();
+
+    private double? releaseTime;
+
+    private bool holdAttempted;
 
     protected override void Update()
     {
         base.Update();
 
         pressedCount.Value = countActiveTouchPoints();
+
+        autoplayUpdate();
 
         if (AllJudged)
         {
@@ -192,22 +192,6 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
             return;
         }
 
-        if (Auto)
-        {
-            // If auto is within the hittable time, attempt to hit it
-            // HACK: In editor context, frame stability is not enforced, this could potentially lead to 0 duration slides being missed as we never ever visit the window.
-            // We resolve this by giving autoplay a bit more leniency. In practice nothing should change for regular autoplay.
-            double missWindow = HitObject.HitWindows.WindowFor(HitResult.Miss);
-
-            if (Time.Current >= HitObject.StartTime && Time.Current < HitObject.EndTime + missWindow)
-            {
-                if (!isHitting.Value)
-                    head.UpdateResult();
-
-                isHitting.Value = true;
-            }
-        }
-
         if (!isHitting.Value)
         {
             holdSample.Stop();
@@ -218,21 +202,8 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
                 Color4.White, Color4.SlateGray,
                 HitObject.StartTime, HitObject.StartTime + 100, Easing.OutSine);
 
-
-            timeNotHeld += Time.Elapsed;
-
-            if (head.AllJudged && timeNotHeld >= 400)
-            {
-                if (!Judged)
-                    ApplyMinResult();
-
-                return;
-            }
-
             return;
         }
-
-        timeNotHeld = 0;
 
         if (!holdSample.RequestedPlaying)
             holdSample.Play();
@@ -246,20 +217,39 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         if (userTriggered)
             return;
 
+        // Judgement of the tail can only happen after the head is judged.
+        if (!Head.Judged)
+            return;
+
         double perfectWindow = HitObject.HitWindows.WindowFor(HitResult.Perfect);
-        if (timeOffset > 0 && isHitting.Value)
+        double timeNotHeld = releaseTime.HasValue ? Time.Current - releaseTime.Value : 0;
+
+        // If the player is still holding it beyond the perfect window, the maximum result is a Great.
+        if (timeOffset >= 0 && isHitting.Value)
         {
             ApplyResult(HitResult.Perfect);
         }
-        else if (head.AllJudged && timeOffset >= -perfectWindow && !isHitting.Value)
+        else if (timeOffset >= -perfectWindow && !isHitting.Value)
         {
-            // If the user is not holding the note, use the unheld duration to determine an appropriate result
-            var earlyReleaseResult = HitObject.HitWindows.ResultFor(timeNotHeld + Math.Abs(timeOffset));
+            // If the player never attempted a hold, we just consider it a miss.
+            if (!holdAttempted)
+            {
+                ApplyResult(HitObject.Judgement.MinResult);
+                return;
+            }
+
+            // If the user is not holding the note, also take into account the time the player wasn't holding the note
+            var earlyReleaseResult = HitObject.HitWindows.ResultFor(timeOffset - timeNotHeld);
 
             if (earlyReleaseResult <= HitResult.None)
                 earlyReleaseResult = HitResult.Miss;
 
             ApplyResult(earlyReleaseResult);
+        }
+        // If the user hasn't held it for 200ms, unconditionally consider a miss.
+        else if (timeNotHeld >= 400)
+        {
+            ApplyResult(HitObject.Judgement.MinResult);
         }
 
         return;
@@ -326,12 +316,12 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
 
         double timeOffset = Time.Current - HitObject.StartTime;
 
-        if (timeOffset < -head.HitObject.HitWindows.WindowFor(HitResult.Perfect))
+        if (timeOffset < -Head.HitObject.HitWindows.WindowFor(HitResult.Perfect))
             return;
 
-        head.UpdateResult();
+        Head.UpdateResult();
         isHitting.Value = true;
-
+        releaseTime = null;
     }
 
     private void onTouchReleased()
@@ -347,8 +337,30 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
 
         UpdateResult(true);
         isHitting.Value = false;
+        releaseTime = Time.Current;
 
         if (!AllJudged)
             Colour = Color4.Gray;
+    }
+
+    private void autoplayUpdate()
+    {
+        if (!Auto)
+            return;
+
+        // If auto is within the hittable time, attempt to hit it
+        // HACK: In editor context, frame stability is not enforced, this could potentially lead to 0 duration slides being missed as we never ever visit the window.
+        // We resolve this by giving autoplay a bit more leniency. In practice nothing should change for regular autoplay.
+        double missWindow = HitObject.HitWindows.WindowFor(HitResult.Miss);
+
+        if (Time.Current >= HitObject.StartTime && Time.Current < HitObject.EndTime + missWindow)
+        {
+            if (!isHitting.Value)
+                Head.UpdateResult();
+
+            holdAttempted = true;
+            isHitting.Value = true;
+            releaseTime = null;
+        }
     }
 }
