@@ -56,7 +56,7 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
                 new DraggableDotPiece()
                 {
                     Anchor = Anchor.BottomCentre,
-                    Y = TapRing.CIRCLE_RADIUS,
+                    Y = -TapRing.CIRCLE_RADIUS,
                     Origin = Anchor.Centre,
                     DragAction = adjustEndTime
                 }
