@@ -71,7 +71,11 @@ public partial class TouchHold : SentakkiHitObject, IHasDuration, IHasPosition
     public IReadOnlyList<Color4> ColourPalette
     {
         get => colourPalette.Value;
-        set => colourPalette.Value = value;
+        set
+        {
+            colourPalette.Value = value;
+            ColourBindable.Value = value[0];
+        }
     }
 
     public double Duration { get; set; }
@@ -83,6 +87,7 @@ public partial class TouchHold : SentakkiHitObject, IHasDuration, IHasPosition
             StartTime = StartTime,
             Position = Position,
             Break = Break,
+            ColourBindable = { BindTarget = ColourBindable }
         });
 
         base.CreateNestedHitObjects(cancellationToken);

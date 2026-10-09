@@ -40,7 +40,8 @@ public class Hold : SentakkiLanedHitObject, IHasDuration
             StartTime = StartTime,
             Lane = Lane,
             Samples = Samples,
-            Ex = Ex
+            Ex = Ex,
+            ColourBindable = { BindTarget = ColourBindable }
         });
 
         base.CreateNestedHitObjects(cancellationToken);

@@ -80,15 +80,8 @@ public class SentakkiBeatmapProcessor : BeatmapProcessor
     {
         foreach (var hitObject in hitObjects)
         {
-            yield return hitObject;
-
             switch (hitObject)
             {
-                case Hold h:
-                    // The HitExplosion uses the colour of the hold head as well as the hold itself.
-                    yield return (Hold.HoldHead)h.NestedHitObjects[0];
-                    break;
-
                 case Slide s:
                     if (s.TapType is not Slide.TapTypeEnum.None)
                         yield return s.SlideTap;
@@ -97,23 +90,13 @@ public class SentakkiBeatmapProcessor : BeatmapProcessor
                         yield return slideBody;
 
                     break;
+
+                default:
+                    yield return hitObject;
+                    break;
             }
         }
     }
 
-    private static bool isTwinGroup(List<SentakkiHitObject> sentakkiHitObject)
-    {
-        int count = 0;
-
-        foreach (var hitObject in sentakkiHitObject)
-        {
-            if (hitObject is Hold.HoldHead or Slide)
-                continue;
-
-            if (++count > 1)
-                return true;
-        }
-
-        return false;
-    }
+    private static bool isTwinGroup(List<SentakkiHitObject> sentakkiHitObjects) => sentakkiHitObjects.Count > 1;
 }

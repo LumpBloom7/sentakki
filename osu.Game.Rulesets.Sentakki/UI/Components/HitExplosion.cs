@@ -71,7 +71,7 @@ public partial class HitExplosion : PoolableDrawable
             case TouchHold:
             case TouchHold.TouchHoldHead:
                 Position = ((IHasPosition)drawableSentakkiHitObject.HitObject).Position;
-                Size = new Vector2(default_explosion_size);
+                Size = new Vector2(90);
                 circular = false;
                 Rotation = 45;
                 break;
