@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
@@ -10,6 +11,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects;
 public class Hold : SentakkiLanedHitObject, IHasDuration
 {
     protected override bool PlaysBreakSample => false;
+
+    public override double MaximumJudgementOffset
+    {
+        get
+        {
+            double offset = base.MaximumJudgementOffset;
+            foreach (var nested in NestedHitObjects)
+                offset = Math.Max(offset, nested.MaximumJudgementOffset);
+
+            return offset;
+        }
+    }
 
     public double EndTime
     {

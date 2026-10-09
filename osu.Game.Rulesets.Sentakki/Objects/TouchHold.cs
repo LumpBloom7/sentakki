@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using osu.Framework.Bindables;
@@ -16,6 +17,18 @@ namespace osu.Game.Rulesets.Sentakki.Objects;
 
 public partial class TouchHold : SentakkiHitObject, IHasDuration, IHasPosition
 {
+    public override double MaximumJudgementOffset
+    {
+        get
+        {
+            double offset = base.MaximumJudgementOffset;
+            foreach (var nested in NestedHitObjects)
+                offset = Math.Max(offset, nested.MaximumJudgementOffset);
+
+            return offset;
+        }
+    }
+
     public override Color4 DefaultNoteColour => DEFAULT_PALETTE[0];
 
     public double EndTime
