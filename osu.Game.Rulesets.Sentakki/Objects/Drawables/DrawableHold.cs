@@ -200,7 +200,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
             ApplyResult(earlyReleaseResult);
         }
         // If the user hasn't held it for 200ms, unconditionally consider a miss.
-        else if (timeNotHeld >= 200)
+        else if (timeNotHeld >= HitObject.HitWindows.WindowFor(HitResult.Miss))
         {
             ApplyResult(HitObject.Judgement.MinResult);
         }

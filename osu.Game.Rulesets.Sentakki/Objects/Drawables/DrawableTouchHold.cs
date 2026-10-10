@@ -247,7 +247,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
             ApplyResult(earlyReleaseResult);
         }
         // If the user hasn't held it for 200ms, unconditionally consider a miss.
-        else if (timeNotHeld >= 400)
+        else if (timeNotHeld >= HitObject.HitWindows.WindowFor(HitResult.Miss))
         {
             ApplyResult(HitObject.Judgement.MinResult);
         }
@@ -321,6 +321,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
 
         Head.UpdateResult();
         isHitting.Value = true;
+        holdAttempted = true;
         releaseTime = null;
     }
 

@@ -93,7 +93,7 @@ public partial class TouchHold : SentakkiHitObject, IHasDuration, IHasPosition
         base.CreateNestedHitObjects(cancellationToken);
     }
 
-    protected override HitWindows CreateHitWindows() => new SentakkiHoldReleaseWindows();
+    protected override HitWindows CreateHitWindows() => new SentakkiTouchHoldReleaseWindows();
 
     public override IList<HitSampleInfo> AuxiliarySamples => CreateHoldSample();
 
