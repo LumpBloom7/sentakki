@@ -86,7 +86,7 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
 
     public Popover? GetPopover()
     {
-        popoverVisibilityState.UnbindAll();
+        popoverVisibilityState.UnbindBindings();
         var popover = new SegmentEditPopover(slide, slideBodyInfo, segmentIndex);
 
         popoverVisibilityState.BindTo(popover.State);
@@ -96,7 +96,7 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
     protected override bool OnClick(ClickEvent e)
     {
         this.ShowPopover();
-        return false;
+        return true;
     }
 
     protected override bool OnHover(HoverEvent e)
