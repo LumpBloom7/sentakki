@@ -1,12 +1,12 @@
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Skinning;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
+using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.UI;
 
@@ -35,11 +35,13 @@ public partial class DrawableSentakkiJudgement : DrawableJudgement
                 Rotation = laned.HitObject.Lane.GetRotationForLane();
                 break;
 
+            case DrawableTouchHold touchHold:
+                Position = touchHold.Position;
+                Rotation = 0;
+                break;
 
-            default:
-                if (judgedObject.HitObject is IHasPosition positional)
-                    Position = positional.Position;
-
+            case DrawableTouchHoldHead touchHoldHead:
+                Position = touchHoldHead.Position - new Vector2(0, 80);
                 Rotation = 0;
                 break;
         }
