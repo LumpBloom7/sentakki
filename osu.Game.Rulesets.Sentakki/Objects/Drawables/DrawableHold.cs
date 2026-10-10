@@ -305,8 +305,6 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
         holdAttempted = true;
         releaseTime = null;
-
-        NoteBody.FadeColour(AccentColour.Value, 50);
         return true;
     }
 
@@ -324,9 +322,6 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
             return;
 
         releaseTime = Time.Current;
-
-        if (!AllJudged)
-            NoteBody.FadeColour(Color4.Gray, 100);
     }
 
     private void autoplayUpdate()
