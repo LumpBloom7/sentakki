@@ -84,7 +84,7 @@ public class SentakkiBeatmapProcessor : BeatmapProcessor
             {
                 case Slide s:
                     if (s.TapType is not Slide.TapTypeEnum.None)
-                        yield return s.SlideTap;
+                        yield return s;
 
                     foreach (var slideBody in s.SlideBodies)
                         yield return slideBody;
