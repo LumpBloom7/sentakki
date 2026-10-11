@@ -188,6 +188,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         // Ensure that the note colour is correct prior to the start time
         if (Time.Current < HitObject.StartTime)
         {
+            holdSample?.Stop();
             Colour = Color4.White;
             return;
         }
