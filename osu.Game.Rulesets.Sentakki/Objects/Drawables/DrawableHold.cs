@@ -340,6 +340,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
                 Head.UpdateResult();
 
             holdAttempted = true;
+            releaseTime = null;
         }
 
         // Pretend that a release was made if auto is holding the note beyond end time

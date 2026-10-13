@@ -364,5 +364,10 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
             isHitting.Value = true;
             releaseTime = null;
         }
+        else
+        {
+            isHitting.Value = false;
+            releaseTime = Time.Current;
+        }
     }
 }
