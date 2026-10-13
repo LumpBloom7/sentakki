@@ -5,6 +5,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables;
 
 public partial class DrawableTouchHoldHead : DrawableSentakkiHitObject
 {
+    public new TouchHold.TouchHoldHead HitObject => (TouchHold.TouchHoldHead)base.HitObject;
+
     public DrawableTouchHoldHead()
         : this(null)
     {
