@@ -82,122 +82,80 @@ public partial class LegacyHoldBody : CompositeDrawable
             accentContainer.Colour = Interpolation.ValueAt(flashProg, flashingColour, accentColour.Value, 0.5, 0, Easing.InSine);
     }
 
-    private static GridContainer createLayer(ISkinSource skin, string texturePostfix = "")
+    private static Container createLayer(ISkinSource skin, string texturePostfix = "")
     {
         var bodyTexture = skin.GetTexture($"sentakki/hitobjects/hold/body{texturePostfix}", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
         var headTexture = skin.GetTexture($"sentakki/hitobjects/hold/head{texturePostfix}", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
         var tailTexture = skin.GetTexture($"sentakki/hitobjects/hold/tail{texturePostfix}", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
 
-        return new GridContainer
+        return new Container
         {
             RelativeSizeAxes = Axes.Both,
-            RowDimensions = [
-                new Dimension(GridSizeMode.Absolute, TapRing.CIRCLE_RADIUS),
-                new Dimension(GridSizeMode.Distributed),
-                new Dimension(GridSizeMode.Absolute, TapRing.CIRCLE_RADIUS)
-            ],
+            Padding = new MarginPadding { Vertical = TapRing.CIRCLE_RADIUS },
 
-            Content = new Drawable[][]
-            {
-                [
-                    new Sprite
-                    {
-                        Anchor = Anchor.BottomCentre,
-                        Origin = Anchor.Centre,
-                        RelativeSizeAxes = Axes.Both,
-                        FillMode = FillMode.Fit,
-                        Height = 2,
-
-                        Texture = headTexture,
-                    },
-                ],
-
-                [
-                    new Container
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                        Child = new Sprite
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Texture = bodyTexture,
-                        }
-                    }
-                ],
-
-                [
-                    new Sprite
-                    {
-                        Anchor = Anchor.TopCentre,
-                        Origin = Anchor.Centre,
-                        RelativeSizeAxes = Axes.Both,
-                        FillMode = FillMode.Fit,
-                        Height = 2,
-
-                        Texture = tailTexture,
-                    }
-                ]
-            }
+            Children = [
+                new Sprite
+                {
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.Centre,
+                    Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
+                    Texture = headTexture,
+                },
+                new Sprite
+                {
+                    Anchor = Anchor.BottomCentre,
+                    Origin = Anchor.Centre,
+                    Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
+                    Texture = tailTexture,
+                },
+                new Sprite
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Texture = bodyTexture,
+                }
+            ]
         };
+
+
     }
 
-    private static GridContainer createGlowLayer(ISkinSource skin)
+    private static Container createGlowLayer(ISkinSource skin)
     {
         var bodyTexture = skin.GetTexture("sentakki/hitobjects/hold/body_glow", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
         var headTexture = skin.GetTexture("sentakki/hitobjects/hold/head_glow", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
         var tailTexture = skin.GetTexture("sentakki/hitobjects/hold/tail_glow", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
 
-        return new GridContainer
+        return new Container
         {
             RelativeSizeAxes = Axes.Both,
-            RowDimensions = [
-                new Dimension(GridSizeMode.Absolute, TapRing.CIRCLE_RADIUS),
-                new Dimension(GridSizeMode.Distributed),
-                new Dimension(GridSizeMode.Absolute, TapRing.CIRCLE_RADIUS)
-            ],
+            Padding = new MarginPadding { Vertical = TapRing.CIRCLE_RADIUS },
 
-            Content = new Drawable[][]
-            {
-                [
-                    new Sprite
-                    {
-                        Anchor = Anchor.BottomCentre,
-                        Origin = Anchor.Centre,
-                        RelativeSizeAxes = Axes.Both,
-                        FillMode = FillMode.Fit,
-                        Height = 2,
-                        Scale = new Vector2(1.5f),
-
-                        Texture = headTexture,
-                    },
-                ],
-
-                [
-                    new Sprite
-                    {
-                        Scale = new Vector2(1.5f, 1.0f),
-                        RelativeSizeAxes = Axes.Both,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Texture = bodyTexture,
-                    }
-                ],
-
-                [
-                    new Sprite
-                    {
-                        Anchor = Anchor.TopCentre,
-                        Origin = Anchor.Centre,
-                        RelativeSizeAxes = Axes.Both,
-                        FillMode = FillMode.Fit,
-                        Height = 2,
-                        Scale = new Vector2(1.5f),
-
-                        Texture = tailTexture,
-                    }
-                ]
-            }
+            Children = [
+                new Sprite
+                {
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.Centre,
+                    Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
+                    Texture = headTexture,
+                    Scale = new Vector2(1.5f)
+                },
+                new Sprite
+                {
+                    Anchor = Anchor.BottomCentre,
+                    Origin = Anchor.Centre,
+                    Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
+                    Texture = tailTexture,
+                    Scale = new Vector2(1.5f)
+                },
+                new Sprite
+                {
+                    Origin = Anchor.Centre,
+                    Anchor = Anchor.Centre,
+                    RelativeSizeAxes = Axes.Both,
+                    Texture = bodyTexture,
+                    Scale = new Vector2(1.5f, 1)
+                }
+            ]
         };
     }
 }
