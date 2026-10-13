@@ -5,6 +5,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
 using osu.Framework.Utils;
+using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
@@ -70,6 +71,8 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
             },
             headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
         ]);
+
+        OnRevertResult += resultReverted;
     }
 
     protected override void LoadComplete()
@@ -83,14 +86,11 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
     protected override void OnApply()
     {
         base.OnApply();
-        releaseTime = null;
-        holdAttempted = false;
+        releaseTime = double.MinValue;
     }
 
     private double? releaseTime;
     private bool isHolding => releaseTime is null;
-
-    private bool holdAttempted;
 
     protected override void Update()
     {
@@ -184,14 +184,8 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         }
         else if (timeOffset >= -perfectWindow && !isHolding)
         {
-            // If the player never attempted a hold, we just consider it a miss.
-            if (!holdAttempted)
-            {
-                ApplyResult(HitObject.Judgement.MinResult);
-                return;
-            }
-
             // If the user is not holding the note, also take into account the time the player wasn't holding the note
+            // This also takes into account any "non-attempts" as releaseTime would be double.MinValue, ensuring timeNotHeld will be large enough to always cause a miss
             var earlyReleaseResult = HitObject.HitWindows.ResultFor(timeOffset - timeNotHeld);
 
             if (earlyReleaseResult <= HitResult.None)
@@ -204,6 +198,15 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         {
             ApplyResult(HitObject.Judgement.MinResult);
         }
+    }
+
+    private void resultReverted(DrawableHitObject drawableHitObject, JudgementResult result)
+    {
+        if (drawableHitObject != Head)
+            return;
+
+        // Reset both of these to ensure replays are sane
+        releaseTime = double.MinValue;
     }
 
     protected override void UpdateHitStateTransforms(ArmedState state)
@@ -303,7 +306,6 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
         Head.UpdateResult();
 
-        holdAttempted = true;
         releaseTime = null;
         return true;
     }
@@ -339,11 +341,9 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
             if (!isHolding)
                 Head.UpdateResult();
 
-            holdAttempted = true;
             releaseTime = null;
         }
 
-        // Pretend that a release was made if auto is holding the note beyond end time
         if (Time.Current >= HitObject.GetEndTime())
             releaseTime = Time.Current;
     }

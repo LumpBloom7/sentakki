@@ -8,6 +8,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 using osu.Framework.Utils;
 using osu.Game.Audio;
+using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
@@ -54,7 +55,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         base.OnApply();
         colourPalette.BindTo(HitObject.ColourPaletteBindable);
         positionBindable.BindTo(HitObject.PositionBindable);
-        releaseTime = null;
+        releaseTime = double.MinValue;
         isHitting.Value = false;
     }
 
@@ -81,6 +82,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
 
         positionBindable.BindValueChanged(v => Position = v.NewValue);
         pressedCount.BindValueChanged(onPressedCountChanged);
+        OnRevertResult += resultReverted;
     }
 
     protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
@@ -168,8 +170,6 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
 
     private double? releaseTime;
 
-    private bool holdAttempted;
-
     protected override void Update()
     {
         base.Update();
@@ -232,13 +232,6 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         }
         else if (timeOffset >= -perfectWindow && !isHitting.Value)
         {
-            // If the player never attempted a hold, we just consider it a miss.
-            if (!holdAttempted)
-            {
-                ApplyResult(HitObject.Judgement.MinResult);
-                return;
-            }
-
             // If the user is not holding the note, also take into account the time the player wasn't holding the note
             var earlyReleaseResult = HitObject.HitWindows.ResultFor(timeOffset - timeNotHeld);
 
@@ -255,6 +248,17 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
 
         return;
     }
+
+    private void resultReverted(DrawableHitObject drawableHitObject, JudgementResult judgementResult)
+    {
+        if (drawableHitObject != Head)
+            return;
+
+        holdSample?.Stop();
+        releaseTime = double.MinValue;
+        isHitting.Value = false;
+    }
+
     protected override void UpdateHitStateTransforms(ArmedState state)
     {
         base.UpdateHitStateTransforms(state);
@@ -322,7 +326,6 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
 
         Head.UpdateResult();
         isHitting.Value = true;
-        holdAttempted = true;
         releaseTime = null;
     }
 
@@ -360,7 +363,6 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
             if (!isHitting.Value)
                 Head.UpdateResult();
 
-            holdAttempted = true;
             isHitting.Value = true;
             releaseTime = null;
         }
