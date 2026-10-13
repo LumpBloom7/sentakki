@@ -5,6 +5,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Tests.Visual;
@@ -27,17 +28,74 @@ public partial class TestSceneTouchHold : OsuTestScene
     public static bool[] ObjectFlagsSource =
     [
         false,
-        true,
+        true
     ];
 
     [TestCaseSource(nameof(ObjectFlagsSource))]
-    public void TestTouchHold(bool breakState)
+    public void TestHolds(bool breakState)
     {
-        AddStep("Miss Single", () => testSingle(false, breakState));
-        AddStep("Hit Single", () => testSingle(true, breakState));
-        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
+        testSingle(0, false, breakState);
+        testSingle(0, true, breakState);
+
+        testSingle(200, false, breakState);
+        testSingle(200, true, breakState);
+
+        testSingle(1000, false, breakState);
+        testSingle(1000, true, breakState);
+
+        testSingle(1000, false, breakState);
+        testSingle(1000, true, breakState);
     }
 
+    private void testSingle(double duration, bool auto = false, bool breakState = false)
+    {
+        DrawableTouchHold touchHold = null!;
+        AddStep($"Create Hit Object ({duration:0.} ms)", () => touchHold = createHitObject(duration, auto, breakState));
+        AddUntilStep("Wait until object judged", () => touchHold.AllJudged);
+
+        if (auto)
+        {
+            AddAssert("Hold head is perfectly hit", () => touchHold.Head.Result.Type is HitResult.Perfect);
+            AddAssert("Hold tail is perfectly hit", () => touchHold.Result.Type is HitResult.Perfect);
+        }
+        else
+        {
+            AddAssert("Hold head is missed", () => touchHold.Head.Result.Type is HitResult.Miss);
+            AddAssert("Hold tail is missed", () => touchHold.Result.Type is HitResult.Miss);
+        }
+    }
+
+
+    private DrawableTouchHold createHitObject(double duration, bool auto = false, bool breakState = false)
+    {
+        var circle = new TouchHold
+        {
+            StartTime = Time.Current + 1000,
+            Duration = duration,
+            Samples =
+            [
+                new HitSampleInfo(HitSampleInfo.HIT_NORMAL)
+            ],
+            Break = breakState
+        };
+
+        if (breakState)
+            circle.ColourPalette = TouchHold.BREAK_PALETTE;
+
+        circle.ApplyDefaults(new ControlPointInfo(), new BeatmapDifficulty());
+
+        var dth = new DrawableTouchHold(circle)
+        {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+            Depth = depthIndex++,
+            Auto = auto
+        };
+
+        Add(dth);
+
+        return dth;
+    }
     private void testSingle(bool auto = false, bool breakState = false)
     {
         var circle = new TouchHold

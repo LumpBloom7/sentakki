@@ -19,7 +19,7 @@ public class SentakkiHoldReleaseWindows : SentakkiHitWindows
         HitResult.Miss or HitResult.Meh => 9 * TIMING_UNIT,
         HitResult.Good => 6 * TIMING_UNIT,
         HitResult.Great => 3 * TIMING_UNIT,
-        HitResult.Perfect => 1 * TIMING_UNIT,
+        HitResult.Perfect => 2 * TIMING_UNIT,
         _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
     };
 
@@ -27,8 +27,8 @@ public class SentakkiHoldReleaseWindows : SentakkiHitWindows
     {
         HitResult.Miss or HitResult.Meh => 9 * TIMING_UNIT,
         HitResult.Good => 6 * TIMING_UNIT,
-        HitResult.Great => 3 * TIMING_UNIT,
-        HitResult.Perfect => 1 * TIMING_UNIT,
+        HitResult.Great => 2 * TIMING_UNIT,
+        HitResult.Perfect => 2 * TIMING_UNIT,
         _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
     };
 }
