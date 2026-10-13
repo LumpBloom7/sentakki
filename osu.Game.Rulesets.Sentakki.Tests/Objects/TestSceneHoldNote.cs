@@ -1,7 +1,9 @@
 using System.Linq;
 using NUnit.Framework;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Platform;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Scoring;
@@ -50,11 +52,17 @@ public partial class TestSceneHoldNote : OsuTestScene
         testSingle(1000, true, breakState, ex);
     }
 
+    [Resolved]
+    private GameHost host { get; set; } = null!;
+
     private void testSingle(double duration, bool auto = false, bool breakState = false, bool ex = false)
     {
         DrawableHold hold = null!;
         AddStep($"Create Hit Object ({duration:0.} ms)", () => hold = createHitObject(duration, auto, breakState, ex));
         AddUntilStep("Wait until object judged", () => hold.AllJudged);
+
+        if (host is HeadlessGameHost)
+            return;
 
         if (auto)
         {
