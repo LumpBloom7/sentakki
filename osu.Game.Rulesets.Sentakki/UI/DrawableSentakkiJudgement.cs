@@ -35,6 +35,11 @@ public partial class DrawableSentakkiJudgement : DrawableJudgement
                 Rotation = laned.HitObject.Lane.GetRotationForLane();
                 break;
 
+            case DrawableTouch touch:
+                Position = touch.Position;
+                Rotation = 0;
+                break;
+
             case DrawableTouchHold touchHold:
                 Position = touchHold.Position;
                 Rotation = 0;
