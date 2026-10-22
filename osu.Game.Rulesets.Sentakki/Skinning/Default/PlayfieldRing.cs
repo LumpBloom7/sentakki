@@ -5,6 +5,7 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Timing;
 using osu.Framework.Utils;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
@@ -94,7 +95,7 @@ public partial class PlayfieldRing : BeatSyncedContainer
     private IBindable<StarDifficulty> beatmapDifficulty = null!;
 
     [BackgroundDependencyLoader]
-    private void load(SentakkiRulesetConfigManager? settings, IBeatmap? beatmap, BeatmapDifficultyCache? difficultyCache)
+    private void load(SentakkiRulesetConfigManager? settings, IBeatmap? beatmap, BeatmapDifficultyCache? difficultyCache, DrawableSentakkiRuleset drawableSentakkiRuleset)
     {
         settings?.BindWith(SentakkiRulesetSettings.RingColor, ringColor);
 
@@ -107,6 +108,8 @@ public partial class PlayfieldRing : BeatSyncedContainer
         // handle colouring of playfield elements
         beatmapDifficulty = difficultyCache.GetBindableDifficulty(beatmap.BeatmapInfo);
         beatmapDifficulty.BindValueChanged(_ => updateColours());
+
+        Clock = drawableSentakkiRuleset.Clock;
     }
 
     protected override void LoadComplete()
