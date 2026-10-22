@@ -28,6 +28,7 @@ public partial class PlayfieldRing : BeatSyncedContainer
 
     public override bool RemoveCompletedTransforms => false;
 
+
     public PlayfieldRing()
     {
         RelativeSizeAxes = Axes.Both;
@@ -109,6 +110,7 @@ public partial class PlayfieldRing : BeatSyncedContainer
         beatmapDifficulty = difficultyCache.GetBindableDifficulty(beatmap.BeatmapInfo);
         beatmapDifficulty.BindValueChanged(_ => updateColours());
 
+        ProcessCustomClock = false;
         Clock = drawableSentakkiRuleset.Clock;
     }
 
