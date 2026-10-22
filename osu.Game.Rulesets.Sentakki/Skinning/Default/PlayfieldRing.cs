@@ -94,7 +94,7 @@ public partial class PlayfieldRing : BeatSyncedContainer
     private IBindable<StarDifficulty> beatmapDifficulty = null!;
 
     [BackgroundDependencyLoader]
-    private void load(SentakkiRulesetConfigManager? settings, IBeatmap? beatmap, BeatmapDifficultyCache? difficultyCache, DrawableSentakkiRuleset drawableSentakkiRuleset)
+    private void load(SentakkiRulesetConfigManager? settings, IBeatmap? beatmap, BeatmapDifficultyCache? difficultyCache, DrawableSentakkiRuleset? drawableSentakkiRuleset)
     {
         settings?.BindWith(SentakkiRulesetSettings.RingColor, ringColor);
 
@@ -107,6 +107,9 @@ public partial class PlayfieldRing : BeatSyncedContainer
         // handle colouring of playfield elements
         beatmapDifficulty = difficultyCache.GetBindableDifficulty(beatmap.BeatmapInfo);
         beatmapDifficulty.BindValueChanged(_ => updateColours());
+
+        if (drawableSentakkiRuleset is null)
+            return;
 
         ProcessCustomClock = false;
         Clock = drawableSentakkiRuleset.Clock;
