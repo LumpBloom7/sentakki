@@ -5,7 +5,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.UserInterface;
-using osu.Framework.Timing;
 using osu.Framework.Utils;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
@@ -26,8 +25,7 @@ public partial class PlayfieldRing : BeatSyncedContainer
     private readonly Container spawnIndicator;
     private readonly Drawable pulseRing;
 
-    public override bool RemoveCompletedTransforms => false;
-
+    public override bool RemoveCompletedTransforms => true;
 
     public PlayfieldRing()
     {
@@ -183,7 +181,6 @@ public partial class PlayfieldRing : BeatSyncedContainer
     public void Pulse(float amplitude = 1)
     {
         pulseRing.FinishTransforms();
-        pulseRing.ClearTransforms();
         pulseRing.ScaleTo(1).FadeTo(0.5f * amplitude).ScaleTo(1.06f, 200).FadeOut(200);
     }
 }
