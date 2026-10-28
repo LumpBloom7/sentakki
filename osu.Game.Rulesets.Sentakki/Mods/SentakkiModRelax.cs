@@ -96,6 +96,10 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
             var result = checkPlayfield(nestedPlayfield, time, mousePosition, hoveredLane);
             needsTap |= result.needsTap;
             needsHold |= result.needsHold;
+
+            // Both are needed, no point looking at other objects, since they can never be false again
+            if (needsTap && needsHold)
+                break;
         }
 
         return (needsTap, needsHold);
@@ -108,24 +112,42 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
 
         switch (drawableHitObject)
         {
-            case DrawableHold hold when time <= hold.HitObject.EndTime && hold.HitObject.Lane == hoveredLane.Current:
-                if (!isInHitRange(hold.Head.HitObject, time, hold.HitObject.Lane != hoveredLane.Predicted))
+            case DrawableHold hold:
+                if (time > hold.HitObject.EndTime || hold.HitObject.Lane != hoveredLane.Current)
+                    break;
+
+                bool isHeadHittable = isInHitRange(hold.Head.HitObject, time, hold.HitObject.Lane != hoveredLane.Predicted);
+
+                // If we can't properly hit the head yet, ignore everything
+                if (!isHeadHittable)
                     break;
 
                 return (needsTap: true, needsHold: !hold.Head.AllJudged);
 
-            case DrawableTap tap when tap.HitObject.Lane == hoveredLane.Current:
+            case DrawableTap tap:
+                if (tap.HitObject.Lane != hoveredLane.Current)
+                    break;
+
                 return (
-                    needsTap: isInHitRange(tap.HitObject, time, tap.HitObject.Lane != hoveredLane.Predicted) && canBeHit(tap, time),
+                    needsTap: canBeHit(tap, time) && isInHitRange(tap.HitObject, time, tap.HitObject.Lane != hoveredLane.Predicted),
                     needsHold: false
                 );
 
-            case DrawableTouchHold touchHold when time >= touchHold.HitObject.StartTime && time <= touchHold.HitObject.EndTime && touchHold.ReceivePositionalInputAt(mousePosition.Current):
+            case DrawableTouchHold touchHold:
+                if (time <= touchHold.HitObject.StartTime || time > touchHold.HitObject.EndTime)
+                    break;
+
+                if (!touchHold.ReceivePositionalInputAt(mousePosition.Current))
+                    break;
+
                 return (needsTap: false, needsHold: true);
 
-            case DrawableTouch touch when touch.ReceivePositionalInputAt(mousePosition.Current):
+            case DrawableTouch touch:
+                if (!touch.ReceivePositionalInputAt(mousePosition.Current))
+                    break;
+
                 return (
-                    needsTap: isInHitRange(drawableHitObject.HitObject, time, !touch.ReceivePositionalInputAt(mousePosition.Predicted)) && canBeHit(touch, time),
+                    needsTap: canBeHit(touch, time) && isInHitRange(drawableHitObject.HitObject, time, !touch.ReceivePositionalInputAt(mousePosition.Predicted)),
                     needsHold: false);
 
             case DrawableSlide slide:
@@ -198,6 +220,7 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
     }
 
     private bool holdPressed;
+
     private void updateHoldButton(bool needsHold)
     {
         if (needsHold == holdPressed)
