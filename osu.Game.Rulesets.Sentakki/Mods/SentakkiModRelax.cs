@@ -122,7 +122,7 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
                 if (!isHeadHittable)
                     break;
 
-                return (needsTap: true, needsHold: !hold.Head.AllJudged);
+                return (needsTap: !hold.Head.AllJudged, needsHold: true);
 
             case DrawableTap tap:
                 if (tap.HitObject.Lane != hoveredLane.Current)
