@@ -23,7 +23,7 @@ public class SentakkiFramedReplayInputHandler : FramedReplayInputHandler<Sentakk
             var frame = CurrentFrame;
 
             if (frame == null)
-                return Vector2.Zero;
+                return new Vector2(-1000);
 
             return NextFrame != null ? Interpolation.ValueAt(CurrentTime, frame.Position, NextFrame.Position, frame.Time, NextFrame.Time) : frame.Position;
         }
