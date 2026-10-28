@@ -144,5 +144,7 @@ public partial class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject
 
     protected override ResumeOverlay CreateResumeOverlay() => new SentakkiResumeOverlay();
 
+    public SentakkiInputManager SentakkiInputManager => (SentakkiInputManager)KeyBindingInputManager;
+
     protected override PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset.RulesetInfo);
 }

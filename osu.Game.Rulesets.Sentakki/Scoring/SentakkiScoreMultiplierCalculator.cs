@@ -27,6 +27,7 @@ public class SentakkiScoreMultiplierCalculator : ScoreMultiplierCalculator
 
         #region Automation
         Single<SentakkiModNoTouch>(hasMultiplier: 0.2);
+        Single<SentakkiModRelax>(hasMultiplier: 0.1);
         // Autoplay
         #endregion
 
