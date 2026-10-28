@@ -112,28 +112,33 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
                 if (!isInHitRange(hold.Head.HitObject, time, hold.HitObject.Lane != hoveredLane.Predicted))
                     break;
 
-                return (true, !hold.Head.AllJudged);
+                return (needsTap: true, needsHold: !hold.Head.AllJudged);
 
             case DrawableTap tap when tap.HitObject.Lane == hoveredLane.Current:
-                return (isInHitRange(tap.HitObject, time, tap.HitObject.Lane != hoveredLane.Predicted) && canBeHit(tap, time), false);
+                return (
+                    needsTap: isInHitRange(tap.HitObject, time, tap.HitObject.Lane != hoveredLane.Predicted) && canBeHit(tap, time),
+                    needsHold: false
+                );
 
-            case DrawableTouchHold touchHold when time >= touchHold.HitObject.StartTime && time <= touchHold.HitObject.EndTime && touchHold.ReceivePositionalInputAt(mousePosition):
-                return (false, true);
+            case DrawableTouchHold touchHold when time >= touchHold.HitObject.StartTime && time <= touchHold.HitObject.EndTime && touchHold.ReceivePositionalInputAt(mousePosition.Current):
+                return (needsTap: false, needsHold: true);
 
             case DrawableTouch touch when touch.ReceivePositionalInputAt(mousePosition.Current):
-                return (isInHitRange(drawableHitObject.HitObject, time, !touch.ReceivePositionalInputAt(mousePosition.Predicted)) && canBeHit(touch, time), false);
+                return (
+                    needsTap: isInHitRange(drawableHitObject.HitObject, time, !touch.ReceivePositionalInputAt(mousePosition.Predicted)) && canBeHit(touch, time),
+                    needsHold: false);
 
             case DrawableSlide slide:
                 foreach (var slideTap in slide.SlideTaps)
                 {
                     if (checkHitObject(slideTap, time, mousePosition, hoveredLane).needsTap)
-                        return (true, false);
+                        return (needsTap: true, needsHold: false);
                 }
 
                 foreach (var slideBody in slide.SlideBodies)
                 {
                     if (checkSlideBody(slideBody, mousePosition))
-                        return (true, false);
+                        return (needsTap: true, needsHold: false);
                 }
 
                 break;
