@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
 using osu.Framework.Localisation;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
@@ -15,8 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Mods;
 public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDrawableRuleset<SentakkiHitObject>, IApplicableToPlayer, IHasNoTimedInputs
 {
     public override LocalisableString Description => SentakkiModRelaxStrings.ModDescription;
-
-    private const double relax_leniency = 12;
+    public override Type[] IncompatibleMods => [.. base.IncompatibleMods, typeof(SentakkiModTouchDevice)];
 
     private SentakkiInputManager inputManager = null!;
     private List<Lane> lanes = null!;
@@ -27,7 +29,11 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
 
     private bool needsTap;
     private bool needsHold;
+
+    private Vector2? previousMousePosition;
+    private Vector2 predictedMousePosition;
     private int hoveredLane;
+    private int predictedLane;
 
     public void ApplyToDrawableRuleset(DrawableRuleset<SentakkiHitObject> drawableRuleset)
     {
@@ -55,7 +61,11 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
 
         var mousePosition = inputManager.CurrentState.Mouse.Position;
 
+        predictedMousePosition = mousePosition + (mousePosition - (previousMousePosition ?? mousePosition));
+        previousMousePosition = mousePosition;
+
         hoveredLane = getHoveredLane(mousePosition);
+        predictedLane = getHoveredLane(predictedMousePosition);
         needsTap = false;
         needsHold = false;
 
@@ -87,26 +97,29 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
 
     private void checkHitObject(DrawableHitObject drawableHitObject, double time, Vector2 mousePosition)
     {
-        if (drawableHitObject.AllJudged || time < drawableHitObject.HitObject.StartTime - relax_leniency)
+        if (drawableHitObject.AllJudged)
             return;
 
         switch (drawableHitObject)
         {
             case DrawableHold hold when time <= hold.HitObject.EndTime && hold.HitObject.Lane == hoveredLane:
+                if (!isInHitRange(hold.Head.HitObject, time, hold.HitObject.Lane != predictedLane))
+                    break;
+
                 needsHold = true;
                 needsTap |= !hold.Head.AllJudged;
                 break;
 
             case DrawableTap tap when tap.HitObject.Lane == hoveredLane:
-                needsTap |= canBeHit(tap, time);
+                needsTap |= isInHitRange(tap.HitObject, time, tap.HitObject.Lane != predictedLane) && canBeHit(tap, time);
                 break;
 
-            case DrawableTouchHold touchHold when time <= touchHold.HitObject.EndTime && touchHold.ReceivePositionalInputAt(mousePosition):
+            case DrawableTouchHold touchHold when time >= touchHold.HitObject.StartTime && time <= touchHold.HitObject.EndTime && touchHold.ReceivePositionalInputAt(mousePosition):
                 needsHold = true;
                 break;
 
             case DrawableTouch touch when touch.ReceivePositionalInputAt(mousePosition):
-                needsTap |= canBeHit(touch, time);
+                needsTap |= isInHitRange(drawableHitObject.HitObject, time, !touch.ReceivePositionalInputAt(predictedMousePosition)) && canBeHit(touch, time);
                 break;
 
             case DrawableSlide slide:
@@ -134,6 +147,19 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
                 }
             }
         }
+    }
+
+    private static bool isInHitRange(HitObject hitObject, double time, bool isLeaving)
+    {
+        double offset = time - hitObject.StartTime;
+
+        if (hitObject.HitWindows is not { } hitWindows)
+            return offset >= 0;
+
+        double criticalWindow = hitWindows.WindowFor(HitResult.Perfect);
+        double perfectWindow = hitWindows.WindowFor(HitResult.Great);
+
+        return offset >= -criticalWindow || (isLeaving && offset >= -perfectWindow);
     }
 
     private static bool canBeHit(DrawableHitObject drawableHitObject, double time)
