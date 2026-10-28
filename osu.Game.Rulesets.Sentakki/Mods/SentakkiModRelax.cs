@@ -30,6 +30,8 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
     private bool needsTap;
     private bool needsHold;
 
+    private double frameLeniency;
+
     private Vector2? previousMousePosition;
     private Vector2 predictedMousePosition;
     private int hoveredLane;
@@ -60,6 +62,8 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
             return;
 
         var mousePosition = inputManager.CurrentState.Mouse.Position;
+
+        frameLeniency = Math.Abs(playfield.Clock.ElapsedFrameTime) / 2;
 
         predictedMousePosition = mousePosition + (mousePosition - (previousMousePosition ?? mousePosition));
         previousMousePosition = mousePosition;
@@ -149,7 +153,7 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
         }
     }
 
-    private static bool isInHitRange(HitObject hitObject, double time, bool isLeaving)
+    private bool isInHitRange(HitObject hitObject, double time, bool isLeaving)
     {
         double offset = time - hitObject.StartTime;
 
@@ -159,7 +163,7 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
         double criticalWindow = hitWindows.WindowFor(HitResult.Perfect);
         double perfectWindow = hitWindows.WindowFor(HitResult.Great);
 
-        return offset >= -criticalWindow || (isLeaving && offset >= -perfectWindow);
+        return offset >= -Math.Min(frameLeniency, criticalWindow) || (isLeaving && offset >= -perfectWindow);
     }
 
     private static bool canBeHit(DrawableHitObject drawableHitObject, double time)
