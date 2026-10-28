@@ -211,7 +211,6 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
     {
         bool shouldPress = needsTap && !tapPressed;
 
-
         if (shouldPress == tapPressed)
             return;
 
