@@ -85,6 +85,10 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
             var result = checkHitObject(drawableHitObject, time, mousePosition, hoveredLane);
             needsTap |= result.needsTap;
             needsHold |= result.needsHold;
+
+            // Both are needed, no point looking at other objects, since they can never be false again
+            if (needsTap && needsHold)
+                return (true, true);
         }
 
         foreach (var nestedPlayfield in playfield.NestedPlayfields)
@@ -120,22 +124,26 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
                 return (isInHitRange(drawableHitObject.HitObject, time, !touch.ReceivePositionalInputAt(mousePosition.Predicted)) && canBeHit(touch, time), false);
 
             case DrawableSlide slide:
-                bool needsTap = false;
                 foreach (var slideTap in slide.SlideTaps)
-                    needsTap |= checkHitObject(slideTap, time, mousePosition, hoveredLane).needsTap;
+                {
+                    if (checkHitObject(slideTap, time, mousePosition, hoveredLane).needsTap)
+                        return (true, false);
+                }
 
                 foreach (var slideBody in slide.SlideBodies)
-                    needsTap = checkSlideBody(slideBody, time, mousePosition);
+                {
+                    if (checkSlideBody(slideBody, mousePosition))
+                        return (true, false);
+                }
 
-                return (needsTap, false);
+                break;
         }
 
         return (false, false);
     }
 
-    private bool checkSlideBody(DrawableSlideBody slidebody, double time, LookaheadValue<Vector2> mousePosition)
+    private static bool checkSlideBody(DrawableSlideBody slidebody, LookaheadValue<Vector2> mousePosition)
     {
-        bool needsTap = false;
         foreach (var checkpoint in slidebody.SlideCheckpoints)
         {
             if (checkpoint.AllJudged || !checkpoint.IsHittable)
@@ -144,11 +152,11 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
             foreach (var node in checkpoint.NestedHitObjects)
             {
                 if (!node.AllJudged && node.ReceivePositionalInputAt(mousePosition.Current))
-                    needsTap = true;
+                    return true;
             }
         }
 
-        return needsTap;
+        return false;
     }
 
     private static bool isInHitRange(HitObject hitObject, double time, bool isLeaving)
