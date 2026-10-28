@@ -24,16 +24,6 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
     private List<Lane> lanes = null!;
 
     private bool hasReplay;
-    private bool tapPressed;
-    private bool holdPressed;
-
-    private bool needsTap;
-    private bool needsHold;
-
-    private Vector2? previousMousePosition;
-    private Vector2 predictedMousePosition;
-    private int hoveredLane;
-    private int predictedLane;
 
     public void ApplyToDrawableRuleset(DrawableRuleset<SentakkiHitObject> drawableRuleset)
     {
@@ -45,7 +35,7 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
 
     public void ApplyToPlayer(Player player)
     {
-        if (inputManager.ReplayInputHandler != null)
+        if (inputManager.ReplayInputHandler is not null)
         {
             hasReplay = true;
             return;
@@ -54,25 +44,24 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
         inputManager.AllowUserPresses = false;
     }
 
+    private Vector2? previousMousePosition;
+
     public void Update(Playfield playfield)
     {
         if (hasReplay)
             return;
 
         var mousePosition = inputManager.CurrentState.Mouse.Position;
-
-        predictedMousePosition = mousePosition + (mousePosition - (previousMousePosition ?? mousePosition));
+        Vector2 predictedMousePosition = mousePosition + (mousePosition - (previousMousePosition ?? mousePosition));
         previousMousePosition = mousePosition;
 
-        hoveredLane = getHoveredLane(mousePosition);
-        predictedLane = getHoveredLane(predictedMousePosition);
-        needsTap = false;
-        needsHold = false;
+        var mousePositionLookahead = new LookaheadValue<Vector2>(mousePosition, predictedMousePosition);
+        var lane = new LookaheadValue<int>(getHoveredLane(mousePosition), getHoveredLane(predictedMousePosition));
 
-        checkPlayfield(playfield, playfield.Clock.CurrentTime, mousePosition);
+        (bool needsTap, bool needsHold) = checkPlayfield(playfield, playfield.Clock.CurrentTime, mousePositionLookahead, lane);
 
-        updateTapButton();
-        updateHoldButton();
+        updateTapButton(needsTap);
+        updateHoldButton(needsHold);
     }
 
     private int getHoveredLane(Vector2 mousePosition)
@@ -86,67 +75,80 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
         return -1;
     }
 
-    private void checkPlayfield(Playfield playfield, double time, Vector2 mousePosition)
+    private (bool needsTap, bool needsHold) checkPlayfield(Playfield playfield, double time, LookaheadValue<Vector2> mousePosition, LookaheadValue<int> hoveredLane)
     {
+        bool needsTap = false;
+        bool needsHold = false;
+
         foreach (var drawableHitObject in playfield.HitObjectContainer.AliveObjects)
-            checkHitObject(drawableHitObject, time, mousePosition);
+        {
+            var result = checkHitObject(drawableHitObject, time, mousePosition, hoveredLane);
+            needsTap |= result.needsTap;
+            needsHold |= result.needsHold;
+        }
 
         foreach (var nestedPlayfield in playfield.NestedPlayfields)
-            checkPlayfield(nestedPlayfield, time, mousePosition);
+        {
+            var result = checkPlayfield(nestedPlayfield, time, mousePosition, hoveredLane);
+            needsTap |= result.needsTap;
+            needsHold |= result.needsHold;
+        }
+
+        return (needsTap, needsHold);
     }
 
-    private void checkHitObject(DrawableHitObject drawableHitObject, double time, Vector2 mousePosition)
+    private (bool needsTap, bool needsHold) checkHitObject(DrawableHitObject drawableHitObject, double time, LookaheadValue<Vector2> mousePosition, LookaheadValue<int> hoveredLane)
     {
         if (drawableHitObject.AllJudged)
-            return;
+            return (false, false);
 
         switch (drawableHitObject)
         {
-            case DrawableHold hold when time <= hold.HitObject.EndTime && hold.HitObject.Lane == hoveredLane:
-                if (!isInHitRange(hold.Head.HitObject, time, hold.HitObject.Lane != predictedLane))
+            case DrawableHold hold when time <= hold.HitObject.EndTime && hold.HitObject.Lane == hoveredLane.Current:
+                if (!isInHitRange(hold.Head.HitObject, time, hold.HitObject.Lane != hoveredLane.Predicted))
                     break;
 
-                needsHold = true;
-                needsTap |= !hold.Head.AllJudged;
-                break;
+                return (true, !hold.Head.AllJudged);
 
-            case DrawableTap tap when tap.HitObject.Lane == hoveredLane:
-                needsTap |= isInHitRange(tap.HitObject, time, tap.HitObject.Lane != predictedLane) && canBeHit(tap, time);
-                break;
+            case DrawableTap tap when tap.HitObject.Lane == hoveredLane.Current:
+                return (isInHitRange(tap.HitObject, time, tap.HitObject.Lane != hoveredLane.Predicted) && canBeHit(tap, time), false);
 
             case DrawableTouchHold touchHold when time >= touchHold.HitObject.StartTime && time <= touchHold.HitObject.EndTime && touchHold.ReceivePositionalInputAt(mousePosition):
-                needsHold = true;
-                break;
+                return (false, true);
 
-            case DrawableTouch touch when touch.ReceivePositionalInputAt(mousePosition):
-                needsTap |= isInHitRange(drawableHitObject.HitObject, time, !touch.ReceivePositionalInputAt(predictedMousePosition)) && canBeHit(touch, time);
-                break;
+            case DrawableTouch touch when touch.ReceivePositionalInputAt(mousePosition.Current):
+                return (isInHitRange(drawableHitObject.HitObject, time, !touch.ReceivePositionalInputAt(mousePosition.Predicted)) && canBeHit(touch, time), false);
 
             case DrawableSlide slide:
-                checkSlide(slide, time, mousePosition);
-                break;
+                bool needsTap = false;
+                foreach (var slideTap in slide.SlideTaps)
+                    needsTap |= checkHitObject(slideTap, time, mousePosition, hoveredLane).needsTap;
+
+                foreach (var slideBody in slide.SlideBodies)
+                    needsTap = checkSlideBody(slideBody, time, mousePosition);
+
+                return (needsTap, false);
         }
+
+        return (false, false);
     }
 
-    private void checkSlide(DrawableSlide slide, double time, Vector2 mousePosition)
+    private bool checkSlideBody(DrawableSlideBody slidebody, double time, LookaheadValue<Vector2> mousePosition)
     {
-        foreach (var slideTap in slide.SlideTaps)
-            checkHitObject(slideTap, time, mousePosition);
-
-        foreach (var body in slide.SlideBodies)
+        bool needsTap = false;
+        foreach (var checkpoint in slidebody.SlideCheckpoints)
         {
-            foreach (var checkpoint in body.SlideCheckpoints)
-            {
-                if (checkpoint.AllJudged || !checkpoint.IsHittable)
-                    continue;
+            if (checkpoint.AllJudged || !checkpoint.IsHittable)
+                continue;
 
-                foreach (var node in checkpoint.NestedHitObjects)
-                {
-                    if (!node.AllJudged && node.ReceivePositionalInputAt(mousePosition))
-                        needsTap = true;
-                }
+            foreach (var node in checkpoint.NestedHitObjects)
+            {
+                if (!node.AllJudged && node.ReceivePositionalInputAt(mousePosition.Current))
+                    needsTap = true;
             }
         }
+
+        return needsTap;
     }
 
     private static bool isInHitRange(HitObject hitObject, double time, bool isLeaving)
@@ -168,9 +170,12 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
         return hitObject.HitWindows?.CanBeHit(time - hitObject.StartTime) ?? true;
     }
 
-    private void updateTapButton()
+    private bool tapPressed;
+
+    private void updateTapButton(bool needsTap)
     {
         bool shouldPress = needsTap && !tapPressed;
+
 
         if (shouldPress == tapPressed)
             return;
@@ -179,7 +184,8 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
         setButton(SentakkiAction.Button1, tapPressed);
     }
 
-    private void updateHoldButton()
+    private bool holdPressed;
+    private void updateHoldButton(bool needsHold)
     {
         if (needsHold == holdPressed)
             return;
@@ -195,4 +201,6 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
         else
             inputManager.TriggerReleased(action);
     }
+
+    private record struct LookaheadValue<T>(T Current, T Predicted);
 }
