@@ -133,7 +133,7 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
                     needsHold: false
                 );
 
-            case DrawableTouchHold touchHold:
+            case DrawableTouchHold touchHold when !touchHold.Auto:
                 if (time <= touchHold.HitObject.StartTime || time > touchHold.HitObject.EndTime)
                     break;
 
@@ -142,7 +142,7 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
 
                 return (needsTap: false, needsHold: true);
 
-            case DrawableTouch touch:
+            case DrawableTouch touch when !touch.Auto:
                 if (!touch.ReceivePositionalInputAt(mousePosition.Current))
                     break;
 
@@ -171,6 +171,9 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
 
     private static bool checkSlideBody(DrawableSlideBody slidebody, LookaheadValue<Vector2> mousePosition)
     {
+        if (slidebody.Auto)
+            return false;
+
         foreach (var checkpoint in slidebody.SlideCheckpoints)
         {
             if (checkpoint.AllJudged || !checkpoint.IsHittable)
