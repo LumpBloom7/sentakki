@@ -134,7 +134,8 @@ public partial class SentakkiRuleset : Ruleset
                 return
                 [
                     new SentakkiModAutoplay(),
-                    new SentakkiModNoTouch()
+                    new SentakkiModNoTouch(),
+                    new SentakkiModRelax()
                 ];
 
             case ModType.Conversion:
