@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
@@ -38,20 +37,21 @@ public partial class SlideVisual : CompositeDrawable
         return Quad.FromRectangle(rect);
     }
 
-    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => chevrons.Any(c => c.IsVisible && c.ReceivePositionalInputAt(screenSpacePos));
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) =>
+        chevrons.Any(c => c.IsVisible && c.ReceivePositionalInputAt(screenSpacePos));
 
-    private readonly IBindable<int> SlideBodyInfoVersion = new Bindable<int>();
+    private readonly IBindable<int> slideBodyInfoVersion = new Bindable<int>();
 
     public SlideBodyInfo? SlideBodyInfo
     {
         get;
         set
         {
-            SlideBodyInfoVersion.UnbindAll();
+            slideBodyInfoVersion.UnbindAll();
             field = value;
 
             if (field is not null)
-                SlideBodyInfoVersion.BindTo(field.Version);
+                slideBodyInfoVersion.BindTo(field.Version);
 
             updateVisuals();
         }
@@ -62,7 +62,7 @@ public partial class SlideVisual : CompositeDrawable
         get;
         set
         {
-            if (field == value)
+            if (Math.Abs(field - value) < 0.001)
                 return;
 
             field = value;
@@ -103,7 +103,7 @@ public partial class SlideVisual : CompositeDrawable
     private void load(SentakkiRulesetConfigManager? sentakkiConfig)
     {
         sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
-        SlideBodyInfoVersion.BindValueChanged(_ => updateVisuals(), true);
+        slideBodyInfoVersion.BindValueChanged(_ => updateVisuals(), true);
     }
 
     private void updateVisuals()
@@ -278,8 +278,8 @@ public partial class SlideVisual : CompositeDrawable
             {
                 var chevron = chevrons[j];
                 chevron.FadeOut()
-                       .Delay(currentOffset)
-                       .FadeIn(fadeDuration);
+                    .Delay(currentOffset)
+                    .FadeIn(fadeDuration);
 
                 currentOffset += offsetIncrement;
             }

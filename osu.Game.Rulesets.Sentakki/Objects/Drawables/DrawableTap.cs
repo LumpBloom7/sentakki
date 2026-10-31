@@ -16,7 +16,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables;
 
 public partial class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHandler<SentakkiAction>
 {
-    protected virtual Drawable CreateTapRepresentation() => new ProxyableSkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap), _ => new TapRing(), ConfineMode.ScaleToFit);
+    protected virtual Drawable CreateTapRepresentation() =>
+        new ProxyableSkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap), _ => new TapRing(), ConfineMode.ScaleToFit);
 
     public override double LifetimeStart
     {
@@ -75,7 +76,8 @@ public partial class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHa
 
         using (BeginDelayedSequence(animTime))
         {
-            double excessDistance = (-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime * HitObject.HitWindows.WindowFor(HitResult.Miss);
+            double excessDistance = (-SentakkiPlayfield.INTERSECTDISTANCE + SentakkiPlayfield.NOTESTARTDISTANCE) / animTime
+                                    * HitObject.HitWindows.WindowFor(HitResult.Miss);
             this.MoveToY((float)(-SentakkiPlayfield.INTERSECTDISTANCE + excessDistance), animTime + HitObject.HitWindows.WindowFor(HitResult.Miss));
         }
     }
@@ -129,10 +131,7 @@ public partial class DrawableTap : DrawableSentakkiLanedHitObject, IKeyBindingHa
 
     public bool OnPressed(KeyBindingPressEvent<SentakkiAction> e)
     {
-        if (!IsValidLaneAction(e.Action))
-            return false;
-
-        return UpdateResult(true);
+        return IsValidLaneAction(e.Action) && UpdateResult(true);
     }
 
     public void OnReleased(KeyBindingReleaseEvent<SentakkiAction> e) { }

@@ -20,7 +20,6 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
@@ -71,7 +70,8 @@ public partial class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset
         lanedPlayfield.HitObjectLineRenderer.Hide();
     }
 
-    protected override void ApplyIncreasedVisibilityState(DrawableHitObject hitObject, ArmedState state) => ApplyNormalVisibilityState(hitObject, state);
+    protected override void ApplyIncreasedVisibilityState(DrawableHitObject hitObject, ArmedState state) =>
+        ApplyNormalVisibilityState(hitObject, state);
 
     protected override void ApplyNormalVisibilityState(DrawableHitObject hitObject, ArmedState state)
     {

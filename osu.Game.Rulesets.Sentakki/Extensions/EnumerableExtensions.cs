@@ -37,9 +37,10 @@ public static class EnumerableExtensions
 
     // An alternative implementation of LINQ's GroupBy, which may have better performance characteristics in some situations
     // See: https://github.com/jackmott/GroupByPerformance
-    public static Dictionary<K, List<V>> GroupByDictionary<K, V>(this IEnumerable<V> values, Func<V, K> keySelector) where K : notnull
+    public static Dictionary<TKey, List<TValue>> GroupByDictionary<TKey, TValue>(this IEnumerable<TValue> values, Func<TValue, TKey> keySelector)
+        where TKey : notnull
     {
-        Dictionary<K, List<V>> result = [];
+        Dictionary<TKey, List<TValue>> result = [];
 
         foreach (var value in values)
         {

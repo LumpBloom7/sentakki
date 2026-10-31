@@ -26,13 +26,13 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
     [Resolved]
     private OsuColour colours { get; set; } = null!;
 
-    private OsuSpriteText text;
+    private readonly OsuSpriteText text;
 
-    private SlideBodyInfo slideBodyInfo;
-    private int segmentIndex;
+    private readonly SlideBodyInfo slideBodyInfo;
+    private readonly int segmentIndex;
 
     private SlideSegment segment => slideBodyInfo.Segments[segmentIndex];
-    private Slide slide;
+    private readonly Slide slide;
 
     public SentakkiSlideSegmentInspectorEntry(Slide slide, SlideBodyInfo slideBodyInfo, int index)
     {
@@ -72,8 +72,8 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
         text.Text = $"{segment.Shape}({simpleEndOffset}){mirrored}";
     }
 
-    private Bindable<Visibility> popoverVisibilityState = new();
-    private IBindable<int> versionBindable = new Bindable<int>();
+    private readonly Bindable<Visibility> popoverVisibilityState = new();
+    private readonly IBindable<int> versionBindable = new Bindable<int>();
 
     protected override void LoadComplete()
     {
@@ -84,7 +84,7 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
         popoverVisibilityState.BindValueChanged(v => Colour = v.NewValue == Visibility.Visible ? colours.YellowDark : Color4.White);
     }
 
-    public Popover? GetPopover()
+    public Popover GetPopover()
     {
         popoverVisibilityState.UnbindBindings();
         var popover = new SegmentEditPopover(slide, slideBodyInfo, segmentIndex);
@@ -123,13 +123,13 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
         [Resolved]
         private EditorBeatmap editorBeatmap { get; set; } = null!;
 
-        private Slide slide;
-        private SlideBodyInfo slideBodyInfo;
-        private int segmentIndex;
+        private readonly Slide slide;
+        private readonly SlideBodyInfo slideBodyInfo;
+        private readonly int segmentIndex;
 
         private SlideSegment segment => slideBodyInfo.Segments[segmentIndex];
 
-        private IBindable<int> versionBindable;
+        private readonly IBindable<int> versionBindable;
 
         public SegmentEditPopover(Slide slide, SlideBodyInfo slideBodyInfo, int index)
         {
@@ -155,7 +155,8 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                 Width = 240,
                 AutoSizeAxes = Axes.Y,
                 Spacing = new Vector2(5),
-                Children = [
+                Children =
+                [
                     new OsuSpriteText
                     {
                         Text = "Edit segment",
@@ -166,23 +167,23 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                         RelativeSizeAxes = Axes.X,
                         AutoSizeAxes = Axes.Y,
                         RowDimensions = [new Dimension(GridSizeMode.AutoSize)],
-                        ColumnDimensions = [new Dimension(GridSizeMode.Distributed), new Dimension(GridSizeMode.Absolute, 5), new Dimension(GridSizeMode.Distributed)],
+                        ColumnDimensions = [new Dimension(), new Dimension(GridSizeMode.Absolute, 5), new Dimension()],
                         Content = new Drawable?[][]
                         {
                             [
-                                shapeDropdown = new FormEnumDropdown<PathShape>()
+                                shapeDropdown = new FormEnumDropdown<PathShape>
                                 {
                                     Caption = "Shape",
                                 },
                                 null,
-                                endLaneDropdown = new FormDropdown<int>()
+                                endLaneDropdown = new FormDropdown<int>
                                 {
                                     Caption = "End Lane",
                                 },
                             ]
                         }
                     },
-                    mirroredCheckbox = new FormCheckBox()
+                    mirroredCheckbox = new FormCheckBox
                     {
                         Caption = "Mirrored",
                     },
@@ -192,12 +193,15 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                         AutoSizeAxes = Axes.Y,
 
                         RowDimensions = [new Dimension(GridSizeMode.AutoSize)],
-                        ColumnDimensions = [new Dimension(GridSizeMode.Distributed), new Dimension(GridSizeMode.Absolute, 5), new Dimension(GridSizeMode.Distributed)],
+                        ColumnDimensions =
+                        [
+                            new Dimension(), new Dimension(GridSizeMode.Absolute, 5), new Dimension()
+                        ],
 
                         Content = new Drawable?[][]
                         {
                             [
-                                new RoundedButton()
+                                new RoundedButton
                                 {
                                     Text = "Duplicate",
                                     RelativeSizeAxes = Axes.X,
@@ -205,7 +209,7 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                                     Action = duplicateSegment
                                 },
                                 null,
-                                deleteButton = new DangerousRoundedButton()
+                                deleteButton = new DangerousRoundedButton
                                 {
                                     Text = "Delete",
                                     RelativeSizeAxes = Axes.X,
@@ -218,7 +222,7 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                 ]
             };
 
-            versionBindable.BindValueChanged(v => refreshForms(), true);
+            versionBindable.BindValueChanged(_ => refreshForms(), true);
             shapeDropdown.Current.BindValueChanged(_ => updateShape());
             mirroredCheckbox.Current.BindValueChanged(_ => updateShape());
             endLaneDropdown.Current.BindValueChanged(_ => updateShape());
@@ -238,7 +242,8 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
             // We have to temporarily re-enable the bindable to be able to change it.
             endLaneDropdown.Current.Disabled = false;
 
-            endLaneDropdown.Items = Enumerable.Range(0, 8).Where(i => SlidePaths.CheckSlideValidity(segment with { RelativeEndLane = i })).Select(i => (i + startLane).NormalizeLane() + 1).Order();
+            endLaneDropdown.Items = Enumerable.Range(0, 8).Where(i => SlidePaths.CheckSlideValidity(segment with { RelativeEndLane = i }))
+                .Select(i => (i + startLane).NormalizeLane() + 1).Order();
             endLaneDropdown.Current.Value = currentEndLane + 1;
             endLaneDropdown.Current.Disabled = endLaneDropdown.Items.Count() == 1;
 
@@ -283,7 +288,7 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
 
         private void deleteSegment()
         {
-            slideBodyInfo.Segments = [.. slideBodyInfo.Segments.Where((v, i) => i != segmentIndex)];
+            slideBodyInfo.Segments = [.. slideBodyInfo.Segments.Where((_, i) => i != segmentIndex)];
             editorBeatmap.Update(slide);
         }
 

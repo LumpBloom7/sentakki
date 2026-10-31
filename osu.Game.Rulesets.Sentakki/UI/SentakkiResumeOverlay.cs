@@ -6,17 +6,13 @@ namespace osu.Game.Rulesets.Sentakki.UI;
 
 public partial class SentakkiResumeOverlay : DelayedResumeOverlay
 {
-    private SentakkiCursorContainer? localCursorContainer;
+    private readonly SentakkiCursorContainer localCursorContainer = new();
     public override CursorContainer? LocalCursor => State.Value is Visibility.Visible ? localCursorContainer : null;
-
-    public SentakkiResumeOverlay()
-    {
-        localCursorContainer = new SentakkiCursorContainer();
-    }
 
     protected override void PopIn()
     {
         base.PopIn();
+
         GameplayCursor?.ActiveCursor.Hide();
 
         Add(localCursorContainer);

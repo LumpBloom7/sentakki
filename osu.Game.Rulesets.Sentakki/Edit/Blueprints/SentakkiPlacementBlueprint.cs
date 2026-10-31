@@ -13,7 +13,7 @@ public abstract partial class SentakkiPlacementBlueprint<T> : HitObjectPlacement
     [Resolved]
     private SentakkiHitObjectComposer composer { get; set; } = null!;
 
-    public SentakkiPlacementBlueprint()
+    protected SentakkiPlacementBlueprint()
         : base(new T())
     {
     }

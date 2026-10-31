@@ -11,10 +11,10 @@ public partial class SlideBodyInspectorSection : CompositeDrawable
 {
     protected FillFlowContainer segmentEntries = null!;
 
-    private IBindable<int> slideBodyVersion = new Bindable<int>();
+    private readonly IBindable<int> slideBodyVersion = new Bindable<int>();
 
-    private Slide slide;
-    private SlideBodyInfo slideBodyInfo;
+    private readonly Slide slide;
+    private readonly SlideBodyInfo slideBodyInfo;
 
     public SlideBodyInspectorSection(Slide slide, SlideBodyInfo slideBodyInfo)
     {

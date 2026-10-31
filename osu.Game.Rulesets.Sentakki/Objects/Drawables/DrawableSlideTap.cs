@@ -7,7 +7,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables;
 
 public partial class DrawableSlideTap : DrawableTap
 {
-    protected override Drawable CreateTapRepresentation() => new SlideTapPiece()
+    protected override Drawable CreateTapRepresentation() => new SlideTapPiece
     {
         Alpha = 1,
         Scale = Vector2.One,
@@ -42,10 +42,8 @@ public partial class DrawableSlideTap : DrawableTap
 
         var note = (SlideTapPiece)TapVisual;
 
-        double spinDuration = baseline_spin_duration * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1);
-
-        if (ParentHitObject is DrawableSlide slide)
-            spinDuration += slide.HitObject.SlideInfoList.FirstOrDefault()?.Duration ?? 1000;
+        double spinDuration = baseline_spin_duration * (DrawableSentakkiRuleset?.GameplaySpeed ?? 1)
+            + ParentHitObject.HitObject.SlideInfoList.FirstOrDefault()?.Duration ?? 1000;
 
         note.Stars.Spin(spinDuration, RotationDirection.Counterclockwise).Loop();
     }

@@ -5,7 +5,6 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
 using osu.Game.Rulesets.Sentakki.Skinning;
-using osu.Game.Rulesets.Sentakki.Skinning.Argon;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
 
 namespace osu.Game.Rulesets.Sentakki.UI;

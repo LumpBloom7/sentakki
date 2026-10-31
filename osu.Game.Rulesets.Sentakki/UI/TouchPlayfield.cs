@@ -18,7 +18,8 @@ public partial class TouchPlayfield : Playfield
     [Resolved]
     private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; } = null!;
 
-    protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, drawableSentakkiRuleset);
+    protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject)
+        => new SentakkiHitObjectLifetimeEntry(hitObject, drawableSentakkiRuleset);
 
     [BackgroundDependencyLoader]
     private void load()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -18,7 +19,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Inspector;
 
 public partial class SentakkiHitObjectInspector : CompositeDrawable
 {
-    protected OsuTextFlowContainer inspectorText = null!;
+    protected OsuTextFlowContainer InspectorText = null!;
 
     [Resolved]
     private EditorBeatmap editorBeatmap { get; set; } = null!;
@@ -32,7 +33,7 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
         AutoSizeAxes = Axes.Y;
         RelativeSizeAxes = Axes.X;
 
-        InternalChild = inspectorText = new OsuTextFlowContainer
+        InternalChild = InspectorText = new OsuTextFlowContainer
         {
             RelativeSizeAxes = Axes.X,
             AutoSizeAxes = Axes.Y,
@@ -52,7 +53,7 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
 
     private void updateInspectorText()
     {
-        inspectorText.Clear();
+        InspectorText.Clear();
 
         HitObject[] objects;
 
@@ -107,10 +108,9 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
                 double minTime = objects.Min(o => o.StartTime);
                 double maxTime = objects.Max(o => o.GetEndTime());
 
-                if (minTime == maxTime)
-                    addValue($"{minTime:#,0.##} ms");
-                else
-                    addValue($"{objects.Min(o => o.StartTime):#,0.##} - {objects.Max(o => o.GetEndTime()):#,0.##} ms");
+                addValue(Math.Abs(minTime - maxTime) < 1
+                    ? $"{minTime:#,0.##} ms"
+                    : $"{objects.Min(o => o.StartTime):#,0.##} - {objects.Max(o => o.GetEndTime()):#,0.##} ms");
 
                 break;
         }
@@ -142,7 +142,7 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
 
         addHeader("Duration");
         addValue(new SelfUpdatingInspectorEntry(() => $"{duration.Duration:#,0.##} ms"));
-        addValue(new SelfUpdatingInspectorEntry(() => $"({duration.Duration / beatLength:0.##} beats)"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"({durationInBeats:0.##} beats)"));
 
         if (hitObject is not Slide s)
             return;
@@ -152,11 +152,12 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
 
         addHeader("Wait duration");
         addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveWaitDuration:#,0.##} ms"));
-        addValue(new SelfUpdatingInspectorEntry(() => $"({s.SlideInfoList[0].EffectiveWaitDuration / beatLength:0.##} beats)"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"({waitDurationInBeats:0.##} beats)"));
 
         addHeader("Movement duration");
         addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveMovementDuration:#,0.##} ms"));
-        addValue(new SelfUpdatingInspectorEntry(() => $"({s.SlideInfoList[0].EffectiveMovementDuration / beatLength:0.##} beats)"));
+        addValue(
+            new SelfUpdatingInspectorEntry(() => $"({movementDurationInBeats:0.##} beats)"));
     }
 
     private void addModifierInformation(SentakkiHitObject hitObject)
@@ -219,7 +220,7 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
         addValue(new SlideBodyInspectorSection(s, s.SlideInfoList[0]));
     }
 
-    private void addHeader(string header) => inspectorText.AddParagraph($"{header}: ", s =>
+    private void addHeader(string header) => InspectorText.AddParagraph($"{header}: ", s =>
     {
         s.Font = OsuFont.Style.Caption2;
         s.Colour = colourProvider.Content2;
@@ -227,16 +228,17 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
 
     private void addValue<T>(T value) where T : Drawable
     {
-        inspectorText.NewLine();
-        inspectorText.AddArbitraryDrawable(value);
+        InspectorText.NewLine();
+        InspectorText.AddArbitraryDrawable(value);
     }
 
     // This is an alternative implementation that reduces the spacing between the values and the headers
     private void addValue(string value) => addValue(value, colourProvider.Content1);
+
     private void addValue(string value, Color4 colour)
     {
-        inspectorText.NewLine();
-        inspectorText.AddText(value, s =>
+        InspectorText.NewLine();
+        InspectorText.AddText(value, s =>
         {
             s.Font = OsuFont.Style.Caption2.With(weight: FontWeight.SemiBold);
             s.Colour = colour;

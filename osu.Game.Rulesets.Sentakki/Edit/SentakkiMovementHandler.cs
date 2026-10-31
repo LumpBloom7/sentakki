@@ -90,10 +90,10 @@ public partial class SentakkiMovementHandler : Component
             playfield.Add(lanedNote);
         }
 
-        var touchNotes = editorBeatmap.SelectedHitObjects.OfType<IHasPosition>();
+        var touchNotes = editorBeatmap.SelectedHitObjects.OfType<IHasPosition>().ToArray();
 
         // Rotate the touch notes around the origin, in order to preserve their relative positions to the laned notes.
-        if (touchNotes.Any())
+        if (touchNotes.Length > 0)
         {
             float theta = laneOffset * 45f / 180 * MathF.PI;
             (float sin, float cos) = MathF.SinCos(theta);

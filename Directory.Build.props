@@ -6,6 +6,7 @@
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <Nullable>enable</Nullable>
         <WarningsNotAsErrors>NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
+        <Configurations>Debug;Release;Development</Configurations>
 
         <Authors>Derrick Timmermans</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -14,7 +15,9 @@
         <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     </PropertyGroup>
     <ItemGroup>
-        <EmbeddedResource Include="Resources\**\*"/>
+        <EmbeddedResource Include="Resources\**\*">
+            <LogicalName>$(AssemblyName).$([System.String]::Copy(%(Identity)).Replace($([System.IO.Path]::DirectorySeparatorChar.ToString()), '.'))</LogicalName>
+        </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
         <EditorConfgFiles Include=".editorconfig"/>

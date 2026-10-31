@@ -38,7 +38,7 @@ public partial class TestSceneTouchNote : OsuTestScene
     {
         AddStep("Miss Single", () => testAllPositions(false, breakState, ex));
         AddStep("Hit Single", () => testAllPositions(true, breakState, ex));
-        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
+        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject { AllJudged: false }));
     }
 
     public static bool[][] ObjectFlagsSource =

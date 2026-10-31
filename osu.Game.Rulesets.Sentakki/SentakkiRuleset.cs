@@ -51,7 +51,8 @@ public partial class SentakkiRuleset : Ruleset
     public override string RulesetAPIVersionSupported => CURRENT_RULESET_API_VERSION;
 
     private static readonly Lazy<bool> is_development_build
-        = new Lazy<bool>(() => typeof(SentakkiRuleset).Assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled));
+        = new Lazy<bool>(() =>
+            typeof(SentakkiRuleset).Assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled));
 
     public static bool IsDevelopmentBuild => is_development_build.Value;
 
@@ -65,7 +66,7 @@ public partial class SentakkiRuleset : Ruleset
 
     public override bool EditorShowScrollSpeed => false;
 
-    public override HitObjectComposer? CreateHitObjectComposer()
+    public override HitObjectComposer CreateHitObjectComposer()
         => new SentakkiHitObjectComposer(this);
 
     public override IEnumerable<Drawable> CreateEditorSetupSections()
@@ -89,7 +90,8 @@ public partial class SentakkiRuleset : Ruleset
 
     #endregion
 
-    public override IEnumerable<RulesetBeatmapAttribute> GetBeatmapAttributesForDisplay(IBeatmapInfo beatmapInfo, IReadOnlyCollection<Mod> mods) => [];
+    public override IEnumerable<RulesetBeatmapAttribute> GetBeatmapAttributesForDisplay(IBeatmapInfo beatmapInfo, IReadOnlyCollection<Mod> mods)
+        => [];
 
     public override ScoreProcessor CreateScoreProcessor() => new SentakkiScoreProcessor(this);
     public override HealthProcessor CreateHealthProcessor(double drainStartTime) => new SentakkiHealthProcessor();
@@ -180,7 +182,8 @@ public partial class SentakkiRuleset : Ruleset
         switch (variant)
         {
             default:
-                return [
+                return
+                [
                     new KeyBinding(InputKey.Z, SentakkiAction.Button1),
                     new KeyBinding(InputKey.X, SentakkiAction.Button2),
                     new KeyBinding(InputKey.MouseLeft, SentakkiAction.Button1),
@@ -196,7 +199,8 @@ public partial class SentakkiRuleset : Ruleset
                 ];
 
             case EDITOR_VARIANT:
-                return [
+                return
+                [
                     new KeyBinding(InputKey.Number2, SentakkiAction.EditorTapTool),
                     new KeyBinding(InputKey.Number3, SentakkiAction.EditorHoldTool),
                     new KeyBinding(InputKey.Number4, SentakkiAction.EditorSlideTool),
@@ -224,11 +228,12 @@ public partial class SentakkiRuleset : Ruleset
             Height = 250
         }, true),
 
-        new StatisticItem(SentakkiStatisticsStrings.JudgementChart, () => new JudgementChart([.. score.HitEvents.Where(e => e.HitObject is SentakkiHitObject)])
-        {
-            RelativeSizeAxes = Axes.X,
-            Size = new Vector2(1, 250)
-        }, true),
+        new StatisticItem(SentakkiStatisticsStrings.JudgementChart, () =>
+            new JudgementChart([.. score.HitEvents.Where(e => e.HitObject is SentakkiHitObject)])
+            {
+                RelativeSizeAxes = Axes.X,
+                Size = new Vector2(1, 250)
+            }, true),
 
         new StatisticItem(string.Empty, () => new SimpleStatisticTable(2, [
             new AverageHitError(score.HitEvents),

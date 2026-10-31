@@ -26,7 +26,7 @@ public partial class ArgonSentakkiJudgementPiece : TextJudgementPiece, IAnimatab
     private RingExplosion? ringExplosion;
     private SpriteText? timingIndicatorText;
 
-    private Bindable<bool> timingIndicatorEnabled = new Bindable<bool>();
+    private readonly Bindable<bool> timingIndicatorEnabled = new Bindable<bool>();
 
     public ArgonSentakkiJudgementPiece(HitResult result) : base(result)
     {
@@ -36,7 +36,7 @@ public partial class ArgonSentakkiJudgementPiece : TextJudgementPiece, IAnimatab
     [BackgroundDependencyLoader]
     private void load(SentakkiRulesetConfigManager configManager)
     {
-        JudgementText.Text = SentakkiExtensions.GetDisplayNameForSentakkiResult(Result).ToUpperInvariant();
+        JudgementText.Text = Result.GetDisplayNameForSentakkiResult().ToUpperInvariant();
         JudgementText.Colour = colours.ForSentakkiResult(Result);
 
         if (!Result.IsHit())
@@ -123,7 +123,7 @@ public partial class ArgonSentakkiJudgementPiece : TextJudgementPiece, IAnimatab
         }
     }
 
-    public Drawable? GetAboveHitObjectsProxiedContent()
+    public Drawable GetAboveHitObjectsProxiedContent()
     {
         var proxiedDrawables = new Container();
 

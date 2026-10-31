@@ -7,7 +7,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps;
 
 public class SentakkiPatternGenerator
 {
-    public readonly Random RNG;
+    public readonly Random SeededRng;
 
     private int currentPattern;
     private int offset;
@@ -16,17 +16,18 @@ public class SentakkiPatternGenerator
     public SentakkiPatternGenerator(IBeatmap beatmap)
     {
         var difficulty = beatmap.BeatmapInfo.Difficulty;
-        int seed = (int)MathF.Round(difficulty.DrainRate + difficulty.CircleSize) * 20 + (int)(difficulty.OverallDifficulty * 41.2) + (int)MathF.Round(difficulty.ApproachRate);
-        RNG = new Random(seed);
+        int seed = (int)MathF.Round(difficulty.DrainRate + difficulty.CircleSize) * 20 + (int)(difficulty.OverallDifficulty * 41.2) +
+                   (int)MathF.Round(difficulty.ApproachRate);
+        SeededRng = new Random(seed);
     }
 
     public int GetNextLane(bool isTwin = false) => patternlist[currentPattern].Invoke(isTwin).NormalizeLane();
 
     public void StartNextPattern()
     {
-        currentPattern = RNG.Next(0, patternlist.Count); // Pick a pattern
-        offset = RNG.Next(0, 8); // Give it a random offset for variety
-        offset2 = RNG.Next(-2, 3); // Give it a random offset for variety
+        currentPattern = SeededRng.Next(0, patternlist.Count); // Pick a pattern
+        offset = SeededRng.Next(0, 8); // Give it a random offset for variety
+        offset2 = SeededRng.Next(-2, 3); // Give it a random offset for variety
     }
 
     //The patterns will generate the note lane to be used based on the current offset
@@ -36,13 +37,13 @@ public class SentakkiPatternGenerator
         twin =>
         {
             if (twin) return offset + 4;
-            else offset += offset2;
+
+            offset += offset2;
 
             return offset;
         },
         // Back and forth, works better with longer combos
         // Lane difference determined by offset2, but will make sure offset2 is never 0.
-
         twin =>
         {
             offset2 = offset2 == 0 ? 1 : offset2;

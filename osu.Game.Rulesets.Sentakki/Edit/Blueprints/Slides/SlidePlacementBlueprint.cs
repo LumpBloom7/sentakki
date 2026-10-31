@@ -42,7 +42,7 @@ public partial class SlidePlacementBlueprint : LanedPlacementBlueprint<Slide>
     // Make sure that slides with no segments are considered invalid
     protected override bool IsValidForPlacement
         => base.IsValidForPlacement
-            && (PlacementActive is PlacementState.Waiting || committedSlideInfo.Segments.Count > 0);
+           && (PlacementActive is PlacementState.Waiting || committedSlideInfo.Segments.Count > 0);
 
     public SlidePlacementBlueprint()
     {
@@ -174,14 +174,16 @@ public partial class SlidePlacementBlueprint : LanedPlacementBlueprint<Slide>
                 time = snappedTime;
                 HitObject.Lane = lane;
 
-                var previousSlide = editorBeatmap.HitObjects.OfType<Slide>().LastOrDefault(s => s.StartTime < snappedTime && s.SlideInfoList.Count > 0);
+                var previousSlide = editorBeatmap.HitObjects.OfType<Slide>()
+                    .LastOrDefault(s => s.StartTime < snappedTime && s.SlideInfoList.Count > 0);
 
                 if (previousSlide is not null)
                 {
                     currentSegment = previousSlide.SlideInfoList[^1].Segments[^1];
                 }
 
-                committedSlideInfo.WaitDuration = beatSnapProvider.GetBeatLengthAtTime(snappedTime) * beatSnapProvider.BeatDivisor;
+                committedSlideInfo.WaitDuration =
+                    beatSnapProvider.GetBeatLengthAtTime(snappedTime) * beatSnapProvider.BeatDivisor;
                 break;
 
             case PlacementState.Active:
@@ -189,7 +191,8 @@ public partial class SlidePlacementBlueprint : LanedPlacementBlueprint<Slide>
                 HitObject.StartTime = Math.Min(commitStartTime, time);
                 double endTime = Math.Max(commitStartTime, time);
 
-                HitObject.SlideInfoList[0].Duration = Math.Max(endTime - HitObject.StartTime, beatSnapProvider.GetBeatLengthAtTime(time));
+                HitObject.SlideInfoList[0].Duration =
+                    Math.Max(endTime - HitObject.StartTime, beatSnapProvider.GetBeatLengthAtTime(time));
 
                 int startLane = committedSlideInfo.RelativeEndLane + HitObject.Lane;
 

@@ -1,9 +1,7 @@
 ﻿using osu.Framework.Bindables;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Configuration;
-using osu.Game.Graphics;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Beatmaps.Converter;
@@ -22,16 +20,19 @@ public class SentakkiModExperimental : Mod, IApplicableToBeatmapConverter
 
     public override bool Ranked => true;
 
-    [SettingSource(typeof(SentakkiModExperimentalStrings), nameof(SentakkiModExperimentalStrings.FanSlides), nameof(SentakkiModExperimentalStrings.FanSlidesDescription))]
+    [SettingSource(typeof(SentakkiModExperimentalStrings), nameof(SentakkiModExperimentalStrings.FanSlides),
+        nameof(SentakkiModExperimentalStrings.FanSlidesDescription))]
     public Bindable<bool> EnableSlideFans { get; } = new BindableBool();
 
     [SettingSource("Use old converter", "The old converter relied on RNG for just about everything. Included for comparison purposes.")]
     public BindableBool OldConversion { get; } = new BindableBool();
 
-    [SettingSource(typeof(SentakkiModExperimentalStrings), nameof(SentakkiModExperimentalStrings.TwinNotes), nameof(SentakkiModExperimentalStrings.TwinNotesDescription))]
+    [SettingSource(typeof(SentakkiModExperimentalStrings), nameof(SentakkiModExperimentalStrings.TwinNotes),
+        nameof(SentakkiModExperimentalStrings.TwinNotesDescription))]
     public BindableBool EnableTwinNotes { get; } = new BindableBool();
 
-    [SettingSource(typeof(SentakkiModExperimentalStrings), nameof(SentakkiModExperimentalStrings.TwinSlides), nameof(SentakkiModExperimentalStrings.TwinSlidesDescription))]
+    [SettingSource(typeof(SentakkiModExperimentalStrings), nameof(SentakkiModExperimentalStrings.TwinSlides),
+        nameof(SentakkiModExperimentalStrings.TwinSlidesDescription))]
     public BindableBool EnableTwinSlides { get; } = new BindableBool();
 
     public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)

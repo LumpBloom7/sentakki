@@ -86,7 +86,8 @@ public static class SlidePaths
         {
             PathShape.Straight => generateStraightPattern(startLane, segment.RelativeEndLane),
             PathShape.Fan => generateStraightPattern(startLane, 4),
-            PathShape.Circle => generateCirclePattern(startLane, segment.RelativeEndLane, segment.Mirrored ? RotationDirection.Counterclockwise : RotationDirection.Clockwise),
+            PathShape.Circle => generateCirclePattern(startLane, segment.RelativeEndLane,
+                segment.Mirrored ? RotationDirection.Counterclockwise : RotationDirection.Clockwise),
             PathShape.V => generateVPattern(startLane, segment.RelativeEndLane),
             PathShape.U => generateUPattern(startLane, segment.RelativeEndLane, segment.Mirrored),
             PathShape.Cup => generateCupPattern(startLane, segment.RelativeEndLane, segment.Mirrored),
@@ -104,7 +105,8 @@ public static class SlidePaths
     {
         return new SliderPath([
             new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, startLane), PathType.LINEAR),
-            new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, relativeEndLane + startLane), PathType.LINEAR)
+            new PathControlPoint(SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, relativeEndLane + startLane),
+                PathType.LINEAR)
         ]);
     }
 
@@ -200,13 +202,16 @@ public static class SlidePaths
     private static SliderPath generateUPattern(int startLane, int relativeEndLane, bool reversed = false)
     {
         Vector2 node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, startLane);
-        Vector2 node1Pos = getPositionInBetween(node0Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, (reversed ? 3 : 5) + startLane), .51f);
+        Vector2 node1Pos = getPositionInBetween(node0Pos,
+            SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, (reversed ? 3 : 5) + startLane), .51f);
 
-        float angleDiff = ((relativeEndLane + startLane).GetRotationForLane() + startLane.GetRotationForLane()) / 2 + (Math.Abs(relativeEndLane) > (reversed ? 3 : 4) ? 0 : 180);
+        float angleDiff = ((relativeEndLane + startLane).GetRotationForLane() + startLane.GetRotationForLane()) / 2 +
+                          (Math.Abs(relativeEndLane) > (reversed ? 3 : 4) ? 0 : 180);
         Vector2 node2Pos = MathExtensions.PointOnCircle(115, angleDiff);
 
         Vector2 node4Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, relativeEndLane + startLane);
-        Vector2 node3Pos = getPositionInBetween(node4Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, relativeEndLane + (reversed ? -3 : 3) + startLane), .51f);
+        Vector2 node3Pos = getPositionInBetween(node4Pos,
+            SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, relativeEndLane + (reversed ? -3 : 3) + startLane), .51f);
 
         return new SliderPath([
             new PathControlPoint(node0Pos, PathType.LINEAR),

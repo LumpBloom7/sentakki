@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -18,7 +19,7 @@ public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
         get;
         set
         {
-            if (field == value)
+            if (Math.Abs(field - value) < 0.001)
                 return;
 
             field = value;
@@ -31,7 +32,7 @@ public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
         get;
         set
         {
-            if (field == value)
+            if (Math.Abs(field - value) < 0.001)
                 return;
 
             field = value;
@@ -70,7 +71,7 @@ public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
     protected override DrawNode CreateDrawNode() => new ChevronDrawNode(this);
 
     [BackgroundDependencyLoader]
-    private void load(ShaderManager shaders, IRenderer renderer)
+    private void load(ShaderManager shaders)
     {
         TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "chevron");
 
@@ -113,7 +114,7 @@ public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
             screenSpaceDrawQuad = Quad.FromRectangle(drawRect) * DrawInfo.Matrix;
             drawSize = drawRect.Size;
 
-            var newParameters = new ShapeParameters()
+            var newParameters = new ShapeParameters
             {
                 Thickness = Source.Thickness,
                 ShadowRadius = Source.ShadowRadius,
@@ -173,9 +174,9 @@ public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
             public UniformBool FanChevron;
         }
 
-        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> uniformBuffer)
+        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> uniformBufferCandidate)
         {
-            return uniformBuffer.Data == parameters;
+            return uniformBufferCandidate.Data == parameters;
         }
     }
 }

@@ -50,6 +50,7 @@ public partial class SentakkiInputManager : RulesetInputManager<SentakkiAction>
     }
 }
 
+// ReSharper disable UnusedMember.Global
 public enum SentakkiAction
 {
     [LocalisableDescription(typeof(SentakkiActionStrings), nameof(SentakkiActionStrings.Button1))]
@@ -95,6 +96,7 @@ public enum SentakkiAction
 
     SensorLane1Alt,
     SensorLane2Alt,
+
     SensorLane3Alt,
     SensorLane4Alt,
     SensorLane5Alt,
@@ -155,3 +157,4 @@ public enum SentakkiAction
     [LocalisableDescription(typeof(SentakkiEditorStrings), nameof(SentakkiEditorStrings.TouchSnapGrid))]
     EditorToggleTouchSnapGrid,
 }
+// ReSharper enable UnusedMember.Global

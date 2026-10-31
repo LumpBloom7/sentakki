@@ -1,9 +1,7 @@
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
-using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -29,8 +27,6 @@ public partial class SentakkiPlayfield : Playfield
 
     private readonly JudgementPooler<DrawableSentakkiJudgement> newJudgementPool;
     private readonly DrawablePool<HitExplosion> explosionPool;
-
-    private readonly SkinnableDrawable ring;
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
 
@@ -65,13 +61,15 @@ public partial class SentakkiPlayfield : Playfield
         Size = new Vector2(RINGSIZE);
         AddRangeInternal([
             explosionPool = new DrawablePool<HitExplosion>(8),
-            newJudgementPool = new JudgementPooler<DrawableSentakkiJudgement>([HitResult.Perfect, HitResult.Great, HitResult.Good, HitResult.Meh, HitResult.Miss], onJudgementLoaded),
+            newJudgementPool =
+                new JudgementPooler<DrawableSentakkiJudgement>([HitResult.Perfect, HitResult.Great, HitResult.Good, HitResult.Meh, HitResult.Miss],
+                    onJudgementLoaded),
             AccentContainer = new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Children =
                 [
-                    ring = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.PlayfieldRing), _ => new PlayfieldRing())
+                    new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.PlayfieldRing), _ => new PlayfieldRing())
                 ]
             },
             explosionLayer = new Container<HitExplosion> { RelativeSizeAxes = Axes.Both },
@@ -95,18 +93,17 @@ public partial class SentakkiPlayfield : Playfield
     [Resolved]
     private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; } = null!;
 
-    private Bindable<Skin> skin = null!;
-
     [BackgroundDependencyLoader]
-    private void load(SkinManager skinManager, IBeatmap beatmap, BeatmapDifficultyCache difficultyCache)
+    private void load(SkinManager skinManager)
     {
         RegisterPool<TouchHold, DrawableTouchHold>(2);
         RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(8);
 
-        skin = skinManager.CurrentSkin.GetBoundCopy();
+        skinManager.CurrentSkin.GetBoundCopy();
     }
 
-    protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, drawableSentakkiRuleset);
+    protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) =>
+        new SentakkiHitObjectLifetimeEntry(hitObject, drawableSentakkiRuleset);
 
     protected override GameplayCursorContainer CreateCursor() => new SentakkiCursorContainer();
 
@@ -154,6 +151,7 @@ public partial class SentakkiPlayfield : Playfield
             return;
 
         var judgement = newJudgementPool.Get(result.Type, d => d.Apply(result, judgedObject));
+
         if (judgement is not null)
             judgementLayer.Add(judgement);
 

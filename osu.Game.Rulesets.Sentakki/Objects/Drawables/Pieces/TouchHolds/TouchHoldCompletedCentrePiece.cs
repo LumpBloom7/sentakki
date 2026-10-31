@@ -86,7 +86,7 @@ public partial class TouchHoldCompletedCentre : CompositeDrawable
     {
         base.LoadComplete();
 
-        paletteBindable?.BindValueChanged(p =>
+        paletteBindable?.BindValueChanged(_ =>
         {
             for (int i = 0; i < progressParts.Length; ++i)
                 progressParts[i].AccentColour = paletteBindable.Value[i];

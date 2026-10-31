@@ -38,12 +38,14 @@ public partial class DrawableSlideCheckpoint : DrawableSentakkiHitObject
 
     private int trackingLookBehindDistance => shouldBeStrict ? 1 : 2;
 
-    private bool isPreviousNodeHit() => ThisIndex < trackingLookBehindDistance || parentHitObject.SlideCheckpoints[ThisIndex - trackingLookBehindDistance].IsHit;
+    private bool isPreviousNodeHit()
+        => ThisIndex < trackingLookBehindDistance || parentHitObject.SlideCheckpoints[ThisIndex - trackingLookBehindDistance].IsHit;
 
     private Container<DrawableSlideCheckpointNode> nodes = null!;
 
     protected override float SamplePlaybackPosition =>
-        SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideOriginLane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2) + .5f;
+        SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideOriginLane).X / (SentakkiPlayfield.INTERSECTDISTANCE * 2)
+        + .5f;
 
     public DrawableSlideCheckpoint()
         : this(null)

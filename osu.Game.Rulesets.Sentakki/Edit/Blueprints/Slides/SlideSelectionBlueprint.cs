@@ -33,7 +33,8 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
     public override Quad SelectionQuad => slideTapHighlight.ScreenSpaceDrawQuad;
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
-        => slideTapHighlight.ReceivePositionalInputAt(screenSpacePos) || DrawableObject.SlideBodies.Select(s => s.Slidepath).Any(s => s.ReceivePositionalInputAt(screenSpacePos));
+        => slideTapHighlight.ReceivePositionalInputAt(screenSpacePos) || DrawableObject.SlideBodies.Select(s => s.Slidepath)
+            .Any(s => s.ReceivePositionalInputAt(screenSpacePos));
 
     public SlideSelectionBlueprint(Slide item)
         : base(item)
@@ -42,7 +43,7 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
         Origin = Anchor.Centre;
 
         if (item.SlideInfoList.Count == 1)
-            AddInternal(slideBodyHighlight = new SlideBodyHighlight(item, item.SlideInfoList[0]) { });
+            AddInternal(slideBodyHighlight = new SlideBodyHighlight(item, item.SlideInfoList[0]));
 
         AddInternal(
             new Container
@@ -50,9 +51,11 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Colour = Color4.YellowGreen,
-                Children = [
+                Children =
+                [
                     slideTapHighlight = new SlideTapPiece(),
-                    tapHighlight = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap), _ => new TapRing())
+                    tapHighlight = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap),
+                        _ => new TapRing())
                     {
                         RelativeSizeAxes = Axes.None,
                         Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
@@ -81,20 +84,22 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
 
         Rotation = HitObject.Lane.GetRotationForLane();
 
-        float targetScale = Interpolation.ValueAt(HitObject.StartTime, 1f, 0f, editorClock.CurrentTime + (animationSpeed.Value / 2), editorClock.CurrentTime + animationSpeed.Value);
+        float targetScale = Interpolation.ValueAt(HitObject.StartTime, 1f, 0f,
+            editorClock.CurrentTime + (animationSpeed.Value / 2), editorClock.CurrentTime + animationSpeed.Value);
         targetScale = Math.Clamp(targetScale, 0, 1);
 
         tapHighlight.Scale = slideTapHighlight.Scale = new Vector2(targetScale);
 
         slideTapHighlight.Y = -Interpolation.ValueAt(
-                HitObject.StartTime,
-                SentakkiPlayfield.INTERSECTDISTANCE,
-                SentakkiPlayfield.NOTESTARTDISTANCE,
-                editorClock.CurrentTime,
-                editorClock.CurrentTime + (animationSpeed.Value / 2)
-            );
+            HitObject.StartTime,
+            SentakkiPlayfield.INTERSECTDISTANCE,
+            SentakkiPlayfield.NOTESTARTDISTANCE,
+            editorClock.CurrentTime,
+            editorClock.CurrentTime + (animationSpeed.Value / 2)
+        );
 
-        slideTapHighlight.Y = Math.Clamp(slideTapHighlight.Y, -SentakkiPlayfield.INTERSECTDISTANCE, -SentakkiPlayfield.NOTESTARTDISTANCE);
+        slideTapHighlight.Y = Math.Clamp(slideTapHighlight.Y, -SentakkiPlayfield.INTERSECTDISTANCE,
+            -SentakkiPlayfield.NOTESTARTDISTANCE);
         tapHighlight.Y = slideTapHighlight.Y;
 
         switch (Item.TapType)
@@ -123,9 +128,6 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
                 break;
         }
 
-        if (slideBodyHighlight is null)
-            return;
-
-        slideBodyHighlight.UpdateFrom(DrawableObject.SlideBodies[0]);
+        slideBodyHighlight?.UpdateFrom(DrawableObject.SlideBodies[0]);
     }
 }

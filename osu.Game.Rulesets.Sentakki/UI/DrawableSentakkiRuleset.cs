@@ -37,7 +37,7 @@ public partial class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject
     private GameHost gamehost { get; set; } = null!;
 
     public override bool RequiresPortraitOrientation => configPreferPortrait.Value;
-    private Bindable<bool> configPreferPortrait = new();
+    private readonly Bindable<bool> configPreferPortrait = new();
 
     [BackgroundDependencyLoader]
     private void load()
@@ -99,9 +99,11 @@ public partial class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject
 
     private void updateAnimationDurations()
     {
-        AdjustedAnimDuration.Value = Interpolation.DampContinuously(AdjustedAnimDuration.Value, currentAnimDuration * GameplaySpeed, 50, gamehost.UpdateThread.Clock.ElapsedFrameTime);
+        AdjustedAnimDuration.Value = Interpolation.DampContinuously(AdjustedAnimDuration.Value, currentAnimDuration * GameplaySpeed, 50,
+            gamehost.UpdateThread.Clock.ElapsedFrameTime);
         AdjustedTouchAnimDuration.Value =
-            Interpolation.DampContinuously(AdjustedTouchAnimDuration.Value, currentTouchAnimDuration * GameplaySpeed, 50, gamehost.UpdateThread.Clock.ElapsedFrameTime);
+            Interpolation.DampContinuously(AdjustedTouchAnimDuration.Value, currentTouchAnimDuration * GameplaySpeed, 50,
+                gamehost.UpdateThread.Clock.ElapsedFrameTime);
     }
 
     public bool OnPressed(KeyBindingPressEvent<GlobalAction> e)
@@ -129,14 +131,12 @@ public partial class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject
 
     protected new SentakkiRulesetConfigManager Config => (SentakkiRulesetConfigManager)base.Config;
 
-    private SentakkiFramedReplayInputHandler? sentakkiFramedReplayInput => (SentakkiFramedReplayInputHandler?)((SentakkiInputManager)KeyBindingInputManager).ReplayInputHandler;
-
     // Default stuff
     protected override Playfield CreatePlayfield() => new SentakkiPlayfield();
 
     protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new SentakkiFramedReplayInputHandler(replay);
 
-    protected override ReplayRecorder CreateReplayRecorder(Score score) => new SentakkiReplayRecorder(score, this);
+    protected override ReplayRecorder CreateReplayRecorder(Score score) => new SentakkiReplayRecorder(score);
 
     public override PlayfieldAdjustmentContainer CreatePlayfieldAdjustmentContainer() => new SentakkiPlayfieldAdjustmentContainer();
 

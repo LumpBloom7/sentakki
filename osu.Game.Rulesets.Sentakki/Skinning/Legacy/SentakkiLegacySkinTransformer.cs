@@ -14,7 +14,8 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
             case SkinComponentLookup<HitResult> resultComponent:
                 var result = resultComponent.Component;
 
-                Drawable? drawable = Skin.GetAnimation($"sentakki/judgements/{result.GetDisplayNameForSentakkiResult().ToLowerInvariant()}", true, false, animationSeparator: "/");
+                Drawable? drawable = Skin.GetAnimation($"sentakki/judgements/{result.GetDisplayNameForSentakkiResult().ToLowerInvariant()}", true,
+                    false, animationSeparator: "/");
 
                 if (drawable is null)
                     return null;
@@ -35,9 +36,6 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
                             return null;
 
                         return new LegacyTapRing();
-
-                    default:
-                        break;
                 }
 
                 break;

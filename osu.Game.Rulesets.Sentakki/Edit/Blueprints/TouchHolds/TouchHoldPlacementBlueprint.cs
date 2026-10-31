@@ -64,7 +64,7 @@ public partial class TouchHoldPlacementBlueprint : TouchPlacementBlueprintBase<T
                 break;
 
             case PlacementState.Active:
-                if (time != commitStartTime)
+                if (Math.Abs(time - commitStartTime) > 0.5)
                     dragged = true;
 
                 HitObject.EndTime = Math.Max(commitStartTime, time);

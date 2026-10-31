@@ -12,8 +12,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Snapping;
 
 public partial class TouchPositionSnapGrid : VisibilityContainer
 {
-    public readonly Bindable<TernaryState> Enabled = new Bindable<TernaryState>(TernaryState.True);
-    private Bindable<bool> activationRequested = new Bindable<bool>();
+    public readonly Bindable<TernaryState> Enabled = new(TernaryState.True);
+    private readonly Bindable<bool> activationRequested = new();
 
     [BackgroundDependencyLoader]
     private void load()
@@ -57,9 +57,8 @@ public partial class TouchPositionSnapGrid : VisibilityContainer
 
     public Vector2 GetSnappedPosition(Vector2 localMousePosition)
     {
-        if (State.Value is Visibility.Hidden)
-            return localMousePosition;
-
-        return SentakkiBeatmapConverterOld.VALID_TOUCH_POSITIONS.MinBy(v => Vector2.DistanceSquared(localMousePosition, v));
+        return State.Value is Visibility.Hidden
+            ? localMousePosition
+            : SentakkiBeatmapConverterOld.VALID_TOUCH_POSITIONS.MinBy(v => Vector2.DistanceSquared(localMousePosition, v));
     }
 }

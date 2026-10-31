@@ -48,7 +48,8 @@ public partial class TestSceneHoldNote : OsuTestScene
         AddStep("Hit Long", () => testSingle(1000, true, breakState, ex));
         AddStep("Miss Very Long", () => testSingle(3000, false, breakState, ex));
         AddStep("Hit Very Long", () => testSingle(3000, true, breakState, ex));
-        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
+        AddUntilStep("Wait for object despawn",
+            () => !Children.Any(h => h is DrawableSentakkiHitObject { AllJudged: false }));
     }
 
     private void testSingle(double duration, bool auto = false, bool breakState = false, bool ex = false)

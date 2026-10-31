@@ -10,7 +10,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Inspector;
 
 public partial class SelfUpdatingInspectorEntry : OsuSpriteText
 {
-    private Func<LocalisableString> textUpdateAction;
+    private readonly Func<LocalisableString> textUpdateAction;
 
     [Resolved]
     private OverlayColourProvider colourProvider { get; set; } = null!;

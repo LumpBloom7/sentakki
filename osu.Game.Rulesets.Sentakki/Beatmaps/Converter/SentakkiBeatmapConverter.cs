@@ -49,7 +49,10 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
 
         // Prep an RNG with a seed generated from beatmap diff
         var difficulty = beatmap.BeatmapInfo.Difficulty;
-        int seed = (int)MathF.Round(difficulty.DrainRate + difficulty.CircleSize) * 20 + (int)(difficulty.OverallDifficulty * 41.2) + (int)MathF.Round(difficulty.ApproachRate);
+        int seed = (int)MathF.Round(difficulty.DrainRate + difficulty.CircleSize) * 20
+                   + (int)(difficulty.OverallDifficulty * 41.2)
+                   + (int)MathF.Round(difficulty.ApproachRate);
+
         rng = new Random(seed);
 
         if (beatmap.HitObjects.Count == 0)
@@ -72,7 +75,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         return currentLane != twinLane;
     }
 
-    protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap, CancellationToken cancellationToken)
+    protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap _, CancellationToken cancellationToken)
     {
         SentakkiHitObject result;
 
@@ -105,10 +108,13 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
                     {
                         var slideBodyInfo = slide.SlideInfoList[0];
                         if (slideBodyInfo.Segments[^1].Shape is PathShape.Fan)
-                            fanStartTime = slide.StartTime + slideBodyInfo.EffectiveWaitDuration + slideBodyInfo.EffectiveMovementDuration * slideBodyInfo.SegmentStartProgressFor(^1);
+                        {
+                            fanStartTime = slide.StartTime + slideBodyInfo.EffectiveWaitDuration +
+                                           slideBodyInfo.EffectiveMovementDuration * slideBodyInfo.SegmentStartProgressFor(^1);
+                        }
                     }
 
-                    if (allClaps && fanStartTime == double.MaxValue)
+                    if (allClaps && Math.Abs(fanStartTime - double.MaxValue) < 1)
                     {
                         if (tryGetLaneForTwinNote(original.StartTime, out int twinLane))
                             yield return convertSlider(original, twinLane, !ConversionFlags.HasFlagFast(ConversionFlags.TwinSlides), false);
@@ -202,11 +208,9 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         // We try to look ahead into the stream in an effort to determine the initial direction of a stream if we don't have a previous
         if (previous is null || !isChronologicallyClose(previous, original))
         {
-            if (secondNext is not null)
-                activeStreamDirection = getStreamDirection(next, previous, secondNext);
-            else
-                // Fallback to using the midpoint as best effort
-                activeStreamDirection = getStreamDirection(original, null, next);
+            activeStreamDirection = secondNext is not null
+                ? getStreamDirection(next, previous, secondNext)
+                : getStreamDirection(original, null, next); // Fallback to using the midpoint as best effort
         }
         else
         {
@@ -225,7 +229,9 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
             currentLane += slide.SlideInfoList[0].RelativeEndLane;
         }
         else
+        {
             currentLane += streamOffset;
+        }
 
         if (!isOverlappingEnd)
             currentLane += streamOffset == 0 ? 1 : streamOffset;

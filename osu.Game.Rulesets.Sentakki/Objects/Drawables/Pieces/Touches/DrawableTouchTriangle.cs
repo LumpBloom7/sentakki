@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -15,14 +16,12 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
 
 public partial class DrawableTouchTriangle : Drawable, ITexturedShaderDrawable
 {
-    private float thickness = 15f;
-
     public float Thickness
     {
         get;
         set
         {
-            if (field == value)
+            if (Math.Abs(field - value) < 0.001)
                 return;
 
             field = value;
@@ -35,7 +34,7 @@ public partial class DrawableTouchTriangle : Drawable, ITexturedShaderDrawable
         get;
         set
         {
-            if (field == value)
+            if (Math.Abs(field - value) < 0.001)
                 return;
 
             field = value;
@@ -89,7 +88,7 @@ public partial class DrawableTouchTriangle : Drawable, ITexturedShaderDrawable
     private readonly BindableBool exBindable = new BindableBool();
 
     [BackgroundDependencyLoader]
-    private void load(ShaderManager shaders, IRenderer renderer, DrawableHitObject? hitObject)
+    private void load(ShaderManager shaders, DrawableHitObject? hitObject)
     {
         TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "touchTriangle");
 
@@ -115,7 +114,7 @@ public partial class DrawableTouchTriangle : Drawable, ITexturedShaderDrawable
 
     private partial class TouchTriangleDrawNode : TexturedShaderDrawNode
     {
-        protected new DrawableTouchTriangle Source => (DrawableTouchTriangle)base.Source;
+        private DrawableTouchTriangle source => (DrawableTouchTriangle)Source;
         protected override bool CanDrawOpaqueInterior => false;
 
         private IUniformBuffer<ShapeParameters>? uniformBuffer;
@@ -135,17 +134,17 @@ public partial class DrawableTouchTriangle : Drawable, ITexturedShaderDrawable
         {
             base.ApplyState();
 
-            var drawRect = Source.DrawRectangle.Normalize().Inflate(Source.ShadowRadius);
+            var drawRect = source.DrawRectangle.Normalize().Inflate(source.ShadowRadius);
             screenSpaceDrawQuad = Quad.FromRectangle(drawRect) * DrawInfo.Matrix;
             drawSize = drawRect.Size;
 
             var newParameters = new ShapeParameters
             {
-                Thickness = Source.thickness,
-                ShadowRadius = Source.ShadowRadius,
-                Glow = Source.Glow,
-                fillTriangle = Source.FillTriangle,
-                shadowOnly = Source.ShadowOnly
+                Thickness = source.Thickness,
+                ShadowRadius = source.ShadowRadius,
+                Glow = source.Glow,
+                fillTriangle = source.FillTriangle,
+                shadowOnly = source.ShadowOnly
             };
 
             if (newParameters == parameters) return;
@@ -202,7 +201,7 @@ public partial class DrawableTouchTriangle : Drawable, ITexturedShaderDrawable
             public UniformPadding12 _;
         }
 
-        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> uniformBuffer)
-            => uniformBuffer.Data == parameters;
+        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> uniformBufferCandidate)
+            => uniformBufferCandidate.Data == parameters;
     }
 }

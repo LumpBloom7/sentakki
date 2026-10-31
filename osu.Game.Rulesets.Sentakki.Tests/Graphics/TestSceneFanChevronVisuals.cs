@@ -20,7 +20,6 @@ namespace osu.Game.Rulesets.Sentakki.Tests.Graphics;
 public partial class TestSceneFanChevronVisual : OsuGridTestScene
 {
     protected override Ruleset CreateRuleset() => new SentakkiRuleset();
-    private readonly SlideBodyInfo slideBodyInfo = new SlideBodyInfo();
 
     [Cached]
     private readonly DrawablePool<SlideChevron> chevronPool;

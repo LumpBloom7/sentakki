@@ -32,7 +32,7 @@ public partial class TestSceneTapNote : SentakkiSkinnableTestScene
     private void addStep(string title, Action action)
     {
         AddStep(title, action);
-        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
+        AddUntilStep("Wait for object despawn", () => !CreatedDrawables.Any(h => h is DrawableSentakkiHitObject { AllJudged: false }));
     }
 
     private void testSingle(bool auto = false, bool breakState = false, bool ex = false)

@@ -102,10 +102,10 @@ public partial class SentakkiBeatmapConverter
 
         double adjustedDuration = duration;
 
-        var candidates = SlidePaths.VALID_CONVERT_PATHS.AsEnumerable();
+        bool canBeFan = !ConversionFlags.HasFlag(ConversionFlags.FanSlides) || !allowFans;
 
-        if (!ConversionFlags.HasFlag(ConversionFlags.FanSlides) || !allowFans)
-            candidates = candidates.Where(p => p.Segment.Shape != PathShape.Fan);
+        var candidates = SlidePaths.VALID_CONVERT_PATHS
+            .Where(p => canBeFan || p.Segment.Shape != PathShape.Fan).ToArray();
 
         List<SlideSegment> parts = [];
 
@@ -116,13 +116,13 @@ public partial class SentakkiBeatmapConverter
         while (true)
         {
             var nextChoices = candidates.Where(p => p.MinDuration * velocityFactor < adjustedDuration)
-                                        .Shuffle(rng)
-                                        .SkipWhile(p => p.Segment.Shape == PathShape.Circle && !isValidCircleComposition(p.Segment, lastPart));
+                .Shuffle(rng)
+                .SkipWhile(p => p.Segment.Shape == PathShape.Circle && !isValidCircleComposition(p.Segment, lastPart));
 
-            if (!nextChoices.Any())
+
+            var chosen = nextChoices.FirstOrDefault();
+            if (chosen == default)
                 break;
-
-            var chosen = nextChoices.First();
 
             adjustedDuration -= chosen.MinDuration * velocityFactor;
             parts.Add((lastPart = chosen.Segment).Value);
@@ -170,7 +170,8 @@ public partial class SentakkiBeatmapConverter
         double velocity = scoringDistance / timingPoint.BeatLength;
         double tickDistance = scoringDistance / difficulty.SliderTickRate;
 
-        var sliderEvents = SliderEventGenerator.Generate(hitObject.StartTime, spanDuration, velocity, tickDistance, slider.Path.Distance, slider.RepeatCount + 1, CancellationToken.None);
+        var sliderEvents = SliderEventGenerator.Generate(hitObject.StartTime, spanDuration, velocity, tickDistance, slider.Path.Distance,
+            slider.RepeatCount + 1, CancellationToken.None);
 
         var sliderOrigin = slider.Path.PositionAt(0);
 

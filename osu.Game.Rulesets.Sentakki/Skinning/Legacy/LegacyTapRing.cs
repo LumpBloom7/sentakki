@@ -45,7 +45,8 @@ public partial class LegacyTapRing : CompositeDrawable
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
 
-                Children = [
+                Children =
+                [
                     glowSprite = new Sprite
                     {
                         Anchor = Anchor.Centre,
@@ -68,7 +69,7 @@ public partial class LegacyTapRing : CompositeDrawable
             },
             new Sprite
             {
-                RelativeSizeAxes  = Axes.Both,
+                RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 FillMode = FillMode.Fit,

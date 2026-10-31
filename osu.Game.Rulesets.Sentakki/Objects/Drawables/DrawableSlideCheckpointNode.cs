@@ -92,7 +92,7 @@ public partial class DrawableSlideCheckpointNode : DrawableSentakkiHitObject
 
         foreach (TouchSource source in touchInput.ActiveSources)
         {
-            if (touchInput.GetTouchPosition(source) is Vector2 touchPosition && ReceivePositionalInputAt(touchPosition))
+            if (touchInput.GetTouchPosition(source) is { } touchPosition && ReceivePositionalInputAt(touchPosition))
                 ++count;
         }
 

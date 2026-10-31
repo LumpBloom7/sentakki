@@ -49,7 +49,7 @@ public class Slide : SentakkiLanedHitObject, IHasDuration
         {
             double max = SlideInfoList.Select(static t => t.Duration).Prepend(0).Max();
 
-            if (max == value)
+            if (Math.Abs(max - value) < 0.1)
                 return;
 
             foreach (var s in SlideInfoList)

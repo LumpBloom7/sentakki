@@ -69,8 +69,8 @@ public partial class TouchBody : CompositeDrawable
     }
 
     // Creates the touch shape using the provided drawable as each of the 4 quarters
-    private Drawable createTouchShape<T>() where T : Drawable, new()
-        => new Container
+    private static Container createTouchShape<T>() where T : Drawable, new()
+        => new()
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,

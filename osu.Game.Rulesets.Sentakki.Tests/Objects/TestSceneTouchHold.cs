@@ -35,7 +35,7 @@ public partial class TestSceneTouchHold : OsuTestScene
     {
         AddStep("Miss Single", () => testSingle(false, breakState));
         AddStep("Hit Single", () => testSingle(true, breakState));
-        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject sentakkiHitObject && sentakkiHitObject.AllJudged == false));
+        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject { AllJudged: false }));
     }
 
     private void testSingle(bool auto = false, bool breakState = false)

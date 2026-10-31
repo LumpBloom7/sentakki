@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
@@ -20,6 +21,7 @@ public partial class SlideBodyHighlight : CompositeDrawable
     private readonly SlideBodyInfo slideBodyInfo;
     private readonly Slide slide;
 
+    [UsedImplicitly]
     private readonly IBindable<int> versionBindable;
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
@@ -63,7 +65,6 @@ public partial class SlideBodyHighlight : CompositeDrawable
                         Origin = Anchor.Centre,
                         Children = starPieces,
                     },
-
                 ]
             },
             new Container
@@ -82,7 +83,6 @@ public partial class SlideBodyHighlight : CompositeDrawable
                     }
                 ]
             },
-
         ];
 
         versionBindable.BindValueChanged(_ => createSegmentHighlights(), true);
@@ -98,10 +98,11 @@ public partial class SlideBodyHighlight : CompositeDrawable
         int offset = 0;
         for (int i = 0; i < slideBodyInfo.Segments.Count; ++i)
         {
-            newSegments.Add(new(slide, i) { Rotation = offset * 45 });
+            newSegments.Add(new SlideSegmentHighlight(slide, i) { Rotation = offset * 45 });
 
             offset += slideBodyInfo.Segments[i].RelativeEndLane;
         }
+
         newSegments.Reverse();
 
         slideSegments.Children = newSegments;

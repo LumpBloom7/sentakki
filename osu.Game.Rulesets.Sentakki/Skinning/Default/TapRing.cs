@@ -18,7 +18,7 @@ public partial class TapRing : CompositeDrawable
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
         Size = new Vector2(CIRCLE_RADIUS * 2);
-        InternalChild = new LaneNoteVisual()
+        InternalChild = new LaneNoteVisual
         {
             RelativeSizeAxes = Axes.Both,
             Anchor = Anchor.Centre,

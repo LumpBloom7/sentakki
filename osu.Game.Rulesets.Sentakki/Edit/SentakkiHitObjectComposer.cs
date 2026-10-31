@@ -46,8 +46,9 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
     protected override ComposeBlueprintContainer CreateBlueprintContainer()
         => new SentakkiBlueprintContainer(this);
 
-    protected override DrawableRuleset<SentakkiHitObject> CreateDrawableRuleset(Ruleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
-    => new DrawableSentakkiEditorRuleset((SentakkiRuleset)ruleset, beatmap, mods);
+    protected override DrawableRuleset<SentakkiHitObject> CreateDrawableRuleset(Ruleset ruleset, IBeatmap beatmap,
+        IReadOnlyList<Mod> mods)
+        => new DrawableSentakkiEditorRuleset((SentakkiRuleset)ruleset, beatmap, mods);
 
     [Cached]
     public TouchPositionSnapGrid TouchPositionSnapGrid { get; private set; } = new TouchPositionSnapGrid();
@@ -65,7 +66,7 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
         setupTernaryBindables();
     }
 
-    private CompositionTool? currentTool = null;
+    private CompositionTool? currentTool;
 
     protected override void Update()
     {
@@ -190,7 +191,8 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
             CreateIcon = () => new SpriteIcon { Icon = OsuIcon.EditorGridSnap },
             Description = SentakkiEditorStrings.TouchSnapGrid,
             Action = SentakkiAction.EditorToggleTouchSnapGrid,
-            Hotkey = new Hotkey(SentakkiRuleset.SHORT_NAME, Ruleset.EDITOR_VARIANT, (int)SentakkiAction.EditorToggleTouchSnapGrid),
+            Hotkey =
+                new Hotkey(SentakkiRuleset.SHORT_NAME, Ruleset.EDITOR_VARIANT, (int)SentakkiAction.EditorToggleTouchSnapGrid),
         };
     }
 

@@ -41,14 +41,12 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
 
     public Container<StarPiece> SlideStars { get; private set; } = null!;
 
-    private float starProgress;
-
     public virtual float StarProgress
     {
-        get => starProgress;
+        get;
         set
         {
-            starProgress = value;
+            field = value;
 
             SlideStars[2].Position = slideBodyInfo.PositionAt(value);
             SlideStars[2].Rotation = slideBodyInfo.PositionAt(value - .01f).AngleTo(SlideStars[2].Position);
@@ -198,7 +196,8 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         }
         else // Otherwise, they suddenly pop-in.
         {
-            using (BeginDelayedSequence(slideBodyInfo.EffectiveWaitDuration + slideBodyInfo.EffectiveMovementDuration * slideBodyInfo.SegmentStartProgressFor(^1)))
+            using (BeginDelayedSequence(slideBodyInfo.EffectiveWaitDuration
+                                        + slideBodyInfo.EffectiveMovementDuration * slideBodyInfo.SegmentStartProgressFor(^1)))
             {
                 SlideStars[0].FadeIn().ScaleTo(1.25f);
                 SlideStars[1].FadeIn().ScaleTo(1.25f);
@@ -214,9 +213,9 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         userTriggered = true;
 
         // If any of the checkpoints aren't complete, we consider the slide to be incomplete
-        for (int i = 0; i < SlideCheckpoints.Count; ++i)
+        foreach (var t in SlideCheckpoints)
         {
-            if (SlideCheckpoints[i].Result.HasResult) continue;
+            if (t.Result.HasResult) continue;
 
             userTriggered = false;
             break;

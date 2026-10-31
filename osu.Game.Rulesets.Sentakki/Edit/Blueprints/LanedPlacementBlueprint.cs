@@ -18,8 +18,8 @@ public abstract partial class LanedPlacementBlueprint<T> : SentakkiPlacementBlue
     public override bool ReplacesExistingObject(HitObject existing)
     {
         bool isCandidateForRemoval = base.ReplacesExistingObject(existing)
-                                        && (existing is IHasLane lanedNote)
-                                        && lanedNote.Lane == HitObject.Lane;
+                                     && (existing is IHasLane lanedNote)
+                                     && lanedNote.Lane == HitObject.Lane;
 
         if (!isCandidateForRemoval)
             return false;
@@ -29,16 +29,15 @@ public abstract partial class LanedPlacementBlueprint<T> : SentakkiPlacementBlue
         if (existing is not Slide s)
             return true;
 
+        if (s.TapType is Slide.TapTypeEnum.None) return false;
+
         // If the slide has a tap associated with it. We will remove the tap note associated with it.
-        if (s.TapType is not Slide.TapTypeEnum.None)
-        {
-            s.TapType = Slide.TapTypeEnum.None;
+        s.TapType = Slide.TapTypeEnum.None;
 
-            composer.Playfield.Remove(s);
-            composer.Playfield.Add(s);
+        composer.Playfield.Remove(s);
+        composer.Playfield.Add(s);
 
-            editorBeatmap.Update(s);
-        }
+        editorBeatmap.Update(s);
 
         return false;
     }

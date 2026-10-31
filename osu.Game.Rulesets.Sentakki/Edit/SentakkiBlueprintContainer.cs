@@ -7,7 +7,6 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
@@ -26,7 +25,7 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
 {
     public new SentakkiHitObjectComposer Composer => (SentakkiHitObjectComposer)base.Composer;
 
-    private SentakkiMovementHandler movementHandler;
+    private readonly SentakkiMovementHandler movementHandler;
 
     public new SentakkiSelectionHandler SelectionHandler => (SentakkiSelectionHandler)base.SelectionHandler;
 
@@ -80,26 +79,15 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
 
     public override HitObjectSelectionBlueprint? CreateHitObjectBlueprintFor(HitObject hitObject)
     {
-        switch (hitObject)
+        return hitObject switch
         {
-            case Tap tap:
-                return new TapSelectionBlueprint(tap);
-
-            case Hold hold:
-                return new HoldSelectionBlueprint(hold);
-
-            case Slide slide:
-                return new SlideSelectionBlueprint(slide);
-
-            case Touch touch:
-                return new TouchSelectionBlueprint(touch);
-
-            case TouchHold touchHold:
-                return new TouchHoldSelectionBlueprint(touchHold);
-
-            default:
-                return base.CreateHitObjectBlueprintFor(hitObject);
-        }
+            Tap tap => new TapSelectionBlueprint(tap),
+            Hold hold => new HoldSelectionBlueprint(hold),
+            Slide slide => new SlideSelectionBlueprint(slide),
+            Touch touch => new TouchSelectionBlueprint(touch),
+            TouchHold touchHold => new TouchHoldSelectionBlueprint(touchHold),
+            _ => base.CreateHitObjectBlueprintFor(hitObject)
+        };
     }
 
     protected override SelectionHandler<HitObject> CreateSelectionHandler() => new SentakkiSelectionHandler();
@@ -109,18 +97,22 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
     // In the playfield, we actually proxy the slides to be under every other note type, and touches to be above.
     // The default selection order doesn't take that into account when determining the click target, which results in targetting the bottom note instead of the top.
     // We apply the proxy precedence rules Touch -> TouchHold -> Tap/Holds -> Slides, before applying time based precedence
-    protected override IEnumerable<SelectionBlueprint<HitObject>> ApplySelectionOrder(IEnumerable<SelectionBlueprint<HitObject>> blueprints)
+    protected override IEnumerable<SelectionBlueprint<HitObject>> ApplySelectionOrder(
+        IEnumerable<SelectionBlueprint<HitObject>> blueprints)
         => blueprints.Reverse()
-        .OrderBy(b => b.Item is not Touch)
-        .ThenBy(b => b.Item is not TouchHold)
-        .ThenBy(b => b.Item is Slide)
-        .ThenBy(b => Math.Min(Math.Abs(EditorClock.CurrentTime - b.Item.GetEndTime()), Math.Abs(EditorClock.CurrentTime - b.Item.StartTime)));
+            .OrderBy(b => b.Item is not Touch)
+            .ThenBy(b => b.Item is not TouchHold)
+            .ThenBy(b => b.Item is Slide)
+            .ThenBy(b => Math.Min(Math.Abs(EditorClock.CurrentTime - b.Item.GetEndTime()),
+                Math.Abs(EditorClock.CurrentTime - b.Item.StartTime)));
 
     // Since the movement is going to be a rotation, it makes sense that we prioritise the closest hitobject.
-    protected override IEnumerable<SelectionBlueprint<HitObject>> SortForMovement(IReadOnlyList<SelectionBlueprint<HitObject>> blueprints)
+    protected override IEnumerable<SelectionBlueprint<HitObject>> SortForMovement(
+        IReadOnlyList<SelectionBlueprint<HitObject>> blueprints)
         => blueprints.OrderBy(b => Vector2.DistanceSquared(b.ScreenSpaceSelectionPoint, currentMousePosition));
 
-    protected override bool TryMoveBlueprints(DragEvent e, IList<(SelectionBlueprint<HitObject> blueprint, Vector2[] originalSnapPositions)> blueprints)
+    protected override bool TryMoveBlueprints(DragEvent e,
+        IList<(SelectionBlueprint<HitObject> blueprint, Vector2[] originalSnapPositions)> blueprints)
         => movementHandler.TryMoveBlueprints(e, blueprints);
 
     // <HACK ZONE>
@@ -130,6 +122,7 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
     // We provide a mechanism for interactive blueprints to inform the BlueprintContainer that they "handled" OnMouseUp,
     //   and that the BlueprintContainer doesn't need to do anything
     private bool suppressMouseUp;
+
     public void SuppressMouseUp()
     {
         suppressMouseUp = true;

@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
@@ -42,9 +43,10 @@ public partial class TestSceneInvalidSlideProperties : OsuTestScene
             Duration = 1000
         };
 
-        Assert.That(slideBody.WaitDuration == -500, "User set wait duration is -500");
+        Assert.That(Math.Abs(slideBody.WaitDuration - (-500)) < 0.1, "User set wait duration is -500");
         Assert.That(slideBody.EffectiveWaitDuration == 0, "Effective wait duration is 0");
-        Assert.That(slideBody.EffectiveMovementDuration == slideBody.Duration, "Effective movement duration is the same as user set duration.");
+        Assert.That(Math.Abs(slideBody.EffectiveMovementDuration - slideBody.Duration) < 0.1,
+            "Effective movement duration is the same as user set duration.");
 
         var slide = new Slide
         {
@@ -70,8 +72,8 @@ public partial class TestSceneInvalidSlideProperties : OsuTestScene
             Duration = 1000
         };
 
-        Assert.That(slideBody.WaitDuration == 5000, "User set wait duration is 5000");
-        Assert.That(slideBody.EffectiveWaitDuration == slideBody.Duration, "Effective wait duration is clamped to slideBodyDuration.");
+        Assert.That(Math.Abs(slideBody.WaitDuration - 5000) < 0.1, "User set wait duration is 5000");
+        Assert.That(Math.Abs(slideBody.EffectiveWaitDuration - slideBody.Duration) < 0.1, "Effective wait duration is clamped to slideBodyDuration.");
         Assert.That(slideBody.EffectiveMovementDuration == 0, "Effective movement duration is exactly 0.");
 
         var slide = new Slide

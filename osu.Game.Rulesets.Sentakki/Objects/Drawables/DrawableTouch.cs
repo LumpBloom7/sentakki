@@ -143,8 +143,8 @@ public partial class DrawableTouch : DrawableSentakkiHitObject
 
             case ArmedState.Miss:
                 TouchBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
-                         .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
-                         .FadeOut(time_fade_miss);
+                    .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
+                    .FadeOut(time_fade_miss);
 
                 this.Delay(time_fade_miss).FadeOut();
                 break;

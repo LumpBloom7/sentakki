@@ -29,12 +29,12 @@ public partial class DefaultSentakkiJudgementPiece : DefaultJudgementPiece, IHas
         AutoSizeAxes = Axes.Both;
     }
 
-    private Bindable<bool> timingIndicatorEnabled = new Bindable<bool>();
+    private readonly Bindable<bool> timingIndicatorEnabled = new Bindable<bool>();
 
     [BackgroundDependencyLoader]
     private void load(SentakkiRulesetConfigManager configManager)
     {
-        JudgementText.Text = SentakkiExtensions.GetDisplayNameForSentakkiResult(Result).ToUpperInvariant();
+        JudgementText.Text = Result.GetDisplayNameForSentakkiResult().ToUpperInvariant();
         JudgementText.Colour = colours.ForSentakkiResult(Result);
 
         if (Result is not HitResult.Perfect && Result.IsHit())

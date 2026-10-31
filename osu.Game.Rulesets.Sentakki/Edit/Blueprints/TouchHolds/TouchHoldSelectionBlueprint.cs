@@ -21,9 +21,10 @@ public partial class TouchHoldSelectionBlueprint : SentakkiSelectionBlueprint<To
         Color4.White.Darken(0.5f),
     ];
 
-    // TouchHoldBody typically relies on colour provided by DrawableTouchHold to set its colour. Since the highlight is not tied to a DHO, we provide that dependency here.
+    // TouchHoldBody typically relies on colour provided by DrawableTouchHold to set its colour.
+    // Since the highlight is not tied to a DHO, we provide that dependency here.
     [Cached]
-    private Bindable<IReadOnlyList<Color4>>? paletteBindable { get; set; } = new Bindable<IReadOnlyList<Color4>>(SELECTION_PALETTE);
+    private Bindable<IReadOnlyList<Color4>>? paletteBindable { get; set; } = new(SELECTION_PALETTE);
 
     private readonly TouchHoldBody highlight;
 

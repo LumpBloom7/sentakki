@@ -29,7 +29,7 @@ public partial class HoldPlacementBlueprint : LanedPlacementBlueprint<Hold>
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
 
-        Child = new Container()
+        Child = new Container
         {
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
@@ -68,7 +68,7 @@ public partial class HoldPlacementBlueprint : LanedPlacementBlueprint<Hold>
 
         Child.Rotation = targetRotation;
         highlight.Y = targetY;
-        highlight.Height = (float)targetHeight;
+        highlight.Height = targetHeight;
     }
 
     private double commitStartTime;
@@ -90,7 +90,7 @@ public partial class HoldPlacementBlueprint : LanedPlacementBlueprint<Hold>
                 HitObject.StartTime = Math.Min(commitStartTime, time);
                 HitObject.EndTime = Math.Max(commitStartTime, time);
 
-                if (time != commitStartTime)
+                if (Math.Abs(time - commitStartTime) > 0.5)
                     dragged = true;
 
                 break;

@@ -9,7 +9,7 @@ namespace osu.Game.Rulesets.Sentakki.UI;
 
 public partial class SentakkiReplayRecorder : ReplayRecorder<SentakkiAction>
 {
-    public SentakkiReplayRecorder(Score score, DrawableSentakkiRuleset ruleset)
+    public SentakkiReplayRecorder(Score score)
         : base(score)
     {
     }

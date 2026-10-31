@@ -17,7 +17,7 @@ public class SentakkiHitObjectLifetimeEntry : HitObjectLifetimeEntry
         drawableRuleset = senRuleset;
 
         bindAnimationDuration();
-        AnimationDurationBindable.BindValueChanged(x => LifetimeStart = HitObject.StartTime - InitialLifetimeOffset, true);
+        AnimationDurationBindable.BindValueChanged(_ => LifetimeStart = HitObject.StartTime - InitialLifetimeOffset, true);
 
         // Prevent past objects in idles states from remaining alive as their end times are skipped in non-frame-stable contexts.
         LifetimeEnd = HitObject.GetEndTime() + HitObject.MaximumJudgementOffset;

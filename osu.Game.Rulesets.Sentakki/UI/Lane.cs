@@ -56,7 +56,8 @@ public partial class Lane : Playfield
 
     protected override void OnNewDrawableHitObject(DrawableHitObject d) => OnLoaded?.Invoke(d);
 
-    protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, drawableSentakkiRuleset);
+    protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject)
+        => new SentakkiHitObjectLifetimeEntry(hitObject, drawableSentakkiRuleset);
 
     #region Input Handling
 

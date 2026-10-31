@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -29,7 +30,7 @@ public partial class LaneNoteVisual : Drawable, ITexturedShaderDrawable
         get;
         set
         {
-            if (field == value)
+            if (Math.Abs(field - value) < 0.001)
                 return;
 
             field = value;
@@ -42,7 +43,7 @@ public partial class LaneNoteVisual : Drawable, ITexturedShaderDrawable
         get;
         set
         {
-            if (field == value)
+            if (Math.Abs(field - value) < 0.001)
                 return;
 
             field = value;
@@ -115,7 +116,7 @@ public partial class LaneNoteVisual : Drawable, ITexturedShaderDrawable
         private Quad screenSpaceDrawQuad { get; set; }
         private Vector2 size { get; set; }
 
-        protected new LaneNoteVisual Source => (LaneNoteVisual)base.Source;
+        private LaneNoteVisual source => (LaneNoteVisual)Source;
 
         protected override bool CanDrawOpaqueInterior => false;
 
@@ -132,15 +133,15 @@ public partial class LaneNoteVisual : Drawable, ITexturedShaderDrawable
         public override void ApplyState()
         {
             base.ApplyState();
-            var drawRect = Source.DrawRectangle.Normalize().Inflate(Source.ShadowRadius);
+            var drawRect = source.DrawRectangle.Normalize().Inflate(source.ShadowRadius);
             screenSpaceDrawQuad = Quad.FromRectangle(drawRect) * DrawInfo.Matrix;
             size = drawRect.Size;
 
-            var newParameters = new ShapeParameters()
+            var newParameters = new ShapeParameters
             {
-                BorderThickness = Source.Thickness,
-                ShadowRadius = Source.ShadowRadius,
-                Glow = Source.Glow,
+                BorderThickness = source.Thickness,
+                ShadowRadius = source.ShadowRadius,
+                Glow = source.Glow,
             };
 
             // If the uniform properties have changed, then we definitely want to null this out so that we get a more appropriate uniform block
@@ -195,9 +196,9 @@ public partial class LaneNoteVisual : Drawable, ITexturedShaderDrawable
             public UniformPadding4 _;
         }
 
-        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> uniformBuffer)
+        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> uniformBufferCandidate)
         {
-            return uniformBuffer.Data == parameters;
+            return uniformBufferCandidate.Data == parameters;
         }
     }
 }

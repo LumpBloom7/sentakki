@@ -13,7 +13,7 @@ public partial class BenchmarkGroupBy
     [GlobalSetup]
     public void GlobalSetup()
     {
-        hitObjects = new List<HitObject>();
+        hitObjects = [];
 
         for (int i = 0; i < 50000; ++i)
         {
@@ -45,7 +45,7 @@ public partial class BenchmarkGroupBy
         {
             foreach (var ho in group)
             {
-                if (ho is Tap t && t.Break)
+                if (ho is Tap { Break: true })
                     ++sum;
             }
         }
@@ -73,7 +73,7 @@ public partial class BenchmarkGroupBy
         {
             foreach (var ho in group.Value)
             {
-                if (ho is Tap t && t.Break)
+                if (ho is Tap { Break: true })
                     ++sum;
             }
         }

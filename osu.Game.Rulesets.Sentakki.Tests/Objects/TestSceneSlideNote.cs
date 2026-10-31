@@ -48,20 +48,21 @@ public partial class TestSceneSlideNote : OsuTestScene
     [TestCaseSource(nameof(ObjectFlagsSource))]
     public void TestSlides(bool headBreak, bool headEx, bool bodyBreak, bool bodyEx)
     {
-        AddStep("Miss Single", () => testSingle(2000, false, headBreak, headEx, bodyBreak, bodyEx));
-        AddStep("Hit Single", () => testSingle(2000, true, headBreak, headEx, bodyBreak, bodyEx));
-        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject hitObject && hitObject.AllJudged == false));
+        AddStep("Miss Single", () => testSingle(false, headBreak, headEx, bodyBreak, bodyEx));
+        AddStep("Hit Single", () => testSingle(true, headBreak, headEx, bodyBreak, bodyEx));
+        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject { AllJudged: false }));
 
         AddStep("Miss chain", () => testChain(5000, false, headBreak, headEx, bodyBreak, bodyEx));
         AddStep("Hit chain", () => testChain(5000, true, headBreak, headEx, bodyBreak, bodyEx));
-        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject hitObject && hitObject.AllJudged == false));
+        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject { AllJudged: false }));
 
         AddStep("Miss chain with Fan", () => testChainWithFan(6000, false, headBreak, headEx, bodyBreak, bodyEx));
         AddStep("Hit chain with Fan", () => testChainWithFan(6000, true, headBreak, headEx, bodyBreak, bodyEx));
-        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject hitObject && hitObject.AllJudged == false));
+        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject { AllJudged: false }));
     }
 
-    private void testSingle(double duration, bool auto = false, bool headBreak = false, bool headEx = false, bool bodyBreak = false, bool bodyEx = false)
+    private void testSingle(bool auto = false, bool headBreak = false, bool headEx = false, bool bodyBreak = false,
+        bool bodyEx = false)
     {
         var slide = new Slide
         {
@@ -128,7 +129,8 @@ public partial class TestSceneSlideNote : OsuTestScene
         }
     }
 
-    private void testChain(double duration, bool auto = false, bool headBreak = false, bool headEx = false, bool bodyBreak = false, bool bodyEx = false)
+    private void testChain(double duration, bool auto = false, bool headBreak = false, bool headEx = false, bool bodyBreak = false,
+        bool bodyEx = false)
     {
         var slide = new Slide
         {
@@ -183,7 +185,8 @@ public partial class TestSceneSlideNote : OsuTestScene
         }
     }
 
-    private void testChainWithFan(double duration, bool auto = false, bool headBreak = false, bool headEx = false, bool bodyBreak = false, bool bodyEx = false)
+    private void testChainWithFan(double duration, bool auto = false, bool headBreak = false, bool headEx = false, bool bodyBreak = false,
+        bool bodyEx = false)
     {
         var slide = new Slide
         {

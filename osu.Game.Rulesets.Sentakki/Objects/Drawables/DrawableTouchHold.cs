@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
 using osu.Framework.Utils;
-using osu.Game.Audio;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -80,7 +78,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
     {
         base.LoadSamples();
 
-        holdSample.Samples = [.. HitObject.CreateHoldSample().Cast<ISampleInfo>()];
+        holdSample.Samples = [.. HitObject.CreateHoldSample()];
         holdSample.Frequency.Value = 1;
     }
 

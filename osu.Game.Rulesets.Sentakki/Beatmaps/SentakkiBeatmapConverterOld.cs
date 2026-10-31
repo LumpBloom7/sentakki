@@ -48,7 +48,10 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
 
     private readonly SentakkiPatternGenerator patternGenerator;
 
-    private readonly Dictionary<Vector2, double> endTimes = VALID_TOUCH_POSITIONS.Select(p => new KeyValuePair<Vector2, double>(p, double.MinValue)).ToDictionary();
+    private readonly Dictionary<Vector2, double> endTimes
+        = VALID_TOUCH_POSITIONS
+            .Select(p => new KeyValuePair<Vector2, double>(p, double.MinValue))
+            .ToDictionary();
 
     public SentakkiBeatmapConverterOld(IBeatmap beatmap, Ruleset ruleset)
         : base(beatmap, ruleset)
@@ -85,7 +88,9 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
         bool twin = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP);
 
         if (!breakNote && !ClassicMode && special)
+        {
             yield return createTouchNote(original);
+        }
         else
         {
             if (twin && ConversionFlags.HasFlag(ConversionFlags.TwinNotes))
@@ -102,7 +107,9 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
         if (spinner.Duration >= 100)
         {
             if (!ClassicMode)
+            {
                 yield return createTouchHold(original);
+            }
             else
             {
                 foreach (var ho in convertSlider(original))
@@ -126,7 +133,9 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
         IList<IList<HitSampleInfo>> nodeSamples;
 
         if (original is IHasPathWithRepeats sl)
+        {
             nodeSamples = sl.NodeSamples;
+        }
         else
         {
             nodeSamples =
@@ -181,7 +190,9 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
         if (ConversionFlags.HasFlag(ConversionFlags.TwinNotes))
         {
             if (twin)
-                yield return createHoldNote(original, nodeSamples, true, breakHead);
+            {
+                yield return createHoldNote(original, true, breakHead);
+            }
             else
             {
                 foreach (var note in createTapsFromNodes(original, nodeSamples))
@@ -189,25 +200,28 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
             }
         }
 
-        yield return createHoldNote(original, nodeSamples, false, breakHead);
+        yield return createHoldNote(original, false, breakHead);
     }
 
-    private IEnumerable<SentakkiHitObject> tryConvertSliderToSlide(HitObject original, IList<IList<HitSampleInfo>> nodeSamples, bool twin = false, bool hasBreakHead = false,
-                                                                   bool hasBreakTail = false)
+    private IEnumerable<SentakkiHitObject> tryConvertSliderToSlide(HitObject original, IList<IList<HitSampleInfo>> nodeSamples, bool twin = false,
+        bool hasBreakHead = false,
+        bool hasBreakTail = false)
     {
         List<Slide> slides = [];
         List<Tap> taps = [];
 
         if (ConversionFlags.HasFlag(ConversionFlags.TwinSlides))
         {
-            if (twin)
+            if (!twin)
+            {
+                taps.AddRange(createTapsFromNodes(original, nodeSamples));
+            }
+            else
             {
                 var secondSlide = createSlideNote(original, nodeSamples, true, hasBreakHead, hasBreakTail);
                 if (secondSlide is not null)
                     slides.Add(secondSlide);
             }
-            else
-                taps.AddRange(createTapsFromNodes(original, nodeSamples));
         }
 
         var mainSlide = createSlideNote(original, nodeSamples, false, hasBreakHead, hasBreakTail);
@@ -255,7 +269,7 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
             StartTime = original.StartTime,
         };
 
-    private Hold createHoldNote(HitObject original, IList<IList<HitSampleInfo>> samples, bool twin = false, bool isBreak = false)
+    private Hold createHoldNote(HitObject original, bool twin = false, bool isBreak = false)
         => new Hold
         {
             Break = !ClassicMode && isBreak,
@@ -280,7 +294,7 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
                 return original.StartTime >= endTime;
 
             return true;
-        }).Shuffle(patternGenerator.RNG);
+        }).Shuffle(patternGenerator.SeededRng);
 
         // Choosing a position
         var position = availableTouchPositions.FirstOrDefault(endTimes.MinBy(x => x.Value).Key);
@@ -295,7 +309,8 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
         };
     }
 
-    private Slide? createSlideNote(HitObject original, IList<IList<HitSampleInfo>> samples, bool twin = false, bool hasBreakHead = false, bool hasBreakTail = false)
+    private Slide? createSlideNote(HitObject original, IList<IList<HitSampleInfo>> samples, bool twin = false, bool hasBreakHead = false,
+        bool hasBreakTail = false)
     {
         int noteLane = patternGenerator.GetNextLane(twin);
 
@@ -332,10 +347,10 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
             candidates = [.. candidates.Where(p => p.Segment.Shape != PathShape.Fan)];
 
         var candidateParts = candidates.Where(t => duration >= t.MinDuration && duration <= t.MinDuration * 10)
-                                       .Select(t => t.Segment)
-                                       .ToList();
+            .Select(t => t.Segment)
+            .ToList();
 
-        return candidateParts.Count == 0 ? null : candidateParts[patternGenerator.RNG.Next(candidateParts.Count)];
+        return candidateParts.Count == 0 ? null : candidateParts[patternGenerator.SeededRng.Next(candidateParts.Count)];
     }
 
     private IEnumerable<Tap> createTapsFromNodes(HitObject original, IList<IList<HitSampleInfo>> nodeSamples)
@@ -350,15 +365,15 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
             yield break;
 
         // There's a chance no taps will be generated from nodes
-        if (patternGenerator.RNG.NextDouble() < 0.5)
+        if (patternGenerator.SeededRng.NextDouble() < 0.5)
             yield break;
 
         // There's a chance no taps will be generated from head nodes
-        bool shouldConsiderStartTick = patternGenerator.RNG.NextDouble() < 0.5;
+        bool shouldConsiderStartTick = patternGenerator.SeededRng.NextDouble() < 0.5;
 
         // There's a chance no taps will be generated from head nodes
         // If the head node isn't considered, then neither will the tail
-        bool shouldConsiderTailTick = shouldConsiderStartTick && patternGenerator.RNG.NextDouble() < 0.5;
+        bool shouldConsiderTailTick = shouldConsiderStartTick && patternGenerator.SeededRng.NextDouble() < 0.5;
 
         var difficulty = Beatmap.BeatmapInfo.Difficulty;
 
@@ -375,7 +390,8 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
 
         int nodeSampleIndex = 0;
 
-        foreach (var e in SliderEventGenerator.Generate(original.StartTime, spanDuration, velocity, tickDistance, curve.Path.Distance, curve.RepeatCount + 1, CancellationToken.None))
+        foreach (var e in SliderEventGenerator.Generate(original.StartTime, spanDuration, velocity, tickDistance, curve.Path.Distance,
+                     curve.RepeatCount + 1, CancellationToken.None))
         {
             switch (e.Type)
             {

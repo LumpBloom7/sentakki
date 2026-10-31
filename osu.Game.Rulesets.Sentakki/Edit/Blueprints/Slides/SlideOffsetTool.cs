@@ -24,7 +24,8 @@ public partial class SlideOffsetTool : CompositeDrawable
     private readonly Slide slide;
     private readonly SlideBodyInfo slideBodyInfo;
 
-    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => InternalChildren.Any(c => c.ReceivePositionalInputAt(screenSpacePos));
+    public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
+        => InternalChildren.Any(c => c.ReceivePositionalInputAt(screenSpacePos));
 
     [Resolved]
     private EditorBeatmap editorBeatmap { get; set; } = null!;
@@ -65,6 +66,7 @@ public partial class SlideOffsetTool : CompositeDrawable
             },
         ];
     }
+
     private readonly Bindable<double> animationSpeed = new Bindable<double>(5);
 
     [BackgroundDependencyLoader]
@@ -85,7 +87,7 @@ public partial class SlideOffsetTool : CompositeDrawable
             editorClock.CurrentTime + animationSpeed.Value / 2
         );
 
-        float Y2 = -Interpolation.ValueAt(
+        float y2 = -Interpolation.ValueAt(
             slide.StartTime + slideBodyInfo.EffectiveWaitDuration,
             SentakkiPlayfield.INTERSECTDISTANCE,
             SentakkiPlayfield.NOTESTARTDISTANCE,
@@ -94,9 +96,9 @@ public partial class SlideOffsetTool : CompositeDrawable
         );
 
         Y = Math.Min(Y, -SentakkiPlayfield.NOTESTARTDISTANCE);
-        Y2 = Math.Min(Y2, -SentakkiPlayfield.NOTESTARTDISTANCE);
+        y2 = Math.Min(y2, -SentakkiPlayfield.NOTESTARTDISTANCE);
 
-        Height = Math.Abs(Y - Y2);
+        Height = Math.Abs(Y - y2);
     }
 
     protected override bool OnClick(ClickEvent e) => true;

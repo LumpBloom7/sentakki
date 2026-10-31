@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using osu.Framework.Bindables;
 using osu.Framework.Localisation;
@@ -34,29 +35,30 @@ public class SentakkiModChallenge : ModFailCondition, IApplicableToDrawableRules
 
     public enum Lives
     {
-        [Description("5")]
+        [Description("5"), UsedImplicitly]
         Five = 5,
 
-        [Description("10")]
+        [Description("10"), UsedImplicitly]
         Ten = 10,
 
-        [Description("20")]
+        [Description("20"), UsedImplicitly]
         Twenty = 20,
 
-        [Description("50")]
+        [Description("50"), UsedImplicitly]
         Fifty = 50,
 
-        [Description("100")]
+        [Description("100"), UsedImplicitly]
         Hundred = 100,
 
-        [Description("200")]
+        [Description("200"), UsedImplicitly]
         TwoHundred = 200,
 
-        [Description("300")]
+        [Description("300"), UsedImplicitly]
         ThreeHundred = 300,
     }
 
-    [SettingSource(typeof(SentakkiModChallengeStrings), nameof(SentakkiModChallengeStrings.NumberOfLives), nameof(SentakkiModChallengeStrings.NumberOfLivesDescription))]
+    [SettingSource(typeof(SentakkiModChallengeStrings), nameof(SentakkiModChallengeStrings.NumberOfLives),
+        nameof(SentakkiModChallengeStrings.NumberOfLivesDescription))]
     public Bindable<Lives> LiveSetting { get; } = new Bindable<Lives>
     {
         Default = Lives.Fifty,

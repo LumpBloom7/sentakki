@@ -31,7 +31,8 @@ public partial class TapSelectionBlueprint : SentakkiSelectionBlueprint<Tap, Dra
             Origin = Anchor.Centre,
             Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
 
-            Child = highlight = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap), _ => new TapRing(), ConfineMode.ScaleToFit)
+            Child = highlight = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap),
+                _ => new TapRing(), ConfineMode.ScaleToFit)
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

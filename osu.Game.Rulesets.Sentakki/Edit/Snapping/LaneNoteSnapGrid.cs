@@ -9,7 +9,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Utils;
-using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Sentakki.Extensions;
@@ -21,8 +20,8 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Snapping;
 
 public partial class LaneNoteSnapGrid : VisibilityContainer
 {
-    public readonly Bindable<TernaryState> Enabled = new Bindable<TernaryState>(TernaryState.True);
-    private Bindable<bool> activationRequested = new Bindable<bool>();
+    public readonly Bindable<TernaryState> Enabled = new(TernaryState.True);
+    private readonly Bindable<bool> activationRequested = new();
 
     [Resolved]
     private EditorClock editorClock { get; set; } = null!;
@@ -39,9 +38,9 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
     protected override void PopIn() => this.FadeIn(50);
     protected override void PopOut() => this.FadeOut(100);
 
-    private Cached gridCache = new Cached();
+    private readonly Cached gridCache = new Cached();
 
-    private Bindable<double> animationDuration = new Bindable<double>();
+    private readonly Bindable<double> animationDuration = new Bindable<double>();
 
     private DrawablePool<DrawableGridLine> linePool = null!;
 
@@ -88,14 +87,15 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
         activationRequested.Value = false;
     }
 
-    private double lastTime = 0;
+    private double lastTime;
+
     protected override void Update()
     {
         base.Update();
 
         // When paused, the clock's frame-rate is 0, and so the ElapsedFrameTime is 0
         // Let's manually keep track of time changes.
-        if (lastTime != editorClock.CurrentTime)
+        if (Math.Abs(lastTime - editorClock.CurrentTime) > 0.5)
         {
             lastTime = editorClock.CurrentTime;
             gridCache.Invalidate();
@@ -129,7 +129,9 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
 
             double beatLength = timingPoint.BeatLength / bindableBeatDivisor.Value;
 
-            for (int beatIndex = 0; ; ++beatIndex)
+            int beatIndex = 0;
+
+            while (true)
             {
                 double beatTime = timingPoint.Time + beatIndex * beatLength;
 
@@ -143,13 +145,15 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
 
                 var line = linePool.Get();
 
-                line.Size = new Vector2((float)Interpolation.Lerp(SentakkiPlayfield.NOTESTARTDISTANCE, SentakkiPlayfield.INTERSECTDISTANCE, scaleAmount)) * 2;
+                line.Size = new Vector2((float)Interpolation.Lerp(SentakkiPlayfield.NOTESTARTDISTANCE,
+                    SentakkiPlayfield.INTERSECTDISTANCE, scaleAmount)) * 2;
 
                 int divisor = BindableBeatDivisor.GetDivisorForBeatIndex(beatIndex, bindableBeatDivisor.Value);
                 line.Colour = BindableBeatDivisor.GetColourFor(divisor, colours);
                 line.Thickness = BindableBeatDivisor.GetSize(divisor).Y * 2;
 
                 gridLines.Add(line);
+                ++beatIndex;
             }
         }
 
@@ -162,12 +166,14 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
 
         if (State.Value is Visibility.Visible)
         {
-            float mouseDistanceFromCentre = Math.Clamp(localMousePosition.Length, SentakkiPlayfield.NOTESTARTDISTANCE, SentakkiPlayfield.INTERSECTDISTANCE);
+            float mouseDistanceFromCentre = Math.Clamp(localMousePosition.Length, SentakkiPlayfield.NOTESTARTDISTANCE,
+                SentakkiPlayfield.INTERSECTDISTANCE);
 
             double currentTime = editorClock.CurrentTime;
             double maximumTime = currentTime + animationDuration.Value / 2;
 
-            double timeAtMousePosition = Interpolation.ValueAt(mouseDistanceFromCentre, maximumTime, currentTime, SentakkiPlayfield.NOTESTARTDISTANCE, SentakkiPlayfield.INTERSECTDISTANCE);
+            double timeAtMousePosition = Interpolation.ValueAt(mouseDistanceFromCentre, maximumTime, currentTime,
+                SentakkiPlayfield.NOTESTARTDISTANCE, SentakkiPlayfield.INTERSECTDISTANCE);
 
             snappedTime = editorBeatmap.SnapTime(timeAtMousePosition, null);
         }
@@ -180,14 +186,13 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
 
     private partial class DrawableGridLine : PoolableDrawable
     {
-        private CircularProgress circularProgress;
+        private readonly CircularProgress circularProgress;
 
         public float Thickness
         {
-            get;
             set
             {
-                if (value == field)
+                if (Math.Abs(value - field) < 0.5)
                     return;
 
                 field = value;

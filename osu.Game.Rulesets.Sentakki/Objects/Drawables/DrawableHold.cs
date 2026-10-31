@@ -75,7 +75,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
     protected override void LoadComplete()
     {
         base.LoadComplete();
-        AccentColour.BindValueChanged(c => flashingColour = AccentColour.Value.LightenHsl(0.4f), true);
+        AccentColour.BindValueChanged(_ => flashingColour = AccentColour.Value.LightenHsl(0.4f), true);
     }
 
     private Color4 flashingColour = Color4.White;
@@ -157,10 +157,9 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
         double flashProg = Time.Current % (flashing_time * 2) / (flashing_time * 2);
 
-        if (flashProg <= 0.5)
-            NoteBody.Colour = Interpolation.ValueAt(flashProg, AccentColour.Value, flashingColour, 0, 0.5, Easing.OutSine);
-        else
-            NoteBody.Colour = Interpolation.ValueAt(flashProg, flashingColour, AccentColour.Value, 0.5, 0, Easing.InSine);
+        NoteBody.Colour = flashProg <= 0.5
+            ? Interpolation.ValueAt(flashProg, AccentColour.Value, flashingColour, 0, 0.5, Easing.OutSine)
+            : Interpolation.ValueAt(flashProg, flashingColour, AccentColour.Value, 0.5, 0, Easing.InSine);
     }
 
     protected override void UpdateInitialTransforms()
@@ -175,15 +174,17 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
             const float total_movable_distance = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
 
             // This is the amount of stretch needed. Capped to the max stretch amount.
-            float stretchAmount = Math.Clamp((float)(total_movable_distance / animTime * (HitObject as IHasDuration).Duration), 0, total_movable_distance);
+            float stretchAmount = Math.Clamp((float)(total_movable_distance / animTime * (HitObject as IHasDuration).Duration), 0,
+                total_movable_distance);
 
             // This is the amount of time that the note spends stretching or unstretching
             float stretchTime = (float)(stretchAmount / total_movable_distance * animTime);
 
             NoteBody.MoveToY(-SentakkiPlayfield.INTERSECTDISTANCE, animTime) // Move the head towards the ring
-                    .ResizeHeightTo(stretchAmount, stretchTime) // While we are moving, we stretch the hold note to match desired length
-                    .Then().Delay(HitObject.Duration - stretchTime) // Wait until the end of the hold note, while considering how much time we need for shrinking
-                    .ResizeHeightTo(0, stretchTime); // We shrink the hold note as it exits
+                .ResizeHeightTo(stretchAmount, stretchTime) // While we are moving, we stretch the hold note to match desired length
+                .Then()
+                .Delay(HitObject.Duration - stretchTime) // Wait until the end of the hold note, while considering how much time we need for shrinking
+                .ResizeHeightTo(0, stretchTime); // We shrink the hold note as it exits
         }
     }
 
@@ -231,9 +232,9 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
             case ArmedState.Miss:
                 NoteBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
-                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
-                        .MoveToOffset(new Vector2(0, -100), time_fade_miss, Easing.OutCubic)
-                        .FadeOut(time_fade_miss);
+                    .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
+                    .MoveToOffset(new Vector2(0, -100), time_fade_miss, Easing.OutCubic)
+                    .FadeOut(time_fade_miss);
 
                 this.Delay(time_fade_miss).FadeOut();
                 break;

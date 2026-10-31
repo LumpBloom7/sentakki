@@ -23,16 +23,16 @@ public partial class JudgementChart : TableContainer
 
     private static readonly (string, Func<HitEvent, bool>)[] hit_object_types =
     [
-        ("Tap", e => e.HitObject is Tap x && !x.Break),
+        ("Tap", e => e.HitObject is Tap { Break: false }),
         ("Hold", e => e.HitObject is Hold.HoldHead or Hold && !((SentakkiLanedHitObject)e.HitObject).Break),
-        ("Slide", e => e.HitObject is SlideBody x && !x.Break),
+        ("Slide", e => e.HitObject is SlideBody { Break: false }),
         ("Touch", e => e.HitObject is Touch),
         ("Touch Hold", e => e.HitObject is TouchHold),
         // Note Hold and Slide breaks are applied to child objects, not itself.
-        ("Break", e => e.HitObject is SentakkiLanedHitObject x && x is not Slide && x.Break)
+        ("Break", e => e.HitObject is SentakkiLanedHitObject { Break: true } and not Slide)
     ];
 
-    private OsuColour colours { get; set; } = new OsuColour();
+    private OsuColour colours { get; } = new OsuColour();
 
     private static readonly HitResult[] valid_results =
     [
