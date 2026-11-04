@@ -4,10 +4,11 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 using osu.Framework.Utils;
 using osu.Game.Audio;
-using osu.Game.Graphics;
+using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
@@ -36,6 +37,9 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
 
     private readonly IBindable<Vector2> positionBindable = new Bindable<Vector2>();
 
+    private Container<DrawableTouchHoldHead> headContainer = null!;
+    public DrawableTouchHoldHead Head => headContainer.Child;
+
     public DrawableTouchHold()
         : this(null)
     {
@@ -51,6 +55,8 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         base.OnApply();
         colourPalette.BindTo(HitObject.ColourPaletteBindable);
         positionBindable.BindTo(HitObject.PositionBindable);
+        releaseTime = double.MinValue;
+        isHitting.Value = false;
     }
 
     [BackgroundDependencyLoader]
@@ -64,16 +70,53 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         Origin = Anchor.Centre;
         AddRangeInternal(
         [
+            headContainer = new Container<DrawableTouchHoldHead> { RelativeSizeAxes = Axes.Both },
             TouchHoldBody = new TouchHoldBody(),
             holdSample = new PausableSkinnableSound
             {
                 Volume = { Value = 1 },
                 Looping = true,
                 Frequency = { Value = 1 }
-            }
+            },
         ]);
 
         positionBindable.BindValueChanged(v => Position = v.NewValue);
+        pressedCount.BindValueChanged(onPressedCountChanged);
+        OnRevertResult += resultReverted;
+    }
+
+    protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
+    {
+        switch (hitObject)
+        {
+            case TouchHold.TouchHoldHead head:
+                return new DrawableTouchHoldHead(head)
+                {
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    AutoBindable = { BindTarget = AutoBindable }
+                };
+        }
+
+        return base.CreateNestedHitObject(hitObject);
+    }
+
+    protected override void AddNestedHitObject(DrawableHitObject hitObject)
+    {
+        base.AddNestedHitObject(hitObject);
+
+        switch (hitObject)
+        {
+            case DrawableTouchHoldHead head:
+                headContainer.Child = head;
+                break;
+        }
+    }
+
+    protected override void ClearNestedHitObjects()
+    {
+        base.ClearNestedHitObjects();
+        headContainer.Clear(false);
     }
 
     protected override void LoadSamples()
@@ -90,9 +133,6 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         holdSample.Stop();
     }
 
-    [Resolved]
-    private OsuColour colours { get; set; } = null!;
-
     protected override void OnFree()
     {
         base.OnFree();
@@ -100,8 +140,6 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         holdSample.ClearSamples();
         colourPalette.UnbindFrom(HitObject.ColourPaletteBindable);
         positionBindable.UnbindFrom(HitObject.PositionBindable);
-        isHitting.Value = false;
-        totalHoldTime = 0;
     }
 
     protected override void UpdateInitialTransforms()
@@ -128,25 +166,32 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
     [Cached]
     private readonly Bindable<bool> isHitting = new Bindable<bool>();
 
-    private double totalHoldTime;
+    private Bindable<int> pressedCount = new Bindable<int>();
 
-    private bool isHittable => Time.Current >= HitObject.StartTime - 150 && Time.Current < HitObject.GetEndTime();
-    private bool withinActiveTime => Time.Current >= HitObject.StartTime && Time.Current < HitObject.GetEndTime();
-
-    private int pressedCount;
+    private double? releaseTime;
 
     protected override void Update()
     {
         base.Update();
 
-        int updatedPressedCounts = countActiveTouchPoints();
+        pressedCount.Value = countActiveTouchPoints();
 
-        if (isHittable && (updatedPressedCounts > pressedCount || Auto))
-            isHitting.Value = true;
-        else if (!isHittable || updatedPressedCounts == 0)
-            isHitting.Value = false;
+        autoplayUpdate();
 
-        pressedCount = updatedPressedCounts;
+        if (AllJudged)
+        {
+            // Remove alterations to NoteBody colour
+            Colour = Color4.White;
+            return;
+        }
+
+        // Ensure that the note colour is correct prior to the start time
+        if (Time.Current < HitObject.StartTime)
+        {
+            holdSample?.Stop();
+            Colour = Color4.White;
+            return;
+        }
 
         if (!isHitting.Value)
         {
@@ -157,45 +202,61 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
                 Math.Clamp(Time.Current, HitObject.StartTime, HitObject.StartTime + 100),
                 Color4.White, Color4.SlateGray,
                 HitObject.StartTime, HitObject.StartTime + 100, Easing.OutSine);
+
             return;
         }
-
-        if (!withinActiveTime)
-            return;
 
         if (!holdSample.RequestedPlaying)
             holdSample.Play();
 
-        totalHoldTime = Math.Clamp(totalHoldTime + Time.Elapsed, 0, ((IHasDuration)HitObject).Duration);
-        holdSample.Frequency.Value = 0.5 + totalHoldTime / ((IHasDuration)HitObject).Duration;
+        holdSample.Frequency.Value = 0.5 + ((Time.Current - HitObject.StartTime) / ((IHasDuration)HitObject).Duration) * 0.5f;
         Colour = Color4.White;
     }
 
     protected override void CheckForResult(bool userTriggered, double timeOffset)
     {
-        if (Time.Current < ((IHasDuration)HitObject).EndTime) return;
+        if (userTriggered)
+            return;
 
-        double result = totalHoldTime / ((IHasDuration)HitObject).Duration;
+        // Judgement of the tail can only happen after the head is judged.
+        if (!Head.Judged)
+            return;
 
-        HitResult resultType;
+        double perfectWindow = HitObject.HitWindows.WindowFor(HitResult.Perfect);
+        double timeNotHeld = releaseTime.HasValue ? Time.Current - releaseTime.Value : 0;
 
-        if (result >= 0.90)
-            resultType = HitResult.Perfect;
-        else if (result >= 0.75)
-            resultType = HitResult.Great;
-        else if (result >= 0.5)
-            resultType = HitResult.Good;
-        else if (result >= 0.25)
-            resultType = HitResult.Meh;
-        else
-            resultType = HitResult.Miss;
+        // If the player is still holding it beyond the perfect window, the maximum result is a Great.
+        if (timeOffset >= 0 && isHitting.Value)
+        {
+            ApplyResult(HitResult.Perfect);
+        }
+        else if (timeOffset >= -perfectWindow && !isHitting.Value)
+        {
+            // If the user is not holding the note, also take into account the time the player wasn't holding the note
+            var earlyReleaseResult = HitObject.HitWindows.ResultFor(timeOffset - timeNotHeld);
 
-        // This is specifically to accommodate the threshold setting in HR
-        if (!HitObject.HitWindows.IsHitResultAllowed(resultType))
-            resultType = HitResult.Miss;
+            if (earlyReleaseResult <= HitResult.None)
+                earlyReleaseResult = HitResult.Miss;
 
-        AccentColour.Value = colours.ForHitResult(resultType);
-        ApplyResult(resultType);
+            ApplyResult(earlyReleaseResult);
+        }
+        // If the user hasn't held it for 200ms, unconditionally consider a miss.
+        else if (timeNotHeld >= HitObject.HitWindows.WindowFor(HitResult.Miss))
+        {
+            ApplyResult(HitObject.Judgement.MinResult);
+        }
+
+        return;
+    }
+
+    private void resultReverted(DrawableHitObject drawableHitObject, JudgementResult judgementResult)
+    {
+        if (drawableHitObject != Head)
+            return;
+
+        holdSample?.Stop();
+        releaseTime = double.MinValue;
+        isHitting.Value = false;
     }
 
     protected override void UpdateHitStateTransforms(ArmedState state)
@@ -243,5 +304,72 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         }
 
         return count;
+    }
+
+    private void onPressedCountChanged(ValueChangedEvent<int> pressedCount)
+    {
+        if (pressedCount.NewValue > pressedCount.OldValue)
+            onTouchPressed();
+        else
+            onTouchReleased();
+    }
+
+    private void onTouchPressed()
+    {
+        if (AllJudged)
+            return;
+
+        double timeOffset = Time.Current - HitObject.StartTime;
+
+        if (timeOffset < -Head.HitObject.HitWindows.WindowFor(HitResult.Perfect))
+            return;
+
+        Head.UpdateResult();
+        isHitting.Value = true;
+        releaseTime = null;
+    }
+
+    private void onTouchReleased()
+    {
+        if (AllJudged)
+            return;
+
+        if (!isHitting.Value)
+            return;
+
+        if (pressedCount.Value > 0)
+            return;
+
+        UpdateResult(true);
+        isHitting.Value = false;
+        releaseTime = Time.Current;
+
+        if (!AllJudged)
+            Colour = Color4.Gray;
+    }
+
+    private void autoplayUpdate()
+    {
+        if (!Auto)
+            return;
+
+        // If auto is within the hittable time, attempt to hit it
+        // HACK: In editor context, frame stability is not enforced, this could potentially lead to 0 duration slides being missed as we never ever visit the window.
+        // We resolve this by giving autoplay a bit more leniency. In practice nothing should change for regular autoplay.
+        double missWindow = HitObject.HitWindows.WindowFor(HitResult.Miss);
+
+        if (Time.Current >= HitObject.StartTime && Time.Current < HitObject.EndTime + missWindow)
+        {
+            if (!isHitting.Value)
+                Head.UpdateResult();
+
+            isHitting.Value = true;
+            releaseTime = null;
+        }
+        else
+        {
+            isHitting.Value = false;
+            releaseTime = Time.Current;
+        }
     }
 }

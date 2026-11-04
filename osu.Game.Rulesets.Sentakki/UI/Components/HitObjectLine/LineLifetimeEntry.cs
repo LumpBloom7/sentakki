@@ -42,6 +42,7 @@ public class LineLifetimeEntry : LifetimeEntry
     public void Remove(SentakkiLanedHitObject hitObject)
     {
         hitObject.BreakBindable.ValueChanged -= onBreakChanged;
+        hitObject.ColourBindable.ValueChanged -= onColorChanged;
         HitObjects.Remove(hitObject);
         updateLine();
     }

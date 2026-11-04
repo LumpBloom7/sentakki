@@ -27,7 +27,7 @@ public class SentakkiTouchHitWindows : SentakkiHitWindows
     {
         HitResult.Miss or HitResult.Meh => 15 * TIMING_UNIT,
         HitResult.Good => 12 * TIMING_UNIT,
-        HitResult.Great => 10.5 * TIMING_UNIT,
+        HitResult.Great => 9 * TIMING_UNIT,
         HitResult.Perfect => 9 * TIMING_UNIT,
         _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
     };

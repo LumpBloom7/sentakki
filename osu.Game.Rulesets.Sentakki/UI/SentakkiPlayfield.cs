@@ -101,6 +101,7 @@ public partial class SentakkiPlayfield : Playfield
     private void load(SkinManager skinManager, IBeatmap beatmap, BeatmapDifficultyCache difficultyCache)
     {
         RegisterPool<TouchHold, DrawableTouchHold>(2);
+        RegisterPool<TouchHold.TouchHoldHead, DrawableTouchHoldHead>(2);
         RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(8);
 
         skin = skinManager.CurrentSkin.GetBoundCopy();

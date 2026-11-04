@@ -38,6 +38,4 @@ public partial class DrawableHoldHead : DrawableSentakkiLanedHitObject
     }
 
     public void UpdateResult() => UpdateResult(true);
-
-    public void MissForcefully() => ApplyResult(Result.Judgement.MinResult);
 }
