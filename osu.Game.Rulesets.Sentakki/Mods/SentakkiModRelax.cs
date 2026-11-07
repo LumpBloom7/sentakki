@@ -113,6 +113,7 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
         switch (drawableHitObject)
         {
             case DrawableHold hold:
+            {
                 if (time > hold.HitObject.EndTime || hold.HitObject.Lane != hoveredLane.Current)
                     break;
 
@@ -123,6 +124,7 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
                     break;
 
                 return (needsTap: !hold.Head.AllJudged, needsHold: true);
+            }
 
             case DrawableTap tap:
                 if (tap.HitObject.Lane != hoveredLane.Current)
@@ -134,13 +136,21 @@ public class SentakkiModRelax : ModRelax, IUpdatableByPlayfield, IApplicableToDr
                 );
 
             case DrawableTouchHold touchHold when !touchHold.Auto:
+            {
                 if (time <= touchHold.HitObject.StartTime || time > touchHold.HitObject.EndTime)
                     break;
 
                 if (!touchHold.ReceivePositionalInputAt(mousePosition.Current))
                     break;
 
-                return (needsTap: false, needsHold: true);
+                bool isHeadHittable = isInHitRange(touchHold.Head.HitObject, time, touchHold.ReceivePositionalInputAt(mousePosition.Predicted));
+
+                // If we can't properly hit the head yet, ignore everything
+                if (!isHeadHittable)
+                    break;
+
+                return (needsTap: !touchHold.Head.AllJudged, needsHold: true);
+            }
 
             case DrawableTouch touch when !touch.Auto:
                 if (!touch.ReceivePositionalInputAt(mousePosition.Current))
