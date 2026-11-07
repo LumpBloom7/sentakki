@@ -140,7 +140,6 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
             NoteBody.Colour = Interpolation.ValueAt(flashProg, flashingColour, AccentColour.Value, 0.5, 0, Easing.InSine);
     }
 
-
     protected override void UpdateInitialTransforms()
     {
         base.UpdateInitialTransforms();

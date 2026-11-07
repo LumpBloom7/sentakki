@@ -65,7 +65,6 @@ public partial class TestSceneTouchHold : OsuTestScene
         }
     }
 
-
     private DrawableTouchHold createHitObject(double duration, bool auto = false, bool breakState = false)
     {
         var circle = new TouchHold
@@ -96,6 +95,7 @@ public partial class TestSceneTouchHold : OsuTestScene
 
         return dth;
     }
+
     private void testSingle(bool auto = false, bool breakState = false)
     {
         var circle = new TouchHold

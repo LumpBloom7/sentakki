@@ -76,7 +76,6 @@ public partial class TestSceneHoldNote : OsuTestScene
         }
     }
 
-
     private DrawableHold createHitObject(double duration, bool auto = false, bool breakState = false, bool ex = false)
     {
         var circle = new Hold
