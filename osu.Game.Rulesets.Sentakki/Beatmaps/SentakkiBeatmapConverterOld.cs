@@ -85,7 +85,9 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
         bool twin = original.Samples.Any(s => s.Name == HitSampleInfo.HIT_CLAP);
 
         if (!breakNote && !ClassicMode && special)
+        {
             yield return createTouchNote(original);
+        }
         else
         {
             if (twin && ConversionFlags.HasFlag(ConversionFlags.TwinNotes))
@@ -102,7 +104,9 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
         if (spinner.Duration >= 100)
         {
             if (!ClassicMode)
+            {
                 yield return createTouchHold(original);
+            }
             else
             {
                 foreach (var ho in convertSlider(original))
@@ -126,7 +130,9 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
         IList<IList<HitSampleInfo>> nodeSamples;
 
         if (original is IHasPathWithRepeats sl)
+        {
             nodeSamples = sl.NodeSamples;
+        }
         else
         {
             nodeSamples =
@@ -181,7 +187,9 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
         if (ConversionFlags.HasFlag(ConversionFlags.TwinNotes))
         {
             if (twin)
+            {
                 yield return createHoldNote(original, nodeSamples, true, breakHead);
+            }
             else
             {
                 foreach (var note in createTapsFromNodes(original, nodeSamples))
@@ -207,7 +215,9 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
                     slides.Add(secondSlide);
             }
             else
+            {
                 taps.AddRange(createTapsFromNodes(original, nodeSamples));
+            }
         }
 
         var mainSlide = createSlideNote(original, nodeSamples, false, hasBreakHead, hasBreakTail);

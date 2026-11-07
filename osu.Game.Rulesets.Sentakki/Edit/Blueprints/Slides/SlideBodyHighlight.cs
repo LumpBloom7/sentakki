@@ -63,7 +63,6 @@ public partial class SlideBodyHighlight : CompositeDrawable
                         Origin = Anchor.Centre,
                         Children = starPieces,
                     },
-
                 ]
             },
             new Container
@@ -82,7 +81,6 @@ public partial class SlideBodyHighlight : CompositeDrawable
                     }
                 ]
             },
-
         ];
 
         versionBindable.BindValueChanged(_ => createSegmentHighlights(), true);
@@ -102,6 +100,7 @@ public partial class SlideBodyHighlight : CompositeDrawable
 
             offset += slideBodyInfo.Segments[i].RelativeEndLane;
         }
+
         newSegments.Reverse();
 
         slideSegments.Children = newSegments;

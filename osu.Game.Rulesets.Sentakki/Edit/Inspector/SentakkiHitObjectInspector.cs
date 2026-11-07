@@ -233,6 +233,7 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
 
     // This is an alternative implementation that reduces the spacing between the values and the headers
     private void addValue(string value) => addValue(value, colourProvider.Content1);
+
     private void addValue(string value, Color4 colour)
     {
         inspectorText.NewLine();

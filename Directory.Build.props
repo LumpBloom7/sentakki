@@ -18,6 +18,5 @@
     </ItemGroup>
     <ItemGroup>
         <EditorConfgFiles Include=".editorconfig"/>
-        <EditorConfgFiles Include=".globalconfig"/>
     </ItemGroup>
 </Project>

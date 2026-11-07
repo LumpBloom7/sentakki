@@ -225,7 +225,9 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
             currentLane += slide.SlideInfoList[0].RelativeEndLane;
         }
         else
+        {
             currentLane += streamOffset;
+        }
 
         if (!isOverlappingEnd)
             currentLane += streamOffset == 0 ? 1 : streamOffset;

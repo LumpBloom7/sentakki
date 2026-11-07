@@ -1,4 +1,3 @@
-
 using System;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -50,7 +49,8 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Colour = Color4.YellowGreen,
-                Children = [
+                Children =
+                [
                     slideTapHighlight = new SlideTapPiece(),
                     tapHighlight = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap), _ => new TapRing())
                     {
@@ -87,12 +87,12 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
         tapHighlight.Scale = slideTapHighlight.Scale = new Vector2(targetScale);
 
         slideTapHighlight.Y = -Interpolation.ValueAt(
-                HitObject.StartTime,
-                SentakkiPlayfield.INTERSECTDISTANCE,
-                SentakkiPlayfield.NOTESTARTDISTANCE,
-                editorClock.CurrentTime,
-                editorClock.CurrentTime + (animationSpeed.Value / 2)
-            );
+            HitObject.StartTime,
+            SentakkiPlayfield.INTERSECTDISTANCE,
+            SentakkiPlayfield.NOTESTARTDISTANCE,
+            editorClock.CurrentTime,
+            editorClock.CurrentTime + (animationSpeed.Value / 2)
+        );
 
         slideTapHighlight.Y = Math.Clamp(slideTapHighlight.Y, -SentakkiPlayfield.INTERSECTDISTANCE, -SentakkiPlayfield.NOTESTARTDISTANCE);
         tapHighlight.Y = slideTapHighlight.Y;

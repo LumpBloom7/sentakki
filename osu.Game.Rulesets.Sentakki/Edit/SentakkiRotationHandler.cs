@@ -13,6 +13,7 @@ using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Compose.Components;
 using osu.Game.Utils;
 using osuTK;
+
 namespace osu.Game.Rulesets.Sentakki.Edit;
 
 public partial class SentakkiRotationHandler : SelectionRotationHandler

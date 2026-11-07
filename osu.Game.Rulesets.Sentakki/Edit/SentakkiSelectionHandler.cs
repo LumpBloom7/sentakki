@@ -115,7 +115,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
                         {
                             slideInfo.Segments =
                             [
-                                ..slideInfo.Segments.Select(s => s with
+                                .. slideInfo.Segments.Select(s => s with
                                 {
                                     RelativeEndLane = (-s.RelativeEndLane).NormalizeLane(),
                                     Mirrored = !s.Mirrored
@@ -123,6 +123,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
                             ];
                         }
                     }
+
                     EditorBeatmap.Update(laned);
                     composer.Playfield.Add(laned);
                     break;
@@ -160,7 +161,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
                         {
                             slideInfo.Segments =
                             [
-                                ..slideInfo.Segments.Select(s => s with
+                                .. slideInfo.Segments.Select(s => s with
                                 {
                                     RelativeEndLane = (-s.RelativeEndLane).NormalizeLane(),
                                     Mirrored = !s.Mirrored

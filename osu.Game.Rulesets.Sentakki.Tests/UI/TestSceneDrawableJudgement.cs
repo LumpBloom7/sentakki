@@ -33,7 +33,9 @@ public partial class TestSceneDrawableSentakkiJudgement : SentakkiSkinnableTestS
             JudgementPooler<DrawableSentakkiJudgement> pool;
 
             if (poolIndex >= judgementPools.Count)
+            {
                 judgementPools.Add(pool = new JudgementPooler<DrawableSentakkiJudgement>(CreateRuleset().GetValidHitResults()));
+            }
             else
             {
                 // We need to make sure neither the pool nor the judgement get disposed when new content is set, and they both share the same parent.

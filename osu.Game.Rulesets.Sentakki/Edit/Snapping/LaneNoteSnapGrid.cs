@@ -1,4 +1,3 @@
-
 using System;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -89,6 +88,7 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
     }
 
     private double lastTime = 0;
+
     protected override void Update()
     {
         base.Update();
@@ -129,7 +129,7 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
 
             double beatLength = timingPoint.BeatLength / bindableBeatDivisor.Value;
 
-            for (int beatIndex = 0; ; ++beatIndex)
+            for (int beatIndex = 0;; ++beatIndex)
             {
                 double beatTime = timingPoint.Time + beatIndex * beatLength;
 

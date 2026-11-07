@@ -16,8 +16,8 @@ public abstract partial class TouchPlacementBlueprintBase<T> : SentakkiPlacement
 
     public override bool ReplacesExistingObject(HitObject existing)
         => base.ReplacesExistingObject(existing)
-            && existing is IHasPosition touchNote
-            && Precision.DefinitelyBigger(MinimumTouchSpacing, Vector2.Distance(HitObject.Position, touchNote.Position));
+           && existing is IHasPosition touchNote
+           && Precision.DefinitelyBigger(MinimumTouchSpacing, Vector2.Distance(HitObject.Position, touchNote.Position));
 
     private static float getMinimumDistance()
     {

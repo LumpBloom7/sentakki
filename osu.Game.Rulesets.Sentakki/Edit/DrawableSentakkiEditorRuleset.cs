@@ -14,5 +14,5 @@ public partial class DrawableSentakkiEditorRuleset : DrawableSentakkiRuleset
     }
 
     public override PlayfieldAdjustmentContainer CreatePlayfieldAdjustmentContainer()
-    => new SentakkiPlayfieldAdjustmentContainer() { Size = new Vector2(0.9f) };
+        => new SentakkiPlayfieldAdjustmentContainer() { Size = new Vector2(0.9f) };
 }

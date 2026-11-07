@@ -155,7 +155,8 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                 Width = 240,
                 AutoSizeAxes = Axes.Y,
                 Spacing = new Vector2(5),
-                Children = [
+                Children =
+                [
                     new OsuSpriteText
                     {
                         Text = "Edit segment",
