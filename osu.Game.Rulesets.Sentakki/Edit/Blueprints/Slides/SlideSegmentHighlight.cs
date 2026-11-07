@@ -75,13 +75,15 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         SegmentIndex = segmentIndex;
 
-        InternalChildren = [
+        InternalChildren =
+        [
             visual = new SlideVisual(),
             dragDotContainer = new Container
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Children = [
+                Children =
+                [
                     dragDot = new DotPiece
                     {
                         Y = -SentakkiPlayfield.INTERSECTDISTANCE,
@@ -110,6 +112,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     private SentakkiBlueprintContainer blueprintContainer { get; set; } = null!;
 
     #region Context menu updates
+
     private List<(PathShape Shape, TernaryStateRadioMenuItem MenuItem)>? shapeMenuItems;
     private (int RelativeEndLane, TernaryStateRadioMenuItem MenuItem)[]? endLaneMenuItems;
     private TernaryStateToggleMenuItem? mirrorMenuItem;
@@ -134,6 +137,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         mirrorMenuItem.State.Value = segment.Mirrored ? TernaryState.True : TernaryState.False;
     }
+
     #endregion
 
     private IEnumerable<MenuItem> createContextMenuItems()

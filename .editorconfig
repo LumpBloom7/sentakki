@@ -7,13 +7,18 @@ insert_final_newline = true
 indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
+max_line_length = 200
 
 #Roslyn naming styles
 
+# Prefer braces for if/for/while when any block spans multiple lines
+csharp_prefer_braces = when_multiline:error
+resharper_braces_redundant = false # Resharper will try to call out the above, tell it to shut up.
+
 #PascalCase for public and protected members
 dotnet_naming_style.pascalcase.capitalization = pascal_case
-dotnet_naming_symbols.public_members.applicable_accessibilities = public, internal, protected, protected_internal, private_protected
-dotnet_naming_symbols.public_members.applicable_kinds = property, method, field, event
+dotnet_naming_symbols.public_members.applicable_accessibilities = public,internal,protected,protected_internal,private_protected
+dotnet_naming_symbols.public_members.applicable_kinds = property,method,field,event
 dotnet_naming_rule.public_members_pascalcase.severity = error
 dotnet_naming_rule.public_members_pascalcase.symbols = public_members
 dotnet_naming_rule.public_members_pascalcase.style = pascalcase
@@ -22,13 +27,13 @@ dotnet_naming_rule.public_members_pascalcase.style = pascalcase
 dotnet_naming_style.camelcase.capitalization = camel_case
 
 dotnet_naming_symbols.private_members.applicable_accessibilities = private
-dotnet_naming_symbols.private_members.applicable_kinds = property, method, field, event
-dotnet_naming_rule.private_members_camelcase.severity = warning
+dotnet_naming_symbols.private_members.applicable_kinds = property,method,field,event
+dotnet_naming_rule.private_members_camelcase.severity = error
 dotnet_naming_rule.private_members_camelcase.symbols = private_members
 dotnet_naming_rule.private_members_camelcase.style = camelcase
 
 dotnet_naming_symbols.local_function.applicable_kinds = local_function
-dotnet_naming_rule.local_function_camelcase.severity = warning
+dotnet_naming_rule.local_function_camelcase.severity = error
 dotnet_naming_rule.local_function_camelcase.symbols = local_function
 dotnet_naming_rule.local_function_camelcase.style = camelcase
 
@@ -39,20 +44,20 @@ dotnet_naming_style.all_lower.word_separator = _
 dotnet_naming_symbols.private_constants.applicable_accessibilities = private
 dotnet_naming_symbols.private_constants.required_modifiers = const
 dotnet_naming_symbols.private_constants.applicable_kinds = field
-dotnet_naming_rule.private_const_all_lower.severity = warning
+dotnet_naming_rule.private_const_all_lower.severity = error
 dotnet_naming_rule.private_const_all_lower.symbols = private_constants
 dotnet_naming_rule.private_const_all_lower.style = all_lower
 
 dotnet_naming_symbols.private_static_readonly.applicable_accessibilities = private
-dotnet_naming_symbols.private_static_readonly.required_modifiers = static, readonly
+dotnet_naming_symbols.private_static_readonly.required_modifiers = static,readonly
 dotnet_naming_symbols.private_static_readonly.applicable_kinds = field
-dotnet_naming_rule.private_static_readonly_all_lower.severity = warning
+dotnet_naming_rule.private_static_readonly_all_lower.severity = error
 dotnet_naming_rule.private_static_readonly_all_lower.symbols = private_static_readonly
 dotnet_naming_rule.private_static_readonly_all_lower.style = all_lower
 
 dotnet_naming_symbols.local_constants.applicable_kinds = local
 dotnet_naming_symbols.local_constants.required_modifiers = const
-dotnet_naming_rule.local_const_all_lower.severity = warning
+dotnet_naming_rule.local_const_all_lower.severity = error
 dotnet_naming_rule.local_const_all_lower.symbols = local_constants
 dotnet_naming_rule.local_const_all_lower.style = all_lower
 
@@ -60,17 +65,17 @@ dotnet_naming_rule.local_const_all_lower.style = all_lower
 dotnet_naming_style.all_upper.capitalization = all_upper
 dotnet_naming_style.all_upper.word_separator = _
 
-dotnet_naming_symbols.public_constants.applicable_accessibilities = public, internal, protected, protected_internal, private_protected
+dotnet_naming_symbols.public_constants.applicable_accessibilities = public,internal,protected,protected_internal,private_protected
 dotnet_naming_symbols.public_constants.required_modifiers = const
 dotnet_naming_symbols.public_constants.applicable_kinds = field
-dotnet_naming_rule.public_const_all_upper.severity = warning
+dotnet_naming_rule.public_const_all_upper.severity = error
 dotnet_naming_rule.public_const_all_upper.symbols = public_constants
 dotnet_naming_rule.public_const_all_upper.style = all_upper
 
-dotnet_naming_symbols.public_static_readonly.applicable_accessibilities = public, internal, protected, protected_internal, private_protected
-dotnet_naming_symbols.public_static_readonly.required_modifiers = static, readonly
+dotnet_naming_symbols.public_static_readonly.applicable_accessibilities = public,internal,protected,protected_internal,private_protected
+dotnet_naming_symbols.public_static_readonly.required_modifiers = static,readonly
 dotnet_naming_symbols.public_static_readonly.applicable_kinds = field
-dotnet_naming_rule.public_static_readonly_all_upper.severity = warning
+dotnet_naming_rule.public_static_readonly_all_upper.severity = error
 dotnet_naming_rule.public_static_readonly_all_upper.symbols = public_static_readonly
 dotnet_naming_rule.public_static_readonly_all_upper.style = all_upper
 
@@ -79,7 +84,7 @@ dotnet_naming_rule.public_static_readonly_all_upper.style = all_upper
 #Formatting - indentation options
 csharp_indent_case_contents = true
 csharp_indent_case_contents_when_block = false
-csharp_indent_labels = one_less_than_current
+csharp_indent_labels = no_change
 csharp_indent_switch_labels = true
 
 #Formatting - new line options
@@ -120,40 +125,40 @@ dotnet_style_qualification_for_event = false:warning
 #Style - type names
 dotnet_style_predefined_type_for_locals_parameters_members = true:warning
 dotnet_style_predefined_type_for_member_access = true:warning
-csharp_style_var_when_type_is_apparent = true:none
+csharp_style_var_when_type_is_apparent = false:none
 csharp_style_var_for_built_in_types = false:warning
-csharp_style_var_elsewhere = true:silent
+csharp_style_var_elsewhere = false:none
 
 #Style - modifiers
 dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
-csharp_preferred_modifier_order = public, private, protected, internal, new, abstract, virtual, sealed, override, static, readonly, extern, unsafe, volatile, async:warning
+csharp_preferred_modifier_order = public,private,protected,internal,new,abstract,virtual,sealed,override,static,readonly,extern,unsafe,volatile,async:warning
 
 #Style - parentheses
 # Skipped because roslyn cannot separate +-*/ with << >>
 
 #Style - expression bodies
 csharp_style_expression_bodied_accessors = true:warning
-csharp_style_expression_bodied_constructors = false:none
+csharp_style_expression_bodied_constructors = false:warning
 csharp_style_expression_bodied_indexers = true:warning
-csharp_style_expression_bodied_methods = false:silent
+csharp_style_expression_bodied_methods = when_on_single_line:silent
 csharp_style_expression_bodied_operators = true:warning
 csharp_style_expression_bodied_properties = true:warning
 csharp_style_expression_bodied_local_functions = true:silent
 
 #Style - expression preferences
-dotnet_style_object_initializer = true:warning
+dotnet_style_object_initializer = true:silent
 dotnet_style_collection_initializer = true:warning
 dotnet_style_prefer_inferred_anonymous_type_member_names = true:warning
-dotnet_style_prefer_auto_properties = true:warning
+dotnet_style_prefer_auto_properties = true:silent
 dotnet_style_prefer_conditional_expression_over_assignment = true:silent
 dotnet_style_prefer_conditional_expression_over_return = true:silent
-dotnet_style_prefer_compound_assignment = true:warning
+dotnet_style_prefer_compound_assignment = true:silent
 
 #Style - null/type checks
-dotnet_style_coalesce_expression = true:warning
-dotnet_style_null_propagation = true:warning
+dotnet_style_coalesce_expression = true:silent
+dotnet_style_null_propagation = true:silent
 csharp_style_pattern_matching_over_is_with_cast_check = true:warning
-csharp_style_pattern_matching_over_as_with_null_check = true:warning
+csharp_style_pattern_matching_over_as_with_null_check = true:silent
 csharp_style_throw_expression = true:silent
 csharp_style_conditional_delegate_call = true:warning
 
@@ -164,8 +169,8 @@ csharp_style_unused_value_expression_statement_preference = discard_variable:sil
 csharp_style_unused_value_assignment_preference = discard_variable:warning
 
 #Style - variable declaration
-csharp_style_inlined_variable_declaration = true:warning
-csharp_style_deconstructed_variable_declaration = false:silent
+csharp_style_inlined_variable_declaration = true:silent
+csharp_style_deconstructed_variable_declaration = true:silent
 
 #Style - other C# 7.x features
 dotnet_style_prefer_inferred_tuple_names = true:warning
@@ -174,8 +179,41 @@ csharp_style_pattern_local_over_anonymous_function = true:warning
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true:silent
 
 #Style - C# 8 features
-csharp_prefer_static_local_function = true:warning
+csharp_prefer_static_local_function = true:silent
 csharp_prefer_simple_using_statement = true:silent
-csharp_style_prefer_index_operator = false:silent
-csharp_style_prefer_range_operator = false:silent
+csharp_style_prefer_index_operator = true:silent
+csharp_style_prefer_range_operator = true:silent
 csharp_style_prefer_switch_expression = false:none
+
+#Style - C# 9 features
+csharp_style_prefer_pattern_matching = false:none
+resharper_merge_into_pattern_highlighting = hint
+csharp_style_implicit_object_creation_when_type_is_apparent = true:silent
+resharper_arrange_object_creation_when_type_evident_highlighting = hint
+
+#Style - C# 12 features
+csharp_style_prefer_primary_constructors = false
+resharper_convert_to_primary_constructor_highlighting = none
+
+resharper_virtual_member_call_in_constructor_highlighting = hint
+resharper_csharp_place_attribute_on_same_line = false
+resharper_access_to_modified_closure_highlighting = hint
+resharper_convert_type_check_pattern_to_null_check_highlighting = hint
+
+# [Resharper] Style - Wrapping and alignment rules
+resharper_wrap_before_eq = true
+resharper_wrap_before_arrow_with_expressions = true
+resharper_wrap_before_binary_opsign = true
+resharper_wrap_before_binary_pattern_op = true
+
+resharper_csharp_align_linq_query=true
+resharper_align_multiline_calls_chain = true
+
+resharper_align_multiline_extends_list = true
+resharper_align_multiline_parameter = true
+
+# [Resharper] Style - Blank lines
+resharper_redundant_blank_lines_highlighting = warning
+
+# osu-framework drawables rely on source generation to provide dependency injection functionality without using reflection
+resharper_partial_type_with_single_part_highlighting = hint

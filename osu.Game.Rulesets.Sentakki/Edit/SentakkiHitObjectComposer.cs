@@ -47,7 +47,7 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
         => new SentakkiBlueprintContainer(this);
 
     protected override DrawableRuleset<SentakkiHitObject> CreateDrawableRuleset(Ruleset ruleset, IBeatmap beatmap, IReadOnlyList<Mod> mods)
-    => new DrawableSentakkiEditorRuleset((SentakkiRuleset)ruleset, beatmap, mods);
+        => new DrawableSentakkiEditorRuleset((SentakkiRuleset)ruleset, beatmap, mods);
 
     [Cached]
     public TouchPositionSnapGrid TouchPositionSnapGrid { get; private set; } = new TouchPositionSnapGrid();
@@ -150,7 +150,7 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
 
     protected override IEnumerable<Drawable> CreateTernaryButtons()
     {
-        foreach (var ternaryButton in base.CreateTernaryButtons().Skip(1))
+        foreach (var ternaryButton in base.CreateTernaryButtons())
             yield return ternaryButton;
 
         var selectionHandler = (SentakkiSelectionHandler)BlueprintContainer.SelectionHandler;

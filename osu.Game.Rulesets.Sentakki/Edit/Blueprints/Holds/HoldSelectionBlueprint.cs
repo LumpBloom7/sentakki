@@ -38,7 +38,8 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
             Anchor = Anchor.Centre,
             Origin = Anchor.TopCentre,
 
-            Children = [
+            Children =
+            [
                 highlight = new HoldBody()
                 {
                     Anchor = Anchor.Centre,
@@ -46,12 +47,14 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.YellowGreen,
                 },
-                startDot = new DraggableDotPiece(){
+                startDot = new DraggableDotPiece()
+                {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.Centre,
                     DragAction = adjustStartTime
                 },
-                new DraggableDotPiece(){
+                new DraggableDotPiece()
+                {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.Centre,
                     DragAction = adjustEndTime

@@ -84,10 +84,14 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
         popoverVisibilityState.BindValueChanged(v => Colour = v.NewValue == Visibility.Visible ? colours.YellowDark : Color4.White);
     }
 
-    public Popover? GetPopover() => new SegmentEditPopover(slide, slideBodyInfo, segmentIndex)
+    public Popover? GetPopover()
     {
-        State = { BindTarget = popoverVisibilityState }
-    };
+        popoverVisibilityState.UnbindBindings();
+        var popover = new SegmentEditPopover(slide, slideBodyInfo, segmentIndex);
+
+        popoverVisibilityState.BindTo(popover.State);
+        return popover;
+    }
 
     protected override bool OnClick(ClickEvent e)
     {
@@ -151,7 +155,8 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                 Width = 240,
                 AutoSizeAxes = Axes.Y,
                 Spacing = new Vector2(5),
-                Children = [
+                Children =
+                [
                     new OsuSpriteText
                     {
                         Text = "Edit segment",

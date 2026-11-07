@@ -65,6 +65,7 @@ public partial class SlideOffsetTool : CompositeDrawable
             },
         ];
     }
+
     private readonly Bindable<double> animationSpeed = new Bindable<double>(5);
 
     [BackgroundDependencyLoader]

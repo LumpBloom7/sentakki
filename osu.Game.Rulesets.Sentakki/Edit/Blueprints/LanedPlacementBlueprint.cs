@@ -18,8 +18,8 @@ public abstract partial class LanedPlacementBlueprint<T> : SentakkiPlacementBlue
     public override bool ReplacesExistingObject(HitObject existing)
     {
         bool isCandidateForRemoval = base.ReplacesExistingObject(existing)
-                                        && (existing is IHasLane lanedNote)
-                                        && lanedNote.Lane == HitObject.Lane;
+                                     && (existing is IHasLane lanedNote)
+                                     && lanedNote.Lane == HitObject.Lane;
 
         if (!isCandidateForRemoval)
             return false;
