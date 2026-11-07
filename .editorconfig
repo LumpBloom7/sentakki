@@ -187,6 +187,7 @@ csharp_style_prefer_switch_expression = false:none
 
 #Style - C# 9 features
 csharp_style_prefer_pattern_matching = false:none
+resharper_merge_into_pattern_highlighting = hint
 csharp_style_implicit_object_creation_when_type_is_apparent = true:silent
 resharper_arrange_object_creation_when_type_evident_highlighting = hint
 
@@ -199,6 +200,7 @@ resharper_csharp_place_attribute_on_same_line = false
 resharper_access_to_modified_closure_highlighting = hint
 resharper_convert_type_check_pattern_to_null_check_highlighting = hint
 
+# [Resharper] Style - Wrapping and alignment rules
 resharper_wrap_before_eq = true
 resharper_wrap_before_arrow_with_expressions = true
 resharper_wrap_before_binary_opsign = true
@@ -206,11 +208,12 @@ resharper_wrap_before_binary_pattern_op = true
 
 resharper_csharp_align_linq_query=true
 resharper_align_multiline_calls_chain = true
-resharper_redundant_blank_lines_highlighting = warning
+
 resharper_align_multiline_extends_list = true
 resharper_align_multiline_parameter = true
 
-trailing_comma_in_multiline_lists = false
+# [Resharper] Style - Blank lines
+resharper_redundant_blank_lines_highlighting = warning
 
 # osu-framework drawables rely on source generation to provide dependency injection functionality without using reflection
 resharper_partial_type_with_single_part_highlighting = hint
