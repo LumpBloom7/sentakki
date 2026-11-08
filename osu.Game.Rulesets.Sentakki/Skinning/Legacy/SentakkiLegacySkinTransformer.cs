@@ -41,9 +41,6 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
                             return null;
 
                         return new LegacyHoldBody();
-
-                    default:
-                        break;
                 }
 
                 break;

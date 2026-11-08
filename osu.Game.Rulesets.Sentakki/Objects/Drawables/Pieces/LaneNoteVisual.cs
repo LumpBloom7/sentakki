@@ -23,47 +23,42 @@ public enum NoteShape
 public partial class LaneNoteVisual : Drawable, ITexturedShaderDrawable
 {
     public NoteShape Shape { get; init; } = NoteShape.Ring;
-    private float thickness = 18.75f;
 
     public float Thickness
     {
-        get => thickness;
+        get;
         set
         {
-            if (thickness == value)
+            if (field == value)
                 return;
 
-            thickness = value;
+            field = value;
             Invalidate(Invalidation.DrawNode);
         }
-    }
-
-    private float shadowRadius = 15;
+    } = 18.75f;
 
     public float ShadowRadius
     {
-        get => shadowRadius;
+        get;
         set
         {
-            if (shadowRadius == value)
+            if (field == value)
                 return;
 
-            shadowRadius = value;
+            field = value;
             Invalidate(Invalidation.DrawNode);
         }
-    }
-
-    private bool glow;
+    } = 15f;
 
     public bool Glow
     {
-        get => glow;
+        get;
         set
         {
-            if (glow == value)
+            if (field == value)
                 return;
 
-            glow = value;
+            field = value;
             Invalidate(Invalidation.DrawNode);
         }
     }
@@ -120,7 +115,7 @@ public partial class LaneNoteVisual : Drawable, ITexturedShaderDrawable
         private Quad screenSpaceDrawQuad { get; set; }
         private Vector2 size { get; set; }
 
-        protected new LaneNoteVisual Source => (LaneNoteVisual)base.Source;
+        private LaneNoteVisual source => (LaneNoteVisual)Source;
 
         protected override bool CanDrawOpaqueInterior => false;
 
@@ -137,15 +132,15 @@ public partial class LaneNoteVisual : Drawable, ITexturedShaderDrawable
         public override void ApplyState()
         {
             base.ApplyState();
-            var drawRect = Source.DrawRectangle.Normalize().Inflate(Source.ShadowRadius);
+            var drawRect = source.DrawRectangle.Normalize().Inflate(source.ShadowRadius);
             screenSpaceDrawQuad = Quad.FromRectangle(drawRect) * DrawInfo.Matrix;
             size = drawRect.Size;
 
             var newParameters = new ShapeParameters()
             {
-                BorderThickness = Source.Thickness,
-                ShadowRadius = Source.ShadowRadius,
-                Glow = Source.Glow,
+                BorderThickness = source.Thickness,
+                ShadowRadius = source.ShadowRadius,
+                Glow = source.Glow,
             };
 
             // If the uniform properties have changed, then we definitely want to null this out so that we get a more appropriate uniform block
@@ -200,9 +195,9 @@ public partial class LaneNoteVisual : Drawable, ITexturedShaderDrawable
             public UniformPadding4 _;
         }
 
-        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> uniformBuffer)
+        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> otherUniformBuffer)
         {
-            return uniformBuffer.Data == parameters;
+            return otherUniformBuffer.Data == parameters;
         }
     }
 }

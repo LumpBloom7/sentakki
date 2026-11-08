@@ -41,14 +41,12 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
 
     public Container<StarPiece> SlideStars { get; private set; } = null!;
 
-    private float starProgress;
-
-    public virtual float StarProgress
+    public float StarProgress
     {
-        get => starProgress;
+        get;
         set
         {
-            starProgress = value;
+            field = value;
 
             SlideStars[2].Position = slideBodyInfo.PositionAt(value);
             SlideStars[2].Rotation = slideBodyInfo.PositionAt(value - .01f).AngleTo(SlideStars[2].Position);
@@ -184,7 +182,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         if (slideBodyInfo.Segments[^1].Shape is not PathShape.Fan) return;
 
         int fanStartLane = slideBodyInfo.RelativeEndLane - 4;
-        float fanStartLaneAngle = fanStartLane.GetRotationForLane();
+        float fanStartLaneAngle = SentakkiExtensions.GetRotationForLane(fanStartLane);
 
         // Apply rotation to the extra stars
         SlideStars[0].RotateTo(fanStartLaneAngle + 180 - 22.5f);
@@ -214,9 +212,9 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         userTriggered = true;
 
         // If any of the checkpoints aren't complete, we consider the slide to be incomplete
-        for (int i = 0; i < SlideCheckpoints.Count; ++i)
+        foreach (var t in SlideCheckpoints)
         {
-            if (SlideCheckpoints[i].Result.HasResult) continue;
+            if (t.Result.HasResult) continue;
 
             userTriggered = false;
             break;

@@ -24,9 +24,9 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
     public override Quad SelectionQuad => highlightContainer.ScreenSpaceDrawQuad;
     public override Vector2 ScreenSpaceSelectionPoint => startDot.ScreenSpaceDrawQuad.Centre;
 
-    private Container highlightContainer;
+    private readonly Container highlightContainer;
 
-    private Drawable startDot;
+    private readonly Drawable startDot;
 
     public HoldSelectionBlueprint(Hold item)
         : base(item)
@@ -40,7 +40,8 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
             OriginPosition = new Vector2(TapRing.CIRCLE_RADIUS),
             Width = TapRing.CIRCLE_RADIUS * 2,
 
-            Children = [
+            Children =
+            [
                 new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Hold), _ => new HoldBody())
                 {
                     RelativeSizeAxes = Axes.Both,
@@ -98,10 +99,10 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
 
     protected override void Update()
     {
-        Rotation = HitObject.Lane.GetRotationForLane();
-        highlightContainer.Y = DrawableObject.Y;
-        highlightContainer.Scale = DrawableObject.Scale;
-        highlightContainer.Height = DrawableObject.Height;
+        Rotation = SentakkiExtensions.GetRotationForLane(HitObject.Lane);
+        highlightContainer.Y = DrawableObject.NoteBody.Y;
+        highlightContainer.Scale = DrawableObject.NoteBody.Scale;
+        highlightContainer.Height = DrawableObject.NoteBody.Height;
     }
 
     private partial class DraggableDotPiece : DotPiece
@@ -111,6 +112,10 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
         {
+            // HACK: We really only want to allow interactivity iff this is the only hitobject selected
+            if (blueprintContainer.SelectionHandler.SelectedItems.Count != 1)
+                return false;
+
             if (snapGrid.State.Value is Visibility.Hidden)
                 return false;
 
@@ -131,11 +136,11 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
             Colour = colours.YellowDark;
         }
 
-        public Action<Vector2> DragAction { get; init; } = null!;
+        public Action<Vector2>? DragAction { get; init; }
 
         protected override void OnDrag(DragEvent e)
         {
-            DragAction(e.ScreenSpaceMousePosition);
+            DragAction?.Invoke(e.ScreenSpaceMousePosition);
             base.OnDrag(e);
         }
 

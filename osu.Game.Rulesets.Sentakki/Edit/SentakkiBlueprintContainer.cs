@@ -7,7 +7,6 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
@@ -26,7 +25,7 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
 {
     public new SentakkiHitObjectComposer Composer => (SentakkiHitObjectComposer)base.Composer;
 
-    private SentakkiMovementHandler movementHandler;
+    private readonly SentakkiMovementHandler movementHandler;
 
     public new SentakkiSelectionHandler SelectionHandler => (SentakkiSelectionHandler)base.SelectionHandler;
 
@@ -111,10 +110,10 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
     // We apply the proxy precedence rules Touch -> TouchHold -> Tap/Holds -> Slides, before applying time based precedence
     protected override IEnumerable<SelectionBlueprint<HitObject>> ApplySelectionOrder(IEnumerable<SelectionBlueprint<HitObject>> blueprints)
         => blueprints.Reverse()
-        .OrderBy(b => b.Item is not Touch)
-        .ThenBy(b => b.Item is not TouchHold)
-        .ThenBy(b => b.Item is Slide)
-        .ThenBy(b => Math.Min(Math.Abs(EditorClock.CurrentTime - b.Item.GetEndTime()), Math.Abs(EditorClock.CurrentTime - b.Item.StartTime)));
+                     .OrderBy(b => b.Item is not Touch)
+                     .ThenBy(b => b.Item is not TouchHold)
+                     .ThenBy(b => b.Item is Slide)
+                     .ThenBy(b => Math.Min(Math.Abs(EditorClock.CurrentTime - b.Item.GetEndTime()), Math.Abs(EditorClock.CurrentTime - b.Item.StartTime)));
 
     // Since the movement is going to be a rotation, it makes sense that we prioritise the closest hitobject.
     protected override IEnumerable<SelectionBlueprint<HitObject>> SortForMovement(IReadOnlyList<SelectionBlueprint<HitObject>> blueprints)
@@ -130,6 +129,7 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
     // We provide a mechanism for interactive blueprints to inform the BlueprintContainer that they "handled" OnMouseUp,
     //   and that the BlueprintContainer doesn't need to do anything
     private bool suppressMouseUp;
+
     public void SuppressMouseUp()
     {
         suppressMouseUp = true;

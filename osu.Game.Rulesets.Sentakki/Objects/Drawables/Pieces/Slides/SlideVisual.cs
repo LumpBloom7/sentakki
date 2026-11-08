@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
@@ -40,36 +39,32 @@ public partial class SlideVisual : CompositeDrawable
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => chevrons.Any(c => c.IsVisible && c.ReceivePositionalInputAt(screenSpacePos));
 
-    private SlideBodyInfo? slideBodyInfo;
-
     private readonly IBindable<int> slideBodyInfoVersion = new Bindable<int>();
 
     public SlideBodyInfo? SlideBodyInfo
     {
-        get => slideBodyInfo;
+        get;
         set
         {
             slideBodyInfoVersion.UnbindAll();
-            slideBodyInfo = value;
+            field = value;
 
-            if (slideBodyInfo is not null)
-                slideBodyInfoVersion.BindTo(slideBodyInfo.Version);
+            if (field is not null)
+                slideBodyInfoVersion.BindTo(field.Version);
 
             updateVisuals();
         }
     }
 
-    private double progress;
-
     public double Progress
     {
-        get => progress;
+        get;
         set
         {
-            if (progress == value)
+            if (field == value)
                 return;
 
-            progress = value;
+            field = value;
             updateChevronVisibility();
         }
     }
@@ -114,7 +109,7 @@ public partial class SlideVisual : CompositeDrawable
     {
         chevrons.Clear(false);
 
-        if (slideBodyInfo is null)
+        if (SlideBodyInfo is null)
             return;
 
         // There is a possibility that dependencies aren't injected yet
@@ -142,18 +137,18 @@ public partial class SlideVisual : CompositeDrawable
     private void createRegularChevrons()
     {
         Debug.Assert(chevronPool is not null);
-        Debug.Assert(slideBodyInfo is not null);
+        Debug.Assert(SlideBodyInfo is not null);
 
-        for (int i = 0; i < slideBodyInfo.Segments.Count; ++i)
+        for (int i = 0; i < SlideBodyInfo.Segments.Count; ++i)
         {
-            var segment = slideBodyInfo.Segments[i];
+            var segment = SlideBodyInfo.Segments[i];
 
             // We don't handle fan slides here
-            if (i == slideBodyInfo.Segments.Count - 1 && segment.Shape is PathShape.Fan)
+            if (i == SlideBodyInfo.Segments.Count - 1 && segment.Shape is PathShape.Fan)
                 return;
 
-            var segmentPath = slideBodyInfo.SegmentPaths[i];
-            double segmentStartProgress = slideBodyInfo.SegmentStartProgressFor(i);
+            var segmentPath = SlideBodyInfo.SegmentPaths[i];
+            double segmentStartProgress = SlideBodyInfo.SegmentStartProgressFor(i);
 
             // First we get the number of chevrons that is part of this segment
             int nChevrons = chevronsInContinuousPath(segmentPath);
@@ -164,7 +159,7 @@ public partial class SlideVisual : CompositeDrawable
             double margin = endpoint_distance / segmentPath.CalculatedDistance;
             double spacing = (1 - 2 * margin) / (nChevrons - 1);
 
-            double segmentRatio = segmentPath.CalculatedDistance / slideBodyInfo.SlideLength;
+            double segmentRatio = segmentPath.CalculatedDistance / SlideBodyInfo.SlideLength;
 
             SlideChevron? lastChevron = null;
 
@@ -205,20 +200,20 @@ public partial class SlideVisual : CompositeDrawable
     private void createFanChevrons()
     {
         Debug.Assert(chevronPool is not null);
-        Debug.Assert(slideBodyInfo is not null);
+        Debug.Assert(SlideBodyInfo is not null);
 
-        if (slideBodyInfo.Segments.Count == 0 || slideBodyInfo.Segments[^1].Shape is not PathShape.Fan)
+        if (SlideBodyInfo.Segments.Count == 0 || SlideBodyInfo.Segments[^1].Shape is not PathShape.Fan)
             return;
 
         // All fans have 11 chevrons, this is exactly half the number of chevrons used by straight slides
         const int n_chevrons = 11;
 
-        double fanStartProgress = slideBodyInfo.SegmentStartProgressFor(^1);
+        double fanStartProgress = SlideBodyInfo.SegmentStartProgressFor(^1);
 
-        Vector2 fanOrigin = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideBodyInfo.RelativeEndLane - 4);
-        Vector2 middleLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideBodyInfo.RelativeEndLane);
-        Vector2 leftLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideBodyInfo.RelativeEndLane - 1);
-        Vector2 rightLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, slideBodyInfo.RelativeEndLane + 1);
+        Vector2 fanOrigin = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, SlideBodyInfo.RelativeEndLane - 4);
+        Vector2 middleLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, SlideBodyInfo.RelativeEndLane);
+        Vector2 leftLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, SlideBodyInfo.RelativeEndLane - 1);
+        Vector2 rightLineEnd = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, SlideBodyInfo.RelativeEndLane + 1);
 
         Vector2 middleVector = middleLineEnd - fanOrigin;
         Vector2 middleDirection = middleVector.Normalized();

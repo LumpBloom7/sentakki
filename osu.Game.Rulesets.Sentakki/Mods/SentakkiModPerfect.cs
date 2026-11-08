@@ -10,12 +10,5 @@ public class SentakkiModPerfect : ModPerfect
     protected override bool FailCondition(HealthProcessor healthProcessor, JudgementResult result)
         => result.Judgement is not IgnoreJudgement && result.Type < result.Judgement.MaxResult;
 
-    public override Type[] IncompatibleMods =>
-    [
-        typeof(ModNoFail),
-        typeof(ModRelax),
-        typeof(ModAutoplay),
-        typeof(SentakkiModChallenge),
-        typeof(ModSuddenDeath)
-    ];
+    public override Type[] IncompatibleMods => [.. base.IncompatibleMods, typeof(SentakkiModChallenge)];
 }

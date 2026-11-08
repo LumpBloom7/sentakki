@@ -8,9 +8,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects;
 
 public class SlideCheckpoint : SentakkiHitObject
 {
-    public double SlideDuration { get; set; }
-    public override double MaximumJudgementOffset => SlideDuration;
-
     // Used to update slides visuals
     public float Progress { get; set; }
 
@@ -22,7 +19,7 @@ public class SlideCheckpoint : SentakkiHitObject
     protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
     {
         foreach (var nodePosition in NodePositions)
-            AddNested(new CheckpointNode(nodePosition) { StartTime = StartTime, SlideDuration = SlideDuration });
+            AddNested(new CheckpointNode(nodePosition) { StartTime = StartTime });
     }
 
     protected override HitWindows CreateHitWindows() => HitWindows.Empty;
@@ -30,9 +27,6 @@ public class SlideCheckpoint : SentakkiHitObject
 
     public class CheckpointNode : SentakkiHitObject
     {
-        public double SlideDuration { get; set; }
-        public override double MaximumJudgementOffset => SlideDuration;
-
         public CheckpointNode(Vector2 position)
         {
             Position = position;

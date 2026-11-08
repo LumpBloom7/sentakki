@@ -37,7 +37,7 @@ public partial class LanedPlayfield : Playfield
         {
             var lane = new Lane
             {
-                Rotation = i.GetRotationForLane(),
+                Rotation = SentakkiExtensions.GetRotationForLane(i),
                 LaneNumber = i,
                 OnLoaded = onHitObjectLoaded
             };

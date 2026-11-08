@@ -58,14 +58,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="get_ready" xml:space="preserve">
-        <value>Hazır ol!</value>
+  <data name="judgement_mode" xml:space="preserve">
+        <value>Chế độ đánh giá</value>
     </data>
-  <data name="lets_go" xml:space="preserve">
-        <value>Hadi başlayalım!</value>
+  <data name="judgement_mode_description" xml:space="preserve">
+        <value>Chế độ đánh giá quyết định đến độ chính xác của khung thời gian trong khi chơi.</value>
     </data>
-  <data name="sentakki_supported_by" xml:space="preserve">
-        <value>Sentakki, {0} gibi destekleyiciler sayesinde yaratıldı.</value>
-        <comment>The placeholder is for the name of a sentakki supporter.</comment>
+  <data name="minimum_result" xml:space="preserve">
+        <value>Đánh giá thấp nhất</value>
+    </data>
+  <data name="minimum_result_description" xml:space="preserve">
+        <value>Đánh giá thấp nhất được chấp nhận trong lúc chơi. Mọi thứ thấp hơn sẽ bị coi là bỏ lỡ.</value>
     </data>
 </root>

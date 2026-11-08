@@ -61,4 +61,10 @@
   <data name="mod_description" xml:space="preserve">
         <value>Notalar tam sen tıklamadan önce kaybolur.</value>
     </data>
+  <data name="visible_radius" xml:space="preserve">
+        <value>Görünür yarıçap</value>
+    </data>
+  <data name="visible_radius_description" xml:space="preserve">
+        <value>Şerit üzerindeki notaların görünür yarıçapı.</value>
+    </data>
 </root>

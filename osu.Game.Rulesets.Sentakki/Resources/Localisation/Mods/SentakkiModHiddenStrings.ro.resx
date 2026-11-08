@@ -59,12 +59,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mod_description" xml:space="preserve">
-        <value>Notele dispar înainte de a le lovi.</value>
+        <value>Notele dispar chiar înainte de a le nimeri.</value>
     </data>
   <data name="visible_radius" xml:space="preserve">
-        <value>Raza de vizibilitate</value>
+        <value>Zona de vizibilitate</value>
     </data>
   <data name="visible_radius_description" xml:space="preserve">
-        <value>Raza vizibilă a notelor aliniate.</value>
+        <value>Raza de vizibilitate a notelor aliniate.</value>
     </data>
 </root>

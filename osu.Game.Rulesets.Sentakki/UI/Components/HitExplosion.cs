@@ -3,6 +3,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Transforms;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
@@ -16,7 +17,6 @@ public partial class HitExplosion : PoolableDrawable
     public override bool RemoveWhenNotAlive => true;
 
     private const float default_explosion_size = 75;
-    private const float touch_hold_explosion_size = 100;
 
     public HitExplosion()
     {
@@ -67,9 +67,10 @@ public partial class HitExplosion : PoolableDrawable
                 Rotation = 0;
                 break;
 
-            case TouchHold touchHoldObject:
-                Position = touchHoldObject.Position;
-                Size = new Vector2(touch_hold_explosion_size);
+            case TouchHold:
+            case TouchHold.TouchHoldHead:
+                Position = ((IHasPosition)drawableSentakkiHitObject.HitObject).Position;
+                Size = new Vector2(90);
                 circular = false;
                 Rotation = 45;
                 break;

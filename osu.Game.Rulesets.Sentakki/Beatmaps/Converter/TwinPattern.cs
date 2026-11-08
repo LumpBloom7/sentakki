@@ -89,6 +89,6 @@ public class TwinPattern
         if (flags.HasFlagFast(TwinFlags.Mirror))
             result = 7 - result;
 
-        return result.NormalizeLane();
+        return SentakkiExtensions.NormalizeLaneNumber(result);
     }
 }

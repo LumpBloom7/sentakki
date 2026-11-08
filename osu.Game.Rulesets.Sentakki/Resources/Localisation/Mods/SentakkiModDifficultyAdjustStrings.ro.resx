@@ -65,6 +65,6 @@
         <value>Dezactivează notele EX</value>
     </data>
   <data name="all_ex" xml:space="preserve">
-        <value>Toate notele EX</value>
+        <value>Forțează doar note EX</value>
     </data>
 </root>

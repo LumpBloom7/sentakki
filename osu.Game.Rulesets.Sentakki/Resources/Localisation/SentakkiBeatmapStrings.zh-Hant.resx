@@ -58,14 +58,24 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="get_ready" xml:space="preserve">
-        <value>Pronti!</value>
+  <data name="taps" xml:space="preserve">
+        <value>Tap 鍵</value>
+        <comment>Tap is a proper noun.</comment>
     </data>
-  <data name="lets_go" xml:space="preserve">
-        <value>Partiamo!</value>
+  <data name="holds" xml:space="preserve">
+        <value>Hold 鍵</value>
+        <comment>Hold is a proper noun.</comment>
     </data>
-  <data name="sentakki_supported_by" xml:space="preserve">
-        <value>Sentakki è fatto con il supporto di {0}.</value>
-        <comment>The placeholder is for the name of a sentakki supporter.</comment>
+  <data name="touchholds" xml:space="preserve">
+        <value>TouchHold 鍵</value>
+        <comment>TouchHold is a proper noun.</comment>
+    </data>
+  <data name="touches" xml:space="preserve">
+        <value>Touch 鍵</value>
+        <comment>Touch is a proper noun.</comment>
+    </data>
+  <data name="slides" xml:space="preserve">
+        <value>滑星數量</value>
+        <comment>Slide is a proper noun.</comment>
     </data>
 </root>

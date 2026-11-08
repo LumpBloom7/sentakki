@@ -65,12 +65,12 @@
         <value>⇅ Oglindește pe verticală</value>
     </data>
   <data name="mirror_vertically_description" xml:space="preserve">
-        <value>Oglindește toată zona de joc pe axa x</value>
+        <value>Oglindește toată zona de joc pe axa X</value>
     </data>
   <data name="mirror_horizontally" xml:space="preserve">
         <value>⇆ Oglindește pe orizontală</value>
     </data>
   <data name="mirror_horizontally_description" xml:space="preserve">
-        <value>Oglindește toată zona de joc pe axa y</value>
+        <value>Oglindește toată zona de joc pe axa Y</value>
     </data>
 </root>

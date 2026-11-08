@@ -58,14 +58,24 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="get_ready" xml:space="preserve">
-        <value>准备！</value>
+  <data name="taps" xml:space="preserve">
+        <value>Vuruşlar</value>
+        <comment>Tap is a proper noun.</comment>
     </data>
-  <data name="lets_go" xml:space="preserve">
-        <value>开始！</value>
+  <data name="holds" xml:space="preserve">
+        <value>Tutmalı notalar</value>
+        <comment>Hold is a proper noun.</comment>
     </data>
-  <data name="sentakki_supported_by" xml:space="preserve">
-        <value>Sentakki 是在 {0} 的支持下制作的。</value>
-        <comment>The placeholder is for the name of a sentakki supporter.</comment>
+  <data name="touchholds" xml:space="preserve">
+        <value>Dokunmalı Tutuşlar</value>
+        <comment>TouchHold is a proper noun.</comment>
+    </data>
+  <data name="touches" xml:space="preserve">
+        <value>Dokunuşlar</value>
+        <comment>Touch is a proper noun.</comment>
+    </data>
+  <data name="slides" xml:space="preserve">
+        <value>Kaydırmalı nota sayısı</value>
+        <comment>Slide is a proper noun.</comment>
     </data>
 </root>

@@ -1,4 +1,3 @@
-
 using System;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -9,7 +8,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Utils;
-using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.Sentakki.Extensions;
@@ -22,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Snapping;
 public partial class LaneNoteSnapGrid : VisibilityContainer
 {
     public readonly Bindable<TernaryState> Enabled = new Bindable<TernaryState>(TernaryState.True);
-    private Bindable<bool> activationRequested = new Bindable<bool>();
+    private readonly Bindable<bool> activationRequested = new Bindable<bool>();
 
     [Resolved]
     private EditorClock editorClock { get; set; } = null!;
@@ -39,9 +37,9 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
     protected override void PopIn() => this.FadeIn(50);
     protected override void PopOut() => this.FadeOut(100);
 
-    private Cached gridCache = new Cached();
+    private readonly Cached gridCache = new Cached();
 
-    private Bindable<double> animationDuration = new Bindable<double>();
+    private readonly Bindable<double> animationDuration = new Bindable<double>();
 
     private DrawablePool<DrawableGridLine> linePool = null!;
 
@@ -88,7 +86,8 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
         activationRequested.Value = false;
     }
 
-    private double lastTime = 0;
+    private double lastTime;
+
     protected override void Update()
     {
         base.Update();
@@ -129,7 +128,7 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
 
             double beatLength = timingPoint.BeatLength / bindableBeatDivisor.Value;
 
-            for (int beatIndex = 0; ; ++beatIndex)
+            for (int beatIndex = 0;; ++beatIndex)
             {
                 double beatTime = timingPoint.Time + beatIndex * beatLength;
 
@@ -180,19 +179,16 @@ public partial class LaneNoteSnapGrid : VisibilityContainer
 
     private partial class DrawableGridLine : PoolableDrawable
     {
-        private CircularProgress circularProgress;
-
-        private float thickness;
+        private readonly CircularProgress circularProgress;
 
         public float Thickness
         {
-            get => thickness;
             set
             {
-                if (value == thickness)
+                if (value == field)
                     return;
 
-                thickness = value;
+                field = value;
                 circularProgress.InnerRadius = value / 300;
             }
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
@@ -37,10 +38,7 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
     {
         OsuColour colours = new OsuColour();
 
-        var hitobjects = beatmap.HitObjects.Where(h => h is Slide).SelectMany(s => s.NestedHitObjects).Cast<SentakkiHitObject>().ToList();
-        hitobjects.AddRange(beatmap.HitObjects);
-
-        foreach (var hitObject in hitobjects)
+        foreach (var hitObject in getColorableHitObject(beatmap.HitObjects))
         {
             double startTime = getStartTime(hitObject);
             int beatDivisor = beatmap.ControlPointInfo.GetClosestBeatDivisor(startTime);
@@ -70,9 +68,7 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
     {
         OsuColour colours = new OsuColour();
 
-        var hitobjects = beatmap.HitObjects.Where(h => h is Slide).SelectMany(s => s.NestedHitObjects).Cast<SentakkiHitObject>().ToList();
-        hitobjects.AddRange(beatmap.HitObjects);
-        hitobjects = [.. hitobjects.OrderBy(getStartTime)];
+        var hitobjects = getColorableHitObject(beatmap.HitObjects).OrderBy(getStartTime).ToList();
 
         for (int i = 0; i < hitobjects.Count; ++i)
         {
@@ -130,6 +126,31 @@ public class SentakkiModSynesthesia : ModSynesthesia, IApplicableToBeatmapProces
             hitobjects[i].NoteColour = colour;
             foreach (SentakkiHitObject nested in hitobjects[i].NestedHitObjects.OfType<SentakkiHitObject>())
                 nested.NoteColour = colour;
+        }
+    }
+
+    private static IEnumerable<SentakkiHitObject> getColorableHitObject(List<SentakkiHitObject> hitObjects)
+    {
+        foreach (var hitObject in hitObjects)
+        {
+            yield return hitObject;
+
+            switch (hitObject)
+            {
+                case Hold h:
+                    // The HitExplosion uses the colour of the hold head as well as the hold itself.
+                    yield return (Hold.HoldHead)h.NestedHitObjects[0];
+                    break;
+
+                case Slide s:
+                    if (s.TapType is not Slide.TapTypeEnum.None)
+                        yield return s.SlideTap;
+
+                    foreach (var slideBody in s.SlideBodies)
+                        yield return slideBody;
+
+                    break;
+            }
         }
     }
 

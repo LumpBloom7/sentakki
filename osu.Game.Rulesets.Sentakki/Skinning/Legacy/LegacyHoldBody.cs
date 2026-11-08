@@ -33,16 +33,17 @@ public partial class LegacyHoldBody : CompositeDrawable
 
     private Color4 flashingColour = Color4.White;
 
-
     [BackgroundDependencyLoader]
     private void load(ISkinSource skin, DrawableHitObject? drawableHitObject)
     {
-        InternalChildren = [
+        InternalChildren =
+        [
             accentContainer = new Container
             {
                 RelativeSizeAxes = Axes.Both,
 
-                Children = [
+                Children =
+                [
                     glowDrawable = createGlowLayer(skin),
                     createLayer(skin)
                 ]
@@ -93,7 +94,8 @@ public partial class LegacyHoldBody : CompositeDrawable
             RelativeSizeAxes = Axes.Both,
             Padding = new MarginPadding { Vertical = TapRing.CIRCLE_RADIUS },
 
-            Children = [
+            Children =
+            [
                 new Sprite
                 {
                     Anchor = Anchor.TopCentre,
@@ -115,8 +117,6 @@ public partial class LegacyHoldBody : CompositeDrawable
                 }
             ]
         };
-
-
     }
 
     private static Container createGlowLayer(ISkinSource skin)
@@ -130,7 +130,8 @@ public partial class LegacyHoldBody : CompositeDrawable
             RelativeSizeAxes = Axes.Both,
             Padding = new MarginPadding { Vertical = TapRing.CIRCLE_RADIUS },
 
-            Children = [
+            Children =
+            [
                 new Sprite
                 {
                     Anchor = Anchor.TopCentre,

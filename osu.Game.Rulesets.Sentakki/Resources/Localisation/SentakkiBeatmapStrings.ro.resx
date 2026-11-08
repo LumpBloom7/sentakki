@@ -58,14 +58,24 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="get_ready" xml:space="preserve">
-        <value>Maak je klaar!</value>
+  <data name="taps" xml:space="preserve">
+        <value>Note Tap</value>
+        <comment>Tap is a proper noun.</comment>
     </data>
-  <data name="lets_go" xml:space="preserve">
-        <value>Laten we gaan!</value>
+  <data name="holds" xml:space="preserve">
+        <value>Note Hold</value>
+        <comment>Hold is a proper noun.</comment>
     </data>
-  <data name="sentakki_supported_by" xml:space="preserve">
-        <value>Sentakki is gemaakt met de hulp van {0}.</value>
-        <comment>The placeholder is for the name of a sentakki supporter.</comment>
+  <data name="touchholds" xml:space="preserve">
+        <value>Note TouchHold</value>
+        <comment>TouchHold is a proper noun.</comment>
+    </data>
+  <data name="touches" xml:space="preserve">
+        <value>Note Touch</value>
+        <comment>Touch is a proper noun.</comment>
+    </data>
+  <data name="slides" xml:space="preserve">
+        <value>Număr de note Slide</value>
+        <comment>Slide is a proper noun.</comment>
     </data>
 </root>

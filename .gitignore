@@ -289,3 +289,6 @@ __pycache__/
 
 # C# Dev tools
 *.lscache
+
+# BenchmarkDotNet
+BenchmarkDotNet*/

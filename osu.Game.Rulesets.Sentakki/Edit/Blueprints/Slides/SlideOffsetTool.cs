@@ -65,12 +65,13 @@ public partial class SlideOffsetTool : CompositeDrawable
             },
         ];
     }
+
     private readonly Bindable<double> animationSpeed = new Bindable<double>(5);
 
     [BackgroundDependencyLoader]
-    private void load(SentakkiBlueprintContainer blueprintContainer)
+    private void load(SentakkiHitObjectComposer composer)
     {
-        animationSpeed.BindTo(blueprintContainer.Composer.DrawableRuleset.AdjustedAnimDuration);
+        animationSpeed.BindTo(composer.DrawableRuleset.AdjustedAnimDuration);
     }
 
     protected override void Update()
@@ -85,7 +86,7 @@ public partial class SlideOffsetTool : CompositeDrawable
             editorClock.CurrentTime + animationSpeed.Value / 2
         );
 
-        float Y2 = -Interpolation.ValueAt(
+        float y2 = -Interpolation.ValueAt(
             slide.StartTime + slideBodyInfo.EffectiveWaitDuration,
             SentakkiPlayfield.INTERSECTDISTANCE,
             SentakkiPlayfield.NOTESTARTDISTANCE,
@@ -94,9 +95,9 @@ public partial class SlideOffsetTool : CompositeDrawable
         );
 
         Y = Math.Min(Y, -SentakkiPlayfield.NOTESTARTDISTANCE);
-        Y2 = Math.Min(Y2, -SentakkiPlayfield.NOTESTARTDISTANCE);
+        y2 = Math.Min(y2, -SentakkiPlayfield.NOTESTARTDISTANCE);
 
-        Height = Math.Abs(Y - Y2);
+        Height = Math.Abs(Y - y2);
     }
 
     protected override bool OnClick(ClickEvent e) => true;

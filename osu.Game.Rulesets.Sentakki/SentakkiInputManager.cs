@@ -120,4 +120,38 @@ public enum SentakkiAction
     B2Lane6,
     B2Lane7,
     B2Lane8,
+
+    // Editor stuffs
+    [LocalisableDescription(typeof(SentakkiEditorStrings), nameof(SentakkiEditorStrings.TapTool))]
+    EditorTapTool = 10000,
+
+    [LocalisableDescription(typeof(SentakkiEditorStrings), nameof(SentakkiEditorStrings.HoldTool))]
+    EditorHoldTool,
+
+    [LocalisableDescription(typeof(SentakkiEditorStrings), nameof(SentakkiEditorStrings.SlideTool))]
+    EditorSlideTool,
+
+    [LocalisableDescription(typeof(SentakkiEditorStrings), nameof(SentakkiEditorStrings.TouchTool))]
+    EditorTouchTool,
+
+    [LocalisableDescription(typeof(SentakkiEditorStrings), nameof(SentakkiEditorStrings.TouchHoldTool))]
+    EditorTouchHoldTool,
+
+    [LocalisableDescription(typeof(SentakkiEditorStrings), nameof(SentakkiEditorStrings.BreakToggle))]
+    EditorToggleBreak,
+
+    [LocalisableDescription(typeof(SentakkiEditorStrings), nameof(SentakkiEditorStrings.ExToggle))]
+    EditorToggleEx,
+
+    [LocalisableDescription(typeof(SentakkiEditorStrings), nameof(SentakkiEditorStrings.BreakSlideToggle))]
+    EditorToggleBreakSlide,
+
+    [LocalisableDescription(typeof(SentakkiEditorStrings), nameof(SentakkiEditorStrings.ExSlideToggle))]
+    EditorToggleExSlide,
+
+    [LocalisableDescription(typeof(SentakkiEditorStrings), nameof(SentakkiEditorStrings.LaneSnapGrid))]
+    EditorToggleLaneSnapGrid,
+
+    [LocalisableDescription(typeof(SentakkiEditorStrings), nameof(SentakkiEditorStrings.TouchSnapGrid))]
+    EditorToggleTouchSnapGrid,
 }

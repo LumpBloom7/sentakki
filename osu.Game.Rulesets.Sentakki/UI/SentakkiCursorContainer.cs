@@ -24,7 +24,6 @@ public partial class SentakkiCursorContainer : GameplayCursorContainer
     {
         cursorTexture = textures.Get("SentakkiIcon.png");
 
-        if (cursorSprite != null)
-            cursorSprite.Texture = cursorTexture;
+        cursorSprite?.Texture = cursorTexture;
     }
 }

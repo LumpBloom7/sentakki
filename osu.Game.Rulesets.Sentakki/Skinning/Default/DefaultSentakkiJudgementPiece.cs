@@ -9,7 +9,6 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Extensions;
-using osu.Game.Rulesets.Sentakki.Scoring;
 using osuTK;
 using osuTK.Graphics;
 
@@ -29,12 +28,12 @@ public partial class DefaultSentakkiJudgementPiece : DefaultJudgementPiece, IHas
         AutoSizeAxes = Axes.Both;
     }
 
-    private Bindable<bool> timingIndicatorEnabled = new Bindable<bool>();
+    private readonly Bindable<bool> timingIndicatorEnabled = new Bindable<bool>();
 
     [BackgroundDependencyLoader]
     private void load(SentakkiRulesetConfigManager configManager)
     {
-        JudgementText.Text = SentakkiExtensions.GetDisplayNameForSentakkiResult(Result).ToUpperInvariant();
+        JudgementText.Text = Result.GetDisplayNameForSentakkiResult().ToUpperInvariant();
         JudgementText.Colour = colours.ForSentakkiResult(Result);
 
         if (Result is not HitResult.Perfect && Result.IsHit())
@@ -60,9 +59,6 @@ public partial class DefaultSentakkiJudgementPiece : DefaultJudgementPiece, IHas
     {
         if (timingIndicatorText is null)
             return;
-
-        // We don't want to show this to hitobjects that don't have the concept of timing
-        timingIndicatorText.Scale = result.HitObject.HitWindows is SentakkiEmptyHitWindows ? Vector2.Zero : Vector2.One;
 
         bool isEarly = result.TimeOffset < 0;
 

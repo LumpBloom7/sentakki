@@ -64,9 +64,9 @@ public class SentakkiModMirror : Mod, IApplicableAfterBeatmapConversion
             {
                 slideInfo.Segments =
                 [
-                    ..slideInfo.Segments.Select(s => s with
+                    .. slideInfo.Segments.Select(s => s with
                     {
-                        RelativeEndLane = (-s.RelativeEndLane).NormalizeLane(),
+                        RelativeEndLane = SentakkiExtensions.NormalizeLaneNumber(-s.RelativeEndLane),
                         Mirrored = s.Mirrored ^ mirrored
                     })
                 ];

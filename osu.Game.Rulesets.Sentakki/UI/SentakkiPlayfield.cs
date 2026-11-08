@@ -1,9 +1,7 @@
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
-using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -29,8 +27,6 @@ public partial class SentakkiPlayfield : Playfield
 
     private readonly JudgementPooler<DrawableSentakkiJudgement> newJudgementPool;
     private readonly DrawablePool<HitExplosion> explosionPool;
-
-    private readonly SkinnableDrawable ring;
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => true;
 
@@ -71,7 +67,7 @@ public partial class SentakkiPlayfield : Playfield
                 RelativeSizeAxes = Axes.Both,
                 Children =
                 [
-                    ring = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.PlayfieldRing), _ => new PlayfieldRing())
+                    new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.PlayfieldRing), _ => new PlayfieldRing())
                 ]
             },
             explosionLayer = new Container<HitExplosion> { RelativeSizeAxes = Axes.Both },
@@ -95,15 +91,12 @@ public partial class SentakkiPlayfield : Playfield
     [Resolved]
     private DrawableSentakkiRuleset drawableSentakkiRuleset { get; set; } = null!;
 
-    private Bindable<Skin> skin = null!;
-
     [BackgroundDependencyLoader]
-    private void load(SkinManager skinManager, IBeatmap beatmap, BeatmapDifficultyCache difficultyCache)
+    private void load()
     {
         RegisterPool<TouchHold, DrawableTouchHold>(2);
+        RegisterPool<TouchHold.TouchHoldHead, DrawableTouchHoldHead>(2);
         RegisterPool<ScorePaddingObject, DrawableScorePaddingObject>(8);
-
-        skin = skinManager.CurrentSkin.GetBoundCopy();
     }
 
     protected override HitObjectLifetimeEntry CreateLifetimeEntry(HitObject hitObject) => new SentakkiHitObjectLifetimeEntry(hitObject, drawableSentakkiRuleset);

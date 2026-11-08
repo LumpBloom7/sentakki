@@ -59,27 +59,27 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mod_description" xml:space="preserve">
-        <value>Adiții experimentale care vor fi adăugate în versiuni viitoare ale sentakki. Modul automat și Anti-eșec recomandate. Înregistrările sunt indisponibile.</value>
+        <value>Adiții experimentale care vor fi adăugate în versiunile viitoare ale sentakki. Autoplay și No-Fail sunt recomandate. Reluările nu sunt disponibile.</value>
     </data>
   <data name="twin_notes" xml:space="preserve">
-        <value>Note soră</value>
+        <value>Note pereche</value>
         <comment>Twin is an adjective.</comment>
     </data>
   <data name="twin_notes_description" xml:space="preserve">
-        <value>Permite mai mult decât o notă să împărtășească același timp (Necesită atingeri multiple)</value>
+        <value>Permite suprapunerea notelor în timp (Necesită un ecran tactil)</value>
     </data>
   <data name="twin_slides" xml:space="preserve">
-        <value>Alunecări soră</value>
+        <value>Note Slide pereche</value>
         <comment>Twin is an adjective.</comment>
     </data>
   <data name="twin_slides_description" xml:space="preserve">
-        <value>Permite mai mult decât o alunecare-corp să împărtășească același timp și origine (Necesită mai multe atingeri)</value>
+        <value>Permite suprapunerea unor note Slide-body (necesită un ecran tactil)</value>
     </data>
   <data name="fan_slides" xml:space="preserve">
-        <value>Alunecări ventilator</value>
+        <value>Fan Slides</value>
         <comment>Fan is a adjective, referring to the shape of the Slide.</comment>
     </data>
   <data name="fan_slides_description" xml:space="preserve">
-        <value>Permite apariția ocazională a alunecărilor ventilator (Necesită atingeri multiple)</value>
+        <value>Permite apariția ocazională a slide-urilor fan (Necesită un ecran tactil)</value>
     </data>
 </root>

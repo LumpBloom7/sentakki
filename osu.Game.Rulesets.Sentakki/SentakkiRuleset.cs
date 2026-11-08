@@ -48,12 +48,6 @@ namespace osu.Game.Rulesets.Sentakki;
 
 public partial class SentakkiRuleset : Ruleset
 {
-
-    public SentakkiRuleset()
-    {
-        RulesetInfo.OnlineID = 21;
-    }
-
     public override string RulesetAPIVersionSupported => CURRENT_RULESET_API_VERSION;
 
     private static readonly Lazy<bool> is_development_build
@@ -63,13 +57,15 @@ public partial class SentakkiRuleset : Ruleset
 
     public override string Description => IsDevelopmentBuild ? "sentakki (Dev build)" : "sentakki";
     public override string PlayingVerb => "Washing laundry";
-    public override string ShortName => "Sentakki";
+
+    public const string SHORT_NAME = "Sentakki";
+    public override string ShortName => SHORT_NAME;
 
     #region Editor
 
     public override bool EditorShowScrollSpeed => false;
 
-    public override HitObjectComposer? CreateHitObjectComposer()
+    public override HitObjectComposer CreateHitObjectComposer()
         => new SentakkiHitObjectComposer(this);
 
     public override IEnumerable<Drawable> CreateEditorSetupSections()
@@ -138,7 +134,8 @@ public partial class SentakkiRuleset : Ruleset
                 return
                 [
                     new SentakkiModAutoplay(),
-                    new SentakkiModNoTouch()
+                    new SentakkiModNoTouch(),
+                    new SentakkiModRelax()
                 ];
 
             case ModType.Conversion:
@@ -178,21 +175,48 @@ public partial class SentakkiRuleset : Ruleset
 
     public override IRulesetConfigManager CreateConfig(SettingsStore? settings) => new SentakkiRulesetConfigManager(settings, RulesetInfo);
 
-    public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) =>
-    [
-        new KeyBinding(InputKey.Z, SentakkiAction.Button1),
-        new KeyBinding(InputKey.X, SentakkiAction.Button2),
-        new KeyBinding(InputKey.MouseLeft, SentakkiAction.Button1),
-        new KeyBinding(InputKey.MouseRight, SentakkiAction.Button2),
-        new KeyBinding(InputKey.Number1, SentakkiAction.Key1),
-        new KeyBinding(InputKey.Number2, SentakkiAction.Key2),
-        new KeyBinding(InputKey.Number3, SentakkiAction.Key3),
-        new KeyBinding(InputKey.Number4, SentakkiAction.Key4),
-        new KeyBinding(InputKey.Number5, SentakkiAction.Key5),
-        new KeyBinding(InputKey.Number6, SentakkiAction.Key6),
-        new KeyBinding(InputKey.Number7, SentakkiAction.Key7),
-        new KeyBinding(InputKey.Number8, SentakkiAction.Key8)
-    ];
+    public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0)
+    {
+        switch (variant)
+        {
+            default:
+                return
+                [
+                    new KeyBinding(InputKey.Z, SentakkiAction.Button1),
+                    new KeyBinding(InputKey.X, SentakkiAction.Button2),
+                    new KeyBinding(InputKey.MouseLeft, SentakkiAction.Button1),
+                    new KeyBinding(InputKey.MouseRight, SentakkiAction.Button2),
+                    new KeyBinding(InputKey.Number1, SentakkiAction.Key1),
+                    new KeyBinding(InputKey.Number2, SentakkiAction.Key2),
+                    new KeyBinding(InputKey.Number3, SentakkiAction.Key3),
+                    new KeyBinding(InputKey.Number4, SentakkiAction.Key4),
+                    new KeyBinding(InputKey.Number5, SentakkiAction.Key5),
+                    new KeyBinding(InputKey.Number6, SentakkiAction.Key6),
+                    new KeyBinding(InputKey.Number7, SentakkiAction.Key7),
+                    new KeyBinding(InputKey.Number8, SentakkiAction.Key8)
+                ];
+
+            case EDITOR_VARIANT:
+                return
+                [
+                    new KeyBinding(InputKey.Number2, SentakkiAction.EditorTapTool),
+                    new KeyBinding(InputKey.Number3, SentakkiAction.EditorHoldTool),
+                    new KeyBinding(InputKey.Number4, SentakkiAction.EditorSlideTool),
+                    new KeyBinding(InputKey.Number5, SentakkiAction.EditorTouchTool),
+                    new KeyBinding(InputKey.Number6, SentakkiAction.EditorTouchHoldTool),
+
+                    new KeyBinding(InputKey.T, SentakkiAction.EditorToggleBreak),
+                    new KeyBinding(InputKey.Y, SentakkiAction.EditorToggleEx),
+
+                    // Not supported yet, hide these for now
+                    //new KeyBinding(new KeyCombination(InputKey.Alt, InputKey.T), SentakkiAction.EditorToggleBreakSlide),
+                    //new KeyBinding(new KeyCombination(InputKey.Alt, InputKey.Y), SentakkiAction.EditorToggleExSlide),
+
+                    new KeyBinding(InputKey.U, SentakkiAction.EditorToggleLaneSnapGrid),
+                    new KeyBinding(InputKey.I, SentakkiAction.EditorToggleTouchSnapGrid),
+                ];
+        }
+    }
 
     public override StatisticItem[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap) =>
     [

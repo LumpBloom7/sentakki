@@ -58,14 +58,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="get_ready" xml:space="preserve">
-        <value>เตรียมพร้อม!</value>
+  <data name="break_removal" xml:space="preserve">
+        <value>Отключить ноты BREAK</value>
     </data>
-  <data name="lets_go" xml:space="preserve">
-        <value>ไปเลย!</value>
+  <data name="ex_removal" xml:space="preserve">
+        <value>Отключить ноты EX</value>
     </data>
-  <data name="sentakki_supported_by" xml:space="preserve">
-        <value>Sentakki สร้างขึ้นด้วยการสนับสนุนของ {0}</value>
-        <comment>The placeholder is for the name of a sentakki supporter.</comment>
+  <data name="all_ex" xml:space="preserve">
+        <value>Включить модификатор EX для всех нот</value>
     </data>
 </root>

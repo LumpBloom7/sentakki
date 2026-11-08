@@ -59,15 +59,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="judgement_mode" xml:space="preserve">
-        <value>Mod statistici</value>
+        <value>Mod de evaluare</value>
     </data>
   <data name="judgement_mode_description" xml:space="preserve">
-        <value>Modurile de statistici determină lungimea perioadei de lovire din timpul jocului.</value>
+        <value>Modul de evaluare determină cât timp îi se oferă utilizatorului să nimerească o notă pe parcursul rundei.</value>
     </data>
   <data name="minimum_result" xml:space="preserve">
-        <value>Acuratețe minimă</value>
+        <value>Evaluarea minimă</value>
     </data>
   <data name="minimum_result_description" xml:space="preserve">
-        <value>Acuratețea minimă acceptată de joc. Tot ce se află sub va fi considerat un rateu.</value>
+        <value>Evaluarea minimă acceptată de joc. Tot ce se află sub ea va fi considerat un rateu.</value>
     </data>
 </root>

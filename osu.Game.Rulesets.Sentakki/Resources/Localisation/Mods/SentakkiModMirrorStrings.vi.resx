@@ -58,14 +58,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="get_ready" xml:space="preserve">
-        <value>Bersiap!</value>
+  <data name="mod_description" xml:space="preserve">
+        <value>Lật khu vực chơi theo chiều ngang, dọc, hoặc cả hai!</value>
     </data>
-  <data name="lets_go" xml:space="preserve">
-        <value>Mulai!</value>
+  <data name="mirror_vertically" xml:space="preserve">
+        <value>⇅ Lật dọc</value>
     </data>
-  <data name="sentakki_supported_by" xml:space="preserve">
-        <value>Sentakki dibuat dengan bantuan dari {0}.</value>
-        <comment>The placeholder is for the name of a sentakki supporter.</comment>
+  <data name="mirror_vertically_description" xml:space="preserve">
+        <value>Lật cả màn chơi theo trục x</value>
+    </data>
+  <data name="mirror_horizontally" xml:space="preserve">
+        <value>⇆ Lật ngang</value>
+    </data>
+  <data name="mirror_horizontally_description" xml:space="preserve">
+        <value>Lật cả màn chơi theo trục y</value>
     </data>
 </root>

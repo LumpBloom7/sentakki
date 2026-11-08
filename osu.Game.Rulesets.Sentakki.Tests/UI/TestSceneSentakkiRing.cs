@@ -31,19 +31,16 @@ public partial class TestSceneSentakkiRing : SentakkiSkinnableTestScene
 
     private void toggleNotestartIndicators(bool b)
     {
-        CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<PlayfieldRing>().ForEach(
-            r => r.NoteStartIndicators.Value = b
+        CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<PlayfieldRing>().ForEach(r => r.NoteStartIndicators.Value = b
         );
     }
 
     private void triggerKiaiBeat()
     {
-        CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<PlayfieldRing>().ForEach(
-            r => r.Pulse()
+        CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<PlayfieldRing>().ForEach(r => r.Pulse()
         );
 
-        CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<LegacyPlayfieldRing>().ForEach(
-            r => r.Pulse()
+        CreatedDrawables.OfType<SkinnableDrawable>().Select(d => d.Drawable).OfType<LegacyPlayfieldRing>().ForEach(r => r.Pulse()
         );
     }
 }

@@ -11,7 +11,7 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
 
 public partial class TouchHoldProgressPiece : CompositeDrawable
 {
-    public BindableDouble ProgressBindable = new BindableDouble();
+    public readonly BindableDouble ProgressBindable = new BindableDouble();
 
     private readonly TouchHoldCircularProgress[] progressParts;
 

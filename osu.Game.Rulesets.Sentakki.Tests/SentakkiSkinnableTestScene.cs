@@ -6,7 +6,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests;
 
 public abstract partial class SentakkiSkinnableTestScene : SkinnableTestScene
 {
-    private Container content = null!;
+    private Container? content;
 
     protected override Container<Drawable> Content
     {

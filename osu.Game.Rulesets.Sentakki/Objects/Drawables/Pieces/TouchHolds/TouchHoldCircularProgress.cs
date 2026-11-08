@@ -36,10 +36,9 @@ public partial class TouchHoldCircularProgress : CircularProgress
 
             double flashProg = Time.Current % (flashing_time * 2) / (flashing_time * 2);
 
-            if (flashProg <= 0.5)
-                Colour = Interpolation.ValueAt(flashProg, originalColour, flashingColour, 0, 0.5, Easing.OutSine);
-            else
-                Colour = Interpolation.ValueAt(flashProg, flashingColour, originalColour, 0.5, 0, Easing.InSine);
+            Colour = flashProg <= 0.5
+                ? Interpolation.ValueAt(flashProg, originalColour, flashingColour, 0, 0.5, Easing.OutSine)
+                : Interpolation.ValueAt(flashProg, flashingColour, originalColour, 0.5, 0, Easing.InSine);
         }
         else
         {

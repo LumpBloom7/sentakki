@@ -1,6 +1,5 @@
 ﻿using osu.Framework;
 using osu.Framework.Allocation;
-using osu.Framework.Localisation;
 using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Sentakki.Configuration;
@@ -10,14 +9,9 @@ namespace osu.Game.Rulesets.Sentakki.UI;
 
 public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
 {
-    private readonly Ruleset ruleset;
-
-    protected override LocalisableString Header => ruleset.Description;
-
     public SentakkiSettingsSubsection(Ruleset ruleset)
         : base(ruleset)
     {
-        this.ruleset = ruleset;
     }
 
     [BackgroundDependencyLoader]
@@ -27,36 +21,43 @@ public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
 
         Children =
         [
-            new SettingsItemV2(new FormCheckBox {
+            new SettingsItemV2(new FormCheckBox
+            {
                 Caption = SentakkiSettingsSubsectionStrings.ShowNoteStartIndicators,
                 Current = config.GetBindable<bool>(SentakkiRulesetSettings.ShowNoteStartIndicators)
             }),
 
-            new SettingsItemV2(new FormCheckBox {
+            new SettingsItemV2(new FormCheckBox
+            {
                 Caption = SentakkiSettingsSubsectionStrings.SnakingInSlides,
                 Current = config.GetBindable<bool>(SentakkiRulesetSettings.SnakingSlideBody)
             }),
 
-            new SettingsItemV2(new FormCheckBox {
+            new SettingsItemV2(new FormCheckBox
+            {
                 Caption = SentakkiSettingsSubsectionStrings.ShowDetailedJudgements,
                 Current = config.GetBindable<bool>(SentakkiRulesetSettings.DetailedJudgements),
                 HintText = "Show EARLY/LATE indicators on supported skins."
-            }) {
-                Keywords = ["early", "late","indicators", "timing"],
+            })
+            {
+                Keywords = ["early", "late", "indicators", "timing"],
             },
 
-            new SettingsItemV2(new FormEnumDropdown<ColorOption> {
-               Caption = SentakkiSettingsSubsectionStrings.RingColor,
-               Current = config.GetBindable<ColorOption>(SentakkiRulesetSettings.RingColor),
+            new SettingsItemV2(new FormEnumDropdown<ColorOption>
+            {
+                Caption = SentakkiSettingsSubsectionStrings.RingColor,
+                Current = config.GetBindable<ColorOption>(SentakkiRulesetSettings.RingColor),
             }) { Keywords = ["color"] },
 
-            new SettingsItemV2(new FormSliderBar<float>{
+            new SettingsItemV2(new FormSliderBar<float>
+            {
                 Caption = SentakkiSettingsSubsectionStrings.NoteEntrySpeed,
                 Current = config.GetBindable<float>(SentakkiRulesetSettings.AnimationSpeed),
                 LabelFormat = v => SentakkiSettingsSubsectionStrings.EntrySpeedTooltip(v, DrawableSentakkiRuleset.ComputeLaneNoteEntryTime(v))
             }) { Keywords = ["scroll"] },
 
-            new SettingsItemV2(new FormSliderBar<float>{
+            new SettingsItemV2(new FormSliderBar<float>
+            {
                 Caption = SentakkiSettingsSubsectionStrings.TouchNoteEntrySpeed,
                 Current = config.GetBindable<float>(SentakkiRulesetSettings.TouchAnimationSpeed),
                 LabelFormat = v => SentakkiSettingsSubsectionStrings.EntrySpeedTooltip(v, DrawableSentakkiRuleset.ComputeTouchNoteEntryTime(v))
@@ -67,10 +68,10 @@ public partial class SentakkiSettingsSubsection : RulesetSettingsSubsection
             return;
 
         Add(new SettingsItemV2(new FormCheckBox
-        {
-            Caption = SentakkiSettingsSubsectionStrings.PreferPortraitLayout,
-            Current = config.GetBindable<bool>(SentakkiRulesetSettings.PreferPortraitLayout),
-        })
-        { Keywords = ["override", "orientation"] });
+            {
+                Caption = SentakkiSettingsSubsectionStrings.PreferPortraitLayout,
+                Current = config.GetBindable<bool>(SentakkiRulesetSettings.PreferPortraitLayout),
+            })
+            { Keywords = ["override", "orientation"] });
     }
 }

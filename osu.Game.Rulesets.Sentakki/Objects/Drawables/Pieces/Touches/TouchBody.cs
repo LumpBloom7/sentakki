@@ -11,8 +11,8 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
 
 public partial class TouchBody : CompositeDrawable
 {
-    public Container BorderContainer;
-    public Container PieceContainer;
+    public readonly Container BorderContainer;
+    public readonly Container PieceContainer;
 
     public TouchBody()
     {

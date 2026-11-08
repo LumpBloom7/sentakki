@@ -61,4 +61,10 @@
   <data name="mod_description" xml:space="preserve">
         <value>Các nốt biến mất trước khi bạn bấm chúng.</value>
     </data>
+  <data name="visible_radius" xml:space="preserve">
+        <value>Bán kính vùng nhìn được</value>
+    </data>
+  <data name="visible_radius_description" xml:space="preserve">
+        <value>Vùng nhìn thấy của các nốt trên vòng tròn.</value>
+    </data>
 </root>

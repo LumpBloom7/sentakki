@@ -11,8 +11,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.TouchHolds;
 
 public partial class TouchHoldCentrePiece : CompositeDrawable
 {
-    public Container PieceContainer;
-
     [Resolved]
     private Bindable<IReadOnlyList<Color4>>? paletteBindable { get; set; }
 
@@ -28,7 +26,7 @@ public partial class TouchHoldCentrePiece : CompositeDrawable
 
         InternalChildren =
         [
-            PieceContainer = new Container
+            new Container
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,

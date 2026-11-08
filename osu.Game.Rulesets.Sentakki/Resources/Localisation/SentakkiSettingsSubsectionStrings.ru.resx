@@ -110,4 +110,7 @@
         <value>Сверхзвуковая</value>
         <comment>Used when the speed value is greater than 10.</comment>
     </data>
+  <data name="prefer_portrait_layout" xml:space="preserve">
+        <value>Предпочитать портретную ориентацию</value>
+    </data>
 </root>

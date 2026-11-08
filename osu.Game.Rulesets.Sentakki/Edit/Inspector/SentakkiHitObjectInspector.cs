@@ -18,7 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Inspector;
 
 public partial class SentakkiHitObjectInspector : CompositeDrawable
 {
-    protected OsuTextFlowContainer inspectorText = null!;
+    private OsuTextFlowContainer inspectorText = null!;
 
     [Resolved]
     private EditorBeatmap editorBeatmap { get; set; } = null!;
@@ -142,7 +142,7 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
 
         addHeader("Duration");
         addValue(new SelfUpdatingInspectorEntry(() => $"{duration.Duration:#,0.##} ms"));
-        addValue(new SelfUpdatingInspectorEntry(() => $"({duration.Duration / beatLength:0.##} beats)"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"({durationInBeats:0.##} beats)"));
 
         if (hitObject is not Slide s)
             return;
@@ -152,11 +152,11 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
 
         addHeader("Wait duration");
         addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveWaitDuration:#,0.##} ms"));
-        addValue(new SelfUpdatingInspectorEntry(() => $"({s.SlideInfoList[0].EffectiveWaitDuration / beatLength:0.##} beats)"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"({waitDurationInBeats:0.##} beats)"));
 
         addHeader("Movement duration");
         addValue(new SelfUpdatingInspectorEntry(() => $"{s.SlideInfoList[0].EffectiveMovementDuration:#,0.##} ms"));
-        addValue(new SelfUpdatingInspectorEntry(() => $"({s.SlideInfoList[0].EffectiveMovementDuration / beatLength:0.##} beats)"));
+        addValue(new SelfUpdatingInspectorEntry(() => $"({movementDurationInBeats:0.##} beats)"));
     }
 
     private void addModifierInformation(SentakkiHitObject hitObject)
@@ -233,6 +233,7 @@ public partial class SentakkiHitObjectInspector : CompositeDrawable
 
     // This is an alternative implementation that reduces the spacing between the values and the headers
     private void addValue(string value) => addValue(value, colourProvider.Content1);
+
     private void addValue(string value, Color4 colour)
     {
         inspectorText.NewLine();
