@@ -9,7 +9,6 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Rulesets.Sentakki.Extensions;
-using osu.Game.Rulesets.Sentakki.Scoring;
 using osuTK;
 using osuTK.Graphics;
 
@@ -60,9 +59,6 @@ public partial class DefaultSentakkiJudgementPiece : DefaultJudgementPiece, IHas
     {
         if (timingIndicatorText is null)
             return;
-
-        // We don't want to show this to hitobjects that don't have the concept of timing
-        timingIndicatorText.Scale = result.HitObject.HitWindows is SentakkiEmptyHitWindows ? Vector2.Zero : Vector2.One;
 
         bool isEarly = result.TimeOffset < 0;
 
