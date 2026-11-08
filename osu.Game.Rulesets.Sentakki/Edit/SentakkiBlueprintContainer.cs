@@ -7,7 +7,6 @@ using osu.Framework.Graphics.Pooling;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Sentakki.Beatmaps;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Holds;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 using osu.Game.Rulesets.Sentakki.Edit.Blueprints.Taps;
@@ -26,7 +25,7 @@ public partial class SentakkiBlueprintContainer : ComposeBlueprintContainer
 {
     public new SentakkiHitObjectComposer Composer => (SentakkiHitObjectComposer)base.Composer;
 
-    private SentakkiMovementHandler movementHandler;
+    private readonly SentakkiMovementHandler movementHandler;
 
     public new SentakkiSelectionHandler SelectionHandler => (SentakkiSelectionHandler)base.SelectionHandler;
 

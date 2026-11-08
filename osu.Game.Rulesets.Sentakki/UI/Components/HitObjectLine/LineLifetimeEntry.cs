@@ -25,7 +25,7 @@ public class LineLifetimeEntry : LifetimeEntry
         animationDuration.BindValueChanged(refreshLifetime, true);
     }
 
-    public List<SentakkiLanedHitObject> HitObjects = [];
+    public readonly List<SentakkiLanedHitObject> HitObjects = [];
 
     public float AngleRange { get; private set; }
     public ColourInfo Colour { get; private set; }

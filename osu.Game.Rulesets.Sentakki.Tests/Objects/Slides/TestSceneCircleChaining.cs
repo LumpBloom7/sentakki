@@ -9,7 +9,6 @@ using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Slides;
 using osu.Game.Rulesets.Sentakki.Objects.SlidePath;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Tests.Visual;
 using osuTK;
 using osuTK.Graphics;
@@ -23,13 +22,12 @@ public partial class TestSceneCircleChaining : OsuTestScene
 
     private bool mirrored;
 
-    private readonly SlideVisual slide;
     private readonly SlideBodyInfo slideBodyInfo = new();
 
     private readonly Container nodes;
 
     [Cached]
-    private readonly DrawablePool<SlideChevron> chevronPool = null!;
+    private readonly DrawablePool<SlideChevron> chevronPool;
 
     public TestSceneCircleChaining()
     {
@@ -40,6 +38,8 @@ public partial class TestSceneCircleChaining : OsuTestScene
             RelativeSizeAxes = Axes.None,
             Size = new Vector2(SentakkiPlayfield.RINGSIZE)
         });
+
+        SlideVisual slide;
 
         Add(slide = new SlideVisual()
         {

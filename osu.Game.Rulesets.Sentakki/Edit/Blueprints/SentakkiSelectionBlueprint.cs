@@ -9,7 +9,7 @@ public abstract partial class SentakkiSelectionBlueprint<THitObject, TDrawable> 
     where THitObject : SentakkiHitObject
     where TDrawable : DrawableSentakkiHitObject
 {
-    public new THitObject Item => (THitObject)base.Item;
+    protected new THitObject Item => (THitObject)base.Item;
 
     public override Vector2 ScreenSpaceSelectionPoint => SelectionQuad.Centre;
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => SelectionQuad.Contains(screenSpacePos);
@@ -21,5 +21,5 @@ public abstract partial class SentakkiSelectionBlueprint<THitObject, TDrawable> 
     {
     }
 
-    public new TDrawable DrawableObject => (TDrawable)base.DrawableObject;
+    protected new TDrawable DrawableObject => (TDrawable)base.DrawableObject;
 }

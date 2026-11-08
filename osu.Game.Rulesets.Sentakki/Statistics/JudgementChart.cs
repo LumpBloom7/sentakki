@@ -32,7 +32,7 @@ public partial class JudgementChart : TableContainer
         ("Break", e => e.HitObject is SentakkiHitObject x and not Slide && x.Break)
     ];
 
-    private OsuColour colours { get; set; } = new OsuColour();
+    private readonly OsuColour colours = new OsuColour();
 
     private static readonly HitResult[] valid_results =
     [

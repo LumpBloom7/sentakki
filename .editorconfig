@@ -163,6 +163,7 @@ csharp_style_throw_expression = true:silent
 csharp_style_conditional_delegate_call = true:warning
 
 #Style - unused
+resharper_unused_member_global_highlighting = hint
 dotnet_style_readonly_field = true:silent
 dotnet_code_quality_unused_parameters = non_public:silent
 csharp_style_unused_value_expression_statement_preference = discard_variable:silent
@@ -215,5 +216,19 @@ resharper_align_multiline_parameter = true
 # [Resharper] Style - Blank lines
 resharper_redundant_blank_lines_highlighting = warning
 
+resharper_redundant_verbatim_string_prefix_highlighting = hint
+
 # osu-framework drawables rely on source generation to provide dependency injection functionality without using reflection
 resharper_partial_type_with_single_part_highlighting = hint
+
+resharper_redundant_argument_default_value_highlighting = hint
+
+resharper_convert_if_statement_to_conditional_ternary_expression_highlighting = hint
+dotnet_style_prefer_conditional_expression_over_assignment = true:silent 
+resharper_member_can_be_private_global_highlighting = hint
+resharper_compare_of_floats_by_equality_operator_highlighting = hint
+resharper_property_can_be_made_init_only_global_highlighting = hint
+resharper_parameter_hides_member_highlighting = hint
+resharper_possible_multiple_enumeration_highlighting = hint
+resharper_unused_member_local_highlighting = hint
+resharper_unused_parameter_local_highlighting = hint

@@ -36,7 +36,7 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
     {
     }
 
-    private DrawableRulesetDependencies dependencies = null!;
+    private DrawableRulesetDependencies? dependencies;
 
     protected override Drawable CreateHitObjectInspector() => new SentakkiHitObjectInspector();
 
@@ -65,7 +65,7 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
         setupTernaryBindables();
     }
 
-    private CompositionTool? currentTool = null;
+    private CompositionTool? currentTool;
 
     protected override void Update()
     {
@@ -153,8 +153,6 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
         foreach (var ternaryButton in base.CreateTernaryButtons())
             yield return ternaryButton;
 
-        var selectionHandler = (SentakkiSelectionHandler)BlueprintContainer.SelectionHandler;
-
         yield return new DrawableTernaryButton<SentakkiAction>
         {
             Current = breakTernaryState,
@@ -198,11 +196,11 @@ public partial class SentakkiHitObjectComposer : HitObjectComposer<SentakkiHitOb
     {
         base.UpdateTernaryStates();
 
-        var selectedItems = EditorBeatmap.SelectedHitObjects.OfType<SentakkiHitObject>().ToList();
+        var selectedItems = EditorBeatmap.SelectedHitObjects.OfType<SentakkiHitObject>().ToArray();
         exTernaryState.Value = selectedItems.Where(h => h is not TouchHold).GetTernaryState(h => h.Ex);
         breakTernaryState.Value = selectedItems.GetTernaryState(h => h.Break);
 
-        var selectedSlideBodies = selectedItems.OfType<Slide>().SelectMany(s => s.SlideInfoList);
+        var selectedSlideBodies = selectedItems.OfType<Slide>().SelectMany(s => s.SlideInfoList).ToArray();
         breakSlideTernaryState.Value = selectedSlideBodies.GetTernaryState(s => s.Break);
         exSlideTernaryState.Value = selectedSlideBodies.GetTernaryState(s => s.Ex);
 

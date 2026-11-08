@@ -10,7 +10,6 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Compose.Components;
 
 namespace osu.Game.Rulesets.Sentakki.Edit;
@@ -79,11 +78,6 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
         return base.HandleReverse();
     }
 
-    public override bool HandleRotation(float angle)
-    {
-        return base.HandleRotation(angle);
-    }
-
     public override bool HandleFlip(Direction direction, bool flipOverOrigin)
     {
         return direction switch
@@ -115,10 +109,10 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
                         {
                             slideInfo.Segments =
                             [
-                                .. slideInfo.Segments.Select(s => s with
+                                .. slideInfo.Segments.Select(segment => segment with
                                 {
-                                    RelativeEndLane = (-s.RelativeEndLane).NormalizeLane(),
-                                    Mirrored = !s.Mirrored
+                                    RelativeEndLane = (-segment.RelativeEndLane).NormalizeLane(),
+                                    Mirrored = !segment.Mirrored
                                 })
                             ];
                         }
@@ -161,10 +155,10 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
                         {
                             slideInfo.Segments =
                             [
-                                .. slideInfo.Segments.Select(s => s with
+                                .. slideInfo.Segments.Select(segment => segment with
                                 {
-                                    RelativeEndLane = (-s.RelativeEndLane).NormalizeLane(),
-                                    Mirrored = !s.Mirrored
+                                    RelativeEndLane = (-segment.RelativeEndLane).NormalizeLane(),
+                                    Mirrored = !segment.Mirrored
                                 })
                             ];
                         }

@@ -37,7 +37,7 @@ public partial class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject
     private GameHost gamehost { get; set; } = null!;
 
     public override bool RequiresPortraitOrientation => configPreferPortrait.Value;
-    private Bindable<bool> configPreferPortrait = new();
+    private readonly Bindable<bool> configPreferPortrait = new();
 
     [BackgroundDependencyLoader]
     private void load()

@@ -75,7 +75,7 @@ public abstract partial class DrawableSentakkiHitObject : DrawableHitObject<Sent
         }, true);
     }
 
-    public Bindable<bool> ExBindable = new Bindable<bool>();
+    public readonly Bindable<bool> ExBindable = new Bindable<bool>();
 
     protected override void OnApply()
     {

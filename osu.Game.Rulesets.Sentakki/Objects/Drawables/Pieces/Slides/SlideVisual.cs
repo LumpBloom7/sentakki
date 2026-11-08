@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Framework.Development;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Pooling;
@@ -40,18 +39,18 @@ public partial class SlideVisual : CompositeDrawable
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => chevrons.Any(c => c.IsVisible && c.ReceivePositionalInputAt(screenSpacePos));
 
-    private readonly IBindable<int> SlideBodyInfoVersion = new Bindable<int>();
+    private readonly IBindable<int> slideBodyInfoVersion = new Bindable<int>();
 
     public SlideBodyInfo? SlideBodyInfo
     {
         get;
         set
         {
-            SlideBodyInfoVersion.UnbindAll();
+            slideBodyInfoVersion.UnbindAll();
             field = value;
 
             if (field is not null)
-                SlideBodyInfoVersion.BindTo(field.Version);
+                slideBodyInfoVersion.BindTo(field.Version);
 
             updateVisuals();
         }
@@ -103,7 +102,7 @@ public partial class SlideVisual : CompositeDrawable
     private void load(SentakkiRulesetConfigManager? sentakkiConfig)
     {
         sentakkiConfig?.BindWith(SentakkiRulesetSettings.SnakingSlideBody, snakingIn);
-        SlideBodyInfoVersion.BindValueChanged(_ => updateVisuals(), true);
+        slideBodyInfoVersion.BindValueChanged(_ => updateVisuals(), true);
     }
 
     private void updateVisuals()

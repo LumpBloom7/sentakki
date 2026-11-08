@@ -100,7 +100,7 @@ public abstract class SentakkiHitObject : HitObject, IHasDisplayColour
     public override IList<HitSampleInfo> AuxiliarySamples =>
         Break && PlaysBreakSample ? [new BreakSample(CreateHitSampleInfo())] : [];
 
-    public class BreakSample : HitSampleInfo
+    private class BreakSample : HitSampleInfo
     {
         public override IEnumerable<string> LookupNames
         {

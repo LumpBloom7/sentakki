@@ -17,7 +17,6 @@ public partial class HitExplosion : PoolableDrawable
     public override bool RemoveWhenNotAlive => true;
 
     private const float default_explosion_size = 75;
-    private const float touch_hold_explosion_size = 100;
 
     public HitExplosion()
     {

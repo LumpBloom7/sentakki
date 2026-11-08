@@ -8,7 +8,6 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Sentakki.Extensions;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Compose.Components;
 using osu.Game.Utils;
@@ -126,7 +125,7 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
         }
     }
 
-    private Dictionary<IHasPosition, Vector2> originalPosition = [];
+    private readonly Dictionary<IHasPosition, Vector2> originalPosition = [];
 
     public override void Begin()
     {

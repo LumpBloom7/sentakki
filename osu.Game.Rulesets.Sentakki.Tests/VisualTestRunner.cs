@@ -8,12 +8,11 @@ namespace osu.Game.Rulesets.Sentakki.Tests;
 public static class VisualTestRunner
 {
     [STAThread]
-    public static int Main(string[] args)
+    public static int Main(string[] _)
     {
-        using (DesktopGameHost host = Host.GetSuitableDesktopHost(@"osu"))
-        {
-            host.Run(new OsuTestBrowser());
-            return 0;
-        }
+        using DesktopGameHost host = Host.GetSuitableDesktopHost(@"osu");
+
+        host.Run(new OsuTestBrowser());
+        return 0;
     }
 }

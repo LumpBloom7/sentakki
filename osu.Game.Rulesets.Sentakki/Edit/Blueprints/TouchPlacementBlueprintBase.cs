@@ -21,21 +21,21 @@ public abstract partial class TouchPlacementBlueprintBase<T> : SentakkiPlacement
 
     private static float getMinimumDistance()
     {
-        var valid_positions = SentakkiBeatmapConverterOld.VALID_TOUCH_POSITIONS;
-        int n = valid_positions.Count;
+        var validPositions = SentakkiBeatmapConverterOld.VALID_TOUCH_POSITIONS;
+        int n = validPositions.Count;
 
-        float min_distance_squared = float.MaxValue;
+        float minDistanceSquared = float.MaxValue;
         for (int i = 0; i < n - 1; ++i)
         {
-            var pos = valid_positions[i];
+            var pos = validPositions[i];
             for (int j = i + 1; j < n; ++j)
             {
-                var pos2 = valid_positions[j];
+                var pos2 = validPositions[j];
 
-                min_distance_squared = Math.Min(min_distance_squared, Vector2.DistanceSquared(pos, pos2));
+                minDistanceSquared = Math.Min(minDistanceSquared, Vector2.DistanceSquared(pos, pos2));
             }
         }
 
-        return MathF.Sqrt(min_distance_squared);
+        return MathF.Sqrt(minDistanceSquared);
     }
 }

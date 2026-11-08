@@ -72,6 +72,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         return currentLane != twinLane;
     }
 
+    // ReSharper disable once ParameterHidesMember
     protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap, CancellationToken cancellationToken)
     {
         SentakkiHitObject result;
@@ -202,11 +203,9 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         // We try to look ahead into the stream in an effort to determine the initial direction of a stream if we don't have a previous
         if (previous is null || !isChronologicallyClose(previous, original))
         {
-            if (secondNext is not null)
-                activeStreamDirection = getStreamDirection(next, previous, secondNext);
-            else
-                // Fallback to using the midpoint as best effort
-                activeStreamDirection = getStreamDirection(original, null, next);
+            activeStreamDirection = secondNext is not null
+                ? getStreamDirection(next, previous, secondNext)
+                : getStreamDirection(original, null, next); // Fallback to using the midpoint as best effort
         }
         else
         {
@@ -274,7 +273,8 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
 
         if (MathHelper.ApproximatelyEquivalent(absAngDelta, 0, 5))
             return activeStreamDirection;
-        else if (MathHelper.ApproximatelyEquivalent(absAngDelta, 180, 5)) // Stream is collinear, equivalent to stack
+
+        if (MathHelper.ApproximatelyEquivalent(absAngDelta, 180, 5)) // Stream is collinear, equivalent to stack
             return StreamDirection.None;
 
         return angleDelta > 0 ? StreamDirection.Clockwise : StreamDirection.Counterclockwise;

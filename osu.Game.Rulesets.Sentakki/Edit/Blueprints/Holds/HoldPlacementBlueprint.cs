@@ -68,7 +68,7 @@ public partial class HoldPlacementBlueprint : LanedPlacementBlueprint<Hold>
 
         Child.Rotation = targetRotation;
         highlight.Y = targetY;
-        highlight.Height = (float)targetHeight;
+        highlight.Height = targetHeight;
     }
 
     private double commitStartTime;

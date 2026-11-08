@@ -26,13 +26,13 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
     [Resolved]
     private OsuColour colours { get; set; } = null!;
 
-    private OsuSpriteText text;
+    private readonly OsuSpriteText text;
 
-    private SlideBodyInfo slideBodyInfo;
-    private int segmentIndex;
+    private readonly SlideBodyInfo slideBodyInfo;
+    private readonly int segmentIndex;
 
     private SlideSegment segment => slideBodyInfo.Segments[segmentIndex];
-    private Slide slide;
+    private readonly Slide slide;
 
     public SentakkiSlideSegmentInspectorEntry(Slide slide, SlideBodyInfo slideBodyInfo, int index)
     {
@@ -72,8 +72,8 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
         text.Text = $"{segment.Shape}({simpleEndOffset}){mirrored}";
     }
 
-    private Bindable<Visibility> popoverVisibilityState = new();
-    private IBindable<int> versionBindable = new Bindable<int>();
+    private readonly Bindable<Visibility> popoverVisibilityState = new();
+    private readonly IBindable<int> versionBindable = new Bindable<int>();
 
     protected override void LoadComplete()
     {
@@ -84,7 +84,7 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
         popoverVisibilityState.BindValueChanged(v => Colour = v.NewValue == Visibility.Visible ? colours.YellowDark : Color4.White);
     }
 
-    public Popover? GetPopover()
+    public Popover GetPopover()
     {
         popoverVisibilityState.UnbindBindings();
         var popover = new SegmentEditPopover(slide, slideBodyInfo, segmentIndex);
@@ -123,13 +123,13 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
         [Resolved]
         private EditorBeatmap editorBeatmap { get; set; } = null!;
 
-        private Slide slide;
-        private SlideBodyInfo slideBodyInfo;
-        private int segmentIndex;
+        private readonly Slide slide;
+        private readonly SlideBodyInfo slideBodyInfo;
+        private readonly int segmentIndex;
 
         private SlideSegment segment => slideBodyInfo.Segments[segmentIndex];
 
-        private IBindable<int> versionBindable;
+        private readonly IBindable<int> versionBindable;
 
         public SegmentEditPopover(Slide slide, SlideBodyInfo slideBodyInfo, int index)
         {

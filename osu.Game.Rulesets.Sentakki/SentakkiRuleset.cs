@@ -65,7 +65,7 @@ public partial class SentakkiRuleset : Ruleset
 
     public override bool EditorShowScrollSpeed => false;
 
-    public override HitObjectComposer? CreateHitObjectComposer()
+    public override HitObjectComposer CreateHitObjectComposer()
         => new SentakkiHitObjectComposer(this);
 
     public override IEnumerable<Drawable> CreateEditorSetupSections()

@@ -35,9 +35,6 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
                             return null;
 
                         return new LegacyTapRing();
-
-                    default:
-                        break;
                 }
 
                 break;

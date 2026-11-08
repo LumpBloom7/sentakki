@@ -290,7 +290,7 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
                 return original.StartTime >= endTime;
 
             return true;
-        }).Shuffle(patternGenerator.RNG);
+        }).Shuffle(patternGenerator.SeededRng);
 
         // Choosing a position
         var position = availableTouchPositions.FirstOrDefault(endTimes.MinBy(x => x.Value).Key);
@@ -345,7 +345,7 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
                                        .Select(t => t.Segment)
                                        .ToList();
 
-        return candidateParts.Count == 0 ? null : candidateParts[patternGenerator.RNG.Next(candidateParts.Count)];
+        return candidateParts.Count == 0 ? null : candidateParts[patternGenerator.SeededRng.Next(candidateParts.Count)];
     }
 
     private IEnumerable<Tap> createTapsFromNodes(HitObject original, IList<IList<HitSampleInfo>> nodeSamples)
@@ -360,15 +360,15 @@ public class SentakkiBeatmapConverterOld : BeatmapConverter<SentakkiHitObject>
             yield break;
 
         // There's a chance no taps will be generated from nodes
-        if (patternGenerator.RNG.NextDouble() < 0.5)
+        if (patternGenerator.SeededRng.NextDouble() < 0.5)
             yield break;
 
         // There's a chance no taps will be generated from head nodes
-        bool shouldConsiderStartTick = patternGenerator.RNG.NextDouble() < 0.5;
+        bool shouldConsiderStartTick = patternGenerator.SeededRng.NextDouble() < 0.5;
 
         // There's a chance no taps will be generated from head nodes
         // If the head node isn't considered, then neither will the tail
-        bool shouldConsiderTailTick = shouldConsiderStartTick && patternGenerator.RNG.NextDouble() < 0.5;
+        bool shouldConsiderTailTick = shouldConsiderStartTick && patternGenerator.SeededRng.NextDouble() < 0.5;
 
         var difficulty = Beatmap.BeatmapInfo.Difficulty;
 

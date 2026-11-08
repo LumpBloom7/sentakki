@@ -29,7 +29,7 @@ public partial class TestSceneSlideFan : OsuTestScene
     private int depthIndex;
 
     [Cached]
-    private readonly DrawablePool<SlideChevron> chevronPool = null!;
+    private readonly DrawablePool<SlideChevron> chevronPool;
 
     public static bool[][] ObjectFlagsSource =
     [
@@ -60,7 +60,7 @@ public partial class TestSceneSlideFan : OsuTestScene
     {
         AddStep("Miss Single", () => testSingle(2000, false, headBreak, headEx, bodyBreak, bodyEx));
         AddStep("Hit Single", () => testSingle(2000, true, headBreak, headEx, bodyBreak, bodyEx));
-        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject hitObject && hitObject.AllJudged == false));
+        AddUntilStep("Wait for object despawn", () => !Children.Any(h => h is DrawableSentakkiHitObject hitObject && !hitObject.AllJudged));
     }
 
     private void testSingle(double duration, bool auto = false, bool headBreak = false, bool headEx = false, bool bodyBreak = false, bool bodyEx = false)

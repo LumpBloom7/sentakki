@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.UI.Components;
 
 public partial class LiveCounter : BeatSyncedContainer
 {
-    public BindableInt LivesLeft = new BindableInt();
+    public readonly BindableInt LivesLeft = new BindableInt();
 
     private readonly LiveRollingCounter livesText;
 

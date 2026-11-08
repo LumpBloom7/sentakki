@@ -41,7 +41,7 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
         Origin = Anchor.Centre;
 
         if (item.SlideInfoList.Count == 1)
-            AddInternal(slideBodyHighlight = new SlideBodyHighlight(item, item.SlideInfoList[0]) { });
+            AddInternal(slideBodyHighlight = new SlideBodyHighlight(item, item.SlideInfoList[0]));
 
         AddInternal(
             new Container

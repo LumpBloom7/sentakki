@@ -20,7 +20,6 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Objects.Drawables;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI;
 using osu.Game.Rulesets.UI;
@@ -205,25 +204,23 @@ public partial class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset
                 shader = shaderManager.Load("PositionAndColour", "PlayfieldMask");
             }
 
-            private Vector2 maskRadius;
-
             public Vector2 MaskRadius
             {
-                get => maskRadius;
+                get;
                 set
                 {
-                    if (maskRadius == value) return;
+                    if (field == value) return;
 
-                    maskRadius = value;
+                    field = value;
                     Invalidate(Invalidation.DrawNode);
                 }
             }
 
-            public Vector2 MaskPosition => OriginPosition;
+            private Vector2 maskPosition => OriginPosition;
 
             private class PlayfieldMaskDrawNode : DrawNode
             {
-                protected new PlayfieldMask Source => (PlayfieldMask)base.Source;
+                private PlayfieldMask source => (PlayfieldMask)Source;
 
                 private IShader shader = null!;
                 private Quad screenSpaceDrawQuad;
@@ -245,10 +242,10 @@ public partial class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset
                 {
                     base.ApplyState();
 
-                    shader = Source.shader;
-                    screenSpaceDrawQuad = Source.ScreenSpaceDrawQuad;
-                    maskPosition = Vector2Extensions.Transform(Source.MaskPosition, DrawInfo.Matrix);
-                    maskRadius = Source.MaskRadius * DrawInfo.Matrix.ExtractScale().Xy;
+                    shader = source.shader;
+                    screenSpaceDrawQuad = source.ScreenSpaceDrawQuad;
+                    maskPosition = Vector2Extensions.Transform(source.maskPosition, DrawInfo.Matrix);
+                    maskRadius = source.MaskRadius * DrawInfo.Matrix.ExtractScale().Xy;
                 }
 
                 protected override void Draw(IRenderer renderer)

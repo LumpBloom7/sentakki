@@ -55,9 +55,8 @@ public partial class DrawableSlide : DrawableSentakkiHitObject
     {
         bool allClear = true;
 
-        for (int i = 0; i < NestedHitObjects.Count; i++)
+        foreach (var nested in NestedHitObjects)
         {
-            var nested = NestedHitObjects[i];
             if (!nested.Result.HasResult)
                 return;
 

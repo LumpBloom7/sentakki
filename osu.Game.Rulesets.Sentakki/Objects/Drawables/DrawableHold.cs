@@ -134,10 +134,9 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
         double flashProg = Time.Current % (flashing_time * 2) / (flashing_time * 2);
 
-        if (flashProg <= 0.5)
-            NoteBody.Colour = Interpolation.ValueAt(flashProg, AccentColour.Value, flashingColour, 0, 0.5, Easing.OutSine);
-        else
-            NoteBody.Colour = Interpolation.ValueAt(flashProg, flashingColour, AccentColour.Value, 0.5, 0, Easing.InSine);
+        NoteBody.Colour = flashProg <= 0.5
+            ? Interpolation.ValueAt(flashProg, AccentColour.Value, flashingColour, 0, 0.5, Easing.OutSine)
+            : Interpolation.ValueAt(flashProg, flashingColour, AccentColour.Value, 0.5, 0, Easing.InSine);
     }
 
     protected override void UpdateInitialTransforms()

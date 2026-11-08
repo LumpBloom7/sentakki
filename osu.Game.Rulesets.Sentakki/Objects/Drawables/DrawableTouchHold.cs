@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input;
 using osu.Framework.Utils;
-using osu.Game.Audio;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -129,7 +127,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
     {
         base.LoadSamples();
 
-        holdSample.Samples = [.. HitObject.CreateHoldSample().Cast<ISampleInfo>()];
+        holdSample.Samples = [.. HitObject.CreateHoldSample()];
         holdSample.Frequency.Value = 1;
     }
 
@@ -172,7 +170,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
     [Cached]
     private readonly Bindable<bool> isHitting = new Bindable<bool>();
 
-    private Bindable<int> pressedCount = new Bindable<int>();
+    private readonly Bindable<int> pressedCount = new Bindable<int>();
 
     private double? releaseTime;
 
@@ -194,7 +192,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         // Ensure that the note colour is correct prior to the start time
         if (Time.Current < HitObject.StartTime)
         {
-            holdSample?.Stop();
+            holdSample.Stop();
             Colour = Color4.White;
             return;
         }
@@ -251,8 +249,6 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         {
             ApplyResult(HitObject.Judgement.MinResult);
         }
-
-        return;
     }
 
     private void resultReverted(DrawableHitObject drawableHitObject, JudgementResult judgementResult)
@@ -260,7 +256,7 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         if (drawableHitObject != Head)
             return;
 
-        holdSample?.Stop();
+        holdSample.Stop();
         releaseTime = double.MinValue;
         isHitting.Value = false;
     }
@@ -312,9 +308,9 @@ public partial class DrawableTouchHold : DrawableSentakkiHitObject
         return count;
     }
 
-    private void onPressedCountChanged(ValueChangedEvent<int> pressedCount)
+    private void onPressedCountChanged(ValueChangedEvent<int> count)
     {
-        if (pressedCount.NewValue > pressedCount.OldValue)
+        if (count.NewValue > count.OldValue)
             onTouchPressed();
         else
             onTouchReleased();
