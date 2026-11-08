@@ -8,16 +8,14 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints;
 
-public abstract partial class TouchPlacementBlueprintBase<T> : SentakkiPlacementBlueprint<T>
-    where T : SentakkiHitObject, IHasPosition, new()
+internal static class TouchPlacementBlueprintBaseStatics
 {
-    private static readonly Lazy<float> minimum_touch_spacing = new Lazy<float>(getMinimumDistance);
-    protected static float MinimumTouchSpacing => minimum_touch_spacing.Value;
+    public static readonly float MINIMUM_TOUCH_SPACING;
 
-    public override bool ReplacesExistingObject(HitObject existing)
-        => base.ReplacesExistingObject(existing)
-           && existing is IHasPosition touchNote
-           && Precision.DefinitelyBigger(MinimumTouchSpacing, Vector2.Distance(HitObject.Position, touchNote.Position));
+    static TouchPlacementBlueprintBaseStatics()
+    {
+        MINIMUM_TOUCH_SPACING = getMinimumDistance();
+    }
 
     private static float getMinimumDistance()
     {
@@ -38,4 +36,13 @@ public abstract partial class TouchPlacementBlueprintBase<T> : SentakkiPlacement
 
         return MathF.Sqrt(minDistanceSquared);
     }
+}
+
+public abstract partial class TouchPlacementBlueprintBase<T> : SentakkiPlacementBlueprint<T>
+    where T : SentakkiHitObject, IHasPosition, new()
+{
+    public override bool ReplacesExistingObject(HitObject existing)
+        => base.ReplacesExistingObject(existing)
+           && existing is IHasPosition touchNote
+           && Precision.DefinitelyBigger(TouchPlacementBlueprintBaseStatics.MINIMUM_TOUCH_SPACING, Vector2.Distance(HitObject.Position, touchNote.Position));
 }
