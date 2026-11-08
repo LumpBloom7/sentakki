@@ -13,7 +13,7 @@ public static class SentakkiExtensions
     /// <summary>
     /// Normalizes the lane number to be between [0,8)
     /// </summary>
-    public static int NormalizeLane(this int laneNumber)
+    public static int NormalizeLaneNumber(int laneNumber)
         => laneNumber.Mod(8);
 
     /// <summary>

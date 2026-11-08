@@ -68,7 +68,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         newComboSinceLastTwin = false;
         lastTwinTime = targetTime;
 
-        twinLane = currentPattern.GetNextLane(currentLane).NormalizeLane();
+        twinLane = SentakkiExtensions.NormalizeLaneNumber(currentPattern.GetNextLane(currentLane));
         return currentLane != twinLane;
     }
 
@@ -178,7 +178,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         if (!isChronologicallyClose(original, next))
         {
             float nextAngle = standard_playfield_center.AngleTo(next.GetPosition());
-            currentLane = getClosestLaneFor(nextAngle).NormalizeLane();
+            currentLane = SentakkiExtensions.NormalizeLaneNumber(getClosestLaneFor(nextAngle));
             activeStreamDirection = StreamDirection.None;
             return;
         }
@@ -189,7 +189,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         if (isJump(original, next))
         {
             activeStreamDirection = StreamDirection.None;
-            currentLane = (currentLane + jumpLaneOffset(original, previous, next)).NormalizeLane();
+            currentLane = SentakkiExtensions.NormalizeLaneNumber(currentLane + jumpLaneOffset(original, previous, next));
             return;
         }
 
@@ -231,7 +231,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         if (!isOverlappingEnd)
             currentLane += streamOffset == 0 ? 1 : streamOffset;
 
-        currentLane = currentLane.NormalizeLane();
+        currentLane = SentakkiExtensions.NormalizeLaneNumber(currentLane);
     }
 
     private bool isOverlapping(Vector2 a, Vector2 b)

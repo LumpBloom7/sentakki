@@ -84,7 +84,7 @@ public partial class SentakkiMovementHandler : Component
         foreach (var lanedNote in editorBeatmap.SelectedHitObjects.OfType<SentakkiLanedHitObject>())
         {
             playfield.Remove(lanedNote);
-            lanedNote.Lane = (lanedNote.Lane + laneOffset).NormalizeLane();
+            lanedNote.Lane = SentakkiExtensions.NormalizeLaneNumber(lanedNote.Lane + laneOffset);
             lanedNote.StartTime += timeOffset;
             editorBeatmap.Update(lanedNote);
             playfield.Add(lanedNote);

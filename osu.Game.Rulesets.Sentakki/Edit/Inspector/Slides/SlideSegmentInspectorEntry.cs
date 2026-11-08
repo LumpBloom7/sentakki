@@ -233,13 +233,19 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
             shapeDropdown.Current.Value = segment.Shape;
             mirroredCheckbox.Current.Value = segment.Mirrored;
 
-            int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(segmentIndex + 1).Sum(s => s.RelativeEndLane)).NormalizeLane();
-            int startLane = (currentEndLane - segment.RelativeEndLane).NormalizeLane();
+            int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(segmentIndex + 1).Sum(s => s.RelativeEndLane));
+            currentEndLane = SentakkiExtensions.NormalizeLaneNumber(currentEndLane);
+
+            int startLane = SentakkiExtensions.NormalizeLaneNumber(currentEndLane - segment.RelativeEndLane);
 
             // We have to temporarily re-enable the bindable to be able to change it.
             endLaneDropdown.Current.Disabled = false;
 
-            endLaneDropdown.Items = Enumerable.Range(0, 8).Where(i => SlidePaths.CheckSlideValidity(segment with { RelativeEndLane = i })).Select(i => (i + startLane).NormalizeLane() + 1).Order();
+            endLaneDropdown.Items = Enumerable.Range(0, 8)
+                                              .Where(i => SlidePaths.CheckSlideValidity(segment with { RelativeEndLane = i }))
+                                              .Select(i => SentakkiExtensions.NormalizeLaneNumber(i + startLane) + 1)
+                                              .Order();
+
             endLaneDropdown.Current.Value = currentEndLane + 1;
             endLaneDropdown.Current.Disabled = endLaneDropdown.Items.Count() == 1;
 
@@ -250,10 +256,12 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
         {
             List<SlideSegment> updatedSegments = [.. slideBodyInfo.Segments];
 
-            int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(segmentIndex + 1).Sum(s => s.RelativeEndLane)).NormalizeLane();
-            int startLane = (currentEndLane - segment.RelativeEndLane).NormalizeLane();
+            int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(segmentIndex + 1).Sum(s => s.RelativeEndLane));
+            currentEndLane = SentakkiExtensions.NormalizeLaneNumber(currentEndLane);
 
-            int relativeEnd = (endLaneDropdown.Current.Value - 1 - startLane).NormalizeLane();
+            int startLane = SentakkiExtensions.NormalizeLaneNumber(currentEndLane - segment.RelativeEndLane);
+
+            int relativeEnd = SentakkiExtensions.NormalizeLaneNumber(endLaneDropdown.Current.Value - 1 - startLane);
 
             var candidateSegment = new SlideSegment
             {
@@ -265,11 +273,11 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
             int offset = 1;
             while (!SlidePaths.CheckSlideValidity(candidateSegment))
             {
-                candidateSegment.RelativeEndLane = (relativeEnd + offset).NormalizeLane();
+                candidateSegment.RelativeEndLane = SentakkiExtensions.NormalizeLaneNumber(relativeEnd + offset);
                 if (SlidePaths.CheckSlideValidity(candidateSegment))
                     break;
 
-                candidateSegment.RelativeEndLane = (relativeEnd - offset).NormalizeLane();
+                candidateSegment.RelativeEndLane = SentakkiExtensions.NormalizeLaneNumber(relativeEnd - offset);
                 if (SlidePaths.CheckSlideValidity(candidateSegment))
                     break;
 

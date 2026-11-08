@@ -20,7 +20,7 @@ public class SentakkiPatternGenerator
         SeededRng = new Random(seed);
     }
 
-    public int GetNextLane(bool isTwin = false) => patternlist[currentPattern].Invoke(isTwin).NormalizeLane();
+    public int GetNextLane(bool isTwin = false) => SentakkiExtensions.NormalizeLaneNumber(patternlist[currentPattern].Invoke(isTwin));
 
     public void StartNextPattern()
     {

@@ -153,10 +153,20 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         shapeMenuItems = [.. Enum.GetValues<PathShape>().Select(s => (s, new TernaryStateRadioMenuItem($"{s}", action: _ => changeShape(s))))];
 
-        int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(SegmentIndex + 1).Sum(s => s.RelativeEndLane)).NormalizeLane();
-        int startLane = (currentEndLane - segment.RelativeEndLane).NormalizeLane();
 
-        endLaneMenuItems = [.. Enumerable.Range(0, 8).Select(i => (i, new TernaryStateRadioMenuItem($"{(i + startLane).NormalizeLane() + 1}", action: _ => changeEndLane(i))))];
+        int currentEndLane = slide.Lane + slideBodyInfo.Segments.Take(SegmentIndex + 1).Sum(s => s.RelativeEndLane);
+        currentEndLane = SentakkiExtensions.NormalizeLaneNumber(currentEndLane);
+
+        int startLane = SentakkiExtensions.NormalizeLaneNumber(currentEndLane - segment.RelativeEndLane);
+
+        endLaneMenuItems =
+        [
+            .. Enumerable.Range(0, 8)
+                         .Select(i => (
+                             i,
+                             new TernaryStateRadioMenuItem($"{SentakkiExtensions.NormalizeLaneNumber(i + startLane) + 1}",
+                                 action: _ => changeEndLane(i))))
+        ];
 
         yield return new OsuMenuItem("Shape")
         {
@@ -167,7 +177,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         {
             Items =
             [
-                .. endLaneMenuItems.OrderBy(kvp => (kvp.RelativeEndLane + startLane).NormalizeLane())
+                .. endLaneMenuItems.OrderBy(kvp => SentakkiExtensions.NormalizeLaneNumber(kvp.RelativeEndLane + startLane))
                                    .Select(kvp => kvp.MenuItem)
             ]
         };
@@ -235,11 +245,11 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         int offset = 1;
         while (!SlidePaths.CheckSlideValidity(candidateSegment))
         {
-            candidateSegment.RelativeEndLane = (relativeEnd + offset).NormalizeLane();
+            candidateSegment.RelativeEndLane = SentakkiExtensions.NormalizeLaneNumber(relativeEnd + offset);
             if (SlidePaths.CheckSlideValidity(candidateSegment))
                 break;
 
-            candidateSegment.RelativeEndLane = (relativeEnd - offset).NormalizeLane();
+            candidateSegment.RelativeEndLane = SentakkiExtensions.NormalizeLaneNumber(relativeEnd - offset);
             if (SlidePaths.CheckSlideValidity(candidateSegment))
                 break;
 
@@ -335,6 +345,6 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         int lane = (int)Math.Round((angle - 22.5f) / 45);
 
-        changeEndLane(lane.NormalizeLane());
+        changeEndLane(SentakkiExtensions.NormalizeLaneNumber(lane));
     }
 }

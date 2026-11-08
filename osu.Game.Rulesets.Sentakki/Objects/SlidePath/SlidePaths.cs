@@ -43,7 +43,7 @@ public static class SlidePaths
     // We additionally block +-1 end offset straight/circle slides, as those do not play well when not done right.
     public static bool CheckSlideValidity(SlideSegment param, bool forConverterUse = false)
     {
-        int normalizedEnd = param.RelativeEndLane.NormalizeLane();
+        int normalizedEnd = SentakkiExtensions.NormalizeLaneNumber(param.RelativeEndLane);
         bool mirrored = param.Mirrored;
 
         switch (param.Shape)
@@ -79,8 +79,8 @@ public static class SlidePaths
         // these lane values could be out of range
         // yet still be technically valid due to the circular playfield
         // Let's conservatively place them back within the [0, 7] range.
-        startLane = startLane.NormalizeLane();
-        segment.RelativeEndLane = segment.RelativeEndLane.NormalizeLane();
+        startLane = SentakkiExtensions.NormalizeLaneNumber(startLane);
+        segment.RelativeEndLane = SentakkiExtensions.NormalizeLaneNumber(segment.RelativeEndLane);
 
         return segment.Shape switch
         {
@@ -160,7 +160,7 @@ public static class SlidePaths
     // DX Circle Pattern
     private static SliderPath generateCirclePattern(int startLane, int relativeEndLane, RotationDirection direction = RotationDirection.Clockwise)
     {
-        bool isFullCircle = relativeEndLane.NormalizeLane() == 0;
+        bool isFullCircle = SentakkiExtensions.NormalizeLaneNumber(relativeEndLane) == 0;
         bool isCounterClockwise = direction == RotationDirection.Counterclockwise;
 
         float startAngle = SentakkiExtensions.GetRotationForLane(startLane);
@@ -224,7 +224,7 @@ public static class SlidePaths
     {
         const float r = 270 / 2f;
 
-        int x = mirrored ? (-relativeEndLane).NormalizeLane() : relativeEndLane;
+        int x = mirrored ? SentakkiExtensions.NormalizeLaneNumber(-relativeEndLane) : relativeEndLane;
 
         float originAngle = 90;
         float angle1 = 300;

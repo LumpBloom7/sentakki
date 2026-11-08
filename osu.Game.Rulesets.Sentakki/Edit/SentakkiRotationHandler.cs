@@ -86,7 +86,7 @@ public partial class SentakkiRotationHandler : SelectionRotationHandler
                 case SentakkiLanedHitObject laned:
                     composer.Playfield.Remove(laned);
 
-                    laned.Lane = (laned.Lane + laneShift).NormalizeLane();
+                    laned.Lane = SentakkiExtensions.NormalizeLaneNumber(laned.Lane + laneShift);
 
                     editorBeatmap.Update(laned);
                     composer.Playfield.Add(laned);

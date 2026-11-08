@@ -111,7 +111,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
                             [
                                 .. slideInfo.Segments.Select(segment => segment with
                                 {
-                                    RelativeEndLane = (-segment.RelativeEndLane).NormalizeLane(),
+                                    RelativeEndLane = SentakkiExtensions.NormalizeLaneNumber(-segment.RelativeEndLane),
                                     Mirrored = !segment.Mirrored
                                 })
                             ];
@@ -147,7 +147,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
             {
                 case SentakkiLanedHitObject laned:
                     composer.Playfield.Remove(laned);
-                    laned.Lane = (3 - laned.Lane).NormalizeLane();
+                    laned.Lane = SentakkiExtensions.NormalizeLaneNumber(3 - laned.Lane);
 
                     if (laned is Slide s)
                     {
@@ -157,7 +157,7 @@ public partial class SentakkiSelectionHandler : EditorSelectionHandler
                             [
                                 .. slideInfo.Segments.Select(segment => segment with
                                 {
-                                    RelativeEndLane = (-segment.RelativeEndLane).NormalizeLane(),
+                                    RelativeEndLane = SentakkiExtensions.NormalizeLaneNumber(-segment.RelativeEndLane),
                                     Mirrored = !segment.Mirrored
                                 })
                             ];
