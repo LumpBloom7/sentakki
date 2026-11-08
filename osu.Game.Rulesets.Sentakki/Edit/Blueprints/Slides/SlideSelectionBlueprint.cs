@@ -79,7 +79,7 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
     {
         base.Update();
 
-        Rotation = HitObject.Lane.GetRotationForLane();
+        Rotation = SentakkiExtensions.GetRotationForLane(HitObject.Lane);
 
         float targetScale = Interpolation.ValueAt(HitObject.StartTime, 1f, 0f, editorClock.CurrentTime + (animationSpeed.Value / 2), editorClock.CurrentTime + animationSpeed.Value);
         targetScale = Math.Clamp(targetScale, 0, 1);

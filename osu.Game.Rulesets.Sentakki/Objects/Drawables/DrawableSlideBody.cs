@@ -182,7 +182,7 @@ public partial class DrawableSlideBody : DrawableSentakkiLanedHitObject
         if (slideBodyInfo.Segments[^1].Shape is not PathShape.Fan) return;
 
         int fanStartLane = slideBodyInfo.RelativeEndLane - 4;
-        float fanStartLaneAngle = fanStartLane.GetRotationForLane();
+        float fanStartLaneAngle = SentakkiExtensions.GetRotationForLane(fanStartLane);
 
         // Apply rotation to the extra stars
         SlideStars[0].RotateTo(fanStartLaneAngle + 180 - 22.5f);

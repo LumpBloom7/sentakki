@@ -33,7 +33,7 @@ public partial class DrawableSentakkiJudgement : DrawableJudgement
         {
             case SentakkiLanedHitObject laned:
                 Position = SentakkiExtensions.GetPositionAlongLane(240, laned.Lane);
-                Rotation = laned.Lane.GetRotationForLane();
+                Rotation = SentakkiExtensions.GetRotationForLane(laned.Lane);
                 break;
 
             // Special case for TouchHold's initial hit: We shift it upwards to improve visibility

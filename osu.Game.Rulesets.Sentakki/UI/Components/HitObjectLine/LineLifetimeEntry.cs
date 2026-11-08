@@ -63,7 +63,7 @@ public class LineLifetimeEntry : LifetimeEntry
                 var hitObject = HitObjects.First();
 
                 Colour = hitObject.NoteColour;
-                Rotation = hitObject.Lane.GetRotationForLane() - 45;
+                Rotation = SentakkiExtensions.GetRotationForLane(hitObject.Lane) - 45;
                 break;
             }
 
@@ -82,11 +82,11 @@ public class LineLifetimeEntry : LifetimeEntry
 
                 if (delta >= 4)
                 {
-                    Rotation = HitObjects.First().Lane.GetRotationForLane() - 180;
+                    Rotation = SentakkiExtensions.GetRotationForLane(HitObjects.First().Lane) - 180;
                 }
                 else
                 {
-                    Rotation = anchor.Lane.GetRotationForLane() + delta * 22.5f - angleRange / 2f;
+                    Rotation = SentakkiExtensions.GetRotationForLane(anchor.Lane) + delta * 22.5f - angleRange / 2f;
                 }
 
                 break;

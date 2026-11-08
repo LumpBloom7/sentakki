@@ -319,7 +319,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
 
         for (int i = 0; i < 8; ++i)
         {
-            float delta = Math.Abs(MathExtensions.AngleDelta(i.GetRotationForLane(), angle));
+            float delta = Math.Abs(MathExtensions.AngleDelta(SentakkiExtensions.GetRotationForLane(i), angle));
 
             if (!(delta < minDelta)) continue;
 

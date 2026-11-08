@@ -19,9 +19,9 @@ public static class SentakkiExtensions
     /// <summary>
     /// Gives the playfield rotation of the lane matching the corresponding laneNumber
     /// </summary>
-    public static float GetRotationForLane(this int laneNumber) => 22.5f + laneNumber * 45;
+    public static float GetRotationForLane(int laneNumber) => 22.5f + laneNumber * 45;
 
-    public static Vector2 GetPositionAlongLane(float distance, int lane) => MathExtensions.PointOnCircle(distance, lane.GetRotationForLane());
+    public static Vector2 GetPositionAlongLane(float distance, int lane) => MathExtensions.PointOnCircle(distance, GetRotationForLane(lane));
 
     public static ColourInfo ForSentakkiResult(this OsuColour osuColour, HitResult result)
     {
