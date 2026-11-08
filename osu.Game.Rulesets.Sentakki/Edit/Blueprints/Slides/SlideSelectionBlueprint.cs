@@ -1,4 +1,3 @@
-
 using System;
 using System.Linq;
 using osu.Framework.Allocation;
@@ -42,7 +41,7 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
         Origin = Anchor.Centre;
 
         if (item.SlideInfoList.Count == 1)
-            AddInternal(slideBodyHighlight = new SlideBodyHighlight(item, item.SlideInfoList[0]) { });
+            AddInternal(slideBodyHighlight = new SlideBodyHighlight(item, item.SlideInfoList[0]));
 
         AddInternal(
             new Container
@@ -50,7 +49,8 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Colour = Color4.YellowGreen,
-                Children = [
+                Children =
+                [
                     slideTapHighlight = new SlideTapPiece(),
                     tapHighlight = new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Tap), _ => new TapRing())
                     {
@@ -79,7 +79,7 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
     {
         base.Update();
 
-        Rotation = HitObject.Lane.GetRotationForLane();
+        Rotation = SentakkiExtensions.GetRotationForLane(HitObject.Lane);
 
         float targetScale = Interpolation.ValueAt(HitObject.StartTime, 1f, 0f, editorClock.CurrentTime + (animationSpeed.Value / 2), editorClock.CurrentTime + animationSpeed.Value);
         targetScale = Math.Clamp(targetScale, 0, 1);
@@ -87,12 +87,12 @@ public partial class SlideSelectionBlueprint : SentakkiSelectionBlueprint<Slide,
         tapHighlight.Scale = slideTapHighlight.Scale = new Vector2(targetScale);
 
         slideTapHighlight.Y = -Interpolation.ValueAt(
-                HitObject.StartTime,
-                SentakkiPlayfield.INTERSECTDISTANCE,
-                SentakkiPlayfield.NOTESTARTDISTANCE,
-                editorClock.CurrentTime,
-                editorClock.CurrentTime + (animationSpeed.Value / 2)
-            );
+            HitObject.StartTime,
+            SentakkiPlayfield.INTERSECTDISTANCE,
+            SentakkiPlayfield.NOTESTARTDISTANCE,
+            editorClock.CurrentTime,
+            editorClock.CurrentTime + (animationSpeed.Value / 2)
+        );
 
         slideTapHighlight.Y = Math.Clamp(slideTapHighlight.Y, -SentakkiPlayfield.INTERSECTDISTANCE, -SentakkiPlayfield.NOTESTARTDISTANCE);
         tapHighlight.Y = slideTapHighlight.Y;

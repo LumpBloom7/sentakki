@@ -37,7 +37,7 @@ public partial class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject
     private GameHost gamehost { get; set; } = null!;
 
     public override bool RequiresPortraitOrientation => configPreferPortrait.Value;
-    private Bindable<bool> configPreferPortrait = new();
+    private readonly Bindable<bool> configPreferPortrait = new();
 
     [BackgroundDependencyLoader]
     private void load()
@@ -143,6 +143,8 @@ public partial class DrawableSentakkiRuleset : DrawableRuleset<SentakkiHitObject
     public override DrawableHitObject<SentakkiHitObject> CreateDrawableRepresentation(SentakkiHitObject h) => null!;
 
     protected override ResumeOverlay CreateResumeOverlay() => new SentakkiResumeOverlay();
+
+    public SentakkiInputManager SentakkiInputManager => (SentakkiInputManager)KeyBindingInputManager;
 
     protected override PassThroughInputManager CreateInputManager() => new SentakkiInputManager(Ruleset.RulesetInfo);
 }

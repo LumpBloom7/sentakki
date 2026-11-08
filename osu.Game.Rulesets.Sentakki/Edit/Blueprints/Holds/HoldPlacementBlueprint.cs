@@ -53,7 +53,7 @@ public partial class HoldPlacementBlueprint : LanedPlacementBlueprint<Hold>
     {
         base.Update();
 
-        float targetRotation = HitObject.Lane.GetRotationForLane();
+        float targetRotation = SentakkiExtensions.GetRotationForLane(HitObject.Lane);
 
         const float max_height = SentakkiPlayfield.INTERSECTDISTANCE - SentakkiPlayfield.NOTESTARTDISTANCE;
         double animationDuration = DrawableSentakkiRuleset.ComputeLaneNoteEntryTime(animationSpeed.Value) / 2;
@@ -68,7 +68,7 @@ public partial class HoldPlacementBlueprint : LanedPlacementBlueprint<Hold>
 
         Child.Rotation = targetRotation;
         highlight.Y = targetY;
-        highlight.Height = (float)targetHeight;
+        highlight.Height = targetHeight;
     }
 
     private double commitStartTime;

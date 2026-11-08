@@ -18,6 +18,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps.Formats;
 ///
 /// The resulting simai chart is fully compatible with Majdata and AstroDX.
 /// </summary>
+// ReSharper disable once UnusedMember.Global
 public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
 {
     public QuantizedSimaiBeatmapEncoder(IBeatmap<SentakkiHitObject> beatmap)
@@ -58,7 +59,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
         return [.. hitobjects.OrderBy(s => s.StartTime)];
     }
 
-    public override string CreateSimaiChart()
+    protected override string CreateSimaiChart()
     {
         if (Beatmap.HitObjects.Count == 0)
             return "E";
@@ -68,16 +69,16 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
 
         var timingGroups =
             ho.GroupBy(h => h.StartTime)
-                   .Select(g => new
-                   {
-                       Time = g.Key,
-                       HitObjects = g.ToList()
-                   })
-                   .GroupBy(g => Beatmap.ControlPointInfo.TimingPointAt(g.Time)).Select(g => new
-                   {
-                       TimingPoint = g.Key,
-                       HitObjectGroups = g.ToList()
-                   }).OrderBy(g => g.TimingPoint.Time).ToList();
+              .Select(g => new
+              {
+                  Time = g.Key,
+                  HitObjects = g.ToList()
+              })
+              .GroupBy(g => Beatmap.ControlPointInfo.TimingPointAt(g.Time)).Select(g => new
+              {
+                  TimingPoint = g.Key,
+                  HitObjectGroups = g.ToList()
+              }).OrderBy(g => g.TimingPoint.Time).ToList();
 
         double currentTime = 0;
 
@@ -88,7 +89,6 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
             var hitObjectGroups = timingGroups[i].HitObjectGroups;
 
             double bpm = timingPoint.BPM;
-            double beatLength = timingPoint.BeatLength;
 
             double timeUntilTimingPoint = timingPoint.Time - currentTime;
 
@@ -106,28 +106,27 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                     var prevTimingPoint = timingGroups[i - 1].TimingPoint;
                     var beatsUntilTimingPoint = AsFraction(timeUntilTimingPoint, prevTimingPoint.BeatLength);
 
-                    double accounted_for = (beatsUntilTimingPoint.wholes + beatsUntilTimingPoint.numerator / (double)beatsUntilTimingPoint.denominator) * prevTimingPoint.BeatLength;
+                    double accountedFor = (beatsUntilTimingPoint.wholes + beatsUntilTimingPoint.numerator / (double)beatsUntilTimingPoint.denominator) * prevTimingPoint.BeatLength;
 
                     maidataUnits.AddRange(generatePaddingBeats(beatsUntilTimingPoint));
-                    currentTime += accounted_for;
+                    currentTime += accountedFor;
                 }
             }
 
-            maidataUnits.Add(new BPMUnit(bpm));
+            maidataUnits.Add(new BpmUnit(bpm));
 
-            for (int j = 0; j < hitObjectGroups.Count; ++j)
+            foreach (var hitObjectGroup in hitObjectGroups)
             {
-                var hitObjectGroup = hitObjectGroups[j];
                 // Handle time before hitObject time
-                double timeUntilCurrent = hitObjectGroups[j].Time - currentTime;
+                double timeUntilCurrent = hitObjectGroup.Time - currentTime;
 
                 var beatsUntilCurrent = AsFraction(timeUntilCurrent, timingPoint.BeatLength);
 
                 maidataUnits.AddRange(generatePaddingBeats(beatsUntilCurrent));
 
-                double accounted_for = (beatsUntilCurrent.wholes + beatsUntilCurrent.numerator / (double)beatsUntilCurrent.denominator) * timingPoint.BeatLength;
+                double accountedFor = (beatsUntilCurrent.wholes + beatsUntilCurrent.numerator / (double)beatsUntilCurrent.denominator) * timingPoint.BeatLength;
 
-                currentTime += accounted_for;
+                currentTime += accountedFor;
 
                 StringBuilder hitObjectGroupBuilder = new StringBuilder();
 
@@ -155,21 +154,19 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
         }
 
         List<IMaidataUnit> cleanMaiDataUnits = [];
-        double currentBPM = 0;
+        double currentBpm = 0;
         int currentDivisor = 0;
 
-        for (int i = 0; i < maidataUnits.Count; ++i)
+        foreach (var unit in maidataUnits)
         {
-            var unit = maidataUnits[i];
-
             // We attempt to immediately discard redundant timing points
             switch (unit)
             {
-                case BPMUnit b:
-                    if (currentBPM == b.BPM)
+                case BpmUnit b:
+                    if (currentBpm == b.Bpm)
                         continue;
 
-                    currentBPM = b.BPM;
+                    currentBpm = b.Bpm;
                     currentDivisor = 1;
 
                     break;
@@ -181,9 +178,9 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                     currentDivisor = d.Divisor;
                     break;
 
-                case BeatTimeUnit bt:
+                case BeatTimeUnit:
                     currentDivisor = 0;
-                    currentBPM = 0;
+                    currentBpm = 0;
                     break;
             }
 
@@ -200,8 +197,8 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
                         continue;
 
                     // Ensure all timing units are before hitObject units
-                    case DivisorUnit or BeatTimeUnit or BPMUnit:
-                        cleanMaiDataUnits[^1] = maidataUnits[i];
+                    case DivisorUnit or BeatTimeUnit or BpmUnit:
+                        cleanMaiDataUnits[^1] = unit;
                         cleanMaiDataUnits.Add(previousHoc);
                         continue;
                 }
@@ -229,27 +226,28 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
         public override readonly string ToString() => ",";
     }
 
-    private readonly record struct BPMUnit(double BPM) : IMaidataUnit
+    private readonly record struct BpmUnit(double Bpm) : IMaidataUnit
     {
-        public override readonly string ToString() => Invariant($"\n({BPM})");
+        public override string ToString() => Invariant($"\n({Bpm})");
     }
 
     private readonly record struct DivisorUnit(int Divisor) : IMaidataUnit
     {
-        public override readonly string ToString() => Invariant($"\n{{{Divisor}}}");
+        public override string ToString() => Invariant($"\n{{{Divisor}}}");
     }
 
+    // ReSharper disable once NotAccessedPositionalProperty.Local
     private readonly record struct BeatTimeUnit(double BeatLength) : IMaidataUnit
     {
-        public override readonly string ToString() => Invariant($"\n({Tempo}){{{DIVISOR}}}");
+        public override string ToString() => Invariant($"\n({tempo}){{{divisor}}}");
 
-        public readonly double Tempo = 60000 / BeatLength;
-        public const int DIVISOR = 4;
+        private readonly double tempo = 60000 / BeatLength;
+        private const int divisor = 4;
     }
 
     private readonly record struct HitObjectCollectionUnit(string CollectionString) : IMaidataUnit
     {
-        public override readonly string ToString() => CollectionString;
+        public override string ToString() => CollectionString;
     }
 
     // Source: Algorithm To Convert A Decimal To A Fraction - John Kennedy (rkennedy@ix.netcom.com)
@@ -290,8 +288,7 @@ public class QuantizedSimaiBeatmapEncoder : SimaiBeatmapEncoder
             denominator = denominator * (int)z + previousDenominator;
             previousDenominator = temp;
             numerator = Convert.ToInt32(x * denominator);
-        }
-        while (Math.Abs(x - numerator / (double)denominator) > maxFractionalError && z != (int)z);
+        } while (Math.Abs(x - numerator / (double)denominator) > maxFractionalError && z != (int)z);
 
         return (n * sign, numerator * sign, denominator);
     }

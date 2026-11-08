@@ -68,10 +68,11 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         newComboSinceLastTwin = false;
         lastTwinTime = targetTime;
 
-        twinLane = currentPattern.GetNextLane(currentLane).NormalizeLane();
+        twinLane = SentakkiExtensions.NormalizeLaneNumber(currentPattern.GetNextLane(currentLane));
         return currentLane != twinLane;
     }
 
+    // ReSharper disable once ParameterHidesMember
     protected override IEnumerable<SentakkiHitObject> ConvertHitObject(HitObject original, IBeatmap beatmap, CancellationToken cancellationToken)
     {
         SentakkiHitObject result;
@@ -177,7 +178,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         if (!isChronologicallyClose(original, next))
         {
             float nextAngle = standard_playfield_center.AngleTo(next.GetPosition());
-            currentLane = getClosestLaneFor(nextAngle).NormalizeLane();
+            currentLane = SentakkiExtensions.NormalizeLaneNumber(getClosestLaneFor(nextAngle));
             activeStreamDirection = StreamDirection.None;
             return;
         }
@@ -188,7 +189,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         if (isJump(original, next))
         {
             activeStreamDirection = StreamDirection.None;
-            currentLane = (currentLane + jumpLaneOffset(original, previous, next)).NormalizeLane();
+            currentLane = SentakkiExtensions.NormalizeLaneNumber(currentLane + jumpLaneOffset(original, previous, next));
             return;
         }
 
@@ -202,11 +203,9 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
         // We try to look ahead into the stream in an effort to determine the initial direction of a stream if we don't have a previous
         if (previous is null || !isChronologicallyClose(previous, original))
         {
-            if (secondNext is not null)
-                activeStreamDirection = getStreamDirection(next, previous, secondNext);
-            else
-                // Fallback to using the midpoint as best effort
-                activeStreamDirection = getStreamDirection(original, null, next);
+            activeStreamDirection = secondNext is not null
+                ? getStreamDirection(next, previous, secondNext)
+                : getStreamDirection(original, null, next); // Fallback to using the midpoint as best effort
         }
         else
         {
@@ -225,12 +224,14 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
             currentLane += slide.SlideInfoList[0].RelativeEndLane;
         }
         else
+        {
             currentLane += streamOffset;
+        }
 
         if (!isOverlappingEnd)
             currentLane += streamOffset == 0 ? 1 : streamOffset;
 
-        currentLane = currentLane.NormalizeLane();
+        currentLane = SentakkiExtensions.NormalizeLaneNumber(currentLane);
     }
 
     private bool isOverlapping(Vector2 a, Vector2 b)
@@ -272,7 +273,8 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
 
         if (MathHelper.ApproximatelyEquivalent(absAngDelta, 0, 5))
             return activeStreamDirection;
-        else if (MathHelper.ApproximatelyEquivalent(absAngDelta, 180, 5)) // Stream is collinear, equivalent to stack
+
+        if (MathHelper.ApproximatelyEquivalent(absAngDelta, 180, 5)) // Stream is collinear, equivalent to stack
             return StreamDirection.None;
 
         return angleDelta > 0 ? StreamDirection.Clockwise : StreamDirection.Counterclockwise;
@@ -317,7 +319,7 @@ public partial class SentakkiBeatmapConverter : BeatmapConverter<SentakkiHitObje
 
         for (int i = 0; i < 8; ++i)
         {
-            float delta = Math.Abs(MathExtensions.AngleDelta(i.GetRotationForLane(), angle));
+            float delta = Math.Abs(MathExtensions.AngleDelta(SentakkiExtensions.GetRotationForLane(i), angle));
 
             if (!(delta < minDelta)) continue;
 

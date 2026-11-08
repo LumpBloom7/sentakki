@@ -97,10 +97,10 @@ MaiDiff:{9}
 
             string creator = dict.GetValueOrDefault($"des_{diffIndex}", allCreator);
             string level = dict.GetValueOrDefault($"lv_{diffIndex}", "0");
-            string version = dict.GetValueOrDefault($"version", "maimai");
+            string version = dict.GetValueOrDefault("version", "maimai");
             string genre = dict.GetValueOrDefault("genre", "");
 
-            string[] tags = { "sentakki-legacy", level, creator, isDeluxe ? "deluxe" : "standard", genre };
+            string[] tags = ["sentakki-legacy", level, creator, isDeluxe ? "deluxe" : "standard", genre];
 
             string osuFile = string.Format(
                 osu_template,
@@ -203,10 +203,10 @@ MaiDiff:{9}
 
                 string creator = dict.GetValueOrDefault($"des_{diffIndex}", allCreator);
                 string level = dict.GetValueOrDefault($"lv_{diffIndex}", "0");
-                string version = dict.GetValueOrDefault($"version", "maimai");
+                string version = dict.GetValueOrDefault("version", "maimai");
                 string genre = dict.GetValueOrDefault("genre", "");
 
-                string[] tags = { "sentakki-legacy", level, creator, isDeluxe ? "deluxe" : "standard", genre };
+                string[] tags = ["sentakki-legacy", level, creator, isDeluxe ? "deluxe" : "standard", genre];
 
                 string osuFile = string.Format(
                     osu_template,

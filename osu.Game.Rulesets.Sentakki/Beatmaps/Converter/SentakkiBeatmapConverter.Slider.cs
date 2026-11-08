@@ -87,7 +87,7 @@ public partial class SentakkiBeatmapConverter
                     WaitDuration = waitDurationMs,
                 }
             ],
-            Lane = lane.NormalizeLane(),
+            Lane = SentakkiExtensions.NormalizeLaneNumber(lane),
             StartTime = original.StartTime,
             Samples = nodeSamples.FirstOrDefault(),
             Break = headBreak,

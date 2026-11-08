@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -29,17 +30,18 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     [Resolved]
     private EditorBeatmap beatmap { get; set; } = null!;
 
-    private Slide slide;
-    public int SegmentIndex { get; private set; }
+    private readonly Slide slide;
+    public int SegmentIndex { get; }
 
     private SlideBodyInfo slideBodyInfo => slide.SlideInfoList[0];
     private SlideSegment segment => slideBodyInfo.Segments[SegmentIndex];
 
-    private SlideVisual visual;
-    private Drawable dragDotContainer;
-    private DotPiece dragDot;
+    private readonly SlideVisual visual;
+    private readonly Drawable dragDotContainer;
+    private readonly DotPiece dragDot;
 
-    private IBindable<int> versionBindable;
+    [UsedImplicitly]
+    private readonly IBindable<int> versionBindable;
 
     [Resolved]
     private SlideTapPiece slideTapPiece { get; set; } = null!;
@@ -47,7 +49,8 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     [Resolved]
     private OsuContextMenuContainer? contextMenuContainer { get; set; }
 
-    private Bindable<int> slideLaneBindable;
+    [UsedImplicitly]
+    private readonly Bindable<int> slideLaneBindable;
 
     public override bool ReceivePositionalInputAt(Vector2 screenSpacePos)
     {
@@ -75,13 +78,15 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         SegmentIndex = segmentIndex;
 
-        InternalChildren = [
+        InternalChildren =
+        [
             visual = new SlideVisual(),
             dragDotContainer = new Container
             {
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Children = [
+                Children =
+                [
                     dragDot = new DotPiece
                     {
                         Y = -SentakkiPlayfield.INTERSECTDISTANCE,
@@ -110,6 +115,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     private SentakkiBlueprintContainer blueprintContainer { get; set; } = null!;
 
     #region Context menu updates
+
     private List<(PathShape Shape, TernaryStateRadioMenuItem MenuItem)>? shapeMenuItems;
     private (int RelativeEndLane, TernaryStateRadioMenuItem MenuItem)[]? endLaneMenuItems;
     private TernaryStateToggleMenuItem? mirrorMenuItem;
@@ -134,6 +140,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         mirrorMenuItem.State.Value = segment.Mirrored ? TernaryState.True : TernaryState.False;
     }
+
     #endregion
 
     private IEnumerable<MenuItem> createContextMenuItems()
@@ -146,10 +153,20 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         shapeMenuItems = [.. Enum.GetValues<PathShape>().Select(s => (s, new TernaryStateRadioMenuItem($"{s}", action: _ => changeShape(s))))];
 
-        int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(SegmentIndex + 1).Sum(s => s.RelativeEndLane)).NormalizeLane();
-        int startLane = (currentEndLane - segment.RelativeEndLane).NormalizeLane();
 
-        endLaneMenuItems = [.. Enumerable.Range(0, 8).Select(i => (i, new TernaryStateRadioMenuItem($"{(i + startLane).NormalizeLane() + 1}", action: _ => changeEndLane(i))))];
+        int currentEndLane = slide.Lane + slideBodyInfo.Segments.Take(SegmentIndex + 1).Sum(s => s.RelativeEndLane);
+        currentEndLane = SentakkiExtensions.NormalizeLaneNumber(currentEndLane);
+
+        int startLane = SentakkiExtensions.NormalizeLaneNumber(currentEndLane - segment.RelativeEndLane);
+
+        endLaneMenuItems =
+        [
+            .. Enumerable.Range(0, 8)
+                         .Select(i => (
+                             i,
+                             new TernaryStateRadioMenuItem($"{SentakkiExtensions.NormalizeLaneNumber(i + startLane) + 1}",
+                                 action: _ => changeEndLane(i))))
+        ];
 
         yield return new OsuMenuItem("Shape")
         {
@@ -158,12 +175,14 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         yield return new OsuMenuItem("End Lane")
         {
-            Items = endLaneMenuItems.OrderBy(kvp => (kvp.RelativeEndLane + startLane).NormalizeLane())
-                                    .Select(kvp => kvp.MenuItem)
-                                    .ToList()
+            Items =
+            [
+                .. endLaneMenuItems.OrderBy(kvp => SentakkiExtensions.NormalizeLaneNumber(kvp.RelativeEndLane + startLane))
+                                   .Select(kvp => kvp.MenuItem)
+            ]
         };
 
-        mirrorMenuItem = new TernaryStateToggleMenuItem("Mirrored", MenuItemType.Standard, action: _ => mirrorSegment());
+        mirrorMenuItem = new TernaryStateToggleMenuItem("Mirrored", action: _ => mirrorSegment());
 
         yield return mirrorMenuItem;
 
@@ -180,7 +199,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         updateContextMenuItems();
     }
 
-    public MenuItem[]? ContextMenuItems => [.. createContextMenuItems()];
+    public MenuItem[] ContextMenuItems => [.. createContextMenuItems()];
 
     private void deleteSlide()
     {
@@ -207,10 +226,7 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
     {
         var segments = slideBodyInfo.Segments.ToList();
 
-        var segment = segments[SegmentIndex];
-        segment.Mirrored = !segment.Mirrored;
-
-        segments[SegmentIndex] = segment;
+        segments[SegmentIndex] = segment with { Mirrored = !segment.Mirrored };
 
         slideBodyInfo.Segments = segments;
         beatmap.Update(slide);
@@ -229,11 +245,11 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
         int offset = 1;
         while (!SlidePaths.CheckSlideValidity(candidateSegment))
         {
-            candidateSegment.RelativeEndLane = (relativeEnd + offset).NormalizeLane();
+            candidateSegment.RelativeEndLane = SentakkiExtensions.NormalizeLaneNumber(relativeEnd + offset);
             if (SlidePaths.CheckSlideValidity(candidateSegment))
                 break;
 
-            candidateSegment.RelativeEndLane = (relativeEnd - offset).NormalizeLane();
+            candidateSegment.RelativeEndLane = SentakkiExtensions.NormalizeLaneNumber(relativeEnd - offset);
             if (SlidePaths.CheckSlideValidity(candidateSegment))
                 break;
 
@@ -329,8 +345,6 @@ public partial class SlideSegmentHighlight : CompositeDrawable, IHasContextMenu
 
         int lane = (int)Math.Round((angle - 22.5f) / 45);
 
-        int currentStartLane = slideBodyInfo.Segments.Take(SegmentIndex).Sum(s => s.RelativeEndLane);
-
-        changeEndLane(lane.NormalizeLane());
+        changeEndLane(SentakkiExtensions.NormalizeLaneNumber(lane));
     }
 }

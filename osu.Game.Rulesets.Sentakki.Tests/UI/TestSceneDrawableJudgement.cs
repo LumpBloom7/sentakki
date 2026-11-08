@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Sentakki.Tests.UI;
 [TestFixture]
 public partial class TestSceneDrawableSentakkiJudgement : SentakkiSkinnableTestScene
 {
-    private List<JudgementPooler<DrawableSentakkiJudgement>> judgementPools = new List<JudgementPooler<DrawableSentakkiJudgement>>();
+    private readonly List<JudgementPooler<DrawableSentakkiJudgement>> judgementPools = [];
 
     private static IEnumerable<HitResult> validResults => new SentakkiRuleset().GetValidHitResults();
 
@@ -33,7 +33,9 @@ public partial class TestSceneDrawableSentakkiJudgement : SentakkiSkinnableTestS
             JudgementPooler<DrawableSentakkiJudgement> pool;
 
             if (poolIndex >= judgementPools.Count)
+            {
                 judgementPools.Add(pool = new JudgementPooler<DrawableSentakkiJudgement>(CreateRuleset().GetValidHitResults()));
+            }
             else
             {
                 // We need to make sure neither the pool nor the judgement get disposed when new content is set, and they both share the same parent.
@@ -56,7 +58,7 @@ public partial class TestSceneDrawableSentakkiJudgement : SentakkiSkinnableTestS
                 }, new SentakkiJudgement())
                 {
                     Type = result,
-                }, null!)));
+                }, null!))!);
             });
 
             poolIndex++;

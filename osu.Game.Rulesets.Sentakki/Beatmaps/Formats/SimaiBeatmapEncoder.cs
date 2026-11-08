@@ -46,9 +46,9 @@ public class SimaiBeatmapEncoder
           .Append(new KeyValuePair<Vector2, string>(Vector2.Zero, "C"))
           .ToDictionary();
 
-    protected IBeatmap<SentakkiHitObject> Beatmap;
+    protected readonly IBeatmap<SentakkiHitObject> Beatmap;
 
-    public SimaiBeatmapEncoder(IBeatmap<SentakkiHitObject> beatmap)
+    protected SimaiBeatmapEncoder(IBeatmap<SentakkiHitObject> beatmap)
     {
         Beatmap = beatmap;
     }
@@ -107,11 +107,11 @@ public class SimaiBeatmapEncoder
 
     private void handleBeatmap(TextWriter writer)
     {
-        writer.WriteLine($"&lv_7=洗");
+        writer.WriteLine("&lv_7=洗");
         writer.WriteLine($"&inote_7={CreateSimaiChart()}");
     }
 
-    public virtual string CreateSimaiChart()
+    protected virtual string CreateSimaiChart()
     {
         var hitObjectsGroups = Beatmap.HitObjects.GroupBy(h => h.StartTime).OrderBy(g => g.Key).Select(g => new TimedBeatmapEvent
         {
@@ -135,16 +135,14 @@ public class SimaiBeatmapEncoder
 
         // Add padding timingPoint prior to first event
         if (events[0].Time > 0)
-            maidataBuilder.Append(Invariant($"\n({((TimingPointMarker)timingPoints.First().BeatmapEvent).timingPoint.BPM}){{#{events[0].Time / 1000:F3}}},"));
+            maidataBuilder.Append(Invariant($"\n({((TimingPointMarker)timingPoints.First().BeatmapEvent).TimingPoint.BPM}){{#{events[0].Time / 1000:F3}}},"));
 
         for (int i = 0; i < events.Length; ++i)
         {
             var group = events[i];
 
-            double nextTime = group.Time;
-
             if (group.BeatmapEvent is TimingPointMarker tp)
-                maidataBuilder.Append(Invariant($"({tp.timingPoint.BPM})"));
+                maidataBuilder.Append(Invariant($"({tp.TimingPoint.BPM})"));
 
             if (i < events.Length - 1)
             {
@@ -220,7 +218,7 @@ public class SimaiBeatmapEncoder
 
                 foreach (var part in slideInfo.Segments)
                 {
-                    int endLane = (currentLane + part.RelativeEndLane).NormalizeLane();
+                    int endLane = SentakkiExtensions.NormalizeLaneNumber(currentLane + part.RelativeEndLane);
                     slideBuilder.Append(shapeForSlidePart(currentLane, part, slideInfo.Segments.Count > 1));
                     slideBuilder.Append(endLane + 1);
                     currentLane = endLane;
@@ -300,7 +298,8 @@ public class SimaiBeatmapEncoder
     }
 
     public interface IBeatmapEvent;
-    public record class HitObjectGroup(SentakkiHitObject[] HitObjects) : IBeatmapEvent { }
 
-    public record class TimingPointMarker(TimingControlPoint timingPoint) : IBeatmapEvent { };
+    public record HitObjectGroup(SentakkiHitObject[] HitObjects) : IBeatmapEvent;
+
+    public record TimingPointMarker(TimingControlPoint TimingPoint) : IBeatmapEvent;
 }

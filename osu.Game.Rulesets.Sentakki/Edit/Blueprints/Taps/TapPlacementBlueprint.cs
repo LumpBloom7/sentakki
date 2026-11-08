@@ -66,7 +66,7 @@ public partial class TapPlacementBlueprint : LanedPlacementBlueprint<Tap>
             EditorClock.CurrentTime + animationSpeed.Value / 2
         );
 
-        Child.Rotation = HitObject.Lane.GetRotationForLane();
+        Child.Rotation = SentakkiExtensions.GetRotationForLane(HitObject.Lane);
     }
 
     public override SnapResult UpdateTimeAndPosition(Vector2 screenSpacePosition, double time)

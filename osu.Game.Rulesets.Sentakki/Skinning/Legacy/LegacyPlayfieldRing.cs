@@ -52,7 +52,8 @@ public partial class LegacyPlayfieldRing : BeatSyncedContainer
         ringDrawable.Anchor = Anchor.Centre;
         ringDrawable.Origin = Anchor.Centre;
 
-        InternalChildren = [
+        InternalChildren =
+        [
             pulseRing,
             ringDrawable,
         ];

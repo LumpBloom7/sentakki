@@ -83,6 +83,7 @@ public class Slide : SentakkiLanedHitObject, IHasDuration
             tap.StartTime = StartTime;
             tap.Samples = Samples;
             tap.Break = Break;
+            tap.ColourBindable.BindTo(ColourBindable);
             tap.Ex = Ex;
 
             AddNested(tap);

@@ -44,7 +44,7 @@ public partial class TapSelectionBlueprint : SentakkiSelectionBlueprint<Tap, Dra
     {
         base.Update();
 
-        InternalChild.Rotation = HitObject.Lane.GetRotationForLane();
+        InternalChild.Rotation = SentakkiExtensions.GetRotationForLane(HitObject.Lane);
         highlight.Scale = DrawableObject.Scale;
         highlight.Y = DrawableObject.Y;
     }

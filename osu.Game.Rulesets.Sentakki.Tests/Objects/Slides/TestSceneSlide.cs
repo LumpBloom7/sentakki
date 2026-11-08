@@ -92,7 +92,7 @@ public abstract partial class TestSceneSlide : OsuTestScene
 
     protected void RefreshSlide()
     {
-        slide.Rotation = startPath.GetRotationForLane() - 22.5f;
+        slide.Rotation = SentakkiExtensions.GetRotationForLane(startPath) - 22.5f;
         slideBodyInfo.Segments = [new SlideSegment(PathShape, endPath, mirrored)];
         nodes.Clear();
 

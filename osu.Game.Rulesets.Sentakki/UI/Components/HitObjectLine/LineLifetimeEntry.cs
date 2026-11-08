@@ -25,7 +25,7 @@ public class LineLifetimeEntry : LifetimeEntry
         animationDuration.BindValueChanged(refreshLifetime, true);
     }
 
-    public List<SentakkiLanedHitObject> HitObjects = [];
+    public readonly List<SentakkiLanedHitObject> HitObjects = [];
 
     public float AngleRange { get; private set; }
     public ColourInfo Colour { get; private set; }
@@ -42,6 +42,7 @@ public class LineLifetimeEntry : LifetimeEntry
     public void Remove(SentakkiLanedHitObject hitObject)
     {
         hitObject.BreakBindable.ValueChanged -= onBreakChanged;
+        hitObject.ColourBindable.ValueChanged -= onColorChanged;
         HitObjects.Remove(hitObject);
         updateLine();
     }
@@ -62,7 +63,7 @@ public class LineLifetimeEntry : LifetimeEntry
                 var hitObject = HitObjects.First();
 
                 Colour = hitObject.NoteColour;
-                Rotation = hitObject.Lane.GetRotationForLane() - 45;
+                Rotation = SentakkiExtensions.GetRotationForLane(hitObject.Lane) - 45;
                 break;
             }
 
@@ -81,11 +82,11 @@ public class LineLifetimeEntry : LifetimeEntry
 
                 if (delta >= 4)
                 {
-                    Rotation = HitObjects.First().Lane.GetRotationForLane() - 180;
+                    Rotation = SentakkiExtensions.GetRotationForLane(HitObjects.First().Lane) - 180;
                 }
                 else
                 {
-                    Rotation = anchor.Lane.GetRotationForLane() + delta * 22.5f - angleRange / 2f;
+                    Rotation = SentakkiExtensions.GetRotationForLane(anchor.Lane) + delta * 22.5f - angleRange / 2f;
                 }
 
                 break;

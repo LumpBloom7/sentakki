@@ -31,7 +31,7 @@ public class SlideBody : SentakkiLanedHitObject, IHasDuration
         set => SlideBodyInfo.Duration = value;
     }
 
-    public SlideBodyInfo SlideBodyInfo { get; private set; }
+    public SlideBodyInfo SlideBodyInfo { get; }
 
     public SlideBody(SlideBodyInfo slideBodyInfo)
     {

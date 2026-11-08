@@ -7,7 +7,7 @@ namespace osu.Game.Rulesets.Sentakki.Beatmaps;
 
 public class SentakkiPatternGenerator
 {
-    public readonly Random RNG;
+    public readonly Random SeededRng;
 
     private int currentPattern;
     private int offset;
@@ -17,16 +17,16 @@ public class SentakkiPatternGenerator
     {
         var difficulty = beatmap.BeatmapInfo.Difficulty;
         int seed = (int)MathF.Round(difficulty.DrainRate + difficulty.CircleSize) * 20 + (int)(difficulty.OverallDifficulty * 41.2) + (int)MathF.Round(difficulty.ApproachRate);
-        RNG = new Random(seed);
+        SeededRng = new Random(seed);
     }
 
-    public int GetNextLane(bool isTwin = false) => patternlist[currentPattern].Invoke(isTwin).NormalizeLane();
+    public int GetNextLane(bool isTwin = false) => SentakkiExtensions.NormalizeLaneNumber(patternlist[currentPattern].Invoke(isTwin));
 
     public void StartNextPattern()
     {
-        currentPattern = RNG.Next(0, patternlist.Count); // Pick a pattern
-        offset = RNG.Next(0, 8); // Give it a random offset for variety
-        offset2 = RNG.Next(-2, 3); // Give it a random offset for variety
+        currentPattern = SeededRng.Next(0, patternlist.Count); // Pick a pattern
+        offset = SeededRng.Next(0, 8); // Give it a random offset for variety
+        offset2 = SeededRng.Next(-2, 3); // Give it a random offset for variety
     }
 
     //The patterns will generate the note lane to be used based on the current offset

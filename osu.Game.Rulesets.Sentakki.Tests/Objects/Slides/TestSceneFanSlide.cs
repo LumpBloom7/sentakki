@@ -17,9 +17,7 @@ public partial class TestSceneFanSlide : OsuTestScene
     protected override Ruleset CreateRuleset() => new SentakkiRuleset();
 
     [Cached]
-    private readonly DrawablePool<SlideChevron> chevronPool = null!;
-
-    private readonly SlideVisual slide;
+    private readonly DrawablePool<SlideChevron> chevronPool;
 
     public TestSceneFanSlide()
     {
@@ -30,6 +28,8 @@ public partial class TestSceneFanSlide : OsuTestScene
             RelativeSizeAxes = Axes.None,
             Size = new Vector2(SentakkiPlayfield.RINGSIZE)
         });
+
+        SlideVisual slide;
 
         Add(slide = new SlideVisual
         {

@@ -182,23 +182,5 @@ public class SlideBodyInfo
         return segmentStartProgress[index];
     }
 
-    public double RecommendedMinimumDuration
-    {
-        get
-        {
-            validatePath();
-            return totalLength / 5;
-        }
-    }
-
-    public double RecommendedMaximumDuration
-    {
-        get
-        {
-            validatePath();
-            return totalLength * 2;
-        }
-    }
-
     #endregion
 }

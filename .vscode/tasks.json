@@ -26,6 +26,33 @@
             ],
             "group": "test",
             "problemMatcher": "$msCompile"
-        }
+        },
+        {
+            "label": "Restore tools",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "tool",
+                "restore"
+            ],
+            "group": "none",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Run resharper code cleanup",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "tool",
+                "run",
+                "jb",
+                "cleanupcode",
+                "osu.Game.Rulesets.Sentakki.sln",
+                "--profile=Built-in: Reformat Code"
+            ],
+            "dependsOn": "Restore tools",
+            "group": "none",
+            "problemMatcher": "$msCompile"
+        },
     ]
 }

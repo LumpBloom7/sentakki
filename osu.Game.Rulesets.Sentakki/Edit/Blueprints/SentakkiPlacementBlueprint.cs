@@ -8,12 +8,12 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints;
 
 public abstract partial class SentakkiPlacementBlueprint<T> : HitObjectPlacementBlueprint where T : SentakkiHitObject, new()
 {
-    public new T HitObject => (T)base.HitObject;
+    protected new T HitObject => (T)base.HitObject;
 
     [Resolved]
     private SentakkiHitObjectComposer composer { get; set; } = null!;
 
-    public SentakkiPlacementBlueprint()
+    protected SentakkiPlacementBlueprint()
         : base(new T())
     {
     }

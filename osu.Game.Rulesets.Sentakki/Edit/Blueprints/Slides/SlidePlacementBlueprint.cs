@@ -42,7 +42,7 @@ public partial class SlidePlacementBlueprint : LanedPlacementBlueprint<Slide>
     // Make sure that slides with no segments are considered invalid
     protected override bool IsValidForPlacement
         => base.IsValidForPlacement
-            && (PlacementActive is PlacementState.Waiting || committedSlideInfo.Segments.Count > 0);
+           && (PlacementActive is PlacementState.Waiting || committedSlideInfo.Segments.Count > 0);
 
     public SlidePlacementBlueprint()
     {
@@ -96,7 +96,7 @@ public partial class SlidePlacementBlueprint : LanedPlacementBlueprint<Slide>
     {
         base.Update();
 
-        Child.Rotation = HitObject.Lane.GetRotationForLane();
+        Child.Rotation = SentakkiExtensions.GetRotationForLane(HitObject.Lane);
         tapHighlight.Y = -Interpolation.ValueAt(
             HitObject.StartTime,
             SentakkiPlayfield.INTERSECTDISTANCE,
@@ -105,7 +105,7 @@ public partial class SlidePlacementBlueprint : LanedPlacementBlueprint<Slide>
             EditorClock.CurrentTime + (animationSpeed.Value / 2)
         );
 
-        activeSegmentVisual.Rotation = committedSlideInfo.RelativeEndLane.GetRotationForLane() - 45f;
+        activeSegmentVisual.Rotation = SentakkiExtensions.GetRotationForLane(committedSlideInfo.RelativeEndLane) - 45f;
     }
 
     private double commitStartTime;

@@ -15,8 +15,6 @@ namespace osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces.Touches;
 
 public partial class DrawableTouchTriangle : Drawable, ITexturedShaderDrawable
 {
-    private float thickness = 15f;
-
     public float Thickness
     {
         get;
@@ -115,7 +113,7 @@ public partial class DrawableTouchTriangle : Drawable, ITexturedShaderDrawable
 
     private partial class TouchTriangleDrawNode : TexturedShaderDrawNode
     {
-        protected new DrawableTouchTriangle Source => (DrawableTouchTriangle)base.Source;
+        private DrawableTouchTriangle source => (DrawableTouchTriangle)Source;
         protected override bool CanDrawOpaqueInterior => false;
 
         private IUniformBuffer<ShapeParameters>? uniformBuffer;
@@ -135,17 +133,17 @@ public partial class DrawableTouchTriangle : Drawable, ITexturedShaderDrawable
         {
             base.ApplyState();
 
-            var drawRect = Source.DrawRectangle.Normalize().Inflate(Source.ShadowRadius);
+            var drawRect = source.DrawRectangle.Normalize().Inflate(source.ShadowRadius);
             screenSpaceDrawQuad = Quad.FromRectangle(drawRect) * DrawInfo.Matrix;
             drawSize = drawRect.Size;
 
             var newParameters = new ShapeParameters
             {
-                Thickness = Source.thickness,
-                ShadowRadius = Source.ShadowRadius,
-                Glow = Source.Glow,
-                fillTriangle = Source.FillTriangle,
-                shadowOnly = Source.ShadowOnly
+                Thickness = source.Thickness,
+                ShadowRadius = source.ShadowRadius,
+                Glow = source.Glow,
+                FillTriangle = source.FillTriangle,
+                ShadowOnly = source.ShadowOnly
             };
 
             if (newParameters == parameters) return;
@@ -197,12 +195,12 @@ public partial class DrawableTouchTriangle : Drawable, ITexturedShaderDrawable
             public UniformFloat Thickness;
             public UniformFloat ShadowRadius;
             public UniformBool Glow;
-            public UniformBool fillTriangle;
-            public UniformBool shadowOnly;
+            public UniformBool FillTriangle;
+            public UniformBool ShadowOnly;
             public UniformPadding12 _;
         }
 
-        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> uniformBuffer)
-            => uniformBuffer.Data == parameters;
+        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> otherUniformBuffer)
+            => otherUniformBuffer.Data == parameters;
     }
 }

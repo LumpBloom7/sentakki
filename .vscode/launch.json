@@ -5,13 +5,9 @@
             "name": "sentakki",
             "type": "coreclr",
             "request": "launch",
-            "program": "dotnet",
-            "args": [
-                "${workspaceRoot}/osu.Game.Rulesets.Sentakki.Tests/bin/Debug/net10.0/osu.Game.Rulesets.Sentakki.Tests.dll"
-            ],
+            "program": "${workspaceRoot}/osu.Game.Rulesets.Sentakki.Tests/bin/Debug/net10.0/osu.Game.Rulesets.Sentakki.Tests.dll",
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "Build",
-            "console": "internalConsole",
         }
     ]
 }

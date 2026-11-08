@@ -23,9 +23,9 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
     public override Quad SelectionQuad => highlight.ScreenSpaceDrawQuad;
     public override Vector2 ScreenSpaceSelectionPoint => startDot.ScreenSpaceDrawQuad.Centre;
 
-    private Container highlightContainer;
+    private readonly Container highlightContainer;
 
-    private Drawable startDot;
+    private readonly Drawable startDot;
 
     public HoldSelectionBlueprint(Hold item)
         : base(item)
@@ -38,7 +38,8 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
             Anchor = Anchor.Centre,
             Origin = Anchor.TopCentre,
 
-            Children = [
+            Children =
+            [
                 highlight = new HoldBody()
                 {
                     Anchor = Anchor.Centre,
@@ -46,12 +47,14 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
                     RelativeSizeAxes = Axes.Both,
                     Colour = Color4.YellowGreen,
                 },
-                startDot = new DraggableDotPiece(){
+                startDot = new DraggableDotPiece()
+                {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.Centre,
                     DragAction = adjustStartTime
                 },
-                new DraggableDotPiece(){
+                new DraggableDotPiece()
+                {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.Centre,
                     DragAction = adjustEndTime
@@ -94,7 +97,7 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
 
     protected override void Update()
     {
-        Rotation = HitObject.Lane.GetRotationForLane();
+        Rotation = SentakkiExtensions.GetRotationForLane(HitObject.Lane);
         highlightContainer.Y = DrawableObject.NoteBody.Y;
         highlightContainer.Scale = DrawableObject.NoteBody.Scale;
         highlightContainer.Height = DrawableObject.NoteBody.Height;
@@ -131,11 +134,11 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
             Colour = colours.YellowDark;
         }
 
-        public Action<Vector2> DragAction { get; init; } = null!;
+        public Action<Vector2>? DragAction { get; init; }
 
         protected override void OnDrag(DragEvent e)
         {
-            DragAction(e.ScreenSpaceMousePosition);
+            DragAction?.Invoke(e.ScreenSpaceMousePosition);
             base.OnDrag(e);
         }
 

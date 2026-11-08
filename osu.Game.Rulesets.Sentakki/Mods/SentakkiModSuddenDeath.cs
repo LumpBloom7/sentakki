@@ -5,12 +5,5 @@ namespace osu.Game.Rulesets.Sentakki.Mods;
 
 public class SentakkiModSuddenDeath : ModSuddenDeath
 {
-    public override Type[] IncompatibleMods =>
-    [
-        typeof(ModNoFail),
-        typeof(ModRelax),
-        typeof(ModAutoplay),
-        typeof(SentakkiModChallenge),
-        typeof(ModPerfect)
-    ];
+    public override Type[] IncompatibleMods => [.. base.IncompatibleMods, typeof(SentakkiModChallenge)];
 }

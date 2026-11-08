@@ -58,8 +58,8 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Size = new Vector2(0.9f, 0.8f),
-            Children = new Drawable[]
-            {
+            Children =
+            [
                 new Box
                 {
                     Colour = colours.GreySeaFoamDark,
@@ -76,8 +76,8 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
                     Width = 0.35f,
                     Anchor = Anchor.TopRight,
                     Origin = Anchor.TopRight,
-                    Children = new Drawable[]
-                    {
+                    Children =
+                    [
                         new Box
                         {
                             Colour = colours.GreySeaFoamDarker,
@@ -104,10 +104,10 @@ public partial class SentakkiSimaiImportScreen : OsuScreen
                             Width = 0.9f,
                             Margin = new MarginPadding { Vertical = button_vertical_margin },
                             Action = () => startImportTask(fileSelector.CurrentPath.Value)
-                        },
-                    }
+                        }
+                    ]
                 }
-            }
+            ]
         };
         fileSelector.CurrentPath.BindValueChanged(directoryChanged);
     }

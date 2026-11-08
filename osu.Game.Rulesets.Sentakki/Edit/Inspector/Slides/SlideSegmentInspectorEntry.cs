@@ -26,13 +26,13 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
     [Resolved]
     private OsuColour colours { get; set; } = null!;
 
-    private OsuSpriteText text;
+    private readonly OsuSpriteText text;
 
-    private SlideBodyInfo slideBodyInfo;
-    private int segmentIndex;
+    private readonly SlideBodyInfo slideBodyInfo;
+    private readonly int segmentIndex;
 
     private SlideSegment segment => slideBodyInfo.Segments[segmentIndex];
-    private Slide slide;
+    private readonly Slide slide;
 
     public SentakkiSlideSegmentInspectorEntry(Slide slide, SlideBodyInfo slideBodyInfo, int index)
     {
@@ -72,8 +72,8 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
         text.Text = $"{segment.Shape}({simpleEndOffset}){mirrored}";
     }
 
-    private Bindable<Visibility> popoverVisibilityState = new();
-    private IBindable<int> versionBindable = new Bindable<int>();
+    private readonly Bindable<Visibility> popoverVisibilityState = new();
+    private readonly IBindable<int> versionBindable = new Bindable<int>();
 
     protected override void LoadComplete()
     {
@@ -84,10 +84,14 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
         popoverVisibilityState.BindValueChanged(v => Colour = v.NewValue == Visibility.Visible ? colours.YellowDark : Color4.White);
     }
 
-    public Popover? GetPopover() => new SegmentEditPopover(slide, slideBodyInfo, segmentIndex)
+    public Popover GetPopover()
     {
-        State = { BindTarget = popoverVisibilityState }
-    };
+        popoverVisibilityState.UnbindBindings();
+        var popover = new SegmentEditPopover(slide, slideBodyInfo, segmentIndex);
+
+        popoverVisibilityState.BindTo(popover.State);
+        return popover;
+    }
 
     protected override bool OnClick(ClickEvent e)
     {
@@ -119,13 +123,13 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
         [Resolved]
         private EditorBeatmap editorBeatmap { get; set; } = null!;
 
-        private Slide slide;
-        private SlideBodyInfo slideBodyInfo;
-        private int segmentIndex;
+        private readonly Slide slide;
+        private readonly SlideBodyInfo slideBodyInfo;
+        private readonly int segmentIndex;
 
         private SlideSegment segment => slideBodyInfo.Segments[segmentIndex];
 
-        private IBindable<int> versionBindable;
+        private readonly IBindable<int> versionBindable;
 
         public SegmentEditPopover(Slide slide, SlideBodyInfo slideBodyInfo, int index)
         {
@@ -151,7 +155,8 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
                 Width = 240,
                 AutoSizeAxes = Axes.Y,
                 Spacing = new Vector2(5),
-                Children = [
+                Children =
+                [
                     new OsuSpriteText
                     {
                         Text = "Edit segment",
@@ -228,13 +233,19 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
             shapeDropdown.Current.Value = segment.Shape;
             mirroredCheckbox.Current.Value = segment.Mirrored;
 
-            int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(segmentIndex + 1).Sum(s => s.RelativeEndLane)).NormalizeLane();
-            int startLane = (currentEndLane - segment.RelativeEndLane).NormalizeLane();
+            int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(segmentIndex + 1).Sum(s => s.RelativeEndLane));
+            currentEndLane = SentakkiExtensions.NormalizeLaneNumber(currentEndLane);
+
+            int startLane = SentakkiExtensions.NormalizeLaneNumber(currentEndLane - segment.RelativeEndLane);
 
             // We have to temporarily re-enable the bindable to be able to change it.
             endLaneDropdown.Current.Disabled = false;
 
-            endLaneDropdown.Items = Enumerable.Range(0, 8).Where(i => SlidePaths.CheckSlideValidity(segment with { RelativeEndLane = i })).Select(i => (i + startLane).NormalizeLane() + 1).Order();
+            endLaneDropdown.Items = Enumerable.Range(0, 8)
+                                              .Where(i => SlidePaths.CheckSlideValidity(segment with { RelativeEndLane = i }))
+                                              .Select(i => SentakkiExtensions.NormalizeLaneNumber(i + startLane) + 1)
+                                              .Order();
+
             endLaneDropdown.Current.Value = currentEndLane + 1;
             endLaneDropdown.Current.Disabled = endLaneDropdown.Items.Count() == 1;
 
@@ -245,10 +256,12 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
         {
             List<SlideSegment> updatedSegments = [.. slideBodyInfo.Segments];
 
-            int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(segmentIndex + 1).Sum(s => s.RelativeEndLane)).NormalizeLane();
-            int startLane = (currentEndLane - segment.RelativeEndLane).NormalizeLane();
+            int currentEndLane = (slide.Lane + slideBodyInfo.Segments.Take(segmentIndex + 1).Sum(s => s.RelativeEndLane));
+            currentEndLane = SentakkiExtensions.NormalizeLaneNumber(currentEndLane);
 
-            int relativeEnd = (endLaneDropdown.Current.Value - 1 - startLane).NormalizeLane();
+            int startLane = SentakkiExtensions.NormalizeLaneNumber(currentEndLane - segment.RelativeEndLane);
+
+            int relativeEnd = SentakkiExtensions.NormalizeLaneNumber(endLaneDropdown.Current.Value - 1 - startLane);
 
             var candidateSegment = new SlideSegment
             {
@@ -260,11 +273,11 @@ public partial class SentakkiSlideSegmentInspectorEntry : CompositeDrawable, IHa
             int offset = 1;
             while (!SlidePaths.CheckSlideValidity(candidateSegment))
             {
-                candidateSegment.RelativeEndLane = (relativeEnd + offset).NormalizeLane();
+                candidateSegment.RelativeEndLane = SentakkiExtensions.NormalizeLaneNumber(relativeEnd + offset);
                 if (SlidePaths.CheckSlideValidity(candidateSegment))
                     break;
 
-                candidateSegment.RelativeEndLane = (relativeEnd - offset).NormalizeLane();
+                candidateSegment.RelativeEndLane = SentakkiExtensions.NormalizeLaneNumber(relativeEnd - offset);
                 if (SlidePaths.CheckSlideValidity(candidateSegment))
                     break;
 

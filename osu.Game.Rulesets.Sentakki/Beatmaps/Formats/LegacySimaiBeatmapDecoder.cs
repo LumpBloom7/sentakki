@@ -87,8 +87,6 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
         List<TimingControlPoint> simaiTimingPoints = [];
 
-        TimingControlPoint? lastTimingPoint = null;
-
         foreach (var timingChange in chart.TimingChanges)
         {
             if (timingChange.TempoInherited)
@@ -104,8 +102,6 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                 BeatLength = 60000.0 / timingChange.trueInheritedTempo,
                 TimeSignature = new TimeSignature(4)
             };
-
-            lastTimingPoint = controlPoint;
 
             simaiTimingPoints.Add(controlPoint);
         }
@@ -152,10 +148,10 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
             }
         }
 
-        simaiTimingPoints.RemoveAll(s => usedTimingPoints.Contains(s));
+        simaiTimingPoints.RemoveAll(usedTimingPoints.Contains);
 
         foreach (var t in usedTimingPoints)
-            beatmap.ControlPointInfo.Add(t!.Time, t);
+            beatmap.ControlPointInfo.Add(t.Time, t);
 
         foreach (var e in effectControlPoints)
             beatmap.ControlPointInfo.Add(e.Time, e);
@@ -276,7 +272,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
                     {
                         endLane = locationToLane(nextLocation);
                         segments.Add(new SlideSegment(PathShape.Straight,
-                            (endLane - startLane).NormalizeLane(),
+                            SentakkiExtensions.NormalizeLaneNumber(endLane - startLane),
                             false
                         ));
                         startLane = endLane;
@@ -325,7 +321,7 @@ public class LegacySimaiBeatmapDecoder : LegacyBeatmapDecoder
 
                 endLane = locationToLane(slideSegment.vertices.Last());
                 segments.Add(new SlideSegment(shape,
-                    (endLane - startLane).NormalizeLane(),
+                    SentakkiExtensions.NormalizeLaneNumber(endLane - startLane),
                     mirrored
                 ));
                 startLane = endLane;

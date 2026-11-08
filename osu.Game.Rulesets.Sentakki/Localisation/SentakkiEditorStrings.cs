@@ -11,6 +11,7 @@ public static class SentakkiEditorStrings
     public static LocalisableString HoldTool => new TranslatableString(getKey("hold_tool"), @"Hold");
 
     public static LocalisableString SlideTool => new TranslatableString(getKey("slide_tool"), @"Slide");
+
     public static LocalisableString SlideToolTooltip
         => new TranslatableString(
             getKey("slide_tool_tooltip"),
@@ -27,6 +28,7 @@ public static class SentakkiEditorStrings
     public static LocalisableString TouchHoldTool => new TranslatableString(getKey("touchhold_tool"), @"TouchHold");
 
     public static LocalisableString BreakToggle => new TranslatableString(getKey("break_toggle"), @"Break");
+
     public static LocalisableString BreakToggleTooltip
         => new TranslatableString(
             getKey("break_toggle_tooltip"),
@@ -34,6 +36,7 @@ public static class SentakkiEditorStrings
         );
 
     public static LocalisableString ExToggle => new TranslatableString(getKey("ex_toggle"), @"Ex");
+
     public static LocalisableString ExToggleTooltip
         => new TranslatableString(
             getKey("ex_toggle_tooltip"),

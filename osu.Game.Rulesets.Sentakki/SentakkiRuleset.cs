@@ -72,7 +72,7 @@ public partial class SentakkiRuleset : Ruleset
 
     public override bool EditorShowScrollSpeed => false;
 
-    public override HitObjectComposer? CreateHitObjectComposer()
+    public override HitObjectComposer CreateHitObjectComposer()
         => new SentakkiHitObjectComposer(this);
 
     public override IEnumerable<Drawable> CreateEditorSetupSections()
@@ -142,7 +142,8 @@ public partial class SentakkiRuleset : Ruleset
                 return
                 [
                     new SentakkiModAutoplay(),
-                    new SentakkiModNoTouch()
+                    new SentakkiModNoTouch(),
+                    new SentakkiModRelax()
                 ];
 
             case ModType.Conversion:
@@ -187,7 +188,8 @@ public partial class SentakkiRuleset : Ruleset
         switch (variant)
         {
             default:
-                return [
+                return
+                [
                     new KeyBinding(InputKey.Z, SentakkiAction.Button1),
                     new KeyBinding(InputKey.X, SentakkiAction.Button2),
                     new KeyBinding(InputKey.MouseLeft, SentakkiAction.Button1),
@@ -203,7 +205,8 @@ public partial class SentakkiRuleset : Ruleset
                 ];
 
             case EDITOR_VARIANT:
-                return [
+                return
+                [
                     new KeyBinding(InputKey.Number2, SentakkiAction.EditorTapTool),
                     new KeyBinding(InputKey.Number3, SentakkiAction.EditorHoldTool),
                     new KeyBinding(InputKey.Number4, SentakkiAction.EditorSlideTool),

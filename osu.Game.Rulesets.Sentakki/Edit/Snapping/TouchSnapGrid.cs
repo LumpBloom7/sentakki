@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Sentakki.Edit.Snapping;
 public partial class TouchPositionSnapGrid : VisibilityContainer
 {
     public readonly Bindable<TernaryState> Enabled = new Bindable<TernaryState>(TernaryState.True);
-    private Bindable<bool> activationRequested = new Bindable<bool>();
+    private readonly Bindable<bool> activationRequested = new Bindable<bool>();
 
     [BackgroundDependencyLoader]
     private void load()

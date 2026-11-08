@@ -43,7 +43,7 @@ public static class SlidePaths
     // We additionally block +-1 end offset straight/circle slides, as those do not play well when not done right.
     public static bool CheckSlideValidity(SlideSegment param, bool forConverterUse = false)
     {
-        int normalizedEnd = param.RelativeEndLane.NormalizeLane();
+        int normalizedEnd = SentakkiExtensions.NormalizeLaneNumber(param.RelativeEndLane);
         bool mirrored = param.Mirrored;
 
         switch (param.Shape)
@@ -79,8 +79,8 @@ public static class SlidePaths
         // these lane values could be out of range
         // yet still be technically valid due to the circular playfield
         // Let's conservatively place them back within the [0, 7] range.
-        startLane = startLane.NormalizeLane();
-        segment.RelativeEndLane = segment.RelativeEndLane.NormalizeLane();
+        startLane = SentakkiExtensions.NormalizeLaneNumber(startLane);
+        segment.RelativeEndLane = SentakkiExtensions.NormalizeLaneNumber(segment.RelativeEndLane);
 
         return segment.Shape switch
         {
@@ -160,18 +160,18 @@ public static class SlidePaths
     // DX Circle Pattern
     private static SliderPath generateCirclePattern(int startLane, int relativeEndLane, RotationDirection direction = RotationDirection.Clockwise)
     {
-        bool isFullCircle = relativeEndLane.NormalizeLane() == 0;
+        bool isFullCircle = SentakkiExtensions.NormalizeLaneNumber(relativeEndLane) == 0;
         bool isCounterClockwise = direction == RotationDirection.Counterclockwise;
 
-        float startAngle = startLane.GetRotationForLane();
-        float endAngle = (relativeEndLane + startLane).GetRotationForLane();
+        float startAngle = SentakkiExtensions.GetRotationForLane(startLane);
+        float endAngle = SentakkiExtensions.GetRotationForLane(relativeEndLane + startLane);
 
         float centreAngle;
 
         if (isFullCircle)
         {
             // If it is a full circle, we simply put the centre node across that start point
-            centreAngle = (startLane + 4).GetRotationForLane();
+            centreAngle = SentakkiExtensions.GetRotationForLane(startLane + 4);
         }
         else
         {
@@ -202,7 +202,10 @@ public static class SlidePaths
         Vector2 node0Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, startLane);
         Vector2 node1Pos = getPositionInBetween(node0Pos, SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, (reversed ? 3 : 5) + startLane), .51f);
 
-        float angleDiff = ((relativeEndLane + startLane).GetRotationForLane() + startLane.GetRotationForLane()) / 2 + (Math.Abs(relativeEndLane) > (reversed ? 3 : 4) ? 0 : 180);
+        float startAngle = SentakkiExtensions.GetRotationForLane(startLane);
+        float endAngle = SentakkiExtensions.GetRotationForLane(relativeEndLane + startLane);
+
+        float angleDiff = (endAngle + startAngle) / 2 + (Math.Abs(relativeEndLane) > (reversed ? 3 : 4) ? 0 : 180);
         Vector2 node2Pos = MathExtensions.PointOnCircle(115, angleDiff);
 
         Vector2 node4Pos = SentakkiExtensions.GetPositionAlongLane(SentakkiPlayfield.INTERSECTDISTANCE, relativeEndLane + startLane);
@@ -221,7 +224,7 @@ public static class SlidePaths
     {
         const float r = 270 / 2f;
 
-        int x = mirrored ? (-relativeEndLane).NormalizeLane() : relativeEndLane;
+        int x = mirrored ? SentakkiExtensions.NormalizeLaneNumber(-relativeEndLane) : relativeEndLane;
 
         float originAngle = 90;
         float angle1 = 300;
@@ -241,7 +244,7 @@ public static class SlidePaths
             _ => 0
         };
 
-        float offsetAdjustment = startLane.GetRotationForLane() - 22.5f;
+        float offsetAdjustment = SentakkiExtensions.GetRotationForLane(startLane) - 22.5f;
 
         if (mirrored)
         {

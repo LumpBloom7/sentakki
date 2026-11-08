@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ master ]
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   build:
     name: Build and Test
@@ -14,14 +18,27 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - name: Install .NET 8.0.x
+
+    - name: Install .NET 10.0.x
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: "8.0.x"
+        dotnet-version: "10.0.x"
+
     - name: Build with .NET
       run: dotnet build
+
     - name: Unit Tests
       run: dotnet test --no-build --no-restore
+
+    - name: InspectCode
+      uses: JetBrains/ReSharper-InspectCode@v0.12
+      with:
+        build: false
+        no-build: true
+        tool-version: '2026.2.1'
+        solution: ./osu.Game.Rulesets.Sentakki.sln
+        verbosity: WARN
+
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:

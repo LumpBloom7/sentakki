@@ -10,11 +10,14 @@ public class SentakkiScoreMultiplierCalculator : ScoreMultiplierCalculator
     public SentakkiScoreMultiplierCalculator(ScoreMultiplierContext context) : base(context)
     {
         #region Difficulty Reduction
+
         Single<SentakkiModHalfTime>(hasMultiplier: ht => rateAdjustMultiplier(ht.SpeedChange.Value));
         Single<SentakkiModDaycore>(hasMultiplier: dc => rateAdjustMultiplier(dc.SpeedChange.Value));
+
         #endregion
 
         #region Difficulty Increase
+
         Single<SentakkiModHardRock>(hasMultiplier: hr => judgementModeMultiplier(hr.JudgementMode.Value));
         Single<SentakkiModDoubleTime>(hasMultiplier: dt => rateAdjustMultiplier(dt.SpeedChange.Value));
         Single<SentakkiModNightcore>(hasMultiplier: nc => rateAdjustMultiplier(nc.SpeedChange.Value));
@@ -23,27 +26,35 @@ public class SentakkiScoreMultiplierCalculator : ScoreMultiplierCalculator
         // Perfect
         // Challenge
         // Accuracy Challenge
+
         #endregion
 
         #region Automation
+
         Single<SentakkiModNoTouch>(hasMultiplier: 0.2);
+        Single<SentakkiModRelax>(hasMultiplier: 0.1);
         // Autoplay
+
         #endregion
 
         #region Conversion
+
         Single<SentakkiModDifficultyAdjust>(hasMultiplier: difficultyAdjustMultiplier);
         // Experimental
         // Classic
         // Mirror
+
         #endregion
 
         #region Fun
+
         Single<ModWindUp>(hasMultiplier: 0.5);
         Single<ModWindDown>(hasMultiplier: 0.5);
         Single<ModAdaptiveSpeed>(hasMultiplier: 0.5);
         Single<SentakkiModSynesthesia>(hasMultiplier: 0.8);
         // Barrel Roll
         // Muted
+
         #endregion
     }
 

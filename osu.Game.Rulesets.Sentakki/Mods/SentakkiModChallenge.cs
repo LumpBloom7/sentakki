@@ -30,13 +30,7 @@ public class SentakkiModChallenge : ModFailCondition, IApplicableToDrawableRules
 
     public override bool Ranked => true;
 
-    public override Type[] IncompatibleMods =>
-    [
-        typeof(ModRelax),
-        typeof(ModFailCondition),
-        typeof(ModAutoplay),
-        typeof(ModNoFail)
-    ];
+    public override Type[] IncompatibleMods => [.. base.IncompatibleMods, typeof(SentakkiModChallenge)];
 
     public enum Lives
     {

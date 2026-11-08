@@ -70,7 +70,7 @@ public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
     protected override DrawNode CreateDrawNode() => new ChevronDrawNode(this);
 
     [BackgroundDependencyLoader]
-    private void load(ShaderManager shaders, IRenderer renderer)
+    private void load(ShaderManager shaders)
     {
         TextureShader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "chevron");
 
@@ -89,7 +89,7 @@ public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
 
     private partial class ChevronDrawNode : TexturedShaderDrawNode
     {
-        protected new DrawableChevron Source => (DrawableChevron)base.Source;
+        private DrawableChevron source => (DrawableChevron)Source;
         protected override bool CanDrawOpaqueInterior => false;
 
         private IUniformBuffer<ShapeParameters>? uniformBuffer;
@@ -109,16 +109,16 @@ public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
         {
             base.ApplyState();
 
-            var drawRect = Source.DrawRectangle.Normalize().Inflate(Source.ShadowRadius);
+            var drawRect = source.DrawRectangle.Normalize().Inflate(source.ShadowRadius);
             screenSpaceDrawQuad = Quad.FromRectangle(drawRect) * DrawInfo.Matrix;
             drawSize = drawRect.Size;
 
             var newParameters = new ShapeParameters()
             {
-                Thickness = Source.Thickness,
-                ShadowRadius = Source.ShadowRadius,
-                Glow = Source.Glow,
-                FanChevron = Source.FanChevron,
+                Thickness = source.Thickness,
+                ShadowRadius = source.ShadowRadius,
+                Glow = source.Glow,
+                FanChevron = source.FanChevron,
             };
 
             if (newParameters == parameters) return;
@@ -173,9 +173,9 @@ public partial class DrawableChevron : Drawable, ITexturedShaderDrawable
             public UniformBool FanChevron;
         }
 
-        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> uniformBuffer)
+        private bool isMatchingUniformBlock(IUniformBuffer<ShapeParameters> otherUniformBuffer)
         {
-            return uniformBuffer.Data == parameters;
+            return otherUniformBuffer.Data == parameters;
         }
     }
 }

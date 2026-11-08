@@ -8,16 +8,14 @@ using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Configuration;
 using osu.Game.Skinning;
 using osuTK;
-using SharpGen.Runtime;
-using static osu.Game.Rulesets.Sentakki.Extensions.SentakkiExtensions;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Legacy;
 
 public partial class LegacySentakkiJudgementPiece : CompositeDrawable, IAnimatableJudgement, IHasTimingIndicator
 {
-    private HitResult hitResult;
+    private readonly HitResult hitResult;
 
-    private Drawable judgementDrawable;
+    private readonly Drawable judgementDrawable;
     private Drawable? timingIndicatorDrawableEarly;
     private Drawable? timingIndicatorDrawableLate;
 
@@ -32,7 +30,7 @@ public partial class LegacySentakkiJudgementPiece : CompositeDrawable, IAnimatab
         judgementDrawable = mainJudgementDrawable;
     }
 
-    private Bindable<bool> timingIndicatorEnabled = new Bindable<bool>();
+    private readonly Bindable<bool> timingIndicatorEnabled = new Bindable<bool>();
 
     [BackgroundDependencyLoader]
     private void load(ISkinSource skin, SentakkiRulesetConfigManager configManager)
@@ -55,12 +53,12 @@ public partial class LegacySentakkiJudgementPiece : CompositeDrawable, IAnimatab
             RelativeSizeAxes = Axes.Both,
         });
 
-        timingIndicatorDrawableEarly = skin.GetAnimation($"sentakki/judgements/early", true, false);
+        timingIndicatorDrawableEarly = skin.GetAnimation("sentakki/judgements/early", true, false);
 
         if (timingIndicatorDrawableEarly is not null)
             timingIndicatorContainer.Add(timingIndicatorDrawableEarly);
 
-        timingIndicatorDrawableLate = skin.GetAnimation($"sentakki/judgements/late", true, false);
+        timingIndicatorDrawableLate = skin.GetAnimation("sentakki/judgements/late", true, false);
 
         if (timingIndicatorDrawableLate is not null)
             timingIndicatorContainer.Add(timingIndicatorDrawableLate);

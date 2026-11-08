@@ -59,8 +59,8 @@ public partial class SentakkiSimaiConvertScreen : OsuScreen
             Anchor = Anchor.Centre,
             Origin = Anchor.Centre,
             Size = new Vector2(0.9f, 0.8f),
-            Children = new Drawable[]
-            {
+            Children =
+            [
                 new Box
                 {
                     Colour = colours.GreySeaFoamDark,
@@ -77,8 +77,8 @@ public partial class SentakkiSimaiConvertScreen : OsuScreen
                     Width = 0.35f,
                     Anchor = Anchor.TopRight,
                     Origin = Anchor.TopRight,
-                    Children = new Drawable[]
-                    {
+                    Children =
+                    [
                         new Box
                         {
                             Colour = colours.GreySeaFoamDarker,
@@ -105,10 +105,10 @@ public partial class SentakkiSimaiConvertScreen : OsuScreen
                             Width = 0.9f,
                             Margin = new MarginPadding { Vertical = button_vertical_margin },
                             Action = () => startConvertTask(fileSelector.CurrentPath.Value)
-                        },
-                    }
+                        }
+                    ]
                 }
-            }
+            ]
         };
         fileSelector.CurrentPath.BindValueChanged(directoryChanged);
     }
@@ -181,7 +181,7 @@ public partial class SentakkiSimaiConvertScreen : OsuScreen
 
                 FileStream createOutputStream(string filename)
                 {
-                    oszPath = $"{path.Parent.FullName}{Path.DirectorySeparatorChar}{filename}";
+                    oszPath = $"{path.Parent!.FullName}{Path.DirectorySeparatorChar}{filename}";
                     return File.Open(oszPath, FileMode.Create);
                 }
 
@@ -226,7 +226,7 @@ public partial class SentakkiSimaiConvertScreen : OsuScreen
             {
                 FileStream createOutputStream(string filename)
                 {
-                    string oszDir = $"{item.Parent.FullName.Replace(origin.FullName, batchOutputFolder)}{Path.DirectorySeparatorChar}";
+                    string oszDir = $"{item.Parent!.FullName.Replace(origin.FullName, batchOutputFolder)}{Path.DirectorySeparatorChar}";
                     Directory.CreateDirectory(oszDir);
                     string oszPath = $"{oszDir}{filename}";
                     return File.Open(oszPath, FileMode.Create);
@@ -246,8 +246,8 @@ public partial class SentakkiSimaiConvertScreen : OsuScreen
 
                 notification.Text = $"Converted {index + 1}/{paths.Count} simai beatmaps.";
                 notification.Progress = (float)(index + 1) / paths.Count;
-
             }
+
             notification.CompletionClickAction = () => host.OpenFileExternally(batchOutputFolder);
             notification.State = ProgressNotificationState.Completed;
         }, TaskCreationOptions.LongRunning);
