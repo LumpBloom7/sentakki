@@ -11,18 +11,24 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - name: Install .NET 8.0.x
+
+    - name: Install .NET 10.0.x
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: "8.0.x"
+        dotnet-version: "10.0.x"
+
     - name: Fetch all tags
       run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
     - name: Get current tag
       run: echo "CURRENT_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1))" >> $GITHUB_ENV
+
     - name: Install dependencies
       run: dotnet restore
+
     - name: Build
       run: dotnet build osu.Game.Rulesets.Sentakki --configuration Release -p:version=${{ env.CURRENT_TAG }} --no-restore
+      
     - name: Create release
       uses: softprops/action-gh-release@v1
       with:
