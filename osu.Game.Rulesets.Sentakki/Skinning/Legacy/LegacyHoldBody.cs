@@ -85,9 +85,9 @@ public partial class LegacyHoldBody : CompositeDrawable
 
     private static Container createLayer(ISkinSource skin, string texturePostfix = "")
     {
-        var bodyTexture = skin.GetTexture($"sentakki/hitobjects/hold/body{texturePostfix}", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
-        var headTexture = skin.GetTexture($"sentakki/hitobjects/hold/head{texturePostfix}", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
-        var tailTexture = skin.GetTexture($"sentakki/hitobjects/hold/tail{texturePostfix}", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
+        var bodyTexture = skin.GetTexture($"sentakki/hitobjects/hold/body{texturePostfix}", WrapMode.Repeat, WrapMode.Repeat);
+        var headTexture = skin.GetTexture($"sentakki/hitobjects/hold/head{texturePostfix}");
+        var tailTexture = skin.GetTexture($"sentakki/hitobjects/hold/tail{texturePostfix}");
 
         return new Container
         {
@@ -96,34 +96,59 @@ public partial class LegacyHoldBody : CompositeDrawable
 
             Children =
             [
-                new Sprite
+                new Container
                 {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.Centre,
                     Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
-                    Texture = headTexture,
+                    Padding = new MarginPadding { Bottom = -1.0f },
+                    Child = new Sprite
+                    {
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        RelativeSizeAxes = Axes.Both,
+                        Texture = headTexture,
+                    },
                 },
-                new Sprite
+                new Container
                 {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.Centre,
                     Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
-                    Texture = tailTexture,
+                    Padding = new MarginPadding { Top = -1.0f },
+                    Child = new Sprite
+                    {
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.BottomCentre,
+                        RelativeSizeAxes = Axes.Both,
+                        Texture = tailTexture,
+                    },
                 },
-                new Sprite
+                new Container
                 {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both,
-                    Texture = bodyTexture,
-                }
+                    Padding = new MarginPadding
+                    {
+                        Top = -1f,
+                        Bottom = -1f,
+                    },
+                    Child = new Sprite
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Texture = bodyTexture,
+                    }
+                },
             ]
         };
     }
 
     private static Container createGlowLayer(ISkinSource skin)
     {
-        var bodyTexture = skin.GetTexture("sentakki/hitobjects/hold/body_glow", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
-        var headTexture = skin.GetTexture("sentakki/hitobjects/hold/head_glow", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
-        var tailTexture = skin.GetTexture("sentakki/hitobjects/hold/tail_glow", WrapMode.ClampToEdge, WrapMode.ClampToEdge);
+        var bodyTexture = skin.GetTexture("sentakki/hitobjects/hold/body_glow", WrapMode.Repeat, WrapMode.Repeat);
+        var headTexture = skin.GetTexture("sentakki/hitobjects/hold/head_glow");
+        var tailTexture = skin.GetTexture("sentakki/hitobjects/hold/tail_glow");
 
         return new Container
         {
@@ -136,26 +161,36 @@ public partial class LegacyHoldBody : CompositeDrawable
                 {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.Centre,
-                    Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
                     Texture = headTexture,
-                    Scale = new Vector2(1.5f)
+                    Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
+                    Scale = new Vector2(1.5f),
                 },
+
                 new Sprite
                 {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.Centre,
                     Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
+                    Scale = new Vector2(1.5f),
                     Texture = tailTexture,
-                    Scale = new Vector2(1.5f)
                 },
-                new Sprite
+                new Container
                 {
-                    Origin = Anchor.Centre,
                     Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both,
-                    Texture = bodyTexture,
-                    Scale = new Vector2(1.5f, 1)
-                }
+                    Scale = new Vector2(1.5f, 1.0f),
+                    Padding = new MarginPadding
+                    {
+                        Top = -0.3f,
+                        Bottom = -0.3f,
+                    },
+                    Child = new Sprite
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Texture = bodyTexture,
+                    }
+                },
             ]
         };
     }
