@@ -1,7 +1,9 @@
+using System;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Utils;
@@ -86,6 +88,8 @@ public partial class LegacyHoldBody : CompositeDrawable
     private static Container createLayer(ISkinSource skin, string texturePostfix = "")
     {
         var bodyTexture = skin.GetTexture($"sentakki/hitobjects/hold/body{texturePostfix}", WrapMode.Repeat, WrapMode.Repeat);
+        bodyTexture = bodyTexture?.Crop(new RectangleF(0, 1, bodyTexture.Width, bodyTexture.Height - 2), Axes.None, WrapMode.ClampToEdge, WrapMode.ClampToEdge);
+
         var headTexture = skin.GetTexture($"sentakki/hitobjects/hold/head{texturePostfix}");
         var tailTexture = skin.GetTexture($"sentakki/hitobjects/hold/tail{texturePostfix}");
 
@@ -96,44 +100,23 @@ public partial class LegacyHoldBody : CompositeDrawable
 
             Children =
             [
-                new Container
+                new HoldCap(headTexture)
                 {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.Centre,
-                    Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
-                    Padding = new MarginPadding { Bottom = -1.0f },
-                    Child = new Sprite
-                    {
-                        Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre,
-                        RelativeSizeAxes = Axes.Both,
-                        Texture = headTexture,
-                    },
+                    Size = new Vector2(TapRing.CIRCLE_RADIUS * 2)
                 },
-                new Container
+                new HoldCap(tailTexture)
                 {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.Centre,
                     Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
-                    Padding = new MarginPadding { Top = -1.0f },
-                    Child = new Sprite
-                    {
-                        Anchor = Anchor.BottomCentre,
-                        Origin = Anchor.BottomCentre,
-                        RelativeSizeAxes = Axes.Both,
-                        Texture = tailTexture,
-                    },
                 },
                 new Container
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both,
-                    Padding = new MarginPadding
-                    {
-                        Top = -1f,
-                        Bottom = -1f,
-                    },
                     Child = new Sprite
                     {
                         RelativeSizeAxes = Axes.Both,
@@ -193,5 +176,47 @@ public partial class LegacyHoldBody : CompositeDrawable
                 },
             ]
         };
+    }
+
+    private partial class HoldCap : CompositeDrawable
+    {
+        public HoldCap(Texture? texture)
+        {
+            if (texture is null)
+                return;
+
+            var top = texture.Crop(
+                new RectangleF(
+                    Vector2.Zero,
+                    new Vector2(texture.Width, MathF.Floor((float)texture.Height / 2) - 1)),
+                Axes.None, WrapMode.ClampToEdge, WrapMode.ClampToEdge);
+
+
+            var bottom = texture.Crop(
+                new RectangleF(
+                    new Vector2(0, (texture.Size.Y / 2 + 1)),
+                    new Vector2(texture.Width, MathF.Floor((float)texture.Height / 2) - 1)),
+                Axes.None, WrapMode.ClampToEdge, WrapMode.ClampToEdge);
+
+            InternalChildren =
+            [
+                new Sprite
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.BottomCentre,
+                    Texture = top,
+                    RelativeSizeAxes = Axes.Both,
+                    Size = new Vector2(1, 0.5f)
+                },
+                new Sprite
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.TopCentre,
+                    Texture = bottom,
+                    RelativeSizeAxes = Axes.Both,
+                    Size = new Vector2(1, 0.5f)
+                },
+            ];
+        }
     }
 }
