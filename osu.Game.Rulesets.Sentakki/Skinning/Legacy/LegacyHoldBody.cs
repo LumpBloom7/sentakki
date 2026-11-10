@@ -140,22 +140,19 @@ public partial class LegacyHoldBody : CompositeDrawable
 
             Children =
             [
-                new Sprite
+                new HoldCap(headTexture)
                 {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.Centre,
-                    Texture = headTexture,
                     Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
                     Scale = new Vector2(1.5f),
                 },
-
-                new Sprite
+                new HoldCap(tailTexture)
                 {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.Centre,
                     Size = new Vector2(TapRing.CIRCLE_RADIUS * 2),
                     Scale = new Vector2(1.5f),
-                    Texture = tailTexture,
                 },
                 new Container
                 {
