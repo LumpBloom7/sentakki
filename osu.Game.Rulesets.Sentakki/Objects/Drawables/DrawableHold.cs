@@ -1,5 +1,6 @@
 using System;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
@@ -10,8 +11,8 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Sentakki.Extensions;
-using osu.Game.Rulesets.Sentakki.Objects.Drawables.Pieces;
+using osu.Game.Rulesets.Sentakki.Skinning;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.UI;
 using osuTK;
 using osuTK.Graphics;
@@ -25,7 +26,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
     private Container<DrawableHoldHead> headContainer = null!;
 
-    public HoldBody NoteBody = null!;
+    public ProxyableSkinnableDrawable NoteBody = null!;
 
     public override double LifetimeStart
     {
@@ -62,12 +63,19 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
     {
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
+
+        Width = TapRing.CIRCLE_RADIUS * 2;
+        Height = TapRing.CIRCLE_RADIUS * 2;
+
+        OriginPosition = new Vector2(TapRing.CIRCLE_RADIUS);
+        Scale = Vector2.Zero;
+        Y = -SentakkiPlayfield.NOTESTARTDISTANCE;
+
         AddRangeInternal(
         [
-            NoteBody = new HoldBody
+            NoteBody = new ProxyableSkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.Hold), _ => new HoldBody())
             {
-                Scale = Vector2.Zero,
-                Y = -SentakkiPlayfield.NOTESTARTDISTANCE
+                RelativeSizeAxes = Axes.Both,
             },
             headContainer = new Container<DrawableHoldHead> { RelativeSizeAxes = Axes.Both },
         ]);
@@ -75,22 +83,15 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         OnRevertResult += resultReverted;
     }
 
-    protected override void LoadComplete()
-    {
-        base.LoadComplete();
-        AccentColour.BindValueChanged(c => flashingColour = AccentColour.Value.LightenHsl(0.4f), true);
-    }
-
-    private Color4 flashingColour = Color4.White;
-
     protected override void OnApply()
     {
         base.OnApply();
         releaseTime = double.MinValue;
+        IsHitting.Value = false;
     }
 
     private double? releaseTime;
-    private bool isHolding => releaseTime is null;
+    public readonly Bindable<bool> IsHitting = new();
 
     protected override void Update()
     {
@@ -98,26 +99,15 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
         autoplayUpdate();
 
-        if (AllJudged)
-        {
-            // Remove alterations to NoteBody colour
-            NoteBody.Colour = AccentColour.Value;
-            return;
-        }
-
         // Ensure that the note colour is correct prior to the start time
         if (Time.Current < HitObject.StartTime)
         {
             Colour = Color4.White;
-            NoteBody.Colour = AccentColour.Value;
             return;
         }
 
-        if (!isHolding)
+        if (!IsHitting.Value)
         {
-            // Remove alterations to NoteBody colour
-            NoteBody.Colour = AccentColour.Value;
-
             // Grey the note to indicate that it isn't being held
             Colour = Interpolation.ValueAt(
                 Math.Clamp(Time.Current, HitObject.StartTime, HitObject.StartTime + 100),
@@ -129,21 +119,13 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
         // Restore colour if it is being held
         Colour = Color4.White;
-
-        const double flashing_time = 80;
-
-        double flashProg = Time.Current % (flashing_time * 2) / (flashing_time * 2);
-
-        NoteBody.Colour = flashProg <= 0.5
-            ? Interpolation.ValueAt(flashProg, AccentColour.Value, flashingColour, 0, 0.5, Easing.OutSine)
-            : Interpolation.ValueAt(flashProg, flashingColour, AccentColour.Value, 0.5, 0, Easing.InSine);
     }
 
     protected override void UpdateInitialTransforms()
     {
         base.UpdateInitialTransforms();
         double animTime = AnimationDuration.Value / 2;
-        NoteBody.FadeInFromZero(animTime).ScaleTo(1, animTime);
+        this.FadeInFromZero(animTime).ScaleTo(1, animTime);
 
         using (BeginDelayedSequence(animTime))
         {
@@ -156,10 +138,10 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
             // This is the amount of time that the note spends stretching or unstretching
             float stretchTime = (float)(stretchAmount / total_movable_distance * animTime);
 
-            NoteBody.MoveToY(-SentakkiPlayfield.INTERSECTDISTANCE, animTime) // Move the head towards the ring
-                    .ResizeHeightTo(stretchAmount, stretchTime) // While we are moving, we stretch the hold note to match desired length
-                    .Then().Delay(HitObject.Duration - stretchTime) // Wait until the end of the hold note, while considering how much time we need for shrinking
-                    .ResizeHeightTo(0, stretchTime); // We shrink the hold note as it exits
+            this.MoveToY(-SentakkiPlayfield.INTERSECTDISTANCE, animTime) // Move the head towards the ring
+                .ResizeHeightTo(stretchAmount + TapRing.CIRCLE_RADIUS * 2, stretchTime) // While we are moving, we stretch the hold note to match desired length
+                .Then().Delay(HitObject.Duration - stretchTime) // Wait until the end of the hold note, while considering how much time we need for shrinking
+                .ResizeHeightTo(TapRing.CIRCLE_RADIUS * 2, stretchTime); // We shrink the hold note as it exits
         }
     }
 
@@ -176,11 +158,11 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         double timeNotHeld = releaseTime.HasValue ? Time.Current - releaseTime.Value : 0;
 
         // If the player is still holding it beyond the perfect window, the maximum result is a Great.
-        if (timeOffset > perfectWindow && isHolding)
+        if (timeOffset > perfectWindow && IsHitting.Value)
         {
             ApplyResult(HitResult.Great);
         }
-        else if (timeOffset >= -perfectWindow && !isHolding)
+        else if (timeOffset >= -perfectWindow && !IsHitting.Value)
         {
             // If the user is not holding the note, also take into account the time the player wasn't holding the note
             // This also takes into account any "non-attempts" as releaseTime would be double.MinValue, ensuring timeNotHeld will be large enough to always cause a miss
@@ -215,17 +197,14 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         switch (state)
         {
             case ArmedState.Hit:
-                NoteBody.FadeOut();
                 this.FadeOut();
                 break;
 
             case ArmedState.Miss:
-                NoteBody.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
-                        .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
-                        .MoveToOffset(new Vector2(0, -100), time_fade_miss, Easing.OutCubic)
-                        .FadeOut(time_fade_miss);
-
-                this.Delay(time_fade_miss).FadeOut();
+                this.ScaleTo(0.5f, time_fade_miss, Easing.InCubic)
+                    .FadeColour(Color4.Red, time_fade_miss, Easing.OutQuint)
+                    .MoveToOffset(new Vector2(0, -100), time_fade_miss, Easing.OutCubic)
+                    .FadeOut(time_fade_miss);
                 break;
         }
 
@@ -294,7 +273,7 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
             return false;
 
         // Passthrough excess inputs to later hitobjects in the same lane
-        if (isHolding)
+        if (IsHitting.Value)
             return false;
 
         double timeOffset = Time.Current - HitObject.StartTime;
@@ -304,14 +283,16 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
         Head.UpdateResult();
 
+        IsHitting.Value = true;
         releaseTime = null;
+
         return true;
     }
 
     public void OnReleased(KeyBindingReleaseEvent<SentakkiAction> e)
     {
         if (AllJudged) return;
-        if (!isHolding) return;
+        if (!IsHitting.Value) return;
 
         if (!IsValidLaneAction(e.Action))
             return;
@@ -320,6 +301,8 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
         // We check for 1 here as drawables receive the event before the counter decrements
         if (pressedCount > 1)
             return;
+
+        IsHitting.Value = false;
 
         releaseTime = Time.Current;
     }
@@ -336,13 +319,17 @@ public partial class DrawableHold : DrawableSentakkiLanedHitObject, IKeyBindingH
 
         if (Time.Current >= HitObject.StartTime && Time.Current < HitObject.EndTime + missWindow)
         {
-            if (!isHolding)
+            if (!IsHitting.Value)
                 Head.UpdateResult();
 
             releaseTime = null;
+            IsHitting.Value = true;
         }
 
         if (Time.Current >= HitObject.GetEndTime())
+        {
             releaseTime = Time.Current;
+            IsHitting.Value = false;
+        }
     }
 }

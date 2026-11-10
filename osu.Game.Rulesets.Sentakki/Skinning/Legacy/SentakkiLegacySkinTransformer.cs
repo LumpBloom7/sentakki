@@ -35,6 +35,12 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
                             return null;
 
                         return new LegacyTapRing();
+
+                    case SentakkiSkinComponents.Hold:
+                        if (Skin.GetTexture("sentakki/hitobjects/hold/body") is null)
+                            return null;
+
+                        return new LegacyHoldBody();
                 }
 
                 break;
