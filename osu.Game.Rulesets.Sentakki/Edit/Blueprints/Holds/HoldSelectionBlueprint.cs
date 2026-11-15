@@ -100,9 +100,9 @@ public partial class HoldSelectionBlueprint : SentakkiSelectionBlueprint<Hold, D
     protected override void Update()
     {
         Rotation = SentakkiExtensions.GetRotationForLane(HitObject.Lane);
-        highlightContainer.Y = DrawableObject.NoteBody.Y;
-        highlightContainer.Scale = DrawableObject.NoteBody.Scale;
-        highlightContainer.Height = DrawableObject.NoteBody.Height;
+        highlightContainer.Y = DrawableObject.Y;
+        highlightContainer.Scale = DrawableObject.Scale;
+        highlightContainer.Height = DrawableObject.Height;
     }
 
     private partial class DraggableDotPiece : DotPiece
