@@ -6,6 +6,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osu.Framework.Utils;
+using osu.Game.Input;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Sentakki.Edit.Snapping;
@@ -21,7 +22,7 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Sentakki.Edit.Blueprints.Slides;
 
-public partial class SlidePlacementBlueprint : LanedPlacementBlueprint<Slide>
+public partial class SlidePlacementBlueprint : LanedPlacementBlueprint<Slide>, IBlockGlobalAltScrollVolume
 {
     public override bool ReplacesExistingObject(HitObject existing)
         => existing is not Slide && base.ReplacesExistingObject(existing);
