@@ -38,8 +38,6 @@ public partial class SentakkiPlayfield : Playfield
     public readonly LanedPlayfield LanedPlayfield;
     private readonly TouchPlayfield touchPlayfield;
 
-    internal readonly Container AccentContainer;
-
     public static readonly float[] LANEANGLES =
     [
         22.5f,
@@ -62,7 +60,7 @@ public partial class SentakkiPlayfield : Playfield
         AddRangeInternal([
             explosionPool = new DrawablePool<HitExplosion>(8),
             newJudgementPool = new JudgementPooler<DrawableSentakkiJudgement>([HitResult.Perfect, HitResult.Great, HitResult.Good, HitResult.Meh, HitResult.Miss], onJudgementLoaded),
-            AccentContainer = new Container
+            new Container
             {
                 RelativeSizeAxes = Axes.Both,
                 Children =

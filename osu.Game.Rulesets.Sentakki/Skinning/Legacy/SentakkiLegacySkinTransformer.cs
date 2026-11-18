@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Scoring;
