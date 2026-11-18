@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Numerics;
-using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -20,13 +19,6 @@ namespace osu.Game.Rulesets.Sentakki.HUD;
 public partial class ArgonContextualDisplay : CompositeDrawable, ISerialisableDrawable
 {
     public bool UsesFixedAnchor { get; set; }
-
-    private Container defaultCounters = null!;
-    private Container overrideCounters = null!;
-
-    private ArgonAccuracyCounter accuracyCounter = null!;
-    private ArgonComboCounter comboCounter = null!;
-    private ArgonScoreCounter scoreCounter = null!;
 
     [SettingSource("Show label")]
     public Bindable<bool> ShowLabel { get; } = new();
@@ -51,81 +43,58 @@ public partial class ArgonContextualDisplay : CompositeDrawable, ISerialisableDr
         Anchor = Anchor.Centre;
         Origin = Anchor.Centre;
         AutoSizeAxes = Axes.Both;
-        InternalChildren =
-        [
-            defaultCounters = new Container
-            {
-                AutoSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
 
-                Children =
-                [
-                    accuracyCounter = new ArgonAccuracyCounter
-                    {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Alpha = 0,
-
-                        ShowLabel = { BindTarget = ShowLabel },
-                        WireframeOpacity = { BindTarget = WireframeOpacity },
-                        AccuracyDisplay = { BindTarget = AccuracyDisplayMode },
-                    },
-                    comboCounter = new ArgonComboCounter
-                    {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Alpha = 0,
-
-                        ShowLabel = { BindTarget = ShowLabel },
-                        WireframeOpacity = { BindTarget = WireframeOpacity },
-                    },
-                    scoreCounter = new ArgonScoreCounter
-                    {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Alpha = 0,
-
-                        ShowLabel = { BindTarget = ShowLabel },
-                        WireframeOpacity = { BindTarget = WireframeOpacity },
-                    }
-                ]
-            },
-
-            overrideCounters = new Container
-            {
-                AutoSizeAxes = Axes.Both,
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Alpha = 0
-            }
-        ];
-
-        DefaultDisplayMode.BindValueChanged(displayModeChanged, true);
         applyOverrideCounterFromMods();
+        DefaultDisplayMode.BindValueChanged(displayModeChanged, true);
     }
 
+    private void recreateCounter()
+    {
+        InternalChild = CreateComponentFor(DefaultDisplayMode.Value);
+    }
+
+    protected virtual Drawable CreateComponentFor(DefaultDisplay mode) => mode switch
+    {
+        DefaultDisplay.Accuracy => new ArgonAccuracyCounter
+        {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+
+            ShowLabel = { BindTarget = ShowLabel },
+            WireframeOpacity = { BindTarget = WireframeOpacity },
+        },
+
+        DefaultDisplay.Combo => new ArgonComboCounter
+        {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+
+            ShowLabel = { BindTarget = ShowLabel },
+            WireframeOpacity = { BindTarget = WireframeOpacity },
+        },
+
+        DefaultDisplay.Score => new ArgonScoreCounter
+        {
+            Anchor = Anchor.Centre,
+            Origin = Anchor.Centre,
+
+            ShowLabel = { BindTarget = ShowLabel },
+            WireframeOpacity = { BindTarget = WireframeOpacity },
+        },
+        _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
+    };
 
     private void displayModeChanged(ValueChangedEvent<DefaultDisplay> defaultDisplay)
     {
-        drawableFor(defaultDisplay.OldValue).Hide();
-        drawableFor(defaultDisplay.NewValue).Show();
+        if (overrideCounterBindable is not null)
+            return;
 
-        return;
-
-        Drawable drawableFor(DefaultDisplay mode) => mode switch
-        {
-            DefaultDisplay.Accuracy => accuracyCounter,
-            DefaultDisplay.Combo => comboCounter,
-            DefaultDisplay.Score => scoreCounter,
-            _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
-        };
+        recreateCounter();
     }
 
     [Resolved]
     private Player player { get; set; } = null!;
 
-    [UsedImplicitly]
     private IBindable? overrideCounterBindable { get; set; }
 
     private void applyOverrideCounterFromMods()
@@ -136,8 +105,6 @@ public partial class ArgonContextualDisplay : CompositeDrawable, ISerialisableDr
             return;
 
         var counterBindable = mod.CounterBindable;
-
-        Drawable counter;
 
         // Add more conditions as needed
         switch (counterBindable)
@@ -151,7 +118,7 @@ public partial class ArgonContextualDisplay : CompositeDrawable, ISerialisableDr
                     Current = { BindTarget = bindableInt }
                 };
 
-                counter = rollingCounter;
+                InternalChild = rollingCounter;
                 break;
 
             default:
@@ -159,10 +126,6 @@ public partial class ArgonContextualDisplay : CompositeDrawable, ISerialisableDr
         }
 
         overrideCounterBindable = counterBindable;
-
-        overrideCounters.Add(counter);
-        defaultCounters.Hide();
-        overrideCounters.Show();
     }
 
     private int getDigitsRequiredForDisplay(int c)
