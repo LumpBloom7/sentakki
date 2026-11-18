@@ -77,10 +77,11 @@ public partial class ArgonContextualCounter : ContextualCounter
 
     private int getDigitsRequiredForDisplay(int c)
     {
-        int digitsRequired = 0;
+        int digitsRequired = 1;
 
         while ((c /= 10) > 0)
             digitsRequired++;
+
         return digitsRequired;
     }
 
