@@ -1,25 +1,20 @@
 using System;
-using System.Linq;
 using System.Numerics;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 using osu.Game.Configuration;
 using osu.Game.Graphics.UserInterface;
-using osu.Game.Screens.Play;
+using osu.Game.Rulesets.Sentakki.HUD;
 using osu.Game.Screens.Play.HUD;
-using osu.Game.Skinning;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Sentakki.HUD;
+namespace osu.Game.Rulesets.Sentakki.Skinning.Argon.HUD;
 
-public partial class ArgonContextualDisplay : CompositeDrawable, ISerialisableDrawable
+public partial class ArgonContextualCounter : ContextualCounter
 {
-    public bool UsesFixedAnchor { get; set; }
-
     [SettingSource("Show label")]
     public Bindable<bool> ShowLabel { get; } = new();
 
@@ -31,29 +26,7 @@ public partial class ArgonContextualDisplay : CompositeDrawable, ISerialisableDr
         MaxValue = 1,
     };
 
-    [SettingSource("Accuracy display mode")]
-    public Bindable<GameplayAccuracyCounter.AccuracyDisplayMode> AccuracyDisplayMode { get; } = new();
-
-    [SettingSource("Default display")]
-    public Bindable<DefaultDisplay> DefaultDisplayMode { get; } = new();
-
-    [BackgroundDependencyLoader]
-    private void load()
-    {
-        Anchor = Anchor.Centre;
-        Origin = Anchor.Centre;
-        AutoSizeAxes = Axes.Both;
-
-        applyOverrideCounterFromMods();
-        DefaultDisplayMode.BindValueChanged(displayModeChanged, true);
-    }
-
-    private void recreateCounter()
-    {
-        InternalChild = CreateComponentFor(DefaultDisplayMode.Value);
-    }
-
-    protected virtual Drawable CreateComponentFor(DefaultDisplay mode) => mode switch
+    protected override Drawable CreateComponentFor(DefaultDisplay mode) => mode switch
     {
         DefaultDisplay.Accuracy => new ArgonAccuracyCounter
         {
@@ -62,6 +35,7 @@ public partial class ArgonContextualDisplay : CompositeDrawable, ISerialisableDr
 
             ShowLabel = { BindTarget = ShowLabel },
             WireframeOpacity = { BindTarget = WireframeOpacity },
+            AccuracyDisplay = { BindTarget = AccuracyDisplayMode }
         },
 
         DefaultDisplay.Combo => new ArgonComboCounter
@@ -84,48 +58,21 @@ public partial class ArgonContextualDisplay : CompositeDrawable, ISerialisableDr
         _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
     };
 
-    private void displayModeChanged(ValueChangedEvent<DefaultDisplay> defaultDisplay)
+    protected override Drawable? CreateOverrideCounterFor(IProvideContextualCounter mod)
     {
-        if (overrideCounterBindable is not null)
-            return;
-
-        recreateCounter();
-    }
-
-    [Resolved]
-    private Player player { get; set; } = null!;
-
-    private IBindable? overrideCounterBindable { get; set; }
-
-    private void applyOverrideCounterFromMods()
-    {
-        var mod = player.GameplayState.Mods.OfType<IProvideContextualCounter>().SingleOrDefault();
-
-        if (mod is null)
-            return;
-
-        var counterBindable = mod.CounterBindable;
-
-        // Add more conditions as needed
-        switch (counterBindable)
+        switch (mod.CounterBindable)
         {
             case BindableInt bindableInt:
-                var rollingCounter = new RollingArgonCounterTextComponent<int>(Anchor.TopLeft, mod.CounterLabel)
+                return new RollingArgonCounterTextComponent<int>(Anchor.TopLeft, mod.CounterLabel)
                 {
                     WireframeOpacity = { BindTarget = WireframeOpacity },
                     ShowLabel = { BindTarget = ShowLabel },
                     WireframeTemplate = new string('#', getDigitsRequiredForDisplay(bindableInt.MaxValue)),
                     Current = { BindTarget = bindableInt }
                 };
-
-                InternalChild = rollingCounter;
-                break;
-
-            default:
-                return;
         }
 
-        overrideCounterBindable = counterBindable;
+        return null;
     }
 
     private int getDigitsRequiredForDisplay(int c)
@@ -135,13 +82,6 @@ public partial class ArgonContextualDisplay : CompositeDrawable, ISerialisableDr
         while ((c /= 10) > 0)
             digitsRequired++;
         return digitsRequired;
-    }
-
-    public enum DefaultDisplay
-    {
-        Combo,
-        Accuracy,
-        Score,
     }
 
     private partial class RollingArgonCounterTextComponent<T> : RollingCounter<T> where T : struct, IEquatable<T>, IComparisonOperators<T, T, bool>
