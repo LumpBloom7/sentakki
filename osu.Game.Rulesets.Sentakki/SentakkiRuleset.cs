@@ -33,6 +33,7 @@ using osu.Game.Rulesets.Sentakki.Objects;
 using osu.Game.Rulesets.Sentakki.Replays;
 using osu.Game.Rulesets.Sentakki.Scoring;
 using osu.Game.Rulesets.Sentakki.Skinning.Argon;
+using osu.Game.Rulesets.Sentakki.Skinning.Default;
 using osu.Game.Rulesets.Sentakki.Skinning.Legacy;
 using osu.Game.Rulesets.Sentakki.Statistics;
 using osu.Game.Rulesets.Sentakki.UI;
@@ -256,7 +257,7 @@ public partial class SentakkiRuleset : Ruleset
         {
             ArgonSkin => new SentakkiArgonSkinTransformer(skin),
             LegacySkin => new SentakkiLegacySkinTransformer(skin),
-            _ => null
+            _ => new SentakkiDefaultSkinTransformer(skin),
         };
     }
 
