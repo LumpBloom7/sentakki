@@ -14,11 +14,11 @@ public abstract partial class ContextualCounter : CompositeDrawable, ISerialisab
 {
     public bool UsesFixedAnchor { get; set; }
 
-    [SettingSource("Accuracy display mode")]
-    public Bindable<GameplayAccuracyCounter.AccuracyDisplayMode> AccuracyDisplayMode { get; } = new();
-
     [SettingSource("Default display")]
     public Bindable<DefaultDisplay> DefaultDisplayMode { get; } = new();
+
+    [SettingSource("Accuracy display mode")]
+    public Bindable<GameplayAccuracyCounter.AccuracyDisplayMode> AccuracyDisplayMode { get; } = new();
 
     protected ContextualCounter()
     {
