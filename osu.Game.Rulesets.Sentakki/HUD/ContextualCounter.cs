@@ -1,4 +1,5 @@
 using System.Linq;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -14,9 +15,11 @@ public abstract partial class ContextualCounter : CompositeDrawable, ISerialisab
 {
     public bool UsesFixedAnchor { get; set; }
 
+    [PublicAPI]
     [SettingSource("Default display")]
     public Bindable<DefaultDisplay> DefaultDisplayMode { get; } = new();
 
+    [PublicAPI]
     [SettingSource("Accuracy display mode")]
     public Bindable<GameplayAccuracyCounter.AccuracyDisplayMode> AccuracyDisplayMode { get; } = new();
 
