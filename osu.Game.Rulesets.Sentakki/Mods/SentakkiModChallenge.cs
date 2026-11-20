@@ -7,16 +7,15 @@ using osu.Game.Configuration;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Sentakki.HUD;
 using osu.Game.Rulesets.Sentakki.Judgements;
 using osu.Game.Rulesets.Sentakki.Localisation.Mods;
 using osu.Game.Rulesets.Sentakki.Objects;
-using osu.Game.Rulesets.Sentakki.UI;
-using osu.Game.Rulesets.Sentakki.UI.Components;
 using osu.Game.Rulesets.UI;
 
 namespace osu.Game.Rulesets.Sentakki.Mods;
 
-public class SentakkiModChallenge : ModFailCondition, IApplicableToDrawableRuleset<SentakkiHitObject>
+public class SentakkiModChallenge : ModFailCondition, IApplicableToDrawableRuleset<SentakkiHitObject>, IProvideContextualCounter
 {
     public override string Name => "Challenge";
     public override LocalisableString Description => SentakkiModChallengeStrings.ModDescription;
@@ -75,7 +74,7 @@ public class SentakkiModChallenge : ModFailCondition, IApplicableToDrawableRules
             MaxValue = maxLives,
         };
 
-        ((SentakkiPlayfield)drawableRuleset.Playfield).AccentContainer.Add(new LiveCounter(livesLeft));
+        //((SentakkiPlayfield)drawableRuleset.Playfield).AccentContainer.Add(new LiveCounter(livesLeft));
     }
 
     protected override bool FailCondition(HealthProcessor healthProcessor, JudgementResult result)
@@ -105,4 +104,7 @@ public class SentakkiModChallenge : ModFailCondition, IApplicableToDrawableRules
 
         return livesLeft.Value <= 0;
     }
+
+    public LocalisableString CounterLabel => "Lives";
+    public IBindable CounterBindable => livesLeft;
 }

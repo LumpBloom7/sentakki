@@ -1,6 +1,8 @@
+using System.Linq;
 using osu.Framework.Graphics;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Sentakki.Extensions;
+using osu.Game.Rulesets.Sentakki.Skinning.Legacy.HUD;
 using osu.Game.Skinning;
 
 namespace osu.Game.Rulesets.Sentakki.Skinning.Legacy;
@@ -35,6 +37,36 @@ public class SentakkiLegacySkinTransformer(ISkin skin) : LegacySkinTransformer(s
                             return null;
 
                         return new LegacyTapRing();
+                }
+
+                break;
+
+            case GlobalSkinnableContainerLookup containerLookup:
+                // Only handle per ruleset defaults here.
+                if (containerLookup.Ruleset == null)
+                    break;
+
+                // we don't have enough assets to display these components (this is especially the case on a "beatmap" skin).
+                if (!IsProvidingLegacyResources)
+                    return null;
+
+                // Our own ruleset components default.
+                switch (containerLookup.Lookup)
+                {
+                    case GlobalSkinnableContainers.Playfield:
+                        return new DefaultSkinComponentsContainer(c =>
+                        {
+                            var contextualCounter = c.OfType<LegacyContextualCounter>().FirstOrDefault();
+
+                            contextualCounter?.Anchor = Anchor.Centre;
+                            contextualCounter?.Origin = Anchor.Centre;
+                        })
+                        {
+                            Children =
+                            [
+                                new LegacyContextualCounter()
+                            ]
+                        };
                 }
 
                 break;
