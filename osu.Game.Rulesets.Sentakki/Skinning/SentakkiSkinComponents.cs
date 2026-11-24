@@ -4,4 +4,5 @@ public enum SentakkiSkinComponents
 {
     PlayfieldRing,
     Tap,
+    Hold,
 }
