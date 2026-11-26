@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.Sentakki.UI;
 [Cached]
 public partial class SentakkiPlayfield : Playfield
 {
-    private readonly Container<HitExplosion> explosionLayer;
+    public readonly Container<HitExplosion> ExplosionLayer;
 
     private readonly JudgementContainer<DrawableSentakkiJudgement> judgementLayer;
     private readonly Container judgementAboveHitObjectLayer;
@@ -70,7 +70,11 @@ public partial class SentakkiPlayfield : Playfield
                     new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.PlayfieldRing), _ => new PlayfieldRing())
                 ]
             },
-            explosionLayer = new Container<HitExplosion> { RelativeSizeAxes = Axes.Both },
+            ExplosionLayer = new Container<HitExplosion>
+            {
+                RelativeSizeAxes = Axes.Both,
+                AlwaysPresent = true // When Hidden, we still want to process the lifetimes of the children so explosions return to the pool
+            },
             judgementLayer = new JudgementContainer<DrawableSentakkiJudgement>
             {
                 RelativeSizeAxes = Axes.Both,
@@ -157,6 +161,6 @@ public partial class SentakkiPlayfield : Playfield
             return;
 
         var explosion = explosionPool.Get().Apply(sentakkiHitObject);
-        explosionLayer.Add(explosion);
+        ExplosionLayer.Add(explosion);
     }
 }

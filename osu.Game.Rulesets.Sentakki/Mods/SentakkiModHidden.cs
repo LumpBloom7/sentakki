@@ -50,6 +50,8 @@ public partial class SentakkiModHidden : ModHidden, IApplicableToDrawableRuleset
     public void ApplyToDrawableRuleset(DrawableRuleset<SentakkiHitObject> drawableRuleset)
     {
         SentakkiPlayfield sentakkiPlayfield = (SentakkiPlayfield)drawableRuleset.Playfield;
+        sentakkiPlayfield.ExplosionLayer.Hide();
+
         LanedPlayfield lanedPlayfield = sentakkiPlayfield.LanedPlayfield;
 
         var lanedHitObjectArea = lanedPlayfield.LanedHitObjectArea;
