@@ -70,7 +70,11 @@ public partial class SentakkiPlayfield : Playfield
                     new SkinnableDrawable(new SentakkiSkinComponentLookup(SentakkiSkinComponents.PlayfieldRing), _ => new PlayfieldRing())
                 ]
             },
-            ExplosionLayer = new Container<HitExplosion> { RelativeSizeAxes = Axes.Both },
+            ExplosionLayer = new Container<HitExplosion>
+            {
+                RelativeSizeAxes = Axes.Both,
+                AlwaysPresent = true // When Hidden, we still want to process the lifetimes of the children so explosions return to the pool
+            },
             judgementLayer = new JudgementContainer<DrawableSentakkiJudgement>
             {
                 RelativeSizeAxes = Axes.Both,
